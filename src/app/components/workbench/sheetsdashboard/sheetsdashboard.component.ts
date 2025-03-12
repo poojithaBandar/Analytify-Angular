@@ -22,7 +22,7 @@ import * as _ from 'lodash';
 // import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
-import { debounceTime, fromEvent, map, Observable } from 'rxjs';
+import { debounceTime, fromEvent, map, Observable, throwError } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -53,6 +53,7 @@ import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
 import 'pivottable';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
+import { cloneDeep } from 'lodash';
 
 interface TableRow {
   [key: string]: any;
@@ -151,6 +152,8 @@ export class SheetsdashboardComponent {
  colData = [] as any;
  heightGrid : number = 800;
  widthGrid : number = 800;
+ tabWidthGrid : number = 800;
+ tabHeightGrid : number = 800;
  gridItemSize : number = 50;
  dataArray = [] as any;
  keysArray = [] as any;
@@ -192,7 +195,7 @@ export class SheetsdashboardComponent {
   drillThroughQuerySetId : any[] = [];
   dashboardActionsList : any[] = [];
   actionName = '';
-  sourceSheetList: any[] = [];
+  sourceSheetList: any = {};
   targetSheetList : any[] = [];
   isAllTargetSheetsSelected : boolean = false;
   editActions : boolean = false;
@@ -259,12 +262,11 @@ export class SheetsdashboardComponent {
     
   }
   options!: GridsterConfig;
-  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any ,tableItemsPerPage : any, tableTotalItems : any }
-}> = [];
+
   dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any
   }>;
-  dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
-}> = [];
+  dashboardTest!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any
+  }>;
   dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
   }>;
   testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
@@ -791,6 +793,16 @@ export class SheetsdashboardComponent {
         else{
           this.dashboardTagName = data.dashboard_tag_name;
         }
+        this.sheetTabs = data.tab_data ? data.tab_data : [];
+        if(this.sheetTabs && this.sheetTabs.length > 0) {
+          this.displayTabs = true;
+          this.selectedTabIndex = 0;
+          this.selectedSheetTab({index : 0});
+          if(this.sheetTabs[0]?.dashboard && this.sheetTabs[0]?.dashboard[0]){
+            this.tabHeightGrid = this.sheetTabs[0].tabHeight;
+            this.tabWidthGrid =  this.sheetTabs[0].tabWidth;
+          }
+        }
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.dashboard.forEach((sheet : any)=>{
           // console.log('Before sanitization:', sheet.data?.sheetTagName);
@@ -1096,9 +1108,13 @@ export class SheetsdashboardComponent {
   // }
   async saveDashboard() {
     this.canNavigateToAnotherPage = false;
-    this.sheetsIdArray = this.dashboard
-    .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
-    .map(item => item['sheetId']);
+    this.sheetsIdArray = [
+      ...this.dashboard.map(item => item.sheetId).filter(id => id !== undefined),
+      ...this.sheetTabs
+        .map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId))
+        .flat()
+        .filter(id => id !== undefined)
+    ];
   
     if (this.dashboardName === '') {
       this.toasterService.info('Please add dashboard Title.', 'info', { positionClass: 'toast-top-center' });
@@ -1106,22 +1122,44 @@ export class SheetsdashboardComponent {
       try {
         // Wait for the screenshot to be taken
         await this.takeScreenshot();
-  
+        
         // Assign other data after screenshot
-        this.assignOriginalDataToDashboard();
+        let dashboardData = this.assignOriginalDataToDashboard(this.dashboard);
+        if(this.sheetTabs && this.sheetTabs.length > 0){
+          this.sheetTabs[0].tabHeight = this.tabHeightGrid;
+          this.sheetTabs[0].tabWidth = this.tabWidthGrid;
+        }
+        let sheetTabsData = _.cloneDeep(this.sheetTabs);
+        if(this.sheetTabs && this.sheetTabs.length > 0){
+          sheetTabsData.forEach((sheetData) => {
+            sheetData.dashboard  = this.assignOriginalDataToDashboard(sheetData.dashboard);
+          })
+        } 
         this.setQuerySetIds();
+        let tabNames;
+        let sheetIds;
+        if(this.sheetTabs && this.sheetTabs.length > 0){
+          tabNames = this.sheetTabs.map(tab => tab.name);
+          sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
+          if(this.hasDuplicates(tabNames)){
+            throw { error: { message: "Duplicate tab names are not allowed." } };
+          }
+        }
   
         let obj = {
           grid: this.gridType,
           height: this.heightGrid,
-          width: this.widthGrid,
+          width: this.widthGrid, 
           queryset_id: this.qrySetId,
           server_id: this.databaseId,
           sheet_ids: this.sheetsIdArray,
           selected_sheet_ids: this.sheetIdsDataSet,
           dashboard_name: this.dashboardName,
           dashboard_tag_name: this.dashboardTagName,
-          data: this.dashboard,
+          data: dashboardData,
+          tab_data: sheetTabsData,
+          tab_name: tabNames,
+          tab_sheets: sheetIds,
           // file_id: this.fileId,
           donutDecimalPlaces: this.donutDecimalPlaces
         }
@@ -1156,6 +1194,10 @@ export class SheetsdashboardComponent {
       }
     }
   }
+
+  hasDuplicates(names: string[]): boolean {
+    return new Set(names).size !== names.length;
+  }
   
   setQuerySetIds() {
     this.qrySetId = [];
@@ -1169,6 +1211,14 @@ export class SheetsdashboardComponent {
         }
       }
     });
+    this.sheetTabs
+        .forEach(tab => tab.dashboard.forEach((sheet:any) => {
+          if (sheet['type'] !== 'image') { 
+            if (sheet.qrySetId) {
+              this.qrySetId.push(sheet.qrySetId);
+            }
+          }
+        }))
   }
   takeScreenshot(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -1286,10 +1336,14 @@ export class SheetsdashboardComponent {
     if(!isLiveReloadData){
       this.takeScreenshot();
     }
-    this.sheetsIdArray = this.dashboard
-    .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
-    .map(item => item['sheetId']);
-     // this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
+    this.sheetsIdArray = [
+      ...this.dashboard.map(item => item.sheetId).filter(id => id !== undefined),
+      ...this.sheetTabs
+        .map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId))
+        .flat()
+        .filter(id => id !== undefined)
+    ];
+
     if(this.dashboardName===''){
       Swal.fire({
         icon: 'error',
@@ -1298,7 +1352,17 @@ export class SheetsdashboardComponent {
         width: '400px',
       })
     }else{
-      let dashboardData = this.assignOriginalDataToDashboard();
+      if(this.sheetTabs && this.sheetTabs.length > 0){
+        this.sheetTabs[0].tabHeight = this.tabHeightGrid;
+        this.sheetTabs[0].tabWidth = this.tabWidthGrid;
+      }
+      let dashboardData = this.assignOriginalDataToDashboard(this.dashboard);
+      let sheetTabsData = _.cloneDeep(this.sheetTabs);
+      if(this.sheetTabs && this.sheetTabs.length > 0){
+        sheetTabsData.forEach((sheetData) => {
+          sheetData.dashboard  = this.assignOriginalDataToDashboard(sheetData.dashboard);
+        })
+      }  
       this.setQuerySetIds();
       let obj;
       // if(this.fileId && this.fileId.length){
@@ -1319,6 +1383,20 @@ export class SheetsdashboardComponent {
       //     donutDecimalPlaces : this.donutDecimalPlaces
       //   }as any;
       // } else {
+        let tabNames;
+        let sheetIds;
+        if(this.sheetTabs && this.sheetTabs.length > 0){
+          tabNames = this.sheetTabs.map(tab => tab.name);
+          sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
+          if(this.hasDuplicates(tabNames)){
+            Swal.fire({
+              icon: 'error',
+              title: 'oops!',
+              text: 'Duplicate tab names are not allowed.',
+              width: '400px',
+            })
+          }
+        }
         obj ={
           grid : this.gridType,
           height: this.heightGrid,
@@ -1330,7 +1408,9 @@ export class SheetsdashboardComponent {
           dashboard_tag_name:this.dashboardTagName,
           selected_sheet_ids:this.sheetIdsDataSet,
           data : dashboardData,
-          sheetTabs : this.sheetTabs,
+          tab_data : sheetTabsData,
+          tab_name: tabNames,
+          tab_sheets: sheetIds,
           user_ids:this.usersForUpdateDashboard,
           role_ids:this.rolesForUpdateDashboard
         }
@@ -1370,8 +1450,8 @@ export class SheetsdashboardComponent {
   }
   }
 
-  assignOriginalDataToDashboard(){
-    let dashboardData = _.cloneDeep(this.dashboard);
+  assignOriginalDataToDashboard(inputData: any[]){
+    let dashboardData = _.cloneDeep(inputData);
     dashboardData.forEach((item1:any) => {
       if(item1.drillDownIndex >= 0){
         item1.drillDownIndex = 0;
@@ -1888,9 +1968,9 @@ getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1
 allowDrop(ev : any): void {
   ev.preventDefault();
 }
-  drop(event: any) {
+  drop(event: any,isTabs: boolean) {
     this.canNavigateToAnotherPage = true;
-    if(this.colArray.length >0 && this.rowArray.length>0){
+    if (this.colArray.length > 0 && this.rowArray.length > 0) {
       this.colArray = [];
       this.rowArray = [];
     }
@@ -1899,353 +1979,361 @@ allowDrop(ev : any): void {
     } else {
       console.log('Transfering item to new container')
       console.log('Transferring item to new container');
-      
+
       let item: any = event.previousContainer.data[event.previousIndex];
       console.log('Original item:', JSON.stringify(item));
-      
+
       // Creating a deep copy of the item
       let copy: any = JSON.parse(JSON.stringify(item));
       console.log('Copy of item:', JSON.stringify(copy));
-      
+
       // Initialize an empty object to hold the copied attributes
       let element: any = {
-        id:copy.id,
-        x:10,
+        id: copy.id,
+        x: 10,
         y: 20,
         rows: 1,
-        cols:1,
+        cols: 1,
         data: copy.data,
-        sheetType:copy.sheetType,
-        sheetId:copy.sheetId,
-        chartType:copy.chartType,
-        databaseId : copy.databaseId,
-        qrySetId : copy.qrySetId,
+        sheetType: copy.sheetType,
+        sheetId: copy.sheetId,
+        chartType: copy.chartType,
+        databaseId: copy.databaseId,
+        qrySetId: copy.qrySetId,
         // fileId : copy.fileId,
-        chartId:copy.chartId,
+        chartId: copy.chartId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
-        tableData:copy.tableData,
-        selectedSheet : true,
-        chartData:copy.chartOptions?.chartData || [],
-        kpiData:copy.kpiData,
-        isEChart : copy.isEChart,
-        echartOptions :  copy.chartOptions,
-        drillDownHierarchy : copy.drillDownHierarchy,
-        column_Data : copy.column_Data,
-      row_Data : copy.row_Data,
-      drillDownObject : [],
-      drillDownIndex : 0,
-      isDrillDownData : copy.isDrillDownData,
-      numberFormat : copy.numberFormat,
-      customizeOptions: copy.customizeOptions,
-      pivotData:copy.pivotData
+        tableData: copy.tableData,
+        selectedSheet: true,
+        chartData: copy.chartOptions?.chartData || [],
+        kpiData: copy.kpiData,
+        isEChart: copy.isEChart,
+        echartOptions: copy.chartOptions,
+        drillDownHierarchy: copy.drillDownHierarchy,
+        column_Data: copy.column_Data,
+        row_Data: copy.row_Data,
+        drillDownObject: [],
+        drillDownIndex: 0,
+        isDrillDownData: copy.isDrillDownData,
+        numberFormat: copy.numberFormat,
+        customizeOptions: copy.customizeOptions,
+        pivotData: copy.pivotData
       };
       // this.qrySetId.push(copy.qrySetId);
       // if(copy.fileId){
       //   this.fileId.push(copy.fileId);
       // } else {
-        this.databaseId.push(copy.databaseId);
       // }
-    //   if(element.chartOptions?.chart?.type === 'bar'){
-    //      element['chartData'].forEach((item: { name: any; value: any; }) => {
-    //       this.colArray.push(item.name);
-    //       this.rowArray.push(item.value);        
-    //       // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
+      //   if(element.chartOptions?.chart?.type === 'bar'){
+      //      element['chartData'].forEach((item: { name: any; value: any; }) => {
+      //       this.colArray.push(item.name);
+      //       this.rowArray.push(item.value);        
+      //       // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
 
-    //     });      
-    //   }
-    //   if(element.chartOptions?.chart?.type === 'line'){
-    //     this.colArray = element['chartData'][0].xAis
-    //     this.rowArray = element['chartData'][0].yAxis
-    //     console.log('linedata',this.colArray,this.rowArray)
-    //     // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
+      //     });      
+      //   }
+      //   if(element.chartOptions?.chart?.type === 'line'){
+      //     this.colArray = element['chartData'][0].xAis
+      //     this.rowArray = element['chartData'][0].yAxis
+      //     console.log('linedata',this.colArray,this.rowArray)
+      //     // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
 
-    //  }
-    //  console.log(this.rowArray);
-     //this.getChartOptions(element.chartOptions?.chart?.type || 'bar');
-    //  if(event.event.target.offsetParent.id == 'cdk-drop-list-0'){
+      //  }
+      //  console.log(this.rowArray);
+      //this.getChartOptions(element.chartOptions?.chart?.type || 'bar');
+      //  if(event.event.target.offsetParent.id == 'cdk-drop-list-0'){
       const index = this.findSheetIndex(copy.sheetId);
-      if (index == -1) {
+      const tabIndex = this.findSheetInTabIndex(copy.sheetId);
+      if (index == -1 && tabIndex) {
+        this.databaseId.push(copy.databaseId);
         this.disableDashboardUpdate = false;
         this.setDashboardNewSheets(copy.sheetId, true);
-        
+
         let self = this;
-        if(element.chartOptions && element.chartOptions.chart) {
-        element.chartOptions.chart.events = {
-          markerClick: (event: any, chartContext: any, config: any) => {
-            let selectedXValue;
-            if(element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4){
-              selectedXValue = element.chartOptions.labels[config.dataPointIndex];
-            } else {
-              selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
-            }
-            if(self.actionId && element.sheetId === self.sourceSheetId){
-              self.setDrillThrough(selectedXValue, element);  
-            }
-          },
-          dataPointSelection: function (event: any, chartContext: any, config: any) {
-            let selectedXValue;
-            if(element.chartId == 24 || element.chartId == 10){
-              selectedXValue = element.chartOptions.labels[config.dataPointIndex];
-            } else {
-              selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
-            }
-            if(self.actionId && element.sheetId === self.sourceSheetId){
-              self.setDrillThrough(selectedXValue, element);  
-            }
-            if (element.drillDownIndex < element.drillDownHierarchy.length - 1) {
-              // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
-              console.log('X-axis value:', selectedXValue);
-              let nestedKey = element.drillDownHierarchy[element.drillDownIndex];
-              element.drillDownIndex++;
-              let obj = { [nestedKey]: selectedXValue };
-              element.drillDownObject.push(obj);
-              self.dataExtraction(element);
-            }
-          },
-          mounted: function(chartContext:any, config:any) {
-            if (element.chartId == 28) {
-              let color = element?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
-              const applyStyles = () => {
-                const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
-                if (valueElement) {
-                  valueElement.style.fill = color;
-                  valueElement.style.setProperty('fill', color, 'important');
-                }
-  
-                const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
-                if (nameElement) {
-                  nameElement.style.fill = color;
-                  nameElement.style.setProperty('fill', color, 'important');
-                }
-              };
-              // Initial styling
-              applyStyles();
-  
-              // Monitor DOM for changes
-              const observer = new MutationObserver(() => {
+        if (element.chartOptions && element.chartOptions.chart) {
+          element.chartOptions.chart.events = {
+            markerClick: (event: any, chartContext: any, config: any) => {
+              let selectedXValue;
+              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4) {
+                selectedXValue = element.chartOptions.labels[config.dataPointIndex];
+              } else {
+                selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
+              }
+              if (self.actionId && element.sheetId === self.sourceSheetId) {
+                self.setDrillThrough(selectedXValue, element);
+              }
+            },
+            dataPointSelection: function (event: any, chartContext: any, config: any) {
+              let selectedXValue;
+              if (element.chartId == 24 || element.chartId == 10) {
+                selectedXValue = element.chartOptions.labels[config.dataPointIndex];
+              } else {
+                selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
+              }
+              if (self.actionId && element.sheetId === self.sourceSheetId) {
+                self.setDrillThrough(selectedXValue, element);
+              }
+              if (element.drillDownIndex < element.drillDownHierarchy.length - 1) {
+                // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
+                console.log('X-axis value:', selectedXValue);
+                let nestedKey = element.drillDownHierarchy[element.drillDownIndex];
+                element.drillDownIndex++;
+                let obj = { [nestedKey]: selectedXValue };
+                element.drillDownObject.push(obj);
+                self.dataExtraction(element);
+              }
+            },
+            mounted: function (chartContext: any, config: any) {
+              if (element.chartId == 28) {
+                let color = element?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+                const applyStyles = () => {
+                  const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+                  if (valueElement) {
+                    valueElement.style.fill = color;
+                    valueElement.style.setProperty('fill', color, 'important');
+                  }
+
+                  const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+                  if (nameElement) {
+                    nameElement.style.fill = color;
+                    nameElement.style.setProperty('fill', color, 'important');
+                  }
+                };
+                // Initial styling
                 applyStyles();
-              });
-              const chartContainer = document.querySelector('.apexcharts-inner');
-              if (chartContainer) {
-                observer.observe(chartContainer, { childList: true, subtree: true });
+
+                // Monitor DOM for changes
+                const observer = new MutationObserver(() => {
+                  applyStyles();
+                });
+                const chartContainer = document.querySelector('.apexcharts-inner');
+                if (chartContainer) {
+                  observer.observe(chartContainer, { childList: true, subtree: true });
+                }
+              }
+            },
+            updated: function (chartContext: any, config: any) {
+              if (element.chartId == 28) {
+                let color = element?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+                const applyStyles = () => {
+                  const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+                  if (valueElement) {
+                    valueElement.style.fill = color;
+                    valueElement.style.setProperty('fill', color, 'important');
+                  }
+
+                  const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+                  if (nameElement) {
+                    nameElement.style.fill = color;
+                    nameElement.style.setProperty('fill', color, 'important');
+                  }
+                };
+                // Initial styling
+                applyStyles();
+
+                // Monitor DOM for changes
+                const observer = new MutationObserver(() => {
+                  applyStyles();
+                });
+                const chartContainer = document.querySelector('.apexcharts-inner');
+                if (chartContainer) {
+                  observer.observe(chartContainer, { childList: true, subtree: true });
+                }
               }
             }
-          },
-          updated: function(chartContext:any, config:any) {
-            if (element.chartId == 28) {
-              let color = element?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
-              const applyStyles = () => {
-                const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
-                if (valueElement) {
-                  valueElement.style.fill = color;
-                  valueElement.style.setProperty('fill', color, 'important');
-                }
-  
-                const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
-                if (nameElement) {
-                  nameElement.style.fill = color;
-                  nameElement.style.setProperty('fill', color, 'important');
-                }
-              };
-              // Initial styling
-              applyStyles();
-  
-              // Monitor DOM for changes
-              const observer = new MutationObserver(() => {
-                applyStyles();
-              });
-              const chartContainer = document.querySelector('.apexcharts-inner');
-              if (chartContainer) {
-                observer.observe(chartContainer, { childList: true, subtree: true });
-              }
-            }
-          }
-        };
-      }else if(element.chartId == 29 && element.echartOptions){
-        this.chartType = 'map';
-        element.echartOptions?.series[0]?.data?.forEach((data:any)=>{
-          this.chartsColumnData.push(data.name);
-          this.chartsRowData.push(data.value);
-        });
-        this.dualAxisColumnData = [{
-          name : element?.column_Data[0][0],
-          values : this.chartsColumnData 
-        }]
-        this.dualAxisRowData = [{
-          name : element?.row_Data[0][0],
-          data : this.chartsRowData
-        }]
-        element.echartOptions.tooltip= {
-          formatter: (params: any) => {
-            const { name, data } = params;
-            if (data) {
-              const keys = Object.keys(data);
-        const values = Object.values(data);
-        let formattedString = '';
-        keys.forEach((key, index) => {
-          if(key)
-          formattedString += `${key}: ${values[index]}<br/>`;
-        });
-  
-        return formattedString;
-             
-            } else {
-              return `${name}: No Data`;
-            }
-          }
-      }
-    }
-    if(element.chartId == 9){
-      let transformedData :any =[];
-      let headers: string[] = [];
-
-     let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
-     let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
-    let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
-    element.pivotData?.pivotColData?.forEach((colObj: any) => {
-      headers.push(colObj.column);
-    });
-
-    element.pivotData?.pivotRowData?.forEach((rowObj: any) => {
-      headers.push(rowObj.col);
-    });
-    element.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
-      headers.push(colObj.col);
-    });
-
-    transformedData.push(headers); 
-    let numRows = 0;
-    if (element.pivotData?.pivotColData?.length > 0) {
-        numRows = element.pivotData.pivotColData[0]?.result_data?.length || 0;
-    } else if (element.pivotData?.pivotRowData?.length > 0) {
-        numRows = element.pivotData.pivotRowData[0]?.result_data?.length || 0;
-    } else if (element.pivotData?.pivotMeasureData?.length > 0) {
-        numRows = element.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
-    }
-
-    for (let i = 0; i < numRows; i++) {
-      let rowArray: any[] = []; 
-      element.pivotData?.pivotColData.forEach((colObj: any) => {
-        rowArray.push(colObj.result_data[i]);
-      });
-      element.pivotData?.pivotRowData.forEach((rowObj: any) => {
-        rowArray.push(rowObj.result_data[i]);
-      });
-      element.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
-        rowArray.push(rowObj.result_data[i]);
-      });
-
-      transformedData.push(rowArray);
-    }
-    element.transformedData = transformedData;
-    element.columnKeys = columnKeys;
-    element.rowKeys = rowKeys;
-    element.valueKeys = valueKeys;
-      setTimeout(() => {
-    this.cdr.detectChanges();  // Ensures ViewChildren is updated
-    console.log("Pivot Containers:", this.pivotContainers);
-    console.log("Pivot Containers Length:", this.pivotContainers.length);
-
-    const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
-
-    if (pivotTables.length !== this.pivotContainers.length) {
-      console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
-    }
-    this.pivotContainers.forEach((pivotContainer, index) => {
-      if (pivotContainer && pivotContainer.nativeElement) {
-        const pivotData = pivotTables[index]; // Get the corresponding pivot data
-            ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-        rows: pivotData['columnKeys'],  
-        cols: pivotData['valueKeys'], 
-            aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-            rendererName: "Table"
+          };
+        } else if (element.chartId == 29 && element.echartOptions) {
+          this.chartType = 'map';
+          element.echartOptions?.series[0]?.data?.forEach((data: any) => {
+            this.chartsColumnData.push(data.name);
+            this.chartsRowData.push(data.value);
           });
-        // }
-      }
-    });
-  }, 1000);
-  }
-        this.dashboard.push(element);
-      }
-    //  } else {
-    //   this.nestedDashboard.push(element);
-    //  }
-     
-    //  this.initializeChartData(element);  // Initialize chart after adding
-    this.dashboard.forEach((sheet:any)=>{
-      // console.log('Before sanitization:', sheet.data.sheetTagName);
-      if(sheet.data?.sheetTagName){
-        this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
-      }
-      // console.log('After sanitization:', sheet.data.sheetTagName);
+          this.dualAxisColumnData = [{
+            name: element?.column_Data[0][0],
+            values: this.chartsColumnData
+          }]
+          this.dualAxisRowData = [{
+            name: element?.row_Data[0][0],
+            data: this.chartsRowData
+          }]
+          element.echartOptions.tooltip = {
+            formatter: (params: any) => {
+              const { name, data } = params;
+              if (data) {
+                const keys = Object.keys(data);
+                const values = Object.values(data);
+                let formattedString = '';
+                keys.forEach((key, index) => {
+                  if (key)
+                    formattedString += `${key}: ${values[index]}<br/>`;
+                });
 
-      if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
-        sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
-          return w.globals.seriesTotals.reduce((a:any, b:any) => {
-            return +a + b
-          }, 0).toFixed(this.donutDecimalPlaces);
-        };
-      }
-      let chartId: number = sheet['chartId'];
-      const numberFormat = sheet?.numberFormat;
-      const isEcharts = sheet?.isEChart;
-      this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
-      // if (![10, 24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)) {
-      //   if([2,3].includes(chartId)){
-      //     if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
-      //       sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
-      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-      //       };            
-      //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
-      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-      //       };
-      //     }
-      //   }
-      //   else{
-      //     if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
-      //       sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
-      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-      //       };
-      //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
-      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-      //       };
-      //     }
-      //     else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
-      //       sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
-      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-      //       };
-      //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
-      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-      //       };
-      //     }
-      //   }
-      // }
-      // if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
-      //   if (sheet.chartOptions?.dataLabels) {
-      //     sheet.chartOptions.dataLabels.formatter = (val: number) => {
-      //       return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-      //     };
-      //   }
-      // }
-      if(chartId == 11){
-        sheet.echartOptions.tooltip.formatter =  function (params: any) {
-          const date = params.data[0];
-          const value = params.data[1];
-          return `Date: ${date}<br/>Value: ${value}`;
-        };
-        this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
-      }
-      if(chartId == 1){
-        if(sheet?.tableData?.tableItemsPerPage){
-          sheet.tableData.tableItemsPerPage = 10;
+                return formattedString;
+
+              } else {
+                return `${name}: No Data`;
+              }
+            }
+          }
         }
-        if(sheet?.tableData?.tablePage){
-          sheet.tableData.tablePage = 1;
+        if(element.chartId == 9){
+          let transformedData :any =[];
+          let headers: string[] = [];
+    
+         let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
+         let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
+        let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+        element.pivotData?.pivotColData?.forEach((colObj: any) => {
+          headers.push(colObj.column);
+        });
+    
+        element.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+          headers.push(rowObj.col);
+        });
+        element.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+          headers.push(colObj.col);
+        });
+    
+        transformedData.push(headers); 
+        let numRows = 0;
+        if (element.pivotData?.pivotColData?.length > 0) {
+            numRows = element.pivotData.pivotColData[0]?.result_data?.length || 0;
+        } else if (element.pivotData?.pivotRowData?.length > 0) {
+            numRows = element.pivotData.pivotRowData[0]?.result_data?.length || 0;
+        } else if (element.pivotData?.pivotMeasureData?.length > 0) {
+            numRows = element.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+        }
+    
+        for (let i = 0; i < numRows; i++) {
+          let rowArray: any[] = []; 
+          element.pivotData?.pivotColData.forEach((colObj: any) => {
+            rowArray.push(colObj.result_data[i]);
+          });
+          element.pivotData?.pivotRowData.forEach((rowObj: any) => {
+            rowArray.push(rowObj.result_data[i]);
+          });
+          element.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+            rowArray.push(rowObj.result_data[i]);
+          });
+    
+          transformedData.push(rowArray);
+        }
+        element.transformedData = transformedData;
+        element.columnKeys = columnKeys;
+        element.rowKeys = rowKeys;
+        element.valueKeys = valueKeys;
+          setTimeout(() => {
+        this.cdr.detectChanges();  // Ensures ViewChildren is updated
+        console.log("Pivot Containers:", this.pivotContainers);
+        console.log("Pivot Containers Length:", this.pivotContainers.length);
+        let pivotTables: any;
+        if(isTabs){
+          // this.dashboardTest.push(element);
+          // this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
+          pivotTables = this.dashboardTest.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+        } else {
+          pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+        }
+        if (pivotTables.length !== this.pivotContainers.length) {
+          console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+        }
+        this.pivotContainers.forEach((pivotContainer, index) => {
+          if (pivotContainer && pivotContainer.nativeElement) {
+            const pivotData = pivotTables[index]; // Get the corresponding pivot data
+                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
+            rows: pivotData['columnKeys'],  
+            cols: pivotData['valueKeys'], 
+                aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
+                rendererName: "Table"
+              });
+            // }
+          }
+        });
+      }, 1000);
+      }
+        if(isTabs){
+          this.dashboardTest.push(element);
+          this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
+        } else {
+        this.dashboard.push(element);
         }
       }
-    });
-     console.log('draggedDashboard',this.dashboard)
+
+      //  this.initializeChartData(element);  // Initialize chart after adding
+      this.dashboard.forEach((sheet: any) => {
+        // console.log('Before sanitization:', sheet.data.sheetTagName);
+        if(sheet.data?.sheetTagName){
+        this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+        }
+        // console.log('After sanitization:', sheet.data.sheetTagName);
+
+        if (sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total) {
+          sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w: any) => {
+            return w.globals.seriesTotals.reduce((a: any, b: any) => {
+              return +a + b
+            }, 0).toFixed(this.donutDecimalPlaces);
+          };
+        }
+        let chartId: number = sheet['chartId'];
+        const numberFormat = sheet?.numberFormat;
+        const isEcharts = sheet?.isEChart;
+        this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
+        // if (![10, 24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)) {
+        //   if([2,3].includes(chartId)){
+        //     if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
+        //       sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
+        //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+        //       };            
+        //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+        //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+        //       };
+        //     }
+        //   }
+        //   else{
+        //     if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
+        //       sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
+        //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+        //       };
+        //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+        //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+        //       };
+        //     }
+        //     else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
+        //       sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
+        //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+        //       };
+        //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+        //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+        //       };
+        //     }
+        //   }
+        // }
+        // if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
+        //   if (sheet.chartOptions?.dataLabels) {
+        //     sheet.chartOptions.dataLabels.formatter = (val: number) => {
+        //       return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+        //     };
+        //   }
+        // }
+        if (chartId == 11) {
+          sheet.echartOptions.tooltip.formatter = function (params: any) {
+            const date = params.data[0];
+            const value = params.data[1];
+            return `Date: ${date}<br/>Value: ${value}`;
+          };
+          this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
+        }
+        if (chartId == 1) {
+          if (sheet?.tableData?.tableItemsPerPage) {
+            sheet.tableData.tableItemsPerPage = 10;
+          }
+          if (sheet?.tableData?.tablePage) {
+            sheet.tableData.tablePage = 1;
+          }
+        }
+      });
+      console.log('draggedDashboard', this.dashboard)
     }
   }
 
@@ -2257,50 +2345,6 @@ allowDrop(ev : any): void {
       return sheet;
     });
   }
-
-  dropNested(event: CdkDragDrop<DashboardItem[]>,nestedItem : DashboardItem){
-    if(this.colArray.length >0 && this.rowArray.length>0){
-      this.colArray = [];
-      this.rowArray = [];
-    }
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      console.log('Transfering item to new container')
-      console.log('Transferring item to new container');
-      
-      let item: any = event.previousContainer.data[event.previousIndex];
-      console.log('Original item:', JSON.stringify(item));
-      
-      // Creating a deep copy of the item
-      let copy: any = JSON.parse(JSON.stringify(item));
-      console.log('Copy of item:', JSON.stringify(copy));
-      
-      // Initialize an empty object to hold the copied attributes
-      let element: DashboardItem = {
-        id:copy.id,
-        x: copy.x,
-        y: copy.y,
-        rows: copy.rows,
-        cols: copy.cols,
-        data: copy.data,
-        sheetType:copy.sheetType,
-        sheetId:copy.sheetId,
-        chartType:copy.chartType,
-        chartId:copy.chartId,
-        databaseId : copy.databaseId,
-    qrySetId : copy.qrySetId,
-        chartOptions: copy.chartOptions,
-        chartInstance: copy.chartInstance,
-        tableData:copy.tableData,
-        chartData:copy.chartOptions?.chartData || [],
-      };
-
-     this.nestedDashboard.push(element);
-    //  this.initializeChartData(element);  // Initialize chart after adding
-     console.log('draggedDashboard',this.dashboard)
-  }
-}
 
 arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   // Check if arrays are of the same length
@@ -2372,6 +2416,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
+      }
         // this.qrySetId.splice(popqryIndex, 1);
         if(this.dashboardId){
           this.deleteSheetFilter(item.sheetId);
@@ -2384,7 +2429,6 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
         this.databaseId.splice(popIndex, 1);
       // }
-      }
     }
     this.canNavigateToAnotherPage = true;
     }
@@ -2429,11 +2473,6 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         })
       }
     });
-  }
-  removeNestedItem($event:any, item:any) {
-    $event.preventDefault();
-    $event.stopPropagation();
-    this.dashboard.splice(this.nestedDashboard.indexOf(item), 1);
   }
 
   resetDashboard() {
@@ -2498,11 +2537,23 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       if(result.isConfirmed){
         this.dashboardNew.splice(this.dashboardNew.findIndex((sheet:any) => item.sheetId == sheet.sheetId), 1);
        this.removeItem(event, item, false);
+       if(this.displayTabs){
+        this.removeItem(event, item, true);
+        this.sheetTabs = this.clearItemFromTab(item.id);
+       }
        this.sheetIdsDataSet.splice(this.sheetIdsDataSet.findIndex((sheet:any) => item.sheetId == sheet), 1);
        this.unSelectSheetsFromSheetsPanel(item);
       }})
   }
 
+  clearItemFromTab(inputId : number){
+    return this.sheetTabs.map(sheetTab => ({
+      ...sheetTab,
+      dashboard: sheetTab.dashboard.filter((dashboardItem : any)=> 
+        dashboardItem.id !== inputId
+      )
+    }));
+  }
   unSelectSheetsFromSheetsPanel(sheetData : any){
     this.panelscheckbox.forEach((panel : any)=>{
       if(panel.queryset_id == sheetData.qrySetId){
@@ -3003,8 +3054,18 @@ getColumnsForFilter(){
     next:(data)=>{
       console.log(data);
       this.columnFilterNames=data.response_data.tables;
-      this.sheetsFilterNames= data.sheets?.map((name: any) => ({ label: name, selected: false }))
       this.buildDropdownOptions(this.columnFilterNames); 
+      // this.sheetsFilterNames= data.sheets?.map((name: any) => ({ label: name, selected: false }))
+      const rawData = data?.sheets
+      this.sheetsFilterNames = Object.keys(rawData).map((key) => ({
+        title: key, // Parent name (Sheet Title)
+        selected: false, // Default unchecked
+        sheets: rawData[key].map((sheet: any) => ({
+          label: { id: sheet.sheet_id, name: sheet.sheet_name },
+          selected: false // Default unchecked
+        }))
+      }));
+      console.log('transformed sheetdata', this.sheetsFilterNames)
     },
     error:(error)=>{
       console.log(error)
@@ -3134,13 +3195,13 @@ loadSelectedForEditing() {
 ResetDashboard(){
   this.dashboard =[];
 }
-updateSelectedRows(){
-  this.selectedRows = this.sheetsFilterNames
-  .filter((row: { selected: any; }) => row.selected)
-  .map((row: { label: any; }) => row.label.id);
-console.log('selected rows', this.selectedRows);
-this.isAllSelected = this.sheetsFilterNames.every((row: { selected: any; }) => row.selected);
-}
+// updateSelectedRows(){
+//   this.selectedRows = this.sheetsFilterNames
+//   .filter((row: { selected: any; }) => row.selected)
+//   .map((row: { label: any; }) => row.label.id);
+// console.log('selected rows', this.selectedRows);
+// this.isAllSelected = this.sheetsFilterNames.every((row: { selected: any; }) => row.selected);
+// }
 getColumnSelectionLabel(filterList: any): string {
   // Get the filtered columns using the provided method
   const filteredColumns = this.getFilteredColumns(filterList);
@@ -3156,15 +3217,57 @@ getColumnSelectionLabel(filterList: any): string {
     return 'Multiple Values'; // Display 'Multiple Values' if more than one column is selected
   }
 }
+updateSelectedRows() {
+  this.selectedRows = this.sheetsFilterNames
+    .flatMap((parent: any) => parent.sheets)
+    .filter((sheet: { selected: any }) => sheet.selected)
+    .map((sheet: { label: any }) => sheet.label.id);
 
+  console.log('Selected Rows:', this.selectedRows);
+
+  this.isAllSelected = this.sheetsFilterNames.every((parent: any) =>
+    parent.sheets.every((sheet: { selected: boolean }) => sheet.selected)
+  );
+}
+
+// Toggle Select All /
 toggleAllRows(event: Event) {
   const isChecked = (event.target as HTMLInputElement).checked;
-  this.sheetsFilterNames.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+
+  this.sheetsFilterNames.forEach((parent: any) => {
+    parent.selected = isChecked; // Select/Deselect parent
+    parent.sheets.forEach((sheet: any) => (sheet.selected = isChecked));
+  });
+
   this.updateSelectedRows();
 }
-isAnyRowSelected(): boolean {
-  return this.sheetsFilterNames.some((row: { selected: any; }) => row.selected);
+
+//Toggle Parent Selection - Select/Deselect All Children //
+toggleParentSelection(parent: any) {
+  parent.sheets.forEach((sheet: any) => (sheet.selected = parent.selected));
+  this.updateSelectedRows();
 }
+
+// Toggle Child Selection - Update Parent Selection /
+toggleChildSelection(parent: any) {
+  parent.selected = parent.sheets.every((sheet: { selected: any }) => sheet.selected);
+  this.updateSelectedRows();
+}
+
+// Check if at least one row is selected /
+isAnyRowSelected(): boolean {
+  return this.sheetsFilterNames.some((parent: any) =>
+    parent.sheets.some((sheet: { selected: any }) => sheet.selected)
+  );
+}
+// toggleAllRows(event: Event) {
+//   const isChecked = (event.target as HTMLInputElement).checked;
+//   this.sheetsFilterNames.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+//   this.updateSelectedRows();
+// }
+// isAnyRowSelected(): boolean {
+//   return this.sheetsFilterNames.some((row: { selected: any; }) => row.selected);
+// }
 validateQuerySetSelection(){
   if (this.selectedQuerySetId === 0) {
     this.selectedQuerySetId = null; // Reset to null if no valid option is selected
@@ -3426,7 +3529,12 @@ getFilteredData(){
         // this.tablePageNo =1;
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '', false,false);
+      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
+        })
+      }
       }
     });
       },
@@ -3472,8 +3580,8 @@ clearAllFilters(): void {
 }
 
 
-setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean){
-  this.dashboard.forEach((item1:any) => {
+setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean, dashboard : any[]){
+  dashboard.forEach((item1:any) => {
     if(item1.sheetId){
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
       if(item.chart_id == '1'){//table
@@ -4098,6 +4206,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
       console.log('filtered dashboard-data',item1)
     }
+    
   }
 })
 if(isLiveReloadData && isLastIndex){
@@ -4143,6 +4252,12 @@ closeFilterModal(){
     return this.dashboard.findIndex(sheet => sheet['sheetId'] === sheetID);
   }
 
+  findSheetInTabIndex(sheetID: number){
+    return !this.sheetTabs.find(tab => 
+      tab.dashboard.find((sheet:any) => sheet['sheetId'] === sheetID)
+    );
+  }
+
 deleteDashboardFilter(id:any){
   const Obj =
     {"filter_id" : [id]
@@ -4179,7 +4294,12 @@ deleteDashboardFilter(id:any){
               this.filteredRowData.push(obj);
               console.log('filterowData',this.filteredRowData)
             });
-            this.setDashboardSheetData(item, true, false, false, false, '', false,false);
+            this.setDashboardSheetData(item, true, false, false, false, '', false,false,this.dashboard);
+            if(this.displayTabs){
+              this.sheetTabs.forEach((sheet:any)=>{
+                this.setDashboardSheetData(item, true, false, false, false, '', false,false,sheet.dashboard);
+              })
+            }
           });
           this.toasterService.success('Filter Deleted Succesfully','success',{ positionClass: 'toast-top-center'})
           this.getFilteredData();
@@ -4243,7 +4363,7 @@ editFiltersData(id:any){
     next:(data)=>{
       console.log(data);
       this.filterName = data.filter_name;
-      this.sheetsFilterNamesFromEdit = data.sheets;
+      // this.sheetsFilterNamesFromEdit = data.sheets;
       this.querysetNameEdit = data.queryname;
       this.selectClmnEdit = data.selected_column;
       this.selectdColmnDtypeEdit = data.datatype;
@@ -4257,6 +4377,26 @@ editFiltersData(id:any){
       this.selectedQuerySetId = data.selected_query_id.map(
         (item: { queryset_id: any; }) => item.queryset_id
       );
+
+      // const rawDataEdit = data?.sheets;
+      this.sheetsFilterNamesFromEdit = Object.entries(data?.sheets as Record<string, any[]>).map(([title, value]) => {
+        const sheets = value as Array<{ sheet_id: number; sheet_name: string; selected?: boolean }>; // Explicit assertion
+      
+        return {
+          title,
+          selected: sheets.length > 0 && sheets.every(sheet => sheet.selected || false), // Ensure sheets is an array
+          expanded: true,
+          sheets: sheets.map(sheet => ({
+            id: sheet.sheet_id,
+            name: sheet.sheet_name,
+            selected: sheet.selected || false,
+          })),
+        };
+      });
+      
+      
+      this.isAllSelected = this.sheetsFilterNamesFromEdit.every((parent: { selected: any; }) => parent.selected);
+
       this.updateSelectedRowsEdit();
       // this.getColumnsFromEdit(data.query_id,data.dashboard_id);
       this.getColumnsForFilterEdit(this.selectedQuerySetId,data.dashboard_id);
@@ -4300,19 +4440,63 @@ editFiltersData(id:any){
 //     }
 //   })
 // }
-isAnySheetSelected(){
-  return this.sheetsFilterNamesFromEdit.some((sheet: { selected: any; }) => sheet.selected);
+// isAnySheetSelected(){
+//   return this.sheetsFilterNamesFromEdit.some((sheet: { selected: any; }) => sheet.selected);
+// }
+// updateSelectedRowsEdit(){
+//   this.selectedRowsEdit = this.sheetsFilterNamesFromEdit
+//   .filter((row: { selected: any; }) => row.selected)
+//   .map((row: { id: any; }) => row.id);
+// console.log('selected rows', this.selectedRowsEdit);
+// this.isAllSelected = this.sheetsFilterNamesFromEdit.every((row: { selected: any; }) => row.selected);
+// }
+// toggleAllRowsEdit(event: Event) {
+//   const isChecked = (event.target as HTMLInputElement).checked;
+//   this.sheetsFilterNamesFromEdit.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+//   this.updateSelectedRowsEdit();
+// }
+
+isAnySheetSelected(): boolean {
+  return this.sheetsFilterNamesFromEdit.some((parent: { selected: any; sheets: any[]; }) =>
+    parent.selected || parent.sheets.some((child: { selected: any; }) => child.selected)
+  );
 }
-updateSelectedRowsEdit(){
+
+// Update selected rows when checkboxes change
+updateSelectedRowsEdit() {
   this.selectedRowsEdit = this.sheetsFilterNamesFromEdit
-  .filter((row: { selected: any; }) => row.selected)
-  .map((row: { id: any; }) => row.id);
-console.log('selected rows', this.selectedRowsEdit);
-this.isAllSelected = this.sheetsFilterNamesFromEdit.every((row: { selected: any; }) => row.selected);
+    .flatMap((parent: { sheets: any[]; }) => parent.sheets.filter((child: { selected: any; }) => child.selected).map((child: { id: any; }) => child.id));
+
+  console.log('Selected Rows:', this.selectedRowsEdit);
+
+  // Update select all checkbox state
+  this.isAllSelected = this.sheetsFilterNamesFromEdit.every((parent: { selected: any; sheets: any[]; }) =>
+    parent.selected || parent.sheets.every((child: { selected: any; }) => child.selected)
+  );
 }
+
+// When select all is toggled
 toggleAllRowsEdit(event: Event) {
   const isChecked = (event.target as HTMLInputElement).checked;
-  this.sheetsFilterNamesFromEdit.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+
+  this.sheetsFilterNamesFromEdit.forEach((parent: { selected: boolean; sheets: any[]; }) => {
+    parent.selected = isChecked;
+    parent.sheets.forEach((child: { selected: boolean; }) => child.selected = isChecked);
+  });
+
+  this.updateSelectedRowsEdit();
+}
+
+// When Parent Checkbox is checks
+toggleParentSelectionEdit(parent: any) {
+  parent.sheets.forEach((child: { selected: any; }) => child.selected = parent.selected);
+  this.updateSelectedRowsEdit();
+}
+
+//  When Child Checkbox is checkd
+toggleChildSelectionEdit(parent: any) {
+  // If all children are selected, mark the parent as selected
+  parent.selected = parent.sheets.every((child: { selected: any; }) => child.selected);
   this.updateSelectedRowsEdit();
 }
 closeColumnsDropdownEdit(colName:any,colDatatype:any, dropdown: NgbDropdown) {
@@ -4356,46 +4540,62 @@ const obj ={
 }
 }
 ///
-dropTest2(event: any) {
-  if(this.colArray.length >0 && this.rowArray.length>0){
-    this.colArray = [];
-    this.rowArray = [];
-  }
-  if (event.previousContainer === event.container) {
-    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-  } else {
-    console.log('Transfering item to new container')
-    console.log('Transferring item to new container');
+// dropTest2(event: any) {
+//   this.canNavigateToAnotherPage = true;
+//   if(this.colArray.length >0 && this.rowArray.length>0){
+//     this.colArray = [];
+//     this.rowArray = [];
+//   }
+//   if (event.previousContainer === event.container) {
+//     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+//   } else {
+//     console.log('Transfering item to new container')
+//     console.log('Transferring item to new container');
     
-    let item: any = event.previousContainer.data[event.previousIndex];
-    console.log('Original item:', JSON.stringify(item));
+//     let item: any = event.previousContainer.data[event.previousIndex];
+//     console.log('Original item:', JSON.stringify(item));
     
-    // Creating a deep copy of the item
-    let copy: any = JSON.parse(JSON.stringify(item));
-    console.log('Copy of item:', JSON.stringify(copy));
+//     // Creating a deep copy of the item
+//     let copy: any = JSON.parse(JSON.stringify(item));
+//     console.log('Copy of item:', JSON.stringify(copy));
     
-    // Initialize an empty object to hold the copied attributes
-    let element: DashboardItem = {
-      id:copy.id,
-      x:copy.x,
-        y: copy.y,
-      rows: 1,
-      cols:1,
-      data: copy.data,
-      sheetType:copy.sheetType,
-      sheetId:copy.sheetId,
-      chartType:copy.chartType,
-      chartId:copy.chartId,
-      chartOptions: copy.chartOptions,
-      chartInstance: copy.chartInstance,
-      tableData:copy.tableData,
-      chartData:copy.chartOptions?.chartData || [],
-    };
-    this.dashboardTest.push(element);
-    this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
-  }
+//     // Initialize an empty object to hold the copied attributes
+//     let element: DashboardItem = {
+//       id:copy.id,
+//       x:copy.x,
+//         y: copy.y,
+//       rows: 1,
+//       cols:1,
+//       data: copy.data,
+//       sheetType:copy.sheetType,
+//       sheetId:copy.sheetId,
+//       chartType:copy.chartType,
+//       chartId:copy.chartId,
+//       databaseId : copy.databaseId,
+//         qrySetId : copy.qrySetId,
+//       chartOptions: copy.chartOptions,
+//       chartInstance: copy.chartInstance,
+//       tableData:copy.tableData,
+//       chartData:copy.chartOptions?.chartData || [],
+//       kpiData:copy.kpiData,
+//       isEChart : copy.isEChart,
+//       echartOptions :  copy.chartOptions,
+//       drillDownHierarchy : copy.drillDownHierarchy,
+//       column_Data : copy.column_Data,
+//     row_Data : copy.row_Data,
+//     drillDownObject : [],
+//     drillDownIndex : 0,
+//     selectedSheet : true,
+//     isDrillDownData : copy.isDrillDownData,
+//     numberFormat : copy.numberFormat,
+//     customizeOptions: copy.customizeOptions,
+//     pivotData:copy.pivotData
+//     };
+//     this.dashboardTest.push(element);
+//     this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
+//   }
  
-}
+// }
 
   selectedSheetTab(event: any) {
     this.selectedTabIndex = event.index;
@@ -4408,7 +4608,7 @@ dropTest2(event: any) {
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
     let name = this.selectedTabIndex > 0 ? "Sheet Title " + this.selectedTabIndex : "Sheet Title";
-    this.sheetTabs.push({ id: id, name: name, dashboard: [] });
+    this.sheetTabs.push({ id: id, name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
     this.dashboardTest = [];
   }
   Editor = ClassicEditor;
@@ -4720,6 +4920,8 @@ kpiData?: KpiData;
         this.dashboardName=data.dashboard_name;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
+        this.tabWidthGrid = data.tabWidth,
+        this.tabHeightGrid = data.tabHeight, 
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
@@ -4727,12 +4929,22 @@ kpiData?: KpiData;
         this.databaseId = data.hierarchy_id;
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
+        this.sheetTabs = data.tab_data ? data.tab_data : [];
+        if(this.sheetTabs && this.sheetTabs.length > 0) {
+          this.displayTabs = true;
+          this.selectedTabIndex = 0;
+          this.selectedSheetTab({index : 0});
+          if(this.sheetTabs[0]?.dashboard && this.sheetTabs[0]?.dashboard[0]){
+            this.tabHeightGrid = this.sheetTabs[0].tabHeight;
+            this.tabWidthGrid =  this.sheetTabs[0].tabWidth;
+          }
+        }
         this.sheetIdsDataSet = data.selected_sheet_ids;
         let self = this;
         this.dashboard.forEach((sheet : any)=>{
           // console.log('Before sanitization:', sheet.data.sheetTagName);
           if(sheet.data?.sheetTagName){
-          this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
           }
           if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
             sheet.chartOptions.chart.events = {
@@ -5009,7 +5221,12 @@ kpiData?: KpiData;
         if(item.chart_id === 1){
           this.pageChangeTableDisplayPublic(item,1)
         }else{
-        this.setDashboardSheetData(item, true , true, false, false, '', false,false);
+        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
+        if (this.displayTabs) {
+          this.sheetTabs.forEach((tabData: any) => {
+            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
+          })
+        }
         }
       });
         },
@@ -5109,7 +5326,12 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '', false,false);
+      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard);
+        })
+      }
       // if(item.chartId == '29'){
       //   if (item.drillDownIndex != 0) {
       //     this.chartType = 'bar';
@@ -5181,7 +5403,12 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '', false,false);
+      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard);
+        })
+      }
       // if(item.chartId == '29'){
       //   if (item.drillDownIndex != 0) {
       //     this.chartType = 'bar';
@@ -5281,7 +5508,12 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,isLastIndex:
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,isLastIndex);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,isLastIndex,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard);
+        })
+      }
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -5317,7 +5549,12 @@ pageChangeTableDisplayPublic(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', false,false);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', false,false,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(data.data, true, false, false, false, '', false, false, tabData.dashboard);
+        })
+      }
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -5499,7 +5736,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
   }
   getSheetsForActions(){
-    this.sourceSheetList = [];
+    this.sourceSheetList = {};
     this.targetSheetList = [];
     this.sourceSheetId = 0;
     this.targetSheetIds = [];
@@ -5524,18 +5761,40 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       }
     })
   }
-  getTargetSheetsList(){
-    this.targetSheetList =this.sourceSheetList.map(sheet => ({
-      ...sheet,
-      selected: false,
-    })).filter(sheet => sheet.id != this.sourceSheetId);
-    console.log('source:',this.sourceSheetList, 'target: ',this.targetSheetList);
+  getSheetCategories(): string[] {
+    return Object.keys(this.sourceSheetList);
   }
+  // getTargetSheetsList(){
+  //   this.targetSheetList =this.sourceSheetList.map(sheet => ({
+  //     ...sheet,
+  //     selected: false,
+  //   })).filter(sheet => sheet.id != this.sourceSheetId);
+  //   console.log('source:',this.sourceSheetList, 'target: ',this.targetSheetList);
+  // }
+  getTargetSheetsList() {
+    this.targetSheetList = [];
+    this.isAllTargetSheetsSelected = false;
+    const sourceCategory = Object.keys(this.sourceSheetList);
+    sourceCategory.forEach((category: any) => {
+      this.sourceSheetList[category].forEach((sheet: any) => {
+        if (sheet.sheet_id == this.sourceSheetId) {
+          this.targetSheetList = this.sourceSheetList[category].filter((sheet: any) => sheet.sheet_id != this.sourceSheetId)
+            .map((sheet: any) => ({
+              ...sheet,
+              selected: false,
+            }));
+        }
+      })
+    })
+
+    console.log("Target Sheets:", this.targetSheetList);
+  }
+  
   updateSelectedSheets() {
     this.targetSheetIds = [];
     const selectedSheets = this.targetSheetList.filter(sheet => sheet.selected);
     selectedSheets.forEach((sheet:any)=>{
-      this.targetSheetIds.push(sheet.id);
+      this.targetSheetIds.push(sheet.sheet_id);
     });
     this.isAllTargetSheetsSelected = this.targetSheetList.length === selectedSheets.length;
     console.log('Selected Sheets:', selectedSheets,this.targetSheetIds);
@@ -5632,26 +5891,48 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             })
           }
         });
-        data.main_sheet_data.forEach((sheet:any)=>{
-          let object = {
-            id : sheet.sheet_id,
-            name : sheet.sheet_name
-          }
-          this.sourceSheetList.push(object);
-          if(sheet.selected){
-            this.sourceSheetId = sheet.sheet_id;
-          }
-        });
-        data.target_sheet_data.forEach((sheet:any)=>{
-          if(sheet.sheet_id != this.sourceSheetId){
-            let object = {
-              id : sheet.sheet_id,
-              name : sheet.sheet_name,
-              selected : sheet.selected
+
+        const sourceCategory = Object.keys(data.main_sheet_data);
+        let selectedSourceCategory = '';
+        sourceCategory.forEach((category: any) => {
+          data.main_sheet_data[category].forEach((sheet: any) => {
+            if(sheet.selected){
+              selectedSourceCategory = category;
+              this.sourceSheetId = sheet.sheet_id;
             }
-            this.targetSheetList.push(object);
-          }
+          });
         });
+
+        this.sourceSheetList = data.main_sheet_data;
+        let updatedSourceSheetList: any = {};
+        Object.keys(this.sourceSheetList).forEach((category: any) => {
+          updatedSourceSheetList[category] = this.sourceSheetList[category].map(({ selected, ...rest }: any) => rest);
+        });
+        this.sourceSheetList = updatedSourceSheetList;
+
+        data.target_sheet_data[selectedSourceCategory].forEach((sheet:any)=>{
+          if(sheet.sheet_id != this.sourceSheetId){
+            this.targetSheetList.push(sheet);
+          }
+        })
+
+        // Object.keys(data.main_sheet_data).forEach((sheet:any)=>{
+          
+        //   this.sourceSheetList.push(object);
+        //   if(sheet.selected){
+        //     this.sourceSheetId = sheet.sheet_id;
+        //   }
+        // });
+        // data.target_sheet_data.forEach((sheet:any)=>{
+        //   if(sheet.sheet_id != this.sourceSheetId){
+        //     let object = {
+        //       id : sheet.sheet_id,
+        //       name : sheet.sheet_name,
+        //       selected : sheet.selected
+        //     }
+        //     this.targetSheetList.push(object);
+        //   }
+        // });
         this.updateSelectedSheets();
         this.onDatabaseChange();
       },
@@ -5753,7 +6034,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       sheet.selected = false;
     });
     this.targetSheetIds = [];
-    this.sourceSheetList = [];
+    this.sourceSheetList = {};
     this.targetSheetList = [];
     this.actionId = '';
     this.drillThroughDatabaseName = '';
@@ -5820,7 +6101,12 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
             this.filteredRowData.push(rowObject);
           }
-          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false);
+          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false,this.dashboard);
+          if (this.displayTabs) {
+            this.sheetTabs.forEach((tabData: any) => {
+              this.setDashboardSheetData(sheet, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard);
+            })
+          }
         });
       },
       error: (error) => {
@@ -5877,7 +6163,12 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.filteredRowData.push(rowObject);
             console.log('filterowData', this.filteredRowData);
           });
-          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,false);
+          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,false,this.dashboard);
+          if (this.displayTabs) {
+            this.sheetTabs.forEach((tabData: any) => {
+              this.setDashboardSheetData([], false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard);
+            })
+          }
         });
       },
       error: (error) => {
@@ -6304,7 +6595,12 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.pageChangeTableDisplay(item,1,true,isLastIndex);
             this.tablePage=1
           }else{
-          this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex);
+          this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard);
+          if (this.displayTabs) {
+            this.sheetTabs.forEach((tabData: any) => {
+              this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard);
+            })
+          }
           }
         });
           },
@@ -6318,6 +6614,18 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           })
         }
       });
+    }
+
+    removeTab(index: number) {
+      this.sheetTabs.splice(index, 1);
+    }
+  
+    enableEdit(index: number) {
+      this.sheetTabs[index].isEditing = true;
+    }
+  
+    disableEdit(index: number) {
+      this.sheetTabs[index].isEditing = false;
     }
 }
 // export interface CustomGridsterItem extends GridsterItem {
