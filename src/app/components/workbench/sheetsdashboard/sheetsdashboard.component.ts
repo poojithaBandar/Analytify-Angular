@@ -3422,11 +3422,11 @@ getFilteredData(){
         console.log('filterowData',this.filteredRowData)
       });
       if(item.chart_id === 1){
-        this.pageChangeTableDisplay(item,1,false,0)
+        this.pageChangeTableDisplay(item,1,false,false)
         // this.tablePageNo =1;
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '', false,0);
+      this.setDashboardSheetData(item, true , true, false, false, '', false,false);
       }
     });
       },
@@ -3472,7 +3472,7 @@ clearAllFilters(): void {
 }
 
 
-setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,liveSheetIndex:any){
+setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean){
   this.dashboard.forEach((item1:any) => {
     if(item1.sheetId){
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
@@ -4100,7 +4100,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
   }
 })
-if(isLiveReloadData && liveSheetIndex == this.dashboard.length-1){
+if(isLiveReloadData && isLastIndex){
   this.updateDashboard(isLiveReloadData);
 }
 }
@@ -4179,7 +4179,7 @@ deleteDashboardFilter(id:any){
               this.filteredRowData.push(obj);
               console.log('filterowData',this.filteredRowData)
             });
-            this.setDashboardSheetData(item, true, false, false, false, '', false,0);
+            this.setDashboardSheetData(item, true, false, false, false, '', false,false);
           });
           this.toasterService.success('Filter Deleted Succesfully','success',{ positionClass: 'toast-top-center'})
           this.getFilteredData();
@@ -5009,7 +5009,7 @@ kpiData?: KpiData;
         if(item.chart_id === 1){
           this.pageChangeTableDisplayPublic(item,1)
         }else{
-        this.setDashboardSheetData(item, true , true, false, false, '', false,0);
+        this.setDashboardSheetData(item, true , true, false, false, '', false,false);
         }
       });
         },
@@ -5109,7 +5109,7 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '', false,0);
+      this.setDashboardSheetData(item, false, false, true, false, '', false,false);
       // if(item.chartId == '29'){
       //   if (item.drillDownIndex != 0) {
       //     this.chartType = 'bar';
@@ -5181,7 +5181,7 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '', false,0);
+      this.setDashboardSheetData(item, false, false, true, false, '', false,false);
       // if(item.chartId == '29'){
       //   if (item.drillDownIndex != 0) {
       //     this.chartType = 'bar';
@@ -5254,9 +5254,9 @@ kpiData?: KpiData;
 tableSearchDashboard(item:any,value:any){
   this.tablePageNo=1;
   this.tableSearch = value;
-  this.pageChangeTableDisplay(item,1,false,0);
+  this.pageChangeTableDisplay(item,1,false,false);
 }
-pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetIndex:any){
+pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,isLastIndex:boolean){
   if(item.tableData){
   item.tableData.tablePage = page;
   }
@@ -5281,7 +5281,7 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,liveSheetIndex);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,isLastIndex);
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -5317,7 +5317,7 @@ pageChangeTableDisplayPublic(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', false,0);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', false,false);
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -5820,7 +5820,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
             this.filteredRowData.push(rowObject);
           }
-          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,0);
+          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false);
         });
       },
       error: (error) => {
@@ -5877,7 +5877,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.filteredRowData.push(rowObject);
             console.log('filterowData', this.filteredRowData);
           });
-          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,0);
+          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,false);
         });
       },
       error: (error) => {
@@ -6273,6 +6273,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       this.workbechService.refreshDashboardData(object).subscribe({
         next:(data)=>{
           console.log(data);
+          let isLastIndex = false;
           data.forEach((item: any,index:any) => {
           this.filteredRowData = [];
           this.filteredColumnData = [];
@@ -6294,11 +6295,16 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.filteredRowData.push(obj);
             console.log('filterowData',this.filteredRowData)
           });
+          if(index == data.length - 1){
+            isLastIndex = true;
+          } else {
+            isLastIndex = false;
+          }
           if(item.chart_id === 1){
-            this.pageChangeTableDisplay(item,1,true,index)
+            this.pageChangeTableDisplay(item,1,true,isLastIndex);
             this.tablePage=1
           }else{
-          this.setDashboardSheetData(item, true , true, false, false, '',true,index);
+          this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex);
           }
         });
           },
