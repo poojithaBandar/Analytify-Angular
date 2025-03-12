@@ -84,8 +84,11 @@ export class InsightEchartComponent {
   @Input() legendOrient:any;
   @Input() leftLegend:any;
   @Input() isDistributed : any;
+  @Input() mapChartOptions:any;
+  @Input() actionId:any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
+  @Output() drillThrough = new EventEmitter<object>();
 
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
@@ -1881,6 +1884,10 @@ chartInitialize(){
         this.resetchartoptions();
       // }
     }
+    if(changes['mapChartOptions'] ){
+      this.chartOptions = this.mapChartOptions;
+      this.chartInstance?.setOption(this.chartOptions, true);
+    }
     if(changes['isZoom']){
       if (this.chartInstance) {
 
@@ -3541,6 +3548,9 @@ updateSeries(){
         drillDownObject : this.drillDownObject
       }
       this.setDrilldowns.emit(dObject);
+    }
+    if(this.actionId){
+      this.drillThrough.emit(event)
     }
   }
 }
