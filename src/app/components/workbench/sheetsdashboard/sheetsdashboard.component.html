@@ -1494,7 +1494,7 @@
           <div  cdkDropList #destinationList1="cdkDropList" [cdkDropListData]="dashboardTest"
           (cdkDropListDropped)="drop($event,true)">
           @if(displayTabs){
-          <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="1000"
+          <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="tabHeightGrid"
             [style.width.px]="tabWidthGrid">
             <!-- <div style="height: inherit;" > -->
               <gridster [options]="options" #gridsterTab>

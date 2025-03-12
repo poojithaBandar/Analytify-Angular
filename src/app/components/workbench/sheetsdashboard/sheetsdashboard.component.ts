@@ -22,7 +22,7 @@ import * as _ from 'lodash';
 // import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
-import { debounceTime, fromEvent, map, Observable } from 'rxjs';
+import { debounceTime, fromEvent, map, Observable, throwError } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -768,8 +768,6 @@ export class SheetsdashboardComponent {
         this.isSampleDashboard = data.is_sample;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
-        this.tabHeightGrid = data.tabHeight;
-        this.tabWidthGrid = data.tabWidth;
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
@@ -800,6 +798,10 @@ export class SheetsdashboardComponent {
           this.displayTabs = true;
           this.selectedTabIndex = 0;
           this.selectedSheetTab({index : 0});
+          if(this.sheetTabs[0]?.dashboard && this.sheetTabs[0]?.dashboard[0]){
+            this.tabHeightGrid = this.sheetTabs[0].dashboard[0].tabHeightGrid;
+            this.tabWidthGrid =  this.sheetTabs[0].dashboard[0].tabWidthGrid;
+          }
         }
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.dashboard.forEach((sheet : any)=>{
@@ -1121,6 +1123,10 @@ export class SheetsdashboardComponent {
         
         // Assign other data after screenshot
         let dashboardData = this.assignOriginalDataToDashboard(this.dashboard);
+        if(this.sheetTabs && this.sheetTabs.length > 0){
+          this.sheetTabs[0].tabHeight = this.tabHeightGrid;
+          this.sheetTabs[0].tabWidth = this.tabWidthGrid;
+        }
         let sheetTabsData = _.cloneDeep(this.sheetTabs);
         if(this.sheetTabs && this.sheetTabs.length > 0){
           sheetTabsData.forEach((sheetData) => {
@@ -1133,14 +1139,15 @@ export class SheetsdashboardComponent {
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
+          if(this.hasDuplicates(tabNames)){
+            throw { error: { message: "Duplicate tab names are not allowed." } };
+          }
         }
   
         let obj = {
           grid: this.gridType,
           height: this.heightGrid,
-          width: this.widthGrid,
-          tabWidth: this.tabWidthGrid,
-          tabHeight: this.tabHeightGrid, 
+          width: this.widthGrid, 
           queryset_id: this.qrySetId,
           server_id: this.databaseId,
           sheet_ids: this.sheetsIdArray,
@@ -1184,6 +1191,10 @@ export class SheetsdashboardComponent {
         });
       }
     }
+  }
+
+  hasDuplicates(names: string[]): boolean {
+    return new Set(names).size !== names.length;
   }
   
   setQuerySetIds() {
@@ -1339,6 +1350,10 @@ export class SheetsdashboardComponent {
         width: '400px',
       })
     }else{
+      if(this.sheetTabs && this.sheetTabs.length > 0){
+        this.sheetTabs[0].tabHeight = this.tabHeightGrid;
+        this.sheetTabs[0].tabWidth = this.tabWidthGrid;
+      }
       let dashboardData = this.assignOriginalDataToDashboard(this.dashboard);
       let sheetTabsData = _.cloneDeep(this.sheetTabs);
       if(this.sheetTabs && this.sheetTabs.length > 0){
@@ -1371,13 +1386,19 @@ export class SheetsdashboardComponent {
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
+          if(this.hasDuplicates(tabNames)){
+            Swal.fire({
+              icon: 'error',
+              title: 'oops!',
+              text: 'Duplicate tab names are not allowed.',
+              width: '400px',
+            })
+          }
         }
         obj ={
           grid : this.gridType,
           height: this.heightGrid,
           width: this.widthGrid,
-          tabWidth: this.tabWidthGrid,
-          tabHeight: this.tabHeightGrid, 
           queryset_id:this.qrySetId,
           server_id:this.databaseId,
           sheet_ids:this.sheetsIdArray,
@@ -2499,11 +2520,23 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       if(result.isConfirmed){
         this.dashboardNew.splice(this.dashboardNew.findIndex((sheet:any) => item.sheetId == sheet.sheetId), 1);
        this.removeItem(event, item, false);
+       if(this.displayTabs){
+        this.removeItem(event, item, true);
+        this.sheetTabs = this.clearItemFromTab(item.id);
+       }
        this.sheetIdsDataSet.splice(this.sheetIdsDataSet.findIndex((sheet:any) => item.sheetId == sheet), 1);
        this.unSelectSheetsFromSheetsPanel(item);
       }})
   }
 
+  clearItemFromTab(inputId : number){
+    return this.sheetTabs.map(sheetTab => ({
+      ...sheetTab,
+      dashboard: sheetTab.dashboard.filter((dashboardItem : any)=> 
+        dashboardItem.id !== inputId
+      )
+    }));
+  }
   unSelectSheetsFromSheetsPanel(sheetData : any){
     this.panelscheckbox.forEach((panel : any)=>{
       if(panel.queryset_id == sheetData.qrySetId){
@@ -4558,7 +4591,7 @@ const obj ={
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
     let name = this.selectedTabIndex > 0 ? "Sheet Title " + this.selectedTabIndex : "Sheet Title";
-    this.sheetTabs.push({ id: id, name: name, dashboard: [] });
+    this.sheetTabs.push({ id: id, name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
     this.dashboardTest = [];
   }
   Editor = ClassicEditor;
@@ -4884,6 +4917,10 @@ kpiData?: KpiData;
           this.displayTabs = true;
           this.selectedTabIndex = 0;
           this.selectedSheetTab({index : 0});
+          if(this.sheetTabs[0]?.dashboard && this.sheetTabs[0]?.dashboard[0]){
+            this.tabHeightGrid = this.sheetTabs[0].dashboard[0].tabHeightGrid;
+            this.tabWidthGrid =  this.sheetTabs[0].dashboard[0].tabWidthGrid;
+          }
         }
         this.sheetIdsDataSet = data.selected_sheet_ids;
         let self = this;
