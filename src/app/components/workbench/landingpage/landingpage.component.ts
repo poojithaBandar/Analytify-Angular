@@ -493,11 +493,18 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
   getAddedDashboardProperties(){
     this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
       next:(data)=>{
-        this.selectedRoleIds = data.roles.map((role: any) => role.role);
-        this.selectedUserIds = data.users.map((user:any)=>user.username);
+        this.selectedRoleIds = data.roles.map((role: any) => role.id);
+        this.selectedUserIds = data.users.map((user:any)=>user.user_id);
         console.log('savedrolesandusers',data);
-        this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
-        this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
+        // this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
+        // this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
+        this.selectedRoleIdsToNumbers = this.selectedRoleIds.map((id: string) => Number(id));
+        this.selectedUserIdsToNumbers = this.selectedUserIds.map((id: string) => Number(id));
+        console.log('Loaded selected roles:', this.selectedRoleIds);
+        console.log('Loaded selected users:', this.selectedUserIds);
+        if(this.selectedRoleIds.length > 0){
+          this.getUsersforRole();
+        }
        },
       error:(error)=>{
         console.log(error);
@@ -611,13 +618,46 @@ fallbackCopyTextToClipboard(text: string): void {
   }
   document.body.removeChild(textArea);
 }
-onRolesChange(selected: number[]) {
-  this.selectedRoleIds = selected
-   this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
-  console.log(this.selectedRoleIds);
+  onRolesChange(selected: number[]) {
+    this.selectedRoleIds = selected
+    this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
+    console.log(this.selectedRoleIds);
+    if (this.selectedRoleIds.length === 0) {
+      this.selectedUserIds = [];
+      this.selectedUserIdsToNumbers = [];
+      return;
+    } 
+    const obj = { role_ids: this.selectedRoleIdsToNumbers };
 
-  // You can store or process the selected values here
-}
+    this.workbechService.getUsersOnRole(obj).subscribe({
+      next: (data) => {
+        console.log('Updated users for selected roles:', data);
+        this.usersOnSelectedRole = data;
+        const validUserIds = new Set(data.map((user: { user_id: any; }) => String(user.user_id)));  
+  
+        const prevSelectedUsers = [...this.selectedUserIds]; // Backup for debugging
+        this.selectedUserIds = this.selectedUserIds.filter((userId: any) =>
+          validUserIds.has(String(userId)) // Convert to string for safe comparison
+        );
+  
+        this.selectedUserIdsToNumbers = this.selectedUserIds.map((value: any) => Number(value));
+        
+        // Debugging logs
+        console.log('Previous selected users:', prevSelectedUsers);
+        console.log('Valid user IDs after role change:', [...validUserIds]);
+        console.log('Filtered selected users:', this.selectedUserIds);
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: error.error.message,
+          width: '400px',
+        });
+      }
+    });
+  }
 getSelectedUsers(selected: number[]){
   this.selectedUserIds = selected;
   this.selectedUserIdsToNumbers = this.selectedUserIds.map((value: any) => Number(value));

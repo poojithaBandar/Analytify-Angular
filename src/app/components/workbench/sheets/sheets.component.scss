@@ -1,5 +1,5 @@
 .drag-txt { text-align: center; }
-button.BtnNewStyle { margin-inline: 0px !important; border-radius: 0px !important;  background-color: rgb(35 145 192 / 7%); border: 1px solid var(--primary-color); height: 48px;}
+button.BtnNewStyle { margin-inline: 0px !important; border-radius: 0px !important;  background-color: rgb(35 145 192 / 7%); border: 1px solid var(--primary-color); height: 48px; width: max-content;}
 .nav-link.BtnNewStyle.active { background: #ccedec !important; color: #036e6c !important; border-bottom: 2px solid #036e6c; border-top: none;}
 button.BtnNewStyle.span-right {  border-right: 0px; padding: 8px 6px 8px 15px;}
 button.BtnNewStyle.span-left { border-left: 0px;  padding: 8px 15px 8px 6px;}

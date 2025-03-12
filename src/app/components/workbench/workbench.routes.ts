@@ -294,6 +294,14 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./configure/configure.component').then((m) => m.ConfigureComponent),
       },
+
+      {
+        path: 'databaseConnection/dataTransformation/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
       {
         path: 'update-password',
         canActivate: [authGuard],
