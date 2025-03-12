@@ -298,20 +298,9 @@ button.IconProperties img { width: 24px !important; height: 24px !important;  ob
 button.FaFaIconProperties:hover{ border-top-left-radius: 0px !important; border-top-right-radius: 5px !important; border-bottom-right-radius: 5px !important; border-bottom-left-radius: 1px !important; border-top-width: 1.5px !important;  border-right-width: 1.5px !important; border-bottom-width: 1.5px !important; border-left-width: 1.5px !important; border-color: var(--primary-color) !important; }
 i.FaFaIconProperties { font-size: 16px; }
 button.FaFaIconProperties { padding: 6px 8px; border-top-left-radius: 0px !important; border-top-right-radius: 5px !important; border-bottom-right-radius: 5px !important; border-bottom-left-radius: 1px !important; border-top-width: 1.5px !important; border-right-width: 1.5px !important; border-bottom-width: 1.5px !important; border-left-width: 1.5px !important; border-color: var(--primary-color) !important; }
-.purpel{ background-color: #be89ff;}
-.blue{ background-color: #89ffdc;}
-.yellow{ background-color: #e1ff89;}
-.orange{ background-color: #ffac89;}
-.green{ background-color: #16c84b;}
-.blue{ background-color: #89ffdc;}
 .color-box { width: 20px; height: 20px; margin: 2px; border-radius: 3px; }
-.alphabet { font-size: 16px; padding: 0px 8px 0px 1px; }
-.dark-green{ background-color: #208830;}
-.dark-blue{ background-color: #154fa6;}
-.brown{ background-color: #d4801c;}
 .child-color-height{ height: 150px; overflow: auto;}
-// .add-color-popup { position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-268.5px, -228.3333px, 7px) !important; }
-.add-color-popup { position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-267.5px, -155.3333px, 7px) !important; }
+.add-color-popup { position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-291.5px, -155.3333px, 7px) !important; }
 .rgb-text{ width: 75px;}
 input[type="color"] {
   appearance: none;
@@ -501,8 +490,7 @@ input.BitSpace {
   .dataCuCardHeight {height: calc(100% - 25px);}
   .show-chart-card {height: calc(100% - 160px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 129px);}
-  // .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-235.5px, 6.6667px, 7px) !important}
-  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-235.5px, -2.6667px, 7px) !important;}
+  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-254.5px, -2.6667px, 7px) !important;}
   li.dropdown-item.p-0 { padding: 0px !important; }
 }
 
@@ -513,8 +501,7 @@ input.BitSpace {
   .dataCuCardHeight {height: calc(100% - 24px);}
   .show-chart-card {height: calc(100% - 169px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 135px);}
-  // .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-249.5px, 8.6667px, 7px) !important;}
-  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-247.5px, -155.6667px, 7px) !important;}
+  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-267.5px, -155.6667px, 7px) !important;}
   li.dropdown-item.p-0 { padding: 0px !important; }
 }
 @media ( 1480px <= width <= 1600px){

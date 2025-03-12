@@ -83,7 +83,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     const defaultColorSchemes = data?.default_colours;
     if(data?.user_colours){
       const colorPalettId = data?.user_colours[0]?.id;
-      localStorage.setItem('colorPalletId', colorPalettId);
+      localStorage.setItem('colorPalettId', colorPalettId);
     }
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));

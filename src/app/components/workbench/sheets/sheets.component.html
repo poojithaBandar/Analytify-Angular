@@ -3938,7 +3938,7 @@
                                                                         </div>
                                                                         <div class="down-arrow-icon">
                                                                             <div class=" dropdown" ngbDropdown>
-                                                                                <a ngbDropdownToggle data-bs-toggle="dropdown" role="button" (click)="getColorSchemesForDropdown()"
+                                                                                <a ngbDropdownToggle data-bs-toggle="dropdown" role="button"
                                                                                     aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
                                                                                     <button class="btn btn-primary" style=" padding: 0px 4px; font-size: 12px;">
                                                                                         <i class="fa fa-angle-down"></i>
@@ -3947,19 +3947,16 @@
                                                                                 <div class="dropdown-menu p-1" ngbDropdownMenu>
                                                                                     <div class="child-color-height pt-1">
                                                                                         <ul class="justify-content-between align-items-center px-1 ">
-                                                                                            <li *ngFor="let key of keysOfColorSchemes; let keyIndex = index" ngbDropdownItem class="dropdown-item p-0">
+                                                                                            <li *ngFor="let colorScheme of keysOfColorSchemes; let keyIndex = index" ngbDropdownItem class="dropdown-item p-0">
                                                                                                 <div class="d-flex m-0">
-                                                                                                    <div class="cursor-pointer rgb-text me-1 p-0" (click)="setColorSchemeForChart(key)" ngbTooltip="{{key}}"> {{key | slice:0:10}} </div>
-                                                                                                    <div class="d-flex p-0 CustomwWidthScroll" (click)="setColorSchemeForChart(key)">
-                                                                                                        <div class="color-box cursor-pointer" *ngFor="let color of defaultColorSchemes[key]"
-                                                                                                            [style.background]="color">
-                                                                                                        </div>
-                                                                                                        <div class="color-box cursor-pointer" *ngFor="let color of userDefinedColorSchemes[key]"
+                                                                                                    <div class="cursor-pointer rgb-text me-1 p-0" (click)="selectedColorScheme = colorScheme?.colorPalette ?? []" ngbTooltip="{{colorScheme?.key}}"> {{colorScheme?.key | slice:0:10}} </div>
+                                                                                                    <div class="d-flex p-0 CustomwWidthScroll" (click)="selectedColorScheme = colorScheme?.colorPalette ?? []">
+                                                                                                        <div class="color-box cursor-pointer" *ngFor="let color of colorScheme?.colorPalette"
                                                                                                             [style.background]="color">
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                    <button *ngIf="keysOfUsersColors.length > 0 && keysOfUsersColors.includes(key)" class="cursor-pointer border rounded-3 bg-light"
-                                                                                                             (click)="removeColorScheme(key,keyIndex)">
+                                                                                                    <button *ngIf="keysOfUsersColors.length > 0 && keysOfUsersColors.includes(colorScheme?.key)" class="cursor-pointer border rounded-3 bg-light"
+                                                                                                             (click)="removeColorScheme(colorScheme?.key ?? '',keyIndex)">
                                                                                                         <i class="fa fa-remove"></i>
                                                                                                     </button>
                                                                                                 </div>
@@ -3994,7 +3991,7 @@
                                                                                                             <i class="fa fa-plus px-1"></i> 
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                    <input type="color" #colorInput id="body" name="body" class="w-100" [(ngModel)]="selectedColor" (ngModelChange)="setColorToBox()"/>
+                                                                                                    <input type="color" #colorInput id="body" name="body" class="w-100" value="#FFFFFF" (input)="newColorScheme[selectedBox] = colorInput.value"/>
                                                                                                 </div>
                                                                                                 <!-- <div class="py-1">
                                                                                                     <input type="color" #colorInput  id="body" name="body" class="w-100" [(ngModel)]="selectedColor" (ngModelChange)="setColorToBox()"/>

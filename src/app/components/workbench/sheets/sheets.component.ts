@@ -383,14 +383,12 @@ export class SheetsComponent {
 
   defaultColorSchemes : { [key: string]: string[] } = {};
   userDefinedColorSchemes : { [key: string]: string[] } = {};
-  keysOfColorSchemes : any[] = [];
+  keysOfColorSchemes : { key: string; colorPalette: string[] }[] = [];
   keysOfUsersColors : any[] = [];
   selectedColorScheme = this.defaultColorSchemes['Blue'];
   newColorScheme : any[] = [];
   colorSchemeName : string = '';
   selectedBox : number = 0;
-  selectedColor : string = '#f6b73c';
-  colorPaletteId : any;
 
   hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
@@ -543,16 +541,16 @@ export class SheetsComponent {
       this.changeChartPlugin(value);
     });
     const defaultColors = localStorage.getItem('defaultColorSchemes');
-    const colorPaletteId = localStorage.getItem('colorPalletId');
+    const colorPaletteId = localStorage.getItem('colorPalettId');
     if(defaultColors){
       this.defaultColorSchemes = JSON.parse(defaultColors);
     }
     if(colorPaletteId){
-      this.colorPaletteId = colorPaletteId;
-      this.getUserColorPalettes(this.colorPaletteId);
+      this.getUserColorPalettes(colorPaletteId);
+    } else{
+      this.getColorSchemesForDropdown();
     }
     console.log(this.defaultColorSchemes);
-    console.log(this.colorPaletteId);
   }
   isColorSchemeDropdownOpen = false;
   toggleDropdownColorScheme() {
@@ -5847,22 +5845,24 @@ customizechangeChartPlugin() {
     }
 
   getColorSchemesForDropdown() {
-    this.keysOfColorSchemes = Object.keys(this.defaultColorSchemes);
-    if (this.userDefinedColorSchemes) {
-      this.keysOfUsersColors = Object.keys(this.userDefinedColorSchemes);
-      if (this.keysOfUsersColors.length > 0) {
-        this.keysOfUsersColors.forEach((colorKey: any) => {
-          this.keysOfColorSchemes.push(colorKey);
-        });
+    this.keysOfColorSchemes = [];
+    let keysofDefault = Object.keys(this.defaultColorSchemes);
+    keysofDefault.forEach((key:any)=>{
+      let object = {
+        key: key,
+        colorPalette: this.defaultColorSchemes[key]
       }
-    }
-  }
-  setColorSchemeForChart(key: string) {
-    if(Object.keys(this.defaultColorSchemes).includes(key)){
-      this.selectedColorScheme = this.defaultColorSchemes[key];
-    } else if(Object.keys(this.userDefinedColorSchemes).includes(key)){
-      this.selectedColorScheme = this.userDefinedColorSchemes[key];
-    }
+      this.keysOfColorSchemes.push(object);
+    });
+    this.keysOfUsersColors = Object.keys(this.userDefinedColorSchemes);
+    this.keysOfUsersColors.forEach((key:any)=>{
+      let object = {
+        key: key,
+        colorPalette: this.userDefinedColorSchemes[key]
+      }
+      this.keysOfColorSchemes.push(object);
+    });
+    console.log(this.keysOfColorSchemes);
   }
   removeColorScheme(key: string, index: any){
     Swal.fire({
@@ -5878,8 +5878,9 @@ customizechangeChartPlugin() {
       if (result.isConfirmed) {
         let colors = JSON.parse(JSON.stringify(this.userDefinedColorSchemes));
         delete colors[key];
+        const colorPaletteId = localStorage.getItem('colorPalettId');
         let object = {
-          id: this.colorPaletteId,
+          id: colorPaletteId,
           colour_palette: {
             ...colors
           }
@@ -5888,13 +5889,7 @@ customizechangeChartPlugin() {
           next: (response: any) => {
             console.log(response);
             delete this.userDefinedColorSchemes[key];
-            this.keysOfColorSchemes.splice(index);
-            if (this.keysOfUsersColors.includes(key)) {
-              const userIndex = this.keysOfUsersColors.indexOf(key);
-              if (userIndex !== -1) {
-                this.keysOfUsersColors.splice(userIndex, 1);
-              }
-            }
+            this.getColorSchemesForDropdown();
             this.toasterService.success('Color Palette Deleted Successfully', 'success', { positionClass: 'toast-top-right' });
           },
           error: (error) => {
@@ -5907,17 +5902,12 @@ customizechangeChartPlugin() {
   }
   addNewBox(){
     this.newColorScheme.push('#FFFFFF');
-    this.selectedColor = '#FFFFFF';
     this.selectedBox = this.newColorScheme.length-1;
-  }
-  setColorToBox(){
-    this.newColorScheme[this.selectedBox] = this.selectedColor;
   }
   closeColorPicker(colorPickerDropDown : NgbDropdown){
     colorPickerDropDown.close();
     this.selectedBox = 0;
     this.newColorScheme = [];
-    this.selectedColor = '#f6b73c';
     this.colorSchemeName = '';
   }
   checkColorNameExists(name: string): boolean {
@@ -5927,11 +5917,12 @@ customizechangeChartPlugin() {
     if(this.checkColorNameExists(this.colorSchemeName)){
       this.toasterService.info(this.colorSchemeName+' already exists. Please try another.', 'info', { positionClass: 'toast-top-right' });
     } else {
-      if(this.colorPaletteId){
+      const colorPaletteId = localStorage.getItem('colorPalettId');
+      if(colorPaletteId){
         let colors = JSON.parse(JSON.stringify(this.userDefinedColorSchemes));
         colors[this.colorSchemeName] = this.newColorScheme;
         let object = {
-          id: this.colorPaletteId,
+          id: colorPaletteId,
           colour_palette: {
             ...colors
           }
@@ -5958,6 +5949,7 @@ customizechangeChartPlugin() {
         this.workbechService.saveColorPalette(object).subscribe({
           next: (response: any) => {
             console.log(response);
+            localStorage.setItem('colorPalettId', response?.id);
             this.userDefinedColorSchemes[this.colorSchemeName] = this.newColorScheme;
             this.closeColorPicker(colorPickerDropDown);
             this.getColorSchemesForDropdown();
@@ -5976,6 +5968,7 @@ customizechangeChartPlugin() {
       next: (response: any) => {
         console.log(response);
         this.userDefinedColorSchemes = response.data[0]?.colour_palette;
+        this.getColorSchemesForDropdown();
         console.log(this.userDefinedColorSchemes);
       },
       error: (error) => {
