@@ -6104,7 +6104,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false,this.dashboard);
           if (this.displayTabs) {
             this.sheetTabs.forEach((tabData: any) => {
-              this.setDashboardSheetData(item, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard);
+              this.setDashboardSheetData(sheet, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard);
             })
           }
         });
