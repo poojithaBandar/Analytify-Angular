@@ -2019,6 +2019,9 @@ chartInitialize(){
     if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme'] || changes['isDistributed']){
       if(this.chartInstance){
         this.colorSetOptions();
+        if(changes['selectedColorScheme']){
+          this.resetchartoptions();
+        }
       }
     }
     if(changes['xGridColor']){

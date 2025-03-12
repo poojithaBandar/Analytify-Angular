@@ -5895,6 +5895,7 @@ customizechangeChartPlugin() {
                 this.keysOfUsersColors.splice(userIndex, 1);
               }
             }
+            this.toasterService.success('Color Palette Deleted Successfully', 'success', { positionClass: 'toast-top-right' });
           },
           error: (error) => {
             console.log(error);
@@ -5906,6 +5907,7 @@ customizechangeChartPlugin() {
   }
   addNewBox(){
     this.newColorScheme.push('#FFFFFF');
+    this.selectedColor = '#FFFFFF';
     this.selectedBox = this.newColorScheme.length-1;
   }
   setColorToBox(){
@@ -5937,11 +5939,10 @@ customizechangeChartPlugin() {
         this.workbechService.updateColorPalette(object).subscribe({
           next: (response: any) => {
             console.log(response);
-            this.colorPaletteId = response.id;
             this.userDefinedColorSchemes[this.colorSchemeName] = this.newColorScheme;
             this.closeColorPicker(colorPickerDropDown);
             this.getColorSchemesForDropdown();
-            this.toasterService.success(response.message, 'success', { positionClass: 'toast-top-right' });
+            this.toasterService.success('New Color Palette Added Successfully', 'success', { positionClass: 'toast-top-right' });
           },
           error: (error) => {
             console.log(error);
@@ -5957,11 +5958,10 @@ customizechangeChartPlugin() {
         this.workbechService.saveColorPalette(object).subscribe({
           next: (response: any) => {
             console.log(response);
-            this.colorPaletteId = response.id;
             this.userDefinedColorSchemes[this.colorSchemeName] = this.newColorScheme;
             this.closeColorPicker(colorPickerDropDown);
             this.getColorSchemesForDropdown();
-            this.toasterService.success(response.message, 'success', { positionClass: 'toast-top-right' });
+            this.toasterService.success('New Color Palette Added Successfully', 'success', { positionClass: 'toast-top-right' });
           },
           error: (error) => {
             console.log(error);

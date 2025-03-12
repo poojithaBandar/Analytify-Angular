@@ -310,8 +310,28 @@ button.FaFaIconProperties { padding: 6px 8px; border-top-left-radius: 0px !impor
 .dark-blue{ background-color: #154fa6;}
 .brown{ background-color: #d4801c;}
 .child-color-height{ height: 150px; overflow: auto;}
-.add-color-popup { position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-299.5px, -162.3333px, 7px) !important; }
-
+// .add-color-popup { position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-268.5px, -228.3333px, 7px) !important; }
+.add-color-popup { position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-267.5px, -155.3333px, 7px) !important; }
+.rgb-text{ width: 75px;}
+input[type="color"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  width: 0;
+  height: 0;
+  padding: 0;
+  opacity: 0;
+}
+.hidden-color-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
 
 
 @media ( 1280px <= width <= 1600px) {
@@ -481,8 +501,9 @@ input.BitSpace {
   .dataCuCardHeight {height: calc(100% - 25px);}
   .show-chart-card {height: calc(100% - 160px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 129px);}
-  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-267.5px, 6.6667px, 7px) !important}
-
+  // .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-235.5px, 6.6667px, 7px) !important}
+  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-235.5px, -2.6667px, 7px) !important;}
+  li.dropdown-item.p-0 { padding: 0px !important; }
 }
 
 // for 90% Resolution //
@@ -492,8 +513,9 @@ input.BitSpace {
   .dataCuCardHeight {height: calc(100% - 24px);}
   .show-chart-card {height: calc(100% - 169px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 135px);}
-  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-280.5px, 8.6667px, 7px) !important;}
-
+  // .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-249.5px, 8.6667px, 7px) !important;}
+  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-247.5px, -155.6667px, 7px) !important;}
+  li.dropdown-item.p-0 { padding: 0px !important; }
 }
 @media ( 1480px <= width <= 1600px){
   .ConnectionsCardHeight {height: calc(100% - 21px);}

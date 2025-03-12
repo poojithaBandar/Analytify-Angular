@@ -1415,7 +1415,7 @@
                                         (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
                                     </app-insights-button> -->
-                                    <button class="viewQueryImg" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
+                                    <button class="viewQueryImg" container="body" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
                                 <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             </div>
@@ -3947,10 +3947,10 @@
                                                                                 <div class="dropdown-menu p-1" ngbDropdownMenu>
                                                                                     <div class="child-color-height pt-1">
                                                                                         <ul class="justify-content-between align-items-center px-1 ">
-                                                                                            <li *ngFor="let key of keysOfColorSchemes; let keyIndex = index" ngbDropdownItem class="dropdown-item p-1">
-                                                                                                <div class="color-row">
-                                                                                                    <div class="d-flex align-items-center cursor-pointer col-4 me-1 p-1" (click)="setColorSchemeForChart(key)" ngbTooltip="{{key}}"> {{key | slice:0:10}} </div>
-                                                                                                    <div class="d-flex col-8 p-1" (click)="setColorSchemeForChart(key)">
+                                                                                            <li *ngFor="let key of keysOfColorSchemes; let keyIndex = index" ngbDropdownItem class="dropdown-item p-0">
+                                                                                                <div class="d-flex m-0">
+                                                                                                    <div class="cursor-pointer rgb-text me-1 p-0" (click)="setColorSchemeForChart(key)" ngbTooltip="{{key}}"> {{key | slice:0:10}} </div>
+                                                                                                    <div class="d-flex p-0 CustomwWidthScroll" (click)="setColorSchemeForChart(key)">
                                                                                                         <div class="color-box cursor-pointer" *ngFor="let color of defaultColorSchemes[key]"
                                                                                                             [style.background]="color">
                                                                                                         </div>
@@ -3967,8 +3967,8 @@
                                                                                         </ul>
                                                                                     </div>
                                                                 
-                                                                                    <div class=" dropdown mt-2" ngbDropdown #colorPickerDropdown="ngbDropdown">
-                                                                                        <div class="d-flex flex-row-reverse px-2 pb-2">
+                                                                                    <div class=" dropdown border-top" ngbDropdown #colorPickerDropdown="ngbDropdown">
+                                                                                        <div class="d-flex flex-row-reverse p-1">
                                                                                             <a href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"
                                                                                                 aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
                                                                                                 <button class="btn btn-primary">
@@ -3989,15 +3989,16 @@
                                                                                                 <div class="py-2">
                                                                                                     <div class="d-flex">
                                                                                                         <div *ngFor="let color of newColorScheme; let i = index" class="border color-box cursor-pointer" 
-                                                                                                        [ngClass]="{ 'border-primary': i === selectedBox }" [style.background]="color" (click)="selectedBox = i"></div>
-                                                                                                        <div class="cursor-pointer border rounded-3 bg-light"  [class.disabled]="newColorScheme.length >= 10" (click)="addNewBox()"> 
+                                                                                                        [ngClass]="{ 'border-primary': i === selectedBox }" [style.background]="color" (click)="selectedBox = i;colorInput.click()"></div>
+                                                                                                        <div class="cursor-pointer border rounded-3 bg-light"  [class.disabled]="newColorScheme.length >= 10" (click)="addNewBox();colorInput.click()"> 
                                                                                                             <i class="fa fa-plus px-1"></i> 
                                                                                                         </div>
                                                                                                     </div>
+                                                                                                    <input type="color" #colorInput id="body" name="body" class="w-100" [(ngModel)]="selectedColor" (ngModelChange)="setColorToBox()"/>
                                                                                                 </div>
-                                                                                                <div class="py-1">
-                                                                                                    <input type="color" id="body" name="body" class="w-100" [(ngModel)]="selectedColor" (ngModelChange)="setColorToBox()"/>
-                                                                                                </div>
+                                                                                                <!-- <div class="py-1">
+                                                                                                    <input type="color" #colorInput  id="body" name="body" class="w-100" [(ngModel)]="selectedColor" (ngModelChange)="setColorToBox()"/>
+                                                                                                </div> -->
                                                                                                 <div class="d-flex justify-content-end">
                                                                                                     <button [disabled]="(newColorScheme.length < 2 || newColorScheme.length > 10) || !colorSchemeName" class="btn btn-primary me-1" (click)="saveColorScheme(colorPickerDropdown)">Apply</button>
                                                                                                     <button class="btn btn-danger" (click)="closeColorPicker(colorPickerDropdown)">Close</button>
