@@ -26,12 +26,14 @@ import _ from 'lodash';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { TestPipe } from '../../../test.pipe';
 const EXCEL_TYPE =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 @Component({
   selector: 'app-database',
   standalone: true,
-  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent],
+  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent,ScrollingModule,TestPipe],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   animations:[
@@ -119,7 +121,9 @@ export class DatabaseComponent {
   titleMarkDirty: boolean = false;
   datasourceFilterIdArray:any[] =[];
   datasourceFilterIdArrayCustomQuery:any[]=[];
-  selectedRows = [];
+  // selectedRows = [] as any;
+  selectedRows: Set<number> = new Set();  
+
   datasourceQuerysetId :string | null =null;
   filteredList = [] as any;
   editFilterList = [] as any;
@@ -1311,7 +1315,9 @@ selectedColumnGetRows(col:any,datatype:any){
         this.tableColumnFilter =false;
         this.columnRowFilter = true;
         console.log('colmnfilterrows',this.columnsInFilters)
+        setTimeout(() => {
         this.searchFiltereredData = this.columnsInFilters
+        },500);
       },
       error:(error:any)=>{
       console.log(error);
@@ -1325,21 +1331,42 @@ selectedColumnGetRows(col:any,datatype:any){
     })
 }
 updateSelectedRows() {
-  this.selectedRows = this.columnsInFilters
-    .filter((row: { selected: any; }) => row.selected)
-    .map((row: { label: any; }) => row.label);
+  // this.selectedRows = this.columnsInFilters
+  //   .filter((row: { selected: any; }) => row.selected)
+  //   .map((row: { label: any; }) => row.label);
+  this.selectedRows = new Set(
+    this.searchFiltereredData
+      .filter((row: { selected: any; }) => row.selected) // Now filtering based on actual selection
+      .map((row: { label: any; }) => row.label)
+  );
   console.log('selected rows', this.selectedRows);
-
   this.isAllSelected = this.columnsInFilters.every((row: { selected: any; }) => row.selected);
 }
 
 toggleAllRows(event: Event) {
   const isChecked = (event.target as HTMLInputElement).checked;
-  this.columnsInFilters.forEach((row: { selected: boolean; }) => row.selected = isChecked);
-  this.updateSelectedRows();
+  // this.columnsInFilters.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+  if (isChecked) {
+    // If "Select All" is checked, store all row labels in selectedRows
+    this.selectedRows = new Set(this.columnsInFilters.map((row: { label: any; }) => row.label));
+  } else {
+    // If deselected, clear the selectedRows Set
+    this.selectedRows.clear();
+  }
+  this.columnsInFilters.forEach((row: { selected: boolean; }) => (row.selected = isChecked));
+  console.log('All Selected:', isChecked, 'Selected Rows:', Array.from(this.selectedRows));
+  // this.updateSelectedRows();
 }
 isAnyRowSelected(): boolean {
-  return this.columnsInFilters.some((row: { selected: any; }) => row.selected);
+  // return this.columnsInFilters.some((row: { selected: any; }) => row.selected);
+  return this.selectedRows.size > 0;
+
+}
+trackByFn(index: number, item: any) {
+  return item.id;
+}
+isSelected(rowId: number): boolean {
+  return this.selectedRows.has(rowId);
 }
 getSelectedRows() {
   this.columnDataSearch = "";

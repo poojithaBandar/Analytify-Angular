@@ -730,7 +730,7 @@
                                 <label for="selectAll" class="form-check-label">Select All</label>
                             </td>
                         </tr>
-                        @for(rows of searchFiltereredData;track rows;let i = $index){
+                        <!-- @for(rows of searchFiltereredData;track rows;let i = $index){
                         <tr class="border-bottom user-list">
                             <td style="width: 46px;">
                                 <div class="form-check">
@@ -744,7 +744,24 @@
                                     rows.label }} </label>
                             </td>
                         </tr>
-                        }
+                        } -->
+                        <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 210px;">
+                            <tr *cdkVirtualFor="let row of searchFiltereredData; trackBy: trackByFn">
+                                <td style="width: 46px;">
+                                    <div class="form-check">
+                                        <input type="checkbox" [id]="'defaultCheck' + row.id"
+                                        [(ngModel)]="row.selected" 
+                                            (change)="updateSelectedRows()"
+                                            class="form-check-input">
+                                    </div>
+                                </td>
+                                <td>
+                                    <label [for]="'defaultCheck' + row.id" class="form-check-label">
+                                        {{ row.label }}
+                                    </label>
+                                </td>
+                            </tr>
+                        </cdk-virtual-scroll-viewport>
                     </tbody>
                     }@else{
                     <h6>No data in selected column</h6>
@@ -845,7 +862,7 @@
                                 <label for="selectAll" class="form-check-label">Select All</label>
                             </td>
                         </tr>
-                        @for(rows of searchEditFilterList;track rows;let i = $index){
+                        <!-- @for(rows of searchEditFilterList;track rows;let i = $index){
                         <tr class="border-bottom user-list">
 
                             <td style="width: 46px;">
@@ -860,7 +877,24 @@
                                     rows.label }} </label>
                             </td>
                         </tr>
-                        }
+                        } -->
+                        <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 210px;">
+                            <tr *cdkVirtualFor="let row of searchEditFilterList; trackBy: trackByFn">
+                                <td style="width: 46px;">
+                                    <div class="form-check">
+                                        <input type="checkbox" [id]="'defaultCheck' + row.id"
+                                        [(ngModel)]="row.selected" 
+                                            (change)="updateEditSelectedRows()"
+                                            class="form-check-input">
+                                    </div>
+                                </td>
+                                <td>
+                                    <label [for]="'defaultCheck' + row.id" class="form-check-label">
+                                        {{ row.label }}
+                                    </label>
+                                </td>
+                            </tr>
+                        </cdk-virtual-scroll-viewport>
                     </tbody>
                 </table>
             </div>

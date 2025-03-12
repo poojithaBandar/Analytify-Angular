@@ -13,10 +13,19 @@ export class TestPipe implements PipeTransform {
     if (!searchText) {
       return items;
     }
-    searchText = searchText.toLowerCase();
-    return items.filter(item => {
-      return item[key]?.toLowerCase()?.includes(searchText);
-    });
-  }
-
+  //   searchText = searchText.toLowerCase();
+  //   return items.filter(item => {
+  //     return item[key]?.toLowerCase()?.includes(searchText);
+  //   });
+  // }
+  return items.filter(item => {
+    const value = item[key];
+    if (typeof value === 'string') {
+      return value.toLowerCase().includes(searchText);
+    } else if (typeof value === 'number') {
+      return value.toString().includes(searchText);
+    }
+    return false;
+  });
+}
 }
