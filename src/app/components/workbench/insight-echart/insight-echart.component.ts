@@ -276,11 +276,12 @@ export class InsightEchartComponent {
           data: this.chartsRowData
           // data: this.chartsRowData.map((value: any, index: number) => ({
           //   value,
-          //   itemStyle: { borderWidth: '50px' }
+          //   itemStyle: { color: this.isDistributed ? this.selectedColorScheme[index % this.selectedColorScheme.length] : this.color  }
           // })),
         },
       ],
-      color: this.color
+      color: this.isDistributed ? this.selectedColorScheme : this.color,
+      colorBy: 'data',
 
     };
 }
@@ -2025,6 +2026,9 @@ chartInitialize(){
     if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme'] || changes['isDistributed']){
       if(this.chartInstance){
         this.colorSetOptions();
+        if(changes['selectedColorScheme']){
+          this.resetchartoptions();
+        }
       }
     }
     if(changes['xGridColor']){
@@ -2047,11 +2051,11 @@ chartInitialize(){
         this.legendsAllignmentSetOptions()
       }
     }
-    if(changes['selectedColorScheme']){
-      if(this.chartInstance){
-        this.selectedColorSchemeSetOptions()
-      }
-    }
+    // if(changes['selectedColorScheme']){
+    //   if(this.chartInstance){
+    //     this.selectedColorSchemeSetOptions()
+    //   }
+    // }
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
@@ -2883,7 +2887,7 @@ chartInitialize(){
       this.chartInstance?.setOption(obj);
       this.chartOptions.series[0].itemStyle.color = this.barColor;
       this.chartOptions.series[1].lineStyle.color = this.lineColor;
-    } else if(this.chartType === 'funnel'){
+    } else if(['bar', 'funnel'].includes(this.chartType)){
       let obj ={
         color:this.isDistributed ? this.selectedColorScheme : this.color
        }
