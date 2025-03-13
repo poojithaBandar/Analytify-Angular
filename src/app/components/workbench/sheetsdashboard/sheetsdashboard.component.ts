@@ -54,6 +54,7 @@ import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
 import 'pivottable';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 import { cloneDeep } from 'lodash';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 interface TableRow {
   [key: string]: any;
@@ -103,7 +104,7 @@ declare var $:any;
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -2742,6 +2743,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     } else {
       console.error('Gridster element not found!');
     }
+    this.cdr.detectChanges();
   }
   initializeChart(item: DashboardItem): void {
     const chartElement = document.querySelector("#chart"); // Adjust selector if necessary
@@ -3216,6 +3218,9 @@ getColumnSelectionLabel(filterList: any): string {
   } else {
     return 'Multiple Values'; // Display 'Multiple Values' if more than one column is selected
   }
+}
+trackByFn(index: number, item: any): string {
+  return item.label; // Ensures efficient rendering
 }
 updateSelectedRows() {
   this.selectedRows = this.sheetsFilterNames

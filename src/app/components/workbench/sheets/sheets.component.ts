@@ -55,7 +55,7 @@ import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 import 'pivottable';
 // import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/sortable';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -369,6 +369,9 @@ export class SheetsComponent {
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
+  @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
+  @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+
   transformedData: any[] = [];
   columnKeys: string[] = [];
   rowKeys: string[] = [];
@@ -492,23 +495,6 @@ export class SheetsComponent {
    } 
    this.canEditDb = this.templateService.addDatasource();
    this.canDrop = !this.canEditDb
-  }
-
-  rgbStringToHex(rgb: string): string {
-    // Split the input string by commas, remove extra spaces, and convert to numbers
-    const [r, g, b] = rgb.split(',').map((value) => parseInt(value.trim(), 10));
-  
-    // Ensure RGB values are within the valid range [0, 255]
-    const clamp = (value: number) => Math.max(0, Math.min(255, value));
-  
-    // Convert RGB to HEX
-    return (
-      '#' +
-      [clamp(r), clamp(g), clamp(b)]
-        .map((x) => x.toString(16).padStart(2, '0')) // Convert to hex and pad
-        .join('')
-        .toUpperCase()
-    );
   }
 
   ngOnInit(): void {
@@ -3161,10 +3147,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
-        setTimeout(() => {
         this.filterData = convertedArray;
-        },500);
-
         if(this.dateList.includes(responce.dtype)){
           let rawLabel = this.filterData[0].label;
           let datePart = rawLabel.split(" ")[0];
@@ -3249,7 +3232,7 @@ filterCheck(event: any, data: string) {
 
 // TrackBy function to optimize rendering
 trackByFn(index: number, item: any): number {
-  return item?.id ?? index;
+  return item?.id || index;
 }
   totalDataLength : any;
   filterDataPut(){
@@ -3356,16 +3339,14 @@ trackByFn(index: number, item: any): number {
         else {
           this.activeTabId = 1;
         }
-        responce.result.forEach((element:any) => {
-
-          this.filterData.push(element);
-        });
+        this.filterData = responce.result
+        // responce.result.forEach((element:any) => {
+        //   this.filterData.push(element);
+        //  // Force update
+        // });
         this.filterData.forEach((filter:any)=>{
           if(filter.selected){
-            setTimeout(() => {
-
             this.filterDataArray.add(filter.label);
-            },500)
           }
         })
         if(this.dateList.includes(responce.data_type) && responce?.range_values){

@@ -437,13 +437,13 @@
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
                                         <div class="tabs-menu-boxed">
                                             <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14 pb-1" >
-                                                <li [ngbNavItem]="1" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet()">
+                                                <li [ngbNavItem]="1" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet();">
                                                     <a ngbNavLink class="p-3 TabShadow">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
                                                             <div class="d-flex">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch"  aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2 search-icon-border-radius"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
@@ -807,29 +807,22 @@
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
                                         <div class="tabs-menu-boxed">
                                             <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
-                                                <li [ngbNavItem]="1" (click)="filterSearch = ''; filterDataGet()">
+                                                <li [ngbNavItem]="1" (click)="filterSearch = ''; filterDataGet();">
                                                     <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
                                                             <div class="d-flex">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch"  aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2 search-icon-border-radius"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
                                                                 <label for="defaultCheck1" class="form-check-label"> Select All </label>
                                                             </div>
-                                                            <!-- <div *ngFor="let data of filterData">
-                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
-                                                                <div class="form-check">
-                                                                    <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" [(ngModel)]="data.selected"
-                                                                        class="form-check-input" (click)="filterCheck($event,data.label)">
-                                                                    <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
-                                                                </div>
-                                                                }
-                                                            </div> -->
-                                                            <cdk-virtual-scroll-viewport itemSize="40" class="virtual-scroll-container" style="height: 410px;">
-                                                                <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn">
+                                                          
+                                                        
+                                                              <cdk-virtual-scroll-viewport  itemSize="40" class="virtual-scroll-container" style="height: 410px;">
+                                                                <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn" class="form-check-container">
                                                                   <div class="form-check">
                                                                     <input type="checkbox" [id]="'defaultCheck' + data.label"
                                                                            [(ngModel)]="data.selected"
@@ -841,7 +834,8 @@
                                                                   </div>
                                                                 </div>
                                                               </cdk-virtual-scroll-viewport>
-                                                        
+                                                              
+
                                                         </div>
                                                     </ng-template>
                                                 </li>
@@ -939,17 +933,30 @@
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
                                                             <div class="d-flex">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2 search-icon-border-radius"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
-                                                            @for(data of filterData;track data){
+                                                            <!-- @for(data of filterData;track data){
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                     <div class="form-check">
                                                                         <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
                                                                         <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
                                                                     </div>
                                                                 }
-                                                            }
+                                                            } -->
+                                                            <cdk-virtual-scroll-viewport itemSize="40" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;">
+                                                                <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn" class="form-check-container">
+                                                                  <div class="form-check">
+                                                                    <input type="checkbox" [id]="'defaultCheck' + data.label"
+                                                                           [(ngModel)]="data.selected"
+                                                                           class="form-check-input"
+                                                                           (change)="filterCheck($event, data.label)">
+                                                                    <label [for]="'defaultCheck' + data.label" class="form-check-label">
+                                                                      {{ data.label }}
+                                                                    </label>
+                                                                  </div>
+                                                                </div>
+                                                              </cdk-virtual-scroll-viewport>
                                                         </div>
                                                     </ng-template>
                                                 </li>
@@ -1294,23 +1301,34 @@
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
                                                             <div class="d-flex">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"  aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2 search-icon-border-radius"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
                                                                 <label for="defaultCheck1" class="form-check-label"> Select All </label>
                                                             </div>
-                                                            <div *ngFor="let data of filterData">
-                                                            <!-- @for(data of filterData;track data){ -->
+                                                            <!-- <div *ngFor="let data of filterData">
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                     <div class="form-check">
                                                                         <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
                                                                         <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
                                                                     </div>
                                                                 }
-                                                                </div>
-                                                            <!-- } -->
+                                                                </div> -->
+                                                                <cdk-virtual-scroll-viewport itemSize="40" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;">
+                                                                    <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn" class="form-check-container">
+                                                                      <div class="form-check">
+                                                                        <input type="checkbox" [id]="'defaultCheck' + data.label"
+                                                                               [(ngModel)]="data.selected"
+                                                                               class="form-check-input"
+                                                                               (change)="filterCheck($event, data.label)">
+                                                                        <label [for]="'defaultCheck' + data.label" class="form-check-label">
+                                                                          {{ data.label }}
+                                                                        </label>
+                                                                      </div>
+                                                                    </div>
+                                                                  </cdk-virtual-scroll-viewport>
                                                         </div>
                                                     </ng-template>
                                                 </li>
@@ -2157,8 +2175,8 @@
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane active" id="activetabs">
                                                                                         <div class="d-flex">
-                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                                            <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
+                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"  aria-describedby="button-addon2" >
+                                                                                            <button class="btn btn-primary border me-2 search-icon-border-radius"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                                         </div>
                                                                                         <!-- @for(data of filterData;track data){
                                                                                             @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -2168,8 +2186,8 @@
                                                                                                 </div>
                                                                                             }
                                                                                         } -->
-                                                                                        <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 510px;">
-                                                                                            <div *cdkVirtualFor="let data of filterData; trackBy: trackByFn">
+                                                                                        <cdk-virtual-scroll-viewport itemSize="40" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
+                                                                                            <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
                                                                                                 <div class="form-check" style="width: 46px;">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
@@ -2521,8 +2539,8 @@
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane active" id="activetabs">
                                                                                         <div class="d-flex">
-                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                                            <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
+                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" aria-describedby="button-addon2" >
+                                                                                            <button class="btn btn-primary border me-2 search-icon-border-radius"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                                         </div>
                                                                                         <div class="form-check">
                                                                                             <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
@@ -2537,7 +2555,7 @@
                                                                                             }
                                                                                         </div> -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 510px;">
-                                                                                            <div *cdkVirtualFor="let data of filterData; trackBy: trackByFn">
+                                                                                            <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
                                                                                                 <div class="form-check" style="width: 46px;">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
