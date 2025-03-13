@@ -1043,6 +1043,15 @@ export class SheetsdashboardComponent {
 
   setSelectedSheetData() {
     this.dashboardNew = this.dashboardNew.map(target => {
+      if(this.displayTabs){
+        const source1 = this.sheetTabs
+    .flatMap(sheetData => sheetData?.dashboard) 
+    .find((source1: any) => source1['sheetId'] === target['sheetId']);
+    if (source1) {
+      target['selectedSheet'] = source1['selectedSheet']; 
+    }
+        
+      }
       const source = this.dashboard.find(source => source['sheetId'] === target['sheetId']);
       if (source) {
         return { ...target, selectedSheet: source['selectedSheet'] };
@@ -1334,9 +1343,6 @@ export class SheetsdashboardComponent {
    
   }
   updateDashboard(isLiveReloadData : boolean){
-    if(!isLiveReloadData){
-      this.takeScreenshot();
-    }
     this.sheetsIdArray = [
       ...this.dashboard.map(item => item.sheetId).filter(id => id !== undefined),
       ...this.sheetTabs
@@ -1384,20 +1390,23 @@ export class SheetsdashboardComponent {
       //     donutDecimalPlaces : this.donutDecimalPlaces
       //   }as any;
       // } else {
-        let tabNames;
+        let tabNames = [];
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
-          if(this.hasDuplicates(tabNames)){
-            Swal.fire({
-              icon: 'error',
-              title: 'oops!',
-              text: 'Duplicate tab names are not allowed.',
-              width: '400px',
-            })
-          }
         }
+        if(this.hasDuplicates(tabNames)){
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: 'Duplicate tab names are not allowed.',
+            width: '400px',
+          })
+        } else {
+          if(!isLiveReloadData){
+            this.takeScreenshot();
+          }
         obj ={
           grid : this.gridType,
           height: this.heightGrid,
@@ -1449,6 +1458,7 @@ export class SheetsdashboardComponent {
       }
     })
   }
+}
   }
 
   assignOriginalDataToDashboard(inputData: any[]){
@@ -2419,20 +2429,20 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
       }
         // this.qrySetId.splice(popqryIndex, 1);
-        if(this.dashboardId){
-          this.deleteSheetFilter(item.sheetId);
-          this.actionUpdateOnSheetRemove(item.sheetId);
-        }
       // if(item.fileId){
       //   let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
       //   this.fileId.splice(popIndex, 1);
       // } else {
-        let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
-        this.databaseId.splice(popIndex, 1);
       // }
     }
-    this.canNavigateToAnotherPage = true;
     }
+    this.canNavigateToAnotherPage = true;
+    if(this.dashboardId){
+      this.deleteSheetFilter(item.sheetId);
+      this.actionUpdateOnSheetRemove(item.sheetId);
+    }
+    let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
+    this.databaseId.splice(popIndex, 1);
     this.setDashboardNewSheets(item.sheetId, false);
   }
 
@@ -4011,7 +4021,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         } else {
       }
       }
-      if((item.chart_id == '29' && (isFilter || isDrillDown)) || (item1.chartId == '29' && isDrillThrough)){//world MAP
+      if((item.chart_id == '29' && (isFilter)) || (item1.chartId == '29' && isDrillThrough)){//world MAP
         if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
@@ -4612,7 +4622,7 @@ const obj ={
     let id = uuidv4();
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
-    let name = this.selectedTabIndex > 0 ? "Sheet Title " + this.selectedTabIndex : "Sheet Title";
+    let name = this.selectedTabIndex > 0 ? "Tab Title " + this.selectedTabIndex : "Tab Title";
     this.sheetTabs.push({ id: id, name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
     this.dashboardTest = [];
   }
@@ -6109,7 +6119,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false,this.dashboard);
           if (this.displayTabs) {
             this.sheetTabs.forEach((tabData: any) => {
-              this.setDashboardSheetData(item, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard);
+              this.setDashboardSheetData(sheet, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard);
             })
           }
         });
@@ -6630,7 +6640,20 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
   
     disableEdit(index: number) {
+      let tabNames = [];
+      if(this.sheetTabs && this.sheetTabs.length > 0){
+        tabNames = this.sheetTabs.map(tab => tab.name);
+      }
+      if(this.hasDuplicates(tabNames)){
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: 'Duplicate tab names are not allowed.',
+          width: '400px',
+        })
+      } else {
       this.sheetTabs[index].isEditing = false;
+      }
     }
 }
 // export interface CustomGridsterItem extends GridsterItem {

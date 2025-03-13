@@ -852,4 +852,21 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/test_connection/`+this.accessToken,object);
     }
+
+    //color palette
+    saveColorPalette(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/colour_palette/`+this.accessToken,object);
+    }
+    updateColorPalette(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/colour_palette/`+this.accessToken,object);
+    }
+    getColorPalettes(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/colour_palette/`+this.accessToken+`/${id}`);
+    }
 }
