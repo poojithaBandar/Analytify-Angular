@@ -2428,20 +2428,20 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
       }
         // this.qrySetId.splice(popqryIndex, 1);
-        if(this.dashboardId){
-          this.deleteSheetFilter(item.sheetId);
-          this.actionUpdateOnSheetRemove(item.sheetId);
-        }
       // if(item.fileId){
       //   let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
       //   this.fileId.splice(popIndex, 1);
       // } else {
-        let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
-        this.databaseId.splice(popIndex, 1);
       // }
     }
-    this.canNavigateToAnotherPage = true;
     }
+    this.canNavigateToAnotherPage = true;
+    if(this.dashboardId){
+      this.deleteSheetFilter(item.sheetId);
+      this.actionUpdateOnSheetRemove(item.sheetId);
+    }
+    let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
+    this.databaseId.splice(popIndex, 1);
     this.setDashboardNewSheets(item.sheetId, false);
   }
 
