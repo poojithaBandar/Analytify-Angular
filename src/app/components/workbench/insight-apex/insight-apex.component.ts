@@ -99,9 +99,9 @@ export class InsightApexComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // if(changes['chartType']){
+    if(changes['chartType']){
       this.generateChart();
-    // }
+    }
     
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       // if(changes['chartsColumnData'].currentValue.length>0 || changes['dualAxisColumnData'].currentValue.length>0){
@@ -179,7 +179,7 @@ export class InsightApexComponent {
     if(this.chartType == 'donut' && changes['label']){
       this.labelsShowOrHide();
     }
-    if(this.chartType == 'funnel' && changes['isDistributed']){
+    if(['bar','funnel'].includes(this.chartType) && changes['isDistributed']){
       this.colorDistribution();
     }
     if(['donut','pie'].includes(this.chartType) && changes['legendsAllignment']){
@@ -514,6 +514,7 @@ export class InsightApexComponent {
       },
       plotOptions: {
         bar: {
+          distributed : this.isDistributed,
           dataLabels: {
             position: this.dataLabelsFontPosition,
           },
@@ -530,7 +531,10 @@ export class InsightApexComponent {
           colors: [this.dataLabelsColor],
         },
       },
-      colors: [this.color]
+      legend: {
+        show: false,
+      },
+      colors: this.isDistributed ? this.selectedColorScheme : [this.color]
     };
   }
   areaChart() {
@@ -1620,14 +1624,16 @@ export class InsightApexComponent {
       colors: this.selectedColorScheme,
       plotOptions: {
         heatmap: {
-          shadeIntensity: 0.5,
+          // shadeIntensity: 0.5,
           colorScale: {
             ranges: [],
             // Stops define the gradient stops for color intensity
-            stops: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            // stops: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
             // Enable this to inverse the colors
-            inverseColors: true
-          }
+            // inverseColors: true
+            inverse: true
+          },
+          distributed: this.isDistributed,
         }
       },
       dataLabels: {
@@ -2703,11 +2709,16 @@ export class InsightApexComponent {
     }
   }
   colorDistribution(){
-    if (this.funnelCharts) {
+    if (this.chartType === 'funnel') {
       this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
       this.chartOptions.plotOptions.bar.distributed = this.isDistributed;
       let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
-      this.funnelCharts.updateOptions(object);
+      this.funnelCharts?.updateOptions(object);
+    } else if(this.chartType === 'bar'){
+      this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
+      this.chartOptions.plotOptions.bar.distributed = this.isDistributed;
+      let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
+      this.barCharts?.updateOptions(object);
     }
   }
   legendPositionChange(){
@@ -2787,7 +2798,7 @@ export class InsightApexComponent {
       }
       object = { series: this.chartOptions.series };
     }
-    else if(this.chartType === 'funnel'){
+    else if(['bar','funnel'].includes(this.chartType)){
       if(this.chartOptions?.colors){
         this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
       }
@@ -2797,7 +2808,7 @@ export class InsightApexComponent {
       this.chartOptions.colors = this.selectedColorScheme
       object = { colors: this.chartOptions.colors };
     }
-    else if(['bar','area','line','guage'].includes(this.chartType)){
+    else if(['area','line','guage'].includes(this.chartType)){
       if(this.chartOptions?.colors){
         // if(this.chartType === 'funnel'){
         //   this.chartOptions.colors = this.selectedColorScheme;

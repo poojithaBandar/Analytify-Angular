@@ -1187,7 +1187,7 @@
                                   [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData"
                                   [dualAxisColumnData]="dualAxisColumnData"></app-insight-echart> -->
             
-                  <app-insight-echart [isZoom]="item['customizeOptions']?.isZoom" [isBold]="item['customizeOptions']?.isBold"
+                  <app-insight-echart [isZoom]="item['customizeOptions']?.isZoom" [isBold]="item['customizeOptions']?.isBold" [mapChartOptions]="item['echartOptions']"
                     [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData"
                     [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [dataLabelsFontPosition]="item['customizeOptions']?.dataLabelsFontPosition"
@@ -1214,7 +1214,7 @@
                     [decimalPlaces]="item['customizeOptions']?.decimalPlaces" [prefix]="item['customizeOptions']?.prefix"
                     [suffix]="item['customizeOptions']?.suffix" [sortType]="item['customizeOptions']?.sortType"
                     [drillDownIndex]="item['drillDownIndex']" [draggedDrillDownColumns]="item['drillDownHierarchy']"
-                    [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)">
+                    [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)" [actionId]="actionId" (drillThrough)="onEChartClick($event, item)">
                   </app-insight-echart>
                   }
                   <!-- @else if(chartType == 'bar') {
