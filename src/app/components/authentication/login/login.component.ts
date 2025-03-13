@@ -80,12 +80,18 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     const userName = { userName: data.username};
     const chartType = data.chart_type;
     const userId = data.user_id;
+    const defaultColorSchemes = data?.default_colours;
+    if(data?.user_colours){
+      const colorPalettId = data?.user_colours[0]?.id;
+      localStorage.setItem('colorPalettId', colorPalettId);
+    }
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
     localStorage.setItem('chartType', chartType);
     localStorage.setItem('userId', userId);  
     localStorage.setItem('customTheme', JSON.stringify(data.custome_theme)); 
     localStorage.setItem('apiCustomTheme', JSON.stringify(data.custome_theme)); 
+    localStorage.setItem('defaultColorSchemes', JSON.stringify(defaultColorSchemes));
     this.themeService.setApiCustomTheme(data.custome_theme);
     this.themeService.setCurrentTheme(data.custome_theme);
     this.switcherComponent.setCustomThemeData(data.custome_theme);

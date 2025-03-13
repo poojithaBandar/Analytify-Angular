@@ -1,5 +1,5 @@
 import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input } from '@angular/core';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -373,14 +373,23 @@ export class SheetsComponent {
   valueKeys: string[] = [];
   rawData: any = {};
   
-  colorSchemes = [
-    ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
-    ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
-    ['#FFFF19', '#FFFF13', '#FFFF0A', '##FFFF00', '#FFC100', '#FF7D00', '#FF0000', '#C30000', '#8A0000'], // Example gradient 3
-    ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
-    ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
-  ];
-  selectedColorScheme=[] as  any;
+  // colorSchemes = [
+  //   ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
+  //   ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
+  //   ['#FFFF19', '#FFFF13', '#FFFF0A', '##FFFF00', '#FFC100', '#FF7D00', '#FF0000', '#C30000', '#8A0000'], // Example gradient 3
+  //   ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
+  //   ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
+  // ];
+
+  defaultColorSchemes : { [key: string]: string[] } = {};
+  userDefinedColorSchemes : { [key: string]: string[] } = {};
+  keysOfColorSchemes : { key: string; colorPalette: string[] }[] = [];
+  keysOfUsersColors : any[] = [];
+  selectedColorScheme = this.defaultColorSchemes['Blue'];
+  newColorScheme : any[] = [];
+  colorSchemeName : string = '';
+  selectedBox : number = 0;
+
   hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
   deleteSheetInSheetComponent = false;
@@ -531,15 +540,26 @@ export class SheetsComponent {
       console.log('Value changed in Comp2:', value);
       this.changeChartPlugin(value);
     });
+    const defaultColors = localStorage.getItem('defaultColorSchemes');
+    const colorPaletteId = localStorage.getItem('colorPalettId');
+    if(defaultColors){
+      this.defaultColorSchemes = JSON.parse(defaultColors);
+    }
+    if(colorPaletteId){
+      this.getUserColorPalettes(colorPaletteId);
+    } else{
+      this.getColorSchemesForDropdown();
+    }
+    console.log(this.defaultColorSchemes);
   }
   isColorSchemeDropdownOpen = false;
   toggleDropdownColorScheme() {
     this.isColorSchemeDropdownOpen = !this.isColorSchemeDropdownOpen;
   }
-  selectColorScheme(scheme: string[]) {
-    this.selectedColorScheme = scheme.slice(0, 9);
-    console.log('color pallete', this.selectedColorScheme)
-  }
+  // selectColorScheme(scheme: string[]) {
+  //   this.selectedColorScheme = scheme.slice(0, 9);
+  //   console.log('color pallete', this.selectedColorScheme)
+  // }
   getGradient(colors: string[]): string {
     return `linear-gradient(to right, ${colors.join(', ')})`;
   }
@@ -3859,7 +3879,7 @@ customizechangeChartPlugin() {
     this.xlabelFontWeight = data.xlabelFontWeight ?? 400;
     this.backgroundColor = data.backgroundColor ?? '#fff';
     this.color = data.color ?? '#2392c1';
-    this.selectedColorScheme = data.selectedColorScheme ?? ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
+    this.selectedColorScheme = data.selectedColorScheme ?? ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'],
     this.ylabelFontWeight = data.ylabelFontWeight ?? 400;
     this.isBold = data.isBold ?? false;
     this.isXlabelBold = data.isXlabelBold ?? false;
@@ -3954,7 +3974,7 @@ customizechangeChartPlugin() {
     this.xlabelFontWeight = 400;
     this.backgroundColor = '#fff';
     this.color = '#2392c1';
-    this.selectedColorScheme = ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
+    this.selectedColorScheme = ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'],
     this.ylabelFontWeight = 400;
     this.isBold = false;
     this.isTableHeaderBold = false;
@@ -5823,4 +5843,138 @@ customizechangeChartPlugin() {
       }
       return isValid;
     }
+
+  getColorSchemesForDropdown() {
+    this.keysOfColorSchemes = [];
+    let keysofDefault = Object.keys(this.defaultColorSchemes);
+    keysofDefault.forEach((key:any)=>{
+      let object = {
+        key: key,
+        colorPalette: this.defaultColorSchemes[key]
+      }
+      this.keysOfColorSchemes.push(object);
+    });
+    this.keysOfUsersColors = Object.keys(this.userDefinedColorSchemes);
+    this.keysOfUsersColors.forEach((key:any)=>{
+      let object = {
+        key: key,
+        colorPalette: this.userDefinedColorSchemes[key]
+      }
+      this.keysOfColorSchemes.push(object);
+    });
+    console.log(this.keysOfColorSchemes);
+  }
+  removeColorScheme(key: string, index: any){
+    Swal.fire({
+      position: "center",
+      icon: "question",
+      title: `Are you sure you want to delete the "${key}" color scheme?`,
+      text: "This action cannot be undone.",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let colors = JSON.parse(JSON.stringify(this.userDefinedColorSchemes));
+        delete colors[key];
+        const colorPaletteId = localStorage.getItem('colorPalettId');
+        let object = {
+          id: colorPaletteId,
+          colour_palette: {
+            ...colors
+          }
+        }
+        this.workbechService.updateColorPalette(object).subscribe({
+          next: (response: any) => {
+            console.log(response);
+            delete this.userDefinedColorSchemes[key];
+            this.getColorSchemesForDropdown();
+            this.toasterService.success('Color Palette Deleted Successfully', 'success', { positionClass: 'toast-top-right' });
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          }
+        });
+      }
+    });
+  }
+  addNewBox(){
+    this.newColorScheme.push('#FFFFFF');
+    this.selectedBox = this.newColorScheme.length-1;
+  }
+  closeColorPicker(colorPickerDropDown : NgbDropdown){
+    colorPickerDropDown.close();
+    this.selectedBox = 0;
+    this.newColorScheme = [];
+    this.colorSchemeName = '';
+  }
+  checkColorNameExists(name: string): boolean {
+    return this.keysOfColorSchemes.some((key: any) => key === name);
+  }
+  saveColorScheme(colorPickerDropDown : NgbDropdown){
+    if(this.checkColorNameExists(this.colorSchemeName)){
+      this.toasterService.info(this.colorSchemeName+' already exists. Please try another.', 'info', { positionClass: 'toast-top-right' });
+    } else {
+      const colorPaletteId = localStorage.getItem('colorPalettId');
+      if(colorPaletteId){
+        let colors = JSON.parse(JSON.stringify(this.userDefinedColorSchemes));
+        colors[this.colorSchemeName] = this.newColorScheme;
+        let object = {
+          id: colorPaletteId,
+          colour_palette: {
+            ...colors
+          }
+        }
+        this.workbechService.updateColorPalette(object).subscribe({
+          next: (response: any) => {
+            console.log(response);
+            this.userDefinedColorSchemes[this.colorSchemeName] = this.newColorScheme;
+            this.closeColorPicker(colorPickerDropDown);
+            this.getColorSchemesForDropdown();
+            this.toasterService.success('New Color Palette Added Successfully', 'success', { positionClass: 'toast-top-right' });
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          }
+        });
+      } else {
+        let object = {
+          colour_palette: {
+            [this.colorSchemeName]: this.newColorScheme
+          }
+        }
+        this.workbechService.saveColorPalette(object).subscribe({
+          next: (response: any) => {
+            console.log(response);
+            localStorage.setItem('colorPalettId', response?.id);
+            this.userDefinedColorSchemes[this.colorSchemeName] = this.newColorScheme;
+            this.closeColorPicker(colorPickerDropDown);
+            this.getColorSchemesForDropdown();
+            this.toasterService.success('New Color Palette Added Successfully', 'success', { positionClass: 'toast-top-right' });
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          }
+        });
+      }
+    }
+  }
+  getUserColorPalettes(id : any){
+    this.workbechService.getColorPalettes(id).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.userDefinedColorSchemes = response.data[0]?.colour_palette;
+        this.getColorSchemesForDropdown();
+        console.log(this.userDefinedColorSchemes);
+      },
+      error: (error) => {
+        console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+      }
+    });
+  }
 }

@@ -4016,7 +4016,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         } else {
       }
       }
-      if((item.chart_id == '29' && (isFilter || isDrillDown)) || (item1.chartId == '29' && isDrillThrough)){//world MAP
+      if((item.chart_id == '29' && (isFilter)) || (item1.chartId == '29' && isDrillThrough)){//world MAP
         if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
