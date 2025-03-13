@@ -852,4 +852,10 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/test_connection/`+this.accessToken,object);
     }
+
+    clearTabSheetFilterActions(obj: any) {
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/clear_dashboard_tabs/`+this.accessToken,obj);
+    }
 }
