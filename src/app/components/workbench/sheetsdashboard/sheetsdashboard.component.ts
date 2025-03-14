@@ -6693,7 +6693,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
 
     autoRefreshInterval(modal: any){
         this.modalService.open(modal, {
-          centered: true,size:'lg',
+          centered: true,size:'md',
           windowClass: 'animate__animated animate__zoomIn',
         });
     }

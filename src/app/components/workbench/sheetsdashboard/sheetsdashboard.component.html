@@ -1023,7 +1023,7 @@
                         </div> -->
                         </div>
 
-                        <div class="min-w-fit-content ms-1">              
+                        <div class="min-w-fit-content ms-1 d-flex">              
                         <span *ngIf="!isPublicUrl" ngbTooltip="Edit Title" class="title-editor ms-1" (click)="toggleEditor()">
                           <button  class="btn btn-primary me-1"><i class="fa fa-pencil"></i></button>
                         </span>
@@ -1038,8 +1038,8 @@
                               <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                                 aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                               </a>
-                              <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu>
-                                <button *ngIf="!isPublicUrl && dashboardId" type="button" class="btn btn-primary mt-0" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button>
+                              <div class="dropdown-menu mt-2" ngbDropdownMenu>
+                                <button *ngIf="!isPublicUrl && dashboardId" type="button" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button>
                               </div>
                               </div>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
@@ -2030,9 +2030,11 @@
             <option value="48"> 48</option>
             <option value=""> 60</option>
           </select>
-          <label class="form-label">Refresh Now <span class="text-red">*</span><i
+          <div class="">
+            <label class="form-label">Refresh Now <span class="text-red">*</span><i
               ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
             <input type="checkbox" [(ngModel)]="refreshNow" />
+          </div>
       </div>
     </div>
     <div class="modal-footer p-2">
