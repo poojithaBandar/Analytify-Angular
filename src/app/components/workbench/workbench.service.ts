@@ -857,6 +857,7 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/clear_dashboard_tabs/`+this.accessToken,obj);
+    }
     //color palette
     saveColorPalette(object : any){
       const currentUser = localStorage.getItem( 'currentUser' );
