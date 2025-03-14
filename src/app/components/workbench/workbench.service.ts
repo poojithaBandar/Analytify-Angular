@@ -865,6 +865,12 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/test_connection/`+this.accessToken,object);
     }
 
+    updateDashboardOnSchedularLoad(object : any, dashboardId : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/shared_dashboard_refresh_update/`+ dashboardId ,object);
+    }
+
     //color palette
     saveColorPalette(object : any){
       const currentUser = localStorage.getItem( 'currentUser' );

@@ -1445,6 +1445,25 @@ export class SheetsdashboardComponent {
     //   delete obj.server_id;
     //   obj['file_id'] = this.fileId;
     // }
+    if(isLiveReloadData){
+      this.workbechService.updateDashboardOnSchedularLoad(obj,this.dashboardId).subscribe({
+        next:(data)=>{
+          console.log(data);
+          this.dashboardsheetsIdArray = this.sheetsIdArray;
+          this.canNavigateToAnotherPage = false;
+          this.endMethod(); 
+        },
+        error:(error)=>{
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error?.error?.message,
+            width: '400px',
+          });
+        }
+      })
+    } else {
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
@@ -1472,6 +1491,7 @@ export class SheetsdashboardComponent {
         });
       }
     })
+  }
   }
 }
   }
