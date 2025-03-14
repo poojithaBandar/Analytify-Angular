@@ -269,7 +269,7 @@ export class WorkbenchComponent implements OnInit{
           "schema": this.selectedSchema
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip) {
+        if (isSkip === true) {
           this.workbechService.postGreSqlConnection(obj).subscribe({
             next: (responce) => {
               console.log(responce);
@@ -294,7 +294,7 @@ export class WorkbenchComponent implements OnInit{
             }
           }
           )
-        } else {
+        } else if(isSkip === false) {
           this.checkDataSourceConnection(obj);
         }
       });
@@ -431,7 +431,7 @@ export class WorkbenchComponent implements OnInit{
 
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip) {
+        if (isSkip === true) {
           this.workbechService.postGreSqlConnection(obj).subscribe({
             next: (responce) => {
               console.log(responce);
@@ -457,7 +457,7 @@ export class WorkbenchComponent implements OnInit{
             }
           }
           )
-        } else {
+        } else if(isSkip === false) {
           this.checkDataSourceConnection(obj);
         }
       });
@@ -658,7 +658,7 @@ export class WorkbenchComponent implements OnInit{
 
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip) {
+        if (isSkip === true) {
           this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
            console.log(responce)
                if(responce){
@@ -681,7 +681,7 @@ export class WorkbenchComponent implements OnInit{
              }
            }
          )
-       } else {
+       } else if(isSkip === false) {
          this.checkDataSourceConnection(obj);
        }
       });
@@ -704,7 +704,7 @@ export class WorkbenchComponent implements OnInit{
           "authentication_type":this.selectedMicroSoftAuthType
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip) {
+        if (isSkip === true) {
           this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
             console.log(responce)
                 if(responce){
@@ -727,7 +727,7 @@ export class WorkbenchComponent implements OnInit{
               }
             }
           )
-        } else {
+        } else if(isSkip === false) {
           this.checkDataSourceConnection(obj);
         }
       });
@@ -749,7 +749,7 @@ export class WorkbenchComponent implements OnInit{
           "database": this.postGreDatabaseName,
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip) {
+        if (isSkip === true) {
           this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
             console.log(responce)
                 if(responce){
@@ -772,7 +772,7 @@ export class WorkbenchComponent implements OnInit{
               }
             }
           )
-        } else {
+        } else if(isSkip === false) {
           this.checkDataSourceConnection(obj);
         }
       });
@@ -794,7 +794,7 @@ export class WorkbenchComponent implements OnInit{
           "database": this.postGreDatabaseName,
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip) {
+        if (isSkip === true) {
           this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
             console.log(responce)
                 if(responce){
@@ -817,7 +817,7 @@ export class WorkbenchComponent implements OnInit{
               }
             }
           )
-        } else {
+        } else if(isSkip === false) {
           this.checkDataSourceConnection(obj);
         }
       });
@@ -839,7 +839,7 @@ export class WorkbenchComponent implements OnInit{
           "database": this.postGreDatabaseName,
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip) {
+        if (isSkip === true) {
           this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
             console.log(responce)
                 if(responce){
@@ -857,7 +857,7 @@ export class WorkbenchComponent implements OnInit{
               }
             }
           )
-        } else {
+        } else if(isSkip === false) {
           this.checkDataSourceConnection(obj);
         }
       });
@@ -879,7 +879,7 @@ export class WorkbenchComponent implements OnInit{
       formData.append('display_name',this.displayName);
 
       this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip) {
+        if (isSkip === true) {
         this.workbechService.DbConnection(formData).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
@@ -902,7 +902,7 @@ export class WorkbenchComponent implements OnInit{
             }
           }
         )
-      } else {
+      } else if(isSkip === false) {
         this.checkDataSourceConnection(formData);
       }
       });
@@ -1636,7 +1636,7 @@ connectGoogleSheets(){
     this.toasterservice.info('On Updating your existing sheets will not work as expected as you are changing schema','info',{ positionClass: 'toast-center-center'});
   }
 
-  confirmPopupForDataTransformation(): Promise<boolean> {
+  confirmPopupForDataTransformation(): Promise<boolean | null> {
     return Swal.fire({
       position: "center",
       icon: "question",
@@ -1645,7 +1645,17 @@ connectGoogleSheets(){
       showCancelButton: true,
       confirmButtonText: "Skip",
       cancelButtonText: "Data Transformation",
-    }).then((result) => result.isConfirmed);
+      showCloseButton: true, 
+      allowOutsideClick: false, 
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.close) {
+        return null;
+      }
+      if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+      }
+      return result.isConfirmed;
+    });
   }
 
   checkDataSourceConnection(object: any) {

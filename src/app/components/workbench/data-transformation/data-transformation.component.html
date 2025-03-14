@@ -64,8 +64,8 @@
                                                         <p class="mb-0">XShop</p>
                                                     </div> -->
                                                     <div class="input-group mt-2 px-3">
-                                                        <input type="text" placeholder="Search" class="form-control border">
-                                                        <button type="button" aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
+                                                        <input type="text" placeholder="Search" [(ngModel)]="searchText" (input)="getFilteredTables()" class="form-control border">
+                                                        <button type="button" aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0" (click)="getFilteredTables()">
                                                             <i aria-hidden="true" class="fe fe-search"></i>
                                                         </button>
                                                     </div>
@@ -188,9 +188,9 @@
                                                       @for (transformationtable of selectedTransformations[index]; let transformationIndex = $index; track transformationtable) {
                                                         <img src="../../../../assets/images/data-transformation/right_arrow.png" class="image-width" alt="arrow image">
                                                   
-                                                        <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center "
+                                                        <div class="example-box p-2 border rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " [ngClass]="selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'border-danger' : 'border-dark-subtle'"
                                                             ngbDropdown #dropdownRef="ngbDropdown">
-                                                            <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations[index][transformationIndex].key }}" placement="top"
+                                                            <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'This transformation is INCOMPLETE' : selectedTransformations[index][transformationIndex].key }}" placement="top"
                                                                 container="body">
                                                                 {{ selectedTransformations[index][transformationIndex].key | slice:0:13 }}
                                                             </span>
@@ -205,7 +205,7 @@
                                                                     class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
                                                                     <i class="fe fe-trash"></i>
                                                                 </a>
-                                                                <a *ngIf="transformationIndex === this.selectedTransformations[index]?.length - 1" aria-label="add" [class.disabled]="!selectedTransformations[index][transformationIndex].key"
+                                                                <a *ngIf="transformationIndex === this.selectedTransformations[index]?.length - 1" aria-label="add" [class.disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown) || ( ['replace_values','alter_datatypes'].includes(selectedTransformations[index][transformationIndex].key) && !selectedTransformations[index][transformationIndex].input)"
                                                                     class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
                                                                     <i class="fe fe-plus text-white text-sm"></i>
                                                                 </a>
@@ -226,18 +226,18 @@
                                                                         ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                         <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
                                                                             <div class="p-2">
-                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
                                                                             <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex)">
                                                                                 <option selected disabled>Select Column</option>
                                                                                 @for(column of item.columns; track column){
-                                                                                    <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || transformation.key != 'alter_datatypes'"  [value]="column.col">{{column?.col}}</option>
+                                                                                    <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || (['upper', 'lower', 'title'].includes(transformation.key) && stringList.includes(column.dtype)) || !['alter_datatypes', 'upper', 'lower', 'title'].includes(transformation.key)"  [value]="column.col">{{column?.col}}</option>
                                                                                 } 
                                                                             </select>
                                                                             </div>
                                                                             <div class="p-2">
-                                                                                <input *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
-                                                                                <select *ngIf="transformation.key == 'alter_datatypes'" class="form-select" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)">
+                                                                                <input [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
+                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'alter_datatypes'" class="form-select" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)">
                                                                                     <option selected disabled>Select Data Type</option>
                                                                                     <option value="int">Integer</option>
                                                                                     <option value="float">Float</option>
@@ -272,7 +272,7 @@
                     </div>
                     <div class="card-footer p-3">
                         <div class="float-end d-inline-block btn-list">
-                            <a class="btn btn-primary" [class.disabled]="draggedTables.length === 0" (click)="setTransformations(false)">Import & Load</a>
+                            <a class="btn btn-primary" [class.disabled]="isApplyDisable" (click)="setTransformations(false)">Import & Load</a>
                             <!-- <a class="btn btn-secondary" (click)="getValue()">Agree and Continue</a> -->
                         </div>
                     </div>

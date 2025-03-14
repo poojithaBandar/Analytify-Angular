@@ -244,8 +244,8 @@ button.viewQueryImg {  border: none;  background: none;}
 .Semantic-layer-card { min-width: 600px;  max-width: 1000px;}
 .query-text { height: 250px; overflow-y: auto; outline: none; border: 1px solid #edebeb; border-radius: 5px; }
 .description-text{ overflow-y: auto;  height: 250px; }
-.example-box-bg{ padding: 3px 13px; background: #75cce621; border-radius: 15px; border: 1px solid;}
-.example-box1-bg{ padding: 3px 13px; background-color: #61c4831a; border-radius: 15px; border: 1px solid;}
+.example-box-bg{ padding: 3px 13px; background: #75cce621; border-radius: 15px; border: 1px solid; white-space: pre;}
+.example-box1-bg{ padding: 3px 13px; background-color: #61c4831a; border-radius: 15px; border: 1px solid; white-space: pre;}
 .sheets-page-fixed{ position: fixed; width: -webkit-fill-available; padding-right: 25px; padding-left: 9px;}
 .calculated-parent-card{ position: relative;min-height: 100px; padding: 2px;}
 .calculated-child-card{ max-height: 420px; overflow: auto; }
@@ -281,13 +281,7 @@ a.TabShadow.nav-link.active {
 .nav-link {
   margin-inline: 0px;
 }
-.Hierarchy-box-bg{     color: rgb(var(--warning-rgb)) !important;
-  background: rgba(var(--warning-rgb), .1) !important;
-  border-color: rgba(var(--warning-rgb), .1);
-  padding: 3px 13px;
-  border-radius: 15px;
-  border: 1px solid;}
-.Hierarchy-box-bg{ color: rgb(var(--warning-rgb)) !important; background: rgba(var(--warning-rgb), .1) !important; border-color: rgba(var(--warning-rgb), .1); padding: 3px 13px; border-radius: 15px; border: 1px solid;}
+.Hierarchy-box-bg{ color: rgb(var(--warning-rgb)) !important; background: rgba(var(--warning-rgb), .1) !important; border-color: rgba(var(--warning-rgb), .1); padding: 3px 13px; border-radius: 15px; border: 1px solid; white-space: pre;}
 div#pivotTableContainer { margin: 20px; width: 100%; height: 500px; }
 .ConnectionsCardHeight { height: calc(100% - 0px); }
 .ContentAreaCardHeight { height: calc(100% - 0px); padding: 10px 10px; background-color: var(--custom-white); border: 1px solid var(--default-border) !important;  border-radius: 7px; }
