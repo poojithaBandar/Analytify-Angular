@@ -231,7 +231,7 @@
                                                                             <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex)">
                                                                                 <option selected disabled>Select Column</option>
                                                                                 @for(column of item.columns; track column){
-                                                                                    <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || transformation.key != 'alter_datatypes'"  [value]="column.col">{{column?.col}}</option>
+                                                                                    <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || (['upper', 'lower', 'title'].includes(transformation.key) && stringList.includes(column.dtype)) || !['alter_datatypes', 'upper', 'lower', 'title'].includes(transformation.key)"  [value]="column.col">{{column?.col}}</option>
                                                                                 } 
                                                                             </select>
                                                                             </div>

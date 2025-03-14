@@ -41,6 +41,10 @@ export class DataTransformationComponent {
     'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 
     'nullable(date32)'
   ]
+  stringList = ['varchar', 'bp char', 'text', 'varchar2', 'NVchar2', 'long', 'char', 'Nchar', 'character varying', 'string', 'str', 
+    'nullable(varchar)', 'nullable(bp char)', 'nullable(text)', 'nullable(varchar2)', 'nullable(NVchar2)', 'nullable(long)', 'nullable(char)', 
+    'nullable(Nchar)','nullable(character varying)', 'nullable(string)', 'string', 'nullable(string)', 'array(string)', 'nullable(array(string))'
+  ]
   isOpen : boolean = true;
   @ViewChildren('dropdownRef') dropdowns!: QueryList<NgbDropdown>;
   searchText : string = '';
