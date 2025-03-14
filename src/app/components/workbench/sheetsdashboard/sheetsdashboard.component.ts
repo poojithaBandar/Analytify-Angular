@@ -6626,9 +6626,41 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       });
     }
 
-    removeTab(index: number) {
-      this.sheetTabs.splice(index, 1);
-    }
+  removeTab(index: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Filters on Tab will be deleted .You won't be able to revert this!",
+      icon: 'warning',
+      width: '300px',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let sheetIds =this.sheetTabs[index].dashboard.map((sheet: any) => sheet.sheetId);
+          this.sheetTabs.splice(index, 1);
+        if (this.dashboardId) {
+          this.loaderService.show();
+          let obj = {
+            "dashboard_id": this.dashboardId,
+            "sheet_ids": sheetIds
+          }
+          this.workbechService.clearTabSheetFilterActions(obj).subscribe({
+            next: (data: any) => {
+              this.loaderService.hide();
+              this.toasterService.info('Filters / Actions on Tab are deleted.','info',{ positionClass: 'toast-top-center'});
+            },
+            error: (error) => {
+              this.loaderService.hide();
+              console.log(error)
+            }
+          })
+        }
+        this.canNavigateToAnotherPage = true;
+      }
+    })
+  }
   
     enableEdit(index: number) {
       this.sheetTabs[index].isEditing = true;
