@@ -54,7 +54,8 @@ import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
 import 'pivottable';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 import { cloneDeep } from 'lodash';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { FixedSizeVirtualScrollStrategy, ScrollingModule, VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
+import { TestPipe } from '../../../test.pipe';
 
 interface TableRow {
   [key: string]: any;
@@ -91,11 +92,16 @@ interface KpiData {
   kpiDecimalPlaces: number;
 }
 declare var $:any;
-
+export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
+  constructor() {
+    super(50, 250, 500);
+  }
+}
 @Component({
   selector: 'app-sheetsdashboard',
   standalone: true,
   providers: [
+    {provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy},
     {
       provide: NGX_ECHARTS_CONFIG,
       useFactory: () => ({ echarts: echarts }),
@@ -104,7 +110,7 @@ declare var $:any;
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -205,7 +211,6 @@ export class SheetsdashboardComponent {
   drillThroughDatabaseName : any = '';
 
   calendarTotalHeight : string = '400px';
-  
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
 
@@ -3229,9 +3234,9 @@ getColumnSelectionLabel(filterList: any): string {
     return 'Multiple Values'; // Display 'Multiple Values' if more than one column is selected
   }
 }
-trackByFn(index: number, item: any): string {
-  return item.label; // Ensures efficient rendering
-}
+// trackByFn(index: number, item: any): string {
+//   return item.label; // Ensures efficient rendering
+// }
 updateSelectedRows() {
   this.selectedRows = this.sheetsFilterNames
     .flatMap((parent: any) => parent.sheets)

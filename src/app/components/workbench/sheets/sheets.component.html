@@ -458,7 +458,7 @@
                                                                 </div>
                                                             }
                                                         </div> -->
-                                                        <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 510px;">
+                                                        <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                             <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn">
                                                                 <div class="form-check" style="width: 46px;">
                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
@@ -821,8 +821,8 @@
                                                             </div>
                                                           
                                                         
-                                                              <cdk-virtual-scroll-viewport  itemSize="40" class="virtual-scroll-container" style="height: 410px;">
-                                                                <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn" class="form-check-container">
+                                                              <cdk-virtual-scroll-viewport  itemSize="10" class="virtual-scroll-container" style="height: 410px;">
+                                                                <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label';" class="form-check-container">
                                                                   <div class="form-check">
                                                                     <input type="checkbox" [id]="'defaultCheck' + data.label"
                                                                            [(ngModel)]="data.selected"
@@ -944,7 +944,7 @@
                                                                     </div>
                                                                 }
                                                             } -->
-                                                            <cdk-virtual-scroll-viewport itemSize="40" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;">
+                                                            <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;">
                                                                 <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn" class="form-check-container">
                                                                   <div class="form-check">
                                                                     <input type="checkbox" [id]="'defaultCheck' + data.label"
@@ -1316,8 +1316,8 @@
                                                                     </div>
                                                                 }
                                                                 </div> -->
-                                                                <cdk-virtual-scroll-viewport itemSize="40" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;">
-                                                                    <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn" class="form-check-container">
+                                                                <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;">
+                                                                    <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label';" class="form-check-container">
                                                                       <div class="form-check">
                                                                         <input type="checkbox" [id]="'defaultCheck' + data.label"
                                                                                [(ngModel)]="data.selected"
@@ -2186,7 +2186,7 @@
                                                                                                 </div>
                                                                                             }
                                                                                         } -->
-                                                                                        <cdk-virtual-scroll-viewport itemSize="40" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
+                                                                                        <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
                                                                                                 <div class="form-check" style="width: 46px;">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
@@ -2554,7 +2554,7 @@
                                                                                                 </div>
                                                                                             }
                                                                                         </div> -->
-                                                                                        <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 510px;">
+                                                                                        <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
                                                                                                 <div class="form-check" style="width: 46px;">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
