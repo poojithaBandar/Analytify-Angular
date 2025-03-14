@@ -647,7 +647,7 @@
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox select-data-card-a">
                                                                     <div class="scrollable-content" style="max-height: calc(100% - 50px); overflow-y: auto;"> <!-- Adjust the height to account for buttons -->
                                                                     <div class="input-group">
-                                                                      <input type="text" [(ngModel)]="filterList.searchText" class="form-control border-end-0" placeholder="Search" aria-describedby="button-addon2">
+                                                                      <input type="text" [(ngModel)]="searchText" class="form-control border-end-0" placeholder="Search" aria-describedby="button-addon2">
                                                                       <button class="btn btn-primary border me-2 search-icon-border-radius" type="button" id="button-addon2" >
                                                                         <i class="fe fe-search"></i>
                                                                       </button>
@@ -656,17 +656,22 @@
                                                                       </button>
                                                                     </div>
                                                                     <div class="form-check">
-
                                                                       <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllColumns($event,filterList)" class="form-check-input">
                                                                       <label for="selectAll" class="form-check-label"><p> Select All</p></label>
-                                                                      </div>
-                                                                    <!-- @for(col of filterList.colData;track col;let i = $index){ -->
-                                                                     
-                                                                      <div *ngFor="let col of getFilteredColumns(filterList); let i = index" class="form-check">
+                                                                      </div>                                                                     
+                                                                      <!-- <div *ngFor="let col of getFilteredColumns(filterList); let i = index" class="form-check">
                                                                         <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList,col)" class="form-check-input"> 
                                                                         <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <p >{{col.label}}</p> </label>
-                                                                      </div>
-                                                                  <!-- } -->
+                                                                      </div> -->
+
+                                                                      <cdk-virtual-scroll-viewport itemSize="5" class="viewport" style="height: 100px;">
+                                                                        <div *cdkVirtualFor="let col of filterList.colData | test:searchText:'label';" >
+                                                                          <div class="form-check" style="width: 46px;">
+                                                                          <input type="checkbox" [id]="'defaultCheck' + col.label" [(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList, col)" class="form-check-input"> 
+                                                                          <label [for]="'defaultCheck' + col.label" class="form-check-label"> <p>{{ col.label }}</p> </label>
+                                                                          </div>
+                                                                        </div>
+                                                                      </cdk-virtual-scroll-viewport>
                                                                 </div>
                                                                   <div class="card mb-0 fixed-buttons p-2 Exclude-check ">
                                                                     <div class="">
@@ -1187,7 +1192,7 @@
                                   [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData"
                                   [dualAxisColumnData]="dualAxisColumnData"></app-insight-echart> -->
             
-                  <app-insight-echart [isZoom]="item['customizeOptions']?.isZoom" [isBold]="item['customizeOptions']?.isBold" [mapChartOptions]="item['echartOptions']"
+                  <app-insight-echart [isZoom]="item['customizeOptions']?.isZoom" [isBold]="item['customizeOptions']?.isBold"
                     [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData"
                     [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [dataLabelsFontPosition]="item['customizeOptions']?.dataLabelsFontPosition"
@@ -1214,7 +1219,7 @@
                     [decimalPlaces]="item['customizeOptions']?.decimalPlaces" [prefix]="item['customizeOptions']?.prefix"
                     [suffix]="item['customizeOptions']?.suffix" [sortType]="item['customizeOptions']?.sortType"
                     [drillDownIndex]="item['drillDownIndex']" [draggedDrillDownColumns]="item['drillDownHierarchy']"
-                    [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)" [actionId]="actionId" (drillThrough)="onEChartClick($event, item)">
+                    [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)">
                   </app-insight-echart>
                   }
                   <!-- @else if(chartType == 'bar') {
@@ -1502,7 +1507,7 @@
           <div  cdkDropList #destinationList1="cdkDropList" [cdkDropListData]="dashboardTest"
           (cdkDropListDropped)="drop($event,true)">
           @if(displayTabs){
-          <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin:auto 0px;"  [style.height.px]="tabHeightGrid"
+          <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="tabHeightGrid"
             [style.width.px]="tabWidthGrid">
             <!-- <div style="height: inherit;" > -->
               <gridster [options]="options" #gridsterTab>
