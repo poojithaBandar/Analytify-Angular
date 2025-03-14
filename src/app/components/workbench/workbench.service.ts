@@ -822,6 +822,18 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/file_replace/`+this.accessToken,object);
     }
 
+    autoRefreshFrequency(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard/refresh/schedule/`+this.accessToken,object);
+    }
+
+    fetchRefreshedData(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/data/`+ id + '/' +this.accessToken);
+    }
+
     upsertExcelOrCsvFile(object : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
