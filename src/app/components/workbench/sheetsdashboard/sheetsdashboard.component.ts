@@ -1154,9 +1154,11 @@ export class SheetsdashboardComponent {
         let tabNames;
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
-          tabNames = this.sheetTabs.map(tab => tab.name);
+          tabNames = this.sheetTabs.map(tab => tab.name?.trim());
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
-          if(this.hasDuplicates(tabNames)){
+          if(this.validateTabs()){
+            throw { error: { message: "Tab title cannot be empty." } };
+          } else if(this.hasDuplicates(tabNames)){
             throw { error: { message: "Duplicate tab names are not allowed." } };
           }
         }
@@ -1398,10 +1400,17 @@ export class SheetsdashboardComponent {
         let tabNames = [];
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
-          tabNames = this.sheetTabs.map(tab => tab.name);
+          tabNames = this.sheetTabs.map(tab => tab.name?.trim());
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
         }
-        if(this.hasDuplicates(tabNames)){
+        if(this.validateTabs()){
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: 'Tab title cannot be empty.',
+            width: '400px',
+          })
+        }else if(this.hasDuplicates(tabNames)){
           Swal.fire({
             icon: 'error',
             title: 'oops!',
@@ -2443,8 +2452,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     }
     this.canNavigateToAnotherPage = true;
     if(this.dashboardId){
-      this.deleteSheetFilter(item.sheetId);
+      if(this.active == 2){
+        this.deleteSheetFilter(item.sheetId);
+      } else if(this.active == 3){
       this.actionUpdateOnSheetRemove(item.sheetId);
+      }
     }
     let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
     this.databaseId.splice(popIndex, 1);
@@ -2492,31 +2504,41 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   }
 
   resetDashboard() {
+    let sheetIds =this.dashboard.map((sheet: any) => sheet.sheetId);
     this.dashboard = [];
     this.loaderService.show();
-    this.qrySetId = [];
-    this.databaseId = [];
+    // this.qrySetId = [];
+    // this.databaseId = [];
     // this.fileId = [];
     this.disableDashboardUpdate = true;
-    const idsArray = this.DahboardListFilters.map((obj:any) => obj.dashboard_filter_id);
-    const actionsIds = this.drillThroughActionList.map((Object : any)=> Object.drill_id);
-    this.deleteDashboardAction(actionsIds);
-    this.workbechService.deleteDashbaordFilter({"filter_id" : idsArray}).subscribe({
-      next:(data)=>{
-        console.log(data);
-        this.DahboardListFilters =  [];
-        this.loaderService.hide();
-    },
-      error:(error)=>{
-        console.log(error)
-        Swal.fire({
-          icon: 'error',
-          title: 'oops!',
-          text: error.error.message,
-          width: '400px',
-        })
-      }
-    });
+    // const idsArray = this.DahboardListFilters.map((obj:any) => obj.dashboard_filter_id);
+    // const actionsIds = this.drillThroughActionList.map((Object : any)=> Object.drill_id);
+    // this.deleteDashboardAction(actionsIds);
+    // this.workbechService.deleteDashbaordFilter({"filter_id" : idsArray}).subscribe({
+    //   next:(data)=>{
+    //     console.log(data);
+    //     this.DahboardListFilters =  [];
+    //     this.loaderService.hide();
+    // },
+    //   error:(error)=>{
+    //     console.log(error)
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'oops!',
+    //       text: error.error.message,
+    //       width: '400px',
+    //     })
+    //   }
+    // });
+    let obj = {
+      "dashboard_id": this.dashboardId,
+      "sheet_ids": sheetIds
+    }
+    if(this.dashboardId && sheetIds?.length > 0){
+      this.removeFiltersandActionsBasedOnSheetIds(obj);
+    } else {
+      this.loaderService.hide();
+    }
     this.dashboardNew.forEach(sheet => {
       sheet['selectedSheet'] = false;
     })
@@ -4828,7 +4850,7 @@ kpiData?: KpiData;
 
   }
   removeUnSelectedSheetsFromCanvas(){
-    this.dashboard = this.dashboard.filter((item:any) => this.sheetIdsDataSet.includes(item.sheetId));
+    this.dashboard = this.dashboard.filter((item:any) => !item.sheetId || this.sheetIdsDataSet.includes(item.sheetId));
   }
   ngAfterViewChecked() {
     this.cdr.detectChanges();
@@ -6650,24 +6672,33 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       if (result.isConfirmed) {
         let sheetIds =this.sheetTabs[index].dashboard.map((sheet: any) => sheet.sheetId);
           this.sheetTabs.splice(index, 1);
-        if (this.dashboardId) {
+        if (this.dashboardId && sheetIds?.length > 0) {
           this.loaderService.show();
           let obj = {
             "dashboard_id": this.dashboardId,
             "sheet_ids": sheetIds
           }
-          this.workbechService.clearTabSheetFilterActions(obj).subscribe({
-            next: (data: any) => {
-              this.loaderService.hide();
-              this.toasterService.info('Filters / Actions on Tab are deleted.','info',{ positionClass: 'toast-top-center'});
-            },
-            error: (error) => {
-              this.loaderService.hide();
-              console.log(error)
-            }
-          })
+          this.removeFiltersandActionsBasedOnSheetIds(obj);
         }
         this.canNavigateToAnotherPage = true;
+      }
+    })
+  }
+
+  removeFiltersandActionsBasedOnSheetIds(obj : any){
+    this.workbechService.clearTabSheetFilterActions(obj).subscribe({
+      next: (data: any) => {
+        this.loaderService.hide();
+        this.toasterService.info('Filters / Actions on Tab are deleted.','info',{ positionClass: 'toast-top-center'});
+        if(this.active == 2){
+          this.getDashboardFilterredList(true);
+        } else if(this.active == 3) {
+        this.getDrillThroughActionList();
+        }
+      },
+      error: (error) => {
+        this.loaderService.hide();
+        console.log(error)
       }
     })
   }
@@ -6681,7 +6712,14 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       if(this.sheetTabs && this.sheetTabs.length > 0){
         tabNames = this.sheetTabs.map(tab => tab.name);
       }
-      if(this.hasDuplicates(tabNames)){
+      if(this.validateTabs()){
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: 'Tab name cannot be empty.',
+          width: '400px',
+        })
+      } else if(this.hasDuplicates(tabNames)){
         Swal.fire({
           icon: 'error',
           title: 'oops!',
@@ -6691,6 +6729,9 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       } else {
       this.sheetTabs[index].isEditing = false;
       }
+    }
+    validateTabs(): boolean {
+      return this.sheetTabs.some(sheet => !sheet.name || sheet.name.trim() === "");
     }
 }
 // export interface CustomGridsterItem extends GridsterItem {

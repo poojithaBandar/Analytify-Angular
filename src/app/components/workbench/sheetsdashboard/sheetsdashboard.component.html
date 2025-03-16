@@ -1498,7 +1498,7 @@
   </mat-tab>
   <!-- } -->
   </mat-tab-group>
-  <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
+  <button *ngIf="!isPublicUrl" type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
     tabindex="-1" class="nav-link BtnNewStyle p-2" (click)="addTabs()">
       <i class="fa fa-plus"></i>
   </button>
