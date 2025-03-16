@@ -2011,7 +2011,7 @@
   <ng-template #autorefresh let-modal>
     <div class="modal-header">
       <h6 class="modal-title">Refresh Interval</h6>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow= false;">
       </button>
     </div>
     <div class="modal-body">
@@ -2038,7 +2038,7 @@
       </div>
     </div>
     <div class="modal-footer p-2">
-      <button type="button" (click)="modal.dismiss('Cross click');frequency = 0" class="btn ripple btn-secondary">
+      <button type="button" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow=false;" class="btn ripple btn-secondary">
         Cancel </button>
       <button (click)="autoFrequencyRefresh()" [disabled]="!frequency" class="btn btn-primary">Apply</button>
     </div>

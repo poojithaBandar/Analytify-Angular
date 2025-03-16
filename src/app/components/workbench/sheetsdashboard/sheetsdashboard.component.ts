@@ -6707,7 +6707,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
       this.workbechService.autoRefreshFrequency(object).subscribe({
         next:(data)=>{
-
+          this.toasterService.success('Dashboard refresh scheduled.','success',{ positionClass: 'toast-center-center'})
           },
         error:(error)=>{
           console.log(error)
