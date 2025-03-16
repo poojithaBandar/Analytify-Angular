@@ -4843,7 +4843,7 @@ kpiData?: KpiData;
 
   }
   removeUnSelectedSheetsFromCanvas(){
-    this.dashboard = this.dashboard.filter((item:any) => this.sheetIdsDataSet.includes(item.sheetId));
+    this.dashboard = this.dashboard.filter((item:any) => !item.sheetId || this.sheetIdsDataSet.includes(item.sheetId));
   }
   ngAfterViewChecked() {
     this.cdr.detectChanges();
