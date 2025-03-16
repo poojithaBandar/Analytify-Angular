@@ -2452,8 +2452,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     }
     this.canNavigateToAnotherPage = true;
     if(this.dashboardId){
-      this.deleteSheetFilter(item.sheetId);
+      if(this.active == 2){
+        this.deleteSheetFilter(item.sheetId);
+      } else if(this.active == 3){
       this.actionUpdateOnSheetRemove(item.sheetId);
+      }
     }
     let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
     this.databaseId.splice(popIndex, 1);
@@ -2531,7 +2534,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       "dashboard_id": this.dashboardId,
       "sheet_ids": sheetIds
     }
-    this.removeFiltersandActionsBasedOnSheetIds(obj);
+    if(this.dashboardId && sheetIds?.length > 0){
+      this.removeFiltersandActionsBasedOnSheetIds(obj);
+    } else {
+      this.loaderService.hide();
+    }
     this.dashboardNew.forEach(sheet => {
       sheet['selectedSheet'] = false;
     })
