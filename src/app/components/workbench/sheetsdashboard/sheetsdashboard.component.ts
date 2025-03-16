@@ -765,7 +765,7 @@ export class SheetsdashboardComponent {
       next:(data)=>{
         console.log('savedDashboard',data);
         if(data.refresh_required){
-          this.workbechService.autoRefreshFrequency(this.dashboardId).subscribe({
+          this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
             next:(data)=>{
               this.refreshDashboardSheetsData(data);
               },
@@ -4964,7 +4964,7 @@ kpiData?: KpiData;
       next:(data)=>{
         console.log('savedDashboard',data);
         if(data.refresh_required){
-          this.workbechService.autoRefreshFrequency(this.dashboardId).subscribe({
+          this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
             next:(data)=>{
               this.refreshDashboardSheetsData(data);
               },
