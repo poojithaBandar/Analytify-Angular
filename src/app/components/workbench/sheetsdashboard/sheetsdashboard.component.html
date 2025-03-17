@@ -1226,6 +1226,7 @@
                     [displayUnits]="item['customizeOptions']?.displayUnits"
                     [decimalPlaces]="item['customizeOptions']?.decimalPlaces" [prefix]="item['customizeOptions']?.prefix"
                     [suffix]="item['customizeOptions']?.suffix" [sortType]="item['customizeOptions']?.sortType"
+                    [mapChartOptions]="item['echartOptions']" [actionId]="actionId"
                     [drillDownIndex]="item['drillDownIndex']" [draggedDrillDownColumns]="item['drillDownHierarchy']"
                     [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)">
                   </app-insight-echart>
