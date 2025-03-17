@@ -1,6 +1,6 @@
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { SharedModule } from '../../../shared/sharedmodule';
-import { NgbDropdown, NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { WorkbenchService } from '../workbench.service';
@@ -8,12 +8,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import _ from 'lodash';
 import { FormsModule } from '@angular/forms';
-import { TableFilterDTPipe } from '../../../shared/pipes/table-filter-dt.pipe';
 
 @Component({
   selector: 'app-data-transformation',
   standalone: true,
-  imports: [SharedModule,NgbModule,DragDropModule,CommonModule,FormsModule,TableFilterDTPipe],
+  imports: [SharedModule,NgbModule,DragDropModule,CommonModule,FormsModule],
   templateUrl: './data-transformation.component.html',
   styleUrl: './data-transformation.component.scss'
 })
@@ -49,20 +48,10 @@ export class DataTransformationComponent {
   isOpen : boolean = true;
   @ViewChildren('dropdownRef') dropdowns!: QueryList<NgbDropdown>;
   searchText : string = '';
+  originalTableData = [{tables : '', columns : []}];
   isApplyDisable : boolean = true;
-  runButtonDisabled: boolean[] = [];
-  tableHeader : any[] = [];
-  tableData : any[] = [];
-  tableName : string = '';
-  isTablePreview : boolean = false;
-  totalRows : number = 0;
-  showingRows : number = 100;
-  runTableIndex : number = -1;
-  nonTransformedTables : any[] = [];
-  tableModalSearch : string = '';
-  isAllSelected : boolean = false;
 
-  constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal) {
+  constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router) {
     if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
       if (route.snapshot.params['id']) {
         this.hierarchyId = +atob(route.snapshot.params['id']);
@@ -84,7 +73,6 @@ export class DataTransformationComponent {
       this.selectedTransformations[index].push({});
     }
     this.isApplyDisable = true;
-    this.runButtonDisabled[index] = true;
     setTimeout(() => {
       if (this.dropdowns.length > 0) {
         const dropdownArray = this.dropdowns.toArray();
@@ -156,7 +144,6 @@ export class DataTransformationComponent {
     }
     
     this.checkTransformationsValid(this.selectedTransformations[index][transformationIndex].isError);
-    this.checkcurrentTableTransformationValid(index);
   }
 
   getTransformationLabel(index: number, transformationIndex: number): string {
@@ -171,7 +158,6 @@ export class DataTransformationComponent {
   removeTransformation(index: number, transformationIndex: number) {
     this.selectedTransformations[index].splice(transformationIndex, 1);
     this.checkTransformationsValid(false);
-    this.checkcurrentTableTransformationValid(index)
   }
   removeTable(index: number) {
     this.draggedTables.splice(index,1);
@@ -197,6 +183,7 @@ export class DataTransformationComponent {
       next: (response: any) => {
         console.log(response);
         this.tables = response.tables;
+        this.originalTableData = response.tables;
         this.schema = response.schema;
         this.databaseName = response.databas_name;
       },
@@ -212,7 +199,7 @@ export class DataTransformationComponent {
     });
   }
 
-  setTransformations(isInvidualTableRun:boolean, index:any, isSkip:boolean){
+  setTransformations(isInvidualTableRun : boolean){
     let transformationList : any[] = []
     this.draggedTables.forEach((table:any,index:any)=>{
       let object = {
@@ -247,32 +234,17 @@ export class DataTransformationComponent {
       }
       transformationList.push(object);
     });
-    let addTables = !isInvidualTableRun ? this.nonTransformedTables.filter(table => table.selected).map(table => table.tables) : [];
-    if(isSkip){
-      addTables = [];
-    }
     let object = {
       id : this.hierarchyId,
-      transformation_list: isInvidualTableRun ? [transformationList[index]] : transformationList,
-      ...(isInvidualTableRun && { preview: isInvidualTableRun, limit:  this.showingRows }),
-      ...(!isInvidualTableRun && addTables.length > 0 && { add_tables: addTables })
+      transformation_list: transformationList,
+      ...(isInvidualTableRun && { preview: isInvidualTableRun })
     }
     console.log('payload : ',object);
     this.workbechService.setTransformations(object).subscribe({
       next: (response: any) => {
         console.log(response);
-        if(isInvidualTableRun){
-          this.isTablePreview = true;
-          this.tableHeader = response?.data?.columns;
-          this.tableData = response?.data?.rows;
-          this.tableName = response?.data?.table_name;
-          this.totalRows = response?.data?.total_rows;
-          this.showingRows = response?.data?.rows.length;
-        } else{
-          this.isTablePreview = false;
-          let encodedId = btoa(response.parent_id.toString());
-          this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
-        }
+        let encodedId = btoa(response.parent_id.toString());
+        this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
       },
       error: (error) => {
         console.log(error);
@@ -284,6 +256,15 @@ export class DataTransformationComponent {
         })
       }
     });
+  }
+
+  getFilteredTables(){
+    this.tables = this.originalTableData;
+    if(this.searchText){
+      this.tables = this.tables.filter(table =>
+        table?.tables?.toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    }
   }
 
   checkTransformationsValid(isError: boolean) {
@@ -309,29 +290,5 @@ export class DataTransformationComponent {
       }
     }
     this.isApplyDisable = false;
-  }
-  checkcurrentTableTransformationValid(index:any){
-    if (!this.selectedTransformations[index] || this.selectedTransformations[index].length === 0) {
-      this.runButtonDisabled[index] = true;
-      return;
-    }
-  
-    this.runButtonDisabled[index] = this.selectedTransformations[index].some((transformation:any) => transformation.isError);
-  }
-  openTablesSelection(modal: any) {
-    const draggedTableNames = new Set(this.draggedTables.map(dragged => dragged.tables));
-    this.nonTransformedTables = this.tables.filter(table => !draggedTableNames.has(table.tables)).map(table => ({ ...table, selected: false }));
-    this.modalService.open(modal, {
-      centered: true,
-      windowClass: 'animate__animated animate__zoomIn',
-    });
-  }
-  toggleSelectAll() {
-    this.nonTransformedTables.forEach(table => {
-      table.selected = this.isAllSelected;
-    });
-  }
-  checkIfAllSelected() {
-    this.isAllSelected = this.nonTransformedTables.every(table => table.selected);
   }
 }
