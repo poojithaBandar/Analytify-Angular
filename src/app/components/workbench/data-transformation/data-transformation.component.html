@@ -159,7 +159,7 @@
                                     <i *ngIf="isOpen" class="fa fa-angle-left fs-18"></i>
                                     <i *ngIf="!isOpen" class="fa fa-angle-right fs-18"></i>
                                 </div>
-                                <div class="tab-content terms" id="vertical-tabContent">
+                                <div class="tab-content terms connections-layer-h" id="vertical-tabContent">
                                     <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0"> -->
                                         <!-- <div class="card card-body databse-T-H mb-0 br-0 p-0"> -->
                                             <div class="card-body example-list-drop mb-0 py-0" cdkDropList #destinationList="cdkDropList"
@@ -181,6 +181,10 @@
                                                             <a *ngIf="!(selectedTransformations[index]?.length > 0)" aria-label="add"
                                                                 class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
                                                                 <i class="fe fe-plus text-white text-sm"></i>
+                                                            </a>
+                                                            <a *ngIf="(selectedTransformations[index]?.length > 0)" ngbTooltip="Run" [class.disabled]="runButtonDisabled[index]" 
+                                                                aria-label="Run Table" class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="setTransformations(true, index)">
+                                                                <span><i class="fa fa-play"></i></span>
                                                             </a>
                                                         </div>  
                                                       </div>
@@ -211,12 +215,6 @@
                                                                 </a>
                                                             </div>
 
-                                                          <!-- Show Dropdown ONLY on the Last Transformation -->
-                                                          <!-- <a *ngIf="isLastTransformation(index, transformationIndex)" 
-                                                             aria-label="anchor" class="btn btn-sm btn-primary rounded-circle  bottom-0 end-0 m-1 plus-icon-size"
-                                                             ngbDropdownToggle data-bs-toggle="dropdown">
-                                                            <i class="fe fe-plus text-white text-sm"></i>
-                                                          </a> -->
                                                           <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                             @for (transformation of transformationTypes; track transformation.key) {
                                                                 @if(transformation.needColumn){
@@ -271,13 +269,115 @@
                            
                     </div>
                     <div class="card-footer p-3">
-                        <div class="float-end d-inline-block btn-list">
-                            <a class="btn btn-primary" [class.disabled]="isApplyDisable" (click)="setTransformations(false)">Import & Load</a>
-                            <!-- <a class="btn btn-secondary" (click)="getValue()">Agree and Continue</a> -->
+                        <div class="float-end d-inline-block btn-list mb-1">
+                            <a class="btn btn-primary" [class.disabled]="isApplyDisable" (click)="setTransformations(false,'')">Import & Load</a>
+                        </div>
+                        <div *ngIf="isTablePreview" class="col-xl-12 col-md-12 p-0 mt-1">
+                            <div class="card mb-0 border customsql-result-preview-h" >
+                                <div class="card-header bg-light d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <h6 class="mb-0 me-2">Result Preview Of {{tableName}} </h6>
+                                        <p class="border p-1 rounded-2 mb-0 bg-light">Showing {{showingRows}} rows of {{totalRows}}
+                                        </p>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center me-1">
+                                        <input [(ngModel)]="showingRows" type="number" id="input-text" placeholder="rows" class="form-control w-40" min="0">
+                                        <a class="btn btn-primary"><i class="mdi mdi-arrow-right-thick"></i></a>
+                                    </div>
+                                </div>
+                                <div class="card-body align-items-center justify-content-center p-0">
+        
+                                    <div class="table-responsive"
+                                        style="overflow-y: auto;height: 293px;">
+                                        <table
+                                            class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                                            <thead class="Result-preview-table-sticky">
+                                                <tr>
+                                                    @for(data of tableHeader;track data){
+                                                    <th>{{data}}</th>
+                                                    }
+                                                </tr>
+        
+                                            </thead>
+                                            <tbody>
+                                                @for(rows of tableData;track rows;){
+                                                <tr>
+                                                    @for(rowData of rows;track rowData;let i = $index){
+        
+                                                    <td>{{rowData}}</td>
+                                                    }
+                                                </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- ROW-1 CLOSE -->
 </div>
+
+
+
+
+<!-- <ng-template #content let-modal>
+    <div class="modal-header">
+      <h6 class="modal-title"></h6>
+      <button type="button"class="btn-close"aria-label="Close"(click)="isAllSelected = false;modal.dismiss('Cross click')">
+      </button>
+    </div>
+    <div class="modal-body sheet-filter-modal">
+        <div class="card panel panel-primary">
+            <div class="tab-menu-heading tab-menu-heading-boxed">
+                <div class="tabs-menu-boxed">
+                    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14">
+                        <li [ngbNavItem]="1" (click)="filterSearch = ''; filterDataGet()">
+                            <a ngbNavLink class="p-3">General</a>
+                            <ng-template ngbNavContent>
+                                <div class="tab-pane active" id="activetabs">
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control border-end-0 " placeholder="Search"
+                                            [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()"
+                                            aria-describedby="button-addon2">
+                                        <button class="btn btn-primary border me-2 search-icon-border-radius"
+                                            (click)="searchFilterList()" type="button" id="button-addon2"><i
+                                                class="fe fe-search "></i></button>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected"
+                                            (change)="toggleEditAllRows($event)" class="form-check-input">
+                                        <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                    </div>
+                                    <div *ngFor="let data of filterData">
+                                        @if(data? data : (boolList.includes(filterType)? true: '')){
+                                        <div class="form-check">
+                                            <input type="checkbox" name="checkbox" id="defaultCheck1"
+                                                [checked]="data.selected" [(ngModel)]="data.selected"
+                                                class="form-check-input" (click)="filterCheck($event,data.label)">
+                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </li>
+                    </ul>
+                    <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                        <div class="tab-content">
+                            <div [ngbNavOutlet]="nav"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="text-right">
+            <button type="button" class="btn ripple btn-primary me-2" (click)="modal.dismiss('Cross click')">Apply</button>
+            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">Close</button>
+        </div>
+    </div>
+  </ng-template> -->

@@ -50,6 +50,13 @@ export class DataTransformationComponent {
   searchText : string = '';
   originalTableData = [{tables : '', columns : []}];
   isApplyDisable : boolean = true;
+  runButtonDisabled: boolean[] = [];
+  tableHeader : any[] = [];
+  tableData : any[] = [];
+  tableName : string = '';
+  isTablePreview : boolean = false;
+  totalRows : number = 0;
+  showingRows : number = 0;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router) {
     if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
@@ -73,6 +80,7 @@ export class DataTransformationComponent {
       this.selectedTransformations[index].push({});
     }
     this.isApplyDisable = true;
+    this.runButtonDisabled[index] = true;
     setTimeout(() => {
       if (this.dropdowns.length > 0) {
         const dropdownArray = this.dropdowns.toArray();
@@ -144,6 +152,7 @@ export class DataTransformationComponent {
     }
     
     this.checkTransformationsValid(this.selectedTransformations[index][transformationIndex].isError);
+    this.checkcurrentTableTransformationValid(index);
   }
 
   getTransformationLabel(index: number, transformationIndex: number): string {
@@ -158,6 +167,7 @@ export class DataTransformationComponent {
   removeTransformation(index: number, transformationIndex: number) {
     this.selectedTransformations[index].splice(transformationIndex, 1);
     this.checkTransformationsValid(false);
+    this.checkcurrentTableTransformationValid(index)
   }
   removeTable(index: number) {
     this.draggedTables.splice(index,1);
@@ -199,7 +209,7 @@ export class DataTransformationComponent {
     });
   }
 
-  setTransformations(isInvidualTableRun : boolean){
+  setTransformations(isInvidualTableRun : boolean, index:any){
     let transformationList : any[] = []
     this.draggedTables.forEach((table:any,index:any)=>{
       let object = {
@@ -236,15 +246,25 @@ export class DataTransformationComponent {
     });
     let object = {
       id : this.hierarchyId,
-      transformation_list: transformationList,
+      transformation_list: isInvidualTableRun ? [transformationList[index]] : transformationList,
       ...(isInvidualTableRun && { preview: isInvidualTableRun })
     }
     console.log('payload : ',object);
     this.workbechService.setTransformations(object).subscribe({
       next: (response: any) => {
         console.log(response);
-        let encodedId = btoa(response.parent_id.toString());
-        this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+        if(isInvidualTableRun){
+          this.isTablePreview = true;
+          this.tableHeader = response?.data?.columns;
+          this.tableData = response?.data?.rows;
+          this.tableName = response?.data?.table_name;
+          this.totalRows = response?.data?.totalRows || 1000;
+          this.showingRows = response?.data?.showingRows || 100;
+        } else{
+          this.isTablePreview = false;
+          let encodedId = btoa(response.parent_id.toString());
+          this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+        }
       },
       error: (error) => {
         console.log(error);
@@ -290,5 +310,13 @@ export class DataTransformationComponent {
       }
     }
     this.isApplyDisable = false;
+  }
+  checkcurrentTableTransformationValid(index:any){
+    if (!this.selectedTransformations[index] || this.selectedTransformations[index].length === 0) {
+      this.runButtonDisabled[index] = true;
+      return;
+    }
+  
+    this.runButtonDisabled[index] = this.selectedTransformations[index].some((transformation:any) => transformation.isError);
   }
 }
