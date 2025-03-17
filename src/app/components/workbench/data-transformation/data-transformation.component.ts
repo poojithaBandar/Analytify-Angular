@@ -7,11 +7,12 @@ import { WorkbenchService } from '../workbench.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import _ from 'lodash';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-data-transformation',
   standalone: true,
-  imports: [SharedModule,NgbModule,DragDropModule,CommonModule],
+  imports: [SharedModule,NgbModule,DragDropModule,CommonModule,FormsModule],
   templateUrl: './data-transformation.component.html',
   styleUrl: './data-transformation.component.scss'
 })
@@ -25,7 +26,7 @@ export class DataTransformationComponent {
   schema : any;
   databaseName : any;
   transformationTypes = [
-    { key: 'duplicate', label: 'Remove duplicates', needColumn: false },
+    { key: 'deduplicate', label: 'Remove duplicates', needColumn: false },
     { key: 'replace_values', label: 'Handle null values', needColumn: true },
     { key: 'special_char_remove', label: 'Remove special characters', needColumn: true },
     { key: 'alter_datatypes', label: 'Change data types', needColumn: true },
@@ -40,8 +41,15 @@ export class DataTransformationComponent {
     'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 
     'nullable(date32)'
   ]
+  stringList = ['varchar', 'bp char', 'text', 'varchar2', 'NVchar2', 'long', 'char', 'Nchar', 'character varying', 'string', 'str', 
+    'nullable(varchar)', 'nullable(bp char)', 'nullable(text)', 'nullable(varchar2)', 'nullable(NVchar2)', 'nullable(long)', 'nullable(char)', 
+    'nullable(Nchar)','nullable(character varying)', 'nullable(string)', 'string', 'nullable(string)', 'array(string)', 'nullable(array(string))'
+  ]
   isOpen : boolean = true;
   @ViewChildren('dropdownRef') dropdowns!: QueryList<NgbDropdown>;
+  searchText : string = '';
+  originalTableData = [{tables : '', columns : []}];
+  isApplyDisable : boolean = true;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router) {
     if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
@@ -64,7 +72,7 @@ export class DataTransformationComponent {
     } else {
       this.selectedTransformations[index].push({});
     }
-
+    this.isApplyDisable = true;
     setTimeout(() => {
       if (this.dropdowns.length > 0) {
         const dropdownArray = this.dropdowns.toArray();
@@ -104,6 +112,10 @@ export class DataTransformationComponent {
       }
     }
     this.draggedTables.push(element);
+    if(this.draggedTables.length > 0 && Object.keys(this.selectedTransformations).length === 0){
+      this.isApplyDisable = false;
+    }
+    this.checkTransformationsValid(false);
   }
 
   setTransformationType(index: number, transformationKey: any,event: any, isDropdown :boolean, isInput:boolean,transformationIndex: number) {
@@ -111,7 +123,7 @@ export class DataTransformationComponent {
       this.selectedTransformations[index] = []; // Initialize if not set
     }
     if(!this.selectedTransformations[index][transformationIndex]){
-      this.selectedTransformations[index][transformationIndex] = {input : '',dropdown:'',keys:[],key:''}
+      this.selectedTransformations[index][transformationIndex] = {input : '',dropdown:'',keys:[],key:'',isError:false}
     }
     if(isInput){
       this.selectedTransformations[index][transformationIndex].input = event.target.value;
@@ -121,6 +133,17 @@ export class DataTransformationComponent {
       this.selectedTransformations[index][transformationIndex].key = transformationKey;
     }
 
+    if(this.selectedTransformations[index][transformationIndex].key && this.selectedTransformations[index][transformationIndex].key == 'deduplicate'){
+      this.selectedTransformations[index][transformationIndex].isError = false;
+    } else if(this.selectedTransformations[index][transformationIndex].key && ['replace_values', 'alter_datatypes'].includes(this.selectedTransformations[index][transformationIndex].key) && this.selectedTransformations[index][transformationIndex].dropdown && this.selectedTransformations[index][transformationIndex].input){
+      this.selectedTransformations[index][transformationIndex].isError = false;
+    } else if(this.selectedTransformations[index][transformationIndex].key && !['deduplicate','replace_values', 'alter_datatypes'].includes(this.selectedTransformations[index][transformationIndex].key) && this.selectedTransformations[index][transformationIndex].dropdown){
+      this.selectedTransformations[index][transformationIndex].isError = false;
+    } else{
+      this.selectedTransformations[index][transformationIndex].isError = true;
+    }
+    
+    this.checkTransformationsValid(this.selectedTransformations[index][transformationIndex].isError);
   }
 
   getTransformationLabel(index: number, transformationIndex: number): string {
@@ -134,6 +157,7 @@ export class DataTransformationComponent {
   }
   removeTransformation(index: number, transformationIndex: number) {
     this.selectedTransformations[index].splice(transformationIndex, 1);
+    this.checkTransformationsValid(false);
   }
   removeTable(index: number) {
     this.draggedTables.splice(index,1);
@@ -149,7 +173,7 @@ export class DataTransformationComponent {
       }
     })
     this.selectedTransformations = updatedTransformations;
-
+    this.checkTransformationsValid(false);
     console.log(this.draggedTables);
     console.log(this.selectedTransformations);
   }
@@ -159,6 +183,7 @@ export class DataTransformationComponent {
       next: (response: any) => {
         console.log(response);
         this.tables = response.tables;
+        this.originalTableData = response.tables;
         this.schema = response.schema;
         this.databaseName = response.databas_name;
       },
@@ -182,29 +207,31 @@ export class DataTransformationComponent {
         table : table.tables,
         transform : [] as any[]
       }
-      this.selectedTransformations[index].forEach((tableWiseTransformations:any)=>{
-        let obj = {
-          type: tableWiseTransformations.key as string,
-          keys: [] as any[]
-        }
-        if(tableWiseTransformations){
-          if(['upper','lower','title'].includes(tableWiseTransformations.key)){
-            obj.type = 'case_change';
-            obj.keys.push(tableWiseTransformations.dropdown);
-            obj.keys.push(tableWiseTransformations.key);
-          } else if(tableWiseTransformations.key === 'replace_values'){
-            obj.keys.push(tableWiseTransformations.dropdown);
-            obj.keys.push(null);
-            obj.keys.push(tableWiseTransformations.input);
-          } else if(tableWiseTransformations.key === 'alter_datatypes'){
-            obj.keys.push(tableWiseTransformations.dropdown);
-            obj.keys.push(tableWiseTransformations.input);
-          } else if(tableWiseTransformations.key === 'special_char_remove'){
-            obj.keys.push(tableWiseTransformations.dropdown);
+      if(this.selectedTransformations[index]){
+        this.selectedTransformations[index].forEach((tableWiseTransformations:any)=>{ 
+          let obj = {
+            type: tableWiseTransformations.key as string,
+            keys: [] as any[]
           }
-        }
-        object.transform.push(obj)
-      });
+          if(tableWiseTransformations){
+            if(['upper','lower','title'].includes(tableWiseTransformations.key)){
+              obj.type = 'case_change';
+              obj.keys.push(tableWiseTransformations.dropdown);
+              obj.keys.push(tableWiseTransformations.key);
+            } else if(tableWiseTransformations.key === 'replace_values'){
+              obj.keys.push(tableWiseTransformations.dropdown);
+              obj.keys.push(null);
+              obj.keys.push(tableWiseTransformations.input);
+            } else if(tableWiseTransformations.key === 'alter_datatypes'){
+              obj.keys.push(tableWiseTransformations.dropdown);
+              obj.keys.push(tableWiseTransformations.input);
+            } else if(tableWiseTransformations.key === 'special_char_remove'){
+              obj.keys.push(tableWiseTransformations.dropdown);
+            }
+          }
+          object.transform.push(obj)
+        });
+      }
       transformationList.push(object);
     });
     let object = {
@@ -229,5 +256,39 @@ export class DataTransformationComponent {
         })
       }
     });
+  }
+
+  getFilteredTables(){
+    this.tables = this.originalTableData;
+    if(this.searchText){
+      this.tables = this.tables.filter(table =>
+        table?.tables?.toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    }
+  }
+
+  checkTransformationsValid(isError: boolean) {
+    if (this.draggedTables.length === 0 || isError) {
+      this.isApplyDisable = true;
+      return;
+    }
+
+    for (const key of Object.keys(this.selectedTransformations)) {
+      for (const transformation of this.selectedTransformations[key]) {
+        if (!transformation.key) {
+          this.isApplyDisable = true;
+          return;
+        }
+        if (transformation.key && ['replace_values', 'alter_datatypes'].includes(transformation.key) && (!transformation.dropdown || !transformation.input)) {
+          this.isApplyDisable = true;
+          return;
+        }
+        if (transformation.key &&!['deduplicate', 'replace_values', 'alter_datatypes'].includes(transformation.key) && !transformation.dropdown) {
+          this.isApplyDisable = true;
+          return;
+        }
+      }
+    }
+    this.isApplyDisable = false;
   }
 }

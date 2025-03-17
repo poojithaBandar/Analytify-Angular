@@ -54,6 +54,8 @@ import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
 import 'pivottable';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 import { cloneDeep } from 'lodash';
+import { FixedSizeVirtualScrollStrategy, ScrollingModule, VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
+import { TestPipe } from '../../../test.pipe';
 
 interface TableRow {
   [key: string]: any;
@@ -90,11 +92,16 @@ interface KpiData {
   kpiDecimalPlaces: number;
 }
 declare var $:any;
-
+export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
+  constructor() {
+    super(50, 250, 500);
+  }
+}
 @Component({
   selector: 'app-sheetsdashboard',
   standalone: true,
   providers: [
+    {provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy},
     {
       provide: NGX_ECHARTS_CONFIG,
       useFactory: () => ({ echarts: echarts }),
@@ -103,7 +110,7 @@ declare var $:any;
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -204,7 +211,6 @@ export class SheetsdashboardComponent {
   drillThroughDatabaseName : any = '';
 
   calendarTotalHeight : string = '400px';
-  
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
 
@@ -1164,9 +1170,11 @@ export class SheetsdashboardComponent {
         let tabNames;
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
-          tabNames = this.sheetTabs.map(tab => tab.name);
+          tabNames = this.sheetTabs.map(tab => tab.name?.trim());
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
-          if(this.hasDuplicates(tabNames)){
+          if(this.validateTabs()){
+            throw { error: { message: "Tab title cannot be empty." } };
+          } else if(this.hasDuplicates(tabNames)){
             throw { error: { message: "Duplicate tab names are not allowed." } };
           }
         }
@@ -1408,10 +1416,17 @@ export class SheetsdashboardComponent {
         let tabNames = [];
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
-          tabNames = this.sheetTabs.map(tab => tab.name);
+          tabNames = this.sheetTabs.map(tab => tab.name?.trim());
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
         }
-        if(this.hasDuplicates(tabNames)){
+        if(this.validateTabs()){
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: 'Tab title cannot be empty.',
+            width: '400px',
+          })
+        }else if(this.hasDuplicates(tabNames)){
           Swal.fire({
             icon: 'error',
             title: 'oops!',
@@ -2473,8 +2488,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     }
     this.canNavigateToAnotherPage = true;
     if(this.dashboardId){
-      this.deleteSheetFilter(item.sheetId);
+      if(this.active == 2){
+        this.deleteSheetFilter(item.sheetId);
+      } else if(this.active == 3){
       this.actionUpdateOnSheetRemove(item.sheetId);
+      }
     }
     let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
     this.databaseId.splice(popIndex, 1);
@@ -2522,31 +2540,41 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   }
 
   resetDashboard() {
+    let sheetIds =this.dashboard.map((sheet: any) => sheet.sheetId);
     this.dashboard = [];
     this.loaderService.show();
-    this.qrySetId = [];
-    this.databaseId = [];
+    // this.qrySetId = [];
+    // this.databaseId = [];
     // this.fileId = [];
     this.disableDashboardUpdate = true;
-    const idsArray = this.DahboardListFilters.map((obj:any) => obj.dashboard_filter_id);
-    const actionsIds = this.drillThroughActionList.map((Object : any)=> Object.drill_id);
-    this.deleteDashboardAction(actionsIds);
-    this.workbechService.deleteDashbaordFilter({"filter_id" : idsArray}).subscribe({
-      next:(data)=>{
-        console.log(data);
-        this.DahboardListFilters =  [];
-        this.loaderService.hide();
-    },
-      error:(error)=>{
-        console.log(error)
-        Swal.fire({
-          icon: 'error',
-          title: 'oops!',
-          text: error.error.message,
-          width: '400px',
-        })
-      }
-    });
+    // const idsArray = this.DahboardListFilters.map((obj:any) => obj.dashboard_filter_id);
+    // const actionsIds = this.drillThroughActionList.map((Object : any)=> Object.drill_id);
+    // this.deleteDashboardAction(actionsIds);
+    // this.workbechService.deleteDashbaordFilter({"filter_id" : idsArray}).subscribe({
+    //   next:(data)=>{
+    //     console.log(data);
+    //     this.DahboardListFilters =  [];
+    //     this.loaderService.hide();
+    // },
+    //   error:(error)=>{
+    //     console.log(error)
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'oops!',
+    //       text: error.error.message,
+    //       width: '400px',
+    //     })
+    //   }
+    // });
+    let obj = {
+      "dashboard_id": this.dashboardId,
+      "sheet_ids": sheetIds
+    }
+    if(this.dashboardId && sheetIds?.length > 0){
+      this.removeFiltersandActionsBasedOnSheetIds(obj);
+    } else {
+      this.loaderService.hide();
+    }
     this.dashboardNew.forEach(sheet => {
       sheet['selectedSheet'] = false;
     })
@@ -2788,6 +2816,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     } else {
       console.error('Gridster element not found!');
     }
+    this.cdr.detectChanges();
   }
   initializeChart(item: DashboardItem): void {
     const chartElement = document.querySelector("#chart"); // Adjust selector if necessary
@@ -3263,6 +3292,9 @@ getColumnSelectionLabel(filterList: any): string {
     return 'Multiple Values'; // Display 'Multiple Values' if more than one column is selected
   }
 }
+// trackByFn(index: number, item: any): string {
+//   return item.label; // Ensures efficient rendering
+// }
 updateSelectedRows() {
   this.selectedRows = this.sheetsFilterNames
     .flatMap((parent: any) => parent.sheets)
@@ -4854,7 +4886,7 @@ kpiData?: KpiData;
 
   }
   removeUnSelectedSheetsFromCanvas(){
-    this.dashboard = this.dashboard.filter((item:any) => this.sheetIdsDataSet.includes(item.sheetId));
+    this.dashboard = this.dashboard.filter((item:any) => !item.sheetId || this.sheetIdsDataSet.includes(item.sheetId));
   }
   ngAfterViewChecked() {
     this.cdr.detectChanges();
@@ -6683,9 +6715,50 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       });
     }
 
-    removeTab(index: number) {
-      this.sheetTabs.splice(index, 1);
-    }
+  removeTab(index: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Filters on Tab will be deleted .You won't be able to revert this!",
+      icon: 'warning',
+      width: '300px',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let sheetIds =this.sheetTabs[index].dashboard.map((sheet: any) => sheet.sheetId);
+          this.sheetTabs.splice(index, 1);
+        if (this.dashboardId && sheetIds?.length > 0) {
+          this.loaderService.show();
+          let obj = {
+            "dashboard_id": this.dashboardId,
+            "sheet_ids": sheetIds
+          }
+          this.removeFiltersandActionsBasedOnSheetIds(obj);
+        }
+        this.canNavigateToAnotherPage = true;
+      }
+    })
+  }
+
+  removeFiltersandActionsBasedOnSheetIds(obj : any){
+    this.workbechService.clearTabSheetFilterActions(obj).subscribe({
+      next: (data: any) => {
+        this.loaderService.hide();
+        this.toasterService.info('Filters / Actions on Tab are deleted.','info',{ positionClass: 'toast-top-center'});
+        if(this.active == 2){
+          this.getDashboardFilterredList(true);
+        } else if(this.active == 3) {
+        this.getDrillThroughActionList();
+        }
+      },
+      error: (error) => {
+        this.loaderService.hide();
+        console.log(error)
+      }
+    })
+  }
   
     enableEdit(index: number) {
       this.sheetTabs[index].isEditing = true;
@@ -6726,7 +6799,14 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       if(this.sheetTabs && this.sheetTabs.length > 0){
         tabNames = this.sheetTabs.map(tab => tab.name);
       }
-      if(this.hasDuplicates(tabNames)){
+      if(this.validateTabs()){
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: 'Tab name cannot be empty.',
+          width: '400px',
+        })
+      } else if(this.hasDuplicates(tabNames)){
         Swal.fire({
           icon: 'error',
           title: 'oops!',
@@ -6736,6 +6816,9 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       } else {
       this.sheetTabs[index].isEditing = false;
       }
+    }
+    validateTabs(): boolean {
+      return this.sheetTabs.some(sheet => !sheet.name || sheet.name.trim() === "");
     }
 }
 // export interface CustomGridsterItem extends GridsterItem {
