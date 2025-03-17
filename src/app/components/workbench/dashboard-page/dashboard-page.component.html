@@ -228,38 +228,38 @@
         </button>
       </div>
 </ng-template>
-
+ 
 <ng-template #autorefresh let-modal>
   <div class="modal-header">
     <h6 class="modal-title">Refresh Interval</h6>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');refreshNow= false;frequency=0;">
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow= false;">
     </button>
   </div>
   <div class="modal-body">
     <div class="row text-wrap">
+      <div>
       <label class="form-label">Frequency <span class="text-red">*</span><i
           ngbTooltip="Periodical automatted time interval to refresh/sync dashboard."
           class="icon icon-info ms-1 cursor-pointer"></i></label>
         <select [(ngModel)]="frequency" class="form-control cursor-pointer">
-          <option value="1"> 1</option>
-          <option value="2"> 2</option>
-          <option value="5"> 5</option>
-          <option value="10"> 10</option>
-          <option value="15"> 15</option>
-          <option value="24"> 24</option>
-          <option value="36"> 36</option>
-          <option value="48"> 48</option>
-          <option value=""> 60</option>
+          <option value="1"> 1 hour</option>
+          <option value="2"> 2 hours</option>
+          <option value="5"> 5 hours</option>
+          <option value="10"> 10 hours</option>
+          <option value="15"> 15 hours</option>
+          <option value="24"> 24 hours</option>
+          <option value="36"> 36 hours</option>
+          <option value="48"> 48 hours</option>
+          <option value=""> 60 hours</option>
         </select>
-        <div class="">
-          <label class="form-label">Refresh Now <span class="text-red">*</span><i
+          <label class="form-label">Refresh Now <i
             ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
           <input type="checkbox" [(ngModel)]="refreshNow" />
         </div>
     </div>
   </div>
   <div class="modal-footer p-2">
-    <button type="button" (click)="modal.dismiss('Cross click');refreshNow= false;frequency=0;" class="btn ripple btn-secondary">
+    <button type="button" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow=false;" class="btn ripple btn-secondary">
       Cancel </button>
     <button (click)="autoFrequencyRefresh()" [disabled]="!frequency" class="btn btn-primary">Apply</button>
   </div>
