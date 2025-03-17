@@ -331,7 +331,7 @@ export class DataTransformationComponent {
       table.selected = this.isAllSelected;
     });
   }
-  checkIfAllSelected() {
+  checkIfAllSelected() { 
     this.isAllSelected = this.nonTransformedTables.every(table => table.selected);
   }
 }
