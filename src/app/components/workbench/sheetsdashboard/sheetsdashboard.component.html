@@ -1028,7 +1028,7 @@
                         </div> -->
                         </div>
 
-                        <div class="min-w-fit-content ms-1">              
+                        <div class="min-w-fit-content ms-1 d-flex">              
                         <span *ngIf="!isPublicUrl" ngbTooltip="Edit Title" class="title-editor ms-1" (click)="toggleEditor()">
                           <button  class="btn btn-primary me-1"><i class="fa fa-pencil"></i></button>
                         </span>
@@ -1039,6 +1039,14 @@
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button>
                             <button *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
+                            <div class=" p-1" ngbDropdown>
+                              <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
+                                aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                              </a>
+                              <div class="dropdown-menu mt-2" ngbDropdownMenu>
+                                <button *ngIf="!isPublicUrl && dashboardId" type="button" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button>
+                              </div>
+                              </div>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
                             <div *ngIf="isPublicUrl" class="dashboard-option">
                               <div class="d-flex justify-content-end p-1" ngbDropdown>
@@ -1954,19 +1962,6 @@
       <div  class="row">
         <div class="col-5">
           <p class="mb-0">Position </p>
-          <!-- <div class="form-group mb-1">
-            <select class="form-select form-select select2" [(ngModel)]="selectedIconPosition" (change)="changePosition($event)">
-              <option value="top-left">Top Left</option>
-              <option value="top-middle">Top Middle</option>
-              <option value="top-right">Top Right</option>
-              <option value="left-middle">Left Middle</option>
-              <option value="center">Center</option>
-              <option value="right-middle">Right Middle</option>
-              <option value="bottom-left">Bottom Left</option>
-              <option value="bottom-middle">Bottom Middle</option>
-              <option value="bottom-right">Bottom Right</option>
-            </select>
-         </div> -->
          <div class="card mb-0 b-0 p-0 shadow-none">
           <div class="dropdown" ngbDropdown>
             <a href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button" 
@@ -2016,6 +2011,45 @@
     </div>
     
   </ng-template>
+
+  
+  <ng-template #autorefresh let-modal>
+    <div class="modal-header">
+      <h6 class="modal-title">Refresh Interval</h6>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow= false;">
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row text-wrap">
+        <div>
+        <label class="form-label">Frequency <span class="text-red">*</span><i
+            ngbTooltip="Periodical automatted time interval to refresh/sync dashboard."
+            class="icon icon-info ms-1 cursor-pointer"></i></label>
+          <select [(ngModel)]="frequency" class="form-control cursor-pointer">
+            <option value="1"> 1 hour</option>
+            <option value="2"> 2 hours</option>
+            <option value="5"> 5 hours</option>
+            <option value="10"> 10 hours</option>
+            <option value="15"> 15 hours</option>
+            <option value="24"> 24 hours</option>
+            <option value="36"> 36 hours</option>
+            <option value="48"> 48 hours</option>
+            <option value=""> 60 hours</option>
+          </select>
+            <label class="form-label">Refresh Now <i
+              ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
+            <input type="checkbox" [(ngModel)]="refreshNow" />
+          </div>
+      </div>
+    </div>
+    <div class="modal-footer p-2">
+      <button type="button" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow=false;" class="btn ripple btn-secondary">
+        Cancel </button>
+      <button (click)="autoFrequencyRefresh()" [disabled]="!frequency" class="btn btn-primary">Apply</button>
+    </div>
+  
+  </ng-template>
+
 
 
 

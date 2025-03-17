@@ -45,7 +45,8 @@ export class DashboardPageComponent implements OnInit{
   port:any;
   host:any; 
   @ViewChild('propertiesModal') propertiesModal : any;
-
+  frequency! : number;
+  refreshNow: boolean = false;
   
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
   private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
@@ -376,5 +377,33 @@ publishDashboard(){
 
     }
   })
+}
+autoFrequencyRefresh(){
+  let object = {
+    "dashboard_id": this.dashboardId,
+    "is_scheduled": true,
+    "frequency": this.frequency,
+    "refresh_now": this.refreshNow
+}
+  this.workbechService.autoRefreshFrequency(object).subscribe({
+    next:(data)=>{
+      this.toasterservice.success('Dashboard refresh scheduled','success',{ positionClass: 'toast-center-center'})
+      },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  });
+}
+
+viewSchedular(dashboardId:any,modal: any){
+  this.modalService.open(modal);
+  this.dashboardId = dashboardId;
+
 }
 }
