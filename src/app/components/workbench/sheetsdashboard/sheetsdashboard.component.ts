@@ -187,7 +187,7 @@ export class SheetsdashboardComponent {
   usersForUpdateDashboard:[] =[];
   tableNameSelectedForFilter:any;
   isPanelHidden: boolean = true;
-
+  frequency! : number;
 
   tableItemsPerPage:any;
   tablePageNo = 1;
@@ -195,8 +195,8 @@ export class SheetsdashboardComponent {
   tableTotalItems:any;
   tableSearch:any;
   isDraggingDisabled = false;
-  isSampleDashboard: boolean = false;;
-
+  isSampleDashboard: boolean = false;
+  refreshNow: boolean = false;
   sourceSheetId : any = 0;
   targetSheetIds : any[] = [];
   drillThroughQuerySetId : any[] = [];
@@ -770,6 +770,22 @@ export class SheetsdashboardComponent {
     this.workbechService.getSavedDashboardData(obj).subscribe({
       next:(data)=>{
         console.log('savedDashboard',data);
+        if(data.refresh_required){
+          this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
+            next:(data)=>{
+              this.refreshDashboardSheetsData(data);
+              },
+            error:(error)=>{
+              console.log(error)
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.message,
+                width: '400px',
+              })
+            }
+          });
+        }
         this.dashboardName=data.dashboard_name;
         this.isSampleDashboard = data.is_sample;
         this.heightGrid = data.height;
@@ -1444,6 +1460,25 @@ export class SheetsdashboardComponent {
     //   delete obj.server_id;
     //   obj['file_id'] = this.fileId;
     // }
+    if(isLiveReloadData){
+      this.workbechService.updateDashboardOnSchedularLoad(obj,this.dashboardId).subscribe({
+        next:(data)=>{
+          console.log(data);
+          this.dashboardsheetsIdArray = this.sheetsIdArray;
+          this.canNavigateToAnotherPage = false;
+          this.endMethod(); 
+        },
+        error:(error)=>{
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error?.error?.message,
+            width: '400px',
+          });
+        }
+      })
+    } else {
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
@@ -1471,6 +1506,7 @@ export class SheetsdashboardComponent {
         });
       }
     })
+  }
   }
 }
   }
@@ -4959,6 +4995,22 @@ kpiData?: KpiData;
     this.workbechService.getSavedDashboardDataPublic(obj).subscribe({
       next:(data)=>{
         console.log('savedDashboard',data);
+        if(data.refresh_required){
+          this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
+            next:(data)=>{
+              this.refreshDashboardSheetsData(data);
+              },
+            error:(error)=>{
+              console.log(error)
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.message,
+                width: '400px',
+              })
+            }
+          });
+        }
         this.dashboardName=data.dashboard_name;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
@@ -6599,6 +6651,49 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     // }
     sheetFilters : any[] = [];
     // [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
+
+    refreshDashboardSheetsData(data: any){
+      let isLastIndex = false;
+      data.forEach((item: any,index:any) => {
+      this.filteredRowData = [];
+      this.filteredColumnData = [];
+      this.tablePreviewColumn.push(item.columns);
+      this.tablePreviewRow.push(item.rows);
+      item.columns.forEach((res:any) => {      
+        let obj1={
+          name:res.column,
+          values: res.result
+        }
+        this.filteredColumnData.push(obj1);
+        console.log('filtercolumn',this.filteredColumnData)
+      });
+      item.rows.forEach((res:any) => {
+        let obj={
+          name: res.column,
+          data: res.result
+        }
+        this.filteredRowData.push(obj);
+        console.log('filterowData',this.filteredRowData)
+      });
+      if(index == data.length - 1){
+        isLastIndex = true;
+      } else {
+        isLastIndex = false;
+      }
+      if(item.chart_id === 1){
+        this.pageChangeTableDisplay(item,1,true,isLastIndex);
+        this.tablePage=1
+      }else{
+      this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard);
+        })
+      }
+      }
+    });
+    }
+
     refreshDashboard(){
       let object ={
         "dashboard_id": this.dashboardId
@@ -6606,45 +6701,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       this.workbechService.refreshDashboardData(object).subscribe({
         next:(data)=>{
           console.log(data);
-          let isLastIndex = false;
-          data.forEach((item: any,index:any) => {
-          this.filteredRowData = [];
-          this.filteredColumnData = [];
-          this.tablePreviewColumn.push(item.columns);
-          this.tablePreviewRow.push(item.rows);
-          item.columns.forEach((res:any) => {      
-            let obj1={
-              name:res.column,
-              values: res.result
-            }
-            this.filteredColumnData.push(obj1);
-            console.log('filtercolumn',this.filteredColumnData)
-          });
-          item.rows.forEach((res:any) => {
-            let obj={
-              name: res.column,
-              data: res.result
-            }
-            this.filteredRowData.push(obj);
-            console.log('filterowData',this.filteredRowData)
-          });
-          if(index == data.length - 1){
-            isLastIndex = true;
-          } else {
-            isLastIndex = false;
-          }
-          if(item.chart_id === 1){
-            this.pageChangeTableDisplay(item,1,true,isLastIndex);
-            this.tablePage=1
-          }else{
-          this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard);
-          if (this.displayTabs) {
-            this.sheetTabs.forEach((tabData: any) => {
-              this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard);
-            })
-          }
-          }
-        });
+          this.refreshDashboardSheetsData(data);
           },
         error:(error)=>{
           console.log(error)
@@ -6705,6 +6762,36 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   
     enableEdit(index: number) {
       this.sheetTabs[index].isEditing = true;
+    }
+
+    autoRefreshInterval(modal: any){
+        this.modalService.open(modal, {
+          centered: true,size:'md',
+          windowClass: 'animate__animated animate__zoomIn',
+        });
+    }
+
+    autoFrequencyRefresh(){
+      let object = {
+        "dashboard_id": this.dashboardId,
+        "is_scheduled": true,
+        "frequency": this.frequency,
+        "refresh_now": this.refreshNow
+    }
+      this.workbechService.autoRefreshFrequency(object).subscribe({
+        next:(data)=>{
+          this.toasterService.success('Dashboard refresh scheduled.','success',{ positionClass: 'toast-center-center'})
+          },
+        error:(error)=>{
+          console.log(error)
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      });
     }
   
     disableEdit(index: number) {
