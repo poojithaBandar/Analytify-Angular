@@ -6644,6 +6644,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }).then((result) => {
       if (result.isConfirmed) {
         let sheetIds =this.sheetTabs[index].dashboard.map((sheet: any) => sheet.sheetId);
+        this.setDashboardNewSheetsArray(sheetIds);
           this.sheetTabs.splice(index, 1);
         if (this.dashboardId && sheetIds?.length > 0) {
           this.loaderService.show();
@@ -6656,6 +6657,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.canNavigateToAnotherPage = true;
       }
     })
+  }
+
+  setDashboardNewSheetsArray(sheetIds: any[]){
+    this.dashboardNew = this.dashboardNew.map(item => ({
+      ...item,
+      selectedSheet: sheetIds.includes(item['sheetId']) ? false : item['selectedSheet']
+    }));
   }
 
   removeFiltersandActionsBasedOnSheetIds(obj : any){
