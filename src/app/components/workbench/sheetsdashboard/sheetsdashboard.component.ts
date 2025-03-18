@@ -826,238 +826,252 @@ export class SheetsdashboardComponent {
           }
         }
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
-        this.dashboard.forEach((sheet : any)=>{
-          // console.log('Before sanitization:', sheet.data?.sheetTagName);
-          if(sheet.data?.sheetTagName){
-            this.sheetTagTitle[sheet.data?.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
-          }
-          if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
-          sheet.chartOptions.chart.events = {
-            markerClick: (event: any, chartContext: any, config: any) => {
-              let selectedXValue;
-              if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
-                selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
-              } else {
-                selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
-              }
-              if(self.actionId && sheet.sheetId === self.sourceSheetId){
-                self.setDrillThrough(selectedXValue, sheet);  
-              }
-            },
-            dataPointSelection: function (event: any, chartContext: any, config: any) {
-              let selectedXValue;
-              if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
-                selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
-              } else {
-                selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
-              }
-              if(self.actionId && sheet.sheetId === self.sourceSheetId){
-                self.setDrillThrough(selectedXValue, sheet);  
-              }            
-              if (sheet.drillDownIndex < sheet.drillDownHierarchy?.length - 1) {
-                // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
-                console.log('X-axis value:', selectedXValue);
-                let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
-                sheet.drillDownIndex++;
-                let obj = { [nestedKey]: selectedXValue };
-                sheet.drillDownObject.push(obj);
-                self.dataExtraction(sheet);
-              }
-            },
-            mounted: function(chartContext:any, config:any) {
-              if (sheet.chartId == 28) {
-                let color = sheet?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
-                const applyStyles = () => {
-                  const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
-                  if (valueElement) {
-                    valueElement.style.fill = color;
-                    valueElement.style.setProperty('fill', color, 'important');
-                  }
-    
-                  const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
-                  if (nameElement) {
-                    nameElement.style.fill = color;
-                    nameElement.style.setProperty('fill', color, 'important');
-                  }
-                };
-                // Initial styling
-                applyStyles();
-    
-                // Monitor DOM for changes
-                const observer = new MutationObserver(() => {
-                  applyStyles();
-                });
-                const chartContainer = document.querySelector('.apexcharts-inner');
-                if (chartContainer) {
-                  observer.observe(chartContainer, { childList: true, subtree: true });
-                }
-              }
-            },
-            updated: function(chartContext:any, config:any) {
-              if (sheet.chartId == 28) {
-                let color = sheet?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
-                const applyStyles = () => {
-                  const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
-                  if (valueElement) {
-                    valueElement.style.fill = color;
-                    valueElement.style.setProperty('fill', color, 'important');
-                  }
-    
-                  const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
-                  if (nameElement) {
-                    nameElement.style.fill = color;
-                    nameElement.style.setProperty('fill', color, 'important');
-                  }
-                };
-                // Initial styling
-                applyStyles();
-    
-                // Monitor DOM for changes
-                const observer = new MutationObserver(() => {
-                  applyStyles();
-                });
-                const chartContainer = document.querySelector('.apexcharts-inner');
-                if (chartContainer) {
-                  observer.observe(chartContainer, { childList: true, subtree: true });
-                }
-              }
+        this.dynamicOptionsUpdateinDashboard(this.dashboard, false);
+        if(this.displayTabs){
+          this.sheetTabs.forEach(tabData => {
+            if(tabData.dashboard && tabData.dashboard.length > 0){
+              this.dynamicOptionsUpdateinDashboard(tabData.dashboard, false);
             }
-          };
-          } else if (sheet.chartId == 29) {
-            this.chartType = 'map';
-            sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
-              this.chartsColumnData.push(data.name);
-              this.chartsRowData.push(data.value);
-            });
-            this.dualAxisColumnData = [{
-              name: sheet?.column_Data[0][0],
-              values: this.chartsColumnData
-            }]
-            this.dualAxisRowData = [{
-              name: sheet?.row_Data[0][0],
-              data: this.chartsRowData
-            }]
-          sheet.echartOptions.tooltip= {
-            formatter: (params: any) => {
-              const { name, data } = params;
-              if (data) {
-                const keys = Object.keys(data);
-          const values = Object.values(data);
-          let formattedString = '';
-          keys.forEach((key, index) => {
-            if(key)
-            formattedString += `${key}: ${values[index]}<br/>`;
           });
-    
-          return formattedString;
-               
-              } else {
-                return `${name}: No Data`;
-              }
-            }
         }
-      }
-          // console.log('After sanitization:', sheet.data.sheetTagName);
-          this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
-          if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
-            sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
-              return w.globals.seriesTotals.reduce((a:any, b:any) => {
-                return +a + b
-              }, 0).toFixed(this.donutDecimalPlaces);
-            };
-          }
-          let chartId : number = sheet['chartId'];
-          const numberFormat = sheet?.numberFormat;
-          const isEcharts = sheet?.isEChart;
-          this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
-          if(chartId == 11){
-            sheet.echartOptions.tooltip.formatter =  function (params: any) {
-              const date = params.data[0];
-              const value = params.data[1];
-              return `Date: ${date}<br/>Value: ${value}`;
-            };
-            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
-          }
-          if(chartId == 9){
-            let transformedData :any =[];
-            let headers: string[] = [];
-  
-           let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
-           let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
-          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
-          sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
-            headers.push(colObj.column);
-          });
-      
-          sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
-            headers.push(rowObj.col);
-          });
-          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
-            headers.push(colObj.col);
-          });
-      
-          transformedData.push(headers); 
-          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
-          let numRows = 0;
-          if (sheet.pivotData?.pivotColData?.length > 0) {
-              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
-          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
-              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
-          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
-              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
-          }
-          for (let i = 0; i < numRows; i++) {
-            let rowArray: any[] = []; 
-            sheet.pivotData?.pivotColData.forEach((colObj: any) => {
-              rowArray.push(colObj.result_data[i]);
-            });
-            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
-              rowArray.push(rowObj.result_data[i]);
-            });
-            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
-              rowArray.push(rowObj.result_data[i]);
-            });
-  
-            transformedData.push(rowArray);
-          }
-          sheet.transformedData = transformedData;
-          sheet.columnKeys = columnKeys;
-          sheet.rowKeys = rowKeys;
-          sheet.valueKeys = valueKeys;
-            setTimeout(() => {
-            // if (this.pivotContainer && this.pivotContainer.nativeElement) {
-              const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
-              if (pivotTables.length !== this.pivotContainers.length) {
-                console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
-              }
-              this.pivotContainers.forEach((pivotContainer, index) => {
-              if (pivotContainer && pivotContainer.nativeElement) {
-                const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
-                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-                  rows: pivotData['columnKeys'],  
-                  cols: pivotData['valueKeys'], 
-                      aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                      rendererName: "Table"
-                    });
-            }   
-          });     
-          }, 1000);
-        }
-          if(chartId == 1){
-            if(sheet?.tableData?.tableItemsPerPage){
-              sheet.tableData.tableItemsPerPage = 10;
-            }
-            if(sheet?.tableData?.tablePage){
-              sheet.tableData.tablePage = 1;
-            }
-          }
-        })
-        console.log(this.sheetTagTitle);
-        console.log(this.dashboard);
       },
       error:(error)=>{
         console.log(error)
+      }
+    })
+  }
+
+  dynamicOptionsUpdateinDashboard(dashboard: any, isPublic: boolean){
+    let self = this;
+    dashboard.forEach((sheet : any)=>{
+      // console.log('Before sanitization:', sheet.data?.sheetTagName);
+      if(sheet.data?.sheetTagName){
+        this.sheetTagTitle[sheet.data?.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
+      }
+      if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
+      sheet.chartOptions.chart.events = {
+        markerClick: (event: any, chartContext: any, config: any) => {
+          let selectedXValue;
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
+            selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
+          } else {
+            selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
+          }
+          if(self.actionId && sheet.sheetId === self.sourceSheetId){
+            self.setDrillThrough(selectedXValue, sheet);  
+          }
+        },
+        dataPointSelection: function (event: any, chartContext: any, config: any) {
+          let selectedXValue;
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
+            selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
+          } else {
+            selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
+          }
+          if(self.actionId && sheet.sheetId === self.sourceSheetId){
+            self.setDrillThrough(selectedXValue, sheet);  
+          }            
+          if (sheet.drillDownIndex < sheet.drillDownHierarchy?.length - 1) {
+            // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
+            console.log('X-axis value:', selectedXValue);
+            let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
+            sheet.drillDownIndex++;
+            let obj = { [nestedKey]: selectedXValue };
+            sheet.drillDownObject.push(obj);
+            if(isPublic){
+              self.publicDataExtraction(sheet);
+            } else {
+            self.dataExtraction(sheet);
+            }
+          }
+        },
+        mounted: function(chartContext:any, config:any) {
+          if (sheet.chartId == 28) {
+            let color = sheet?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+            const applyStyles = () => {
+              const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+              if (valueElement) {
+                valueElement.style.fill = color;
+                valueElement.style.setProperty('fill', color, 'important');
+              }
+
+              const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+              if (nameElement) {
+                nameElement.style.fill = color;
+                nameElement.style.setProperty('fill', color, 'important');
+              }
+            };
+            // Initial styling
+            applyStyles();
+
+            // Monitor DOM for changes
+            const observer = new MutationObserver(() => {
+              applyStyles();
+            });
+            const chartContainer = document.querySelector('.apexcharts-inner');
+            if (chartContainer) {
+              observer.observe(chartContainer, { childList: true, subtree: true });
+            }
+          }
+        },
+        updated: function(chartContext:any, config:any) {
+          if (sheet.chartId == 28) {
+            let color = sheet?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+            const applyStyles = () => {
+              const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+              if (valueElement) {
+                valueElement.style.fill = color;
+                valueElement.style.setProperty('fill', color, 'important');
+              }
+
+              const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+              if (nameElement) {
+                nameElement.style.fill = color;
+                nameElement.style.setProperty('fill', color, 'important');
+              }
+            };
+            // Initial styling
+            applyStyles();
+
+            // Monitor DOM for changes
+            const observer = new MutationObserver(() => {
+              applyStyles();
+            });
+            const chartContainer = document.querySelector('.apexcharts-inner');
+            if (chartContainer) {
+              observer.observe(chartContainer, { childList: true, subtree: true });
+            }
+          }
+        }
+      };
+      } else if (sheet.chartId == 29) {
+        this.chartType = 'map';
+        sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
+          this.chartsColumnData.push(data.name);
+          this.chartsRowData.push(data.value);
+        });
+        this.dualAxisColumnData = [{
+          name: sheet?.column_Data[0][0],
+          values: this.chartsColumnData
+        }]
+        this.dualAxisRowData = [{
+          name: sheet?.row_Data[0][0],
+          data: this.chartsRowData
+        }]
+      sheet.echartOptions.tooltip= {
+        formatter: (params: any) => {
+          const { name, data } = params;
+          if (data) {
+            const keys = Object.keys(data);
+      const values = Object.values(data);
+      let formattedString = '';
+      keys.forEach((key, index) => {
+        if(key)
+        formattedString += `${key}: ${values[index]}<br/>`;
+      });
+
+      return formattedString;
+           
+          } else {
+            return `${name}: No Data`;
+          }
+        }
+    }
+  }
+      // console.log('After sanitization:', sheet.data.sheetTagName);
+      this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
+      if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
+        sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
+          return w.globals.seriesTotals.reduce((a:any, b:any) => {
+            return +a + b
+          }, 0).toFixed(this.donutDecimalPlaces);
+        };
+      }
+      let chartId : number = sheet['chartId'];
+      const numberFormat = sheet?.numberFormat;
+      const isEcharts = sheet?.isEChart;
+      this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
+      if(chartId == 11){
+        sheet.echartOptions.tooltip.formatter =  function (params: any) {
+          const date = params.data[0];
+          const value = params.data[1];
+          return `Date: ${date}<br/>Value: ${value}`;
+        };
+        this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
+      }
+      if(chartId == 9){
+        let transformedData :any =[];
+        let headers: string[] = [];
+
+       let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
+       let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+      let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+      sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
+        headers.push(colObj.column);
+      });
+  
+      sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+        headers.push(rowObj.col);
+      });
+      sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+        headers.push(colObj.col);
+      });
+  
+      transformedData.push(headers); 
+      // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
+      let numRows = 0;
+      if (sheet.pivotData?.pivotColData?.length > 0) {
+          numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+      } else if (sheet.pivotData?.pivotRowData?.length > 0) {
+          numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+      } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
+          numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+      }
+      for (let i = 0; i < numRows; i++) {
+        let rowArray: any[] = []; 
+        sheet.pivotData?.pivotColData.forEach((colObj: any) => {
+          rowArray.push(colObj.result_data[i]);
+        });
+        sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
+          rowArray.push(rowObj.result_data[i]);
+        });
+        sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+          rowArray.push(rowObj.result_data[i]);
+        });
+
+        transformedData.push(rowArray);
+      }
+      sheet.transformedData = transformedData;
+      sheet.columnKeys = columnKeys;
+      sheet.rowKeys = rowKeys;
+      sheet.valueKeys = valueKeys;
+        setTimeout(() => {
+        // if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          const pivotTables = dashboard.filter((item:any) => item.chartType === 'PIVOT' && item['chartId'] === 9);
+          if (pivotTables.length !== this.pivotContainers.length) {
+            console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+          }
+          this.pivotContainers.forEach((pivotContainer, index) => {
+          if (pivotContainer && pivotContainer.nativeElement) {
+            const pivotData = pivotTables[index]; // Get the corresponding pivot data
+
+            ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
+              rows: pivotData['columnKeys'],  
+              cols: pivotData['valueKeys'], 
+                  aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
+                  rendererName: "Table"
+                });
+        }   
+      });     
+      }, 1000);
+    }
+      if(chartId == 1){
+        if(sheet?.tableData?.tableItemsPerPage){
+          sheet.tableData.tableItemsPerPage = 10;
+        }
+        if(sheet?.tableData?.tablePage){
+          sheet.tableData.tablePage = 1;
+        }
       }
     })
   }
@@ -3746,7 +3760,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     item1.rowKeys = rowKeys;
     item1.valueKeys = valueKeys;
     setTimeout(() => {
-      const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+      const pivotTables = dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
 
       if (pivotTables.length !== this.pivotContainers.length) {
         console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
@@ -4678,6 +4692,15 @@ const obj ={
   selectedSheetTab(event: any) {
     this.selectedTabIndex = event.index;
     this.dashboardTest = this.sheetTabs[this.selectedTabIndex].dashboard;
+    if(this.sheetTabs[this.selectedTabIndex].dashboard && this.sheetTabs[this.selectedTabIndex].dashboard.length > 0){
+      this.sheetTabs[this.selectedTabIndex].dashboard.some((tabData: any) => {
+        if (tabData.chartId == 9) {
+          this.pivotReinitialize(true, false);
+          return true;
+        }
+        return false;
+      });
+    }
   }
 
   addTabs() {
@@ -4811,39 +4834,40 @@ kpiData?: KpiData;
     })
   }
 
-  pivotReinitialize(){
-    this.dashboard.forEach((sheet : any)=>{
+  pivotReinitialize(isTab: boolean, isDashbaord: boolean) {
+    if (isDashbaord) {
+      this.dashboard.forEach((sheet: any) => {
 
-  if(sheet.chartId == 9){
-            let transformedData :any =[];
-            let headers: string[] = [];
-  
-           let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
-           let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
-          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+        if (sheet.chartId == 9) {
+          let transformedData: any = [];
+          let headers: string[] = [];
+
+          let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column);
+          let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col: any) => col.col)
           sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
             headers.push(colObj.column);
           });
-      
+
           sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
             headers.push(rowObj.col);
           });
           sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
             headers.push(colObj.col);
           });
-      
-          transformedData.push(headers); 
+
+          transformedData.push(headers);
           // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
           let numRows = 0;
           if (sheet.pivotData?.pivotColData?.length > 0) {
-              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+            numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
           } else if (sheet.pivotData?.pivotRowData?.length > 0) {
-              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+            numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
           } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
-              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+            numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
           }
           for (let i = 0; i < numRows; i++) {
-            let rowArray: any[] = []; 
+            let rowArray: any[] = [];
             sheet.pivotData?.pivotColData.forEach((colObj: any) => {
               rowArray.push(colObj.result_data[i]);
             });
@@ -4853,37 +4877,111 @@ kpiData?: KpiData;
             sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
               rowArray.push(rowObj.result_data[i]);
             });
-  
+
             transformedData.push(rowArray);
           }
           sheet.transformedData = transformedData;
           sheet.columnKeys = columnKeys;
           sheet.rowKeys = rowKeys;
           sheet.valueKeys = valueKeys;
-            setTimeout(() => {
+          setTimeout(() => {
             // if (this.pivotContainer && this.pivotContainer.nativeElement) {
-              const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
-              if (pivotTables.length !== this.pivotContainers.length) {
-                console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
-              }
-              this.pivotContainers.forEach((pivotContainer, index) => {
+            const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+            if (pivotTables.length !== this.pivotContainers.length) {
+              console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+            }
+            this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
 
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-                  rows: pivotData['columnKeys'],  
-                  cols: pivotData['valueKeys'], 
-                      aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                      rendererName: "Table"
-                    });
-            }   
-          });     
+                  rows: pivotData['columnKeys'],
+                  cols: pivotData['valueKeys'],
+                  aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
+                  rendererName: "Table"
+                });
+              }
+            });
           }, 1000);
         }
 
 
-    })
+      });
+    }
+    if (isTab && this.displayTabs && this.dashboardTest?.length > 0) {
+      this.dashboardTest.forEach((sheet: any) => {
 
+        if (sheet.chartId == 9) {
+          let transformedData: any = [];
+          let headers: string[] = [];
+
+          let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column);
+          let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col: any) => col.col)
+          sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+
+          sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+
+          transformedData.push(headers);
+          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
+          let numRows = 0;
+          if (sheet.pivotData?.pivotColData?.length > 0) {
+            numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
+            numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
+            numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+          }
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = [];
+            sheet.pivotData?.pivotColData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+
+            transformedData.push(rowArray);
+          }
+          sheet.transformedData = transformedData;
+          sheet.columnKeys = columnKeys;
+          sheet.rowKeys = rowKeys;
+          sheet.valueKeys = valueKeys;
+          setTimeout(() => {
+            // if (this.pivotContainer && this.pivotContainer.nativeElement) {
+            const pivotTables = this.dashboardTest.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+            if (pivotTables.length !== this.pivotContainers.length) {
+              console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+            }
+            this.pivotContainers.forEach((pivotContainer, index) => {
+              if (pivotContainer && pivotContainer.nativeElement) {
+                const pivotData = pivotTables[index]; // Get the corresponding pivot data
+
+                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
+                  rows: pivotData['columnKeys'],
+                  cols: pivotData['valueKeys'],
+                  aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
+                  rendererName: "Table"
+                });
+              }
+            });
+          }, 1000);
+        }
+
+
+      })
+      this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
+    }
   }
   removeUnSelectedSheetsFromCanvas(){
     this.dashboard = this.dashboard.filter((item:any) => !item.sheetId || this.sheetIdsDataSet.includes(item.sheetId));
@@ -5035,204 +5133,14 @@ kpiData?: KpiData;
         }
         this.sheetIdsDataSet = data.selected_sheet_ids;
         let self = this;
-        this.dashboard.forEach((sheet : any)=>{
-          // console.log('Before sanitization:', sheet.data.sheetTagName);
-          if(sheet.data?.sheetTagName){
-          this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
-          }
-          if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
-            sheet.chartOptions.chart.events = {
-              markerClick: (event: any, chartContext: any, config: any) => {
-                let selectedXValue;
-                if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
-                  selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
-                } else {
-                  selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
-                }
-                if(self.actionId && sheet.sheetId === self.sourceSheetId){
-                  self.setDrillThrough(selectedXValue, sheet);  
-                }
-              },
-              dataPointSelection: function (event: any, chartContext: any, config: any) {
-                let selectedXValue;
-                if(sheet.chartId == 24 || sheet.chartId == 10 ){
-                  selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
-                } else {
-                  selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
-                }
-                if(self.actionId && sheet.sheetId === self.sourceSheetId){
-                  self.setDrillThrough(selectedXValue, sheet);  
-                }               
-                if (sheet.drillDownIndex < sheet.drillDownHierarchy.length - 1) {
-                  // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
-                  console.log('X-axis value:', selectedXValue);
-                  let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
-                  sheet.drillDownIndex++;
-                  let obj = { [nestedKey]: selectedXValue };
-                  sheet.drillDownObject.push(obj);
-                  self.publicDataExtraction(sheet);
-                }
-              },
-              mounted: function(chartContext:any, config:any) {
-                if (sheet.chartId == 28) {
-                  let color = sheet?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
-                  const applyStyles = () => {
-                    const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
-                    if (valueElement) {
-                      valueElement.style.fill = color;
-                      valueElement.style.setProperty('fill', color, 'important');
-                    }
-      
-                    const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
-                    if (nameElement) {
-                      nameElement.style.fill = color;
-                      nameElement.style.setProperty('fill', color, 'important');
-                    }
-                  };
-                  // Initial styling
-                  applyStyles();
-      
-                  // Monitor DOM for changes
-                  const observer = new MutationObserver(() => {
-                    applyStyles();
-                  });
-                  const chartContainer = document.querySelector('.apexcharts-inner');
-                  if (chartContainer) {
-                    observer.observe(chartContainer, { childList: true, subtree: true });
-                  }
-                }
-              }
-            };
-          } else if(sheet.chartId == 29){
-            this.chartType = 'map';
-            sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
-              this.chartsColumnData.push(data.name);
-              this.chartsRowData.push(data.value);
-            });
-            this.dualAxisColumnData = [{
-              name: sheet?.column_Data[0][0],
-              values: this.chartsColumnData
-            }]
-            this.dualAxisRowData = [{
-              name: sheet?.row_Data[0][0],
-              data: this.chartsRowData
-            }]
-            sheet.echartOptions.tooltip= {
-              formatter: (params: any) => {
-                const { name, data } = params;
-                if (data) {
-                  const keys = Object.keys(data);
-            const values = Object.values(data);
-            let formattedString = '';
-            keys.forEach((key, index) => {
-              if(key)
-              formattedString += `${key}: ${values[index]}<br/>`;
-            });
-      
-            return formattedString;
-                 
-                } else {
-                  return `${name}: No Data`;
-                }
-              }
-          }
-          }
-          // console.log('After sanitization:', sheet.data.sheetTagName);
-          this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
-          if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
-            sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
-              return w.globals.seriesTotals.reduce((a:any, b:any) => {
-                return +a + b
-              }, 0).toFixed(this.donutDecimalPlaces);
-            };
-          }
-          let chartId : number = sheet['chartId'];
-          const numberFormat = sheet?.numberFormat;
-          const isEcharts = sheet?.isEChart;
-          this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
-          if(chartId == 11){
-            sheet.echartOptions.tooltip.formatter =  function (params: any) {
-              const date = params.data[0];
-              const value = params.data[1];
-              return `Date: ${date}<br/>Value: ${value}`;
-            };
-            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
-          }
-          if(chartId == 9){
-            let transformedData :any =[];
-            let headers: string[] = [];
-  
-           let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
-           let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
-          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
-          sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
-            headers.push(colObj.column);
+        this.dynamicOptionsUpdateinDashboard(this.dashboard, true);
+        if(this.displayTabs){
+          this.sheetTabs.forEach(tabData => {
+            if(tabData.dashboard && tabData.dashboard.length > 0){
+              this.dynamicOptionsUpdateinDashboard(tabData.dashboard, true);
+            }
           });
-      
-          sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
-            headers.push(rowObj.col);
-          });
-          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
-            headers.push(colObj.col);
-          });
-      
-          transformedData.push(headers); 
-          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
-          let numRows = 0;
-          if (sheet.pivotData?.pivotColData?.length > 0) {
-              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
-          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
-              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
-          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
-              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
-          }
-          for (let i = 0; i < numRows; i++) {
-            let rowArray: any[] = []; 
-            sheet.pivotData?.pivotColData.forEach((colObj: any) => {
-              rowArray.push(colObj.result_data[i]);
-            });
-            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
-              rowArray.push(rowObj.result_data[i]);
-            });
-            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
-              rowArray.push(rowObj.result_data[i]);
-            });
-  
-            transformedData.push(rowArray);
-          }
-          sheet.transformedData = transformedData;
-          sheet.columnKeys = columnKeys;
-          sheet.rowKeys = rowKeys;
-          sheet.valueKeys = valueKeys;
-            setTimeout(() => {
-            // if (this.pivotContainer && this.pivotContainer.nativeElement) {
-              const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
-              if (pivotTables.length !== this.pivotContainers.length) {
-                console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
-              }
-              this.pivotContainers.forEach((pivotContainer, index) => {
-              if (pivotContainer && pivotContainer.nativeElement) {
-                const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
-                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-                  rows: pivotData['columnKeys'],  
-                  cols: pivotData['valueKeys'], 
-                      aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                      rendererName: "Table"
-                    });
-            }   
-          });     
-          }, 1000);
         }
-          if(chartId == 1){
-            if(sheet?.tableData?.tableItemsPerPage){
-              sheet.tableData.tableItemsPerPage = 10;
-            }
-            if(sheet?.tableData?.tablePage){
-              sheet.tableData.tablePage = 1;
-            }
-          }
-        })
         console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){
           // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
@@ -6415,6 +6323,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
      }
      updateKPIImage(item:any,KpiImage:any){
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
+      let tabItemIndex = -1;
+      if(this.displayTabs && this.sheetTabs && this.selectedTabIndex >= 0 && this.sheetTabs[this.selectedTabIndex] && this.sheetTabs[this.selectedTabIndex].dashboard && this.sheetTabs[this.selectedTabIndex].dashboard.length > 0){
+        tabItemIndex = this.sheetTabs[this.selectedTabIndex].dashboard.findIndex((d:any) => d['id'] == item.id);
+      }
       if (itemIndex !== -1) {
         // const item1 = this.dashboard[itemIndex];
         if (item['kpiImage']) {
@@ -6432,12 +6344,30 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         }
         console.log('addedKpiImage',this.dashboard);
         this.canNavigateToAnotherPage = true;
+      } else if(tabItemIndex !== -1) {
+        if (item['kpiImage']) {
+          // Add the kpiImage key to kpiData
+          this.sheetTabs[this.selectedTabIndex].dashboard[tabItemIndex] = {
+            ...item,
+            kpiImage: KpiImage,
+          };
+       
+        } else {
+          this.sheetTabs[this.selectedTabIndex].dashboard[tabItemIndex] = {
+            ...item,
+            kpiImage: KpiImage,
+          };    
+        }
       } else {
         console.error('Item not found in dashboard:', item);
       } 
      }
      removeKpiImage(item: any): void {
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
+      let tabItemIndex = -1;
+      if(this.displayTabs && this.sheetTabs && this.selectedTabIndex >= 0 && this.sheetTabs[this.selectedTabIndex] && this.sheetTabs[this.selectedTabIndex].dashboard && this.sheetTabs[this.selectedTabIndex].dashboard.length > 0){
+        tabItemIndex = this.sheetTabs[this.selectedTabIndex].dashboard.findIndex((d:any) => d['id'] === item.id);
+      }
       if (itemIndex !== -1) {
         const updatedItem = {
           ...this.dashboard[itemIndex],
@@ -6449,6 +6379,18 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   
         // Update the dashboard array
         this.dashboard[itemIndex] = updatedItem;
+        this.canNavigateToAnotherPage = true;
+      } else if (tabItemIndex !== -1) {
+        const updatedItem = {
+          ...this.sheetTabs[this.selectedTabIndex].dashboard[tabItemIndex],
+          kpiImage: { ...this.sheetTabs[this.selectedTabIndex].dashboard[tabItemIndex] },
+        };
+  
+        // Delete kpiImage key if it exists
+        delete updatedItem.kpiImage;
+  
+        // Update the dashboard array
+        this.sheetTabs[this.selectedTabIndex].dashboard[tabItemIndex] = updatedItem;
         this.canNavigateToAnotherPage = true;
       } else {
         console.error('Item not found in dashboard:', item);
@@ -6521,6 +6463,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
     applyIconInKpi(){
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === this.KpiIconItem.id);
+      let tabItemIndex = -1;
+      if(this.displayTabs && this.sheetTabs && this.selectedTabIndex >= 0 && this.sheetTabs[this.selectedTabIndex] && this.sheetTabs[this.selectedTabIndex].dashboard && this.sheetTabs[this.selectedTabIndex].dashboard.length > 0){
+        tabItemIndex = this.sheetTabs[this.selectedTabIndex].dashboard.findIndex((d:any) => d['id'] === this.KpiIconItem.id);
+      }
       if (itemIndex !== -1) {
         if (!this.KpiIconItem.kpiIconsArray) {
           this.KpiIconItem.kpiIconsArray = {};
@@ -6540,7 +6486,26 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         console.log('Updated kpiIconsArray:', this.dashboard);
         this.canNavigateToAnotherPage = true;
         this.selectedIcon = null;
-      } else {
+      } else if(tabItemIndex !== -1){
+        if (!this.KpiIconItem.kpiIconsArray) {
+          this.KpiIconItem.kpiIconsArray = {};
+        }
+            const newIconObject = {
+          kpiIcon: this.selectedIcon,
+          kpiIconSize: this.selectedIconFontSize,
+          kpiIconColor: this.selectedIconColor,
+          kpiIconPosition: this.selectedIconPosition
+        };
+        this.KpiIconItem.kpiIconsArray = newIconObject;
+            this.sheetTabs[this.selectedTabIndex].dashboard[tabItemIndex] = { 
+          ...this.KpiIconItem 
+        };
+    
+        this.modalService.dismissAll();
+        console.log('Updated kpiIconsArray:', this.dashboard);
+        this.canNavigateToAnotherPage = true;
+        this.selectedIcon = null;
+      }else {
         console.error('Item not found in dashboard:', this.KpiIconItem);
       }
     
@@ -6615,6 +6580,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   }
   removeKpiIcon(item: any): void {
     const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
+    let tabItemIndex = -1;
+      if(this.displayTabs && this.sheetTabs && this.selectedTabIndex >= 0 && this.sheetTabs[this.selectedTabIndex] && this.sheetTabs[this.selectedTabIndex].dashboard && this.sheetTabs[this.selectedTabIndex].dashboard.length > 0){
+        tabItemIndex = this.sheetTabs[this.selectedTabIndex].dashboard.findIndex((d:any) => d['id'] === item.id);
+      }
     if (itemIndex !== -1) {
       const updatedItem = {
         ...this.dashboard[itemIndex],
@@ -6630,7 +6599,21 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       this.dashboard[itemIndex] = updatedItem;
       this.canNavigateToAnotherPage = true;
       this.deselectIconChanges()
-    } else {
+    } else if(tabItemIndex !== -1) {
+      const updatedItem = {
+        ...this.sheetTabs[this.selectedTabIndex].dashboard[tabItemIndex],
+        kpiIconsArray: { ...this.sheetTabs[this.selectedTabIndex].dashboard['kpiIconsArray'] },
+      };
+
+      // Delete kpiIcon key if it exists
+      delete updatedItem.kpiIconsArray.kpiIcon;
+      delete updatedItem.kpiIconsArray.kpiIconPosition;
+      delete updatedItem.kpiIconsArray.kpiIconColor;
+      delete updatedItem.kpiIconsArray.kpiIconSize;
+      // Update the dashboard array
+      this.sheetTabs[this.selectedTabIndex].dashboard[tabItemIndex] = updatedItem;
+      this.canNavigateToAnotherPage = true;
+    }else {
       console.error('Item not found in dashboard:', item);
     }
   }
@@ -6728,6 +6711,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }).then((result) => {
       if (result.isConfirmed) {
         let sheetIds =this.sheetTabs[index].dashboard.map((sheet: any) => sheet.sheetId);
+        this.setDashboardNewSheetsArray(sheetIds);
           this.sheetTabs.splice(index, 1);
         if (this.dashboardId && sheetIds?.length > 0) {
           this.loaderService.show();
@@ -6740,6 +6724,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.canNavigateToAnotherPage = true;
       }
     })
+  }
+
+  setDashboardNewSheetsArray(sheetIds: any[]){
+    this.dashboardNew = this.dashboardNew.map(item => ({
+      ...item,
+      selectedSheet: sheetIds.includes(item['sheetId']) ? false : item['selectedSheet']
+    }));
   }
 
   removeFiltersandActionsBasedOnSheetIds(obj : any){
