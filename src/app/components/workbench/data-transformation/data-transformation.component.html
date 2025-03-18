@@ -194,9 +194,9 @@
                                                   
                                                         <div class="example-box p-2 border rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " [ngClass]="selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'border-danger' : 'border-dark-subtle'"
                                                             ngbDropdown #dropdownRef="ngbDropdown">
-                                                            <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'This transformation is INCOMPLETE' : selectedTransformations[index][transformationIndex].key }}" placement="top"
+                                                            <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'This transformation is INCOMPLETE' : selectedTransformations[index][transformationIndex].label }}" placement="top"
                                                                 container="body">
-                                                                {{ selectedTransformations[index][transformationIndex].key | slice:0:13 }}
+                                                                {{ selectedTransformations[index][transformationIndex].label | slice:0:13 }}
                                                             </span>
                                                         
                                                         
