@@ -61,6 +61,7 @@ export class DataTransformationComponent {
   nonTransformedTables : any[] = [];
   tableModalSearch : string = '';
   isAllSelected : boolean = false;
+  isAddTheseTablesDisable : boolean = true;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal) {
     if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
@@ -321,17 +322,23 @@ export class DataTransformationComponent {
   openTablesSelection(modal: any) {
     const draggedTableNames = new Set(this.draggedTables.map(dragged => dragged.tables));
     this.nonTransformedTables = this.tables.filter(table => !draggedTableNames.has(table.tables)).map(table => ({ ...table, selected: false }));
-    this.modalService.open(modal, {
-      centered: true,
-      windowClass: 'animate__animated animate__zoomIn',
-    });
+    if(this.nonTransformedTables.length > 0){
+      this.modalService.open(modal, {
+        centered: true,
+        windowClass: 'animate__animated animate__zoomIn',
+      });
+    } else{
+      this.setTransformations(false, '', true);
+    }
   }
   toggleSelectAll() {
     this.nonTransformedTables.forEach(table => {
       table.selected = this.isAllSelected;
     });
+    this.isAddTheseTablesDisable = !this.isAllSelected;
   }
-  checkIfAllSelected() {
+  checkIfAllSelected() { 
     this.isAllSelected = this.nonTransformedTables.every(table => table.selected);
+    this.isAddTheseTablesDisable = !this.nonTransformedTables.some(table => table.selected);
   }
 }
