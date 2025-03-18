@@ -3791,7 +3791,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && (bar || funnel)) || area || line)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && (bar || funnel)) || area || line || radar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
@@ -3981,7 +3981,7 @@
                                                                     <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'">
                                                                     </ngx-colors>
                                                                 </div> -->
-                                                                <div *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || radar || ((funnel || bar) && isDistributed)" class="p-2">
+                                                                <div *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || ((funnel || bar) && isDistributed)" class="p-2">
                                                                     <div class="d-flex justify-content-between p-1 border rounded-3">
                                                                         <div class="colors-card">
                                                                             <ul class="d-flex flex-wrap">
@@ -4036,7 +4036,7 @@
                                                                                                 <div class="rainbow-text d-flex align-items-center p-2 bg-light">
                                                                                                     <p class="mb-0 me-2">Name:</p>
                                                                                                     <input type="text" id="input-placeholder" placeholder="Color Name"
-                                                                                                    class="form-control border me-2" [(ngModel)]="colorSchemeName">
+                                                                                                    class="form-control border me-2" [(ngModel)]="colorSchemeName" required>
                                                                                                 </div>
                                                                                                 <div class="py-2">
                                                                                                     <div class="d-flex">
@@ -4052,7 +4052,7 @@
                                                                                                     <input type="color" #colorInput  id="body" name="body" class="w-100" [(ngModel)]="selectedColor" (ngModelChange)="setColorToBox()"/>
                                                                                                 </div> -->
                                                                                                 <div class="d-flex justify-content-end">
-                                                                                                    <button [disabled]="(newColorScheme.length < 2 || newColorScheme.length > 10) || !colorSchemeName" class="btn btn-primary me-1" (click)="saveColorScheme(colorPickerDropdown)">Apply</button>
+                                                                                                    <button [disabled]="(newColorScheme.length < 2 || newColorScheme.length > 10) || !colorSchemeName.trim()" class="btn btn-primary me-1" (click)="saveColorScheme(colorPickerDropdown)">Apply</button>
                                                                                                     <button class="btn btn-danger" (click)="closeColorPicker(colorPickerDropdown)">Close</button>
                                                                                                 </div>
                                                                                             </div>

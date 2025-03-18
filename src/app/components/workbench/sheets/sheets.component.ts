@@ -390,7 +390,7 @@ export class SheetsComponent {
   userDefinedColorSchemes : { [key: string]: string[] } = {};
   keysOfColorSchemes : { key: string; colorPalette: string[] }[] = [];
   keysOfUsersColors : any[] = [];
-  selectedColorScheme = this.defaultColorSchemes['Blue'];
+  selectedColorScheme = ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'];
   newColorScheme : any[] = [];
   colorSchemeName : string = '';
   selectedBox : number = 0;
@@ -5884,10 +5884,11 @@ customizechangeChartPlugin() {
     console.log(this.keysOfColorSchemes);
   }
   removeColorScheme(key: string, index: any){
+    let isColorSchemeSelected = JSON.stringify(this.selectedColorScheme) === JSON.stringify(this.userDefinedColorSchemes[key]);
     Swal.fire({
       position: "center",
       icon: "question",
-      title: `Are you sure you want to delete the "${key}" color scheme?`,
+      title: isColorSchemeSelected ? `"${key}" is currently applied to the sheet. Do you still want to delete it?` : `Are you sure you want to delete the "${key}" color scheme?`,
       text: "This action cannot be undone.",
       showConfirmButton: true,
       showCancelButton: true,
@@ -5907,6 +5908,12 @@ customizechangeChartPlugin() {
         this.workbechService.updateColorPalette(object).subscribe({
           next: (response: any) => {
             console.log(response);
+            if(isColorSchemeSelected){
+              this.selectedColorScheme = ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'];
+              if(this.retriveDataSheet_id){
+                this.sheetSave();
+              }
+            }
             delete this.userDefinedColorSchemes[key];
             this.getColorSchemesForDropdown();
             this.toasterService.success('Color Palette Deleted Successfully', 'success', { positionClass: 'toast-top-right' });
@@ -5930,9 +5937,10 @@ customizechangeChartPlugin() {
     this.colorSchemeName = '';
   }
   checkColorNameExists(name: string): boolean {
-    return this.keysOfColorSchemes.some((key: any) => key === name);
+    return this.keysOfColorSchemes.some((colorScheme: any) => colorScheme.key.toLowerCase() === name.trim().toLowerCase());
   }
   saveColorScheme(colorPickerDropDown : NgbDropdown){
+    this.colorSchemeName = this.colorSchemeName.trim();
     if(this.checkColorNameExists(this.colorSchemeName)){
       this.toasterService.info(this.colorSchemeName+' already exists. Please try another.', 'info', { positionClass: 'toast-top-right' });
     } else {
