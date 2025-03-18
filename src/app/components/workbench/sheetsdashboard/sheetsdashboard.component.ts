@@ -4656,6 +4656,15 @@ const obj ={
   selectedSheetTab(event: any) {
     this.selectedTabIndex = event.index;
     this.dashboardTest = this.sheetTabs[this.selectedTabIndex].dashboard;
+    if(this.sheetTabs[this.selectedTabIndex].dashboard && this.sheetTabs[this.selectedTabIndex].dashboard.length > 0){
+      this.sheetTabs[this.selectedTabIndex].dashboard.some((tabData: any) => {
+        if (tabData.chartId == 9) {
+          this.pivotReinitialize(true, false);
+          return true;
+        }
+        return false;
+      });
+    }
   }
 
   addTabs() {
@@ -4789,39 +4798,40 @@ kpiData?: KpiData;
     })
   }
 
-  pivotReinitialize(){
-    this.dashboard.forEach((sheet : any)=>{
+  pivotReinitialize(isTab: boolean, isDashbaord: boolean) {
+    if (isDashbaord) {
+      this.dashboard.forEach((sheet: any) => {
 
-  if(sheet.chartId == 9){
-            let transformedData :any =[];
-            let headers: string[] = [];
-  
-           let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
-           let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
-          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+        if (sheet.chartId == 9) {
+          let transformedData: any = [];
+          let headers: string[] = [];
+
+          let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column);
+          let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col: any) => col.col)
           sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
             headers.push(colObj.column);
           });
-      
+
           sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
             headers.push(rowObj.col);
           });
           sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
             headers.push(colObj.col);
           });
-      
-          transformedData.push(headers); 
+
+          transformedData.push(headers);
           // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
           let numRows = 0;
           if (sheet.pivotData?.pivotColData?.length > 0) {
-              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+            numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
           } else if (sheet.pivotData?.pivotRowData?.length > 0) {
-              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+            numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
           } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
-              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+            numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
           }
           for (let i = 0; i < numRows; i++) {
-            let rowArray: any[] = []; 
+            let rowArray: any[] = [];
             sheet.pivotData?.pivotColData.forEach((colObj: any) => {
               rowArray.push(colObj.result_data[i]);
             });
@@ -4831,111 +4841,111 @@ kpiData?: KpiData;
             sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
               rowArray.push(rowObj.result_data[i]);
             });
-  
+
             transformedData.push(rowArray);
           }
           sheet.transformedData = transformedData;
           sheet.columnKeys = columnKeys;
           sheet.rowKeys = rowKeys;
           sheet.valueKeys = valueKeys;
-            setTimeout(() => {
+          setTimeout(() => {
             // if (this.pivotContainer && this.pivotContainer.nativeElement) {
-              const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
-              if (pivotTables.length !== this.pivotContainers.length) {
-                console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
-              }
-              this.pivotContainers.forEach((pivotContainer, index) => {
+            const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+            if (pivotTables.length !== this.pivotContainers.length) {
+              console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+            }
+            this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
 
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-                  rows: pivotData['columnKeys'],  
-                  cols: pivotData['valueKeys'], 
-                      aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                      rendererName: "Table"
-                    });
-            }   
-          });     
+                  rows: pivotData['columnKeys'],
+                  cols: pivotData['valueKeys'],
+                  aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
+                  rendererName: "Table"
+                });
+              }
+            });
           }, 1000);
         }
 
 
-    })
-    if(this.displayTabs && this.dashboardTest?.length > 0){
-    this.dashboardTest.forEach((sheet : any)=>{
+      });
+    }
+    if (isTab && this.displayTabs && this.dashboardTest?.length > 0) {
+      this.dashboardTest.forEach((sheet: any) => {
 
-      if(sheet.chartId == 9){
-                let transformedData :any =[];
-                let headers: string[] = [];
-      
-               let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
-               let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
-              let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
-              sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
-                headers.push(colObj.column);
-              });
-          
-              sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
-                headers.push(rowObj.col);
-              });
-              sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
-                headers.push(colObj.col);
-              });
-          
-              transformedData.push(headers); 
-              // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
-              let numRows = 0;
-              if (sheet.pivotData?.pivotColData?.length > 0) {
-                  numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
-              } else if (sheet.pivotData?.pivotRowData?.length > 0) {
-                  numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
-              } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
-                  numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
-              }
-              for (let i = 0; i < numRows; i++) {
-                let rowArray: any[] = []; 
-                sheet.pivotData?.pivotColData.forEach((colObj: any) => {
-                  rowArray.push(colObj.result_data[i]);
-                });
-                sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
-                  rowArray.push(rowObj.result_data[i]);
-                });
-                sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
-                  rowArray.push(rowObj.result_data[i]);
-                });
-      
-                transformedData.push(rowArray);
-              }
-              sheet.transformedData = transformedData;
-              sheet.columnKeys = columnKeys;
-              sheet.rowKeys = rowKeys;
-              sheet.valueKeys = valueKeys;
-                setTimeout(() => {
-                // if (this.pivotContainer && this.pivotContainer.nativeElement) {
-                  const pivotTables = this.dashboardTest.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
-                  if (pivotTables.length !== this.pivotContainers.length) {
-                    console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
-                  }
-                  this.pivotContainers.forEach((pivotContainer, index) => {
-                  if (pivotContainer && pivotContainer.nativeElement) {
-                    const pivotData = pivotTables[index]; // Get the corresponding pivot data
-    
-                    ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-                      rows: pivotData['columnKeys'],  
-                      cols: pivotData['valueKeys'], 
-                          aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                          rendererName: "Table"
-                        });
-                }   
-              });     
-              }, 1000);
+        if (sheet.chartId == 9) {
+          let transformedData: any = [];
+          let headers: string[] = [];
+
+          let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column);
+          let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col: any) => col.col)
+          sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+
+          sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+
+          transformedData.push(headers);
+          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
+          let numRows = 0;
+          if (sheet.pivotData?.pivotColData?.length > 0) {
+            numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
+            numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
+            numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+          }
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = [];
+            sheet.pivotData?.pivotColData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+
+            transformedData.push(rowArray);
+          }
+          sheet.transformedData = transformedData;
+          sheet.columnKeys = columnKeys;
+          sheet.rowKeys = rowKeys;
+          sheet.valueKeys = valueKeys;
+          setTimeout(() => {
+            // if (this.pivotContainer && this.pivotContainer.nativeElement) {
+            const pivotTables = this.dashboardTest.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+            if (pivotTables.length !== this.pivotContainers.length) {
+              console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
             }
-    
-    
-        })
-        this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
-      }
+            this.pivotContainers.forEach((pivotContainer, index) => {
+              if (pivotContainer && pivotContainer.nativeElement) {
+                const pivotData = pivotTables[index]; // Get the corresponding pivot data
 
+                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
+                  rows: pivotData['columnKeys'],
+                  cols: pivotData['valueKeys'],
+                  aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
+                  rendererName: "Table"
+                });
+              }
+            });
+          }, 1000);
+        }
+
+
+      })
+      this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
+    }
   }
   removeUnSelectedSheetsFromCanvas(){
     this.dashboard = this.dashboard.filter((item:any) => !item.sheetId || this.sheetIdsDataSet.includes(item.sheetId));
