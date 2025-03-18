@@ -288,7 +288,7 @@
                             </div>
                             <div class="card-body align-items-center justify-content-center p-0">
                         
-                                <div class="table-responsive" style="overflow-y: auto;height: 293px;">
+                                <div class="table-responsive tables-preview">
                                     <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                         <thead class="Result-preview-table-sticky">
                                             <tr>
@@ -350,8 +350,8 @@
     <div class="modal-footer">
         <div class="text-right">
             <button type="button" class="btn ripple btn-secondary me-2" (click)="setTransformations(false, '', true); modal.close('Save click')">Skip</button>
-            <button type="button" class="btn ripple btn-primary" (click)="setTransformations(false, '', false); modal.dismiss('Cross click')">
-                Add TheseTables
+            <button type="button" class="btn ripple btn-primary" (click)="setTransformations(false, '', false); modal.dismiss('Cross click')" [disabled]="isAddTheseTablesDisable">
+                Add These Tables
             </button>
         </div>
     </div>
