@@ -5078,7 +5078,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'split': 
-        if(!this.validateFormula(/^split_part\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*\"([^\"]*)\"\s*,\s*(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^split_part\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*'([^']*)'\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5145,7 +5145,7 @@ customizechangeChartPlugin() {
             }
           break; 
           case 'case': 
-          if(!this.validateFormula(/^CASE\s+(WHEN\s+.+?\s+THEN\s+.+?(\s+WHEN\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END)$/)){
+          if(!this.validateFormula(/^CASE\s+(WHEN\s+.+?\s+THEN\s+.+?(\s+WHEN\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END)$/i)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5167,7 +5167,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'average': 
-        if(!this.validateFormula(/^AVERAGE\(\s*.+?\s*\)$/)){
+        if(!this.validateFormula(/^AVG\(\s*.+?\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;

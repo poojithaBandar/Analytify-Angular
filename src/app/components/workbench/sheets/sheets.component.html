@@ -1505,7 +1505,7 @@
                                             @else{   
                                                  {{ columns.column }}
                                             } <i (click)="isDimensionEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
-                                            <li  *ngIf="isDimensionEdit"><input (blur)="onColumnAliasChange(columns, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
+                                            <li  *ngIf="isDimensionEdit"><input (blur)="onColumnAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
                                             </li>
                                             <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
@@ -1649,7 +1649,7 @@
                                                     @else{   
                                                          {{ rows.column }}
                                                     } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
-                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
+                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
                                                     <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center">
                                                     <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem >Aggregation</li>
