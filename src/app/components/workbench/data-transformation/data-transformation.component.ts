@@ -136,7 +136,7 @@ export class DataTransformationComponent {
       this.selectedTransformations[index] = []; // Initialize if not set
     }
     if(!this.selectedTransformations[index][transformationIndex]){
-      this.selectedTransformations[index][transformationIndex] = {input : '',dropdown:'',keys:[],key:'',isError:false}
+      this.selectedTransformations[index][transformationIndex] = {input : '',dropdown:'',keys:[],key:'', label:'',isError:false}
     }
     if(isInput){
       this.selectedTransformations[index][transformationIndex].input = event.target.value;
@@ -144,6 +144,9 @@ export class DataTransformationComponent {
       this.selectedTransformations[index][transformationIndex].dropdown = event.target.value;
     } if(transformationKey){
       this.selectedTransformations[index][transformationIndex].key = transformationKey;
+
+      const transformation = this.transformationTypes.find(t => t.key === transformationKey);
+      this.selectedTransformations[index][transformationIndex].label = transformation ? transformation.label : '';
     }
 
     if(this.selectedTransformations[index][transformationIndex].key && this.selectedTransformations[index][transformationIndex].key == 'deduplicate'){
