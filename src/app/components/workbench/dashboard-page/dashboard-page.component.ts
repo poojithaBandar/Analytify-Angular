@@ -47,6 +47,8 @@ export class DashboardPageComponent implements OnInit{
   @ViewChild('propertiesModal') propertiesModal : any;
   frequency! : number;
   refreshNow: boolean = false;
+  lastRefresh: any;
+  nextRefresh: any;
   
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
   private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
@@ -402,8 +404,19 @@ autoFrequencyRefresh(){
 }
 
 viewSchedular(dashboardId:any,modal: any){
-  this.modalService.open(modal);
   this.dashboardId = dashboardId;
+  this.workbechService.fetchSchedularData(this.dashboardId).subscribe({
+    next:(data)=>{
+      this.frequency = data.frequency;
+      this.lastRefresh = data.last_refresh;
+      this.nextRefresh = data.next_refresh;
+      this.modalService.open(modal);
+      },
+    error:(error)=>{
+      this.modalService.open(modal);
+    }
+  });
+
 
 }
 }

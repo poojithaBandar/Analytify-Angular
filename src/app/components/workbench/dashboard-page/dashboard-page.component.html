@@ -252,6 +252,12 @@
           <label class="form-label">Refresh Now <i
             ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
           <input type="checkbox" [(ngModel)]="refreshNow" />
+          <label class="form-label">Last Refresh<i
+            ngbTooltip="last refreshed date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
+        <input type="text" readonly="true" [(ngModel)]="lastRefresh" />
+        <label class="form-label">Next Refresh<i
+            ngbTooltip="next refresh date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
+        <input type="text" readonly="true" [(ngModel)]="nextRefresh" />
         </div>
     </div>
   </div>

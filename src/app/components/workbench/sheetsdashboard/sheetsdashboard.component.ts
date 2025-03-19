@@ -213,6 +213,8 @@ export class SheetsdashboardComponent {
   calendarTotalHeight : string = '400px';
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
+  lastRefresh: any;
+  nextRefresh: any;
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -820,7 +822,7 @@ export class SheetsdashboardComponent {
           this.displayTabs = true;
           this.selectedTabIndex = 0;
           this.selectedSheetTab({index : 0});
-          if(this.sheetTabs[0]?.dashboard && this.sheetTabs[0]?.dashboard[0]){
+          if(this.sheetTabs[0]?.dashboard){
             this.tabHeightGrid = this.sheetTabs[0].tabHeight;
             this.tabWidthGrid =  this.sheetTabs[0].tabWidth;
           }
@@ -5112,8 +5114,6 @@ kpiData?: KpiData;
         this.dashboardName=data.dashboard_name;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
-        this.tabWidthGrid = data.tabWidth,
-        this.tabHeightGrid = data.tabHeight, 
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
@@ -6756,10 +6756,22 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
 
     autoRefreshInterval(modal: any){
-        this.modalService.open(modal, {
-          centered: true,size:'md',
-          windowClass: 'animate__animated animate__zoomIn',
-        });
+      this.workbechService.fetchSchedularData(this.dashboardId).subscribe({
+        next:(data)=>{
+          this.frequency = data.frequency;
+          this.lastRefresh = data.last_refresh;
+          this.nextRefresh = data.next_refresh;
+          this.modalService.open(modal, {
+            centered: true,size:'md',
+            windowClass: 'animate__animated animate__zoomIn',
+          });          },
+        error:(error)=>{
+          this.modalService.open(modal, {
+            centered: true,size:'md',
+            windowClass: 'animate__animated animate__zoomIn',
+          });  
+        }
+      });
     }
 
     autoFrequencyRefresh(){
@@ -6771,7 +6783,23 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
       this.workbechService.autoRefreshFrequency(object).subscribe({
         next:(data)=>{
-          this.toasterService.success('Dashboard refresh scheduled.','success',{ positionClass: 'toast-center-center'})
+          this.toasterService.success('Dashboard refresh scheduled.','success',{ positionClass: 'toast-center-center'});
+          if(this.refreshNow){
+          this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
+            next:(data)=>{
+              this.refreshDashboardSheetsData(data);
+              },
+            error:(error)=>{
+              console.log(error)
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.message,
+                width: '400px',
+              })
+            }
+          });
+        }
           },
         error:(error)=>{
           console.log(error)

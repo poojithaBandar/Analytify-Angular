@@ -1034,7 +1034,7 @@
                         </span>
                         <span [ngbTooltip]="dashboard.length === 0 ? 'Add sheet to save dashboard' : ''">
                             <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button></span>
-                            <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
+                            <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
                             (btnClickEvent)="updateDashboard(false);editor =false"></app-insights-button>
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button>
@@ -2037,13 +2037,23 @@
             <label class="form-label">Refresh Now <i
               ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
             <input type="checkbox" [(ngModel)]="refreshNow" />
+            @if(lastRefresh){
+            <label class="form-label">Last Refresh<i
+                ngbTooltip="last refreshed date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
+            <input type="text" readonly="true" [(ngModel)]="lastRefresh" />
+            }
+            @if(nextRefresh){
+            <label class="form-label">Next Refresh<i
+                ngbTooltip="next refresh date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
+            <input type="text" readonly="true" [(ngModel)]="nextRefresh" />
+            }
           </div>
       </div>
     </div>
     <div class="modal-footer p-2">
       <button type="button" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow=false;" class="btn ripple btn-secondary">
         Cancel </button>
-      <button (click)="autoFrequencyRefresh()" [disabled]="!frequency" class="btn btn-primary">Apply</button>
+      <button (click)="autoFrequencyRefresh();modal.dismiss('Cross click');" [disabled]="!frequency" class="btn btn-primary">Apply</button>
     </div>
   
   </ng-template>
