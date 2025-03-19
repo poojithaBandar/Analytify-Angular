@@ -381,12 +381,21 @@ publishDashboard(){
   })
 }
 autoFrequencyRefresh(){
-  let object = {
-    "dashboard_id": this.dashboardId,
-    "is_scheduled": true,
-    "frequency": this.frequency,
-    "refresh_now": this.refreshNow
-}
+  let object;
+  if(this.frequency > 0){
+    object = {
+      "dashboard_id": this.dashboardId,
+      "is_scheduled": true,
+      "frequency": this.frequency,
+      "refresh_now": this.refreshNow
+  }
+  } else {
+    object = {
+      "dashboard_id": this.dashboardId,
+      "is_scheduled": false,
+      "refresh_now": this.refreshNow
+  }
+  }
   this.workbechService.autoRefreshFrequency(object).subscribe({
     next:(data)=>{
       this.toasterservice.success('Dashboard refresh scheduled','success',{ positionClass: 'toast-center-center'})
@@ -409,7 +418,7 @@ viewSchedular(dashboardId:any,modal: any){
     next:(data)=>{
       this.frequency = data.frequency;
       this.lastRefresh = data.last_refresh;
-      this.nextRefresh = data.next_refresh;
+      this.nextRefresh = data.next_refresh_in_minutes;
       this.modalService.open(modal);
       },
     error:(error)=>{
