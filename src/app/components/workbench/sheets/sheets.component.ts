@@ -145,6 +145,7 @@ export class SheetsComponent {
   tableSearch! : string;
   isMeasureEdit : boolean = false;
   isDimensionEdit : boolean = false;
+  isPivotRowEdit : boolean = false;
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
   suppressTabChangeEvent : boolean = false;
@@ -1317,6 +1318,14 @@ try {
     if (this.draggedColumnsData[index]) {
       this.draggedColumnsData[index][3] = column.alias ? column.alias : "";
       this.draggedColumns[index].alias = column.alias ? column.alias : "";
+      this.dataExtraction();
+    }
+  }
+  onPivotRowAliasChange(column : any , index : any){
+    this.isPivotRowEdit = false;
+    if (this.draggedMeasureValuesData[index]) {
+      this.draggedMeasureValuesData[index][3] = column.alias ? column.alias : "";
+      this.draggedMeasureValues[index].alias = column.alias ? column.alias : "";
       this.dataExtraction();
     }
   }
@@ -4255,6 +4264,32 @@ customizechangeChartPlugin() {
     }
     this.dataExtraction();
   }
+  dateFormatForPivotRow(column:any, index:any, format:any){
+    if(format === ''){
+      this.draggedMeasureValuesData[index] = [column.column,column.data_type,format,column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = {column:column.column,data_type:column.data_type,type:format, alias: column.alias ? column.alias : ""};
+    }else if(format === '-Select-'){
+      this.draggedMeasureValuesData[index] = [column.column,column.data_type,'',column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = {column:column.column,data_type:column.data_type,type:'', alias: column.alias ? column.alias : ""};
+    }else{
+      this.draggedMeasureValuesData[index] = [column.column, "date", format,column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: format, alias: column.alias ? column.alias : "" };
+      console.log(this.draggedMeasureValues);
+    }
+    this.dataExtraction();
+  }
+  dateAggregationForPivotRow(column:any, index:any, type:any){
+    if (type === '') {
+      this.draggedMeasureValuesData[index] = [column.column, column.data_type, type, column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
+    }
+    else {
+      this.draggedMeasureValuesData[index] = [column.column, "aggregate", type, column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
+      console.log(this.draggedMeasureValues);
+    }
+    this.dataExtraction();
+  }
 
   sliderOptions = {
     floor: 1,
@@ -4320,7 +4355,7 @@ customizechangeChartPlugin() {
         this.draggedMeasureValuesData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
         }
         if (this.dateList.includes(element.data_type)) {
-          this.dateFormat(element, event.currentIndex, 'year');
+          this.dateFormatForPivotRow(element, event.currentIndex, 'year');
         } else {
           console.log('measurerows',this.draggedMeasureValuesData)
           this.dataExtraction();
