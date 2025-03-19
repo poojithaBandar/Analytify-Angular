@@ -76,11 +76,11 @@
                                   [previledgeId]="35" [isBtn]="false" [toolTip]="'Delete'"
                                   (btnClickEvent)="deleteDashboard(dashboard.dashboard_id)"
                                   [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
-                                  <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
+                                  <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2'"
                                   [previledgeId]="43" [isBtn]="false" [toolTip]="'Properties'"
                                   (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                                   [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
-                            
+                                  <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -131,10 +131,11 @@
                             [previledgeId]="35" [isBtn]="false" [toolTip]="'Delete'"
                             (btnClickEvent)="deleteDashboard(dashboard.dashboard_id)"
                             [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
-                            <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
+                            <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2'"
                             [previledgeId]="43" [isBtn]="false" [toolTip]="'Properties'"
                             (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                             [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
+                            <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
                         </div>
                   </div>
                     </div>
@@ -226,4 +227,44 @@
           Close
         </button>
       </div>
+</ng-template>
+ 
+<ng-template #autorefresh let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Refresh Interval</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow= false;">
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row text-wrap">
+      <div>
+      <label class="form-label">Frequency <span class="text-red">*</span><i
+          ngbTooltip="Periodical automatted time interval to refresh/sync dashboard."
+          class="icon icon-info ms-1 cursor-pointer"></i></label>
+        <select [(ngModel)]="frequency" class="form-control cursor-pointer">
+          <option value="1"> 1 hour</option>
+          <option value="2"> 2 hours</option>
+          <option value="5"> 5 hours</option>
+          <option value="10"> 10 hours</option>
+          <option value="15"> 15 hours</option>
+          <option value="24"> 24 hours</option>
+        </select>
+          <label class="form-label">Refresh Now <i
+            ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
+          <input type="checkbox" [(ngModel)]="refreshNow" />
+          <label class="form-label">Last Refresh<i
+            ngbTooltip="last refreshed date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
+        <input type="text" readonly="true" [(ngModel)]="lastRefresh" />
+        <label class="form-label">Next Refresh<i
+            ngbTooltip="next refresh date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
+        <input type="text" readonly="true" [(ngModel)]="nextRefresh" />
+        </div>
+    </div>
+  </div>
+  <div class="modal-footer p-2">
+    <button type="button" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow=false;" class="btn ripple btn-secondary">
+      Cancel </button>
+    <button (click)="autoFrequencyRefresh()" [disabled]="!frequency" class="btn btn-primary">Apply</button>
+  </div>
+
 </ng-template>

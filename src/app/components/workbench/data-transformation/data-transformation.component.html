@@ -1,22 +1,20 @@
-<p>data-transformation works!</p>
-
-<div class="main-container container-fluid mt-5 TopHeader">
+<div class="main-container container-fluid mt-5">
         <!-- ROW-1 OPEN -->
         <div class="row ">
-            <div class="col-md-12">
+            <div class="col-md-12 mt-4">
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-center align-items-center m-2">
                             <!-- <img class="me-2 w-40p" src="./assets/images/icons/1.png" alt=""> -->
                             <div>
-                                <h5 class="mb-0"><b>Transformations Layer</b></h5>
+                                <h5 class="card-title mb-0">Transformations Layer</h5>
                                 <!-- <p class="mb-0 text-muted">Last Updated Jan 27, 2023</p> -->
                             </div>
                         </div>
                     </div>
                     <div class="card-body p-0">
                         <div class="d-lg-flex d-block">
-                            <div class="col-3 p-4 border-end">
+                            <div class="col-3 p-4 border-end" [ngStyle]="{ 'display': isOpen ? 'block' : 'none' }">
                                 <div class="card mb-0 connections-layer-h">
                                     <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav flex-column nav-pills" id="vertical-tab" role="tablist" aria-orientation="vertical">
                                         <div
@@ -56,36 +54,33 @@
                                                 <ng-template>
                                                     <div class="px-3 py-2 br-0 mb-0 border-bottom d-block">
                                                         <div class="d-flex align-items-center justify-content-between">
-                                                            <h6 class="mb-0">e-commerce</h6>
-                                                            <i class="bi-plus-circle plus-icon"></i>
+                                                            <h6 class="mb-0">{{databaseName}}</h6>
+                                                            <!-- <i class="bi-plus-circle plus-icon"></i> -->
                                                         </div>
-                                                        <p class="mb-0">PostgreSQL</p>
+                                                        <p class="mb-0">{{schema}}</p>
                                                     </div>
-                                                    <div class="mb-0 px-3 py-2 br-0 border-bottom">
+                                                    <!-- <div class="mb-0 px-3 py-2 br-0 border-bottom">
                                                         <h6 class="mb-0">Database</h6>
                                                         <p class="mb-0">XShop</p>
-                                                    </div>
+                                                    </div> -->
                                                     <div class="input-group mt-2 px-3">
-                                                        <input type="text" placeholder="User" class="form-control border">
+                                                        <input type="text" placeholder="Search" [(ngModel)]="searchText" class="form-control border">
                                                         <button type="button" aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
                                                             <i aria-hidden="true" class="fe fe-search"></i>
                                                         </button>
                                                     </div>
                                                    
                                                     <div class="data-cdk-tables px-3 mt-2">
-                                                        <ul>
+                                                        <ul cdkDropList 
+                                                        #sourceList="cdkDropList" 
+                                                        [cdkDropListData]="tables" 
+                                                        [cdkDropListConnectedTo]="[destinationList]"
+                                                        (cdkDropListDropped)="drop($event)">
                                                             <h6 class="mb-0">Tables</h6>
-                                                            <li class="cdk-drag sub-menu-item example-box subMenuFlex p-2 border rounded-3 mb-1">
+                                                            <li *ngFor="let table of tables | tableFilterDT:searchText" cdkDrag
+                                                                class="cdk-drag sub-menu-item example-box subMenuFlex p-2 border rounded-3 mb-1 cursor-move">
                                                                 <i class="fa fa-table table-icon-p me-1"></i>
-                                                                <span >User_address</span>
-                                                            </li>
-                                                            <li class="cdk-drag sub-menu-item example-box subMenuFlex p-2 border rounded-3 mb-1">
-                                                                <i class="fa fa-table table-icon-p me-1"></i>
-                                                                <span >cart</span>
-                                                            </li>
-                                                            <li class="cdk-drag sub-menu-item example-box subMenuFlex p-2 border rounded-3 mb-1">
-                                                                <i class="fa fa-table table-icon-p me-1"></i>
-                                                                <span >User_product_reviwes</span>
+                                                                <span>{{ table?.tables }}</span>
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -96,7 +91,7 @@
                                         }
                                       </div>
                                      
-                                        <li [ngbNavItem]="2" className="nav-link text-start " id="vertical-accept-tab"><a ngbNavLink ><i class="fa fa-gears me-2"></i>Transformations</a>
+                                        <!-- <li [ngbNavItem]="2" className="nav-link text-start " id="vertical-accept-tab"><a ngbNavLink ><i class="fa fa-gears me-2"></i>Transformations</a>
                                             <ng-template ngbNavContent>
                                                 <div class="tab-pane  terms" id="vertical-accept" role="tabpanel" aria-labelledby="vertical-accept-tab" tabindex="0">
                                                     <h5><b> Terms :</b></h5>
@@ -154,30 +149,210 @@
                                                             truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences</p>
                                                 </div>
                                             </ng-template>
-                                        </li>
+                                        </li> -->
                                     </ul>
                                 </div>
                                
                             </div>
-                            <div class="col-9 p-4">
-                                <div type="button" class="card mb-0 hide-show-btn btn-primary">
-                                    <i class="fa fa-angle-left fs-18"></i>
+                            <div class="col-9 py-0">
+                                <div type="button" class="card mb-0 hide-show-btn btn-primary" (click)="isOpen = !isOpen">
+                                    <i *ngIf="isOpen" class="fa fa-angle-left fs-18"></i>
+                                    <i *ngIf="!isOpen" class="fa fa-angle-right fs-18"></i>
                                 </div>
-                                <div class="tab-content terms" id="vertical-tabContent">                                 
-                                    <div [ngbNavOutlet]="nav" ></div>
+                                <div class="tab-content terms connections-layer-h" id="vertical-tabContent">
+                                    <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0"> -->
+                                        <!-- <div class="card card-body databse-T-H mb-0 br-0 p-0"> -->
+                                            <div class="card-body example-list-drop mb-0 py-0" cdkDropList #destinationList="cdkDropList"
+                                                [cdkDropListData]="draggedTables" (cdkDropListDropped)="drop($event)">
+                                        
+                                                @for (item of draggedTables; track item; let index = $index) {
+                                                    <div class="d-flex overflow-auto">
+                                                      <!-- Table Element -->
+                                                      <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " ngbDropdown>
+                                                      
+
+                                                        <div class="d-flex  end-0 gap-1 m-1">
+                                                            <span class="flex-grow-1" ngbTooltip="{{ item.tables }}" placement="top" container="body">
+                                                                {{ item.tables | slice:0:14 }}
+                                                              </span>
+                                                            <a (click)="removeTable(index)" aria-label="remove" class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
+                                                                <i class="fe fe-trash"></i>
+                                                            </a>
+                                                            <a *ngIf="!(selectedTransformations[index]?.length > 0)" aria-label="add"
+                                                                class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
+                                                                <i class="fe fe-plus text-white text-sm"></i>
+                                                            </a>
+                                                            <a *ngIf="(selectedTransformations[index]?.length > 0)" ngbTooltip="Run" [class.disabled]="runButtonDisabled[index]" 
+                                                                aria-label="Run Table" class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="setTransformations(true, index, false); runTableIndex = index">
+                                                                <span><i class="fa fa-play"></i></span>
+                                                            </a>
+                                                        </div>  
+                                                      </div>
+                                                      <!-- Transformation Chain -->
+                                                      @for (transformationtable of selectedTransformations[index]; let transformationIndex = $index; track transformationtable) {
+                                                        <img src="../../../../assets/images/data-transformation/right_arrow.png" class="image-width" alt="arrow image">
+                                                  
+                                                        <div class="example-box p-2 border rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " [ngClass]="selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'border-danger' : 'border-dark-subtle'"
+                                                            ngbDropdown #dropdownRef="ngbDropdown">
+                                                            <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'This transformation is INCOMPLETE' : selectedTransformations[index][transformationIndex].label }}" placement="top"
+                                                                container="body">
+                                                                {{ selectedTransformations[index][transformationIndex].label | slice:0:13 }}
+                                                            </span>
+                                                        
+                                                        
+                                                            <div class="d-flex  end-0 gap-1 m-1">
+                                                                <a aria-label="edit" class="btn btn-sm btn-primary-light rounded-circle plus-icon-size" ngbDropdownToggle
+                                                                    data-bs-toggle="dropdown">
+                                                                    <i class="fe fe-edit"></i>
+                                                                </a>
+                                                                <a (click)="removeTransformation(index, transformationIndex)" aria-label="remove"
+                                                                    class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
+                                                                    <i class="fe fe-trash"></i>
+                                                                </a>
+                                                                <a *ngIf="transformationIndex === this.selectedTransformations[index]?.length - 1" aria-label="add" [class.disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown) || ( ['replace_values','alter_datatypes'].includes(selectedTransformations[index][transformationIndex].key) && !selectedTransformations[index][transformationIndex].input)"
+                                                                    class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
+                                                                    <i class="fe fe-plus text-white text-sm"></i>
+                                                                </a>
+                                                            </div>
+
+                                                          <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                            @for (transformation of transformationTypes; track transformation.key) {
+                                                                @if(transformation.needColumn){
+                                                                <div class="dropup d-flex text-center" ngbDropdown>
+                                                                    <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem> {{ transformation.label }} </li>
+                                                                    <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block"
+                                                                        ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                        <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
+                                                                            <div class="p-2">
+                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                            <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex)">
+                                                                                <option selected disabled>Select Column</option>
+                                                                                @for(column of item.columns; track column){
+                                                                                    <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || (['upper', 'lower', 'title'].includes(transformation.key) && stringList.includes(column.dtype)) || !['alter_datatypes', 'upper', 'lower', 'title'].includes(transformation.key)"  [value]="column.col">{{column?.col}}</option>
+                                                                                } 
+                                                                            </select>
+                                                                            </div>
+                                                                            <div class="p-2">
+                                                                                <input [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
+                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'alter_datatypes'" class="form-select" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)">
+                                                                                    <option selected disabled>Select Data Type</option>
+                                                                                    <option value="int">Integer</option>
+                                                                                    <option value="float">Float</option>
+                                                                                    <option value="string">String</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </ul>
+                                                                </div>
+                                                                } @else{
+                                                                <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
+                                                                (click)="setTransformationType(index, transformation.key, null,false, false,transformationIndex)">
+                                                                    <a> {{ transformation.label }} </a>
+                                                                </li>
+                                                                }
+                                                            }
+                                                          </ul>
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                }                                                  
+                                                @if (draggedTables.length === 0) {
+                                                <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
+                                                }
+                                            </div>
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                    <div [ngbNavOutlet]="nav" ></div>                           
                                 </div>
                             </div>
                         </div>
                            
                     </div>
                     <div class="card-footer p-3">
-                        <div class="float-end d-inline-block btn-list">
-                            <a class="btn btn-primary">Decline</a>
-                            <a class="btn btn-secondary">Agree and Continue</a>
+                        <div class="float-end d-inline-block btn-list mb-1">
+                            <a class="btn btn-primary cursor-pointer" [class.disabled]="isApplyDisable" (click)="openTablesSelection(tablesCheck)">Import & Load</a>
+                        </div>
+                        <div *ngIf="isTablePreview" class="card mb-0 border customsql-result-preview-h">
+                            <div class="card-header bg-light d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <h6 class="mb-0 me-2">Result Preview Of {{tableName}} </h6>
+                                    <p class="border p-1 rounded-2 mb-0 bg-light">Showing {{showingRows}} rows of {{totalRows}}
+                                    </p>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center me-1">
+                                    <input [(ngModel)]="showingRows" type="number" id="input-text" placeholder="rows"
+                                        (keyup.enter)="setTransformations(true, runTableIndex, false)" class="form-control w-40" min="0">
+                                    <a class="btn btn-primary" (click)="setTransformations(true, runTableIndex, false)"><i
+                                            class="mdi mdi-arrow-right-thick"></i></a>
+                                </div>
+                            </div>
+                            <div class="card-body align-items-center justify-content-center p-0">
+                        
+                                <div class="table-responsive tables-preview">
+                                    <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                                        <thead class="Result-preview-table-sticky">
+                                            <tr>
+                                                @for(data of tableHeader;track data){
+                                                <th>{{data}}</th>
+                                                }
+                                            </tr>
+                        
+                                        </thead>
+                                        <tbody>
+                                            @for(rows of tableData;track rows;){
+                                            <tr>
+                                                @for(rowData of rows;track rowData;let i = $index){
+                        
+                                                <td>{{rowData}}</td>
+                                                }
+                                            </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- ROW-1 CLOSE -->
 </div>
+
+<ng-template #tablesCheck let-modal>
+    <div class="modal-header">
+        <h6 class="modal-title">Non-Transformed Tables</h6>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-primary text-dark" role="alert">
+            Select the tables you want to add to the Semantic Layer, or skip if not required.
+        </div>
+        <div class="card panel panel-primary">
+            <div class="d-flex">
+                <input type="text" class="form-control border-end-0" placeholder="Search" [(ngModel)]="tableModalSearch">
+                <button class="btn btn-primary border me-2 search-icon-border-radius" type="button">
+                    <i class="fe fe-search"></i>
+                </button>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" id="selectAll" class="form-check-input" [(ngModel)]="isAllSelected" (change)="toggleSelectAll()">
+                <label for="selectAll" class="form-check-label"> Select All </label>
+            </div>
+            <div class="tables-modal">
+                <div *ngFor="let table of nonTransformedTables | tableFilterDT:tableModalSearch; let i = index" class="form-check">
+                    <input type="checkbox" name="checkbox" class="form-check-input" [id]="'tableCheckbox' + i" [(ngModel)]="table.selected" (change)="checkIfAllSelected()">
+                    <label class="form-check-label" [for]="'tableCheckbox' + i"> {{ table?.tables }} </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="text-right">
+            <button type="button" class="btn ripple btn-secondary me-2" (click)="setTransformations(false, '', true); modal.close('Save click')">Skip</button>
+            <button type="button" class="btn ripple btn-primary" (click)="setTransformations(false, '', false); modal.dismiss('Cross click')" [disabled]="isAddTheseTablesDisable">
+                Add These Tables
+            </button>
+        </div>
+    </div>
+</ng-template>

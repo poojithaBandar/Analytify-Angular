@@ -715,10 +715,10 @@
                 <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="seachColumnDataFilter()" type="button"
                     id="button-addon2"><i class="fe fe-search "></i></button>
             </div>
-            <div class="table-responsive" style="max-height: 210px;">
+            <!-- <div class="table-responsive" style="max-height: 210px;">
                 <table class="table table-bordered text-nowrap mb-0 custom-table">
                     @if(searchFiltereredData?.length){
-                    <tbody>
+                    <thead>
                         <tr>
                             <td>
                                 <div class="form-check">
@@ -730,28 +730,73 @@
                                 <label for="selectAll" class="form-check-label">Select All</label>
                             </td>
                         </tr>
-                        @for(rows of searchFiltereredData;track rows;let i = $index){
-                        <tr class="border-bottom user-list">
-                            <td style="width: 46px;">
+                    </thead>
+                    <tbody>
+                        <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 210px; width: 100%; display: contents;">
+                            <tr *cdkVirtualFor="let row of searchFiltereredData; trackBy: trackByFn">
+                                <td style="width: 46px;">
+                                    <div class="form-check">
+                                        <input type="checkbox" [id]="'defaultCheck' + row.id"
+                                        [(ngModel)]="row.selected" 
+                                            (change)="updateSelectedRows()"
+                                            class="form-check-input">
+                                    </div>
+                                </td>
+                                <td>
+                                    <label [for]="'defaultCheck' + row.id" class="form-check-label">
+                                        {{ row.label }}
+                                    </label>
+                                </td>
+                            </tr>
+                        </cdk-virtual-scroll-viewport>
+                    </tbody>
+                    }@else{
+                    <h6>No data in selected column</h6>
+                    }
+                </table>
+            </div> -->
+            <div class="table-responsive" style="max-height: 210px; overflow: hidden;">
+                <table class="table table-bordered text-nowrap mb-0 custom-table">
+                    @if(searchFiltereredData?.length){
+                    <tbody>
+                        <div class="d-flex align-items-center">
+                            <div class="col-1 p-1 border-end">
                                 <div class="form-check">
-                                    <input type="checkbox" [id]="'defaultCheck' + i" name="rows{{i}}"
-                                        [(ngModel)]="rows.selected" (change)="updateSelectedRows()"
-                                        class="form-check-input">
+                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected"
+                                        (change)="toggleAllRows($event)" class="form-check-input">
                                 </div>
-                            </td>
-                            <td>
-                                <label for="defaultCheck1" [for]="'defaultCheck' + i" class="form-check-label"> {{
-                                    rows.label }} </label>
-                            </td>
+                            </div>
+                            <div class="col-11 p-1 border-end">
+                                <label for="selectAll" class="form-check-label">Select All</label>
+                            </div>
+                        </div>
+                        <tr>
+                         <td colspan="2" class="p-0">
+                            <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 210px; ">
+                                <div class="d-flex align-items-center" *cdkVirtualFor="let row of searchFiltereredData; trackBy: trackByFn">
+                                    <div class="col-1 p-1  border-end border-bottom">
+                                        <div class="form-check m-0">
+                                            <input type="checkbox" [id]="'defaultCheck' + row.id"
+                                            [(ngModel)]="row.selected" 
+                                                (change)="updateSelectedRows()"
+                                                class="form-check-input">
+                                        </div>
+                                    </div>
+                                    <div class="col-11 p-1 border-bottom border-end">
+                                        <label [for]="'defaultCheck' + row.id" class="form-check-label">
+                                            {{ row.label }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </cdk-virtual-scroll-viewport>
+                        </td>
                         </tr>
-                        }
                     </tbody>
                     }@else{
                     <h6>No data in selected column</h6>
                     }
                 </table>
             </div>
-
         </div>
 
         <div class="modal-footer">
@@ -831,36 +876,41 @@
                 <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="seachColumnDataFilterEdit()" type="button"
                     id="button-addon2"><i class="fe fe-search "></i></button>
             </div>
-            <div class="table-responsive" style="max-height: 210px;">
+            <div class="table-responsive" style="max-height: 210px;overflow: hidden;">
                 <table class="table table-bordered text-nowrap mb-0 custom-table">
                     <tbody>
-                        <tr>
-                            <td>
+                        <div class="d-flex align-items-center">
+                            <div class="col-1 p-1 border-end">
                                 <div class="form-check">
                                     <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected"
                                         (change)="toggleEditAllRows($event)" class="form-check-input">
                                 </div>
-                            </td>
-                            <td>
+                            </div>
+                            <div class="col-11 p-1 border-end">
                                 <label for="selectAll" class="form-check-label">Select All</label>
-                            </td>
-                        </tr>
-                        @for(rows of searchEditFilterList;track rows;let i = $index){
-                        <tr class="border-bottom user-list">
-
-                            <td style="width: 46px;">
-                                <div class="form-check">
-                                    <input type="checkbox" [id]="'defaultCheck' + i" name="rows{{i}}"
-                                        [(ngModel)]="rows.selected" (change)="updateEditSelectedRows()"
-                                        class="form-check-input">
+                            </div>
+                        </div>
+                        <tr>
+                        <td colspan="2" class="p-0">
+                        <cdk-virtual-scroll-viewport itemSize="40" class="viewport" style="height: 210px;">
+                            <div class="d-flex align-items-center" *cdkVirtualFor="let row of searchEditFilterList; trackBy: trackByFn">
+                                <div class="col-1 p-1  border-end border-bottom">    
+                                <div class="form-check m-0">
+                                        <input type="checkbox" [id]="'defaultCheck' + row.id"
+                                        [(ngModel)]="row.selected" 
+                                            (change)="updateEditSelectedRows()"
+                                            class="form-check-input">
+                                    </div>
+                                    </div>
+                                    <div class="col-11 p-1 border-bottom border-end">
+                                        <label [for]="'defaultCheck' + row.id" class="form-check-label">
+                                        {{ row.label }}
+                                    </label>
                                 </div>
-                            </td>
-                            <td>
-                                <label for="defaultCheck1" [for]="'defaultCheck' + i" class="form-check-label"> {{
-                                    rows.label }} </label>
-                            </td>
+                            </div>
+                        </cdk-virtual-scroll-viewport>
+                        </td>
                         </tr>
-                        }
                     </tbody>
                 </table>
             </div>

@@ -45,7 +45,10 @@ export class DashboardPageComponent implements OnInit{
   port:any;
   host:any; 
   @ViewChild('propertiesModal') propertiesModal : any;
-
+  frequency! : number;
+  refreshNow: boolean = false;
+  lastRefresh: any;
+  nextRefresh: any;
   
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
   private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
@@ -376,5 +379,44 @@ publishDashboard(){
 
     }
   })
+}
+autoFrequencyRefresh(){
+  let object = {
+    "dashboard_id": this.dashboardId,
+    "is_scheduled": true,
+    "frequency": this.frequency,
+    "refresh_now": this.refreshNow
+}
+  this.workbechService.autoRefreshFrequency(object).subscribe({
+    next:(data)=>{
+      this.toasterservice.success('Dashboard refresh scheduled','success',{ positionClass: 'toast-center-center'})
+      },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  });
+}
+
+viewSchedular(dashboardId:any,modal: any){
+  this.dashboardId = dashboardId;
+  this.workbechService.fetchSchedularData(this.dashboardId).subscribe({
+    next:(data)=>{
+      this.frequency = data.frequency;
+      this.lastRefresh = data.last_refresh;
+      this.nextRefresh = data.next_refresh;
+      this.modalService.open(modal);
+      },
+    error:(error)=>{
+      this.modalService.open(modal);
+    }
+  });
+
+
 }
 }

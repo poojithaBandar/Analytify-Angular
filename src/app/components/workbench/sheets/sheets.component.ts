@@ -1,5 +1,5 @@
 import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input } from '@angular/core';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -55,6 +55,8 @@ import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 import 'pivottable';
 // import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/sortable';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { TestPipe } from '../../../test.pipe';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -90,7 +92,7 @@ declare var $:any;
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -367,20 +369,32 @@ export class SheetsComponent {
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
+  @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
+  @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+
   transformedData: any[] = [];
   columnKeys: string[] = [];
   rowKeys: string[] = [];
   valueKeys: string[] = [];
   rawData: any = {};
   
-  colorSchemes = [
-    ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
-    ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
-    ['#FFFF19', '#FFFF13', '#FFFF0A', '##FFFF00', '#FFC100', '#FF7D00', '#FF0000', '#C30000', '#8A0000'], // Example gradient 3
-    ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
-    ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
-  ];
-  selectedColorScheme=[] as  any;
+  // colorSchemes = [
+  //   ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
+  //   ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
+  //   ['#FFFF19', '#FFFF13', '#FFFF0A', '##FFFF00', '#FFC100', '#FF7D00', '#FF0000', '#C30000', '#8A0000'], // Example gradient 3
+  //   ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
+  //   ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
+  // ];
+
+  defaultColorSchemes : { [key: string]: string[] } = {};
+  userDefinedColorSchemes : { [key: string]: string[] } = {};
+  keysOfColorSchemes : { key: string; colorPalette: string[] }[] = [];
+  keysOfUsersColors : any[] = [];
+  selectedColorScheme = ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'];
+  newColorScheme : any[] = [];
+  colorSchemeName : string = '';
+  selectedBox : number = 0;
+
   hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
   deleteSheetInSheetComponent = false;
@@ -492,23 +506,6 @@ export class SheetsComponent {
    this.canDrop = !this.canEditDb
   }
 
-  rgbStringToHex(rgb: string): string {
-    // Split the input string by commas, remove extra spaces, and convert to numbers
-    const [r, g, b] = rgb.split(',').map((value) => parseInt(value.trim(), 10));
-  
-    // Ensure RGB values are within the valid range [0, 255]
-    const clamp = (value: number) => Math.max(0, Math.min(255, value));
-  
-    // Convert RGB to HEX
-    return (
-      '#' +
-      [clamp(r), clamp(g), clamp(b)]
-        .map((x) => x.toString(16).padStart(2, '0')) // Convert to hex and pad
-        .join('')
-        .toUpperCase()
-    );
-  }
-
   ngOnInit(): void {
     this.loaderService.hide();
     this.columnsData();
@@ -531,15 +528,26 @@ export class SheetsComponent {
       console.log('Value changed in Comp2:', value);
       this.changeChartPlugin(value);
     });
+    const defaultColors = localStorage.getItem('defaultColorSchemes');
+    const colorPaletteId = localStorage.getItem('colorPalettId');
+    if(defaultColors){
+      this.defaultColorSchemes = JSON.parse(defaultColors);
+    }
+    if(colorPaletteId){
+      this.getUserColorPalettes(colorPaletteId);
+    } else{
+      this.getColorSchemesForDropdown();
+    }
+    console.log(this.defaultColorSchemes);
   }
   isColorSchemeDropdownOpen = false;
   toggleDropdownColorScheme() {
     this.isColorSchemeDropdownOpen = !this.isColorSchemeDropdownOpen;
   }
-  selectColorScheme(scheme: string[]) {
-    this.selectedColorScheme = scheme.slice(0, 9);
-    console.log('color pallete', this.selectedColorScheme)
-  }
+  // selectColorScheme(scheme: string[]) {
+  //   this.selectedColorScheme = scheme.slice(0, 9);
+  //   console.log('color pallete', this.selectedColorScheme)
+  // }
   getGradient(colors: string[]): string {
     return `linear-gradient(to right, ${colors.join(', ')})`;
   }
@@ -3099,7 +3107,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   filterType:any;
   openSuperScaled(modal: any,data:any) {
     this.filterSearch = '';
-    this.filterDataArray = [];
+    this.filterDataArray.clear();
     this.isExclude = false;
     this.modalService.open(modal, {
       centered: true,
@@ -3160,7 +3168,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         console.log(responce);
         const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
         this.filterData = convertedArray;
-
         if(this.dateList.includes(responce.dtype)){
           let rawLabel = this.filterData[0].label;
           let datePart = rawLabel.split(" ")[0];
@@ -3200,23 +3207,53 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     }
   )
   }
-  toggleEditAllRows(event:any){
-    // this.isAllSelected = !this.isAllSelected;
-    this.filterDataArray = [];
-    this.filterData.forEach((element: any) => { element['selected'] = this.isAllSelected; if(this.isAllSelected){this.filterDataArray.push(element.label)} });
-    console.log(this.filterData)
+  // toggleEditAllRows(event:any){
+  //   // this.isAllSelected = !this.isAllSelected;
+  //   this.filterDataArray = [];
+  //   this.filterData.forEach((element: any) => { element['selected'] = this.isAllSelected; if(this.isAllSelected){this.filterDataArray.push(element.label)} });
+  //   console.log(this.filterData)
+  // }
+
+  // filterDataArray = [] as any;
+  // filterCheck(event:any,data:any){
+  //   if(event.target.checked){
+  //     this.filterDataArray.push(data);
+  //   }else{
+  //     let index1 = this.filterDataArray.findIndex((i:any) => i == data);
+  //     this.filterDataArray.splice(index1, 1);
+  //   }
+  //  console.log(this.filterDataArray)
+  // }
+  filterDataArray = new Set<string>();
+
+toggleEditAllRows(event: any) {
+  const isChecked = event.target.checked;
+  this.filterData.forEach((element: any) => {
+    element.selected = isChecked;
+    if (isChecked) {
+      this.filterDataArray.add(element.label);
+    } else {
+      this.filterDataArray.delete(element.label);
+    }
+  });
+
+  console.log('All Selected:', this.filterDataArray);
+}
+
+filterCheck(event: any, data: string) {
+  if (event.target.checked) {
+    this.filterDataArray.add(data);
+  } else {
+    this.filterDataArray.delete(data);
   }
 
-  filterDataArray = [] as any;
-  filterCheck(event:any,data:any){
-    if(event.target.checked){
-      this.filterDataArray.push(data);
-    }else{
-      let index1 = this.filterDataArray.findIndex((i:any) => i == data);
-      this.filterDataArray.splice(index1, 1);
-    }
-   console.log(this.filterDataArray)
-  }
+  console.log('Selected Filters:', this.filterDataArray);
+}
+
+// TrackBy function to optimize rendering
+trackByFn(index: number, item: any): number {
+  return item?.id || index;
+}
   totalDataLength : any;
   filterDataPut(){
     // this.dimetionMeasure = [];
@@ -3243,7 +3280,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
     "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
-    "select_values":this.filterDataArray,
+    "select_values":Array.from(this.filterDataArray),
     "col_name":this.filterName,
     "data_type":this.filterType,
     "parent_user":this.createdBy,
@@ -3261,7 +3298,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         this.dataExtraction();
-        this.filterDataArray = [];
+        this.filterDataArray.clear();
         this.filterDateRange = [];
         this.formatExtractType = '';
         this.selectedTopColumn = 'select';
@@ -3322,12 +3359,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         else {
           this.activeTabId = 1;
         }
-        responce.result.forEach((element:any) => {
-          this.filterData.push(element);
-        });
+        this.filterData = responce.result
+        // responce.result.forEach((element:any) => {
+        //   this.filterData.push(element);
+        //  // Force update
+        // });
         this.filterData.forEach((filter:any)=>{
           if(filter.selected){
-            this.filterDataArray.push(filter.label);
+            this.filterDataArray.add(filter.label);
           }
         })
         if(this.dateList.includes(responce.data_type) && responce?.range_values){
@@ -3399,7 +3438,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
       "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
-      "select_values":this.filterDataArray,
+      "select_values":Array.from(this.filterDataArray),
       "col_name":this.filterName,
       "data_type":this.filterType,
       "is_exclude":this.isExclude,
@@ -3413,7 +3452,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           console.log(responce);
           this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
           this.dataExtraction();
-          this.filterDataArray = [];
+          this.filterDataArray.clear();
           this.filterDateRange = [];
           this.isAllSelected = false;
           this.selectedTopColumn = 'select';
@@ -3859,7 +3898,7 @@ customizechangeChartPlugin() {
     this.xlabelFontWeight = data.xlabelFontWeight ?? 400;
     this.backgroundColor = data.backgroundColor ?? '#fff';
     this.color = data.color ?? '#2392c1';
-    this.selectedColorScheme = data.selectedColorScheme ?? ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
+    this.selectedColorScheme = data.selectedColorScheme ?? ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'],
     this.ylabelFontWeight = data.ylabelFontWeight ?? 400;
     this.isBold = data.isBold ?? false;
     this.isXlabelBold = data.isXlabelBold ?? false;
@@ -3954,7 +3993,7 @@ customizechangeChartPlugin() {
     this.xlabelFontWeight = 400;
     this.backgroundColor = '#fff';
     this.color = '#2392c1';
-    this.selectedColorScheme = ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
+    this.selectedColorScheme = ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'],
     this.ylabelFontWeight = 400;
     this.isBold = false;
     this.isTableHeaderBold = false;
@@ -5823,4 +5862,146 @@ customizechangeChartPlugin() {
       }
       return isValid;
     }
+
+  getColorSchemesForDropdown() {
+    this.keysOfColorSchemes = [];
+    let keysofDefault = Object.keys(this.defaultColorSchemes);
+    keysofDefault.forEach((key:any)=>{
+      let object = {
+        key: key,
+        colorPalette: this.defaultColorSchemes[key]
+      }
+      this.keysOfColorSchemes.push(object);
+    });
+    this.keysOfUsersColors = Object.keys(this.userDefinedColorSchemes);
+    this.keysOfUsersColors.forEach((key:any)=>{
+      let object = {
+        key: key,
+        colorPalette: this.userDefinedColorSchemes[key]
+      }
+      this.keysOfColorSchemes.push(object);
+    });
+    console.log(this.keysOfColorSchemes);
+  }
+  removeColorScheme(key: string, index: any){
+    let isColorSchemeSelected = JSON.stringify(this.selectedColorScheme) === JSON.stringify(this.userDefinedColorSchemes[key]);
+    Swal.fire({
+      position: "center",
+      icon: "question",
+      title: isColorSchemeSelected ? `"${key}" is currently applied to the sheet. Do you still want to delete it?` : `Are you sure you want to delete the "${key}" color scheme?`,
+      text: "This action cannot be undone.",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let colors = JSON.parse(JSON.stringify(this.userDefinedColorSchemes));
+        delete colors[key];
+        const colorPaletteId = localStorage.getItem('colorPalettId');
+        let object = {
+          id: colorPaletteId,
+          colour_palette: {
+            ...colors
+          }
+        }
+        this.workbechService.updateColorPalette(object).subscribe({
+          next: (response: any) => {
+            console.log(response);
+            if(isColorSchemeSelected){
+              this.selectedColorScheme = ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'];
+              if(this.retriveDataSheet_id){
+                this.sheetSave();
+              }
+            }
+            delete this.userDefinedColorSchemes[key];
+            this.getColorSchemesForDropdown();
+            this.toasterService.success('Color Palette Deleted Successfully', 'success', { positionClass: 'toast-top-right' });
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          }
+        });
+      }
+    });
+  }
+  addNewBox(){
+    this.newColorScheme.push('#FFFFFF');
+    this.selectedBox = this.newColorScheme.length-1;
+  }
+  closeColorPicker(colorPickerDropDown : NgbDropdown){
+    colorPickerDropDown.close();
+    this.selectedBox = 0;
+    this.newColorScheme = [];
+    this.colorSchemeName = '';
+  }
+  checkColorNameExists(name: string): boolean {
+    return this.keysOfColorSchemes.some((colorScheme: any) => colorScheme.key.toLowerCase() === name.trim().toLowerCase());
+  }
+  saveColorScheme(colorPickerDropDown : NgbDropdown){
+    this.colorSchemeName = this.colorSchemeName.trim();
+    if(this.checkColorNameExists(this.colorSchemeName)){
+      this.toasterService.info(this.colorSchemeName+' already exists. Please try another.', 'info', { positionClass: 'toast-top-right' });
+    } else {
+      const colorPaletteId = localStorage.getItem('colorPalettId');
+      if(colorPaletteId){
+        let colors = JSON.parse(JSON.stringify(this.userDefinedColorSchemes));
+        colors[this.colorSchemeName] = this.newColorScheme;
+        let object = {
+          id: colorPaletteId,
+          colour_palette: {
+            ...colors
+          }
+        }
+        this.workbechService.updateColorPalette(object).subscribe({
+          next: (response: any) => {
+            console.log(response);
+            this.userDefinedColorSchemes[this.colorSchemeName] = this.newColorScheme;
+            this.closeColorPicker(colorPickerDropDown);
+            this.getColorSchemesForDropdown();
+            this.toasterService.success('New Color Palette Added Successfully', 'success', { positionClass: 'toast-top-right' });
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          }
+        });
+      } else {
+        let object = {
+          colour_palette: {
+            [this.colorSchemeName]: this.newColorScheme
+          }
+        }
+        this.workbechService.saveColorPalette(object).subscribe({
+          next: (response: any) => {
+            console.log(response);
+            localStorage.setItem('colorPalettId', response?.id);
+            this.userDefinedColorSchemes[this.colorSchemeName] = this.newColorScheme;
+            this.closeColorPicker(colorPickerDropDown);
+            this.getColorSchemesForDropdown();
+            this.toasterService.success('New Color Palette Added Successfully', 'success', { positionClass: 'toast-top-right' });
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          }
+        });
+      }
+    }
+  }
+  getUserColorPalettes(id : any){
+    this.workbechService.getColorPalettes(id).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.userDefinedColorSchemes = response.data[0]?.colour_palette;
+        this.getColorSchemesForDropdown();
+        console.log(this.userDefinedColorSchemes);
+      },
+      error: (error) => {
+        console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+      }
+    });
+  }
 }

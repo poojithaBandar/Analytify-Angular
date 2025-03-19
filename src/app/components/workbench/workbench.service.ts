@@ -822,6 +822,24 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/file_replace/`+this.accessToken,object);
     }
 
+    autoRefreshFrequency(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard/refresh/schedule/`+this.accessToken,object);
+    }
+
+    fetchRefreshedData(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/data/`+ id + '/' +this.accessToken);
+    }
+
+    fetchSchedularData(dashboardId : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/status/`+ dashboardId + '/' +this.accessToken);
+    }
+
     upsertExcelOrCsvFile(object : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -832,5 +850,53 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/file_append/`+this.accessToken,object);
+    }
+
+    //data transformation
+    getTablesForDataTransformation(hierarchyId : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/Database_tables/`+this.accessToken+`/${hierarchyId}`);
+    }
+
+    setTransformations(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/Database_Transformation/`+this.accessToken,object);
+    }
+
+    checkDatasourceConnection(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/test_connection/`+this.accessToken,object);
+    }
+
+    updateDashboardOnSchedularLoad(object : any, dashboardId : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/shared_dashboard_refresh_update/`+ dashboardId ,object);
+    }
+
+    clearTabSheetFilterActions(obj: any) {
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/clear_dashboard_tabs/`+this.accessToken,obj);
+    }
+
+    //color palette
+    saveColorPalette(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/colour_palette/`+this.accessToken,object);
+    }
+    updateColorPalette(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/colour_palette/`+this.accessToken,object);
+    }
+    getColorPalettes(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/colour_palette/`+this.accessToken+`/${id}`);
     }
 }
