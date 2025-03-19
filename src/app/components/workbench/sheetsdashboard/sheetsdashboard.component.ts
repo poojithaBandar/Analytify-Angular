@@ -6727,7 +6727,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   }
 
   setDashboardNewSheetsArray(sheetIds: any[]){
-    if (this.dashboardNew?.length) {
+    if (this.dashboardNew?.length > 0) {
       this.dashboardNew = this.dashboardNew.map(item => ({
         ...item,
         selectedSheet: sheetIds.includes(item['sheetId']) ? false : item['selectedSheet']
