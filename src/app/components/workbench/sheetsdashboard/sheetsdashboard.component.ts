@@ -6760,7 +6760,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         next:(data)=>{
           this.frequency = data.frequency;
           this.lastRefresh = data.last_refresh;
-          this.nextRefresh = data.next_refresh;
+          this.nextRefresh = data.next_refresh_in_minutes;
           this.modalService.open(modal, {
             centered: true,size:'md',
             windowClass: 'animate__animated animate__zoomIn',
@@ -6775,12 +6775,21 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
 
     autoFrequencyRefresh(){
-      let object = {
-        "dashboard_id": this.dashboardId,
-        "is_scheduled": true,
-        "frequency": this.frequency,
-        "refresh_now": this.refreshNow
-    }
+      let object;
+      if(this.frequency > 0){
+        object = {
+          "dashboard_id": this.dashboardId,
+          "is_scheduled": true,
+          "frequency": this.frequency,
+          "refresh_now": this.refreshNow
+      }
+      } else {
+        object = {
+          "dashboard_id": this.dashboardId,
+          "is_scheduled": false,
+          "refresh_now": this.refreshNow
+      }
+      }
       this.workbechService.autoRefreshFrequency(object).subscribe({
         next:(data)=>{
           this.toasterService.success('Dashboard refresh scheduled.','success',{ positionClass: 'toast-center-center'});
