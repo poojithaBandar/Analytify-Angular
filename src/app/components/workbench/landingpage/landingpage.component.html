@@ -624,7 +624,7 @@
           <div *ngIf="shareAsPrivate" class="">
             
             <p class="fw-semibold mb-0 mt-3">Users</p>
-            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(click)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
+            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(open)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
                 <ng-option *ngFor="let user of usersOnSelectedRole" [value]="user.user_id">{{user.username}}</ng-option>
               
             </ng-select>
@@ -642,7 +642,9 @@
    </div>
       </div>
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl  && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
+
         <button
           type="button"
           class="btn ripple btn-secondary"
