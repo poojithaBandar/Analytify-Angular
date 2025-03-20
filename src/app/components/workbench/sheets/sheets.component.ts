@@ -2504,7 +2504,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.filterQuerySetId = responce?.datasource_queryset_id;
         }
         this.draggedRows = this.sheetResponce?.rows;
-        this.draggedMeasureValues = this.sheetResponce?.pivotMeasure; 
+        this.draggedMeasureValues = this.sheetResponce?.pivotMeasure || []; 
         this.mulColData = responce?.col_data;
         this.mulRowData = responce?.row_data;
         this.pivotMeasureValues = responce?.pivot_measure
