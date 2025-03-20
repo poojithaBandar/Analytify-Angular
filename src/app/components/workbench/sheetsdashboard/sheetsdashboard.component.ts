@@ -5201,6 +5201,8 @@ kpiData?: KpiData;
         // localStorage.removeItem('filterid')
         this.sheetFilters = data;
         data.forEach((item: any) => {
+          this.filteredRowData = [];
+          this.filteredColumnData = [];
           this.tablePreviewColumn.push(item.columns);
       this.tablePreviewRow.push(item.rows);
         item.columns.forEach((res:any) => {      
