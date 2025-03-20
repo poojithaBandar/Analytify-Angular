@@ -834,6 +834,12 @@ deleteUser(id:any){
       return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/data/`+ id + '/' +this.accessToken);
     }
 
+    fetchSchedularData(dashboardId : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/status/`+ dashboardId + '/' +this.accessToken);
+    }
+
     upsertExcelOrCsvFile(object : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];

@@ -578,7 +578,7 @@
                         <app-insights-button *ngIf="updateQuery" [buttonName]="' Update Query '"
                             [classesList]="'btn btn-primary'" [previledgeId]="52" [isBtn]="true"
                             (btnClickEvent)="updateCustmQuery()" [isIcon]="false"></app-insights-button>
-                        <button aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length"
+                        <button *ngIf="!updateQuery" aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length"
                             (click)="executeQuery()"> Run Query </button>
                         <button aria-expanded="false" class="btn btn-secondary" (click)="clrQuery()"> Clear Query
                         </button>

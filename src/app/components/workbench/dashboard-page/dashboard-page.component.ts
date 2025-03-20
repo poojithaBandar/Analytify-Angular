@@ -47,6 +47,8 @@ export class DashboardPageComponent implements OnInit{
   @ViewChild('propertiesModal') propertiesModal : any;
   frequency! : number;
   refreshNow: boolean = false;
+  lastRefresh: any;
+  nextRefresh: any;
   
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
   private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
@@ -170,6 +172,7 @@ viewPropertiesTab(name:any,dashboardId:any){
   this.dashboardPropertyId = dashboardId;
    this.publishedDashboard = false;
    this.shareAsPrivate = false;
+   this.applyButtonEnableOnEditUser = false;
   this.getAddedDashboardProperties();
 
 }
@@ -286,34 +289,35 @@ this.workbechService.saveDashboardProperties(obj).subscribe({
   }
 })
 }
+applyButtonEnableOnEditUser = false;
 getAddedDashboardProperties(){
   this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
     next:(data)=>{
-      this.selectedRoleIds = data.roles.map((role: any) => role.id);
-      this.selectedUserIds = data.users.map((user:any)=>user.user_id);
+      this.selectedRoleIds = data?.roles?.map((role: any) => role.id);
+      this.selectedUserIds = data?.users?.map((user:any)=>user.user_id);
       console.log('savedrolesandUsers',data);
       // this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
       // this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
-      this.selectedRoleIdsToNumbers = this.selectedRoleIds.map((id: string) => Number(id));
-      this.selectedUserIdsToNumbers = this.selectedUserIds.map((id: string) => Number(id));
+      this.selectedRoleIdsToNumbers = this.selectedRoleIds?.map((id: string) => Number(id));
+      this.selectedUserIdsToNumbers = this.selectedUserIds?.map((id: string) => Number(id));
       console.log('Loaded selected roles:', this.selectedRoleIds);
       console.log('Loaded selected users:', this.selectedUserIds);
       if(this.selectedRoleIds.length > 0){
         this.getUsersforRole();
       }
+      if(this.selectedUserIds.length > 0){
+        this.applyButtonEnableOnEditUser = true;
+      }
+   
      },
     error:(error)=>{
       console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
+      this.selectedUserIds = [];
+      this.selectedRoleIds = [];
     }
   }) 
 }
-
 
 sharePublish(value:any){
   console.log(value);
@@ -379,12 +383,21 @@ publishDashboard(){
   })
 }
 autoFrequencyRefresh(){
-  let object = {
-    "dashboard_id": this.dashboardId,
-    "is_scheduled": true,
-    "frequency": this.frequency,
-    "refresh_now": this.refreshNow
-}
+  let object;
+  if(this.frequency > 0){
+    object = {
+      "dashboard_id": this.dashboardId,
+      "is_scheduled": true,
+      "frequency": this.frequency,
+      "refresh_now": this.refreshNow
+  }
+  } else {
+    object = {
+      "dashboard_id": this.dashboardId,
+      "is_scheduled": false,
+      "refresh_now": this.refreshNow
+  }
+  }
   this.workbechService.autoRefreshFrequency(object).subscribe({
     next:(data)=>{
       this.toasterservice.success('Dashboard refresh scheduled','success',{ positionClass: 'toast-center-center'})
@@ -402,8 +415,19 @@ autoFrequencyRefresh(){
 }
 
 viewSchedular(dashboardId:any,modal: any){
-  this.modalService.open(modal);
   this.dashboardId = dashboardId;
+  this.workbechService.fetchSchedularData(this.dashboardId).subscribe({
+    next:(data)=>{
+      this.frequency = data.frequency;
+      this.lastRefresh = data.last_refresh;
+      this.nextRefresh = data.next_refresh_in_minutes;
+      this.modalService.open(modal);
+      },
+    error:(error)=>{
+      this.modalService.open(modal);
+    }
+  });
+
 
 }
 }

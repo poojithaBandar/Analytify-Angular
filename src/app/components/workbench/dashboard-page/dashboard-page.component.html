@@ -189,7 +189,7 @@
           <div *ngIf="shareAsPrivate" class="">
             
             <p class="fw-semibold mb-2 mt-3">Users</p>
-            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(click)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
+            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(open)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
                 <ng-option *ngFor="let user of usersOnSelectedRole" [value]="user.user_id">{{user.username}}</ng-option>
               
             </ng-select>
@@ -217,7 +217,8 @@
         </button>
       </div> -->
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
 
         <button
           type="button"
@@ -242,19 +243,28 @@
           ngbTooltip="Periodical automatted time interval to refresh/sync dashboard."
           class="icon icon-info ms-1 cursor-pointer"></i></label>
         <select [(ngModel)]="frequency" class="form-control cursor-pointer">
+          <option value="-1"> Don't refresh </option>
           <option value="1"> 1 hour</option>
           <option value="2"> 2 hours</option>
           <option value="5"> 5 hours</option>
           <option value="10"> 10 hours</option>
           <option value="15"> 15 hours</option>
           <option value="24"> 24 hours</option>
-          <option value="36"> 36 hours</option>
-          <option value="48"> 48 hours</option>
-          <option value=""> 60 hours</option>
         </select>
+        @if(frequency > 0){
           <label class="form-label">Refresh Now <i
             ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
           <input type="checkbox" [(ngModel)]="refreshNow" />
+        }
+          @if(lastRefresh){
+          <label class="form-label">Last Refresh<i
+            ngbTooltip="last refreshed date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
+        <input type="text" readonly="true" [(ngModel)]="lastRefresh" />
+          }
+          @if(nextRefresh){
+            <label class="form-label">Next Refresh will happen in 
+              <span class="fw-bold">{{nextRefresh}}</span> minutes.</label>
+          }
         </div>
     </div>
   </div>
