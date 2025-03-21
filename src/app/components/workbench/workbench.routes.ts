@@ -303,6 +303,20 @@ export const admin: Routes = [
       },
 
       {
+        path: 'transformationList/dataTransformation/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'transformationList',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./transformation-list/transformation-list.component').then((m) => m.TransformationListComponent),
+      },
+
+      {
         path: 'update-password',
         canActivate: [authGuard],
         loadComponent: () =>

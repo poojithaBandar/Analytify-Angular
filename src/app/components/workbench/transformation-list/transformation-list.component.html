@@ -1,0 +1,280 @@
+<app-page-header title="Data Transformations" title1="Home" activeitem="Transformations"></app-page-header>
+<div class="main-container container-fluid TopHeader">
+    <div class="row" class="card card-padding-top">
+        <div class="col-sm-12 col-lg-12 col-xl-12 p-0">
+            <div class="header-title-search">
+                <div class="connect-txt">
+                    <h4 class="card-title mt-2">Transformations List</h4>
+                  </div>
+                <div class="new-data-btn d-flex text-align-center">
+                    <button *ngIf="gridView" type="button" ngbTooltip="Grid View" class="btn btn-icon btn-outline-primary me-1">
+                        <i class="fa fa-th-large"></i>
+                    </button>
+                    <button *ngIf="gridView" type="button" ngbTooltip="Table View" (click)="gridView=false"class="btn btn-icon btn-primary-light me-3">
+                        <i class="fa fa-th-list"></i>
+                    </button>
+            
+                    <button *ngIf="!gridView" type="button" ngbTooltip="Grid View" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1">
+                        <i class="fa fa-th-large"></i>
+                    </button>
+                    <button *ngIf="!gridView" type="button" ngbTooltip="Table View" class="btn btn-icon btn-outline-primary me-3">
+                        <i class="fa fa-th-list"></i>
+                    </button>
+                    <div class="input-group">
+                        <input type="text" class="form-control border-end-0 " placeholder="Search Datasource"
+                            [(ngModel)]="searchTransformation" aria-describedby="button-addon2" (keyup.enter)="searchTransformationList()">
+                        <button class="btn btn-primary border me-2 search-icon-border-radius" type="button"
+                            (click)="searchTransformationList()" id="button-addon2"><i class="fe fe-search "></i></button>
+            
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="viewTransformationList && transformationList?.length === 0" class="m-3">
+                No transformations have been created yet!
+            </div>
+            <div *ngIf="!viewTransformationList" class="m-3">
+                you don't have permission to view!
+            </div>
+
+            <div *ngIf="viewTransformationList" class="card-body">
+                @if(!gridView){
+                <div class="table-responsive border table-responsive-height">
+                    <table class="table border text-nowrap text-md-nowrap mb-0">
+                        <thead class="table-primary bg-primary table-primary-position">
+                            <tr>
+                                <th>Transformation</th>
+                                <th>Server</th>
+                                <th>Created on</th>
+                                <th>Created by</th>
+                                <th>Last Modified</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let transformation of transformationList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }" class="selectable-card">
+                                <td (click)="goToTransformationLayer(transformation.hierarchy_id)">
+                                    <a ngbTooltip="{{transformation.display_name}}"> {{transformation.display_name |slice:0:15}}</a>
+                                </td>
+                                <td *ngIf="transformation.server_type === 'POSTGRESQL'">
+                                    <img alt="product" src="./assets/images/icons/postSQL-icon.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'ORACLE'">
+                                    <img alt="product" src="./assets/images/icons/oracle-icon.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'MYSQL'">
+                                    <img alt="product" src="./assets/images/icons/MySql-icon1.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'MONGODB'">
+                                    <img alt="product" src="./assets/images/icons/mongodb-icon.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'MICROSOFTSQLSERVER'">
+                                    <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'SNOWFLAKE'">
+                                    <img alt="product" src="./assets/images/icons/snowflake-icon.png"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'SQLITE'">
+                                    <img alt="product" src="./assets/images/icons/sqlite-icon.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'EXCEL'">
+                                    <img alt="product" src="./assets/images/icons/excel-icon.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'CSV'">
+                                    <img alt="product" src="./assets/images/icons/csv-icon.jpg" 
+                                    class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'QUICKBOOKS'">
+                                    <img alt="product" src="./assets/images/icons/quickbooks-icon.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'SALESFORCE'">
+                                    <img alt="product" src="./assets/images/icons/salesforce-icon.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'CONNECTWISE'">
+                                    <img alt="product" src="./assets/images/icons/connectwise-icon.png"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'HALOPS'">
+                                    <img alt="product" src="./assets/images/icons/Halopsa-icon.png"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'SHOPIFY'">
+                                    <img alt="product" src="./assets/images/icons/shopify-large-1.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td *ngIf="transformation.server_type === 'GOOGLE_SHEETS'">
+                                    <img alt="product" src="./assets/images/icons/google-sheets.jpg"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
+                                <td>{{transformation.created_at}}</td>
+                                <td>{{transformation.created_by}}</td>
+                                <td>{{transformation.updated_at}}</td>
+                                <td>
+                                    <div class="hstack gap-2 fs-1">
+                                        <button aria-label="Edit Transformation" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light"
+                                            (click)="goToTransformationLayer(transformation.hierarchy_id)">
+                                            <i class="ri-edit-line" ngbTooltip="Edit Transformation"></i>
+                                        </button>
+                                        <button aria-label="Delete Transformation" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light"
+                                            (click)="deleteTransformation(transformation.hierarchy_id)">
+                                            <i class="ri-delete-bin-7-line" ngbTooltip="Delete Transformation"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                }
+                @if(gridView){
+                <div class="row">
+                    <div *ngFor="let transformation of transformationList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }" class="col-md-12 col-xl-3">
+                        <div class="card card-box-shadow selectable-card">
+                            <div class="card-header  tiled-header-bg bg-primary tiled-card-header-padding">
+                                <div class="d-sm-flex align-items-center">
+                                    <span *ngIf="transformation.server_type === 'ORACLE'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/charts/oracle-tiled-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'POSTGRESQL'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/charts/post-tiled-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'MYSQL'" class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/MySql-icon1.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'MICROSOFTSQLSERVER'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/microsoft-sql-server-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'SNOWFLAKE'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/snowflake-icon.png" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'SQLITE'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/sqlite-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'MONGODB'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/mongodb-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'EXCEL'" class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/excel-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'CSV'" class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/csv-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'SALESFORCE'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/salesforce-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'QUICKBOOKS'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/quickbooks-icon.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'CONNECTWISE'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/connectwise-icon.png" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'HALOPS'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/Halopsa-icon.png" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'SHOPIFY'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/shopify-large-1.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'GOOGLE_SHEETS'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/google-sheets.jpg" alt=""
+                                            class="rounded-circle"></span>
+                                    <div class="ms-2 mt-sm-0 mt-2">
+                                        <h6 class="mb-1">
+                                            <a (click)="goToTransformationLayer(transformation.hierarchy_id)" class="float-start" ngbTooltip="{{transformation.display_name}}">
+                                                {{transformation.display_name | slice:0:15}}
+                                            </a>
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="col-auto p-0">
+                                    <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                        <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
+                                            aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-light"></i>
+                                        </a>
+                                        <div class="dropdown-menu" ngbDropdownMenu>
+                                            <a aria-label="Edit Transformation" class="dropdown-item" ngbDropdownItem (click)="goToTransformationLayer(transformation.hierarchy_id)">
+                                                <i class="fe fe-edit" ngbTooltip="Edit Transformation"></i>
+                                                Edit
+                                            </a>
+                                            <a aria-label="Delete Transformation" class="dropdown-item btn btn-secondary-light" ngbDropdownItem (click)="deleteTransformation(transformation.hierarchy_id)">
+                                                <i class="fe fe-trash" ngbTooltip="Delete Transformation"></i>
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body title-card-body tiled-card-body-padding">
+                                <div class="row">
+
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <span class="fw-semibold fs-14">Created by: </span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <span class="fs-14">{{transformation.created_by}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <span class="fw-semibold fs-14">Created on:</span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <span class="fs-14">{{transformation.created_at}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <span class="fw-semibold fs-14">Last Modified: </span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <span class="fs-14">{{transformation.updated_at}}</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                }
+                <pagination-controls previousLabel="Prev" nextLabel="Next"
+                    (pageChange)="pageChangeGetTransformationList((page = $event))"></pagination-controls>
+                <div class="pagination-count">
+                    <select [(ngModel)]="itemsPerPage" (ngModelChange)="getTransformationList()" class="form-control cursor" [disabled]="!itemsPerPage">
+                        <option value="10"> 10</option>
+                        <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
+                        <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
+
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
