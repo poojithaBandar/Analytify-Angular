@@ -1809,13 +1809,18 @@ dataNotSaveAlert(): Promise<boolean> {
     icon: "warning",
     title: "Your work has not been saved, Do you want to continue?",
     showConfirmButton: true,
-    showCancelButton: true, // Add a "No" button
-    confirmButtonText: 'Yes', // Text for "Yes" button
-    cancelButtonText: 'No',   // Text for "No" button
+    showCancelButton: true,
+    showDenyButton: true,  
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'No',
+    denyButtonText: 'Save & Proceed'
   }).then((result) => {
     if (result.isConfirmed) {
       // User clicked "Yes", allow navigation
       this.loaderService.show();
+      return true;
+    }  else if (result.isDenied) {
+      this.saveQuery();
       return true;
     } else {
       // User clicked "No", prevent navigation
