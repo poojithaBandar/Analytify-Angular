@@ -3767,6 +3767,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       if (pivotTables.length !== this.pivotContainers.length) {
         console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
       }
+      pivotTables.forEach((pivotData)=>{
+        this.sharedService.saveFilters(pivotData['id'],pivotData);
+      })
       this.pivotContainers.forEach((pivotContainer, index) => {
       if (pivotContainer && pivotContainer.nativeElement) {
         const pivotData = pivotTables[index]; // Get the corresponding pivot data
@@ -4967,7 +4970,7 @@ kpiData?: KpiData;
             }
             this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
-                const pivotData = pivotTables[index]; // Get the corresponding pivot data
+                const pivotData = this.sharedService.getFilters(pivotTables[index]['id']); // Get the corresponding pivot data
 
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
                   rows: pivotData['columnKeys'],

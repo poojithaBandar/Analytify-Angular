@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import _ from 'lodash';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
@@ -14,6 +15,35 @@ export class SharedService {
 
     private localStorageValue = new BehaviorSubject<string | null>(localStorage.getItem('myValue'));
     public localStorageValue$ = this.localStorageValue.asObservable();
+
+    private pivotFilterStates: Map<string, any> = new Map();
+
+  saveFilters(pivotId: string, filterData: any) {
+    if (filterData) {
+      console.log("*****************"+pivotId+"***************************")
+      console.log(filterData)
+      console.log("********************************************")
+
+      // filterData = _.cloneDeep(filterData);
+      this.pivotFilterStates.set(pivotId, filterData);
+    }
+  }
+
+  getFilters(pivotId: string): any {
+    console.log("$$$$$$$$$$$$$$$$"+pivotId+"$$$$$$$$$$$$$$$$$")
+console.log(this.pivotFilterStates.get(pivotId))
+    console.log("*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$444")
+
+    return this.pivotFilterStates.get(pivotId) || null;
+  }
+
+  removeFilters(pivotId: string) {
+    this.pivotFilterStates.delete(pivotId);
+  }
+
+  clearAllFilters() {
+    this.pivotFilterStates.clear();
+  }
 
     setValue(newValue: string): void {
       localStorage.setItem('myValue', newValue);
