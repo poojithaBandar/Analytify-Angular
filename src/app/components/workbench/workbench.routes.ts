@@ -29,13 +29,25 @@ export const admin: Routes = [
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
       {
-        path: 'datasources/crossdatabase/viewconnection/:id1/:id2? ',
+        path: 'datasources/crossdatabase/viewconnection/:id1',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
       {
-        path: 'datasources/crossdatabase/newconnection/:id1/:id2?',
+        path: 'datasources/crossdatabase/viewconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/newconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/newconnection/:id1/:id2',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
@@ -54,7 +66,14 @@ export const admin: Routes = [
       // },
 
       {
-        path: 'database-connection/tables/:id1/:id2?',
+        path: 'database-connection/tables/:id1',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/tables/:id1/:id2',
         canActivate: [authGuard],
         canDeactivate: [canDeactivateGuard],
         loadComponent: () =>

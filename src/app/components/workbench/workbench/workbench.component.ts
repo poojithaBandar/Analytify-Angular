@@ -1578,7 +1578,8 @@ connectGoogleSheets(){
       next:(data)=>{
         console.log(data);
         const encodedId = btoa(data[0].cross_db_id.toString());
-        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+        const encodeQrysetId = btoa(this.querysetIdFromDataSource.toString())
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId+'/'+encodeQrysetId]);
        },
       error:(error)=>{
         console.log(error);

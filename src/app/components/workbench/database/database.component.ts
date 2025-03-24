@@ -173,6 +173,7 @@ export class DatabaseComponent {
         this.fromDatabasId = true; 
         this.databaseId = +atob(id1);
         this.qurtySetId = +atob(id2);
+        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
       } else if (id1) {
         this.fromDatabasId = true;
         this.databaseId = +atob(id1);
@@ -1638,7 +1639,8 @@ getfilteredCustomSqlData(){
   
 }
 goToConnections(){
-  const hidToPass = btoa(this.databaseId.toString());
+  // const hidToPass = btoa(this.databaseId.toString());
+  const hidToPass = this.crossDbId ? btoa(this.crossDbId.toString()) : btoa(this.databaseId.toString());
   if(this.qurtySetId){
     const qrysetIdToPass = btoa(this.qurtySetId.toString());
     this.router.navigate(['/analytify/datasources/crossdatabase/viewconnection/'+hidToPass+'/'+qrysetIdToPass])
