@@ -1755,7 +1755,7 @@ saveQuery(){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+          this.toasterService.success('Saved Successfully','success',{ positionClass: 'toast-top-right'});
 
         }
       },
@@ -1826,7 +1826,11 @@ dataNotSaveAlert(): Promise<boolean> {
     showDenyButton: true,  
     confirmButtonText: 'Yes',
     cancelButtonText: 'No',
-    denyButtonText: 'Save & Proceed'
+    denyButtonText: 'Save & Proceed',
+    customClass: {
+      confirmButton: 'btn btn-primary',
+      denyButton: 'btn btn-success'
+    }
   }).then((result) => {
     if (result.isConfirmed) {
       // User clicked "Yes", allow navigation
