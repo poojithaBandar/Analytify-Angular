@@ -1190,11 +1190,11 @@ export class SheetsdashboardComponent {
         } 
         this.setQuerySetIds();
         let tabNames;
-        let tabIds = [];
+        let tabIds: any[] = [];
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name?.trim());
-          tabIds = this.sheetTabs.map(tab => tab.id);
+          // tabIds = this.sheetTabs.map(tab => tab.id);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
           if(this.validateTabs()){
             throw { error: { message: "Tab title cannot be empty." } };
