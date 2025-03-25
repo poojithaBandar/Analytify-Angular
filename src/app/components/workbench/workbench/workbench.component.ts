@@ -146,7 +146,14 @@ export class WorkbenchComponent implements OnInit{
   routeNewDatabase(){
     if(this.iscrossDbSelect){
       const encodedId = btoa(this.primaryHierachyId.toString());
-      this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId])
+      if(this.querysetIdFromDataSource){
+        const encodeQueysetId = btoa(this.querysetIdFromDataSource.toString());
+      this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId+'/'+encodeQueysetId])
+      }
+      else{
+        this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId]) 
+      }
+
     }else{
     this.router.navigate(['analytify/datasources/new-connections'])
     }
@@ -1578,8 +1585,13 @@ connectGoogleSheets(){
       next:(data)=>{
         console.log(data);
         const encodedId = btoa(data[0].cross_db_id.toString());
+        if(this.querysetIdFromDataSource){
         const encodeQrysetId = btoa(this.querysetIdFromDataSource.toString())
         this.router.navigate(['/analytify/database-connection/tables/'+encodedId+'/'+encodeQrysetId]);
+        }
+        else{
+          this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+        }
        },
       error:(error)=>{
         console.log(error);
