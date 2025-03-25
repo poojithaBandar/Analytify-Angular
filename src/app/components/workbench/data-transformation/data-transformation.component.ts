@@ -74,9 +74,7 @@ export class DataTransformationComponent {
       }
     } else if(this.router.url.startsWith('/analytify/transformationList/dataTransformation')){
       if (route.snapshot.params['id']) {
-        // this.hierarchyId = +atob(route.snapshot.params['id']);
-        this.hierarchyId = route.snapshot.params['id'];
-        this.hierarchyId = parseInt(this.hierarchyId);
+        this.hierarchyId = +atob(route.snapshot.params['id']);
         console.log(this.hierarchyId);
       }
     }

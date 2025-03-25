@@ -23,11 +23,11 @@ export class TransformationListComponent {
   searchTransformation : string = '';
   viewTransformationList : boolean = false;
   transformationList : any[] = [];
-  itemsPerPage!:any;
+  itemsPerPage : any = 10;
   totalItems:any;
-  page: number = 1;
+  page: any = 1;
 
-  constructor(private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,private viewTemplateService:ViewTemplateDrivenService,private loaderService:LoaderService){
+  constructor(private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private viewTemplateService:ViewTemplateDrivenService,private loaderService:LoaderService){
     this.viewTransformationList = this.viewTemplateService.viewTransformations();
   }
   ngOnInit(): void {
@@ -39,62 +39,75 @@ export class TransformationListComponent {
 
 
   getTransformationList(){
-    this.transformationList = [
-      {display_name: 'sample1', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample2', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample3', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample4', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample5', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample6', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample7', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample8', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample9', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample10', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample11', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample12', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'},
-      {display_name: 'sample13', server_type: 'POSTGRESQL', created_at: '12-03-2025', created_by:'narendra', updated_at: '21-03-2025'}
-    ]
-    this.totalItems = 13;
-    this.itemsPerPage = 10;
-
-    // let object = {};
-    // this.workbechService.getTransformationList(object).subscribe({
-    //   next: (data) => {
-    //     console.log(data);
-    //   },
-    //   error: (error) => {
-    //     console.log(error);
-    //     Swal.fire({
-    //       icon: 'error',
-    //       title: 'oops!',
-    //       text: error.error.message,
-    //       width: '400px',
-    //     })
-    //   }
-    // })
+    this.workbechService.getTransformationList(this.page, this.itemsPerPage, this.searchTransformation).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.transformationList = response.data.data;
+        this.itemsPerPage = response.data.items_per_page;
+        this.totalItems = response.data.total_items;
+        if(this.transformationList.length === 0){
+          this.itemsPerPage = '';
+          this.page = '';
+        }
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
   }
   goToTransformationLayer(hierarchyId:any){
     const encodedId = btoa(hierarchyId.toString());
     this.router.navigate(['/analytify/transformationList/dataTransformation/' + encodedId]);
   }
   deleteTransformation(hierarchyId: any) {
-    Swal.fire({
-      position: "center",
-      icon: "question",
-      title: "Are you sure you want to delete the Transformation?",
-      text: "This action will also remove the related saved queries, sheets and dashboard.",
-      showConfirmButton: true,
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No',
-    }).then((result) => {
-      if (result.isConfirmed) {
-
+    this.workbechService.getDeleteTransformationMessage(hierarchyId).subscribe({
+      next: (response) => {
+        console.log(response);
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: response.message === 'Are you sure to continue to Delete Data Transformation?' ? response.message : "Are you sure?",
+          text: (response.message === 'Are you sure to continue to Delete Data Transformation?' ? '' : response.message),
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.workbechService.deleteTransformation(hierarchyId).subscribe({
+              next: (response) => {
+                console.log(response);
+                this.getTransformationList();
+                this.toasterservice.info(response.message, 'info', { positionClass: 'toast-top-right' });
+              },
+              error: (error) => {
+                console.log(error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'oops!',
+                  text: error.error.message,
+                  width: '400px',
+                })
+              }
+            })
+          }
+        })
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
       }
     })
-  }
-  searchTransformationList(){
-  }
-  pageChangeGetTransformationList(page:any){
   }
 }

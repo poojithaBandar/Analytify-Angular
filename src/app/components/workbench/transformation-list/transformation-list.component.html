@@ -22,9 +22,9 @@
                     </button>
                     <div class="input-group">
                         <input type="text" class="form-control border-end-0 " placeholder="Search Datasource"
-                            [(ngModel)]="searchTransformation" aria-describedby="button-addon2" (keyup.enter)="searchTransformationList()">
+                            [(ngModel)]="searchTransformation" aria-describedby="button-addon2" (keyup.enter)="page = 1; getTransformationList()">
                         <button class="btn btn-primary border me-2 search-icon-border-radius" type="button"
-                            (click)="searchTransformationList()" id="button-addon2"><i class="fe fe-search "></i></button>
+                            (click)="page = 1; getTransformationList()" id="button-addon2"><i class="fe fe-search "></i></button>
             
                     </div>
                 </div>
@@ -143,60 +143,60 @@
                                 <div class="d-sm-flex align-items-center">
                                     <span *ngIf="transformation.server_type === 'ORACLE'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/charts/oracle-tiled-icon.jpg" alt=""
+                                        <img src="./assets/images/charts/oracle-tiled-icon.jpg" alt="ORACLE"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'POSTGRESQL'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/charts/post-tiled-icon.jpg" alt=""
+                                        <img src="./assets/images/charts/post-tiled-icon.jpg" alt="POSTGRESQL"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'MYSQL'" class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/MySql-icon1.jpg" alt=""
+                                        <img src="./assets/images/icons/MySql-icon1.jpg" alt="MYSQL"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'MICROSOFTSQLSERVER'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/microsoft-sql-server-icon.jpg" alt=""
+                                        <img src="./assets/images/icons/microsoft-sql-server-icon.jpg" alt="MICROSOFTSQLSERVER"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'SNOWFLAKE'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/snowflake-icon.png" alt=""
+                                        <img src="./assets/images/icons/snowflake-icon.png" alt="SNOWFLAKE"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'SQLITE'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/sqlite-icon.jpg" alt=""
+                                        <img src="./assets/images/icons/sqlite-icon.jpg" alt="SQLITE"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'MONGODB'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/mongodb-icon.jpg" alt=""
+                                        <img src="./assets/images/icons/mongodb-icon.jpg" alt="MONGODB"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'EXCEL'" class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/excel-icon.jpg" alt=""
+                                        <img src="./assets/images/icons/excel-icon.jpg" alt="EXCEL"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'CSV'" class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/csv-icon.jpg" alt=""
+                                        <img src="./assets/images/icons/csv-icon.jpg" alt="CSV"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'SALESFORCE'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/salesforce-icon.jpg" alt=""
+                                        <img src="./assets/images/icons/salesforce-icon.jpg" alt="SALESFORCE"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'QUICKBOOKS'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/quickbooks-icon.jpg" alt=""
+                                        <img src="./assets/images/icons/quickbooks-icon.jpg" alt="QUICKBOOKS"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'CONNECTWISE'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/connectwise-icon.png" alt=""
+                                        <img src="./assets/images/icons/connectwise-icon.png" alt="CONNECTWISE"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'HALOPS'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/Halopsa-icon.png" alt=""
+                                        <img src="./assets/images/icons/Halopsa-icon.png" alt="HALOPS"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'SHOPIFY'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/shopify-large-1.jpg" alt=""
+                                        <img src="./assets/images/icons/shopify-large-1.jpg" alt="SHOPIFY"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'GOOGLE_SHEETS'"
                                         class="avatar rounded-circle">
-                                        <img src="./assets/images/icons/google-sheets.jpg" alt=""
+                                        <img src="./assets/images/icons/google-sheets.jpg" alt="GOOGLE_SHEETS"
                                             class="rounded-circle"></span>
                                     <div class="ms-2 mt-sm-0 mt-2">
                                         <h6 class="mb-1">
@@ -264,13 +264,12 @@
                 </div>
                 }
                 <pagination-controls previousLabel="Prev" nextLabel="Next"
-                    (pageChange)="pageChangeGetTransformationList((page = $event))"></pagination-controls>
+                    (pageChange)="page = $event; getTransformationList()"></pagination-controls>
                 <div class="pagination-count">
-                    <select [(ngModel)]="itemsPerPage" (ngModelChange)="getTransformationList()" class="form-control cursor" [disabled]="!itemsPerPage">
+                    <select [(ngModel)]="itemsPerPage" (ngModelChange)="page = 1; getTransformationList()" class="form-control cursor" [disabled]="!itemsPerPage">
                         <option value="10"> 10</option>
                         <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
                         <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
-
                     </select>
                 </div>
             </div>
