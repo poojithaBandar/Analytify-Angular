@@ -215,6 +215,7 @@ export class SheetsdashboardComponent {
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
   lastRefresh: any;
   nextRefresh: any;
+  tabData: any;
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -819,6 +820,7 @@ export class SheetsdashboardComponent {
         }
         this.sheetTabs = data.tab_data ? data.tab_data : [];
         if(this.sheetTabs && this.sheetTabs.length > 0) {
+          this.tabData = data.tab_id;
           this.displayTabs = true;
           this.selectedTabIndex = 0;
           this.selectedSheetTab({index : 0});
@@ -830,9 +832,13 @@ export class SheetsdashboardComponent {
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.dynamicOptionsUpdateinDashboard(this.dashboard, false);
         if(this.displayTabs){
-          this.sheetTabs.forEach(tabData => {
-            if(tabData.dashboard && tabData.dashboard.length > 0){
-              this.dynamicOptionsUpdateinDashboard(tabData.dashboard, false);
+          this.sheetTabs.forEach(tabsData => {
+            const match = this.tabData.find((t:any) => t.tab_name == tabsData.name);
+            if (match) {
+              tabsData.id = match.id;
+            }
+            if(tabsData.dashboard && tabsData.dashboard.length > 0){
+              this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, false);
             }
           });
         }
@@ -1184,9 +1190,11 @@ export class SheetsdashboardComponent {
         } 
         this.setQuerySetIds();
         let tabNames;
+        let tabIds = [];
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name?.trim());
+          tabIds = this.sheetTabs.map(tab => tab.id);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
           if(this.validateTabs()){
             throw { error: { message: "Tab title cannot be empty." } };
@@ -1209,6 +1217,7 @@ export class SheetsdashboardComponent {
           tab_data: sheetTabsData,
           tab_name: tabNames,
           tab_sheets: sheetIds,
+          tab_id: tabIds,
           // file_id: this.fileId,
           donutDecimalPlaces: this.donutDecimalPlaces
         }
@@ -1430,9 +1439,11 @@ export class SheetsdashboardComponent {
       //   }as any;
       // } else {
         let tabNames = [];
+        let tabIds = [];
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name?.trim());
+          tabIds = this.sheetTabs.map(tab => tab.id);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
         }
         if(this.validateTabs()){
@@ -1467,6 +1478,7 @@ export class SheetsdashboardComponent {
           tab_data : sheetTabsData,
           tab_name: tabNames,
           tab_sheets: sheetIds,
+          tab_id: tabIds,
           user_ids:this.usersForUpdateDashboard,
           role_ids:this.rolesForUpdateDashboard
         }
@@ -5130,6 +5142,7 @@ kpiData?: KpiData;
         this.dashboard = data.dashboard_data;
         this.sheetTabs = data.tab_data ? data.tab_data : [];
         if(this.sheetTabs && this.sheetTabs.length > 0) {
+          this.tabData = data.tab_id;
           this.displayTabs = true;
           this.selectedTabIndex = 0;
           this.selectedSheetTab({index : 0});
@@ -5142,9 +5155,13 @@ kpiData?: KpiData;
         let self = this;
         this.dynamicOptionsUpdateinDashboard(this.dashboard, true);
         if(this.displayTabs){
-          this.sheetTabs.forEach(tabData => {
-            if(tabData.dashboard && tabData.dashboard.length > 0){
-              this.dynamicOptionsUpdateinDashboard(tabData.dashboard, true);
+          this.sheetTabs.forEach(tabsData => {
+            const match = this.tabData.find((t:any) => t.tab_name == tabsData.name);
+            if (match) {
+              tabsData.id = match.id;
+            }
+            if(tabsData.dashboard && tabsData.dashboard.length > 0){
+              this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, true);
             }
           });
         }
