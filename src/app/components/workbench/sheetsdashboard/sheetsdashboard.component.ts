@@ -4234,63 +4234,70 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           let years: Set<any> = new Set();
           console.log(this.filteredColumnData);
           console.log(this.filteredRowData);
-          this.filteredColumnData.forEach((data: any) => {
-            data?.values.forEach((column:any, index: any)=>{
-              let formattedDate = column.split(" ")[0];
-              let arr = [formattedDate, this.filteredRowData[0]?.data[index]];
-              calendarData.push(arr);
-
-              const year = new Date(column).getFullYear();
-              years.add(year);
-            })
-        });
-        let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
-        let series = yearArray.map((year: any) => {
-          const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
-          return {
-              type: 'heatmap',
-              coordinateSystem: 'calendar',
-              calendarIndex: yearArray.indexOf(year),
-              data: yearData
-          };
-        });
-
-        const calendarHeight = 120;  // Adjust height for better visibility
-        const yearGap = 30;  // Reduced gap between years
-        const totalHeight = (calendarHeight + yearGap) * yearArray.length;
-        this.calendarTotalHeight = (totalHeight+25)+'px';
-    
-        // Create multiple calendar instances, one for each year
-        let calendars = yearArray.map((year: any, idx: any) => ({
-            top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
-            range: year.toString(),
-            cellSize: ['auto', 12],
-            splitLine: {
+          if(this.filteredColumnData[0]?.values?.length > 0 || this.filteredRowData[0]?.data?.length > 0){
+            this.filteredColumnData.forEach((data: any) => {
+              data?.values.forEach((column:any, index: any)=>{
+                let formattedDate = column.split(" ")[0];
+                let arr = [formattedDate, this.filteredRowData[0]?.data[index]];
+                calendarData.push(arr);
+  
+                const year = new Date(column).getFullYear();
+                years.add(year);
+              })
+          });
+          let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
+          let series = yearArray.map((year: any) => {
+            const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
+            return {
+                type: 'heatmap',
+                coordinateSystem: 'calendar',
+                calendarIndex: yearArray.indexOf(year),
+                data: yearData
+            };
+          });
+  
+          const calendarHeight = 120;  // Adjust height for better visibility
+          const yearGap = 30;  // Reduced gap between years
+          const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+          this.calendarTotalHeight = (totalHeight+25)+'px';
+      
+          // Create multiple calendar instances, one for each year
+          let calendars = yearArray.map((year: any, idx: any) => ({
+              top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+              range: year.toString(),
+              cellSize: ['auto', 12],
+              splitLine: {
+                  show: true,
+                  lineStyle: {
+                      color: '#000',
+                      width: 1
+                  }
+              },
+              yearLabel: {
                 show: true,
-                lineStyle: {
-                    color: '#000',
-                    width: 1
-                }
-            },
-            yearLabel: {
-              show: true,
-              margin: 25,
-              fontSize: 14,
-              fontWeight: 'bold'
-            }
-        }));
+                margin: 25,
+                fontSize: 14,
+                fontWeight: 'bold'
+              }
+          }));
+  
+          const minValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
+          const maxValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
+          console.log(minValue +' '+maxValue);
 
-        const minValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
-        const maxValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
-        console.log(minValue +' '+maxValue);
-
-          item1.echartOptions.series = series;
-          item1.echartOptions.calendar = calendars;
-          item1.echartOptions.visualMap.min = minValue;
-          item1.echartOptions.visualMap.max = maxValue;
-          item1.echartOptions = { ...item1.echartOptions };
-          console.log(calendarData);
-          console.log(item1.echartOptions);
+          if(item1.echartOptions && Object.keys(item1.echartOptions).length === 0){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          }
+            item1.echartOptions.series = series;
+            item1.echartOptions.calendar = calendars;
+            item1.echartOptions.visualMap.min = minValue;
+            item1.echartOptions.visualMap.max = maxValue;
+            item1.echartOptions = { ...item1.echartOptions };
+            console.log(calendarData);
+            console.log(item1.echartOptions);
+          } else {
+            item1.echartOptions = {};
+          }
         }
       }
 
