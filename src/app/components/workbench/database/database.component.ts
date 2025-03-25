@@ -1755,7 +1755,7 @@ saveQuery(){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+          this.toasterService.success('Saved Successfully','success',{ positionClass: 'toast-top-right'});
 
         }
       },
@@ -1822,13 +1822,22 @@ dataNotSaveAlert(): Promise<boolean> {
     icon: "warning",
     title: "Your work has not been saved, Do you want to continue?",
     showConfirmButton: true,
-    showCancelButton: true, // Add a "No" button
-    confirmButtonText: 'Yes', // Text for "Yes" button
-    cancelButtonText: 'No',   // Text for "No" button
+    showCancelButton: true,
+    showDenyButton: true,  
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'No',
+    denyButtonText: 'Save & Proceed',
+    customClass: {
+      confirmButton: 'btn btn-primary',
+      denyButton: 'btn btn-success'
+    }
   }).then((result) => {
     if (result.isConfirmed) {
       // User clicked "Yes", allow navigation
       this.loaderService.show();
+      return true;
+    }  else if (result.isDenied) {
+      this.saveQuery();
       return true;
     } else {
       // User clicked "No", prevent navigation
