@@ -1520,6 +1520,15 @@ export class SheetsdashboardComponent {
         // })
         this.dashboardsheetsIdArray = this.sheetsIdArray;
         this.canNavigateToAnotherPage = false;
+        if(data.tab_data && data.tab_data.length > 0){
+          this.tabData = data.tab_data;
+          this.sheetTabs.forEach(tabsData => {
+            const match = this.tabData.find((t:any) => t.tab_name == tabsData.name);
+            if (match) {
+              tabsData.id = match.id;
+            }
+          });
+        }
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
         if(!isLiveReloadData){
           this.saveDashboardimageUpdate();
