@@ -1443,7 +1443,9 @@ export class SheetsdashboardComponent {
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name?.trim());
-          tabIds = this.sheetTabs.map(tab => tab.id);
+          tabIds = this.sheetTabs
+  .filter(tab => tab.id)
+  .map(tab => tab.id);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
         }
         if(this.validateTabs()){
@@ -4730,7 +4732,7 @@ const obj ={
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
     let name = this.selectedTabIndex > 0 ? "Tab Title " + this.selectedTabIndex : "Tab Title";
-    this.sheetTabs.push({ id: id, name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
+    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
     this.dashboardTest = [];
   }
   Editor = ClassicEditor;
