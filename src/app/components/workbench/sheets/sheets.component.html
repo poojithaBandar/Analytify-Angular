@@ -1687,9 +1687,13 @@
                                                             >Year Over Year (YOY)</a>
                                                      </li> -->
                                                      <ng-container *ngIf="yearLength > 0; else singleYOY">
-                                                        <li *ngFor="let column of yearColumns">
+                                                        <li *ngFor="let column of yearColumns" [ngClass]=" draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
                                                             <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
                                                                (click)="selectedColumnForYOY=column;rowMeasuresCount(rows, index, 'yoy');">{{ column }}(yoy)</a>
+                                                        </li>
+                                                        <li>
+                                                            <a *ngIf="draggedRowsData[index][1] == 'yoy'" class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
+                                                               (click)="selectedColumnForYOY='';rowMeasuresCount(rows,index,'yoyRemove')">Remove</a>
                                                         </li>
                                                     </ng-container>
                                             

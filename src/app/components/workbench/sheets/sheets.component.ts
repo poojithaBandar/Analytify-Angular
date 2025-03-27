@@ -1281,6 +1281,8 @@ try {
       if(type){
         if(type == 'yoy'){
           this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
+        }else if(type == 'yoyRemove'){
+          this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
         }
         else{
         this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
@@ -1323,7 +1325,12 @@ try {
   }
   onAliasChange(rows : any , index : any){
     this.isMeasureEdit = false;
-    this.rowMeasuresCount(rows, index, rows.type);
+    if(this.draggedRowsData[index][1] == 'yoy'){
+      this.rowMeasuresCount(rows, index, 'yoy');
+    }else{
+      this.rowMeasuresCount(rows, index, rows.type);
+    } 
+      // this.rowMeasuresCount(rows, index, rows.type);
   }
 
   onColumnAliasChange(column : any , index : any){
