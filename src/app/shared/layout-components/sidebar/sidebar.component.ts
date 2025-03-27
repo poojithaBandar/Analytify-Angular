@@ -20,6 +20,7 @@ export class SidebarComponent{
   viewSavedQueries = false;
   viewDashboard = false;
   viewDataSource = false;
+  viewTransformations = false;
   @HostListener('window:scroll', [])
   onWindowScroll() {
 
@@ -89,7 +90,7 @@ export class SidebarComponent{
     this.viewSheets = this.viewTemplateService.viewSheets();
     this.viewDataSource = this.viewTemplateService.viewDtabase();
     this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
-
+    this.viewTransformations = viewTemplateService.viewTransformations();
   }
   clickAction(item:any){
     console.log('kjrvgug',item)
@@ -129,6 +130,9 @@ export class SidebarComponent{
           return true;
         }
         if (item.title === 'Data Sources' && this.viewDataSource) { 
+          return true;
+        }
+        if (item.title === 'Transformations' && this.viewTransformations) { 
           return true;
         }
       })

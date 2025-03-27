@@ -4892,7 +4892,16 @@ customizechangeChartPlugin() {
           this.calculatedFieldLogic = '"' + item.table_name + '"."' + item.column + '"';
         }
       }
-    }
+    }else if(item && item.column && item.data_type === 'calculated'){
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+        this.dropCalculatedField('calculated_fields', item.field_name); 
+      } else {
+        if (this.calculatedFieldLogic?.length) {
+          this.calculatedFieldLogic = this.calculatedFieldLogic + '"' + 'calculated_fields' + '"."' + item.field_name + '"';
+        } else {
+          this.calculatedFieldLogic = '"' + 'calculated_fields' + '"."' + item.field_name + '"';
+        }
+      }    }
   }
 
   applyCalculatedFields(event: any, ngbdropdownevent: any) {

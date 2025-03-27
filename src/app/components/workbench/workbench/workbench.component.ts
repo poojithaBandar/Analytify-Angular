@@ -89,6 +89,7 @@ export class WorkbenchComponent implements OnInit{
   canUploadCsv = false;
   schemaList: any[] = [];
   selectedSchema : string = 'public';
+  querysetIdFromDataSource :any;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
@@ -117,17 +118,27 @@ export class WorkbenchComponent implements OnInit{
         console.log(currentUrl);
         this.getGoogleSheetDetailsByUrl(currentUrl);
       }else if(currentUrl.includes('crossdatabase/viewconnection')){
+        if (route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')) {
+          this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
+          this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+        }else if(route.snapshot.paramMap.has('id1')){
+          this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+        }
         this.iscrossDbSelect = true;
         this.databaseconnectionsList = true;
         this.viewNewDbs = false;
         this.isGoogleSheetsPage = false;
-        this.primaryHierachyId = +atob(route.snapshot.params['id']);
       }else if(currentUrl.includes('crossdatabase/newconnection')){
+        if(route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')){
+          this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
+          this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+        }else if(route.snapshot.paramMap.has('id1')){
+          this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+        }
         this.iscrossDbSelect = true;
         this.viewNewDbs = true;
         this.databaseconnectionsList = false;
         this.isGoogleSheetsPage = false;
-        this.primaryHierachyId = +atob(route.snapshot.params['id']);
       }
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
@@ -135,7 +146,14 @@ export class WorkbenchComponent implements OnInit{
   routeNewDatabase(){
     if(this.iscrossDbSelect){
       const encodedId = btoa(this.primaryHierachyId.toString());
-      this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId])
+      if(this.querysetIdFromDataSource){
+        const encodeQueysetId = btoa(this.querysetIdFromDataSource.toString());
+      this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId+'/'+encodeQueysetId])
+      }
+      else{
+        this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId]) 
+      }
+
     }else{
     this.router.navigate(['analytify/datasources/new-connections'])
     }
@@ -1567,7 +1585,13 @@ connectGoogleSheets(){
       next:(data)=>{
         console.log(data);
         const encodedId = btoa(data[0].cross_db_id.toString());
-        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+        if(this.querysetIdFromDataSource){
+        const encodeQrysetId = btoa(this.querysetIdFromDataSource.toString())
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId+'/'+encodeQrysetId]);
+        }
+        else{
+          this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+        }
        },
       error:(error)=>{
         console.log(error);
@@ -1662,13 +1686,27 @@ connectGoogleSheets(){
     this.workbechService.checkDatasourceConnection(object).subscribe({
       next: (responce) => {
         console.log(responce);
-        const encodedId = btoa(responce.server_id.toString());
-        this.router.navigate(['/analytify/databaseConnection/dataTransformation/' + encodedId]);
+        const encodedServerId = btoa(responce.server_id.toString());
+        if (this.iscrossDbSelect){
+          const encodedPrimaryHId = btoa(this.primaryHierachyId.toString());
+          const encodedQuerySetId = this.querysetIdFromDataSource ? btoa(this.querysetIdFromDataSource.toString()) : '';
+          if(encodedQuerySetId){
+            this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId +'/' + encodedQuerySetId]);
+          } else{
+            this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId]);
+          }
+        } else{
+          this.router.navigate(['/analytify/databaseConnection/dataTransformation/' + encodedServerId]);
+        }
       },
       error: (error) => {
         console.log(error);
         this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
       }
     });
+  }
+  goToTransformationLayer(hierarchyId:any){
+    const encodedId = btoa(hierarchyId.toString());
+    this.router.navigate(['/analytify/transformationList/dataTransformation/' + encodedId]);
   }
 }

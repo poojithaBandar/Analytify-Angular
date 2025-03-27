@@ -393,7 +393,7 @@
                                   [cdkDropListData]="columns.calculated_fields"
                                   [cdkDropListConnectedTo]="[calculatedfields,columnList,rowList,drilldownList]"
                                   (cdkDropListDropped)="rowdrop($event)"
-                                  [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">  
+                                  >  
                                   @if(columns.expanded){    
                                                             
                                 @for(measures of columns.calculated_fields; track measures){ 
