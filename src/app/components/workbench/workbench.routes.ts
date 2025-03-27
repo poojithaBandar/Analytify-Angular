@@ -294,6 +294,34 @@ export const admin: Routes = [
       },
 
       {
+        path: 'transformationList/dataTransformation/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'transformationList',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./transformation-list/transformation-list.component').then((m) => m.TransformationListComponent),
+      },
+
+      {
+        path: 'crossDatabase/dataTransformation/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'crossDatabase/dataTransformation/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
         path: 'update-password',
         canActivate: [authGuard],
         loadComponent: () =>
