@@ -1637,7 +1637,7 @@
                                         <div class="dropup" ngbDropdown style="line-height: 0;">
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                <div class="dropup" ngbDropdown >
+                                                <div class="dropup" ngbDropdown #aggDrop="ngbDropdown">
                                                     <li  *ngIf="!isMeasureEdit" class="btn btn-primary-light alis-measure-width border" >@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
@@ -1664,6 +1664,43 @@
                                                         <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
                                                         <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" >None</a></li>  
                                                     </ul>
+                                                </div>
+                                                <div *ngIf="checkdatetype && checkAggregateNotNone" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
+                                                    <li class="dropdown-item btn btn-primary-light Quick-Calc-text border" ngbDropdownToggle>Quick Calculation</li>
+                                                    <!-- <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
+                                                       ngbDropdownToggle></i>
+                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                        <li>
+                                                            <a class="dropdown-item border Aggregation-select-padding"
+                                                               href="javascript:void(0);" >Year Over Year (YOY)</a>
+                                                        </li>
+                                                    </ul> -->
+
+                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
+                                                    ngbDropdownToggle (click)="toggleQuickCalculation()"></i>
+                                             
+                                                 <!-- YOY Dropdown (Appears to the Right of Quick Calculation) -->
+                                                 <ul class="dropdown-menu custom-dropdown position-absolute dropdown-menu-end"
+                                                     [ngClass]="{'show': quickCalcOpen}" style="top: 70px; left: 100%; min-width: 150px;">
+                                                     <!-- <li>
+                                                         <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'yoy')"
+                                                            >Year Over Year (YOY)</a>
+                                                     </li> -->
+                                                     <ng-container *ngIf="yearLength > 0; else singleYOY">
+                                                        <li *ngFor="let column of yearColumns">
+                                                            <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
+                                                               (click)="selectedColumnForYOY=column;rowMeasuresCount(rows, index, 'yoy');">{{ column }}(yoy)</a>
+                                                        </li>
+                                                    </ng-container>
+                                            
+                                                    <!-- Single YOY option -->
+                                                    <ng-template #singleYOY>
+                                                        <li>
+                                                            <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
+                                                               (click)="rowMeasuresCount(rows, index, 'yoy')">Year Over Year (YOY)</a>
+                                                        </li>
+                                                    </ng-template>
+                                                 </ul>
                                                 </div>
                                                 <li> <a class="btn btn-secondary-light mx-0 w-100" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
                                             </ul>
