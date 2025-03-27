@@ -65,6 +65,9 @@ export class DataTransformationComponent {
   isAllSelected : boolean = false;
   isAddTheseTablesDisable : boolean = true;
   transformationsPreview : any[] = [];
+  primaryHierarchyId : any;
+  querySetIdFromDatasource : any;
+  isCrossDbSelect : boolean = false;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal) {
     if (this.router.url.startsWith('/analytify/databaseConnection/dataTransformation')) {
@@ -77,6 +80,20 @@ export class DataTransformationComponent {
         this.hierarchyId = +atob(route.snapshot.params['id']);
         console.log(this.hierarchyId);
       }
+    } else if(this.router.url.startsWith('/analytify/crossDatabase/dataTransformation')){
+      if (route.snapshot.params['id1']) {
+        this.serverId = +atob(route.snapshot.params['id1']);
+        console.log(this.serverId);
+      }
+      if (route.snapshot.params['id2']) {
+        this.primaryHierarchyId = +atob(route.snapshot.params['id2']);
+        console.log(this.primaryHierarchyId);
+      }
+      if (route.snapshot.params['id3']) {
+        this.querySetIdFromDatasource = +atob(route.snapshot.params['id3']);
+        console.log(this.querySetIdFromDatasource);
+      }
+      this.isCrossDbSelect = true;
     }
   }
 
@@ -313,7 +330,11 @@ export class DataTransformationComponent {
         } else{
           this.isTablePreview = false;
           let encodedId = btoa(response.parent_id.toString());
-          this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+          if (this.isCrossDbSelect) {
+            this.connectCrossDbs(response.parent_id);
+          } else {
+            this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+          }
         }
       },
       error: (error) => {
@@ -411,5 +432,32 @@ export class DataTransformationComponent {
         })
       }
     });
+  }
+  connectCrossDbs(secondaryHierarchyId : any) {
+    const obj = {
+      hierarchy_ids: [this.primaryHierarchyId, secondaryHierarchyId]
+    }
+    this.workbechService.crossDbConnection(obj).subscribe({
+      next: (data) => {
+        console.log(data);
+        const encodedId = btoa(data[0].cross_db_id.toString());
+        if (this.querySetIdFromDatasource) {
+          const encodeQrysetId = btoa(this.querySetIdFromDatasource.toString())
+          this.router.navigate(['/analytify/database-connection/tables/' + encodedId + '/' + encodeQrysetId]);
+        }
+        else {
+          this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+        }
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
   }
 }
