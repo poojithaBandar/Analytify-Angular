@@ -52,6 +52,32 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
+
+      {
+        path: 'datasources/crossdatabase/customsql/viewconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/viewconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/newconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/newconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+
       {
         path: 'datasources/google-sheets',
         canActivate: [authGuard],
@@ -111,6 +137,13 @@ export const admin: Routes = [
       },
       {
         path: 'database-connection/savedQuery/:id1/:id2',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/savedQuery/:id1',
         canActivate: [authGuard],
         canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
