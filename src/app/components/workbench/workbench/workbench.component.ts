@@ -1754,10 +1754,18 @@ connectGoogleSheets(){
         if (this.iscrossDbSelect){
           const encodedPrimaryHId = btoa(this.primaryHierachyId.toString());
           const encodedQuerySetId = this.querysetIdFromDataSource ? btoa(this.querysetIdFromDataSource.toString()) : '';
-          if(encodedQuerySetId){
-            this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId +'/' + encodedQuerySetId]);
+          if(this.isCustomSql){
+            if(encodedQuerySetId){
+              this.router.navigate(['/analytify/crossDatabase/customSql/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId +'/' + encodedQuerySetId]);
+            } else{
+              this.router.navigate(['/analytify/crossDatabase/customSql/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId]);
+            }
           } else{
-            this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId]);
+            if(encodedQuerySetId){
+              this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId +'/' + encodedQuerySetId]);
+            } else{
+              this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId]);
+            }
           }
         } else{
           this.router.navigate(['/analytify/databaseConnection/dataTransformation/' + encodedServerId]);
