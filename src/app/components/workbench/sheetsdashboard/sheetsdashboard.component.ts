@@ -5752,23 +5752,24 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
               return `${formattedValue}%`;
             };
-          }
-          if (sheet.chartOptions?.yaxis?.labels) {
-            sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
-              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-            };
-          }
-          else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.yaxis?.length >= 0){
-            sheet.chartOptions.yaxis.forEach((data:any)=>{
-              data.labels.formatter = (val: number) => {
+          } else{
+            if (sheet.chartOptions?.yaxis?.labels) {
+              sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
                 return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
               };
-            });
-          }
-          if(sheet.chartOptions?.dataLabels){
-            sheet.chartOptions.dataLabels.formatter = (val: number) => {
-              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-            };
+            }
+            else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.yaxis?.length >= 0){
+              sheet.chartOptions.yaxis.forEach((data:any)=>{
+                data.labels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              });
+            }
+            if(sheet.chartOptions?.dataLabels){
+              sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              };
+            }
           }
         }
       }
@@ -6781,6 +6782,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           this.getDashboardFilterredList(true);
         } else if(this.active == 3) {
         this.getDrillThroughActionList();
+        this.actionId = '';
+        this.sheetFilters = [];
         }
       },
       error: (error) => {
