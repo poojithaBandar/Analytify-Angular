@@ -4314,11 +4314,11 @@
                                     </a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane" id="linktabs">
-                                            <div class="copilot-container p-2">
-                                                <h6 style="text-align: center;font-weight:900;background-image: linear-gradient(to right, #ff69b4, #00bfff); background-size: 100% 1px; background-position: 0% 100%; color: #fff; padding: 5px;">Genie AIQ</h6>
+                                            <div class="copilot-container p-1">
+                                                <h6 class='rounded-2 genie-aiq-text'>Genie AIQ</h6>
                                                 <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-3">
                                                     <button *ngFor="let chart of chartSuggestions" type="button"
-                                                        class="btn ripple btn-primary inp-btn d-flex align-items-center"
+                                                        class="btn ripple btn-primary inp-btn d-flex align-items-center p1-text-start"
                                                         (click)="fetchChartData(chart)"
                                                         matTooltip="{{ chart.description }}" matTooltipPosition="above">
                                                         <span class="avatar avatar rounded-circle-copilot mr-2 me-2">
@@ -4369,7 +4369,7 @@
                                                     <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
                                                 </div>
                                                 <div class="input-group mt-3 inp">
-                                                    <input type="text" class="form-control" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
+                                                    <input type="text" class="form-control p-1" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
                                                     <div class="input-group-append">
                                                         <!-- <button (click)="startVoiceRecognition()" style="height: 33px; width:33px"> <img
                                                                 src="./assets/images/microphone.svg" alt="Micro Phone" /> </button>
@@ -4381,8 +4381,9 @@
                                                                 <i class="fa fa-paper-plane"></i>
                                                             </button>
                                                     </div>
-                                                    <p></p>
-                                                    <p style="font-size: 0.6rem;">The art of chart suggestion: not magic, but data-driven</p>
+                                                    <!-- <p></p> -->
+                                                     <br>
+                                                    <p style="font-size: 0.6rem;" class="mt-1">The art of chart suggestion: not magic, but data-driven</p>
                                                 </div>
                                             </div>
                                         </div>
