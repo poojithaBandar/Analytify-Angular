@@ -68,6 +68,7 @@ export class DataTransformationComponent {
   primaryHierarchyId : any;
   querySetIdFromDatasource : any;
   isCrossDbSelect : boolean = false;
+  isCustomSql : boolean = false;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal) {
     if (this.router.url.startsWith('/analytify/databaseConnection/dataTransformation')) {
@@ -80,7 +81,12 @@ export class DataTransformationComponent {
         this.hierarchyId = +atob(route.snapshot.params['id']);
         console.log(this.hierarchyId);
       }
-    } else if(this.router.url.startsWith('/analytify/crossDatabase/dataTransformation')){
+    } else if(this.router.url.startsWith('/analytify/crossDatabase')){
+      if(this.router.url.startsWith('/analytify/crossDatabase/customSql/dataTransformation')){
+        this.isCustomSql = true;
+      } else if(this.router.url.startsWith('/analytify/crossDatabase/dataTransformation')){
+        this.isCustomSql = false;
+      }
       if (route.snapshot.params['id1']) {
         this.serverId = +atob(route.snapshot.params['id1']);
         console.log(this.serverId);
@@ -441,12 +447,22 @@ export class DataTransformationComponent {
       next: (data) => {
         console.log(data);
         const encodedId = btoa(data[0].cross_db_id.toString());
-        if (this.querySetIdFromDatasource) {
-          const encodeQrysetId = btoa(this.querySetIdFromDatasource.toString())
-          this.router.navigate(['/analytify/database-connection/tables/' + encodedId + '/' + encodeQrysetId]);
-        }
-        else {
-          this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+        if(this.isCustomSql){
+          if(this.querySetIdFromDatasource){
+            const encodeQrysetId = btoa(this.querySetIdFromDatasource.toString())
+            this.router.navigate(['/analytify/database-connection/savedQuery/'+encodedId+'/'+encodeQrysetId]);
+            }
+            else{
+              this.router.navigate(['/analytify/database-connection/savedQuery/'+encodedId]);
+            }
+        } else{
+          if (this.querySetIdFromDatasource) {
+            const encodeQrysetId = btoa(this.querySetIdFromDatasource.toString())
+            this.router.navigate(['/analytify/database-connection/tables/' + encodedId + '/' + encodeQrysetId]);
+          }
+          else {
+            this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+          }
         }
       },
       error: (error) => {

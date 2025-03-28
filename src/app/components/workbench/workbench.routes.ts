@@ -355,6 +355,20 @@ export const admin: Routes = [
       },
 
       {
+        path: 'crossDatabase/customSql/dataTransformation/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'crossDatabase/customSql/dataTransformation/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
         path: 'update-password',
         canActivate: [authGuard],
         loadComponent: () =>
