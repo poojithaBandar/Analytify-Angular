@@ -1750,13 +1750,27 @@ connectGoogleSheets(){
     this.workbechService.checkDatasourceConnection(object).subscribe({
       next: (responce) => {
         console.log(responce);
-        const encodedId = btoa(responce.server_id.toString());
-        this.router.navigate(['/analytify/databaseConnection/dataTransformation/' + encodedId]);
+        const encodedServerId = btoa(responce.server_id.toString());
+        if (this.iscrossDbSelect){
+          const encodedPrimaryHId = btoa(this.primaryHierachyId.toString());
+          const encodedQuerySetId = this.querysetIdFromDataSource ? btoa(this.querysetIdFromDataSource.toString()) : '';
+          if(encodedQuerySetId){
+            this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId +'/' + encodedQuerySetId]);
+          } else{
+            this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId]);
+          }
+        } else{
+          this.router.navigate(['/analytify/databaseConnection/dataTransformation/' + encodedServerId]);
+        }
       },
       error: (error) => {
         console.log(error);
         this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
       }
     });
+  }
+  goToTransformationLayer(hierarchyId:any){
+    const encodedId = btoa(hierarchyId.toString());
+    this.router.navigate(['/analytify/transformationList/dataTransformation/' + encodedId]);
   }
 }

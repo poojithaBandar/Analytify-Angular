@@ -24,6 +24,9 @@ viewDashboard(){
 viewCustomSql(){
   return this.rolesprevilgeService.userHasPriviledge(54);
 }
+viewTransformations(){
+  return true;
+}
 editDashboard(){
   return this.rolesprevilgeService.userHasPriviledge(37);
 }
