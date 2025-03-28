@@ -30,12 +30,12 @@ export class DataTransformationComponent {
   databaseName : any;
   transformationTypes = [
     { key: 'deduplicate', label: 'Remove duplicates', needColumn: false },
-    { key: 'replace_values', label: 'Handle null values', needColumn: true },
-    { key: 'special_char_remove', label: 'Remove special characters', needColumn: true },
-    { key: 'alter_datatypes', label: 'Change data types', needColumn: true },
-    { key: 'upper', label: 'Upper case', needColumn: true },
-    { key: 'lower', label: 'Lower case', needColumn: true },
-    { key: 'title', label: 'Title case', needColumn: true }
+    { key: 'replace_values', label: 'Handle null values', needColumn: true, dropdown:'', input:'' },
+    { key: 'special_char_remove', label: 'Remove special characters', needColumn: true, dropdown:'' },
+    { key: 'alter_datatypes', label: 'Change data types', needColumn: true, dropdown:'', input:'' },
+    { key: 'upper', label: 'Upper case', needColumn: true, dropdown:'' },
+    { key: 'lower', label: 'Lower case', needColumn: true, dropdown:'' },
+    { key: 'title', label: 'Title case', needColumn: true, dropdown:'' }
   ];
   dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 
     'timestamptz', 'nullable(date)', 'nullable(time)', 'nullable(datetime)', 'nullable(timestamp)', 'nullable(timestamp with time zone)',
@@ -116,8 +116,12 @@ export class DataTransformationComponent {
     if (!this.selectedTransformations[index]) {
       this.selectedTransformations[index] = [{}]; // Initialize if not set
     } else {
-      this.selectedTransformations[index].push({});
+      this.selectedTransformations[index].push({input : '',dropdown:'',keys:[],key:'', label:'',isError:false});
     }
+    this.transformationTypes.forEach((trans:any)=>{
+      trans.dropdown = '';
+      trans.input = '';
+    })
     this.isApplyDisable = true;
     this.runButtonDisabled[index] = true;
     setTimeout(() => {
@@ -145,7 +149,30 @@ export class DataTransformationComponent {
         }
       }
     }, 100); 
-  }  
+  }
+  
+  editTransformationPreview(index: number, transformationIndex: number, typeIndex:number){
+    const key = this.selectedTransformations[index][transformationIndex].key;
+    const dropdown = this.selectedTransformations[index][transformationIndex].dropdown;
+    const input = this.selectedTransformations[index][transformationIndex].input;
+
+    // const tTypeIndex = this.transformationTypes.findIndex(trans => trans.key === key);
+    if(key === this.transformationTypes[typeIndex].key){
+      if(this.transformationTypes[typeIndex]?.dropdown === '' || this.transformationTypes[typeIndex]?.dropdown !== ''){
+        this.transformationTypes[typeIndex].dropdown = dropdown;
+      }
+      if(this.transformationTypes[typeIndex]?.input === '' || this.transformationTypes[typeIndex]?.input !== ''){
+        this.transformationTypes[typeIndex].input = input;
+      }
+    } else{
+      if(this.transformationTypes[typeIndex]?.dropdown){
+        this.transformationTypes[typeIndex].dropdown = '';
+      }
+      if(this.transformationTypes[typeIndex]?.input){
+        this.transformationTypes[typeIndex].input = '';
+      }
+    }
+  }
 
   drop(event: CdkDragDrop<any[]>) {
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -176,6 +203,12 @@ export class DataTransformationComponent {
       this.selectedTransformations[index][transformationIndex].input = event.target.value;
     } else if(isDropdown){
       this.selectedTransformations[index][transformationIndex].dropdown = event.target.value;
+      this.transformationTypes.forEach((trans:any)=>{
+        if(trans.key !== transformationKey){
+          trans.dropdown = '';
+          trans.input = '';
+        }
+      });
     } if(transformationKey){
       this.selectedTransformations[index][transformationIndex].key = transformationKey;
 
