@@ -968,7 +968,11 @@ lineChart(){
 
   };
 }
-pieChart(){
+pieChart(chartsColumnData?:any[],chartsRowData?:any[]){
+  if(chartsColumnData && chartsRowData){
+    this.chartsColumnData = chartsColumnData;
+    this.chartsRowData = chartsRowData;
+  }
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
     value: value,
     name: this.chartsColumnData[index]
@@ -1211,7 +1215,11 @@ barLineChart(){
     ]
   };
 }
-multiLineChart(){
+multiLineChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+  if(dualAxisColumnData && dualAxisRowData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+  }
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
@@ -1316,6 +1324,7 @@ multiLineChart(){
       }
   })),
   };
+  return this.chartOptions;
 }
 radarChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;

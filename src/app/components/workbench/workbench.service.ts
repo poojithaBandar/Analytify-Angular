@@ -923,4 +923,10 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.get<any>(`${environment.apiUrl}/colour_palette/`+this.accessToken+`/${id}`);
     }
+
+    buildSampleDashbaord(id : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/connectwise_dashboard/`+1841+'/'+this.accessToken);
+    }
 }
