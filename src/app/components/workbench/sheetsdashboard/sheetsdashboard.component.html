@@ -641,8 +641,8 @@
                                                                 <p class="p-1 mb-0 category-text">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
-                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList).length > 20 ? (getColumnSelectionLabel(filterList) | slice: 0:20) + '...' : getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
-                                                                  <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button>
+                                                                  <button type="button" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList).length > 20 ? (getColumnSelectionLabel(filterList) | slice: 0:20) + '...' : getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
+                                                                  <!-- <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button> -->
 
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox select-data-card-a">
                                                                     <div class="scrollable-content" style="max-height: calc(100% - 50px); overflow-y: auto;"> <!-- Adjust the height to account for buttons -->
@@ -1226,7 +1226,7 @@
                     [displayUnits]="item['customizeOptions']?.displayUnits"
                     [decimalPlaces]="item['customizeOptions']?.decimalPlaces" [prefix]="item['customizeOptions']?.prefix"
                     [suffix]="item['customizeOptions']?.suffix" [sortType]="item['customizeOptions']?.sortType"
-                    [mapChartOptions]="item['echartOptions']" [actionId]="actionId"
+                    [mapChartOptions]="item['echartOptions']" [actionId]="actionId" (drillThrough)="onEChartClick($event, item)"
                     [drillDownIndex]="item['drillDownIndex']" [draggedDrillDownColumns]="item['drillDownHierarchy']"
                     [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)">
                   </app-insight-echart>
@@ -1273,7 +1273,7 @@
                         [dataLabels]="item.chartOptions.dataLabels!" [plotOptions]="item.chartOptions.plotOptions!"
                         [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                         [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" [yaxis]="item.chartOptions.yaxis!"
-                        (chartInit)="onChartInit($event, item)">
+                        [legend]="item.chartOptions.legend!" (chartInit)="onChartInit($event, item)">
                       </apx-chart>
                     </div>
                     <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
@@ -1651,6 +1651,7 @@
                     [displayUnits]="item['customizeOptions']?.displayUnits"
                     [decimalPlaces]="item['customizeOptions']?.decimalPlaces" [prefix]="item['customizeOptions']?.prefix"
                     [suffix]="item['customizeOptions']?.suffix" [sortType]="item['customizeOptions']?.sortType"
+                    [mapChartOptions]="item['echartOptions']" [actionId]="actionId" (drillThrough)="onEChartClick($event, item)"
                     [drillDownIndex]="item['drillDownIndex']" [draggedDrillDownColumns]="item['drillDownHierarchy']"
                     [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)">
                   </app-insight-echart>
@@ -1697,7 +1698,7 @@
                         [dataLabels]="item.chartOptions.dataLabels!" [plotOptions]="item.chartOptions.plotOptions!"
                         [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                         [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" [yaxis]="item.chartOptions.yaxis!"
-                        (chartInit)="onChartInit($event, item)">
+                        [legend]="item.chartOptions.legend!" (chartInit)="onChartInit($event, item)">
                       </apx-chart>
                     </div>
                     <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
@@ -2027,6 +2028,7 @@
             ngbTooltip="Periodical automatted time interval to refresh/sync dashboard."
             class="icon icon-info ms-1 cursor-pointer"></i></label>
           <select [(ngModel)]="frequency" class="form-control cursor-pointer">
+            <option value="-1"> Don't refresh </option>
             <option value="1"> 1 hour</option>
             <option value="2"> 2 hours</option>
             <option value="5"> 5 hours</option>
@@ -2034,18 +2036,19 @@
             <option value="15"> 15 hours</option>
             <option value="24"> 24 hours</option>
           </select>
+          @if(frequency > 0){
             <label class="form-label">Refresh Now <i
               ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
             <input type="checkbox" [(ngModel)]="refreshNow" />
+          }
             @if(lastRefresh){
             <label class="form-label">Last Refresh<i
                 ngbTooltip="last refreshed date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
             <input type="text" readonly="true" [(ngModel)]="lastRefresh" />
             }
             @if(nextRefresh){
-            <label class="form-label">Next Refresh<i
-                ngbTooltip="next refresh date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
-            <input type="text" readonly="true" [(ngModel)]="nextRefresh" />
+            <label class="form-label">Next Refresh will happen in 
+            <span class="fw-bold">{{nextRefresh}}</span> minutes.</label>
             }
           </div>
       </div>

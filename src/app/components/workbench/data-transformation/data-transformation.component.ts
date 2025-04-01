@@ -21,8 +21,10 @@ export class DataTransformationComponent {
   active=0;
   defaults = ['Connections'];
   tables = [{tables : '', columns : []}];
+  originalTableData = [{tables : '', columns : []}];
   draggedTables: any[] = [];
   selectedTransformations: any = {};
+  serverId : any;
   hierarchyId : any;
   schema : any;
   databaseName : any;
@@ -62,19 +64,51 @@ export class DataTransformationComponent {
   tableModalSearch : string = '';
   isAllSelected : boolean = false;
   isAddTheseTablesDisable : boolean = true;
+  transformationsPreview : any[] = [];
+  primaryHierarchyId : any;
+  querySetIdFromDatasource : any;
+  isCrossDbSelect : boolean = false;
+  isCustomSql : boolean = false;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal) {
-    if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
+    if (this.router.url.startsWith('/analytify/databaseConnection/dataTransformation')) {
+      if (route.snapshot.params['id']) {
+        this.serverId = +atob(route.snapshot.params['id']);
+        console.log(this.serverId);
+      }
+    } else if(this.router.url.startsWith('/analytify/transformationList/dataTransformation')){
       if (route.snapshot.params['id']) {
         this.hierarchyId = +atob(route.snapshot.params['id']);
         console.log(this.hierarchyId);
       }
+    } else if(this.router.url.startsWith('/analytify/crossDatabase')){
+      if(this.router.url.startsWith('/analytify/crossDatabase/customSql/dataTransformation')){
+        this.isCustomSql = true;
+      } else if(this.router.url.startsWith('/analytify/crossDatabase/dataTransformation')){
+        this.isCustomSql = false;
+      }
+      if (route.snapshot.params['id1']) {
+        this.serverId = +atob(route.snapshot.params['id1']);
+        console.log(this.serverId);
+      }
+      if (route.snapshot.params['id2']) {
+        this.primaryHierarchyId = +atob(route.snapshot.params['id2']);
+        console.log(this.primaryHierarchyId);
+      }
+      if (route.snapshot.params['id3']) {
+        this.querySetIdFromDatasource = +atob(route.snapshot.params['id3']);
+        console.log(this.querySetIdFromDatasource);
+      }
+      this.isCrossDbSelect = true;
     }
   }
 
   ngOnInit() {
-    if(this.hierarchyId){
+    if(this.serverId){
       this.getTablesForDataTransformation();
+    }
+    if(this.hierarchyId){
+      this.getTransformationsEditPreview();
     }
   }
 
@@ -163,15 +197,6 @@ export class DataTransformationComponent {
     this.checkcurrentTableTransformationValid(index);
   }
 
-  getTransformationLabel(index: number, transformationIndex: number): string {
-    let selectedData = "";
-    this.transformationTypes.forEach((transformation : any)=>{
-      if(transformation.key === (this.selectedTransformations[index]?.[transformationIndex][0] || "")){
-        selectedData = transformation.label;
-      }
-    });
-    return selectedData;
-  }
   removeTransformation(index: number, transformationIndex: number) {
     this.selectedTransformations[index].splice(transformationIndex, 1);
     this.checkTransformationsValid(false);
@@ -197,12 +222,45 @@ export class DataTransformationComponent {
   }
 
   getTablesForDataTransformation(){
-    this.workbechService.getTablesForDataTransformation(this.hierarchyId).subscribe({
+    this.workbechService.getTablesForDataTransformation(this.serverId).subscribe({
       next: (response: any) => {
         console.log(response);
         this.tables = response.tables;
+        this.originalTableData = response.tables;
         this.schema = response.schema;
         this.databaseName = response.databas_name;
+        if(this.hierarchyId && this.transformationsPreview.length >0){
+          this.transformationsPreview.forEach((transformation:any, index:any)=>{
+            let table = this.tables.find(table => transformation.table === table.tables);
+            this.draggedTables.push(table);
+            transformation.transform.forEach((t:any, tIndex:any)=>{
+              if (!this.selectedTransformations[index]) {
+                this.selectedTransformations[index] = [];
+              }
+              if(!this.selectedTransformations[index][tIndex]){
+                this.selectedTransformations[index][tIndex] = {input : '',dropdown:'',keys:[],key:'', label:'',isError:false}
+              }
+              this.selectedTransformations[index][tIndex].key = t.type;
+              if(['case_change'].includes(t.type)){
+                this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
+                this.selectedTransformations[index][tIndex].key = t.keys[1];
+                t.type = t.keys[1];
+              } else if(t.type === 'replace_values'){
+                this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
+                this.selectedTransformations[index][tIndex].input = t.keys[2];
+              } else if(t.type === 'alter_datatypes'){
+                this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
+                this.selectedTransformations[index][tIndex].input = t.keys[1];
+              } else if(t.type === 'special_char_remove'){
+                this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
+              }
+              const transformation = this.transformationTypes.find(trans => trans.key === t.type);
+              this.selectedTransformations[index][tIndex].label = transformation ? transformation.label : '';
+            });
+          });
+          console.log(this.selectedTransformations);
+          this.checkTransformationsValid(false);
+        }
       },
       error: (error) => {
         console.log(error);
@@ -217,6 +275,7 @@ export class DataTransformationComponent {
   }
 
   setTransformations(isInvidualTableRun:boolean, index:any, isSkip:boolean){
+    console.log(this.selectedTransformations);
     let transformationList : any[] = []
     this.draggedTables.forEach((table:any,index:any)=>{
       let object = {
@@ -255,11 +314,13 @@ export class DataTransformationComponent {
     if(isSkip){
       addTables = [];
     }
+    let isEdit = this.hierarchyId ? true : false;
     let object = {
-      id : this.hierarchyId,
+      id : this.serverId,
       transformation_list: isInvidualTableRun ? [transformationList[index]] : transformationList,
       ...(isInvidualTableRun && { preview: isInvidualTableRun, limit:  this.showingRows }),
-      ...(!isInvidualTableRun && addTables.length > 0 && { add_tables: addTables })
+      ...(!isInvidualTableRun && addTables.length > 0 && { add_tables: addTables }),
+      ...(isEdit && { hierarchy_id: this.hierarchyId }),
     }
     console.log('payload : ',object);
     this.workbechService.setTransformations(object).subscribe({
@@ -275,7 +336,11 @@ export class DataTransformationComponent {
         } else{
           this.isTablePreview = false;
           let encodedId = btoa(response.parent_id.toString());
-          this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+          if (this.isCrossDbSelect) {
+            this.connectCrossDbs(response.parent_id);
+          } else {
+            this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+          }
         }
       },
       error: (error) => {
@@ -324,7 +389,7 @@ export class DataTransformationComponent {
   }
   openTablesSelection(modal: any) {
     const draggedTableNames = new Set(this.draggedTables.map(dragged => dragged.tables));
-    this.nonTransformedTables = this.tables.filter(table => !draggedTableNames.has(table.tables)).map(table => ({ ...table, selected: false }));
+    this.nonTransformedTables = this.originalTableData.filter(table => !draggedTableNames.has(table.tables)).map(table => ({ ...table, selected: false }));
     if(this.nonTransformedTables.length > 0){
       this.modalService.open(modal, {
         centered: true,
@@ -343,5 +408,72 @@ export class DataTransformationComponent {
   checkIfAllSelected() { 
     this.isAllSelected = this.nonTransformedTables.every(table => table.selected);
     this.isAddTheseTablesDisable = !this.nonTransformedTables.some(table => table.selected);
+  }
+  getFilteredTables(){
+    this.tables = this.originalTableData;
+    if(this.searchText){
+      this.tables = this.tables.filter(table =>
+        table?.tables?.toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    }
+  }
+  getTransformationsEditPreview(){
+    this.workbechService.getTransformationsPreview(this.hierarchyId).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.serverId = response.data[0].datasource_id;
+        this.transformationsPreview = response.data[0].transformations;
+        this.hierarchyId = response.hierarchy_id;
+        if(this.serverId){
+          this.getTablesForDataTransformation();
+        }
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
+  }
+  connectCrossDbs(secondaryHierarchyId : any) {
+    const obj = {
+      hierarchy_ids: [this.primaryHierarchyId, secondaryHierarchyId]
+    }
+    this.workbechService.crossDbConnection(obj).subscribe({
+      next: (data) => {
+        console.log(data);
+        const encodedId = btoa(data[0].cross_db_id.toString());
+        if(this.isCustomSql){
+          if(this.querySetIdFromDatasource){
+            const encodeQrysetId = btoa(this.querySetIdFromDatasource.toString())
+            this.router.navigate(['/analytify/database-connection/savedQuery/'+encodedId+'/'+encodeQrysetId]);
+            }
+            else{
+              this.router.navigate(['/analytify/database-connection/savedQuery/'+encodedId]);
+            }
+        } else{
+          if (this.querySetIdFromDatasource) {
+            const encodeQrysetId = btoa(this.querySetIdFromDatasource.toString())
+            this.router.navigate(['/analytify/database-connection/tables/' + encodedId + '/' + encodeQrysetId]);
+          }
+          else {
+            this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+          }
+        }
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
   }
 }

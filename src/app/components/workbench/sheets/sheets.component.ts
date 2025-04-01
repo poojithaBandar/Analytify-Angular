@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -1258,17 +1258,20 @@ try {
     console.log(this.draggedRowsData);
     if (this.integerList.includes(element.data_type)) {
       this.rowMeasuresCount(element, event.currentIndex, 'sum');
+      this.rowaggregateType = 'sum'
     } else {
       this.dataExtraction();
     }
 
   }
   isDropdownVisible = false;
-
+  rowaggregateType :any;
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
+  selectedColumnForYOY :any;
   rowMeasuresCount(rows:any,index:any,type:any){
+    // this.rowaggregateType = type;
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
       this.selectedSortColumnData[2] = type;
       if(rows.alias){
@@ -1277,7 +1280,14 @@ try {
     }
       this.measureValues = [];
       if(type){
+        if(type == 'yoy'){
+          this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
+        }else if(type == 'yoyRemove'){
+          this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
+        }
+        else{
         this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
+        }
       }
       else{
         this.measureValues = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
@@ -1293,7 +1303,9 @@ try {
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
+    if(type !== 'yoy' && type !== 'yoyRemove'){
     this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
+    }
     console.log(this.draggedRows)
     if(type === 'count' || type === 'count_distinct'){
       this.KPIDecimalPlaces = 0;
@@ -1304,13 +1316,22 @@ try {
       this.decimalPlaces = 2;
       this.donutDecimalPlaces = 2;
     }
+    this.checkAggregationForYOY();
     this.dataExtraction();
      }
   }
-
+  checkAggregateNotNone = false;
+  checkAggregationForYOY(){
+    this.checkAggregateNotNone = this.draggedRows.every((col: { type: string; }) => col.type !== '');
+  }
   onAliasChange(rows : any , index : any){
     this.isMeasureEdit = false;
-    this.rowMeasuresCount(rows, index, rows.type);
+    if(this.draggedRowsData[index][1] == 'yoy'){
+      this.rowMeasuresCount(rows, index, 'yoy');
+    }else{
+      this.rowMeasuresCount(rows, index, rows.type);
+    } 
+      // this.rowMeasuresCount(rows, index, rows.type);
   }
 
   onColumnAliasChange(column : any , index : any){
@@ -1398,6 +1419,7 @@ try {
       
     }
    this.dataExtraction();
+   this.checkDateFormatForYOY();
   }
   dragStartedRow(index:any,column:any){
     this.sortedData = [];
@@ -2509,11 +2531,17 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetCustomQuery = responce?.custom_query;
         this.sheetResponce = responce?.sheet_data;
         this.draggedColumns=this.sheetResponce?.columns;
+        if(this.draggedColumns){
+          this.checkDateFormatForYOY();
+        }
         if(!this.filterQuerySetId){
           this.filterQuerySetId = responce?.datasource_queryset_id;
         }
         this.draggedRows = this.sheetResponce?.rows;
-        this.draggedMeasureValues = this.sheetResponce?.pivotMeasure; 
+        if(this.draggedRows){
+          this.checkAggregationForYOY();
+        }
+        this.draggedMeasureValues = this.sheetResponce?.pivotMeasure || []; 
         this.mulColData = responce?.col_data;
         this.mulRowData = responce?.row_data;
         this.pivotMeasureValues = responce?.pivot_measure
@@ -4247,7 +4275,18 @@ customizechangeChartPlugin() {
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: format, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
      }
+     this.checkDateFormatForYOY();
      this.dataExtraction();
+  }
+  checkdatetype= false;
+  checkDateFormatForYOY(){
+    // this.checkdatetype = this.draggedColumns.every((col: { type: string; }) => col.type === 'year');
+    const hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
+    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
+    this.checkdatetype = hasYearType && hasDateFormat;
+
+    this.yearColumns = this.draggedColumns
+  .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
   }
   dateAggregation(column:any, index:any, type:any){
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
@@ -4888,7 +4927,16 @@ customizechangeChartPlugin() {
           this.calculatedFieldLogic = '"' + item.table_name + '"."' + item.column + '"';
         }
       }
-    }
+    }else if(item && item.column && item.data_type === 'calculated'){
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+        this.dropCalculatedField('calculated_fields', item.field_name); 
+      } else {
+        if (this.calculatedFieldLogic?.length) {
+          this.calculatedFieldLogic = this.calculatedFieldLogic + '"' + 'calculated_fields' + '"."' + item.field_name + '"';
+        } else {
+          this.calculatedFieldLogic = '"' + 'calculated_fields' + '"."' + item.field_name + '"';
+        }
+      }    }
   }
 
   applyCalculatedFields(event: any, ngbdropdownevent: any) {
@@ -4944,6 +4992,9 @@ customizechangeChartPlugin() {
           },
           error: (error) => {
             this.validationMessage = error?.error?.error;
+            if(error.error.message){
+              this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-center' });
+            }
             console.log(error);
           }
         })
@@ -5014,7 +5065,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*"),\s*\d+\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5113,7 +5164,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'split': 
-        if(!this.validateFormula(/^split_part\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*\"([^\"]*)\"\s*,\s*(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^split_part\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*'([^']*)'\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5180,7 +5231,7 @@ customizechangeChartPlugin() {
             }
           break; 
           case 'case': 
-          if(!this.validateFormula(/^CASE\s+(WHEN\s+.+?\s+THEN\s+.+?(\s+WHEN\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END)$/)){
+          if(!this.validateFormula(/^CASE\s+(WHEN\s+.+?\s+THEN\s+.+?(\s+WHEN\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END)$/i)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5202,7 +5253,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'average': 
-        if(!this.validateFormula(/^AVERAGE\(\s*.+?\s*\)$/)){
+        if(!this.validateFormula(/^AVG\(\s*.+?\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -6039,4 +6090,18 @@ customizechangeChartPlugin() {
       }
     });
   }
+  quickCalcOpen = false;
+
+toggleQuickCalculation() {
+    this.quickCalcOpen = !this.quickCalcOpen;
+}
+yearLength = 2; // Example value, dynamically set based on your data
+yearColumns = [];
+// @HostListener('document:click', ['$event'])
+// closeQuickCalcDropdown(event: Event) {
+//     const targetElement = event.target as HTMLElement;
+//     if (!targetElement.closest('.position-relative')) {
+//         this.quickCalcOpen = false;
+//     }
+// }
 }
