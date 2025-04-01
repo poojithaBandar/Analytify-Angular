@@ -1589,13 +1589,16 @@
                             (cdkDropListDropped)="measureValuesdrop($event)">
                                 @for(columns of draggedMeasureValues;track columns;let index = $index){
                                 <div class="example-box example-box-bg" cdkDrag >
-                                    @if(columns.type){
+                                    @if(columns.alias){
+                                        {{ columns.alias }}
+                                    }
+                                    @else if(columns.type){
                                         {{ columns.type }} ({{columns.column}})
                                     } @else if(columns.field_name) {
                                         {{ columns.field_name }}
-                                    } @else {   
+                                    } @else {
                                         {{ columns.column }}
-                                    } 
+                                    }
                                     <div class="dropup" ngbDropdown style="line-height: 0;">
                                         <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
