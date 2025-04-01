@@ -95,10 +95,14 @@ export class WorkbenchComponent implements OnInit{
   schemaList: any[] = [];
   selectedSchema : string = 'public';
   querysetIdFromDataSource :any;
-  xArray = [0,5,10,15,0,10,0,10,0];
-  yArray = [0,0,0,0,4,4,12,12,20];
-  rowsArray = [4,4,4,4,8,8,8,8,8];
-  colsArray = [5,5,5,5,10,10,10,10,10]
+  xConnectWiseArray = [0,5,10,15,0,10,0,10,0];
+  yConnectWiseArray = [0,0,0,0,4,4,12,12,20];
+  rowsConnectWiseArray = [4,4,4,4,8,8,8,8,8];
+  colsConnectWiseArray = [5,5,5,5,10,10,10,10,10];
+  xHALOPSAArray = [0,5,10,15,20,25,0,10,0,10,0];
+  yHALOPSAArray = [0,0,0,0,0,0,4,4,12,12,20];
+  rowsHALOPSAArray = [4,4,4,4,4,4,8,8,8,8,8];
+  colsHALOPSAArray = [5,5,5,5,5,5,10,10,10,10,10];
   chartTypeArray = ["KPI","KPI","KPI","KPI","pie","multiline","multiline","multiline","multiline"]
 
   echartInstance!: InsightEchartComponent;
@@ -644,7 +648,7 @@ export class WorkbenchComponent implements OnInit{
                 cancelButtonText: 'No',
               }).then((result) => {
                 if (result.isConfirmed) {
-                  this.buildSampleDashboard();
+                  this.buildSampleConnectWiseDashboard();
                 } else {
                   this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
@@ -680,7 +684,22 @@ export class WorkbenchComponent implements OnInit{
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
               }else{
-              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              Swal.fire({
+                position: "center",
+                icon: "question",
+                title: "Would like to view any sample dashboard?",
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.buildSampleHALOPSADashboard();
+                } else {
+                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
+              });
               }
             }
           },
@@ -1738,13 +1757,13 @@ connectGoogleSheets(){
     this.router.navigate(['/analytify/transformationList/dataTransformation/' + encodedId]);
   }
 
-  buildDashboardData(chartData: any, data: any, index : number,kpiData : any){
+  updateDashboardJSONData(chartData: any, data: any, index : number,kpiData : any,formType : string){
       let obj = {
         id : uuidv4(),
-        x : this.xArray[index],
-        y: this.yArray[index],
-        rows : this.rowsArray[index],
-        cols: this.colsArray[index],
+        x : formType == 'connectWise' ? this.xConnectWiseArray[index] : this.xHALOPSAArray[index] ,
+        y: formType == 'connectWise' ? this.yConnectWiseArray[index] : this.yHALOPSAArray[index],
+        rows : formType == 'connectWise' ? this.rowsConnectWiseArray[index] : this.rowsHALOPSAArray[index],
+        cols: formType == 'connectWise' ? this.colsConnectWiseArray[index] : this.colsHALOPSAArray[index],
         data: {
           sheetTagName
             :
@@ -1769,105 +1788,122 @@ connectGoogleSheets(){
      return obj;
   }
 
-  buildSampleDashboard(){
+  buildSampleConnectWiseDashboard(){
     const componentRef =this.container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleDashbaord(this.databaseId).subscribe({next: (responce) => {
-      console.log(responce);
-      let dashboardData: any[] = [];
-          if(responce){
-            const updateRequests = responce.sheets.map((data:any,index:number) => {
-              if(data.chart_id == 1){
-                data.chart_id = 8 
+      this.buildDashboardResponseData(responce,"connectWise");
+        },
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      }
+    )
+  }
+
+  buildDashboardResponseData(responce: any,formType: string){
+    let dashboardData: any[] = [];
+    if(responce){
+      const updateRequests = responce.sheets.map((data:any,index:number) => {
+        if(data.chart_id == 1){
+          data.chart_id = 8 
+        }
+
+         let tablePreviewColumn = _.cloneDeep(data.sheet_query_data.columns_data)
+        let  tablePreviewRow = _.cloneDeep(data.sheet_query_data.rows_data)
+        let dualAxisColumnData:any =[];
+        let dualAxisRowData:any=[];
+        let chartsColumnData:any=[];
+        let chartsRowData:any = [];
+          if (tablePreviewColumn && tablePreviewRow) {
+            tablePreviewColumn.forEach((res: any) => {
+              // let obj = {
+              //   data: res.result_data
+              // }
+              // sidebysideBarColumnData.push(res.result_data);
+              let obj1 = {
+                name: res.column,
+                values: res.data
               }
-              if(data.chart_id == 8 || data.chart_id == 25 || data.chart_id == 24){
-               let tablePreviewColumn = _.cloneDeep(data.sheet_query_data.columns_data)
-              let  tablePreviewRow = _.cloneDeep(data.sheet_query_data.rows_data)
-              let dualAxisColumnData:any =[];
-              let dualAxisRowData:any=[];
-              let chartsColumnData:any=[];
-              let chartsRowData:any = [];
-                if (tablePreviewColumn && tablePreviewRow) {
-                  tablePreviewColumn.forEach((res: any) => {
-                    // let obj = {
-                    //   data: res.result_data
-                    // }
-                    // sidebysideBarColumnData.push(res.result_data);
-                    let obj1 = {
-                      name: res.column,
-                      values: res.data
-                    }
-                    dualAxisColumnData.push(obj1);
-                  });
-                  tablePreviewRow.forEach((res: any) => {
-                    let obj = {
-                      name: res.column,
-                      data: res.data
-                    }
-                    dualAxisRowData.push(obj);
-                  });
-                  tablePreviewRow.forEach((res: any) => {
-                    let obj = {
-                      name: res.col,
-                      value: res.data
-                    }
-                    // this.radarRowData.push(obj);
-                  });
-                  let rowCount: any;
-                  if (tablePreviewColumn[0]?.data?.length) {
-                    rowCount = tablePreviewColumn[0]?.data?.length;
-                  }
-                  
-                  //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
-                  // Extract column names
-                  // this.displayedColumns = this.tablePreviewColumn.map((col: any) => col.column).concat(this.tablePreviewRow.map((row: any) => row.col));
-                  // Create table data
-  
-                  //store table data close
-        
-                  tablePreviewColumn.forEach((col: any) => {
-                    chartsColumnData = col.data;
-                  });
-                  tablePreviewRow.forEach((rowData: any) => {
-                    chartsRowData = rowData.data;
-                  });
-                }
-                this.dashboardQuerySetIds.push(data.queryset_id);
-                return this.sheetUpdate(chartsColumnData, chartsRowData, dualAxisRowData, dualAxisColumnData,data.sheet_query_data.columns_data,data.sheet_query_data.rows_data,data,dashboardData,index);
-              }
+              dualAxisColumnData.push(obj1);
             });
-            
-            let dashboardObj ={
-              grid : "scroll",
-              height: 800,
-              width: 800,
-              queryset_id: this.dashboardQuerySetIds,
-              server_id:responce.dashboard.hierarchy_id,
-              sheet_ids:responce.dashboard.sheet_ids,
-              dashboard_name:responce.dashboard.dashboard_name,
-              dashboard_tag_name:responce.dashboard.dashboard_tag_name,
-              selected_sheet_ids:responce.dashboard.selected_sheet_ids,
-              data : dashboardData,
-              // tab_data : sheetTabsData,
-              // tab_name: tabNames,
-              // tab_sheets: sheetIds,
-              // tab_id: tabIds,
-
-            }
-            forkJoin(updateRequests).pipe(
-              switchMap(() => this.workbechService.updateDashboard(dashboardObj,responce.dashboard.dashboard_id))
-            ).subscribe({
-              next: (dashboardData) => {
-                const encodedDashboardId = btoa(responce.dashboard.dashboard_id.toString());
-
-                this.router.navigate(['/analytify/home/sheetsdashboard/'+encodedDashboardId])
-                console.log('Dashboard Data:', dashboardData);
-              },
-              error: (err) => {
-                console.error('Error during processing or dashboard fetch', err);
+            tablePreviewRow.forEach((res: any) => {
+              let obj = {
+                name: res.column,
+                data: res.data
               }
+              dualAxisRowData.push(obj);
+            });
+            tablePreviewRow.forEach((res: any) => {
+              let obj = {
+                name: res.col,
+                value: res.data
+              }
+              // this.radarRowData.push(obj);
+            });
+            let rowCount: any;
+            if (tablePreviewColumn[0]?.data?.length) {
+              rowCount = tablePreviewColumn[0]?.data?.length;
+            }
+            
+            //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
+            // Extract column names
+            // this.displayedColumns = this.tablePreviewColumn.map((col: any) => col.column).concat(this.tablePreviewRow.map((row: any) => row.col));
+            // Create table data
+
+            //store table data close
+  
+            tablePreviewColumn.forEach((col: any) => {
+              chartsColumnData = col.data;
+            });
+            tablePreviewRow.forEach((rowData: any) => {
+              chartsRowData = rowData.data;
             });
           }
+          this.dashboardQuerySetIds.push(data.queryset_id);
+          return this.sheetUpdate(chartsColumnData, chartsRowData, dualAxisRowData, dualAxisColumnData,data.sheet_query_data.columns_data,data.sheet_query_data.rows_data,data,dashboardData,index,formType);
+        
+      });
+      
+      let dashboardObj ={
+        grid : "scroll",
+        height: 800,
+        width: 800,
+        queryset_id: this.dashboardQuerySetIds,
+        server_id:responce.dashboard.hierarchy_id,
+        sheet_ids:responce.dashboard.sheet_ids,
+        dashboard_name:responce.dashboard.dashboard_name,
+        dashboard_tag_name:responce.dashboard.dashboard_tag_name,
+        selected_sheet_ids:responce.dashboard.selected_sheet_ids,
+        data : dashboardData,
+        // tab_data : sheetTabsData,
+        // tab_name: tabNames,
+        // tab_sheets: sheetIds,
+        // tab_id: tabIds,
+
+      }
+      forkJoin(updateRequests).pipe(
+        switchMap(() => this.workbechService.updateDashboard(dashboardObj,responce.dashboard.dashboard_id))
+      ).subscribe({
+        next: (dashboardData) => {
+          const encodedDashboardId = btoa(responce.dashboard.dashboard_id.toString());
+
+          this.router.navigate(['/analytify/home/sheetsdashboard/'+encodedDashboardId])
+          console.log('Dashboard Data:', dashboardData);
+        },
+        error: (err) => {
+          console.error('Error during processing or dashboard fetch', err);
+        }
+      });
+    }
+  }
+
+  buildSampleHALOPSADashboard(){
+    const componentRef =this.container.createComponent(InsightEchartComponent);
+    this.echartInstance = componentRef.instance;
+    this.workbechService.buildSampleHALOPSADashbaord(this.databaseId).subscribe({next: (responce) => {
+      this.buildDashboardResponseData(responce,"HALOPSA");      
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -1892,13 +1928,20 @@ connectGoogleSheets(){
     return transformed;
   }
 
-  sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number) {
+  sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number, formType : string) {
     let chartData;
     if(data.chart_id == 8){
       chartData = this.echartInstance.multiLineChart(dualAxisColumnData, dualAxisRowData);
-    }
-    else if(data.chart_id == 24) {
+    } else if(data.chart_id == 24) {
     chartData = this.echartInstance.pieChart(chartsColumnData, chartsRowData);
+    } else if(data.chart_id == 6) {
+      chartData = this.echartInstance.barChart(chartsColumnData, chartsRowData);
+    }  else if(data.chart_id == 3) {
+      chartData = this.echartInstance.hgroupedChart(dualAxisColumnData, dualAxisRowData);
+    } else if(data.chart_id == 10) {
+      chartData = this.echartInstance.donutChart(chartsColumnData, chartsRowData);
+    } else if(data.chart_id == 7) {
+      chartData = this.echartInstance.sidebySide(dualAxisColumnData, dualAxisRowData);
     }
     let tranformedData = this.transformData(tableColumnData,tableRowData);
     const sheetRows = data.row_data.map((item:any) => {
@@ -2024,7 +2067,7 @@ connectGoogleSheets(){
 
       }
     }
-    let dashbaordObj = this.buildDashboardData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,rows:tableRowData});
+    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,rows:tranformedData.rows_data},formType);
     dashboardData.push(dashbaordObj);
    return this.workbechService.sheetUpdate(obj, data.sheet_id);
 

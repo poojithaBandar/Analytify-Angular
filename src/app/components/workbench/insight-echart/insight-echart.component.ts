@@ -165,7 +165,11 @@ export class InsightEchartComponent {
     }
   }
 
-  barChart(){
+  barChart(chartsColumnData? : any ,chartsRowData?: any ){
+    if(chartsColumnData && chartsRowData){
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
     this.chartOptions = {
       backgroundColor: this.backgroundColor,
       legend: {
@@ -284,6 +288,7 @@ export class InsightEchartComponent {
       colorBy: 'data',
 
     };
+    return this.chartOptions;
 }
 flattenDimensions(dimensions: Dimension[]): string[] {
   const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
@@ -439,7 +444,11 @@ stackedChart(){
 
   };
 }
-sidebySide(){
+sidebySide(dualAxisColumnData? : any ,dualAxisRowData? : any ){
+  if(dualAxisColumnData && dualAxisRowData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+  }
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
@@ -546,8 +555,13 @@ sidebySide(){
       }
   })),
   };
+  return this.chartOptions;
 }
-hgroupedChart(){
+hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
+  if(dualAxisColumnData && dualAxisRowData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+  }
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
@@ -653,6 +667,7 @@ hgroupedChart(){
   })),
 
   };
+  return this.chartOptions;
 }
 hstackedChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1016,9 +1031,13 @@ pieChart(chartsColumnData?:any[],chartsRowData?:any[]){
     }
     ]
   };
-  console.log('pieoptions',this.chartOptions)
+  return this.chartOptions;
 }
-donutChart(){
+donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
+  if(chartsColumnData && chartsRowData){
+    this.chartsColumnData = chartsColumnData;
+    this.chartsRowData = chartsRowData;
+  }
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
     value: value,
     name: this.chartsColumnData[index]
@@ -1062,6 +1081,7 @@ donutChart(){
       }
     ]
   };
+  return this.chartOptions;
 }
 barLineChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;

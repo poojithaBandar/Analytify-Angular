@@ -927,6 +927,12 @@ deleteUser(id:any){
     buildSampleDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/connectwise_dashboard/`+1841+'/'+this.accessToken);
+      return this.http.get<any>(`${environment.apiUrl}/connectwise_dashboard/`+id+'/'+this.accessToken);
+    }
+
+    buildSampleHALOPSADashbaord(id : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/halops_dashboard/`+id+'/'+this.accessToken);
     }
 }
