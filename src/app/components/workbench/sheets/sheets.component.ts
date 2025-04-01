@@ -1302,7 +1302,7 @@ try {
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
-    if(type !== 'yoy'){
+    if(type !== 'yoy' && type !== 'yoyRemove'){
     this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     }
     console.log(this.draggedRows)
@@ -4957,6 +4957,9 @@ customizechangeChartPlugin() {
           },
           error: (error) => {
             this.validationMessage = error?.error?.error;
+            if(error.error.message){
+              this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-center' });
+            }
             console.log(error);
           }
         })
@@ -5027,7 +5030,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*"),\s*\d+\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
