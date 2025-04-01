@@ -30,12 +30,12 @@ export class DataTransformationComponent {
   databaseName : any;
   transformationTypes = [
     { key: 'deduplicate', label: 'Remove duplicates', needColumn: false },
-    { key: 'replace_values', label: 'Handle null values', needColumn: true },
-    { key: 'special_char_remove', label: 'Remove special characters', needColumn: true },
-    { key: 'alter_datatypes', label: 'Change data types', needColumn: true },
-    { key: 'upper', label: 'Upper case', needColumn: true },
-    { key: 'lower', label: 'Lower case', needColumn: true },
-    { key: 'title', label: 'Title case', needColumn: true }
+    { key: 'replace_values', label: 'Handle null values', needColumn: true, dropdown:'', input:'' },
+    { key: 'special_char_remove', label: 'Remove special characters', needColumn: true, dropdown:'' },
+    { key: 'alter_datatypes', label: 'Change data types', needColumn: true, dropdown:'', input:'' },
+    { key: 'upper', label: 'Upper case', needColumn: true, dropdown:'' },
+    { key: 'lower', label: 'Lower case', needColumn: true, dropdown:'' },
+    { key: 'title', label: 'Title case', needColumn: true, dropdown:'' }
   ];
   dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 
     'timestamptz', 'nullable(date)', 'nullable(time)', 'nullable(datetime)', 'nullable(timestamp)', 'nullable(timestamp with time zone)',
@@ -104,11 +104,10 @@ export class DataTransformationComponent {
   }
 
   ngOnInit() {
-    if(this.serverId){
-      this.getTablesForDataTransformation();
-    }
     if(this.hierarchyId){
       this.getTransformationsEditPreview();
+    } else if(this.serverId){
+      this.getTablesForDataTransformation();
     }
   }
 
@@ -116,8 +115,12 @@ export class DataTransformationComponent {
     if (!this.selectedTransformations[index]) {
       this.selectedTransformations[index] = [{}]; // Initialize if not set
     } else {
-      this.selectedTransformations[index].push({});
+      this.selectedTransformations[index].push({input : '',dropdown:'',keys:[],key:'', label:'',isError:true});
     }
+    this.transformationTypes.forEach((trans:any)=>{
+      trans.dropdown = '';
+      trans.input = '';
+    })
     this.isApplyDisable = true;
     this.runButtonDisabled[index] = true;
     setTimeout(() => {
@@ -145,7 +148,30 @@ export class DataTransformationComponent {
         }
       }
     }, 100); 
-  }  
+  }
+  
+  editTransformationPreview(index: number, transformationIndex: number, typeIndex:number){
+    const key = this.selectedTransformations[index][transformationIndex].key;
+    const dropdown = this.selectedTransformations[index][transformationIndex].dropdown;
+    const input = this.selectedTransformations[index][transformationIndex].input;
+
+    // const tTypeIndex = this.transformationTypes.findIndex(trans => trans.key === key);
+    if(key === this.transformationTypes[typeIndex].key){
+      if(this.transformationTypes[typeIndex]?.dropdown === '' || this.transformationTypes[typeIndex]?.dropdown !== ''){
+        this.transformationTypes[typeIndex].dropdown = dropdown;
+      }
+      if(this.transformationTypes[typeIndex]?.input === '' || this.transformationTypes[typeIndex]?.input !== ''){
+        this.transformationTypes[typeIndex].input = input;
+      }
+    } else{
+      if(this.transformationTypes[typeIndex]?.dropdown){
+        this.transformationTypes[typeIndex].dropdown = '';
+      }
+      if(this.transformationTypes[typeIndex]?.input){
+        this.transformationTypes[typeIndex].input = '';
+      }
+    }
+  }
 
   drop(event: CdkDragDrop<any[]>) {
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -170,12 +196,18 @@ export class DataTransformationComponent {
       this.selectedTransformations[index] = []; // Initialize if not set
     }
     if(!this.selectedTransformations[index][transformationIndex]){
-      this.selectedTransformations[index][transformationIndex] = {input : '',dropdown:'',keys:[],key:'', label:'',isError:false}
+      this.selectedTransformations[index][transformationIndex] = {input : '',dropdown:'',keys:[],key:'', label:'',isError:true}
     }
     if(isInput){
       this.selectedTransformations[index][transformationIndex].input = event.target.value;
     } else if(isDropdown){
       this.selectedTransformations[index][transformationIndex].dropdown = event.target.value;
+      this.transformationTypes.forEach((trans:any)=>{
+        if(trans.key !== transformationKey){
+          trans.dropdown = '';
+          trans.input = '';
+        }
+      });
     } if(transformationKey){
       this.selectedTransformations[index][transformationIndex].key = transformationKey;
 
@@ -221,6 +253,39 @@ export class DataTransformationComponent {
     console.log(this.selectedTransformations);
   }
 
+  setTransformationsEditPreview() {
+    this.transformationsPreview.forEach((transformation: any, index: any) => {
+      let table = this.tables.find(table => transformation.table === table.tables);
+      this.draggedTables.push(table);
+      transformation.transform.forEach((t: any, tIndex: any) => {
+        if (!this.selectedTransformations[index]) {
+          this.selectedTransformations[index] = [];
+        }
+        if (!this.selectedTransformations[index][tIndex]) {
+          this.selectedTransformations[index][tIndex] = { input: '', dropdown: '', keys: [], key: '', label: '', isError: false }
+        }
+        this.selectedTransformations[index][tIndex].key = t.type;
+        if (['case_change'].includes(t.type)) {
+          this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
+          this.selectedTransformations[index][tIndex].key = t.keys[1];
+          t.type = t.keys[1];
+        } else if (t.type === 'replace_values') {
+          this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
+          this.selectedTransformations[index][tIndex].input = t.keys[2];
+        } else if (t.type === 'alter_datatypes') {
+          this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
+          this.selectedTransformations[index][tIndex].input = t.keys[1];
+        } else if (t.type === 'special_char_remove') {
+          this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
+        }
+        const transformation = this.transformationTypes.find(trans => trans.key === t.type);
+        this.selectedTransformations[index][tIndex].label = transformation ? transformation.label : '';
+      });
+    });
+    console.log(this.selectedTransformations);
+    this.checkTransformationsValid(false);
+  }
+
   getTablesForDataTransformation(){
     this.workbechService.getTablesForDataTransformation(this.serverId).subscribe({
       next: (response: any) => {
@@ -229,37 +294,12 @@ export class DataTransformationComponent {
         this.originalTableData = response.tables;
         this.schema = response.schema;
         this.databaseName = response.databas_name;
+        
         if(this.hierarchyId && this.transformationsPreview.length >0){
-          this.transformationsPreview.forEach((transformation:any, index:any)=>{
-            let table = this.tables.find(table => transformation.table === table.tables);
-            this.draggedTables.push(table);
-            transformation.transform.forEach((t:any, tIndex:any)=>{
-              if (!this.selectedTransformations[index]) {
-                this.selectedTransformations[index] = [];
-              }
-              if(!this.selectedTransformations[index][tIndex]){
-                this.selectedTransformations[index][tIndex] = {input : '',dropdown:'',keys:[],key:'', label:'',isError:false}
-              }
-              this.selectedTransformations[index][tIndex].key = t.type;
-              if(['case_change'].includes(t.type)){
-                this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
-                this.selectedTransformations[index][tIndex].key = t.keys[1];
-                t.type = t.keys[1];
-              } else if(t.type === 'replace_values'){
-                this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
-                this.selectedTransformations[index][tIndex].input = t.keys[2];
-              } else if(t.type === 'alter_datatypes'){
-                this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
-                this.selectedTransformations[index][tIndex].input = t.keys[1];
-              } else if(t.type === 'special_char_remove'){
-                this.selectedTransformations[index][tIndex].dropdown = t.keys[0];
-              }
-              const transformation = this.transformationTypes.find(trans => trans.key === t.type);
-              this.selectedTransformations[index][tIndex].label = transformation ? transformation.label : '';
-            });
-          });
-          console.log(this.selectedTransformations);
-          this.checkTransformationsValid(false);
+          this.setTransformationsEditPreview();
+        } else if(!this.hierarchyId && response.hierarchy_id){
+          this.hierarchyId = response.hierarchy_id;
+          this.getTransformationsEditPreview();
         }
       },
       error: (error) => {
@@ -421,10 +461,12 @@ export class DataTransformationComponent {
     this.workbechService.getTransformationsPreview(this.hierarchyId).subscribe({
       next: (response: any) => {
         console.log(response);
-        this.serverId = response.data[0].datasource_id;
         this.transformationsPreview = response.data[0].transformations;
         this.hierarchyId = response.hierarchy_id;
-        if(this.serverId){
+        if(this.serverId && this.tables.length > 0){
+          this.setTransformationsEditPreview();
+        } else if(!this.serverId){
+          this.serverId = response.data[0].datasource_id;
           this.getTablesForDataTransformation();
         }
       },
