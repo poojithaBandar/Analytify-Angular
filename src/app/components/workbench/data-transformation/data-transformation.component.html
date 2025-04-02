@@ -26,7 +26,7 @@
                                         @for (default of defaults; track default) {
                                           <div
                                             ngbAccordionItem
-                                            [collapsed]="default !== 'First'"
+                                            [collapsed]="default !== 'Connections'"
                                             class="accordion-item"
                                             >
                                             <h2 ngbAccordionHeader class="accordion-header" id="headingOne">
@@ -64,8 +64,8 @@
                                                         <p class="mb-0">XShop</p>
                                                     </div> -->
                                                     <div class="input-group mt-2 px-3">
-                                                        <input type="text" placeholder="Search" [(ngModel)]="searchText" class="form-control border">
-                                                        <button type="button" aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
+                                                        <input type="text" placeholder="Search" [(ngModel)]="searchText" class="form-control border" (input)="getFilteredTables()">
+                                                        <button type="button" aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0" (click)="getFilteredTables()">
                                                             <i aria-hidden="true" class="fe fe-search"></i>
                                                         </button>
                                                     </div>
@@ -77,7 +77,7 @@
                                                         [cdkDropListConnectedTo]="[destinationList]"
                                                         (cdkDropListDropped)="drop($event)">
                                                             <h6 class="mb-0">Tables</h6>
-                                                            <li *ngFor="let table of tables | tableFilterDT:searchText" cdkDrag
+                                                            <li *ngFor="let table of tables" cdkDrag
                                                                 class="cdk-drag sub-menu-item example-box subMenuFlex p-2 border rounded-3 mb-1 cursor-move">
                                                                 <i class="fa fa-table table-icon-p me-1"></i>
                                                                 <span>{{ table?.tables }}</span>
@@ -194,7 +194,7 @@
                                                   
                                                         <div class="example-box p-2 border rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " [ngClass]="selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'border-danger' : 'border-dark-subtle'"
                                                             ngbDropdown #dropdownRef="ngbDropdown">
-                                                            <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'This transformation is INCOMPLETE' : selectedTransformations[index][transformationIndex].label }}" placement="top"
+                                                            <span class="flex-grow-1 text-nowrap" ngbTooltip="{{ selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'This transformation is INCOMPLETE' : selectedTransformations[index][transformationIndex].label }}" placement="top"
                                                                 container="body">
                                                                 {{ selectedTransformations[index][transformationIndex].label | slice:0:13 }}
                                                             </span>
@@ -216,27 +216,27 @@
                                                             </div>
 
                                                           <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                            @for (transformation of transformationTypes; track transformation.key) {
+                                                            @for (transformation of transformationTypes; track transformation.key; let typeIndex = $index) {
                                                                 @if(transformation.needColumn){
                                                                 <div class="dropup d-flex text-center" ngbDropdown>
                                                                     <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem> {{ transformation.label }} </li>
                                                                     <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block"
-                                                                        ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                        ngbDropdownToggle data-bs-toggle="dropdown" (click)="editTransformationPreview(index, transformationIndex, typeIndex)"></i>
                                                                         <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
                                                                             <div class="p-2">
                                                                                 <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
-                                                                            <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex)">
-                                                                                <option selected disabled>Select Column</option>
+                                                                            <select class="form-select" [(ngModel)]="transformation.dropdown" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex)">
+                                                                                <option selected disabled value="">Select Column</option>
                                                                                 @for(column of item.columns; track column){
                                                                                     <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || (['upper', 'lower', 'title'].includes(transformation.key) && stringList.includes(column.dtype)) || !['alter_datatypes', 'upper', 'lower', 'title'].includes(transformation.key)"  [value]="column.col">{{column?.col}}</option>
                                                                                 } 
                                                                             </select>
                                                                             </div>
                                                                             <div class="p-2">
-                                                                                <input [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
-                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'alter_datatypes'" class="form-select" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)">
-                                                                                    <option selected disabled>Select Data Type</option>
+                                                                                <input [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" [(ngModel)]="transformation.input" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
+                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'alter_datatypes'" class="form-select" [(ngModel)]="transformation.input" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)">
+                                                                                    <option selected disabled value="">Select Data Type</option>
                                                                                     <option value="int">Integer</option>
                                                                                     <option value="float">Float</option>
                                                                                     <option value="string">String</option>

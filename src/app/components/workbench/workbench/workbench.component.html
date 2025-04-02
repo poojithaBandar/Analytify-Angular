@@ -216,6 +216,9 @@
                                 <span  *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}">
                                   <img src="./assets/images/icons/crossdatabase-black.png" class=" avatar-radius avatar-databse-sm cover-image ms-2">
                                 </span>
+                                <span  *ngIf="database?.transformation && !database.is_cross_db" ngbTooltip="Transformed Datasource">
+                                  <img src="./assets/images/icons/transformation_blue.png" class=" avatar-radius avatar-databse-sm cover-image ms-2">
+                                </span>
                                </td>
                             <td *ngIf="database.server_type === 'POSTGRESQL'">
                               <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
@@ -267,11 +270,20 @@
                             <td>{{database.updated_at}}</td>
                             <td  *ngIf="!iscrossDbSelect">
                               <div class="hstack gap-2 fs-1">
-                                <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL')"
+                                <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL') && (!database?.transformation || database.is_cross_db)"
                                   [disabled]="(database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS')"
                                   aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
+                                <div *ngIf="database?.transformation && !database.is_cross_db" class="d-flex justify-content-end" ngbDropdown>
+                                  <button aria-label="Edit Transformation" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbDropdownToggle data-bs-toggle="dropdown">
+                                    <i class="ri-edit-line" ngbTooltip="Edit"></i>
+                                  </button>
+                                  <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a class="dropdown-item" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"><i class="ri-edit-line"></i> Edit Database</a>
+                                    <a class="dropdown-item" (click)="goToTransformationLayer(database?.hierarchy_id)"><img src="./assets/images/icons/transformation_blue.png" class="avatar-databse-sm d-inline-flex me-2"> Edit Transformation</a>
+                                  </div>
+                                </div>
                                 <div *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="d-flex justify-content-end" ngbDropdown>
                                   <button aria-label="anchor" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbDropdownToggle data-bs-toggle="dropdown">
                                     <i class="ri-edit-line" ngbTooltip="Edit database"></i>
@@ -358,8 +370,11 @@
   
                       <div class="col-auto p-0"  *ngIf="!iscrossDbSelect">
                         <div class="d-flex justify-content-end p-1" ngbDropdown>
-                          <span *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}">
+                          <span *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}" class="me-1">
                             <img src="./assets/images/icons/crossdatabase-icon.png" class="avatar avatar-radius avatar-databse-sm cover-image">
+                          </span>
+                          <span  *ngIf="database?.transformation && !database.is_cross_db" ngbTooltip="Transformed Datasource">
+                            <img src="./assets/images/icons/transformation_white.png" class="avatar avatar-radius avatar-databse-sm cover-image">
                           </span>
                           <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                               aria-haspopup="true" aria-expanded="false" class=""><i
@@ -369,6 +384,7 @@
                             <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                            <a *ngIf="database?.transformation && !database.is_cross_db" class="dropdown-item" (click)="goToTransformationLayer(database?.hierarchy_id)" ngbTooltip="Edit Transformation"><img src="./assets/images/icons/transformation_blue.png" class="avatar-databse-sm d-inline-flex me-2"> Edit Transforma...</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-plus"></i> Append</a>

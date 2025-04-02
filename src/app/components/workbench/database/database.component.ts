@@ -167,34 +167,38 @@ export class DatabaseComponent {
     this.deleteTablesFromSemanticLayer = this.templateService.canDeleteTablesFromSemanticLayer();
     this.canSearchTablesInSemanticLayer = this.templateService.canSearchTablesInSemanticLayer();
     if(currentUrl.includes('/analytify/database-connection/tables/')){
-      this.fromDatabasId=true
-      this.databaseId = +atob(route.snapshot.params['id']);
+      const id1 = route.snapshot.paramMap.get('id1');
+      const id2 = route.snapshot.paramMap.get('id2');
+      if (id1 && id2) {
+        this.fromDatabasId = true; 
+        this.databaseId = +atob(id1);
+        this.qurtySetId = +atob(id2);
+        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+      } else if (id1) {
+        this.fromDatabasId = true;
+        this.databaseId = +atob(id1);
+      }
+      // this.fromDatabasId=true
+      // this.databaseId = +atob(route.snapshot.params['id']);
     }
-    // else if(currentUrl.includes('/insights/database-connection/files/tables/')){
-    //   this.fromFileId=true;
-    //   this.fileId = +atob(route.snapshot.params['id']);
-    //  }
     else if(currentUrl.includes('/analytify/database-connection/savedQuery/')){
-      // if(currentUrl.includes('/insights/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
-      //   this.fileId = +atob(route.snapshot.params['id1']);
-      //   this.fromFileId = true;
-      //   this.custumQuerySetid = +atob(route.snapshot.params['id2']);
-      //   localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-      //   this.getTablesFromFileId();
-      // }
-      if (currentUrl.includes('/analytify/database-connection/savedQuery/') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      if (route.snapshot.params['id1']) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
         this.saveQueryCheck = true;
+      }
+    
+      if (route.snapshot.params['id2']) {
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
-        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-        this.getSchemaTablesFromConnectedDb();
-        }
-      this.customSql=true;
-      this.tableJoiningUI=false;
-      this.updateQuery=true;
+        localStorage.setItem('QuerySetId', JSON.stringify(this.custumQuerySetid));
+        this.getSavedQueryData();
+      }
+    
+      this.customSql = true;
+      this.tableJoiningUI = false;
+      this.updateQuery = true;
       this.fromSavedQuery = true;
-      this.getSavedQueryData();
+      // this.getSchemaTablesFromConnectedDb();
      }
      else if(currentUrl.includes('/analytify/database-connection/customSql/')){
       this.custumQuerySetid = localStorage.getItem('customQuerySetId') || 0;
@@ -223,24 +227,6 @@ export class DatabaseComponent {
         }
       }
     }
-    // else if(currentUrl.includes('/insights/database-connection/sheets/fileId')){
-    //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-    //    this.fileId = +atob(route.snapshot.params['id1']);
-    //    this.qurtySetId = +atob(route.snapshot.params['id2']);
-    //    localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-    //    this.fromFileId = true;
-    //    this.fromSheetEditDb = true;
-    //    this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
-    //    if(this.datasourceQuerysetId==='null'){
-    //      console.log('filterqrysetid',this.datasourceQuerysetId)
-    //      this.datasourceQuerysetId = null
-    //    }
-    //    else{
-    //        parseInt(this.datasourceQuerysetId)
-    //        console.log(this.datasourceQuerysetId)
-    //      }
-    //    }
-    //  }
      if(currentUrl.includes('/analytify/database-connection/tables/quickbooks/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
@@ -1657,8 +1643,25 @@ getfilteredCustomSqlData(){
   
 }
 goToConnections(){
-  const hidToPass = btoa(this.databaseId.toString());
+  // const hidToPass = btoa(this.databaseId.toString());
+  const hidToPass = this.crossDbId ? btoa(this.crossDbId.toString()) : btoa(this.databaseId.toString());
+  if(!this.customSql){
+  if(this.qurtySetId){
+    const qrysetIdToPass = btoa(this.qurtySetId.toString());
+    this.router.navigate(['/analytify/datasources/crossdatabase/viewconnection/'+hidToPass+'/'+qrysetIdToPass])
+  }
+  else{
   this.router.navigate(['/analytify/datasources/crossdatabase/viewconnection/'+hidToPass])
+  }
+}else if(this.customSql){
+  if(this.custumQuerySetid){
+    const qrysetIdToPass = btoa(this.custumQuerySetid.toString());
+    this.router.navigate(['/analytify/datasources/crossdatabase/customsql/viewconnection/'+hidToPass+'/'+qrysetIdToPass])
+  }
+  else{
+  this.router.navigate(['/analytify/datasources/crossdatabase/customsql/viewconnection/'+hidToPass])
+  }
+}
 }
 
 markDirty(){
@@ -1744,9 +1747,10 @@ saveQuery(){
       width: '400px',
     })
   }else{
+    const queryIdToPass = this.customSql ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
     database_id:this.databaseId,
-    query_set_id:this.qurtySetId,
+    query_set_id:queryIdToPass,
     query_name:this.saveQueryName,
     custom_query:this.sqlQuery
   }
@@ -1755,7 +1759,7 @@ saveQuery(){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+          this.toasterService.success('Saved Successfully','success',{ positionClass: 'toast-top-right'});
 
         }
       },
@@ -1822,13 +1826,22 @@ dataNotSaveAlert(): Promise<boolean> {
     icon: "warning",
     title: "Your work has not been saved, Do you want to continue?",
     showConfirmButton: true,
-    showCancelButton: true, // Add a "No" button
-    confirmButtonText: 'Yes', // Text for "Yes" button
-    cancelButtonText: 'No',   // Text for "No" button
+    showCancelButton: true,
+    showDenyButton: true,  
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'No',
+    denyButtonText: 'Save & Proceed',
+    customClass: {
+      confirmButton: 'btn btn-primary',
+      denyButton: 'btn btn-success'
+    }
   }).then((result) => {
     if (result.isConfirmed) {
       // User clicked "Yes", allow navigation
       this.loaderService.show();
+      return true;
+    }  else if (result.isDenied) {
+      this.saveQuery();
       return true;
     } else {
       // User clicked "No", prevent navigation
