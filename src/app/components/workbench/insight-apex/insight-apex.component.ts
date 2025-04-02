@@ -99,9 +99,9 @@ export class InsightApexComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes['chartType']){
+    // if(changes['chartType']){
       this.generateChart();
-    }
+    // }
     
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       // if(changes['chartsColumnData'].currentValue.length>0 || changes['dualAxisColumnData'].currentValue.length>0){

@@ -9,7 +9,7 @@
             <div class="p-2 br-0 mb-0  border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0">Connections</h6>
-                    <a [ngClass]="{ 'disabled': crossDbId }" [attr.disabled]="crossDbId ? true : null" [ngbTooltip]="crossDbId ? 'You can connect two Datasources only' : ''" (click)="crossDbId ? $event.preventDefault() : goToConnections()"><span  class="add-txt text-info">Add</span></a>
+                    <a ngbTooltip="Click to connect multi datasources" (click)="goToConnections()"><span  class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" [ngbTooltip]="hostName?.length > 15 ? hostName : null">{{hostName?.length > 15 ? (hostName| slice:0:15)+'...':hostName}}</p>
             </div>
@@ -507,7 +507,7 @@
             <div class="p-2 br-0 mb-0 border-bottom d-block ">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0">Connections</h6>
-                    <a [ngClass]="{ 'disabled': crossDbId }" [attr.disabled]="crossDbId ? true : null" [ngbTooltip]="crossDbId ? 'You can connect two Datasources only' : ''" (click)="crossDbId ? $event.preventDefault() : goToConnections()"><span class="add-txt text-info">Add</span></a>
+                    <a ngbTooltip="Click to connect multi datasources" (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>
             </div>
@@ -578,7 +578,7 @@
                         <app-insights-button *ngIf="updateQuery" [buttonName]="' Update Query '"
                             [classesList]="'btn btn-primary'" [previledgeId]="52" [isBtn]="true"
                             (btnClickEvent)="updateCustmQuery()" [isIcon]="false"></app-insights-button>
-                        <button aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length"
+                        <button *ngIf="!updateQuery" aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length"
                             (click)="executeQuery()"> Run Query </button>
                         <button aria-expanded="false" class="btn btn-secondary" (click)="clrQuery()"> Clear Query
                         </button>

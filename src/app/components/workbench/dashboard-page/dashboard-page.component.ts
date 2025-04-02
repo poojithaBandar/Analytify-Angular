@@ -172,6 +172,7 @@ viewPropertiesTab(name:any,dashboardId:any){
   this.dashboardPropertyId = dashboardId;
    this.publishedDashboard = false;
    this.shareAsPrivate = false;
+   this.applyButtonEnableOnEditUser = false;
   this.getAddedDashboardProperties();
 
 }
@@ -288,34 +289,35 @@ this.workbechService.saveDashboardProperties(obj).subscribe({
   }
 })
 }
+applyButtonEnableOnEditUser = false;
 getAddedDashboardProperties(){
   this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
     next:(data)=>{
-      this.selectedRoleIds = data.roles.map((role: any) => role.id);
-      this.selectedUserIds = data.users.map((user:any)=>user.user_id);
+      this.selectedRoleIds = data?.roles?.map((role: any) => role.id);
+      this.selectedUserIds = data?.users?.map((user:any)=>user.user_id);
       console.log('savedrolesandUsers',data);
       // this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
       // this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
-      this.selectedRoleIdsToNumbers = this.selectedRoleIds.map((id: string) => Number(id));
-      this.selectedUserIdsToNumbers = this.selectedUserIds.map((id: string) => Number(id));
+      this.selectedRoleIdsToNumbers = this.selectedRoleIds?.map((id: string) => Number(id));
+      this.selectedUserIdsToNumbers = this.selectedUserIds?.map((id: string) => Number(id));
       console.log('Loaded selected roles:', this.selectedRoleIds);
       console.log('Loaded selected users:', this.selectedUserIds);
       if(this.selectedRoleIds.length > 0){
         this.getUsersforRole();
       }
+      if(this.selectedUserIds.length > 0){
+        this.applyButtonEnableOnEditUser = true;
+      }
+   
      },
     error:(error)=>{
       console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
+      this.selectedUserIds = [];
+      this.selectedRoleIds = [];
     }
   }) 
 }
-
 
 sharePublish(value:any){
   console.log(value);
@@ -422,6 +424,8 @@ viewSchedular(dashboardId:any,modal: any){
       this.modalService.open(modal);
       },
     error:(error)=>{
+      this.lastRefresh = null;
+      this.nextRefresh = null;
       this.modalService.open(modal);
     }
   });

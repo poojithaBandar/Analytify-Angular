@@ -215,6 +215,7 @@ export class SheetsdashboardComponent {
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
   lastRefresh: any;
   nextRefresh: any;
+  tabData: any;
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -819,6 +820,7 @@ export class SheetsdashboardComponent {
         }
         this.sheetTabs = data.tab_data ? data.tab_data : [];
         if(this.sheetTabs && this.sheetTabs.length > 0) {
+          this.tabData = data.tab_id;
           this.displayTabs = true;
           this.selectedTabIndex = 0;
           this.selectedSheetTab({index : 0});
@@ -830,9 +832,13 @@ export class SheetsdashboardComponent {
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.dynamicOptionsUpdateinDashboard(this.dashboard, false);
         if(this.displayTabs){
-          this.sheetTabs.forEach(tabData => {
-            if(tabData.dashboard && tabData.dashboard.length > 0){
-              this.dynamicOptionsUpdateinDashboard(tabData.dashboard, false);
+          this.sheetTabs.forEach(tabsData => {
+            const match = this.tabData.find((t:any) => t.tab_name == tabsData.name);
+            if (match) {
+              tabsData.id = match.id;
+            }
+            if(tabsData.dashboard && tabsData.dashboard.length > 0){
+              this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, false);
             }
           });
         }
@@ -1184,9 +1190,11 @@ export class SheetsdashboardComponent {
         } 
         this.setQuerySetIds();
         let tabNames;
+        let tabIds: any[] = [];
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name?.trim());
+          // tabIds = this.sheetTabs.map(tab => tab.id);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
           if(this.validateTabs()){
             throw { error: { message: "Tab title cannot be empty." } };
@@ -1209,6 +1217,7 @@ export class SheetsdashboardComponent {
           tab_data: sheetTabsData,
           tab_name: tabNames,
           tab_sheets: sheetIds,
+          tab_id: tabIds,
           // file_id: this.fileId,
           donutDecimalPlaces: this.donutDecimalPlaces
         }
@@ -1430,9 +1439,13 @@ export class SheetsdashboardComponent {
       //   }as any;
       // } else {
         let tabNames = [];
+        let tabIds = [];
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name?.trim());
+          tabIds = this.sheetTabs
+  .filter(tab => tab.id)
+  .map(tab => tab.id);
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
         }
         if(this.validateTabs()){
@@ -1467,6 +1480,7 @@ export class SheetsdashboardComponent {
           tab_data : sheetTabsData,
           tab_name: tabNames,
           tab_sheets: sheetIds,
+          tab_id: tabIds,
           user_ids:this.usersForUpdateDashboard,
           role_ids:this.rolesForUpdateDashboard
         }
@@ -1506,6 +1520,15 @@ export class SheetsdashboardComponent {
         // })
         this.dashboardsheetsIdArray = this.sheetsIdArray;
         this.canNavigateToAnotherPage = false;
+        if(data.tab_data && data.tab_data.length > 0){
+          this.tabData = data.tab_data;
+          this.sheetTabs.forEach(tabsData => {
+            const match = this.tabData.find((t:any) => t.tab_name == tabsData.name);
+            if (match) {
+              tabsData.id = match.id;
+            }
+          });
+        }
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
         if(!isLiveReloadData){
           this.saveDashboardimageUpdate();
@@ -4234,63 +4257,70 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           let years: Set<any> = new Set();
           console.log(this.filteredColumnData);
           console.log(this.filteredRowData);
-          this.filteredColumnData.forEach((data: any) => {
-            data?.values.forEach((column:any, index: any)=>{
-              let formattedDate = column.split(" ")[0];
-              let arr = [formattedDate, this.filteredRowData[0]?.data[index]];
-              calendarData.push(arr);
-
-              const year = new Date(column).getFullYear();
-              years.add(year);
-            })
-        });
-        let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
-        let series = yearArray.map((year: any) => {
-          const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
-          return {
-              type: 'heatmap',
-              coordinateSystem: 'calendar',
-              calendarIndex: yearArray.indexOf(year),
-              data: yearData
-          };
-        });
-
-        const calendarHeight = 120;  // Adjust height for better visibility
-        const yearGap = 30;  // Reduced gap between years
-        const totalHeight = (calendarHeight + yearGap) * yearArray.length;
-        this.calendarTotalHeight = (totalHeight+25)+'px';
-    
-        // Create multiple calendar instances, one for each year
-        let calendars = yearArray.map((year: any, idx: any) => ({
-            top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
-            range: year.toString(),
-            cellSize: ['auto', 12],
-            splitLine: {
+          if(this.filteredColumnData[0]?.values?.length > 0 || this.filteredRowData[0]?.data?.length > 0){
+            this.filteredColumnData.forEach((data: any) => {
+              data?.values.forEach((column:any, index: any)=>{
+                let formattedDate = column.split(" ")[0];
+                let arr = [formattedDate, this.filteredRowData[0]?.data[index]];
+                calendarData.push(arr);
+  
+                const year = new Date(column).getFullYear();
+                years.add(year);
+              })
+          });
+          let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
+          let series = yearArray.map((year: any) => {
+            const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
+            return {
+                type: 'heatmap',
+                coordinateSystem: 'calendar',
+                calendarIndex: yearArray.indexOf(year),
+                data: yearData
+            };
+          });
+  
+          const calendarHeight = 120;  // Adjust height for better visibility
+          const yearGap = 30;  // Reduced gap between years
+          const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+          this.calendarTotalHeight = (totalHeight+25)+'px';
+      
+          // Create multiple calendar instances, one for each year
+          let calendars = yearArray.map((year: any, idx: any) => ({
+              top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+              range: year.toString(),
+              cellSize: ['auto', 12],
+              splitLine: {
+                  show: true,
+                  lineStyle: {
+                      color: '#000',
+                      width: 1
+                  }
+              },
+              yearLabel: {
                 show: true,
-                lineStyle: {
-                    color: '#000',
-                    width: 1
-                }
-            },
-            yearLabel: {
-              show: true,
-              margin: 25,
-              fontSize: 14,
-              fontWeight: 'bold'
-            }
-        }));
+                margin: 25,
+                fontSize: 14,
+                fontWeight: 'bold'
+              }
+          }));
+  
+          const minValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
+          const maxValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
+          console.log(minValue +' '+maxValue);
 
-        const minValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
-        const maxValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
-        console.log(minValue +' '+maxValue);
-
-          item1.echartOptions.series = series;
-          item1.echartOptions.calendar = calendars;
-          item1.echartOptions.visualMap.min = minValue;
-          item1.echartOptions.visualMap.max = maxValue;
-          item1.echartOptions = { ...item1.echartOptions };
-          console.log(calendarData);
-          console.log(item1.echartOptions);
+          if(item1.echartOptions && Object.keys(item1.echartOptions).length === 0){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          }
+            item1.echartOptions.series = series;
+            item1.echartOptions.calendar = calendars;
+            item1.echartOptions.visualMap.min = minValue;
+            item1.echartOptions.visualMap.max = maxValue;
+            item1.echartOptions = { ...item1.echartOptions };
+            console.log(calendarData);
+            console.log(item1.echartOptions);
+          } else {
+            item1.echartOptions = {};
+          }
         }
       }
 
@@ -4711,7 +4741,7 @@ const obj ={
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
     let name = this.selectedTabIndex > 0 ? "Tab Title " + this.selectedTabIndex : "Tab Title";
-    this.sheetTabs.push({ id: id, name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
+    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
     this.dashboardTest = [];
   }
   Editor = ClassicEditor;
@@ -5123,6 +5153,7 @@ kpiData?: KpiData;
         this.dashboard = data.dashboard_data;
         this.sheetTabs = data.tab_data ? data.tab_data : [];
         if(this.sheetTabs && this.sheetTabs.length > 0) {
+          this.tabData = data.tab_id;
           this.displayTabs = true;
           this.selectedTabIndex = 0;
           this.selectedSheetTab({index : 0});
@@ -5135,9 +5166,13 @@ kpiData?: KpiData;
         let self = this;
         this.dynamicOptionsUpdateinDashboard(this.dashboard, true);
         if(this.displayTabs){
-          this.sheetTabs.forEach(tabData => {
-            if(tabData.dashboard && tabData.dashboard.length > 0){
-              this.dynamicOptionsUpdateinDashboard(tabData.dashboard, true);
+          this.sheetTabs.forEach(tabsData => {
+            const match = this.tabData.find((t:any) => t.tab_name == tabsData.name);
+            if (match) {
+              tabsData.id = match.id;
+            }
+            if(tabsData.dashboard && tabsData.dashboard.length > 0){
+              this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, true);
             }
           });
         }
@@ -5201,6 +5236,8 @@ kpiData?: KpiData;
         // localStorage.removeItem('filterid')
         this.sheetFilters = data;
         data.forEach((item: any) => {
+          this.filteredRowData = [];
+          this.filteredColumnData = [];
           this.tablePreviewColumn.push(item.columns);
       this.tablePreviewRow.push(item.rows);
         item.columns.forEach((res:any) => {      
@@ -6768,6 +6805,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             windowClass: 'animate__animated animate__zoomIn',
           });          },
         error:(error)=>{
+          this.lastRefresh = null;
+          this.nextRefresh = null;
           this.modalService.open(modal, {
             centered: true,size:'md',
             windowClass: 'animate__animated animate__zoomIn',

@@ -278,9 +278,11 @@
                                                                         {{ validationMessage }}
                                                                     </div>
                                                         <div class="mt-0 d-flex gap-2 calculated-footer-btn">
+                                                            <div [ngbTooltip]="calculatedFieldLogic && !calculatedFieldName ? 'Enter Name' : null" placement="top" container="body">
                                                             <button
                                                                 [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
                                                                 class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
+                                                            </div>
                                                             <button class="btn btn-secondary mt-0"
                                                                 (click)="isEditCalculatedField = false;level1.close();level2.close();calculationfieldid.hidden = true">Close </button>
                                                         </div>
@@ -393,7 +395,7 @@
                                   [cdkDropListData]="columns.calculated_fields"
                                   [cdkDropListConnectedTo]="[calculatedfields,columnList,rowList,drilldownList]"
                                   (cdkDropListDropped)="rowdrop($event)"
-                                  [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">  
+                                  >  
                                   @if(columns.expanded){    
                                                             
                                 @for(measures of columns.calculated_fields; track measures){ 
@@ -1515,8 +1517,9 @@
                                                     <li><a [ngClass]="columns.type === 'quarter' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
                                                     <li><a [ngClass]="columns.type === 'month' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'month')">Month (January)</a></li>
                                                     <li><a [ngClass]="columns.type === 'day' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'day')">Day (1-31)</a></li>
-                                                    <li><a [ngClass]="columns.type === 'weekdays' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekdays')">Week Day (1-7)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'weekdays' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekdays')">Week Day (Mon-Sun)</a></li>
                                                     <li><a [ngClass]="columns.type === 'week numbers' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'week numbers')">Week Number (0-52)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'year/month/day' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year/month/day')">Date (year/month/day)</a></li>
                                                     <!-- <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekname')">Week Name (Mon-Sun)</a></li> -->
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
@@ -1586,21 +1589,68 @@
                             (cdkDropListDropped)="measureValuesdrop($event)">
                                 @for(columns of draggedMeasureValues;track columns;let index = $index){
                                 <div class="example-box example-box-bg" cdkDrag >
-                                    @if(columns.type){
+                                    @if(columns.alias){
+                                        {{ columns.alias }}
+                                    }
+                                    @else if(columns.type){
                                         {{ columns.type }} ({{columns.column}})
                                     } @else if(columns.field_name) {
                                         {{ columns.field_name }}
-                                    } @else {   
+                                    } @else {
                                         {{ columns.column }}
-                                    } 
-                                    <div class="" ngbDropdown style="margin-top: 5px;">
+                                    }
+                                    <div class="dropup" ngbDropdown style="line-height: 0;">
+                                        <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                        <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                            <li  *ngIf="!isPivotRowEdit" class="btn btn-primary-light alis-measure-width border" >@if(columns.alias){
+                                                {{ columns.alias }}
+                                            }
+                                            @else if(columns.type){
+                                                {{ columns.type }} ({{columns.column}})
+                                            }@else if(columns.field_name){
+                                                {{ columns.field_name }}
+                                            }
+                                            @else{   
+                                                 {{ columns.column }}
+                                            } <i (click)="isPivotRowEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
+                                            <li  *ngIf="isPivotRowEdit"><input (blur)="onPivotRowAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
+                                            </li>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                                <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
+                                                <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                    <li><a [ngClass]="columns.type === 'year' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'year')">Year (2024)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'quarter' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'quarter')">Quarter</a></li>
+                                                    <li><a [ngClass]="columns.type === 'month' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'month')">Month (January)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'day' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'day')">Day (1-31)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'weekdays' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'weekdays')">Week Day (Mon-Sun)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'week numbers' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'week numbers')">Week Number (0-52)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'year/month/day' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'year/month/day')">Date (year/month/day)</a></li>
+                                                    <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'')">None</a></li>  
+                                                </ul>
+                                            </div>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                                <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
+                                                <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                    <li><a [ngClass]="columns.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregationForPivotRow(columns,index,'min')">Min</a></li>
+                                                    <li><a [ngClass]="columns.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregationForPivotRow(columns,index,'max')">Max</a></li>
+                                                    <li><a [ngClass]="columns.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregationForPivotRow(columns,index,'count')">Count</a></li>
+                                                    <li><a [ngClass]="columns.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregationForPivotRow(columns,index,'count_distinct')">Count (Distinct)</a></li>
+                                                    <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregationForPivotRow(columns,index,'')">None</a></li>  
+                                                </ul>
+                                            </div>
+                                            <li><a class="btn btn-secondary-light mx-0 column-remove-btn"  (click)="removemeasureValuesRow(index,columns)"> Remove</a>  </li>
+                                        </ul>
+                                    </div>
+                                    <!-- <div class="" ngbDropdown style="margin-top: 5px;">
                                         <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                             aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                         <div class="dropdown-menu  cu" ngbDropdownMenu>
                                                 <a class="btn btn-secondary-light mx-0"  (click)="removemeasureValuesRow(index,columns)"> Remove</a>     
                                             </div>
                                         </a>
-                                </div>
+                                </div> -->
                                </div>
                                 }
                             </div>             
@@ -1637,7 +1687,7 @@
                                         <div class="dropup" ngbDropdown style="line-height: 0;">
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                <div class="dropup" ngbDropdown >
+                                                <div class="dropup" ngbDropdown #aggDrop="ngbDropdown">
                                                     <li  *ngIf="!isMeasureEdit" class="btn btn-primary-light alis-measure-width border" >@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
@@ -1664,6 +1714,47 @@
                                                         <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
                                                         <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" >None</a></li>  
                                                     </ul>
+                                                </div>
+                                                <div *ngIf="checkdatetype && checkAggregateNotNone" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
+                                                    <li class="dropdown-item btn btn-primary-light Quick-Calc-text border" ngbDropdownToggle>Quick Calculation</li>
+                                                    <!-- <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
+                                                       ngbDropdownToggle></i>
+                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                        <li>
+                                                            <a class="dropdown-item border Aggregation-select-padding"
+                                                               href="javascript:void(0);" >Year Over Year (YOY)</a>
+                                                        </li>
+                                                    </ul> -->
+
+                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
+                                                    ngbDropdownToggle (click)="toggleQuickCalculation()"></i>
+                                             
+                                                 <!-- YOY Dropdown (Appears to the Right of Quick Calculation) -->
+                                                 <ul class="dropdown-menu custom-dropdown position-absolute dropdown-menu-end"
+                                                     [ngClass]="{'show': quickCalcOpen}" style="top: 70px; left: 100%; min-width: 150px;">
+                                                     <!-- <li>
+                                                         <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'yoy')"
+                                                            >Year Over Year (YOY)</a>
+                                                     </li> -->
+                                                     <ng-container *ngIf="yearLength > 0; else singleYOY">
+                                                        <li *ngFor="let column of yearColumns" [ngClass]=" draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
+                                                            <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
+                                                               (click)="selectedColumnForYOY=column;rowMeasuresCount(rows, index, 'yoy');">{{ column }}(yoy)</a>
+                                                        </li>
+                                                        <li>
+                                                            <a *ngIf="draggedRowsData[index][1] == 'yoy'" class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
+                                                               (click)="selectedColumnForYOY='';rowMeasuresCount(rows,index,'yoyRemove')">Remove</a>
+                                                        </li>
+                                                    </ng-container>
+                                            
+                                                    <!-- Single YOY option -->
+                                                    <ng-template #singleYOY>
+                                                        <li>
+                                                            <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
+                                                               (click)="rowMeasuresCount(rows, index, 'yoy')">Year Over Year (YOY)</a>
+                                                        </li>
+                                                    </ng-template>
+                                                 </ul>
                                                 </div>
                                                 <li> <a class="btn btn-secondary-light mx-0 w-100" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
                                             </ul>
@@ -2731,9 +2822,9 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2">
+                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
-                                                            <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
+                                                            <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
                                                                 Header
                                                             </button>
@@ -2744,13 +2835,13 @@
                                                             <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                                 <ng-template>
                                                                     <div>
-                                                                        <div class="sub-menu-item  p-2">
+                                                                        <div class="sub-menu-item   mb-0 p-0">
                                                                             <div class="row">
                                                                                 <div class="">
-                                                                                    <div class="font-color-card">
+                                                                                    <div class="font-color-card mb-1">
                                                                                         <p class="mb-0">Fonts</p>
                                                                                         <div class="dropup" ngbDropdown>
-                                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle"
+                                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2"
                                                                                                 ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                 <div class="dropup" ngbDropdown>
@@ -2825,13 +2916,13 @@
                                                                                 </div>
                                                                                 <span ngbTooltip=""></span>
                                                                             </div>
-                                                                            <div class="sub-menu-item mb-0">
+                                                                            <div class="sub-menu-item mb-0 p-0">
                                                                                 <div class="row">
                                                                                   <div class="">
                                                                                       <div class="font-color-card">
                                                                                           <p class="mb-0">Alignments</p>
                                                                                           <div class="dropup" ngbDropdown>
-                                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                   <div class="dropup" ngbDropdown >
                                                                                                       <div class=" p-1">
@@ -2864,9 +2955,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2">
+                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
-                                                            <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
+                                                            <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
                                                                 Table Data
                                                             </button>
@@ -2877,13 +2968,13 @@
                                                             <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                                 <ng-template>
                                                                     <div>
-                                                                        <div class="sub-menu-item  p-2">
+                                                                        <div class="sub-menu-item  p-2 mb-0">
                                                                             <div class="row">
                                                                                 <div class="">
-                                                                                    <div class="font-color-card">
+                                                                                    <div class="font-color-card mb-0">
                                                                                         <p class="mb-0">Fonts</p>
                                                                                         <div class="dropup" ngbDropdown>
-                                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle"
+                                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary border rounded-2 dropdown-toggle"
                                                                                                 ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                 <div class="dropup" ngbDropdown>
@@ -2958,13 +3049,13 @@
                                                                                 </div>
                                                                                 <span ngbTooltip=""></span>
                                                                             </div>
-                                                                            <div class="sub-menu-item mb-0">
+                                                                            <div class="sub-menu-item mb-0 p-0">
                                                                                 <div class="row">
                                                                                   <div class="">
                                                                                       <div class="font-color-card">
                                                                                           <p class="mb-0">Alignments</p>
                                                                                           <div class="dropup" ngbDropdown>
-                                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                   <div class="dropup" ngbDropdown >
                                                                                                       <div class=" p-1">
@@ -2997,9 +3088,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!(table || kpi)" ngbAccordionItem class="accordion-item mb-2">
+                                                    <div *ngIf="!(table || kpi)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
-                                                            <button ngbAccordionButton class="accordion-button p-3 fw-500" type="button" data-bs-toggle="collapse"
+                                                            <button ngbAccordionButton class="accordion-button p-2 fw-500 border-0 rounded-2" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
                                                                 Chart Plugin
                                                             </button>
@@ -3026,11 +3117,11 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
-                                                              class="accordion-button p-3 fw-500"
+                                                              class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                               type="button"
                                                               data-bs-toggle="collapse"
                                                               data-bs-target="#collapse"
@@ -3057,10 +3148,10 @@
                                                                   <div class="sub-menu-item  p-2 mb-0" >
                                                                           <div class="row">
                                                                             <div class="" >
-                                                                                <div class="font-color-card">
+                                                                                <div class="font-color-card mb-1">
                                                                                     <p class="mb-0">Fonts</p>
                                                                                     <div class="dropup" ngbDropdown>
-                                                                                        <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                        <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2 " ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                             <div class="dropup" ngbDropdown >
                                                                                                 <div class="form-group mb-0 p-1">
@@ -3126,13 +3217,13 @@
                                                                           </div>
                                                                           <span ngbTooltip=""></span>
                                                                         </div>
-                                                                        <div class="sub-menu-item mb-0">
+                                                                        <div class="sub-menu-item mb-0 p-0">
                                                                             <div class="row">
                                                                               <div class="">
                                                                                   <div class="font-color-card">
                                                                                       <p class="mb-0">Alignments</p>
                                                                                       <div class="dropup" ngbDropdown>
-                                                                                          <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                          <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                           <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                               <div class="dropup" ngbDropdown >
                                                                                                   <div class=" p-1">
@@ -3167,11 +3258,11 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
-                                                                class="accordion-button p-3 fw-500 border"
+                                                                class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                                 type="button"
                                                                 data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse"
@@ -3200,10 +3291,10 @@
                                                                       
                                                                       <div class="row">
                                                                         <div class="" >
-                                                                            <div class="font-color-card">
+                                                                            <div class="font-color-card mb-1">
                                                                                 <p class="mb-0">Fonts</p>
                                                                                 <div class="dropup" ngbDropdown>
-                                                                                    <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                    <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                         <div class="dropup" ngbDropdown >
                                                                                             <div class="form-group mb-0 p-1">
@@ -3269,13 +3360,13 @@
                                                                       </div>
                                                                       <span ngbTooltip=""></span>
                                                                     </div>
-                                                                    <div *ngIf="isApexCharts" class="sub-menu-item mb-0">
+                                                                    <div *ngIf="isApexCharts" class="sub-menu-item mb-0 p-0 ">
                                                                         <div class="row">
                                                                           <div class="">
                                                                               <div class="font-color-card">
                                                                                   <p class="mb-0">Alignments</p>
                                                                                   <div class="dropup" ngbDropdown>
-                                                                                      <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                      <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                       <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                           <div class="dropup" ngbDropdown >
                                                                                                 <div class=" p-1 mt-2 mb-2">
@@ -3310,11 +3401,11 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || (table && draggedRows.length === 0))" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || (table && draggedRows.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
-                                                            class="accordion-button p-3 fw-500 border "
+                                                            class="accordion-button p-2 fw-500 border-0 rounded-2 "
                                                             type="button"
                                                             data-bs-toggle="collapse"
                                                             data-bs-target="#collapse"
@@ -3332,18 +3423,18 @@
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
+                                                          <div class="accordion-body p-2  database-dropdown" ngbAccordionBody>
                                                             <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="sub-menu-item  p-2 mb-0" *ngIf="!kpi && !table">
+                                                                <div class="sub-menu-item mb-0 p-0" *ngIf="!kpi && !table">
                                                                   <div class="row">
                                                                     <div class="" >
-                                                                        <div class="font-color-card">
+                                                                        <div class="font-color-card mb-1">
                                                                             <p class="mb-0">Fonts</p>
                                                                             <div class="dropup" ngbDropdown>
-                                                                                <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                     <div class="dropup" ngbDropdown >
                                                                                         <div class="form-group mb-0 p-1">
@@ -3413,13 +3504,13 @@
                                                                   <span ngbTooltip=""></span>
                                                                 </div>
                                                               </div>
-                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(kpi || table || guage || calendar || map || radar || barLine || (isApexCharts && (heatMap)))">
+                                                              <div class="sub-menu-item  mb-0 p-0" *ngIf="!(kpi || table || guage || calendar || map || radar || barLine || (isApexCharts && (heatMap)))">
                                                                 <div class="row">
                                                                   <div class="">
-                                                                      <div class="font-color-card">
+                                                                      <div class="font-color-card p-0">
                                                                           <p class="mb-0">Alignments</p>
                                                                           <div class="dropup" ngbDropdown>
-                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle border rounded-2" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                   <div class="dropup" ngbDropdown >
                                                                                     <div class=" p-1" *ngIf="horizentalStocked || grouped || funnel">
@@ -3557,9 +3648,9 @@
                                                                   <input type="text" class="form-control fs-14" id="suffix" style="width: auto;" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
                                                                 </div>
                                                               }
-                                                                <div *ngIf="!(kpi || guage)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!(kpi || guage)" class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                                                     <label>Numbers</label>
-                                                                    <div class="btn-group my-2" ngbDropdown>
+                                                                    <div class="btn-group" ngbDropdown>
                                                                         <button type="button" ngbDropdownToggle class="btn btn-primary-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" (click)="numberPopupTrigger()">
                                                                             123.456 &nbsp;<i class="fa fa-chevron-down"></i>
                                                                         </button>
@@ -3601,9 +3692,9 @@
                                                         </div>
                                                   </div>
 
-                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
-                                                            <p >Banding </p>
+                                                            <label class="mb-0">Banding </label>
                                                         </div>
                                                         <div *ngIf="bandingSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('banding')">
                                                             <span></span>
@@ -3613,10 +3704,10 @@
                                                         </div>
                                                     </div>
                                              
-                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
-                                                        <div  style="font-size: 15px;">
-                                                            <label>Page Length</label>
-                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination()" class="form-control cursor">
+                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class=" mb-2 p-2 border rounded-2">
+                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
+                                                            <label class="mb-0">Page Length</label>
+                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination()" class="form-control cursor w-40 p-1">
                                                                 <option  [ngValue]="''" disabled> select page length</option>
                                                                   <option  [ngValue]="10"> 10</option>
                                                                   <option  value="50"> 50</option>
@@ -3626,9 +3717,9 @@
                                                             </select>
                                                          </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table)" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
-                                                            <p >Zoom </p>
+                                                            <label class="mb-0">Zoom </label>
                                                         </div>
                                                         <div *ngIf="isZoom" class="toggle toggle-sm on mb-0" (click)="enableZoom()">
                                                             <span></span>
@@ -3638,11 +3729,11 @@
                                                         </div>
                                                     </div>
                                                   
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
-                                                            class="accordion-button p-3 fw-500 border"
+                                                            class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                             type="button"
                                                             data-bs-toggle="collapse"
                                                             data-bs-target="#collapse"
@@ -3660,12 +3751,12 @@
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
+                                                          <div class="accordion-body p-2  database-dropdown" ngbAccordionBody>
                                                             <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >X-label </p>
                                                                     </div>
@@ -3677,7 +3768,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div *ngIf="!heatMap" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!heatMap" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
                                                                     </div>
@@ -3694,11 +3785,11 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
-                                                            class="accordion-button p-3 fw-500 border"
+                                                            class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                             type="button"
                                                             data-bs-toggle="collapse"
                                                             data-bs-target="#collapse"
@@ -3716,12 +3807,12 @@
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody >
+                                                          <div class="accordion-body p-2  database-dropdown" ngbAccordionBody >
                                                             <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Y-label </p>
                                                                     </div>
@@ -3733,7 +3824,7 @@
                                                                     </div>
                                                                 </div>
  
-                                                                <div *ngIf="!heatMap" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!heatMap" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
                                                                     </div>
@@ -3750,11 +3841,11 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((table && bandingSwitch && (draggedColumns.length !== 0 || draggedRows.length !==0)) || (((kpi || guage) && draggedRows.length === 1) || !(calendar || map || table)))" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((table && bandingSwitch && (draggedColumns.length !== 0 || draggedRows.length !==0)) || (((kpi || guage) && draggedRows.length === 1) || !(calendar || map || table)))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
-                                                            class="accordion-button p-3 fw-500 border"
+                                                            class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                             type="button"
                                                             data-bs-toggle="collapse"
                                                             data-bs-target="#collapse"
@@ -3772,9 +3863,9 @@
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
+                                                          <div class="accordion-body p-2  database-dropdown" ngbAccordionBody>
                                                             <ng-template>
-                                                                <div *ngIf="!((table && chartId) || kpi || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!((table && chartId) || kpi || calendar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p>Background</p>
                                                                     </div>
@@ -3791,7 +3882,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && (bar || funnel)) || area || line || radar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && (bar || funnel)) || area || line || radar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
@@ -3841,7 +3932,7 @@
                                                                 </div>
                                                               </div> -->
 
-                                                                <div *ngIf="barLine" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="barLine" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >bar</p>
                                                                     </div>
@@ -3858,7 +3949,7 @@
                                                                     [format]="'hex'">
                                                                     </ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="barLine" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="barLine" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >line</p>
                                                                     </div>
@@ -3875,7 +3966,7 @@
                                                                     [format]="'hex'">
                                                                     </ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Grid Line</p>
                                                                     </div>
@@ -3893,7 +3984,7 @@
                                                                 </div>
 
                                                                 
-                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >X-Grid Line Color </p>
                                                                     </div>
@@ -3910,7 +4001,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
                                                                
-                                                                <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar || kpi || radar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar || kpi || radar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Y-Grid Line Color </p>
                                                                     </div>
@@ -3926,7 +4017,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Banding color </p>
                                                                     </div>
@@ -3947,7 +4038,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <label for="color">Color</label>
                                                                     <div *ngIf="kpiColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiColorSwitch = !kpiColorSwitch; resetKpiColor()">
                                                                         <span></span>
@@ -3961,7 +4052,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="funnel || bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="funnel || bar" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <label>Distribution</label>
                                                                     <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
                                                                         <span></span>
@@ -4068,11 +4159,11 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage || calendar)" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage || calendar)" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
-                                                            class="accordion-button p-3 fw-500 border"
+                                                            class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                             type="button"
                                                             data-bs-toggle="collapse"
                                                             data-bs-target="#collapse"
@@ -4090,9 +4181,9 @@
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody >
+                                                          <div class="accordion-body p-2  database-dropdown" ngbAccordionBody >
                                                             <ng-template>
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
                                                                     <label class="mb-0" for="columnName">Column</label>
                                                                     <select id="columnName" [(ngModel)]="sortColumn" style="width: 50%;" (change)="sortType = 0; changeSelectedColumn();">
                                                                         <option value="select" selected disabled>select</option>
@@ -4124,9 +4215,9 @@
                                                     </div>
 
                                                     <div *ngIf="((pie && chartId) || donut || radar)">
-                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
+                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                             <div class=""> 
-                                                                <p >Legends </p>
+                                                                <label class="mb-0">Legends </label>
                                                             </div>
                                                             <div *ngIf="legendSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('legend')">
                                                                 <span></span>
@@ -4135,8 +4226,8 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="legendSwitch" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
-                                                            <div class=""><p>Allignment</p></div>
+                                                        <div *ngIf="legendSwitch" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 px-2 py-1 border rounded-2">
+                                                            <div class=""><label class="mb-0">Allignment</label></div>
                                                             <div class="btn-group " ngbDropdown>
                                                                 <button type="button" ngbDropdownToggle class="btn btn-primary-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                                     {{legendsAllignment}}
@@ -4149,9 +4240,9 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
+                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                             <div class=""> 
-                                                                <p >Data Labels </p>
+                                                                <label class="mb-0" >Data Labels </label>
                                                             </div>
                                                             <div *ngIf="dataLabels" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('dataLabels')">
                                                                 <span></span>
@@ -4160,9 +4251,9 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="donut && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
+                                                        <div *ngIf="donut && !isEChatrts" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                             <div class="" > 
-                                                                <p >Label </p>
+                                                                <label class="mb-0" >Label </label>
                                                             </div>
                                                             <div *ngIf="label" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('label')">
                                                                 <span></span>
@@ -4171,28 +4262,28 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="donut" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
+                                                        <div *ngIf="donut" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                             <label class="mb-0">Donut Size</label>
                                                             <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5">
                                                         </div>
-                                                        <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
+                                                        <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2 border rounded-2">
                                                             <label class="mb-0" for="decimalInput">Decimal Places: </label>
                                                             <input  type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" min="0" class="w-30">
                                                         </div>
                                                     </div>
 
                                                     
-                                                    <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <label for="font-size" step="1" >Font Size</label>
+                                                    <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                        <label class="mb-0" for="font-size" step="1" >Font Size</label>
                                                         <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;" min="0">
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                    
-                                                    <div *ngIf="((pie && chartId) || donut || bar || map)  && draggedColumns && draggedColumns.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((pie && chartId) || donut || bar || map)  && draggedColumns && draggedColumns.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
-                                                            class="accordion-button p-3 fw-500 border"
+                                                            class="accordion-button p-2 fw-500 border-0"
                                                             type="button"
                                                             data-bs-toggle="collapse"
                                                             data-bs-target="#collapse"
@@ -4242,7 +4333,7 @@
                                                           </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2">
                                                         <div>
                                                             <label for="minValue">Enter Minimum Value:</label>
                                                             <input type="number" class="form-control fs-14" [(ngModel)]="minValueGuage" id="minValue"  />
@@ -4273,11 +4364,11 @@
                                     </a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane" id="linktabs">
-                                            <div class="copilot-container p-2">
-                                                <h6 style="text-align: center;font-weight:900;background-image: linear-gradient(to right, #ff69b4, #00bfff); background-size: 100% 1px; background-position: 0% 100%; color: #fff; padding: 5px;">Genie AIQ</h6>
+                                            <div class="copilot-container p-1">
+                                                <h6 class='rounded-2 genie-aiq-text'>Genie AIQ</h6>
                                                 <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-3">
                                                     <button *ngFor="let chart of chartSuggestions" type="button"
-                                                        class="btn ripple btn-primary inp-btn d-flex align-items-center"
+                                                        class="btn ripple btn-primary inp-btn d-flex align-items-center p1-text-start"
                                                         (click)="fetchChartData(chart)"
                                                         matTooltip="{{ chart.description }}" matTooltipPosition="above">
                                                         <span class="avatar avatar rounded-circle-copilot mr-2 me-2">
@@ -4328,7 +4419,7 @@
                                                     <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
                                                 </div>
                                                 <div class="input-group mt-3 inp">
-                                                    <input type="text" class="form-control" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
+                                                    <input type="text" class="form-control p-1" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
                                                     <div class="input-group-append">
                                                         <!-- <button (click)="startVoiceRecognition()" style="height: 33px; width:33px"> <img
                                                                 src="./assets/images/microphone.svg" alt="Micro Phone" /> </button>
@@ -4340,8 +4431,9 @@
                                                                 <i class="fa fa-paper-plane"></i>
                                                             </button>
                                                     </div>
-                                                    <p></p>
-                                                    <p style="font-size: 0.6rem;">The art of chart suggestion: not magic, but data-driven</p>
+                                                    <!-- <p></p> -->
+                                                     <br>
+                                                    <p style="font-size: 0.6rem;" class="mt-1">The art of chart suggestion: not magic, but data-driven</p>
                                                 </div>
                                             </div>
                                         </div>
