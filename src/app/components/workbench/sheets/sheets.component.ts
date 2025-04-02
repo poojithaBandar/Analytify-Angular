@@ -400,6 +400,23 @@ export class SheetsComponent {
   deleteSheetInSheetComponent = false;
   canAddDashbaordInSheet = false;
   canEditDashbaordInSheet = false;
+
+  isRelativeDateValid : boolean = false;
+  minRangeValue : any = 1;
+  maxRangeValue : any = 100;
+  minRangeValueInput : any;
+  maxRangeValueInput : any;
+  measureRangeError : string = '';
+  measureValuesOptions : Options = {
+    floor: this.minRangeValue,
+    ceil: this.maxRangeValue,
+    step: 1,
+    showSelectionBar: true,
+    selectionBarGradient: {
+      from: '#5a66f1',
+      to: '#5a66f1',
+    }
+  };
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
       this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
@@ -3130,7 +3147,16 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   ceil: any;
   minDate: string = '';
   maxDate: string = '';
-  options: Options ={};
+  options: Options ={
+    floor: 0,
+    ceil: 100,
+    step: 1,
+    showSelectionBar: true,
+    selectionBarGradient: {
+      from: '#5a66f1',
+      to: '#5a66f1',
+    }
+  };
   filterDateRange : any[] = [];
   updateDateRange() {
     const format: Intl.DateTimeFormatOptions = { 
@@ -3143,6 +3169,34 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     this.minDate = `${minDateObj.getFullYear()}/${(minDateObj.getMonth() + 1).toString().padStart(2, '0')}/${minDateObj.getDate().toString().padStart(2, '0')}`;
     this.maxDate = `${maxDateObj.getFullYear()}/${(maxDateObj.getMonth() + 1).toString().padStart(2, '0')}/${maxDateObj.getDate().toString().padStart(2, '0')}`;
     this.filterDateRange = [this.minDate, this.maxDate];
+  }
+  updateMeasureRange(isInput:boolean){
+    if (isInput){
+      if(this.minRangeValueInput > this.maxRangeValueInput){
+        this.measureRangeError = 'The minimum value cannot be greater than the maximum range. Please enter a lower value for the minimum or increase the maximum range.'
+      } else if(this.maxRangeValueInput < this.minRangeValueInput){
+        this.measureRangeError = 'The maximum value cannot be less than the minimum range. Please enter a higher value for the maximum or decrease the minimum range.'
+      } else{
+        if (this.minRangeValueInput < (this.measureValuesOptions.floor ?? this.minRangeValue)) {
+          this.measureValuesOptions = {
+            ...this.measureValuesOptions,
+            floor: this.minRangeValueInput
+          };
+        }
+        if(this.maxRangeValueInput > (this.measureValuesOptions.ceil ?? this.maxRangeValue)){
+          this.measureValuesOptions = {
+            ...this.measureValuesOptions,
+            ceil: this.maxRangeValueInput
+          };
+        }
+        this.minRangeValue = this.minRangeValueInput;
+        this.maxRangeValue = this.maxRangeValueInput;
+        this.measureRangeError = '';
+      }
+    } else{
+      this.minRangeValueInput = this.minRangeValue;
+      this.maxRangeValueInput = this.maxRangeValue;
+    }
   }
   formatExtractType : string = '';
   extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
@@ -3168,7 +3222,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         console.log(responce);
         const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
         this.filterData = convertedArray;
-        if(this.dateList.includes(responce.dtype)){
+        if(this.dateList.includes(responce.dtype) && this.activeTabId === 2){
           let rawLabel = this.filterData[0].label;
           let datePart = rawLabel.split(" ")[0];
           let [year, month, day] = datePart.split("/");
@@ -3198,6 +3252,23 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           };
           this.updateDateRange();
           this.filterDateRange = [];
+        }
+        if(this.integerList.includes(responce.dtype) && this.activeTabId === 6){
+          this.minRangeValue = this.filterData[0].label;
+          this.maxRangeValue = this.filterData[this.filterData.length - 1].label;
+          this.minRangeValueInput = this.minRangeValue;
+          this.maxRangeValueInput = this.maxRangeValue;
+          this.measureValuesOptions = {
+            floor: this.minRangeValue,
+            ceil: this.maxRangeValue,
+            step: 1,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            }
+          };
+          this.updateMeasureRange(false);
         }
         //this.filter_id = responce.filter_id;
       },
@@ -3279,7 +3350,7 @@ trackByFn(index: number, item: any): number {
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
-    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
+    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
     "select_values":Array.from(this.filterDataArray),
     "col_name":this.filterName,
     "data_type":this.filterType,
@@ -3340,8 +3411,12 @@ trackByFn(index: number, item: any): number {
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day' && !responce?.relative_date){
-          this.activeTabId = 2;
+        else if(responce?.range_values && responce?.range_values.length > 0 && !responce?.relative_date){
+          if(responce?.format_type === 'year/month/day'){
+            this.activeTabId = 2;
+          } else{
+            this.activeTabId = 6;
+          }
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
           this.activeTabId = 4;
@@ -3409,6 +3484,23 @@ trackByFn(index: number, item: any): number {
           this.updateDateRange();
           this.filterDateRange = [];
         }
+        if(this.integerList.includes(responce.data_type) && this.activeTabId === 6){
+          this.minRangeValue = responce.range_values[0];
+          this.maxRangeValue =  responce.range_values[responce.range_values.length - 1];
+          this.minRangeValueInput = this.minRangeValue;
+          this.maxRangeValueInput = this.maxRangeValue;
+          this.measureValuesOptions = {
+            floor: this.filterData[0].label,
+            ceil: this.filterData[this.filterData.length - 1].label,
+            step: 1,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            }
+          };
+          this.updateMeasureRange(false);
+        }
       },
       error: (error) => {
         console.log(error);
@@ -3437,7 +3529,7 @@ trackByFn(index: number, item: any): number {
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
-      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
+      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
       "select_values":Array.from(this.filterDataArray),
       "col_name":this.filterName,
       "data_type":this.filterType,
@@ -5583,8 +5675,13 @@ customizechangeChartPlugin() {
         startDate = firstYear.start;
         endDate = lastYear.end;
       }
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getYearDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5634,8 +5731,13 @@ customizechangeChartPlugin() {
         endDate = lastQuarter.end;
       }
       
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getQuarterDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5693,8 +5795,13 @@ customizechangeChartPlugin() {
         endDate = lastMonth.end;
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getMonthDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5751,8 +5858,13 @@ customizechangeChartPlugin() {
         endDate = lastWeek.end;
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getWeekDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5795,8 +5907,13 @@ customizechangeChartPlugin() {
         endDate = this.getDayDate(this.next - 1); // End N days forward
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getDayDate(offset: number): Date {
       let now;
