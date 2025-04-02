@@ -425,6 +425,7 @@ viewSchedular(dashboardId:any,modal: any){
       },
     error:(error)=>{
       this.lastRefresh = null;
+      this.nextRefresh = null;
       this.modalService.open(modal);
     }
   });
