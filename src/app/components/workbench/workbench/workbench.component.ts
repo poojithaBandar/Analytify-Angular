@@ -1472,6 +1472,10 @@ connectGoogleSheets(){
   shopifyNameError:boolean = false;
 
   serverConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
     if(this.postGreServerName){
       this.serverError = false;
     }else{
@@ -1480,6 +1484,10 @@ connectGoogleSheets(){
     this.errorCheck();
   }
   portConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
     if(this.postGrePortName){
       this.portError = false;
     }else{
@@ -1489,6 +1497,10 @@ connectGoogleSheets(){
     this.errorCheck();
   }
   databaseConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
       if (this.postGreDatabaseName) {
         this.databaseError = false;
       } else {
@@ -1498,6 +1510,10 @@ connectGoogleSheets(){
     this.errorCheck();
   }
   userNameConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
     if(this.postGreUserName){
       this.userNameError = false;
     }else{
@@ -1527,6 +1543,10 @@ connectGoogleSheets(){
     this.errorCheck();
   }
   passwordConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
     if(this.PostGrePassword){
       this.passwordError = false;
     }else{
