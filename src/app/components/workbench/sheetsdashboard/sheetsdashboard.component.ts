@@ -3447,6 +3447,7 @@ if(this.filterName === ''){
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
       this.selectedOption = null;
       this.selectedQuerySetId = 0;
+      this.selectedDatabase=''
       this.clearAllFilters();
     },
     error:(error)=>{
