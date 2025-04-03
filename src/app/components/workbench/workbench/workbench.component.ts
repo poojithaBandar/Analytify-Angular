@@ -305,7 +305,7 @@ export class WorkbenchComponent implements OnInit{
             console.log(data);
             if(data.hierarchy_id){
               const GsheetsHierarchyId = btoa(data.hierarchy_id.toString());
-              this.router.navigate(['/analytify/database-connection/tables/quickbooks/'+GsheetsHierarchyId]);
+              this.router.navigate(['/analytify/database-connection/tables/googlesheets/'+GsheetsHierarchyId]);
             }
           },
           error: (error: any) => {
