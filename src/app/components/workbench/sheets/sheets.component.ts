@@ -145,6 +145,7 @@ export class SheetsComponent {
   tableSearch! : string;
   isMeasureEdit : boolean = false;
   isDimensionEdit : boolean = false;
+  isPivotRowEdit : boolean = false;
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
   suppressTabChangeEvent : boolean = false;
@@ -1302,7 +1303,7 @@ try {
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
-    if(type !== 'yoy'){
+    if(type !== 'yoy' && type !== 'yoyRemove'){
     this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     }
     console.log(this.draggedRows)
@@ -1338,6 +1339,14 @@ try {
     if (this.draggedColumnsData[index]) {
       this.draggedColumnsData[index][3] = column.alias ? column.alias : "";
       this.draggedColumns[index].alias = column.alias ? column.alias : "";
+      this.dataExtraction();
+    }
+  }
+  onPivotRowAliasChange(column : any , index : any){
+    this.isPivotRowEdit = false;
+    if (this.draggedMeasureValuesData[index]) {
+      this.draggedMeasureValuesData[index][3] = column.alias ? column.alias : "";
+      this.draggedMeasureValues[index].alias = column.alias ? column.alias : "";
       this.dataExtraction();
     }
   }
@@ -4294,6 +4303,32 @@ customizechangeChartPlugin() {
     }
     this.dataExtraction();
   }
+  dateFormatForPivotRow(column:any, index:any, format:any){
+    if(format === ''){
+      this.draggedMeasureValuesData[index] = [column.column,column.data_type,format,column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = {column:column.column,data_type:column.data_type,type:format, alias: column.alias ? column.alias : ""};
+    }else if(format === '-Select-'){
+      this.draggedMeasureValuesData[index] = [column.column,column.data_type,'',column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = {column:column.column,data_type:column.data_type,type:'', alias: column.alias ? column.alias : ""};
+    }else{
+      this.draggedMeasureValuesData[index] = [column.column, "date", format,column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: format, alias: column.alias ? column.alias : "" };
+      console.log(this.draggedMeasureValues);
+    }
+    this.dataExtraction();
+  }
+  dateAggregationForPivotRow(column:any, index:any, type:any){
+    if (type === '') {
+      this.draggedMeasureValuesData[index] = [column.column, column.data_type, type, column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
+    }
+    else {
+      this.draggedMeasureValuesData[index] = [column.column, "aggregate", type, column.alias ? column.alias : ""];
+      this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
+      console.log(this.draggedMeasureValues);
+    }
+    this.dataExtraction();
+  }
 
   sliderOptions = {
     floor: 1,
@@ -4359,7 +4394,7 @@ customizechangeChartPlugin() {
         this.draggedMeasureValuesData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
         }
         if (this.dateList.includes(element.data_type)) {
-          this.dateFormat(element, event.currentIndex, 'year');
+          this.dateFormatForPivotRow(element, event.currentIndex, 'year');
         } else {
           console.log('measurerows',this.draggedMeasureValuesData)
           this.dataExtraction();
@@ -4957,6 +4992,9 @@ customizechangeChartPlugin() {
           },
           error: (error) => {
             this.validationMessage = error?.error?.error;
+            if(error.error.message){
+              this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-center' });
+            }
             console.log(error);
           }
         })
@@ -5027,7 +5065,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*"),\s*\d+\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;

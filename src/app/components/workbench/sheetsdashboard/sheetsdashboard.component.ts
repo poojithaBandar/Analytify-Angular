@@ -6805,6 +6805,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             windowClass: 'animate__animated animate__zoomIn',
           });          },
         error:(error)=>{
+          this.lastRefresh = null;
+          this.nextRefresh = null;
           this.modalService.open(modal, {
             centered: true,size:'md',
             windowClass: 'animate__animated animate__zoomIn',
