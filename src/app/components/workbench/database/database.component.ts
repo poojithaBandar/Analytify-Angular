@@ -232,6 +232,10 @@ export class DatabaseComponent {
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
     }
+    if(currentUrl.includes('/analytify/database-connection/tables/googlesheets/')){
+      this.fromDatabasId=true;
+      this.databaseId = +atob(route.snapshot.params['id']);
+    }
     if(currentUrl.includes('/analytify/database-connection/tables/salesforce/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
