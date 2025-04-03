@@ -871,6 +871,30 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/test_connection/`+this.accessToken,object);
     }
 
+    getTransformationsPreview(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/Edit_Transformations/`+this.accessToken+`/${id}`);
+    }
+
+    getTransformationList(page:any, pageCount:any, search:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/transformation_list/`+this.accessToken+`/?page=${page}&page_count=${pageCount}`+(search ? `&search=${search}` : ``));
+    }
+
+    getDeleteTransformationMessage(hierarchyId:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/transformation_del_stmt/`+this.accessToken+`/${hierarchyId}`);
+    }
+
+    deleteTransformation(hierarchyId:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.delete<any>(`${environment.apiUrl}/Database_Transformation/`+this.accessToken+`/${hierarchyId}`);
+    }
+
     updateDashboardOnSchedularLoad(object : any, dashboardId : number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];

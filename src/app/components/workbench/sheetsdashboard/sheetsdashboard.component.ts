@@ -3447,6 +3447,7 @@ if(this.filterName === ''){
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
       this.selectedOption = null;
       this.selectedQuerySetId = 0;
+      this.selectedDatabase=''
       this.clearAllFilters();
     },
     error:(error)=>{
@@ -6805,6 +6806,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             windowClass: 'animate__animated animate__zoomIn',
           });          },
         error:(error)=>{
+          this.lastRefresh = null;
+          this.nextRefresh = null;
           this.modalService.open(modal, {
             centered: true,size:'md',
             windowClass: 'animate__animated animate__zoomIn',

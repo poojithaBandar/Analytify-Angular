@@ -182,19 +182,23 @@ export class DatabaseComponent {
       // this.databaseId = +atob(route.snapshot.params['id']);
     }
     else if(currentUrl.includes('/analytify/database-connection/savedQuery/')){
-      if (currentUrl.includes('/analytify/database-connection/savedQuery/') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      if (route.snapshot.params['id1']) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
         this.saveQueryCheck = true;
+      }
+    
+      if (route.snapshot.params['id2']) {
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
-        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-        this.getSchemaTablesFromConnectedDb();
-        }
-      this.customSql=true;
-      this.tableJoiningUI=false;
-      this.updateQuery=true;
+        localStorage.setItem('QuerySetId', JSON.stringify(this.custumQuerySetid));
+        this.getSavedQueryData();
+      }
+    
+      this.customSql = true;
+      this.tableJoiningUI = false;
+      this.updateQuery = true;
       this.fromSavedQuery = true;
-      this.getSavedQueryData();
+      // this.getSchemaTablesFromConnectedDb();
      }
      else if(currentUrl.includes('/analytify/database-connection/customSql/')){
       this.custumQuerySetid = localStorage.getItem('customQuerySetId') || 0;
@@ -226,6 +230,10 @@ export class DatabaseComponent {
      if(currentUrl.includes('/analytify/database-connection/tables/quickbooks/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
+      this.databaseId = +atob(route.snapshot.params['id']);
+    }
+    if(currentUrl.includes('/analytify/database-connection/tables/googlesheets/')){
+      this.fromDatabasId=true;
       this.databaseId = +atob(route.snapshot.params['id']);
     }
     if(currentUrl.includes('/analytify/database-connection/tables/salesforce/')){
@@ -1641,6 +1649,7 @@ getfilteredCustomSqlData(){
 goToConnections(){
   // const hidToPass = btoa(this.databaseId.toString());
   const hidToPass = this.crossDbId ? btoa(this.crossDbId.toString()) : btoa(this.databaseId.toString());
+  if(!this.customSql){
   if(this.qurtySetId){
     const qrysetIdToPass = btoa(this.qurtySetId.toString());
     this.router.navigate(['/analytify/datasources/crossdatabase/viewconnection/'+hidToPass+'/'+qrysetIdToPass])
@@ -1648,6 +1657,15 @@ goToConnections(){
   else{
   this.router.navigate(['/analytify/datasources/crossdatabase/viewconnection/'+hidToPass])
   }
+}else if(this.customSql){
+  if(this.custumQuerySetid){
+    const qrysetIdToPass = btoa(this.custumQuerySetid.toString());
+    this.router.navigate(['/analytify/datasources/crossdatabase/customsql/viewconnection/'+hidToPass+'/'+qrysetIdToPass])
+  }
+  else{
+  this.router.navigate(['/analytify/datasources/crossdatabase/customsql/viewconnection/'+hidToPass])
+  }
+}
 }
 
 markDirty(){
@@ -1733,9 +1751,10 @@ saveQuery(){
       width: '400px',
     })
   }else{
+    const queryIdToPass = this.customSql ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
     database_id:this.databaseId,
-    query_set_id:this.qurtySetId,
+    query_set_id:queryIdToPass,
     query_name:this.saveQueryName,
     custom_query:this.sqlQuery
   }
