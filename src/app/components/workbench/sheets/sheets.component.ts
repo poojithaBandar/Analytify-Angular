@@ -947,6 +947,7 @@ try {
               });
             // }, 1000);
           }        
+          this.applyDynamicStyles()
                       }, 1000);
 
         }
@@ -6104,4 +6105,22 @@ yearColumns = [];
 //         this.quickCalcOpen = false;
 //     }
 // }
+
+
+
+applyDynamicStyles() {
+  const headers = document.querySelectorAll('.pvtTable th');
+  headers.forEach(header => {
+    (header as HTMLElement).style.backgroundColor = '#050a0f';
+    (header as HTMLElement).style.color = 'white';
+    (header as HTMLElement).style.fontSize = '14px';
+  });
+
+  const cells = document.querySelectorAll('.pvtTable td');
+  cells.forEach(cell => {
+    (cell as HTMLElement).style.backgroundColor = '#f5f5f5';
+    (cell as HTMLElement).style.color = '#333';
+    (cell as HTMLElement).style.fontSize = '12px';
+  });
+}
 }

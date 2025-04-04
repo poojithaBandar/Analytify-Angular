@@ -2551,7 +2551,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 
           let filterIdStr = data.filter_id.map(String);
           filterIdStr.forEach((key: string) => {
-            if (this.storeSelectedColData?.test.hasOwnProperty(key)) {
+            if (this.storeSelectedColData?.test?.hasOwnProperty(key)) {
               delete this.storeSelectedColData.test[key];
               console.log(`Deleted key from storeSelectedColData: ${key}`);
             }
