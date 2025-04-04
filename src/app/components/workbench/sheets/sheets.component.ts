@@ -3195,17 +3195,51 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     }
   };
   filterDateRange : any[] = [];
-  updateDateRange() {
-    const format: Intl.DateTimeFormatOptions = { 
-      year: 'numeric',
-      month: '2-digit', 
-      day: '2-digit',  
-    };
-    const minDateObj = new Date(this.minValue);
-    const maxDateObj = new Date(this.maxValue);
-    this.minDate = `${minDateObj.getFullYear()}/${(minDateObj.getMonth() + 1).toString().padStart(2, '0')}/${minDateObj.getDate().toString().padStart(2, '0')}`;
-    this.maxDate = `${maxDateObj.getFullYear()}/${(maxDateObj.getMonth() + 1).toString().padStart(2, '0')}/${maxDateObj.getDate().toString().padStart(2, '0')}`;
-    this.filterDateRange = [this.minDate, this.maxDate];
+  dateRangeError : string = '';
+  updateDateRange(isInput:boolean) {
+    const datePattern = /^\d{4}\/\d{2}\/\d{2}$/;
+
+    if(isInput){
+      if (!datePattern.test(this.minDate) || !datePattern.test(this.maxDate)) {
+        this.dateRangeError = 'Invalid date format. Please enter the date in YYYY/MM/DD format.';
+        return;
+      }
+      const minDateObj = new Date(this.minDate);
+      const maxDateObj = new Date(this.maxDate); 
+      if (isNaN(minDateObj.getTime()) || isNaN(maxDateObj.getTime())) {
+        this.dateRangeError = 'Invalid date value. Please enter a valid date in YYYY/MM/DD format.';
+        return;
+      }     
+      if (minDateObj > maxDateObj) {
+        this.dateRangeError = 'Start date cannot be after the end date. Please choose an earlier start date or a later end date.';
+      } else if (maxDateObj < minDateObj) {
+        this.dateRangeError = 'End date cannot be before the start date. Please choose a later end date or an earlier start date.';
+      } else{
+        if (minDateObj < (this.options.floor ?? this.minValue)) {
+          this.options = {
+            ...this.options,
+            floor: minDateObj.getTime()
+          };
+        }
+        if(maxDateObj > (this.options.ceil ?? this.maxValue)){
+          this.options = {
+            ...this.options,
+            ceil: maxDateObj.getTime()
+          };
+        }
+        this.minValue = minDateObj.getTime();
+        this.maxValue = maxDateObj.getTime();
+        this.dateRangeError = '';
+      }
+    } else{
+      this.minDate = this.formatDate(new Date(this.minValue));
+      this.maxDate = this.formatDate(new Date(this.maxValue));
+      this.dateRangeError = '';
+    }
+    this.filterDateRange = [this.formatDate(new Date(this.minValue)), this.formatDate(new Date(this.maxValue))];
+  }
+  formatDate(date: Date): string {
+    return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
   }
   updateMeasureRange(isInput:boolean){
     if (isInput){
@@ -3233,10 +3267,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     } else{
       this.minRangeValueInput = this.minRangeValue;
       this.maxRangeValueInput = this.maxRangeValue;
+      this.measureRangeError = '';
     }
   }
   formatExtractType : string = '';
-  extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
+  extractTypesForTab : any[] = ['year','quarter','month','day','week numbers','weekdays','count','count_distinct','min','max'];
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     if(this.activeTabId === 4){
@@ -3260,20 +3295,22 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
         this.filterData = convertedArray;
         if(this.dateList.includes(responce.dtype) && this.activeTabId === 2){
-          let rawLabel = this.filterData[0].label;
-          let datePart = rawLabel.split(" ")[0];
-          let [year, month, day] = datePart.split("/");
-          this.floor = new Date(`${year}-${month}-${day}`).getTime();
-          // this.floor = new Date(this.filterData[0].label).getTime();
+          // let rawLabel = this.filterData[0].label;
+          // let datePart = rawLabel.split(" ")[0];
+          // let [year, month, day] = datePart.split("/");
+          // this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          this.floor = new Date(this.filterData[0].label).getTime();
 
-          rawLabel = this.filterData[this.filterData.length - 1].label;
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
-          this.ceil = new Date(`${year}-${month}-${day}`).getTime();
-          // this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
+          // rawLabel = this.filterData[this.filterData.length - 1].label;
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
+          // this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
 
           this.minValue = this.floor;
           this.maxValue = this.ceil;
+          this.minDate = this.floor;
+          this.maxDate = this.ceil;
           this.options = {
             floor: this.floor,
             ceil: this.ceil,
@@ -3284,11 +3321,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
               to: '#5a66f1',
             },
             translate: (value: number): string => {
-              return new Date(value).toLocaleDateString();
+              const date = new Date(value);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0');
+              const day = String(date.getDate()).padStart(2, '0');
+              return `${year}/${month}/${day}`;
             }
           };
-          this.updateDateRange();
           this.filterDateRange = [];
+          this.updateDateRange(false);
         }
         if(this.integerList.includes(responce.dtype) && this.activeTabId === 6){
           this.minRangeValue = this.filterData[0].label;
@@ -3476,33 +3517,42 @@ trackByFn(index: number, item: any): number {
         //   this.filterData.push(element);
         //  // Force update
         // });
-        this.filterData.forEach((filter:any)=>{
-          if(filter.selected){
-            this.filterDataArray.add(filter.label);
-          }
-        })
+        if(![2,6].includes(this.activeTabId)){
+          this.filterData.forEach((filter:any)=>{
+            if(filter.selected){
+              this.filterDataArray.add(filter.label);
+            }
+          });
+        }
         if(this.dateList.includes(responce.data_type) && responce?.range_values){
           let rawLabel = this.filterData[0].label;
-          let datePart = rawLabel.split(" ")[0];
-          let [year, month, day] = datePart.split("/");
-          this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          // let datePart = rawLabel.split(" ")[0];
+          // let [year, month, day] = datePart.split("/");
+          // this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          this.floor = new Date(rawLabel).getTime();
 
           rawLabel = this.filterData[this.filterData.length - 1].label;
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
-          this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
+          // this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          this.ceil = new Date(rawLabel).getTime();
 
           rawLabel = responce.range_values[0];
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
 
-          this.minValue = new Date(`${year}-${month}-${day}`).getTime();
+          // this.minValue = new Date(`${year}-${month}-${day}`).getTime();
+          this.minValue = new Date(rawLabel).getTime();
+
 
           rawLabel = responce.range_values[responce.range_values.length - 1];
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
 
-          this.maxValue = new Date(`${year}-${month}-${day}`).getTime();
+          // this.maxValue = new Date(`${year}-${month}-${day}`).getTime();
+          this.maxValue = new Date(rawLabel).getTime();
+          this.minDate = this.minValue;
+          this.maxDate = this.maxValue;
 
           this.options = {
             floor: this.floor,
@@ -3514,12 +3564,15 @@ trackByFn(index: number, item: any): number {
               to: '#5a66f1',
             },
             translate: (value: number): string => {
-              return new Date(value).toLocaleDateString();
+              const date = new Date(value);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0');
+              const day = String(date.getDate()).padStart(2, '0');
+              return `${year}/${month}/${day}`;
             }
           };
-
-          this.updateDateRange();
           this.filterDateRange = [];
+          this.updateDateRange(false);
         }
         if(this.integerList.includes(responce.data_type) && this.activeTabId === 6){
           this.minRangeValue = responce.range_values[0];

@@ -478,18 +478,19 @@
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body">
                                                                 <div class="date-box">
-                                                                    <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                    <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                 </div>
                                                                 <div id="merging-tooltips">
                                                                   <ngx-slider 
                                                                   [(value)]="minValue"
                                                                   [(highValue)]="maxValue"
                                                                   [options]="options"
-                                                                  (valueChange)="updateDateRange()"
-                                                                  (highValueChange)="updateDateRange()"
+                                                                  (valueChange)="updateDateRange(false)"
+                                                                  (highValueChange)="updateDateRange(false)"
                                                                 ></ngx-slider>
                                                                 </div>
+                                                                <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -933,7 +934,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && filterDateRange.length === 0) || (activeTabId === 6 && minRangeValue && maxRangeValue && measureRangeError !== '') || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -993,18 +994,19 @@
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body">
                                                                 <div class="date-box">
-                                                                    <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                    <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                 </div>
                                                                 <div id="merging-tooltips">
                                                                   <ngx-slider 
                                                                   [(value)]="minValue"
                                                                   [(highValue)]="maxValue"
                                                                   [options]="options"
-                                                                  (valueChange)="updateDateRange()"
-                                                                  (highValueChange)="updateDateRange()"
+                                                                  (valueChange)="updateDateRange(false)"
+                                                                  (highValueChange)="updateDateRange(false)"
                                                                 ></ngx-slider>
                                                                 </div>
+                                                                <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -1410,7 +1412,7 @@
                                                     </li>
                                                 }
                                                 @if(integerList.includes(filterType)){
-                                                    <li [ngbNavItem]="6">
+                                                    <li [ngbNavItem]="6" [class.disabled]="activeTabId !== 6">
                                                         <a ngbNavLink class="p-3 TabShadow">Range of Values</a>
                                                         <ng-template ngbNavContent>
                                                             <div class="tab-pane" id="linktabs">
@@ -1460,8 +1462,8 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && filterDateRange.length === 0) || (activeTabId === 6 && minRangeValue && maxRangeValue && measureRangeError !== '') || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button" class="btn ripple btn-primary me-2"
-                                    (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply {{(minRangeValue && maxRangeValue && measureRangeError === '')}}</button>
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button" class="btn ripple btn-primary me-2"
+                                    (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
                                 </button>
@@ -2345,18 +2347,19 @@
                                                                                     <div class="tab-pane" id="linktabs">
                                                                                         <div class="card-body">
                                                                                             <div class="date-box">
-                                                                                                <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                                                <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                                                <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                                                <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                                             </div>
                                                                                             <div id="merging-tooltips">
                                                                                               <ngx-slider 
                                                                                               [(value)]="minValue"
                                                                                               [(highValue)]="maxValue"
                                                                                               [options]="options"
-                                                                                              (valueChange)="updateDateRange()"
-                                                                                              (highValueChange)="updateDateRange()"
+                                                                                              (valueChange)="updateDateRange(false)"
+                                                                                              (highValueChange)="updateDateRange(false)"
                                                                                             ></ngx-slider>
                                                                                             </div>
+                                                                                            <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                                                         </div>
                                                                                     </div>
                                                                                 </ng-template>
@@ -2758,7 +2761,7 @@
                                                                                 </li>
                                                                             }
                                                                             @if(integerList.includes(filterType)){
-                                                                                <li [ngbNavItem]="6">
+                                                                                <li [ngbNavItem]="6" [class.disabled]="activeTabId !== 6">
                                                                                     <a ngbNavLink class="p-3 TabShadow">Range of Values</a>
                                                                                     <ng-template ngbNavContent>
                                                                                         <div class="tab-pane" id="linktabs">
@@ -2806,7 +2809,7 @@
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && filterDateRange.length === 0) || (activeTabId === 6 && minRangeValue && maxRangeValue && measureRangeError !== '') || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
+                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close
