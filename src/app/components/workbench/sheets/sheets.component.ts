@@ -1205,6 +1205,8 @@ try {
       } else {
         this.dataExtraction();
       }
+      this.checkDateFormatForYOY();
+      // this.checkAggregationForYOY();
     }
     //dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32','date32'];
     // integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
@@ -4447,6 +4449,8 @@ customizechangeChartPlugin() {
       console.log(this.draggedColumns);
     }
     this.dataExtraction();
+    this.checkDateFormatForYOY();
+
   }
   dateFormatForPivotRow(column:any, index:any, format:any){
     if(format === ''){
@@ -4903,6 +4907,9 @@ customizechangeChartPlugin() {
         case 'round':
         this.calculatedFieldLogic = 'ROUND("' + tableName + '"."' + columnName + '")';
            break; 
+       case 'ifnull':
+            this.calculatedFieldLogic = 'COALESCE("' + tableName + '"."' + columnName + '")';
+               break; 
         case 'left': 
         regex = /^LEFT\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
         this.calculatedFieldLogic.trim();
@@ -5063,7 +5070,7 @@ customizechangeChartPlugin() {
     console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
     if (item && item.column && item.table_name) {
-      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+      if (!((this.calculatedFieldFunction == 'logical' && this.calculatedFieldLogic !== 'COALESCE()') || this.calculatedFieldFunction == 'arithematic')) {
         this.dropCalculatedField(item.table_name, item.column); 
       } else {
         if (this.calculatedFieldLogic?.length) {
@@ -5387,7 +5394,7 @@ customizechangeChartPlugin() {
           } 
           break; 
         case 'ifnull': 
-        if(!this.validateFormula(/^COALESCE\(\s*([^,]+(?:\s*,\s*[^,]+)*)\s*\)$/)){
+        if(!this.validateFormula(/^COALESCE\s*\(\s*("?[a-zA-Z_][\w]*"?(?:\."?[a-zA-Z_][\w]*"?)*)(?:\s*,\s*("?[a-zA-Z_][\w]*"?(?:\."?[a-zA-Z_][\w]*"?)*|\d+|'[^']*'|"[^"]*"))+\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;

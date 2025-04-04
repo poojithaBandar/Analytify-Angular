@@ -1799,7 +1799,8 @@ updateCustmQuery(){
       this.custmQryTime = data.query_exection_time;
       this.custmQryRows = data.no_of_rows;
       this.showingRowsCustomQuery=data.no_of_rows
-      this.totalRowsCustomQuery=data.total_rows
+      this.totalRowsCustomQuery=data.total_rows;
+      this.gotoSheetButtonDisable = false;
     },
     error:(error:any)=>{
       console.log(error);
