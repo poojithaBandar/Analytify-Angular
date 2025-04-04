@@ -71,6 +71,8 @@ export class DataTransformationComponent {
   isCustomSql : boolean = false;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal) {
+    localStorage.setItem('QuerySetId', '0');
+    localStorage.setItem('customQuerySetId', '0');
     if (this.router.url.startsWith('/analytify/databaseConnection/dataTransformation')) {
       if (route.snapshot.params['id']) {
         this.serverId = +atob(route.snapshot.params['id']);
