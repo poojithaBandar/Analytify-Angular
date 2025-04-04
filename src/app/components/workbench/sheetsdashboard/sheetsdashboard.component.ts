@@ -3213,8 +3213,22 @@ ColumnsForFilterEdit(){
     next:(data)=>{
       console.log(data);
       this.columnFilterNames=data.response_data.tables;
-      this.sheetsFilterNamesFromEdit= data.sheets?.map((obj: any) => ({ ...obj, selected: false }));
-      this.buildDropdownOptions(this.columnFilterNames); 
+      // this.sheetsFilterNamesFromEdit= data.sheets?.map((obj: any) => ({ ...obj, selected: false }));
+      this.buildDropdownOptions(this.columnFilterNames);
+      this.sheetsFilterNamesFromEdit = Object.entries(data?.sheets as Record<string, any[]>).map(([title, value]) => {
+        const sheets = value as Array<{ sheet_id: number; sheet_name: string; selected?: boolean }>; // Explicit assertion
+      
+        return {
+          title,
+          selected: sheets.length > 0 && sheets.every(sheet => sheet.selected || false), // Ensure sheets is an array
+          expanded: true,
+          sheets: sheets.map(sheet => ({
+            id: sheet.sheet_id,
+            name: sheet.sheet_name,
+            selected: sheet.selected || false,
+          })),
+        };
+      }); 
       this.updateSelectedRowsEdit()
     },
     error:(error)=>{
@@ -3447,6 +3461,7 @@ if(this.filterName === ''){
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
       this.selectedOption = null;
       this.selectedQuerySetId = 0;
+      this.selectedDatabase=''
       this.clearAllFilters();
     },
     error:(error)=>{
