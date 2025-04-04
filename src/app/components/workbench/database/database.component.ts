@@ -414,11 +414,7 @@ getSchemaTablesFromConnectedDb(){
   //  this.schematableList= data?.data?.schemas;
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
    console.log('filteredscemas',this.filteredSchematableList)
-   if(data[0].is_cross_db){
-       this.databaseName = data[0]?.display_name +"+" +data[1]?.display_name;
-   }else{
-    this.databaseName = data[0]?.display_name;
-   }
+   this.databaseName = data[0]?.display_name;
         // this.hostName = data.database.hostname;
         // this.saveQueryName = data.queryset_name;
     console.log(data)
@@ -1803,7 +1799,8 @@ updateCustmQuery(){
       this.custmQryTime = data.query_exection_time;
       this.custmQryRows = data.no_of_rows;
       this.showingRowsCustomQuery=data.no_of_rows
-      this.totalRowsCustomQuery=data.total_rows
+      this.totalRowsCustomQuery=data.total_rows;
+      this.gotoSheetButtonDisable = false;
     },
     error:(error:any)=>{
       console.log(error);
