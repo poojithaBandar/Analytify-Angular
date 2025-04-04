@@ -409,8 +409,8 @@
                                                 aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.field_name)"><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
-                                                <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
+                                                <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                     <a class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                     <a class="dropdown-item btn-secondary-light border" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
@@ -462,7 +462,7 @@
                                                         </div> -->
                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                             <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn">
-                                                                <div class="form-check" style="width: 46px;">
+                                                                <div class="form-check d-flex" style="width: 46px;">
                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2130,7 +2130,7 @@
         <!-- } -->
         <!-- }-->
                  </div>
-                    <div class="card-footer d-flex p-2 sheets-footer-card">
+                    <div class="card-footer d-flex p-1 sheets-footer-card">
                         <mat-tab-group [selectedIndex]="selectedTabIndex"
                         (selectedIndexChange)="selected.setValue($event)"
                         (selectedTabChange)="onChange($event);" 
@@ -2154,30 +2154,30 @@
                         <ul ngbnav="" id="footer-tab border-1 " role="tablist" class="nav nav-pills fs-12 " style=" display: contents;">
                             
                             <div>
-                                <li role="presentation" class="nav-item">
+                                <li role="presentation" class="nav-item me-1 ms-1">
                                     <button type="button" ngbnavlink="" ngbTooltip="Add Sheet" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
-                                        class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" >
+                                        class="btn-sm btn-info-light" (click)="addSheet(false)" >
                                         <i class="fa fa-plus-square"></i>
                                     </button>
                                 </li>
                             </div>
-                            <li role="presentation" class="nav-item">
+                            <li role="presentation" class="nav-item me-1">
                                 <button type="button" ngbnavlink="" ngbTooltip="Delete Sheet" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0 && !deleteSheetInSheetComponent" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="btn-sm btn-danger-light"
                                     (click)="removeTab()" >
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
-                            <li role="presentation" class="nav-item">
+                            <li role="presentation" class="nav-item me-1">
                                 <button type="button" ngbnavlink="" ngbTooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="btn-sm btn-info-light"
                                     (click)="sheetDuplicate()" >
                                     <i class="fa fa-copy"></i>
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" class="movetodashboard-text-btn"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2 move-text" >Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" ><button (click)="openSelectDashboard(content)" class="btn-sm btn-info-light move-text" >Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -2206,7 +2206,7 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle  sheet-bottom-icon px-2">view Dashboard</button></div>        
+                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link  btn-sm btn-info-light border">View Dashboard</button></div>        
                     </div>
                 </div>
 
@@ -2279,7 +2279,7 @@
                                                                                         } -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check" style="width: 46px;">
+                                                                                                <div class="form-check d-flex" style="width: 46px;">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2647,7 +2647,7 @@
                                                                                         </div> -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check" style="width: 46px;">
+                                                                                                <div class="form-check d-flex" style="width: 46px;">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
