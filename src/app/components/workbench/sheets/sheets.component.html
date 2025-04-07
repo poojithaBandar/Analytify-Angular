@@ -1443,22 +1443,22 @@
                                 </div> 
                                 <ckeditor *ngIf="editor" placeholder="Sheet Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName" (ngModelChange)="updateSheetName()"></ckeditor>
                             </div>
-
-                            <div class="col-lg-3 col-md-3 col-sm-3 p-1 d-flex justify-content-end" >
-                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
+                            <div class="col-lg-3 col-md-3 col-sm-3 p-1 d-flex" >
+                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
                                     <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false"></app-insights-button>
                                     <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
-                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
+                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
                                     <!-- <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
                                         (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
                                     </app-insights-button> -->
                                     <button class="viewQueryImg" container="body" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
-                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
+                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 me-1 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
+                                <button [disabled]="!retriveDataSheet_id" ngbTooltip="Refresh" container="body" type="button" class="btn btn-primary mt-0 ps-2 pe-2" (click)="refreshSheetData()"><i class="fa fa-refresh w-4 h-4"></i></button>
                             </div>
                         </div>
                         </div>
@@ -1490,7 +1490,6 @@
                                             {{ columns.field_name }}
                                         } @else {   
                                             {{ columns.column }}
-                                            <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
                                         }
 
                                      <div class="dropup" ngbDropdown style="line-height: 0;">
@@ -2747,10 +2746,10 @@
                                                 <div class="card-body single-axis-card">
                                                     <div class="row">
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination();"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination(false);"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Pivot Table" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,9);pivotTableDatatransform();"><img src="./assets/images/charts/pivot-chart.jpg" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': pivotTable}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Pivot Table" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,9);pivotTableDatatransform(false);"><img src="./assets/images/charts/pivot-chart.jpg" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': pivotTable}"></a>
                                                         </div>
                                                         <div class="card-title fs-12 mt-2 mb-1 border bg-light text-center" >Single Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
@@ -3707,7 +3706,7 @@
                                                     <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class=" mb-2 p-2 border rounded-2">
                                                         <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
                                                             <label class="mb-0">Page Length</label>
-                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination()" class="form-control cursor w-40 p-1">
+                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination(false)" class="form-control cursor w-40 p-1">
                                                                 <option  [ngValue]="''" disabled> select page length</option>
                                                                   <option  [ngValue]="10"> 10</option>
                                                                   <option  value="50"> 50</option>
