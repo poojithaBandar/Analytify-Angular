@@ -5609,12 +5609,23 @@ customizechangeChartPlugin() {
     }
     changeSelectedColumn(){
       console.log(this.sortColumn);
-      this.columnNamesForSort.forEach((column:any,index:any)=>{
-        if((this.sortColumn.alias && this.sortColumn.alias === column.alias) || (this.sortColumn.field_name && this.sortColumn.field_name === column.field_name) || (this.sortColumn.type && this.sortColumn.type === column.type && this.sortColumn.column === column.column) || (this.sortColumn.column && this.sortColumn.column === column.column)){
-          this.sortColumn = column;
-          this.selectedColumnIndex = index;
+      if(this.sortColumn !== 'select'){
+        for (let index = 0; index < this.columnNamesForSort.length; index++) {
+          const column = this.columnNamesForSort[index];
+        
+          const isMatch =
+            (!this.sortColumn?.alias || this.sortColumn?.alias === column?.alias) &&
+            (!this.sortColumn?.field_name || this.sortColumn?.field_name === column?.field_name) &&
+            (!this.sortColumn?.type || this.sortColumn?.type === column?.type) &&
+            (!this.sortColumn?.column || this.sortColumn?.column === column?.column);
+        
+          if (isMatch) {
+            this.sortColumn = column;
+            this.selectedColumnIndex = index;
+            break;
+          }
         }
-      });
+      }
     }
     sortColumns(){
       if(this.sortType === 'none' || this.sortType === 0){
