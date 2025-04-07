@@ -14,7 +14,7 @@
                         </div>
                         <div class=" mb-0 p-2 br-0 ">
                             <h6 class="mb-0">Database</h6>
-                            <p class=" mb-0" ngbTooltip="{{database_name}}">{{database_name}}</p> 
+                            <p class="mb-0" [ngbTooltip]="database_name?.length > 15 ? database_name : null">{{database_name?.length > 15 ? (database_name| slice:0:15)+'...':database_name}}</p>
                         </div>
                 </div>
                 <div class="card-body p-1">
@@ -409,8 +409,8 @@
                                                 aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.field_name)"><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
-                                                <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
+                                                <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                     <a class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                     <a class="dropdown-item btn-secondary-light border" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
@@ -462,7 +462,7 @@
                                                         </div> -->
                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                             <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn">
-                                                                <div class="form-check" style="width: 46px;">
+                                                                <div class="form-check d-flex" style="width: 46px;">
                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -478,18 +478,19 @@
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body">
                                                                 <div class="date-box">
-                                                                    <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                    <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                 </div>
                                                                 <div id="merging-tooltips">
                                                                   <ngx-slider 
                                                                   [(value)]="minValue"
                                                                   [(highValue)]="maxValue"
                                                                   [options]="options"
-                                                                  (valueChange)="updateDateRange()"
-                                                                  (highValueChange)="updateDateRange()"
+                                                                  (valueChange)="updateDateRange(false)"
+                                                                  (highValueChange)="updateDateRange(false)"
                                                                 ></ngx-slider>
                                                                 </div>
+                                                                <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -891,6 +892,31 @@
                                                         </ng-template>
                                                     </li>
                                                 }
+                                                @if(integerList.includes(filterType)){
+                                                    <li [ngbNavItem]="6" (click)="filterSearch = ''; filterDataGet()">
+                                                        <a ngbNavLink class="p-3 TabShadow">Range of Values</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane" id="linktabs">
+                                                                <div class="card-body">
+                                                                    <div class="date-box">
+                                                                        <input type="number" step="1" id="input" [(ngModel)]="minRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                        <input type="number" step="1" id="input" [(ngModel)]="maxRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                    </div>
+                                                                    <div id="merging-tooltips">
+                                                                      <ngx-slider 
+                                                                      [(value)]="minRangeValue"
+                                                                      [(highValue)]="maxRangeValue"
+                                                                      [options]="measureValuesOptions"
+                                                                      (valueChange)="updateMeasureRange(false)"
+                                                                      (highValueChange)="updateMeasureRange(false)"
+                                                                    ></ngx-slider>
+                                                                    </div>
+                                                                    <span *ngIf="measureRangeError" class="text-danger"> *Note :- {{measureRangeError}} </span>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </li>
+                                                }
                                             </ul>
                                             <div class="panel-body tabs-menu-body p-1 panel-body-h">
                                                 <div class="tab-content">
@@ -903,12 +929,12 @@
                             }
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="activeTabId === 1">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray.size > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -968,18 +994,19 @@
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body">
                                                                 <div class="date-box">
-                                                                    <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                    <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                 </div>
                                                                 <div id="merging-tooltips">
                                                                   <ngx-slider 
                                                                   [(value)]="minValue"
                                                                   [(highValue)]="maxValue"
                                                                   [options]="options"
-                                                                  (valueChange)="updateDateRange()"
-                                                                  (highValueChange)="updateDateRange()"
+                                                                  (valueChange)="updateDateRange(false)"
+                                                                  (highValueChange)="updateDateRange(false)"
                                                                 ></ngx-slider>
                                                                 </div>
+                                                                <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -1384,6 +1411,31 @@
                                                         </ng-template>
                                                     </li>
                                                 }
+                                                @if(integerList.includes(filterType)){
+                                                    <li [ngbNavItem]="6" [class.disabled]="activeTabId !== 6">
+                                                        <a ngbNavLink class="p-3 TabShadow">Range of Values</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane" id="linktabs">
+                                                                <div class="card-body">
+                                                                    <div class="date-box">
+                                                                        <input type="number" step="1" id="input" [(ngModel)]="minRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                        <input type="number" step="1" id="input" [(ngModel)]="maxRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                    </div>
+                                                                    <div id="merging-tooltips">
+                                                                      <ngx-slider 
+                                                                      [(value)]="minRangeValue"
+                                                                      [(highValue)]="maxRangeValue"
+                                                                      [options]="measureValuesOptions"
+                                                                      (valueChange)="updateMeasureRange(false)"
+                                                                      (highValueChange)="updateMeasureRange(false)"
+                                                                    ></ngx-slider>
+                                                                    </div>
+                                                                    <span *ngIf="measureRangeError" class="text-danger"> *Note :- {{measureRangeError}} </span>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </li>
+                                                }
                                             </ul>
                                             <div class="panel-body tabs-menu-body p-1 panel-body-h">
                                                 <div class="tab-content">
@@ -1405,12 +1457,12 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="activeTabId === 1">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray.size > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -1714,7 +1766,7 @@
                                                         <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" >None</a></li>  
                                                     </ul>
                                                 </div>
-                                                <div *ngIf="checkdatetype && checkAggregateNotNone" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
+                                                <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
                                                     <li class="dropdown-item btn btn-primary-light Quick-Calc-text border" ngbDropdownToggle>Quick Calculation</li>
                                                     <!-- <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
                                                        ngbDropdownToggle></i>
@@ -2129,7 +2181,7 @@
         <!-- } -->
         <!-- }-->
                  </div>
-                    <div class="card-footer d-flex p-2 sheets-footer-card">
+                    <div class="card-footer d-flex p-1 sheets-footer-card">
                         <mat-tab-group [selectedIndex]="selectedTabIndex"
                         (selectedIndexChange)="selected.setValue($event)"
                         (selectedTabChange)="onChange($event);" 
@@ -2153,30 +2205,30 @@
                         <ul ngbnav="" id="footer-tab border-1 " role="tablist" class="nav nav-pills fs-12 " style=" display: contents;">
                             
                             <div>
-                                <li role="presentation" class="nav-item">
+                                <li role="presentation" class="nav-item me-1 ms-1">
                                     <button type="button" ngbnavlink="" ngbTooltip="Add Sheet" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
-                                        class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" >
+                                        class="btn-sm btn-info-light" (click)="addSheet(false)" >
                                         <i class="fa fa-plus-square"></i>
                                     </button>
                                 </li>
                             </div>
-                            <li role="presentation" class="nav-item">
+                            <li role="presentation" class="nav-item me-1">
                                 <button type="button" ngbnavlink="" ngbTooltip="Delete Sheet" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0 && !deleteSheetInSheetComponent" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="btn-sm btn-danger-light"
                                     (click)="removeTab()" >
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
-                            <li role="presentation" class="nav-item">
+                            <li role="presentation" class="nav-item me-1">
                                 <button type="button" ngbnavlink="" ngbTooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="btn-sm btn-info-light"
                                     (click)="sheetDuplicate()" >
                                     <i class="fa fa-copy"></i>
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" class="movetodashboard-text-btn"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2 move-text" >Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" ><button (click)="openSelectDashboard(content)" class="btn-sm btn-info-light move-text" >Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -2205,7 +2257,7 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle  sheet-bottom-icon px-2">view Dashboard</button></div>        
+                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link  btn-sm btn-info-light border">View Dashboard</button></div>        
                     </div>
                 </div>
 
@@ -2278,7 +2330,7 @@
                                                                                         } -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check" style="width: 46px;">
+                                                                                                <div class="form-check d-flex" style="width: 46px;">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2294,18 +2346,19 @@
                                                                                     <div class="tab-pane" id="linktabs">
                                                                                         <div class="card-body">
                                                                                             <div class="date-box">
-                                                                                                <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                                                <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                                                <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                                                <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                                             </div>
                                                                                             <div id="merging-tooltips">
                                                                                               <ngx-slider 
                                                                                               [(value)]="minValue"
                                                                                               [(highValue)]="maxValue"
                                                                                               [options]="options"
-                                                                                              (valueChange)="updateDateRange()"
-                                                                                              (highValueChange)="updateDateRange()"
+                                                                                              (valueChange)="updateDateRange(false)"
+                                                                                              (highValueChange)="updateDateRange(false)"
                                                                                             ></ngx-slider>
                                                                                             </div>
+                                                                                            <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                                                         </div>
                                                                                     </div>
                                                                                 </ng-template>
@@ -2646,7 +2699,7 @@
                                                                                         </div> -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check" style="width: 46px;">
+                                                                                                <div class="form-check d-flex" style="width: 46px;">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2706,6 +2759,31 @@
                                                                                     </ng-template>
                                                                                 </li>
                                                                             }
+                                                                            @if(integerList.includes(filterType)){
+                                                                                <li [ngbNavItem]="6" [class.disabled]="activeTabId !== 6">
+                                                                                    <a ngbNavLink class="p-3 TabShadow">Range of Values</a>
+                                                                                    <ng-template ngbNavContent>
+                                                                                        <div class="tab-pane" id="linktabs">
+                                                                                            <div class="card-body">
+                                                                                                <div class="date-box">
+                                                                                                    <input type="number" step="1" id="input" [(ngModel)]="minRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                                                    <input type="number" step="1" id="input" [(ngModel)]="maxRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                                                </div>
+                                                                                                <div id="merging-tooltips">
+                                                                                                  <ngx-slider 
+                                                                                                  [(value)]="minRangeValue"
+                                                                                                  [(highValue)]="maxRangeValue"
+                                                                                                  [options]="measureValuesOptions"
+                                                                                                  (valueChange)="updateMeasureRange(false)"
+                                                                                                  (highValueChange)="updateMeasureRange(false)"
+                                                                                                ></ngx-slider>
+                                                                                                </div>
+                                                                                                <span *ngIf="measureRangeError" class="text-danger"> *Note :- {{measureRangeError}} </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </ng-template>
+                                                                                </li>
+                                                                            }
                                                                         </ul>
                                                                         <div class="panel-body tabs-menu-body p-1 panel-body-h">
                                                                             <div class="tab-content">
@@ -2725,12 +2803,12 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
+                                                        <div class="col text-left p-0" *ngIf="activeTabId === 1">
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="!(filterDataArray.size > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button"
+                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close
