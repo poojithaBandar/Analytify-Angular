@@ -684,7 +684,7 @@ try {
         )
       }
 
-      dataExtraction(){
+      dataExtraction(isSyncData : boolean){
         this.dualAxisColumnData = [];
         this.tablePreviewColumn = [];
         this.tablePreviewRow = [];
@@ -816,12 +816,19 @@ try {
               this.chartType = 'sidebyside'
             }
             if(this.pivotTable){
-              this.pivotTableDatatransform();
+              this.pivotTableDatatransform(isSyncData);
             }
             if(this.table){
               this.page = 1;
               this.pageNo = 1;
-              this.tableDisplayPagination();
+              this.tableDisplayPagination(isSyncData);
+            }
+            if(isSyncData && !this.table && !this.pivotTable){
+              if(this.kpi){
+                this.sheetSave();
+              } else{
+                this.isSheetSaveOrUpdate = true;
+              }
             }
           },
           error: (error) => {
@@ -835,14 +842,14 @@ try {
       pageChangeTableDisplay(page:any){
         this.sortedData = [];
         this.pageNo=page;
-        this.tableDisplayPagination();
+        this.tableDisplayPagination(false);
       }
       tableDisplayPaginationSearch(){
         this.pageNo = 1;
         this.page = 1;
-        this.tableDisplayPagination();
+        this.tableDisplayPagination(false);
       }
-      tableDisplayPagination() {
+      tableDisplayPagination(isSyncData : boolean) {
         if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
           const obj = {
             hierarchy_id: this.databaseId,
@@ -888,6 +895,9 @@ try {
                   this.tableDataDisplay.push(tableRow);
                  // console.log('display row data ', this.tableDataDisplay)
                 }
+                if(isSyncData){
+                  this.sheetSave();
+                }
               },
               error: (error) => {
                 console.log(error);
@@ -904,7 +914,7 @@ try {
       pivotRowData = [] as any;
       pivotColumnData = [] as any;
       pivotMeasureData = [] as any;
-        pivotTableDatatransform() {
+        pivotTableDatatransform(isSyncData : boolean) {
           if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
             this.transformedData =[];
           let headers: string[] = [];
@@ -947,11 +957,11 @@ try {
 
             this.transformedData.push(rowArray);
           }
-          this.renderPivotTable();        
+          this.renderPivotTable(isSyncData);        
         }
         }
 
-        renderPivotTable() {
+        renderPivotTable(isSyncData : boolean) {
           setTimeout(() => {
 
           if (this.pivotContainer && this.pivotContainer.nativeElement) {
@@ -961,8 +971,10 @@ try {
                 // vals: this.valueKeys, 
                 aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
                 rendererName: "Table"
-              });
-            // }, 1000);
+              }); 
+            if(isSyncData){
+              this.sheetSave();
+            }
           }        
                       }, 1000);
 
@@ -1203,7 +1215,7 @@ try {
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
-        this.dataExtraction();
+        this.dataExtraction(false);
       }
       this.checkDateFormatForYOY();
       // this.checkAggregationForYOY();
@@ -1279,7 +1291,7 @@ try {
       this.rowMeasuresCount(element, event.currentIndex, 'sum');
       this.rowaggregateType = 'sum'
     } else {
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
 
   }
@@ -1314,11 +1326,11 @@ try {
      if(type === ''){
       this.draggedRowsData[index] = [rows.column,rows.data_type,type,rows.alias ? rows.alias : ""];
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
-      this.dataExtraction();
+      // this.dataExtraction();
      }else if(type === '-Select-'){
       this.draggedRowsData[index] = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'',alias:rows.alias};
-      this.dataExtraction();
+      // this.dataExtraction();
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
@@ -1336,8 +1348,9 @@ try {
       this.donutDecimalPlaces = 2;
     }
     this.checkAggregationForYOY();
-    this.dataExtraction();
-     }
+    // this.dataExtraction();
+    }
+    this.dataExtraction(false);
   }
   checkAggregateNotNone = false;
   checkAggregationForYOY(){
@@ -1358,7 +1371,7 @@ try {
     if (this.draggedColumnsData[index]) {
       this.draggedColumnsData[index][3] = column.alias ? column.alias : "";
       this.draggedColumns[index].alias = column.alias ? column.alias : "";
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
   }
   onPivotRowAliasChange(column : any , index : any){
@@ -1366,7 +1379,7 @@ try {
     if (this.draggedMeasureValuesData[index]) {
       this.draggedMeasureValuesData[index][3] = column.alias ? column.alias : "";
       this.draggedMeasureValues[index].alias = column.alias ? column.alias : "";
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
   }
    drop(event: CdkDragDrop<string[]>) {
@@ -1437,7 +1450,7 @@ try {
       }
       
     }
-   this.dataExtraction();
+   this.dataExtraction(false);
    this.checkDateFormatForYOY();
   }
   dragStartedRow(index:any,column:any){
@@ -1467,7 +1480,7 @@ try {
       this.sortType = 0;
     }
   }
-   this.dataExtraction();
+   this.dataExtraction(false);
   }
   rightArrow(){
     console.log(this.draggedColumns.length)
@@ -1522,7 +1535,6 @@ try {
     this.guage = guage;
     this.map = map;
     this.calendar = calendar;
-    // this.dataExtraction();
     if(!(this.bar|| this.pie || this.donut)){
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
@@ -2676,7 +2688,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.calendar = false;
-          this.tableDisplayPagination();
+          this.tableDisplayPagination(false);
         }
         if(responce.chart_id == 9){
           // this.tableData = this.sheetResponce.results.tableData;
@@ -2701,7 +2713,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.calendar = false;
-          this.pivotTableDatatransform();
+          this.pivotTableDatatransform(false);
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce?.results?.kpiData;
@@ -3448,7 +3460,7 @@ trackByFn(index: number, item: any): number {
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-        this.dataExtraction();
+        this.dataExtraction(false);
         this.filterDataArray.clear();
         this.filterDateRange = [];
         this.formatExtractType = '';
@@ -3635,7 +3647,7 @@ trackByFn(index: number, item: any): number {
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-          this.dataExtraction();
+          this.dataExtraction(false);
           this.filterDataArray.clear();
           this.filterDateRange = [];
           this.isAllSelected = false;
@@ -3659,7 +3671,7 @@ trackByFn(index: number, item: any): number {
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-         this.dataExtraction();
+         this.dataExtraction(false);
       },
       error: (error) => {
         console.log(error);
@@ -3753,31 +3765,6 @@ this.oldColumn = name;
 let reName=`${this.draggedColumnsData.at(index)}`;
 console.log(reName.split(',')[0])
 }
-
-renameColumn(index:any,column:any,event:any){
-  this.newColumn = '';
-  this.newColumn = column;
-  if (event.keyCode === 13) {
-  this.renameColumns();
- }
-}
-renameColumns(){
-  const obj={
-    "database_id":this.databaseId,
-    "queryset_id":this.qrySetId,
-    "old_col_name" :this.oldColumn,
-    "new_col_name":this.newColumn
-}
-  this.workbechService.renameColumn(obj).subscribe({next: (responce:any) => {
-        console.log(responce);
-        this.columnsData();
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    }
-  )
- }
 
   editorConfig = {
     fontFamily: {
@@ -4017,7 +4004,7 @@ fetchChartData(chartData: any){
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
             this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,10);
           }
-          this.dataExtraction();
+          this.dataExtraction(false);
 
 }
 customizechangeChartPlugin() {
@@ -4423,7 +4410,7 @@ customizechangeChartPlugin() {
       console.log(this.draggedColumns);
      }
      this.checkDateFormatForYOY();
-     this.dataExtraction();
+     this.dataExtraction(false);
   }
   checkdatetype= false;
   checkDateFormatForYOY(){
@@ -4448,9 +4435,8 @@ customizechangeChartPlugin() {
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
     }
-    this.dataExtraction();
+    this.dataExtraction(false);
     this.checkDateFormatForYOY();
-
   }
   dateFormatForPivotRow(column:any, index:any, format:any){
     if(format === ''){
@@ -4464,7 +4450,7 @@ customizechangeChartPlugin() {
       this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: format, alias: column.alias ? column.alias : "" };
       console.log(this.draggedMeasureValues);
     }
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
   dateAggregationForPivotRow(column:any, index:any, type:any){
     if (type === '') {
@@ -4476,7 +4462,7 @@ customizechangeChartPlugin() {
       this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedMeasureValues);
     }
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
 
   sliderOptions = {
@@ -4519,7 +4505,7 @@ customizechangeChartPlugin() {
       this.drillDownObject = this.drillDownObject.slice(0, index - 1);
       this.drillDownIndex = index - 1;
     } 
-       this.dataExtraction();
+       this.dataExtraction(false);
       }
       draggedMeasureValuesData = [] as any;
       measureValuesdrop(event: CdkDragDrop<string[]>){
@@ -4546,14 +4532,14 @@ customizechangeChartPlugin() {
           this.dateFormatForPivotRow(element, event.currentIndex, 'year');
         } else {
           console.log('measurerows',this.draggedMeasureValuesData)
-          this.dataExtraction();
+          this.dataExtraction(false);
         }
       }
 
       removemeasureValuesRow(index:any,column:any){
         this.draggedMeasureValues.splice(index, 1);
         this.draggedMeasureValuesData.splice(index, 1);
-        this.dataExtraction();
+        this.dataExtraction(false);
 
       }
       toggleDateSwitch(){
@@ -4574,7 +4560,7 @@ customizechangeChartPlugin() {
               this.drillDownObject = [];
             }
              
-            this.dataExtraction();
+            this.dataExtraction(false);
          }
 
   toggleLocationSwitch(onColumnRemove : boolean) {
@@ -4612,11 +4598,11 @@ customizechangeChartPlugin() {
       this.drillDownObject = [];
     }
 
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
         
           callDrillDown(){
-            this.dataExtraction();
+            this.dataExtraction(false);
           }
         
           goDrillDownBack(){
@@ -5653,7 +5639,7 @@ customizechangeChartPlugin() {
       //   }
       // }
       this.setOriginalData();
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
@@ -5778,7 +5764,7 @@ customizechangeChartPlugin() {
           this.selectedSortColumnData = column;
         }
       }
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
     
     //years
@@ -6281,4 +6267,9 @@ yearColumns = [];
 //         this.quickCalcOpen = false;
 //     }
 // }
+
+  refreshSheetData(){
+    this.columnsData();
+    this.dataExtraction(true);
+  }
 }
