@@ -3215,18 +3215,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       } else if (maxDateObj < minDateObj) {
         this.dateRangeError = 'End date cannot be before the start date. Please choose a later end date or an earlier start date.';
       } else{
-        if (minDateObj < (this.options.floor ?? this.minValue)) {
-          this.options = {
-            ...this.options,
-            floor: minDateObj.getTime()
-          };
-        }
-        if(maxDateObj > (this.options.ceil ?? this.maxValue)){
-          this.options = {
-            ...this.options,
-            ceil: maxDateObj.getTime()
-          };
-        }
+        // if (minDateObj < (this.options.floor ?? this.minValue)) {
+        //   this.options = {
+        //     ...this.options,
+        //     floor: minDateObj.getTime()
+        //   };
+        // }
+        // if(maxDateObj > (this.options.ceil ?? this.maxValue)){
+        //   this.options = {
+        //     ...this.options,
+        //     ceil: maxDateObj.getTime()
+        //   };
+        // }
         this.minValue = minDateObj.getTime();
         this.maxValue = maxDateObj.getTime();
         this.dateRangeError = '';
@@ -3248,18 +3248,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       } else if(this.maxRangeValueInput < this.minRangeValueInput){
         this.measureRangeError = 'The maximum value cannot be less than the minimum range. Please enter a higher value for the maximum or decrease the minimum range.'
       } else{
-        if (this.minRangeValueInput < (this.measureValuesOptions.floor ?? this.minRangeValue)) {
-          this.measureValuesOptions = {
-            ...this.measureValuesOptions,
-            floor: this.minRangeValueInput
-          };
-        }
-        if(this.maxRangeValueInput > (this.measureValuesOptions.ceil ?? this.maxRangeValue)){
-          this.measureValuesOptions = {
-            ...this.measureValuesOptions,
-            ceil: this.maxRangeValueInput
-          };
-        }
+        // if (this.minRangeValueInput < (this.measureValuesOptions.floor ?? this.minRangeValue)) {
+        //   this.measureValuesOptions = {
+        //     ...this.measureValuesOptions,
+        //     floor: this.minRangeValueInput
+        //   };
+        // }
+        // if(this.maxRangeValueInput > (this.measureValuesOptions.ceil ?? this.maxRangeValue)){
+        //   this.measureValuesOptions = {
+        //     ...this.measureValuesOptions,
+        //     ceil: this.maxRangeValueInput
+        //   };
+        // }
         this.minRangeValue = this.minRangeValueInput;
         this.maxRangeValue = this.maxRangeValueInput;
         this.measureRangeError = '';
@@ -3295,17 +3295,20 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
         this.filterData = convertedArray;
         if(this.dateList.includes(responce.dtype) && this.activeTabId === 2){
-          // let rawLabel = this.filterData[0].label;
+          let rawLabel = this.filterData[0].label;
           // let datePart = rawLabel.split(" ")[0];
           // let [year, month, day] = datePart.split("/");
           // this.floor = new Date(`${year}-${month}-${day}`).getTime();
-          this.floor = new Date(this.filterData[0].label).getTime();
+          if(!rawLabel || rawLabel === '' || rawLabel.toLowerCase === 'nan' || rawLabel === null){
+            rawLabel = this.filterData[1].label;
+          }
+          this.floor = new Date(rawLabel).getTime();
 
-          // rawLabel = this.filterData[this.filterData.length - 1].label;
+          rawLabel = this.filterData[this.filterData.length - 1].label;
           // datePart = rawLabel.split(" ")[0];
           // [year, month, day] = datePart.split("/");
           // this.ceil = new Date(`${year}-${month}-${day}`).getTime();
-          this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
+          this.ceil = new Date(rawLabel).getTime();
 
           this.minValue = this.floor;
           this.maxValue = this.ceil;
@@ -3332,14 +3335,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.updateDateRange(false);
         }
         if(this.integerList.includes(responce.dtype) && this.activeTabId === 6){
-          this.minRangeValue = this.filterData[0].label;
+          let min = this.filterData[0].label;
+          if(!min || min === '' || min.toLowerCase === 'nan' || min === null){
+            min = this.filterData[1].label;
+          }
+          this.minRangeValue = min;
           this.maxRangeValue = this.filterData[this.filterData.length - 1].label;
           this.minRangeValueInput = this.minRangeValue;
           this.maxRangeValueInput = this.maxRangeValue;
           this.measureValuesOptions = {
             floor: this.minRangeValue,
             ceil: this.maxRangeValue,
-            step: 1,
+            step: 0.1,
             showSelectionBar: true,
             selectionBarGradient: {
               from: '#5a66f1',
@@ -3352,6 +3359,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3459,6 +3467,7 @@ trackByFn(index: number, item: any): number {
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3529,6 +3538,9 @@ trackByFn(index: number, item: any): number {
           // let datePart = rawLabel.split(" ")[0];
           // let [year, month, day] = datePart.split("/");
           // this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          if(!rawLabel || rawLabel === '' || rawLabel.toLowerCase === 'nan' || rawLabel === null){
+            rawLabel = this.filterData[1].label;
+          }
           this.floor = new Date(rawLabel).getTime();
 
           rawLabel = this.filterData[this.filterData.length - 1].label;
@@ -3579,10 +3591,14 @@ trackByFn(index: number, item: any): number {
           this.maxRangeValue =  responce.range_values[responce.range_values.length - 1];
           this.minRangeValueInput = this.minRangeValue;
           this.maxRangeValueInput = this.maxRangeValue;
+          let min = this.filterData[0].label;
+          if(!min || min === '' || min.toLowerCase === 'nan' || min === null){
+            min = this.filterData[1].label;
+          }
           this.measureValuesOptions = {
-            floor: this.filterData[0].label,
+            floor: min,
             ceil: this.filterData[this.filterData.length - 1].label,
-            step: 1,
+            step: 0.1,
             showSelectionBar: true,
             selectionBarGradient: {
               from: '#5a66f1',
@@ -3594,6 +3610,7 @@ trackByFn(index: number, item: any): number {
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3645,6 +3662,7 @@ trackByFn(index: number, item: any): number {
         },
         error: (error) => {
           console.log(error);
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
         }
       }
     )
@@ -3661,6 +3679,7 @@ trackByFn(index: number, item: any): number {
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
