@@ -64,7 +64,30 @@ h6.dropdown-header { font-weight: 700; background-color: aliceblue; }
 //   background-color: #e0e0e0;
 //   transition: flex-grow 0.3s ease-in-out;
 // }
+.join-taggle {
+  border-radius: 10px;
+  padding: 2px;
+  background: var(--primary-color);
+  color: #fff;
+  padding: 2px 7px;
+}
+.toggle-database {
+  position: relative;
+  overflow: hidden;
+  width: 138px;
+  height: 36px;
+}
 
+.toggle-slider {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  top: 0;
+  background: var(--primary-color);
+  border-radius: 10px;
+  transition: left 0.3s ease;
+  z-index: 0;
+}
 .right-card.expanded {
   // flex: 2; /* Adjust this value to control how much the right card expands */
 max-width: 1226px; min-width: 1226px; margin:  auto 0; }

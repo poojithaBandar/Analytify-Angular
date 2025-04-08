@@ -110,7 +110,7 @@ export class DatabaseComponent {
   enableJoinBtn = true;
   customSql = false;
   tableJoiningUI = true;
-  isOpen = false;
+  isOpenRelation = false;
   searchTables : any;
   columnsInFilters = [] as any;
   searchFiltereredData = [] as any;
@@ -161,6 +161,7 @@ export class DatabaseComponent {
   dragTablestoSemanticLayer = false;
   deleteTablesFromSemanticLayer = false;
   canSearchTablesInSemanticLayer = false;
+  isRelation = false;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService,private templateService:ViewTemplateDrivenService){
     const currentUrl = this.router.url;
     this.dragTablestoSemanticLayer = this.templateService.dragTablesToSemanticLayer();
@@ -242,27 +243,72 @@ export class DatabaseComponent {
       this.databaseId = +atob(route.snapshot.params['id']);
     }
   }
-  ngOnInit(){
+  ngOnInit() {
     this.loaderService.hide();
-    if(this.customSql){
+    if (this.customSql) {
       this.getSavedQueryData();
       this.getSchemaTablesFromConnectedDb();
-    }else{
-    if(!this.updateQuery && !this.fromSheetEditDb){
-      if(this.fromDatabasId){
-    // this.getTablesFromConnectedDb();
-    this.getSchemaTablesFromConnectedDb();
+    } else {
+      if (!this.updateQuery && !this.fromSheetEditDb) {
+        if (this.fromDatabasId) {
+          // this.getTablesFromConnectedDb();
+          this.getSchemaTablesFromConnectedDb();
+        }
+        this.getTablesfromPrevious()
       }
-    this.getTablesfromPrevious()
-  }
-  if(this.fromSheetEditDb){
-    this.getTablesfromPrevious();
- if(this.fromDatabasId){
-      this.getSchemaTablesFromConnectedDb();
+      if (this.fromSheetEditDb) {
+        this.getTablesfromPrevious();
+        if (this.fromDatabasId) {
+          this.getSchemaTablesFromConnectedDb();
+        }
+      }
     }
   }
-}
+activeToggle: 'join' | 'relation' = 'join';
+setJoinRelationToggle(val: 'join' | 'relation') {
+  const type = val=='join' ? 'relations' : 'joinings';
+
+  if(this.draggedtables.length > 0){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `This action will remove all your ${type}.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result)=>{
+      if(result.isConfirmed){
+        this.activeToggle = val;
+        this.TabledataJoining=[];
+        this.draggedtables =[];
+        this.qryTime = '';
+        this.qryRows ='';
+        this.totalRows = '';
+        this.showingRows = '';
+        this.filteredTablesT1 =[];
+        this.filteredTablesT2 =[];
+        this.tableJoiningList =[];
+        if(val == 'join'){
+          this.isRelation = false;
+          this.isOpenRelation = false;
+        }else if(val = 'relation'){
+          this.isRelation = true;
+          this.isOpenRelation = true;
+        }
+    }})
+  }else{
+    this.activeToggle = val;
+    if(val == 'join'){
+      this.isRelation = false;
+      this.isOpenRelation = false;
+    }else if(val = 'relation'){
+      this.isRelation = true;
+      this.isOpenRelation = true;
+    }
   }
+
+}
   backToTableJoining(){
     this.gotoSheetButtonDisable = true;
     const encodedId = btoa(this.databaseId.toString());
@@ -274,7 +320,7 @@ export class DatabaseComponent {
     this.router.navigate(['/analytify/database-connection/customSql/'+encodedId]);
   }
   toggleCard() {
-    this.isOpen = !this.isOpen;
+    this.isOpenRelation = !this.isOpenRelation;
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -485,12 +531,16 @@ drop(event: CdkDragDrop<string[]>) {4
     this.pushToDraggedTables(element)
     console.log('darggedtable',this.draggedtables)
    }
+   if(!this.isRelation){
    if(parseInt(this.qurtySetId) !== 0){
     this.joiningTables();
    }
    else if(parseInt(this.qurtySetId) === 0){
      this.joiningTablesWithoutQuerySetId()
    }
+  }else{
+
+  }
 }
 
 pushToDraggedTables(newTable:any): void {
@@ -541,7 +591,7 @@ onDeleteItem(index: number, tableName : string) {
   //   this.gotoSheetButtonDisable = true;
   // } else {
    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
-   this.isOpen = false;
+   this.isOpenRelation = false;
    if(index > 0){
     this.relationOfTables.splice(index-1, 1);
     this.joinTypes.splice(index-1, 1);
@@ -746,10 +796,10 @@ filterColumnsT1() {
 }
 
 updateRemainingTables(item:any) {
-  // this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
-  // this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
-  // this.filteredTablesT2 = this.remainingTables;
-  // this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
+  this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
+  this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
+  this.filteredTablesT2 = this.remainingTables;
+  this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
 }
 filterColumnsT2(relation: any) {
   // If search term is empty, return all tables excluding the selected one
@@ -1947,6 +1997,10 @@ buildRelation(){
   this.workbechService.buildRelation(obj).subscribe({
     next:(data:any)=>{
       console.log(data);
+      this.qurtySetId = data.querySetId
+      if(this.qurtySetId){
+      this.getJoiningTableData();
+      }
     },
     error:(error:any)=>{
       console.log(error);

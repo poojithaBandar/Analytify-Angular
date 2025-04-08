@@ -71,9 +71,23 @@
             <div class=" p-0 ">
                 <div class="col-xl-12 col-md-12 p-0">
                     <div class="card mb-0 p-3 border bg-light database-title-card">
-                        <div class="flex-grow-1 ">
+                        <div class="flex-grow-1 d-flex">
                             <input type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title"
                                 aria-label="Sheet" class="form-control">
+                                <div class="toggle-database p-1 border rounded-4 bg-white mx-2 d-flex align-items-center position-relative">
+                                    <div 
+                                      class="toggle-slider" 
+                                      [ngStyle]="{ left: activeToggle === 'join' ? '0%' : '50%' }">
+                                    </div>
+                                    <p 
+                                      class="mb-0 cursor-pointer mx-1 z-1 px-2" 
+                                      [class.text-white]="activeToggle === 'join'" 
+                                      (click)="setJoinRelationToggle('join')">Join</p>
+                                    <p 
+                                      class="mb-0 cursor-pointer mx-1 z-1 px-2" 
+                                      [class.text-white]="activeToggle === 'relation'" 
+                                      (click)="setJoinRelationToggle('relation')">Relation</p>
+                                  </div>
                         </div>
                         <div class="right">
                             @if(draggedtables?.length){
@@ -114,14 +128,15 @@
                         </a> -->
                                     }
                                     @if(!draggedtables?.length){
-                                    <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
+                                    <h6 *ngIf="isRelation" class="fs-12 mt-2 mb-0 drag-txt">Drag tables here to build Relation</h6>
+                                    <h6 *ngIf="!isRelation" class="fs-12 mt-2 mb-0 drag-txt">Drag tables here for joining</h6>
                                     }
                                 </div>
                             </div>
                         </div>
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                             <div class="card databse-T-H mb-0 br-0">
-                                <div class="card-body overflow-auto border-start" >
+                                <div *ngIf="!isRelation" class="card-body overflow-auto border-start" >
                                     @if(relationOfTables.length){
                                     <ul class="tags">
                                         @for(relation of tableJoiningList;track relation;let i = $index){
@@ -282,6 +297,9 @@
                                     </ul>
                                     }
                                 </div>
+                                <div *ngIf="isRelation" class="card-body overflow-auto border-start" >
+                                   
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -289,7 +307,7 @@
                 <div class="col-xl-12 col-md-12 p-1">
                     <div class="card-body p-1 ">
                         <div class="row p-1">
-                            <div [@toggle]="isOpen ? 'open' : 'closed'"
+                            <div [@toggle]="isOpenRelation ? 'open' : 'closed'"
                                 class="table-joining-card p-0 col-xxl-6 col-xl-6 col-lg-6 col-md-6">
 
                                 <div class="">
@@ -302,7 +320,7 @@
                                         </div>
 
                                         <div class="card-body">
-                                            @if(isOpen){
+                                            @if(isOpenRelation){
                                             <div class=" gap-1 d-flex flex-wrap p-2">
                                                 <div ngbDropdown class="btn-group my-2 dropdown">
                                                     <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
@@ -311,11 +329,11 @@
                                                         selectedClmnT1:'Select Column') | slice:0:13}}</button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         <li>
-                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT1" (input)="filterColumnsT1CrsDb()" placeholder="Search columns..." />                                                          
+                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT1" (input)="filterColumnsT1()" placeholder="Search columns..." />                                                          
                                                         </li>
-                                                        @for(table of crossDbFilteredTablesT1;track table){
+                                                        @for(table of filteredTablesT1;track table){
                                                         <li class="dropdown-plus-title">
-                                                            {{table.table}}.({{ table.schema }})
+                                                            {{ table.schema }}.{{ table.alias }}
                                                         </li>
                                                         @for(column of table.columns;track column){
                                                         <li>
@@ -379,8 +397,7 @@
                                                         </li>
                                                         @for(table of filteredTablesT2;track table){
                                                         <li class="dropdown-plus-title">
-                                                            {{table.table}}.({{ table.schema }})
-                                                        </li>
+                                                            {{ table.schema }}.{{ table.alias }}                                                        </li>
                                                         @for(column of table.columns;track column){
                                                         <li><a class="dropdown-item" ngbDropdownItem
                                                                 (click)="selectedClmnT2= column.column;getSelectedT2 = table.table;selectedAliasT2 = table.alias;selectedSchema2 = table.schema">{{
@@ -397,7 +414,7 @@
                                                 </button>
                                                 <button class="btn btn-primary" [disabled]="!selectedClmnT2"
                                                     (click)="buildRelation()" aria-expanded="false">
-                                                    Join
+                                                    Build Relation
                                                 </button>
                                             </div>
                                             }
@@ -410,13 +427,13 @@
 
                             </div>
                             <div class="p-0"
-                                [ngClass]="!crossDbId ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
-                                <div class="card mb-0 border joining-T-H"  [ngClass]="isOpen ? 'right-card':''"
-                                    [class.expanded]="!isOpen">
+                                [ngClass]="!isRelation ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpenRelation ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
+                                <div class="card mb-0 border joining-T-H"  [ngClass]="isOpenRelation ? 'right-card':''"
+                                    [class.expanded]="!isOpenRelation">
                                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
-                                            @if(crossDbId){
-                                            @if(!isOpen){
+                                            @if(isRelation){
+                                            @if(!isOpenRelation){
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()"
                                                 ngbtooltip="fa fa-chevron-left" 
                                                 class="fa fa-chevron-right chevron-right-icon p-2 border-0 ">
@@ -455,8 +472,8 @@
                                         <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
                                         }@else{
                                         <div class="table-responsive Result-preview-table-h" 
-                                            [class.table-left]="crossDbId && !isOpen"
-                                            [class.table-right]="crossDbId && isOpen">
+                                            [class.table-left]="isRelation && !isOpenRelation"
+                                            [class.table-right]="isRelation && isOpenRelation">
                                             <table
                                                 class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 ">
                                                 <thead class="Result-preview-table-sticky">
