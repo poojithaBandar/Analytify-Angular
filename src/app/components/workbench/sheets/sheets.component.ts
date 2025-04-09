@@ -3336,7 +3336,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         if(this.integerList.includes(responce.dtype) && this.activeTabId === 6){
           let min = this.filterData[0].label;
-          if(!min || min === '' || min.toLowerCase === 'nan' || min === null){
+          if(min === undefined || min === '' || String(min).toLowerCase() === 'nan' || min === null){
             min = this.filterData[1].label;
           }
           this.minRangeValue = min;
@@ -3592,7 +3592,7 @@ trackByFn(index: number, item: any): number {
           this.minRangeValueInput = this.minRangeValue;
           this.maxRangeValueInput = this.maxRangeValue;
           let min = this.filterData[0].label;
-          if(!min || min === '' || min.toLowerCase === 'nan' || min === null){
+          if(min === undefined || min === '' || String(min).toLowerCase() === 'nan' || min === null){
             min = this.filterData[1].label;
           }
           this.measureValuesOptions = {
