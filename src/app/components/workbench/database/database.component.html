@@ -74,7 +74,7 @@
                         <div class="flex-grow-1 d-flex">
                             <input type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title"
                                 aria-label="Sheet" class="form-control">
-                                <div class="toggle-database p-1 border rounded-4 bg-white mx-2 d-flex align-items-center position-relative">
+                                <div class="toggle-database p-1 border rounded-3 bg-white mx-2 d-flex align-items-center position-relative">
                                     <div 
                                       class="toggle-slider" 
                                       [ngStyle]="{ left: activeToggle === 'join' ? '0%' : '50%' }">
@@ -84,7 +84,7 @@
                                       [class.text-white]="activeToggle === 'join'" 
                                       (click)="setJoinRelationToggle('join')">Join</p>
                                     <p 
-                                      class="mb-0 cursor-pointer mx-1 z-1 px-2" 
+                                      class="mb-0 cursor-pointer mx-1 z-1 px-3" 
                                       [class.text-white]="activeToggle === 'relation'" 
                                       (click)="setJoinRelationToggle('relation')">Relation</p>
                                   </div>

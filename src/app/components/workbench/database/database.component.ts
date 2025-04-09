@@ -1997,7 +1997,7 @@ buildRelation(){
   this.workbechService.buildRelation(obj).subscribe({
     next:(data:any)=>{
       console.log(data);
-      this.qurtySetId = data.querySetId
+      this.qurtySetId = data.queryset_id
       if(this.qurtySetId){
       this.getJoiningTableData();
       }
