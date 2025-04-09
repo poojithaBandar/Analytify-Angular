@@ -17,6 +17,9 @@ button.BtnNewStyle.span-left { border-left: 0px;  padding: 8px 15px 8px 6px;}
 //   opacity: 0.5; // Optional
 //   pointer-events: none; // Optional
 // }
+textarea.query-text {
+  display: block !important;
+}
 .drag-disabled {  cursor: not-allowed !important; opacity: 0.5; pointer-events: none;}
 button.BtnRowStyle { margin-inline: 0px !important; border-radius: 0px !important; background-color: rgb(241 241 241 / 72%); border: 1px solid rgb(0 0 0 / 16%); }
 .nav-link.BtnRowStyle.active { background: #ccedec !important; color: #036e6c !important; border-top: none;  }

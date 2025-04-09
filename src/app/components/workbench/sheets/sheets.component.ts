@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -57,6 +57,13 @@ import 'pivottable';
 import 'jquery-ui/ui/widgets/sortable';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
+import CodeMirror from 'codemirror';
+import 'codemirror/mode/sql/sql';
+import 'codemirror/addon/hint/show-hint';
+import 'codemirror/addon/hint/sql-hint'; // optional, but good
+import 'codemirror/addon/hint/anyword-hint'; // optional
+
+
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -96,7 +103,7 @@ declare var $:any;
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
-export class SheetsComponent {
+export class SheetsComponent{
   tableColumnsData = [] as any;
   draggedtables = [] as any;
   draggedColumns = [] as any;
@@ -372,6 +379,7 @@ export class SheetsComponent {
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  @ViewChild('sqlEditor', { static: false }) sqlEditor!: ElementRef;
 
   transformedData: any[] = [];
   columnKeys: string[] = [];
@@ -506,7 +514,60 @@ export class SheetsComponent {
    this.canEditDb = this.templateService.addDatasource();
    this.canDrop = !this.canEditDb
   }
+  codeMirrorInstance: any;
+  customSQLHint(cm: any) {
+    console.log('Autocomplete triggered');  // <--- check this fires
 
+    const cursor = cm.getCursor();
+    const token = cm.getTokenAt(cursor);
+    const start = token.start;
+    const end = cursor.ch;
+    const currentWord = token.string;
+  
+    const list = this.getSQLSuggestions().filter((item) =>
+      item.toLowerCase().includes(currentWord.toLowerCase())
+    );
+  
+    return {
+      list,
+      from: CodeMirror.Pos(cursor.line, start),
+      to: CodeMirror.Pos(cursor.line, end)
+    };
+  }
+  getSQLSuggestions(): string[] {
+    return [
+      'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'JOIN',
+      'finance.Amount', 'finance.Date', 'ordersdata.cost_price', 'ordersdata.sno',
+      'COALESCE', 'IFNULL', 'COUNT', 'SUM', 'AVG'
+    ];
+  }
+  
+  callautosuggest(){
+        console.log('Creating CodeMirror instance');
+        console.log(this.sqlEditor.nativeElement);
+    this.codeMirrorInstance = CodeMirror.fromTextArea(this.sqlEditor.nativeElement, {
+      mode: 'text/x-sql',
+      theme: 'material',
+      lineNumbers: true,
+      extraKeys: {
+        'Ctrl-Space': (cm: any) => {
+          console.log('Ctrl+Space triggered');
+          cm.showHint({ hint: this.customSQLHint.bind(this) });
+        }
+      },
+      hintOptions: {
+        completeSingle: false
+      }
+    });
+  }
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      const textarea = document.querySelector('textarea');
+      if (textarea) {
+        textarea.style.display = 'block'; // Force it again
+      }
+    });
+  }
   ngOnInit(): void {
     this.loaderService.hide();
     this.columnsData();
@@ -5484,6 +5545,10 @@ customizechangeChartPlugin() {
      this.calculatedFieldLogic = '';
      this.isEditCalculatedField = false;
       }
+      // this.callautosuggest();
+      setTimeout(() => {
+        this.callautosuggest(); // Now the textarea is likely in the DOM and visible
+      }, 1000);
     }
 
     isMapChartDrillDown : boolean = false;
