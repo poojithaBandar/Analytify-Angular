@@ -338,7 +338,7 @@
                                                         @for(column of table.columns;track column){
                                                         <li>
                                                             <a ngbDropdownItem class="dropdown-item"
-                                                                (click)="selectedClmnT1 = column.column;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables(table)">{{
+                                                                (click)="selectedClmnT1 = column.column;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables(table);selectedClmnT2=null;">{{
                                                                 column.column }}</a>
                                                         </li>
                                                         }

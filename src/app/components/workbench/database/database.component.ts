@@ -242,6 +242,11 @@ export class DatabaseComponent {
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
     }
+    if(localStorage.getItem('isJoin')=='true'){
+      this.setJoinRelationToggle('join')
+        }else{
+          this.setJoinRelationToggle('relation')
+        }
   }
   ngOnInit() {
     this.loaderService.hide();
@@ -289,6 +294,9 @@ setJoinRelationToggle(val: 'join' | 'relation') {
         this.filteredTablesT1 =[];
         this.filteredTablesT2 =[];
         this.tableJoiningList =[];
+        this.selectedCndn ='Operator';
+        this.selectedClmnT1=null
+        this.selectedClmnT2=null;
         if(val == 'join'){
           this.isRelation = false;
           this.isOpenRelation = false;
@@ -306,6 +314,11 @@ setJoinRelationToggle(val: 'join' | 'relation') {
       this.isRelation = true;
       this.isOpenRelation = true;
     }
+  }
+  if(this.activeToggle == 'join'){
+    localStorage.setItem('isJoin',JSON.stringify('true'))
+  }else{
+    localStorage.setItem('isJoin',JSON.stringify('false'))
   }
 
 }
@@ -1982,17 +1995,22 @@ filterColumnsT1CrsDb() {
     })
     .filter((table:any): table is { columns: any[] } => table !== null);
 }
+relations : any [] = [];
 buildRelation(){
-  const relation = [{db1: this.selectedSchema1,
+  this.relations = this.relations || [];
+  const relation = {db1: this.selectedSchema1,
     table1: this.getSelectedT1,
     firstcolumn: this.selectedClmnT1,
     operator: "=",
     db2:this.selectedSchema2,
     table2: this.getSelectedT2,
-    secondcolumn: this.selectedClmnT2}]
+    secondcolumn: this.selectedClmnT2}
+    
+    this.relations.push(relation);
+
   const obj ={
    hierarchy_id:this.databaseId,
-   joining_conditions:relation
+   joining_conditions:this.relations
   }
   this.workbechService.buildRelation(obj).subscribe({
     next:(data:any)=>{
