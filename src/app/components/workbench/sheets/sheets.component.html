@@ -934,7 +934,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -1462,7 +1462,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -2808,7 +2808,7 @@
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && (!minRangeValue || !maxRangeValue || measureRangeError !== '')) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
+                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close
