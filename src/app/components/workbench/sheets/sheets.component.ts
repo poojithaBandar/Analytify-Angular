@@ -671,11 +671,13 @@ try {
         this.workbechService.getColumnsData(obj).subscribe({
           next: (responce: any) => {
             console.log(responce);
+            if(responce.length > 0){
             this.tableColumnsData = responce;
             this.database_name = responce[0].database_name;
             this.isCustomSql = responce[0].is_custom_sql;
             this.tableDimentions = responce.dimensions;
             this.tableMeasures = responce.measures;
+            }
           },
           error: (error) => {
             console.log(error);
@@ -3157,7 +3159,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false;
           this.calendar = true;
        }
+       if(this.sheetResponce.customizeOptions){
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
+       }
        this.getDimensionAndMeasures();
        this.changeSelectedColumn();
         // setTimeout(()=>{
