@@ -381,6 +381,7 @@ export class WorkbenchComponent implements OnInit{
 
   echartInstance!: InsightEchartComponent;
   dashboardQuerySetIds: number[]=[];
+  isCustomSql = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
@@ -408,51 +409,103 @@ export class WorkbenchComponent implements OnInit{
         this.iscrossDbSelect = false;
         console.log(currentUrl);
         this.getGoogleSheetDetailsByUrl(currentUrl);
-      }else if(currentUrl.includes('crossdatabase/viewconnection')){
-        if (route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')) {
-          this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-          this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-        }else if(route.snapshot.paramMap.has('id1')){
+      }else if(currentUrl.includes('crossdatabase/')){
+        if (currentUrl.includes('crossdatabase/customsql')) {
+          this.isCustomSql = true;
+          this.iscrossDbSelect = true;
+          this.viewNewDbs = currentUrl.includes('newconnection');
+          this.databaseconnectionsList = !this.viewNewDbs;
+          this.isGoogleSheetsPage = false;
+        } else if (currentUrl.includes('crossdatabase')) {
+          this.isCustomSql = false;
+          this.iscrossDbSelect = true;
+          this.viewNewDbs = currentUrl.includes('newconnection');
+          this.databaseconnectionsList = !this.viewNewDbs;
+          this.isGoogleSheetsPage = false;
+        }
+        
+        if (route.snapshot.paramMap.has('id1')) {
           this.primaryHierachyId = +atob(route.snapshot.params['id1']);
         }
-        this.iscrossDbSelect = true;
-        this.databaseconnectionsList = true;
-        this.viewNewDbs = false;
-        this.isGoogleSheetsPage = false;
-      }else if(currentUrl.includes('crossdatabase/newconnection')){
-        if(route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')){
+        if (route.snapshot.paramMap.has('id2')) {
           this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-          this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-        }else if(route.snapshot.paramMap.has('id1')){
-          this.primaryHierachyId = +atob(route.snapshot.params['id1']);
         }
-        this.iscrossDbSelect = true;
-        this.viewNewDbs = true;
-        this.databaseconnectionsList = false;
-        this.isGoogleSheetsPage = false;
+        
+      //   if (route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')) {
+      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
+      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+      //   }else if(route.snapshot.paramMap.has('id1')){
+      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+      //   }
+      //   this.iscrossDbSelect = true;
+      //   this.databaseconnectionsList = true;
+      //   this.viewNewDbs = false;
+      //   this.isGoogleSheetsPage = false;
+      // }else if(currentUrl.includes('crossdatabase/newconnection')){
+      //   if(route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')){
+      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
+      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+      //   }else if(route.snapshot.paramMap.has('id1')){
+      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+      //   }
+      //   this.iscrossDbSelect = true;
+      //   this.viewNewDbs = true;
+      //   this.databaseconnectionsList = false;
+      //   this.isGoogleSheetsPage = false;
+      // }
+      // else if(currentUrl.includes('crossdatabase/customsql/viewconnection')){
+      //   if (route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')) {
+      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
+      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+      //   }else if(route.snapshot.paramMap.has('id1')){
+      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+      //   }
+      //   this.iscrossDbSelect = true;
+      //   this.databaseconnectionsList = true;
+      //   this.viewNewDbs = false;
+      //   this.isGoogleSheetsPage = false;
+      // }else if(currentUrl.includes('crossdatabase/customsql/newconnection')){
+      //   if(route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')){
+      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
+      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+      //   }else if(route.snapshot.paramMap.has('id1')){
+      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
+      //   }
+      //   this.iscrossDbSelect = true;
+      //   this.viewNewDbs = true;
+      //   this.databaseconnectionsList = false;
+      //   this.isGoogleSheetsPage = false;
       }
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
   routeNewDatabase(){
-    if(this.iscrossDbSelect){
+    if (this.iscrossDbSelect) {
       const encodedId = btoa(this.primaryHierachyId.toString());
-      if(this.querysetIdFromDataSource){
-        const encodeQueysetId = btoa(this.querysetIdFromDataSource.toString());
-      this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId+'/'+encodeQueysetId])
-      }
-      else{
-        this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId]) 
-      }
-
-    }else{
-    this.router.navigate(['analytify/datasources/new-connections'])
+      const encodedQuerySetId = this.querysetIdFromDataSource ? '/' + btoa(this.querysetIdFromDataSource.toString()) : '';
+  
+      const basePath = this.isCustomSql 
+        ? 'analytify/datasources/crossdatabase/customsql/newconnection/' 
+        : 'analytify/datasources/crossdatabase/newconnection/';
+  
+      this.router.navigate([basePath + encodedId + encodedQuerySetId]);
+    } else {
+      this.router.navigate(['analytify/datasources/new-connections']);
     }
+  
   }
   routeViewDatabase(){
     if(this.iscrossDbSelect){
+      // const encodedId = btoa(this.primaryHierachyId.toString());
+      // this.router.navigate(['analytify/datasources/crossdatabase/viewconnection/'+encodedId])
       const encodedId = btoa(this.primaryHierachyId.toString());
-      this.router.navigate(['analytify/datasources/crossdatabase/viewconnection/'+encodedId])
+      const encodedQuerySetId = this.querysetIdFromDataSource ? '/' + btoa(this.querysetIdFromDataSource.toString()) : '';
+  
+      const basePath = this.isCustomSql 
+        ? 'analytify/datasources/crossdatabase/customsql/viewconnection/' 
+        : 'analytify/datasources/crossdatabase/viewconnection/';
+  
+      this.router.navigate([basePath + encodedId + encodedQuerySetId]);
     }else{
       this.router.navigate(['analytify/datasources/view-connections'])
     }
@@ -543,7 +596,7 @@ export class WorkbenchComponent implements OnInit{
             console.log(data);
             if(data.hierarchy_id){
               const GsheetsHierarchyId = btoa(data.hierarchy_id.toString());
-              this.router.navigate(['/analytify/database-connection/tables/quickbooks/'+GsheetsHierarchyId]);
+              this.router.navigate(['/analytify/database-connection/tables/googlesheets/'+GsheetsHierarchyId]);
             }
           },
           error: (error: any) => {
@@ -1740,6 +1793,10 @@ connectGoogleSheets(){
   shopifyNameError:boolean = false;
 
   serverConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
     if(this.postGreServerName){
       this.serverError = false;
     }else{
@@ -1748,6 +1805,10 @@ connectGoogleSheets(){
     this.errorCheck();
   }
   portConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
     if(this.postGrePortName){
       this.portError = false;
     }else{
@@ -1757,6 +1818,10 @@ connectGoogleSheets(){
     this.errorCheck();
   }
   databaseConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
       if (this.postGreDatabaseName) {
         this.databaseError = false;
       } else {
@@ -1766,6 +1831,10 @@ connectGoogleSheets(){
     this.errorCheck();
   }
   userNameConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
     if(this.postGreUserName){
       this.userNameError = false;
     }else{
@@ -1795,6 +1864,10 @@ connectGoogleSheets(){
     this.errorCheck();
   }
   passwordConditionError(){
+    if(this.schemaList && this.schemaList.length > 0){
+      this.selectedSchema = 'public';
+      this.schemaList = [];
+    }
     if(this.PostGrePassword){
       this.passwordError = false;
     }else{
@@ -1906,12 +1979,23 @@ connectGoogleSheets(){
       next:(data)=>{
         console.log(data);
         const encodedId = btoa(data[0].cross_db_id.toString());
-        if(this.querysetIdFromDataSource){
-        const encodeQrysetId = btoa(this.querysetIdFromDataSource.toString())
-        this.router.navigate(['/analytify/database-connection/tables/'+encodedId+'/'+encodeQrysetId]);
+        if(this.isCustomSql){
+          if(this.querysetIdFromDataSource){
+            const encodeQrysetId = btoa(this.querysetIdFromDataSource.toString())
+            this.router.navigate(['/analytify/database-connection/savedQuery/'+encodedId+'/'+encodeQrysetId]);
+            }
+            else{
+              this.router.navigate(['/analytify/database-connection/savedQuery/'+encodedId]);
+            }
         }
-        else{
-          this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+        else if(!this.isCustomSql){
+          if(this.querysetIdFromDataSource){
+            const encodeQrysetId = btoa(this.querysetIdFromDataSource.toString())
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId+'/'+encodeQrysetId]);
+            }
+            else{
+              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            }
         }
        },
       error:(error)=>{
@@ -2011,10 +2095,18 @@ connectGoogleSheets(){
         if (this.iscrossDbSelect){
           const encodedPrimaryHId = btoa(this.primaryHierachyId.toString());
           const encodedQuerySetId = this.querysetIdFromDataSource ? btoa(this.querysetIdFromDataSource.toString()) : '';
-          if(encodedQuerySetId){
-            this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId +'/' + encodedQuerySetId]);
+          if(this.isCustomSql){
+            if(encodedQuerySetId){
+              this.router.navigate(['/analytify/crossDatabase/customSql/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId +'/' + encodedQuerySetId]);
+            } else{
+              this.router.navigate(['/analytify/crossDatabase/customSql/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId]);
+            }
           } else{
-            this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId]);
+            if(encodedQuerySetId){
+              this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId +'/' + encodedQuerySetId]);
+            } else{
+              this.router.navigate(['/analytify/crossDatabase/dataTransformation/' + encodedServerId + '/' + encodedPrimaryHId]);
+            }
           }
         } else{
           this.router.navigate(['/analytify/databaseConnection/dataTransformation/' + encodedServerId]);
