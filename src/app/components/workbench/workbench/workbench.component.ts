@@ -28,6 +28,11 @@ import _ from 'lodash';
 import { data } from 'jquery';
 import { uuidv4 } from '@firebase/util';
 import { index } from 'd3';
+
+interface TableRow {
+  [key: string]: any;
+}
+
 @Component({
   selector: 'app-workbench',
   standalone: true,
@@ -40,6 +45,276 @@ export class WorkbenchComponent implements OnInit{
   @ViewChild('fileInput1') fileInput1:any;
   @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   
+  customizeOptions = {GridColor
+    : 
+    "#089ffc",
+    KPIDecimalPlaces
+    : 
+    2,
+    KPIDisplayUnits
+    : 
+    "none",
+    KPIPrefix
+    : 
+    "",
+    KPISuffix
+    : 
+    "",
+    backgroundColor
+    : 
+    "#fcfcfc",
+    backgroundColorSwitch
+    : 
+    false,
+    bandingColorSwitch
+    : 
+    false,
+    bandingSwitch
+    : 
+    false,
+    barColor
+    : 
+    "#4382f7",
+    barColorSwitch
+    : 
+    false,
+    bottomLegend
+    : 
+    "0%",
+    chartColorSwitch
+    : 
+    false,
+    color
+    : 
+    "#2392c1",
+    dataLabels
+    : 
+    true,
+    dataLabelsColor
+    : 
+    "#2392c1",
+    dataLabelsFontFamily
+    : 
+    "sans-serif",
+    dataLabelsFontPosition
+    : 
+    "top",
+    dataLabelsFontSize
+    : 
+    "12px",
+    decimalPlaces
+    : 
+    2,
+    dimensionAlignment
+    : 
+    "center",
+    dimensionColor
+    : 
+    "#2392c1",
+    displayUnits
+    : 
+    "none",
+    donutDecimalPlaces
+    : 
+    2,
+    donutSize
+    : 
+    50,
+    funnelColorSwitch
+    : 
+    false,
+    gridLineColorSwitch
+    : 
+    false,
+    headerFontAlignment
+    : 
+    "left",
+    headerFontColor
+    : 
+    "#000000",
+    headerFontDecoration
+    : 
+    "none",
+    headerFontFamily
+    : 
+    "'Arial', sans-serif",
+    headerFontSize
+    : 
+    "16px",
+    headerFontStyle
+    : 
+    "normal",
+    headerFontWeight
+    : 
+    700,
+    isBold
+    : 
+    false,
+    isDistributed
+    : 
+    false,
+    isLocationField
+    : 
+    false,
+    isTableDataBold
+    : 
+    false,
+    isTableHeaderBold
+    : 
+    false,
+    isXlabelBold
+    : 
+    false,
+    isYlabelBold
+    : 
+    false,
+    isZoom
+    : 
+    false,
+    kpiColor
+    : 
+    "#000000",
+    kpiColorSwitch
+    : 
+    false,
+    kpiFontSize
+    : 
+    "3",
+    label
+    : 
+    true,
+    labelAlignment
+    : 
+    "left",
+    leftLegend
+    : 
+    "center",
+    legendOrient
+    : 
+    "horizontal",
+    legendSwitch
+    : 
+    true,
+    legendsAllignment
+    : 
+    "bottom",
+    lineColor
+    : 
+    "#38ff98",
+    lineColorSwitch
+    : 
+    false,
+    locationDrillDownSwitch
+    : 
+    false,
+    maxValueGuage
+    : 
+    100,
+    measureAlignment
+    : 
+    "center",
+    measureColor
+    : 
+    "#2392c1",
+    minValueGuage
+    : 
+    0,
+    prefix
+    : 
+    "",
+    rightLegend
+    : 
+    null,
+    selectedColorScheme
+    : 
+    ["#1d2e92", "#088ed2", "#007cb9", "#36c2ce", "#52c9f7"],
+    sortColumn
+    : 
+    "select",
+    sortType
+    : 
+    0,
+    suffix
+    : 
+    "",
+    tableDataFontAlignment
+    : 
+    "left",
+    tableDataFontColor
+    : 
+    "#000000",
+    tableDataFontDecoration
+    : 
+    "none",
+    tableDataFontFamily
+    : 
+    "sans-serif",
+    tableDataFontSize
+    : 
+    "12px",
+    tableDataFontStyle
+    : 
+    "normal",
+    tableDataFontWeight
+    : 
+    400,
+    topLegend
+    : 
+    null,
+    xGridColor
+    : 
+    "#2392c1",
+    xGridLineColorSwitch
+    : 
+    false,
+    xGridSwitch
+    : 
+    false,
+    xLabelColor
+    : 
+    "#2392c1",
+    xLabelColorSwitch
+    : 
+    false,
+    xLabelFontFamily
+    : 
+    "sans-serif",
+    xLabelFontSize
+    : 
+    12,
+    xLabelSwitch
+    : 
+    true,
+    xlabelFontWeight
+    : 
+    400,
+    yGridColor
+    : 
+    "#2392c1",
+    yGridLineColorSwitch
+    : 
+    false,
+    yGridSwitch
+    : 
+    false,
+    yLabelColor
+    : 
+    "#2392c1",
+    yLabelColorSwitch
+    : 
+    false,
+    yLabelFontFamily
+    : 
+    "sans-serif",
+    yLabelFontSize
+    : 
+    12,
+    yLabelSwitch
+    : 
+    true,
+    ylabelFontWeight
+    : 
+    400}
   tableList = [] as any;
   dragedTableName: any;
   databaseconnectionsList!:boolean;
@@ -103,7 +378,6 @@ export class WorkbenchComponent implements OnInit{
   yHALOPSAArray = [0,0,0,0,0,0,4,4,12,12,20];
   rowsHALOPSAArray = [4,4,4,4,4,4,8,8,8,8,8];
   colsHALOPSAArray = [5,5,5,5,5,5,10,10,10,10,10];
-  chartTypeArray = ["KPI","KPI","KPI","KPI","pie","multiline","multiline","multiline","multiline"]
 
   echartInstance!: InsightEchartComponent;
   dashboardQuerySetIds: number[]=[];
@@ -1757,7 +2031,41 @@ connectGoogleSheets(){
     this.router.navigate(['/analytify/transformationList/dataTransformation/' + encodedId]);
   }
 
-  updateDashboardJSONData(chartData: any, data: any, index : number,kpiData : any,formType : string){
+  updateDashboardJSONData(chartData: any, data: any, index : number,kpiData : any,formType : string, tableDataStore : any[],displayedColumns : string[]){
+    let tableData;
+    let totalRecordCount;
+    if (data.chart_id == 1) {
+      let columns = data.col_data.map((item: any) => item.column);
+      let rows = data.row_data.map((item: any) => item.column);
+      const obj = {
+        hierarchy_id: data.hierarchy_id,
+        // sheetqueryset_id: this.sheetfilter_querysets_id,
+        queryset_id: data.queryset_id,
+        page_no: 1,
+        page_count: 10,
+        rows: rows,
+        columns: columns,
+        custom_query: data.custom_query
+      };
+      tableData = {
+        headers: displayedColumns,
+        rows: tableDataStore,
+        "banding": false,
+        "tableItemsPerPage": 10,
+        "tableTotalItems": totalRecordCount,
+        "tablePage": 1
+      };
+      this.workbechService.tablePaginationSearch(obj).subscribe(
+        {
+          next: (data: any) => {
+             totalRecordCount = data.total_items;
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        }
+      )
+    }
       let obj = {
         id : uuidv4(),
         x : formType == 'connectWise' ? this.xConnectWiseArray[index] : this.xHALOPSAArray[index] ,
@@ -1774,7 +2082,7 @@ connectGoogleSheets(){
         },
         sheetType: "chart",
         sheetId : data.sheet_id,
-        chartType : this.chartTypeArray[index],
+        chartType : data.chart_type,
         databaseId : data.hierarchy_id,
         qrySetId : data.queryset_id,
         chartId : data.chart_id,
@@ -1782,8 +2090,8 @@ connectGoogleSheets(){
         kpiData: kpiData,
         isEChart: true,
         echartOptions: chartData,
-
-
+        customizeOptions : this.customizeOptions,
+        tableData : tableData
      }
      return obj;
   }
@@ -1792,6 +2100,24 @@ connectGoogleSheets(){
     const componentRef =this.container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleDashbaord(this.databaseId).subscribe({next: (responce) => {
+      const obj ={
+        query_set_id:responce.datasource_query.queryset_id,
+        hierarchy_id:responce.datasource_query.hierarchy_id,
+        joining_tables: responce.datasource_query.joining_tables,
+        join_type:responce.datasource_query.join_type,
+        joining_conditions:responce.datasource_query.joining_conditions,
+        dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
+      } as any
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
+      
+        this.buildDashboardResponseData(responce,"connectWise");
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
       this.buildDashboardResponseData(responce,"connectWise");
         },
         error: (error) => {
@@ -1806,10 +2132,11 @@ connectGoogleSheets(){
     let dashboardData: any[] = [];
     if(responce){
       const updateRequests = responce.sheets.map((data:any,index:number) => {
-        if(data.chart_id == 1){
-          data.chart_id = 8 
-        }
-
+        // if(data.chart_id == 1){
+        //   data.chart_id = 8 
+        // }
+        let tableDataStore = [];
+        let transformData : any ;
          let tablePreviewColumn = _.cloneDeep(data.sheet_query_data.columns_data)
         let  tablePreviewRow = _.cloneDeep(data.sheet_query_data.rows_data)
         let dualAxisColumnData:any =[];
@@ -1846,13 +2173,25 @@ connectGoogleSheets(){
             if (tablePreviewColumn[0]?.data?.length) {
               rowCount = tablePreviewColumn[0]?.data?.length;
             }
+            transformData = this.transformData(tablePreviewColumn,tablePreviewRow);
             
-            //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
-            // Extract column names
-            // this.displayedColumns = this.tablePreviewColumn.map((col: any) => col.column).concat(this.tablePreviewRow.map((row: any) => row.col));
-            // Create table data
-
-            //store table data close
+            let rowCountStore: any;
+            if (transformData?.columns_data.length) {
+              rowCountStore = transformData?.columns_data[0]?.result_data?.length;
+            } else {
+              rowCountStore = transformData?.rows_data[0]?.result_data?.length;
+            }
+            rowCountStore = rowCountStore > 10 ? 10:rowCountStore;
+            for (let i = 0; i < rowCountStore; i++) {
+              const row: TableRow = {};
+              transformData?.columns_data.forEach((col: any) => {
+                row[col.column] = col.result_data[i];
+              });
+              transformData?.rows_data.forEach((rowData: any) => {
+                row[rowData.col] = rowData.result_data[i];
+              });
+              tableDataStore.push(row);
+            }
   
             tablePreviewColumn.forEach((col: any) => {
               chartsColumnData = col.data;
@@ -1861,8 +2200,9 @@ connectGoogleSheets(){
               chartsRowData = rowData.data;
             });
           }
+          let displayedColumns = tablePreviewColumn.map((col: any) => col.column).concat(tablePreviewRow.map((row: any) => row.column));
           this.dashboardQuerySetIds.push(data.queryset_id);
-          return this.sheetUpdate(chartsColumnData, chartsRowData, dualAxisRowData, dualAxisColumnData,data.sheet_query_data.columns_data,data.sheet_query_data.rows_data,data,dashboardData,index,formType);
+          return this.sheetUpdate(chartsColumnData, chartsRowData, dualAxisRowData, dualAxisColumnData,data.sheet_query_data.columns_data,data.sheet_query_data.rows_data,data,dashboardData,index,formType,transformData,tableDataStore,displayedColumns);
         
       });
       
@@ -1928,7 +2268,7 @@ connectGoogleSheets(){
     return transformed;
   }
 
-  sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number, formType : string) {
+  sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number, formType : string,tranformedData:any,tableDataStore: any[],displayedColumns : string[]) {
     let chartData;
     if(data.chart_id == 8){
       chartData = this.echartInstance.multiLineChart(dualAxisColumnData, dualAxisRowData);
@@ -1943,37 +2283,37 @@ connectGoogleSheets(){
     } else if(data.chart_id == 7) {
       chartData = this.echartInstance.sidebySide(dualAxisColumnData, dualAxisRowData);
     }
-    let tranformedData = this.transformData(tableColumnData,tableRowData);
     const sheetRows = data.row_data.map((item:any) => {
       return {
-        column: item.column,
+        column: item.orginal_column,
         data_type: item.data_type,
-        type: item.type
+        type: item.type ?  item.type : ""
       };
     });
     const sheetColumns = data.col_data.map((item:any) => {
       return {
-        column: item.column,
+        column: item.orginal_column,
         data_type: item.data_type,
-        type: item.type
+        type: item.type ?  item.type : ""
       };
     });
     const sheet_rows_data = data.row_data.map((item:any) => {
       return [
-        item.column,
+        item.orginal_column,
         "aggregate",
-        item.type,
+        item.type ? item.type : "",
         ""
       ];
     });
     const sheet_column_data = data.col_data.map((item:any) => {
       return [
-        item.column,
-        "aggregate",
-        item.type,
+        item.orginal_column,
+        item.data_type,
+        "",
         ""
       ];
     });
+
     const obj = {
       "chart_id": data.chart_id,
       "queryset_id": data.queryset_id,
@@ -1984,11 +2324,13 @@ connectGoogleSheets(){
       "sheetfilter_querysets_id": data.sheet_filter_quereyset_ids,
       "filter_data": data.filters_data,
       "datasource_querysetid": data.datasource_queryset_id,
-      "col": data.col_data,
-      "row": data.row_data,
+      "col": data.sheet_col,
+      "row": data.sheet_row,
+      "row_data":data.row_data.map((item: any) => item.column),
+      "col_data":data.col_data.map((item: any) => item.column),
       "custom_query": data.custom_query,
       "data": {
- 
+        "customizeOptions": this.customizeOptions,
         "columns": sheetColumns,
         "columns_data": sheet_column_data,
         "col":tranformedData.columns_data,
@@ -2067,7 +2409,7 @@ connectGoogleSheets(){
 
       }
     }
-    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,rows:tranformedData.rows_data},formType);
+    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,rows:tranformedData.rows_data},formType,tableDataStore,displayedColumns);
     dashboardData.push(dashbaordObj);
    return this.workbechService.sheetUpdate(obj, data.sheet_id);
 

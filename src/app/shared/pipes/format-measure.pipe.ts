@@ -34,8 +34,19 @@ export class FormatMeasurePipe implements PipeTransform {
     } else {
       formattedNumber = (value).toFixed(decimalPlaces)
     }
-
-    return  prefix + formattedNumber + suffix;
+    if(prefix || suffix){
+      if(prefix && suffix){
+        return  prefix + formattedNumber + suffix;
+      } else if(prefix){
+        return  prefix + formattedNumber
+      } else {
+      return formattedNumber + suffix;
+      }
+    }
+    else {
+      return formattedNumber;
+    }
+    
   }
   }
 }
