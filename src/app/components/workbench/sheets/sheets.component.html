@@ -57,6 +57,7 @@
                                                                         <option value="date">Date</option>
                                                                         <option value="logical">Logical</option>
                                                                         <option value="aggregation">Aggregate</option>
+                                                                        <option value="Custom">Custom</option>
                                                                     </select>
                                                                 </div>
                                                                 <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
@@ -107,10 +108,21 @@
                                                             <div class="d-flex">
                                                                 <div class="col-6 p-0">
                                                                     <textarea #sqlEditor [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
-                                                                       
+                                                                    (keydown)="onTextAreaKeyUp($event)"
+                                                                    (click)="updateCaretPosition()"
+                                                                    (blur)="hideSuggestions()"
                                                                         class="query-text mb-1 px-3" [(ngModel)]="calculatedFieldLogic" [style.width]="calculationfieldid.hidden ? '195%' : '100%'"
                                                                         placeholder="Drop Column or Enter Logic"></textarea>
-                                                                    
+                                                                        <ul *ngIf="filteredSuggestions.length && showSuggestions"
+                                                                        class="suggestions-dropdown"
+                                                                        [style.top.px]="caretTop"
+                                                                        [style.left.px]="caretLeft">
+                                                                        <li *ngFor="let suggestion of filteredSuggestions; let i = index"
+                                                                        (mousedown)="selectSuggestion(suggestion)"
+                                                                        [class.selected]="i === selectedSuggestionIndex">
+                                                                      {{ suggestion.display }}
+                                                                    </li>
+                                                                    </ul>
                                                                 </div>
                                                                 <div #calculationfieldid [hidden]="true" class="col-6 p-0 d-flex">
                                                                     <div class="calculated-hide-card bg-light mb-1 border rounded-2 d-flex">

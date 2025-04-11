@@ -57,12 +57,6 @@ import 'pivottable';
 import 'jquery-ui/ui/widgets/sortable';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
-import CodeMirror from 'codemirror';
-import 'codemirror/mode/sql/sql';
-import 'codemirror/addon/hint/show-hint';
-import 'codemirror/addon/hint/sql-hint'; // optional, but good
-import 'codemirror/addon/hint/anyword-hint'; // optional
-
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -84,6 +78,11 @@ declare global {
     sortable(): JQuery;
   }
 }
+interface SqlSuggestion {
+  display: string;      // tablename.columnname
+  insert: string;       // "tablename"."columnname"
+}
+
 
 declare var $:any;
 
@@ -379,7 +378,7 @@ export class SheetsComponent{
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
-  @ViewChild('sqlEditor', { static: false }) sqlEditor!: ElementRef;
+  @ViewChild('sqlEditor') sqlEditor!: ElementRef<HTMLTextAreaElement>;
 
   transformedData: any[] = [];
   columnKeys: string[] = [];
@@ -471,32 +470,6 @@ export class SheetsComponent{
       // this.sheetRetrive();
       }
    }
-  //  if(this.router.url.includes('/analytify/home/fileId/sheets/')){
-  //   this.fromFileId = true;
-  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
-  //     this.fileId = +atob(route.snapshot.params['id1']);
-  //     this.qrySetId = +atob(route.snapshot.params['id2'])
-  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
-  //     console.log(this.retriveDataSheet_id);
-  //     //this.tabs[0] = this.sheetName;
-  //     // this.sheetRetrive();
-  //     }
-  //  }
-
-
-  //  if(this.router.url.includes('/analytify/sheetsdashboard/sheets/fileId/')){
-  //   this.sheetsDashboard = true;
-  //   this.fromFileId = true;
-  //   console.log("landing page")
-  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
-  //     this.fileId = +atob(route.snapshot.params['id1']);
-  //     this.qrySetId = +atob(route.snapshot.params['id2']);
-  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
-  //     this.dashboardId = +atob(route.snapshot.params['id4']);
-  //     console.log(this.retriveDataSheet_id)
-  //     // this.sheetRetrive();
-  //     }
-  //  } 
    if(this.router.url.includes('/analytify/sheetsdashboard/sheets/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
@@ -514,59 +487,9 @@ export class SheetsComponent{
    this.canEditDb = this.templateService.addDatasource();
    this.canDrop = !this.canEditDb
   }
-  codeMirrorInstance: any;
-  customSQLHint(cm: any) {
-    console.log('Autocomplete triggered');  // <--- check this fires
 
-    const cursor = cm.getCursor();
-    const token = cm.getTokenAt(cursor);
-    const start = token.start;
-    const end = cursor.ch;
-    const currentWord = token.string;
-  
-    const list = this.getSQLSuggestions().filter((item) =>
-      item.toLowerCase().includes(currentWord.toLowerCase())
-    );
-  
-    return {
-      list,
-      from: CodeMirror.Pos(cursor.line, start),
-      to: CodeMirror.Pos(cursor.line, end)
-    };
-  }
-  getSQLSuggestions(): string[] {
-    return [
-      'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'JOIN',
-      'finance.Amount', 'finance.Date', 'ordersdata.cost_price', 'ordersdata.sno',
-      'COALESCE', 'IFNULL', 'COUNT', 'SUM', 'AVG'
-    ];
-  }
-  
-  callautosuggest(){
-        console.log('Creating CodeMirror instance');
-        console.log(this.sqlEditor.nativeElement);
-    this.codeMirrorInstance = CodeMirror.fromTextArea(this.sqlEditor.nativeElement, {
-      mode: 'text/x-sql',
-      theme: 'material',
-      lineNumbers: true,
-      extraKeys: {
-        'Ctrl-Space': (cm: any) => {
-          console.log('Ctrl+Space triggered');
-          cm.showHint({ hint: this.customSQLHint.bind(this) });
-        }
-      },
-      hintOptions: {
-        completeSingle: false
-      }
-    });
-  }
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      const textarea = document.querySelector('textarea');
-      if (textarea) {
-        textarea.style.display = 'block'; // Force it again
-      }
-    });
+
   }
   ngOnInit(): void {
     this.loaderService.hide();
@@ -720,6 +643,7 @@ try {
             this.isCustomSql = responce[0].is_custom_sql;
             this.tableDimentions = responce.dimensions;
             this.tableMeasures = responce.measures;
+            this.buildSuggestionsForCalculations(responce);
           },
           error: (error) => {
             console.log(error);
@@ -1609,7 +1533,7 @@ try {
       }).then((result) => {
         if(result.isConfirmed){
           this.hasUnSavedChanges = false;
-          this.columnsData();
+          // this.columnsData();
           if (this.active !== 3){
             this.active = 1;
           }
@@ -1642,7 +1566,7 @@ try {
         }
       })
     }else{
-    this.columnsData();
+    // this.columnsData();
     if (this.active !== 3){
       this.active = 1;
     }
@@ -1914,7 +1838,7 @@ try {
             this.displayedColumns = [];
             this.retriveDataSheet_id = '';
             this.getChartData();
-            this.columnsData();
+            // this.columnsData();
             if (selectedSheetId) {
               this.retriveDataSheet_id = selectedSheetId;
               this.sheetRetrive(false);
@@ -1955,7 +1879,7 @@ try {
         this.displayedColumns = [];
         this.retriveDataSheet_id = '';
         this.getChartData();
-        this.columnsData();
+        // this.columnsData();
         if (selectedSheetId) {
           this.retriveDataSheet_id = selectedSheetId;
           this.sheetRetrive(false);
@@ -4979,7 +4903,7 @@ customizechangeChartPlugin() {
     console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
     if (item && item.column && item.table_name) {
-      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic' || this.calculatedFieldFunction == 'Custom')) {
         this.dropCalculatedField(item.table_name, item.column); 
       } else {
         if (this.calculatedFieldLogic?.length) {
@@ -5001,7 +4925,7 @@ customizechangeChartPlugin() {
   }
 
   applyCalculatedFields(event: any, ngbdropdownevent: any) {
-    if (!(this.calculatedFieldFunction == 'arithematic')) {
+    if (!(this.calculatedFieldFunction == 'arithematic' || this.calculatedFieldFunction == 'Custom')) {
       this.validateCalculatedField();
     } else {
       this.validateExpression();
@@ -5545,10 +5469,6 @@ customizechangeChartPlugin() {
      this.calculatedFieldLogic = '';
      this.isEditCalculatedField = false;
       }
-      // this.callautosuggest();
-      setTimeout(() => {
-        this.callautosuggest(); // Now the textarea is likely in the DOM and visible
-      }, 1000);
     }
 
     isMapChartDrillDown : boolean = false;
@@ -6162,11 +6082,179 @@ toggleQuickCalculation() {
 }
 yearLength = 2; // Example value, dynamically set based on your data
 yearColumns = [];
-// @HostListener('document:click', ['$event'])
-// closeQuickCalcDropdown(event: Event) {
-//     const targetElement = event.target as HTMLElement;
-//     if (!targetElement.closest('.position-relative')) {
-//         this.quickCalcOpen = false;
-//     }
-// }
+// calculatedFieldLogic = '';
+showSuggestions = false;
+filteredSuggestions: SqlSuggestion[] = [];
+caretTop = 0;
+caretLeft = 0;
+
+// suggestions: string[] = [
+//   'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'JOIN',
+//   'COALESCE', 'IFNULL', 'COUNT', 'SUM', 'AVG'
+// ];
+suggestions: SqlSuggestion[] = [];
+
+buildSuggestionsForCalculations(data:any){
+  const results: SqlSuggestion[] = [];
+
+  data.forEach((table: { table_name: any; dimensions: any; measures: any; }) => {
+    const tableName = table.table_name;
+    (table.dimensions || []).forEach((dim: any) => {
+      if (dim.column) {
+        results.push({
+          display: `${tableName}.${dim.column}`,
+          insert: `"${tableName}"."${dim.column}"`
+        });
+      }
+    });
+
+    (table.measures || []).forEach((meas: any) => {
+      if (meas.column) {
+        results.push({
+          display: `${tableName}.${meas.column}`,
+          insert: `"${tableName}"."${meas.column}"`
+        });
+      }
+    });
+  });
+  this.suggestions.push(...results);
+  console.log('calculationsuggestions',this.suggestions)
+}
+selectedSuggestionIndex: number = -1;
+
+onTextAreaKeyUp(event: KeyboardEvent) {
+  const input = this.sqlEditor.nativeElement;
+  const caretPosition = input.selectionStart || 0;
+  const textBefore = input.value.slice(0, caretPosition);
+  const wordMatch = textBefore.match(/(\w+)$/);
+  const currentWord = wordMatch ? wordMatch[1] : '';
+
+  if (event.key === 'ArrowDown' && this.showSuggestions) {
+    this.selectedSuggestionIndex = Math.min(this.selectedSuggestionIndex + 1, this.filteredSuggestions.length - 1);
+    event.preventDefault();
+    return;
+  }
+
+  if (event.key === 'ArrowUp' && this.showSuggestions) {
+    this.selectedSuggestionIndex = Math.max(this.selectedSuggestionIndex - 1, 0);
+    event.preventDefault();
+    return;
+  }
+
+  if (event.key === 'Enter' && this.showSuggestions && this.selectedSuggestionIndex >= 0) {
+    event.preventDefault();
+    const selected = this.filteredSuggestions[this.selectedSuggestionIndex];
+    if (selected) {
+      this.selectSuggestion(selected);
+    }
+    return;
+  }
+
+  if (event.ctrlKey && event.key === ' ') {
+    this.filteredSuggestions = [...this.suggestions];
+    this.showSuggestions = true;
+    this.selectedSuggestionIndex = 0;
+    this.setSuggestionDropdownPosition();
+    return;
+  }
+
+  if (currentWord.length > 0) {
+    this.filteredSuggestions = this.suggestions.filter(s =>
+      s.display.toLowerCase().includes(currentWord.toLowerCase())
+    );
+    this.showSuggestions = true;
+    this.selectedSuggestionIndex = 0;
+    this.setSuggestionDropdownPosition();
+  } else {
+    this.filteredSuggestions = [];
+    this.showSuggestions = false;
+    this.selectedSuggestionIndex = -1;
+  }
+}
+
+
+selectSuggestion(suggestion: SqlSuggestion) {
+  const input = this.sqlEditor.nativeElement;
+  const caretPosition = input.selectionStart || 0;
+  const textBefore = input.value.slice(0, caretPosition);
+  const textAfter = input.value.slice(caretPosition);
+  const match = textBefore.match(/(\w+)$/);
+  const wordStart = match ? caretPosition - match[1].length : caretPosition;
+
+  this.calculatedFieldLogic =
+    textBefore.slice(0, wordStart) + suggestion.insert + textAfter;
+
+  setTimeout(() => {
+    input.focus();
+    const newCaretPos = wordStart + suggestion.insert.length;
+    input.setSelectionRange(newCaretPos, newCaretPos);
+  });
+
+  this.showSuggestions = false;
+}
+
+
+setSuggestionDropdownPosition() {
+  const textarea = this.sqlEditor.nativeElement;
+  const coords = this.getCaretCoordinates(textarea, textarea.selectionEnd);
+  this.caretTop = coords.top + 20; // adjust based on line height
+  this.caretLeft = coords.left;
+
+
+  const containerRect = textarea.getBoundingClientRect();
+  const dropdownWidth = 250; // approximate or fixed width of suggestion box
+
+  // Calculate max allowed left to keep inside container
+  const maxLeft = containerRect.width - dropdownWidth;
+
+  // Adjust left position to prevent overflow
+  this.caretLeft = Math.min(coords.left, maxLeft);
+  this.caretTop = coords.top + 20; // adjust based on line height
+  
+  const viewportHeight = window.innerHeight;
+const dropdownHeight = 200; // estimated
+
+if (coords.top + dropdownHeight > viewportHeight) {
+  this.caretTop = coords.top - dropdownHeight; // open above
+} else {
+  this.caretTop = coords.top + 20; // open below
+}
+}
+
+updateCaretPosition() {
+  this.setSuggestionDropdownPosition();
+}
+
+hideSuggestions() {
+  setTimeout(() => this.showSuggestions = false, 200); // small delay for click
+}
+
+// Use a small utility to get caret coordinates
+getCaretCoordinates(textarea: HTMLTextAreaElement, position: number) {
+  const div = document.createElement('div');
+  const style = getComputedStyle(textarea);
+
+  for (let i = 0; i < style.length; i++) {
+    const prop = style[i];
+    div.style.setProperty(prop, style.getPropertyValue(prop));
+  }
+
+  div.style.position = 'absolute';
+  div.style.visibility = 'hidden';
+  div.style.whiteSpace = 'pre-wrap';
+  div.style.wordWrap = 'break-word';
+  div.style.width = textarea.offsetWidth + 'px';
+
+  const text = textarea.value.substring(0, position);
+  const span = document.createElement('span');
+  span.textContent = '\u200b'; // zero-width space
+  div.textContent = text;
+  div.appendChild(span);
+  document.body.appendChild(div);
+
+  const { offsetLeft: left, offsetTop: top } = span;
+  document.body.removeChild(div);
+
+  return { top, left };
+}
 }
