@@ -166,7 +166,7 @@
                                                 [cdkDropListData]="draggedTables" (cdkDropListDropped)="drop($event)">
                                         
                                                 @for (item of draggedTables; track item; let index = $index) {
-                                                    <div class="d-flex overflow-auto">
+                                                    <div class="d-flex">
                                                       <!-- Table Element -->
                                                       <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " ngbDropdown>
                                                       
@@ -182,7 +182,7 @@
                                                                 class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
                                                                 <i class="fe fe-plus text-white text-sm"></i>
                                                             </a>
-                                                            <a *ngIf="(selectedTransformations[index]?.length > 0)" ngbTooltip="Run" [class.disabled]="runButtonDisabled[index]" 
+                                                            <a *ngIf="(selectedTransformations[index]?.length > 0)" ngbTooltip="Preview" [class.disabled]="runButtonDisabled[index]" 
                                                                 aria-label="Run Table" class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="setTransformations(true, index, false); runTableIndex = index">
                                                                 <span><i class="fa fa-play"></i></span>
                                                             </a>
@@ -209,44 +209,134 @@
                                                                     class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
                                                                     <i class="fe fe-trash"></i>
                                                                 </a>
-                                                                <a *ngIf="transformationIndex === this.selectedTransformations[index]?.length - 1" aria-label="add" [class.disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown) || ( ['replace_values','alter_datatypes'].includes(selectedTransformations[index][transformationIndex].key) && !selectedTransformations[index][transformationIndex].input)"
+                                                                <a *ngIf="transformationIndex === this.selectedTransformations[index]?.length - 1" aria-label="add" [class.disabled]="selectedTransformations?.[index]?.[transformationIndex]?.isError"
                                                                     class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
                                                                     <i class="fe fe-plus text-white text-sm"></i>
                                                                 </a>
                                                             </div>
 
-                                                          <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                          <ul class="dropdown-menu custom-dropdown DropDownWidth" ngbDropdownMenu>
                                                             @for (transformation of transformationTypes; track transformation.key; let typeIndex = $index) {
                                                                 @if(transformation.needColumn){
                                                                 <div class="dropup d-flex text-center" ngbDropdown>
                                                                     <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem> {{ transformation.label }} </li>
                                                                     <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block"
                                                                         ngbDropdownToggle data-bs-toggle="dropdown" (click)="editTransformationPreview(index, transformationIndex, typeIndex)"></i>
-                                                                        <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
+                                                                        <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu style="min-height: 170px;">
                                                                             <div class="p-2">
-                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                <label *ngIf="!['union','pivot'].includes(transformation.key)" class="form-label">Column <span  class="text-red">*</span><i ngbTooltip="Select a column" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
-                                                                            <select class="form-select" [(ngModel)]="transformation.dropdown" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex)">
-                                                                                <option selected disabled value="">Select Column</option>
-                                                                                @for(column of item.columns; track column){
-                                                                                    <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || (['upper', 'lower', 'title'].includes(transformation.key) && stringList.includes(column.dtype)) || !['alter_datatypes', 'upper', 'lower', 'title'].includes(transformation.key)"  [value]="column.col">{{column?.col}}</option>
-                                                                                } 
-                                                                            </select>
-                                                                            </div>
-                                                                            <div class="p-2">
-                                                                                <input [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" [(ngModel)]="transformation.input" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
-                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'alter_datatypes'" class="form-select" [(ngModel)]="transformation.input" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)">
+                                                                                <select *ngIf="!['union','pivot'].includes(transformation.key)" class="form-select" [(ngModel)]="transformation.dropdown" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex,false,false,false,false,false,false)">
+                                                                                    <option selected disabled value="">Select Column</option>
+                                                                                    @for(column of item.columns; track column){
+                                                                                        <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || (transformation.key == 'case_change' && stringList.includes(column.dtype)) || !['alter_datatypes', 'case_change'].includes(transformation.key)"  [value]="column.col">{{column?.col}}</option>
+                                                                                    } 
+                                                                                </select>
+
+                                                                                <label *ngIf="transformation.key == 'case_change'" class="form-label">Case <span  class="text-red">*</span><i ngbTooltip="Select a Case to Change" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'case_change'" 
+                                                                                    class="form-select" [(ngModel)]="transformation.input" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex,false,false,false,false,false,false)">
+                                                                                    <option selected disabled value="">Select Case</option>
+                                                                                    <option value="upper">Upper Case</option>
+                                                                                    <option value="lower">Lower Case</option>
+                                                                                    <option value="title">Title Case</option>
+                                                                                </select>
+
+                                                                                <label *ngIf="transformation.key == 'union'" class="form-label">Table <span  class="text-red">*</span><i ngbTooltip="Select a table" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <ng-select *ngIf="transformation.key == 'union'" [items]="ngSelectUnion" bindLabel="tables" bindValue="tables" placeholder="Select Table" [clearable]="false"
+                                                                                    [(ngModel)]="transformation.dropdown" placeholder="Select a Table" [searchable]="true" dropdownPosition="bottom"
+                                                                                    (change)="setTransformationType(index, transformation.key, $event, true, false, transformationIndex, false, false,false,false,false,false)">
+                                                                                </ng-select>
+
+                                                                                <label *ngIf="transformation.key == 'pivot'" class="form-label">Index <span  class="text-red">*</span><i ngbTooltip="Select Index" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <ng-select *ngIf="transformation.key == 'pivot'" [items]="item.columns" bindLabel="col" bindValue="col" dropdownPosition="bottom"
+                                                                                    [multiple]="true" placeholder="Select Index" [searchable]="true" [clearable]="false"[(ngModel)]="transformation.index"
+                                                                                    (change)="setTransformationType(index, transformation.key, $event, false, false, transformationIndex, false, false,true,false,false,false)">
+                                                                                </ng-select>
+
+                                                                                <label *ngIf="transformation.key == 'pivot'" class="form-label">Values <span  class="text-red">*</span><i ngbTooltip="Select Values (only columns with integer data types are displayed here)." container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <ng-select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].index)"  *ngIf="transformation.key == 'pivot'" 
+                                                                                    [items]="ngSelectPivotValues" bindLabel="col" bindValue="col" dropdownPosition="bottom" placeholder="Select Values" [searchable]="true" [clearable]="false"
+                                                                                    [(ngModel)]="transformation.value" (change)="setTransformationType(index, transformation.key, $event, false, false, transformationIndex, false, false,false,true,false,false)">
+                                                                                </ng-select>
+
+                                                                                <label *ngIf="transformation.key == 'pivot'" class="form-label">Columns <span  class="text-red"></span><i ngbTooltip="Select Columns is Optional" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <ng-select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].index && selectedTransformations[index][transformationIndex].value)" *ngIf="transformation.key == 'pivot'" 
+                                                                                    [items]="item.columns" bindLabel="col" bindValue="col" dropdownPosition="bottom"[multiple]="true" placeholder="Select Columns" [searchable]="true" [clearable]="false"
+                                                                                    [(ngModel)]="transformation.columns" (change)="setTransformationType(index, transformation.key, $event, false, false, transformationIndex, false, false,false,false,true,false)">
+                                                                                </ng-select>
+
+                                                                                <label *ngIf="transformation.key == 'pivot'" class="form-label">Aggregation <span  class="text-red">*</span><i ngbTooltip="Select a Aggregation" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].index && selectedTransformations[index][transformationIndex].value)" *ngIf="transformation.key == 'pivot'" 
+                                                                                    class="form-select" [(ngModel)]="transformation.aggregation" (change)="setTransformationType(index, transformation.key, $event, false, false,transformationIndex,false,false,false,false,false,true)">
+                                                                                    <option value="mean">Mean</option>
+                                                                                    <option value="median">Median</option>
+                                                                                    <option value="mode">Mode</option>
+                                                                                    <option value="sum">Sum</option>
+                                                                                    <option value="max">Max</option>
+                                                                                    <option value="min">Min</option>
+                                                                                    <option value="count">Count</option>
+                                                                                    <option value="count_distinct">Count Distinct</option>
+                                                                                </select>
+                                                                                
+                                                                                <label *ngIf="transformation.key == 'replace_values'" class="form-label">Replace Value<span  class="text-red">*</span><i ngbTooltip="Replace Value" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <input [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" [(ngModel)]="transformation.input" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex,false,false,false,false,false,false)" class="form-control border">
+                                                                                
+                                                                                <label *ngIf="transformation.key == 'alter_datatypes'" class="form-label">Data Type<span  class="text-red">*</span><i ngbTooltip="Select a column" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'alter_datatypes'" class="form-select" [(ngModel)]="transformation.input" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex,false,false,false,false,false,false)">
                                                                                     <option selected disabled value="">Select Data Type</option>
                                                                                     <option value="int">Integer</option>
                                                                                     <option value="float">Float</option>
                                                                                     <option value="string">String</option>
+                                                                                </select>
+
+                                                                                <label *ngIf="transformation.key == 'joining'" class="form-label">Table<span  class="text-red">*</span><i ngbTooltip="Select a Table to Join" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <ng-select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'joining'" 
+                                                                                    [items]="ngSelectJoin" bindLabel="label" groupBy="group" placeholder="Select a Table & column" [searchable]="true" [clearable]="false" dropdownPosition="bottom"
+                                                                                    [(ngModel)]="transformation.input" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex,false,false,false,false,false,false)">
+                                                                                    <ng-template ng-optgroup-tmp let-item="item">
+                                                                                        <strong>{{ item.group }}</strong>
+                                                                                    </ng-template>
+                                                                                    <ng-template ng-option-tmp let-item="item">
+                                                                                        {{ item.label }}
+                                                                                    </ng-template>
+                                                                                </ng-select>
+
+                                                                                <label *ngIf="transformation.key == 'joining'" class="form-label">Join<span  class="text-red">*</span><i ngbTooltip="Select a Jion" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].dropdown && selectedTransformations[index][transformationIndex].input)" *ngIf="transformation.key == 'joining'" class="form-select" [(ngModel)]="transformation.joinType" (change)="setTransformationType(index, transformation.key, $event, false, false,transformationIndex,true,false,false,false,false,false)">
+                                                                                    <option selected disabled value="">Select Join Type</option>
+                                                                                    <option value="inner">Inner</option>
+                                                                                    <option value="left">Left</option>
+                                                                                    <option value="right">Right</option>
+                                                                                    <option value="full_outer">Full Outer</option>
+                                                                                </select>
+
+                                                                                <label *ngIf="transformation.key == 'joining'" class="form-label">Operator<span  class="text-red">*</span><i ngbTooltip="Select a Operator" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                                <select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].dropdown && selectedTransformations[index][transformationIndex].input && selectedTransformations[index][transformationIndex].joinType)" *ngIf="transformation.key == 'joining'" class="form-select" [(ngModel)]="transformation.operator" (change)="setTransformationType(index, transformation.key, $event, false, false,transformationIndex,false,true,false,false,false,false)">
+                                                                                    <option selected disabled value="">Select operator</option>
+                                                                                    <option value="=">=</option>
+                                                                                    <option value=">">></option>
+                                                                                    <option value="<"><</option>
+                                                                                    <option value=">=">>=</option>
+                                                                                    <option value="<="><=</option>
                                                                                 </select>
                                                                             </div>
                                                                         </ul>
                                                                 </div>
                                                                 } @else{
                                                                 <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
-                                                                (click)="setTransformationType(index, transformation.key, null,false, false,transformationIndex)">
+                                                                (click)="setTransformationType(index, transformation.key, null,false, false,transformationIndex,false,false,false,false,false,false)">
                                                                     <a> {{ transformation.label }} </a>
                                                                 </li>
                                                                 }
