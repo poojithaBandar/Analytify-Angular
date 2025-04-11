@@ -1155,6 +1155,30 @@
                         <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'"
                           [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, false)" [isIcon]="false">
                         </app-insights-button>
+                        <!-- <app-insights-button [classesList]="'dropdown-item'" 
+                          [buttonName]="'PDF'" 
+                          [previledgeIdsList]="[20,18]" 
+                          [isBtn]="false"
+                          (btnClickEvent)="downloadSheet(item, 'pdf')" 
+                          [isIcon]="false">
+                        </app-insights-button> -->
+                        <app-insights-button [classesList]="'dropdown-item'" 
+                          [buttonName]="'Download CSV'" 
+                          [previledgeIdsList]="[20,18]" 
+                          [isBtn]="false"
+                          (btnClickEvent)="downloadSheet(item, 'csv')" 
+                          [isIcon]="false">
+                        </app-insights-button>
+                        <!-- <app-insights-button [classesList]="'dropdown-item'" 
+                          [buttonName]="'HTML'" 
+                          [previledgeIdsList]="[20,18]" 
+                          [isBtn]="false"
+                          (btnClickEvent)="downloadSheet(item, 'html')" 
+                          [isIcon]="false">
+                        </app-insights-button> -->
+                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
+                          [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
+                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
                           [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>

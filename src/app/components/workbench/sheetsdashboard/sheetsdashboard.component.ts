@@ -56,6 +56,7 @@ import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 import { cloneDeep } from 'lodash';
 import { FixedSizeVirtualScrollStrategy, ScrollingModule, VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
+import { saveAs } from 'file-saver';
 
 interface TableRow {
   [key: string]: any;
@@ -6904,6 +6905,184 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     validateTabs(): boolean {
       return this.sheetTabs.some(sheet => !sheet.name || sheet.name.trim() === "");
     }
+
+downloadSheet(item: any, format: 'pdf' | 'csv' | 'html'): void {
+  if (!item || !item.sheetId) return;
+
+  this.loaderService.show(); // Show loader
+  const obj = {
+      "queryset_id": item.qrySetId,
+      "server_id": item.databaseId,
+  };
+
+  // Fetch sheet data before exporting
+  this.workbechService.sheetGet(obj,item.sheetId).subscribe({
+      next: (sheetData) => {
+          if (!sheetData) {
+              this.toasterService.error('Failed to retrieve sheet data.', 'Error');
+              this.loaderService.hide();
+              return;
+          }
+
+          // Proceed based on format
+          // if (format === 'pdf') {
+          //     this.exportToPDF(item);
+          if (format === 'csv') {
+              this.exportToCSV(sheetData); // Use API response data
+          } 
+          // else if (format === 'html') {
+          //     this.exportToHTML(item);
+          // }
+
+          this.loaderService.hide(); // Hide loader after operation
+      },
+      error: (error) => {
+          console.error('Sheet retrieval failed:', error);
+          this.toasterService.error('Failed to retrieve sheet data. Try again.', 'Error');
+          this.loaderService.hide();
+      }
+  });
+}
+
+exportToCSV(sheetData: any) {
+  const CHUNK_SIZE = 10000; // Adjust as needed
+
+  const escapeCSV = (value: any): string => {
+    if (value == null) return '';
+    const str = String(value).replace(/"/g, '""');
+    return `"${str}"`;
+  };
+
+  const generateCSVBlob = async (data: any[], headers: string[]): Promise<Blob> => {
+    let csvChunks: string[] = [];
+    csvChunks.push(headers.map(escapeCSV).join(','));
+
+    for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+      await new Promise(resolve => setTimeout(resolve)); // yield to UI
+      const chunk = data.slice(i, i + CHUNK_SIZE);
+      chunk.forEach(row => {
+        const line = headers.map(header => escapeCSV(row[header])).join(',');
+        csvChunks.push(line);
+      });
+    }
+
+    const csvString = csvChunks.join('\n');
+    return new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+  };
+
+  const runExport = async () => {
+    try {
+      if (!sheetData?.sheet_data) {
+        this.toasterService.error('Invalid sheet data. Try again.', 'Error');
+        return;
+      }
+
+      let formattedData = [];
+      const sheetName = sheetData.sheet_name || 'SheetData';
+
+      if (
+        sheetData.sheet_data.pivotTransformedData &&
+        sheetData.sheet_data.pivotTransformedData.length > 0
+      ) {
+        const pivotData = sheetData.sheet_data.pivotTransformedData;
+        const columnNames: string[] = pivotData[0];
+
+        formattedData = pivotData.slice(1).map((row: any[]) => {
+          const rowObj: any = {};
+          columnNames.forEach((colName, index) => {
+            rowObj[colName] = row[index] || '';
+          });
+          return rowObj;
+        });
+
+        const blob = await generateCSVBlob(formattedData, columnNames);
+        saveAs(blob, `${sheetName}.csv`);
+        this.toasterService.info('CSV downloaded successfully.', 'Success');
+
+      } else if (
+        sheetData.sheet_data.col &&
+        sheetData.sheet_data.col.length === 0 &&
+        sheetData.sheet_data.row &&
+        sheetData.sheet_data.row.length > 0
+      ) {
+        const row = sheetData.sheet_data.row;
+        const rowNames: string[] = row.map((rowItem: any) => rowItem.col);
+        const numRecords = row[0]?.result_data?.length || 0;
+      
+        formattedData = Array.from({ length: numRecords }, (_, index) => {
+          const rowObj: any = {};
+          rowNames.forEach((rowName, rowIndex) => {
+            rowObj[rowName] = row[rowIndex]?.result_data[index] || '';
+          });
+          return rowObj;
+        });
+      
+        const blob = await generateCSVBlob(formattedData, rowNames);
+        saveAs(blob, `${sheetName}.csv`);
+        this.toasterService.info('CSV downloaded successfully.', 'Success');
+      
+      } else if (
+        sheetData.sheet_data.row &&
+        sheetData.sheet_data.row.length === 0 &&
+        sheetData.sheet_data.col &&
+        sheetData.sheet_data.col.length > 0
+      ) {
+        const col = sheetData.sheet_data.col;
+        const columnNames: string[] = col.map((colItem: any) => colItem.column);
+        const numRecords = col[0]?.result_data?.length || 0;
+      
+        formattedData = Array.from({ length: numRecords }, (_, index) => {
+          const rowObj: any = {};
+          columnNames.forEach((colName, colIndex) => {
+            rowObj[colName] = col[colIndex]?.result_data[index] || '';
+          });
+          return rowObj;
+        });
+      
+        const blob = await generateCSVBlob(formattedData, columnNames);
+        saveAs(blob, `${sheetName}.csv`);
+        this.toasterService.info('CSV downloaded successfully.', 'Success');
+      
+      } else if (sheetData.sheet_data.col && sheetData.sheet_data.row) {
+        const col = sheetData.sheet_data.col;
+        const row = sheetData.sheet_data.row;
+
+        const columnNames: string[] = col.map((colItem: any) => colItem.column);
+        const rowNames: string[] = row.map((rowItem: any) => rowItem.col);
+        const headers = [...columnNames, ...rowNames];
+
+        const numRecords = col[0]?.result_data?.length || 0;
+
+        formattedData = Array.from({ length: numRecords }, (_, index) => {
+          const rowObj: any = {};
+
+          columnNames.forEach((colName, colIndex) => {
+            rowObj[colName] = col[colIndex]?.result_data[index] || '';
+          });
+
+          rowNames.forEach((rowName, rowIndex) => {
+            rowObj[rowName] = row[rowIndex]?.result_data[index] || '';
+          });
+
+          return rowObj;
+        });
+
+        const blob = await generateCSVBlob(formattedData, headers);
+        saveAs(blob, `${sheetName}.csv`);
+        this.toasterService.info('CSV downloaded successfully.', 'Success');
+      } else {
+        this.toasterService.error('No valid data available for export.', 'Error');
+      }
+    } catch (error) {
+      console.error('CSV export failed:', error);
+      this.toasterService.error('CSV export failed. Try again.', 'Error');
+    }
+  };
+
+  runExport();
+}
+
+
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
