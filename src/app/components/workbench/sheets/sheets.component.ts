@@ -5237,6 +5237,17 @@ customizechangeChartPlugin() {
           return true;
         }
         break; 
+        case 'ifelse': 
+        if(!this.validateFormula(/^IF\s+.+?\s+THEN\s+.+?(\s+ELSE\s+IF\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END$/i)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break;
         case 'average': 
         if(!this.validateFormula(/^AVG\(\s*.+?\s*\)$/)){
           this.isValidCalculatedField = false;
@@ -5311,9 +5322,11 @@ customizechangeChartPlugin() {
     calculatedFieldData(){
       this.nestedCalculatedFieldData = '';
       this.calculatedFieldLogic = '';
+      this.validationMessage = '';
     }
 
     nestedCalculatedFieldFunction(){
+      this.validationMessage = '';
       switch(this.nestedCalculatedFieldData) {
         case 'abs':
           this.calculatedFieldLogic = 'ABS()';
@@ -5377,6 +5390,9 @@ customizechangeChartPlugin() {
         break; 
         case 'case':
           this.calculatedFieldLogic = 'CASE expression WHEN value THEN result ELSE default END';
+        break; 
+        case 'ifelse':
+          this.calculatedFieldLogic = 'IF condition THEN result ELSE IF condition THEN result ELSE default END';
         break; 
         case 'ifnull':
           this.calculatedFieldLogic = 'COALESCE()';
@@ -6197,29 +6213,28 @@ selectSuggestion(suggestion: SqlSuggestion) {
 setSuggestionDropdownPosition() {
   const textarea = this.sqlEditor.nativeElement;
   const coords = this.getCaretCoordinates(textarea, textarea.selectionEnd);
-  this.caretTop = coords.top + 20; // adjust based on line height
-  this.caretLeft = coords.left;
 
-
-  const containerRect = textarea.getBoundingClientRect();
-  const dropdownWidth = 250; // approximate or fixed width of suggestion box
-
-  // Calculate max allowed left to keep inside container
-  const maxLeft = containerRect.width - dropdownWidth;
-
-  // Adjust left position to prevent overflow
-  this.caretLeft = Math.min(coords.left, maxLeft);
-  this.caretTop = coords.top + 20; // adjust based on line height
-  
+  const containerRect = textarea.getBoundingClientRect(); // textarea position on screen
   const viewportHeight = window.innerHeight;
-const dropdownHeight = 200; // estimated
 
-if (coords.top + dropdownHeight > viewportHeight) {
-  this.caretTop = coords.top - dropdownHeight; // open above
-} else {
-  this.caretTop = coords.top + 20; // open below
+  const dropdownHeight = 200; // estimated
+  const lineHeight = 20;      // estimated line height
+  const dropdownWidth = 250;
+
+  // Calculate available space below the caret relative to viewport
+  const caretAbsoluteTop = containerRect.top + coords.top;
+  const showAbove = caretAbsoluteTop + dropdownHeight > viewportHeight;
+
+  // Set top relative to textarea
+  this.caretTop = showAbove
+    ? coords.top - dropdownHeight - 4 // a little spacing
+    : coords.top + lineHeight;
+
+  // Prevent overflow on X
+  const maxLeft = textarea.offsetWidth - dropdownWidth;
+  this.caretLeft = Math.min(coords.left, maxLeft);
 }
-}
+
 
 updateCaretPosition() {
   this.setSuggestionDropdownPosition();

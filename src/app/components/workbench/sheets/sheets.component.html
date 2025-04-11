@@ -71,7 +71,8 @@
 
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
-                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="ifelse">IF ELSE/ELSE IF</option>
+
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
@@ -160,10 +161,20 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> CASE expression WHEN value THEN result ELSE default END</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  case  when "finance"."Amount" > 0 then 1 else 0 end </span>
                                                                             }
+                                                                            @if(nestedCalculatedFieldData == 'ifelse'){
+                                                                                <span> <p class="fw-600 mb-0">IF / ELSE IF :<br></p>Executes conditional logic with if-else branching.</span><br><br>
+                                                                                <span><p class="fw-600 mb-0">Syntax :<br></p> IF condition THEN result ELSE IF condition THEN result ELSE default END</span> <br><br>
+                                                                                <span><p class="fw-600 mb-0">Example :<br></p>IF "finance"."Amount" > 1000 THEN 'High' ELSE IF "finance"."Amount" > 0 THEN 'Medium' ELSE 'Low' END </span>
+                                                                            }
                                                                             @if(nestedCalculatedFieldData == 'average'){
                                                                                 <span > <p class="fw-600 mb-0">AVG(expression) :<br> </p> Returns the average.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> AVG("tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  AVG("finance"."Amount") </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'count'){
+                                                                                <span > <p class="fw-600 mb-0">COUNT(string) :<br> </p> Counts total number of non-null values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> COUNT("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  COUNT("finance"."Name") </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'countd'){
                                                                                 <span > <p class="fw-600 mb-0">COUNTD(string) :<br> </p> Counts distinct values.</span> <br><br>
@@ -241,7 +252,7 @@
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  current_date + INTERVAL '5 days'(days/months/years)  </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'datediff'){
-                                                                                <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the difference between two dates.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">DATEDIFF :<br> </p> Returns the difference between two dates.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" - "tablename"."column_name"</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  CURRENT_DATE - '2024-10-03' </span>
                                                                             }
