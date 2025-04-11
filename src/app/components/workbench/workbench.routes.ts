@@ -52,6 +52,32 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
+
+      {
+        path: 'datasources/crossdatabase/customsql/viewconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/viewconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/newconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/newconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+
       {
         path: 'datasources/google-sheets',
         canActivate: [authGuard],
@@ -65,30 +91,16 @@ export const admin: Routes = [
       //     import('./insights/workbench.component').then((m) => m.WorkbenchComponent),
       // },
 
-      {
-        path: 'database-connection/tables/:id1',
-        canActivate: [authGuard],
-        canDeactivate: [canDeactivateGuard],
-        loadComponent: () =>
-          import('./database/database.component').then((m) => m.DatabaseComponent)
-      },
-      {
-        path: 'database-connection/tables/:id1/:id2',
-        canActivate: [authGuard],
-        canDeactivate: [canDeactivateGuard],
-        loadComponent: () =>
-          import('./database/database.component').then((m) => m.DatabaseComponent)
-      },
-      {
-        path: 'database-connection/customSql/:id',
-        canActivate: [authGuard],
-        canDeactivate: [canDeactivateGuard],
-        loadComponent: () =>
-          import('./database/database.component').then((m) => m.DatabaseComponent)
-      },
       //quickbooks
       {
         path: 'database-connection/tables/quickbooks/:id',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/tables/googlesheets/:id',
         canActivate: [authGuard],
         canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
@@ -103,6 +115,29 @@ export const admin: Routes = [
           import('./database/database.component').then((m) => m.DatabaseComponent)
       },
       {
+        path: 'database-connection/tables/:id1/:id2',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/tables/:id1',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+
+      {
+        path: 'database-connection/customSql/:id',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+
+      {
         path: 'database-connection/sheets/:id1/:id2/:id3',
         canActivate: [authGuard],
         canDeactivate: [canDeactivateGuard],
@@ -111,6 +146,13 @@ export const admin: Routes = [
       },
       {
         path: 'database-connection/savedQuery/:id1/:id2',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/savedQuery/:id1',
         canActivate: [authGuard],
         canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
@@ -316,6 +358,20 @@ export const admin: Routes = [
 
       {
         path: 'crossDatabase/dataTransformation/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'crossDatabase/customSql/dataTransformation/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'crossDatabase/customSql/dataTransformation/:id1/:id2',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
