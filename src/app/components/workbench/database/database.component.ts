@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { WorkbenchService } from '../workbench.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -28,6 +28,7 @@ import { saveAs } from 'file-saver';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
+import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 const EXCEL_TYPE =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 @Component({
@@ -56,6 +57,8 @@ const EXCEL_TYPE =
 })
 
 export class DatabaseComponent {
+
+  @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   databaseName:any;
   tableName:any;
   tableJoiningList : any[] = [];
@@ -161,7 +164,7 @@ export class DatabaseComponent {
   dragTablestoSemanticLayer = false;
   deleteTablesFromSemanticLayer = false;
   canSearchTablesInSemanticLayer = false;
-  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService,private templateService:ViewTemplateDrivenService){
+  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService,private templateService:ViewTemplateDrivenService,private templateDashboardService: TemplateDashboardService){
     const currentUrl = this.router.url;
     this.dragTablestoSemanticLayer = this.templateService.dragTablesToSemanticLayer();
     this.deleteTablesFromSemanticLayer = this.templateService.canDeleteTablesFromSemanticLayer();
@@ -227,13 +230,40 @@ export class DatabaseComponent {
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
-    }
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "Would like to view any sample dashboard?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, this.databaseId);
+        }
+      });
+     
     if(currentUrl.includes('/analytify/database-connection/tables/salesforce/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "Would like to view any sample dashboard?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.templateDashboardService.buildSampleSalesforceDashboard(this.container, this.databaseId);
+        }
+      });
     }
   }
+}
   ngOnInit(){
     this.loaderService.hide();
     if(this.customSql){

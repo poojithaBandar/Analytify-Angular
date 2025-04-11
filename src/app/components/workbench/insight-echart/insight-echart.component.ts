@@ -296,7 +296,11 @@ flattenDimensions(dimensions: Dimension[]): string[] {
     return dimensions.map(dim => dim.values[index] === null ? 'null' : dim.values[index] || '').join(',');
   });
 }
-funnelchart(){
+funnelchart(dualAxisColumnData? : any ,dualAxisRowData?: any){
+  if(dualAxisRowData && dualAxisColumnData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+  }
   const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
   const combinedArray: any[] = [];
@@ -335,6 +339,7 @@ funnelchart(){
       },
     ],
   };
+  return this.chartOptions;
 }
 stackedChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1607,7 +1612,12 @@ getMaxValue(rowData:any) {
   });
   return max === Number.NEGATIVE_INFINITY ? 0 : max; // Return 0 if no valid values found
 }
-mapChart(){
+mapChart(dualAxisColumnData? :any, dualAxisRowData ?:any, chartsRowData?: any){
+  if(dualAxisColumnData && dualAxisRowData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+    this.chartsRowData = chartsRowData;
+  }
   let minData : number = 0;
   let maxData: number = Math.max(...this.chartsRowData);
   let result:any[] = [];
@@ -1792,8 +1802,8 @@ let barChartOptions = {
   color: this.color
 
 };
-this.chartOptions = this.draggedDrillDownColumns.length > 0 ? (this.drillDownIndex > 0 ? barChartOptions : mapChartOptions) : mapChartOptions
-console.log(this.chartOptions);
+this.chartOptions = this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0 ? (this.drillDownIndex > 0 ? barChartOptions : mapChartOptions) : mapChartOptions
+return this.chartOptions;
  }
 formatNumber(value: number): string {
   let formattedNumber = value+'';
