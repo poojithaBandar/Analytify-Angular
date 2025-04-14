@@ -408,6 +408,23 @@ export class SheetsComponent{
   deleteSheetInSheetComponent = false;
   canAddDashbaordInSheet = false;
   canEditDashbaordInSheet = false;
+
+  isRelativeDateValid : boolean = false;
+  minRangeValue : any = 1;
+  maxRangeValue : any = 100;
+  minRangeValueInput : any;
+  maxRangeValueInput : any;
+  measureRangeError : string = '';
+  measureValuesOptions : Options = {
+    floor: this.minRangeValue,
+    ceil: this.maxRangeValue,
+    step: 1,
+    showSelectionBar: true,
+    selectionBarGradient: {
+      from: '#5a66f1',
+      to: '#5a66f1',
+    }
+  };
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
       this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
@@ -638,6 +655,7 @@ try {
         this.workbechService.getColumnsData(obj).subscribe({
           next: (responce: any) => {
             console.log(responce);
+            if(responce.length > 0){
             this.tableColumnsData = responce;
             this.database_name = responce[0].database_name;
             this.isCustomSql = responce[0].is_custom_sql;
@@ -652,7 +670,7 @@ try {
         )
       }
 
-      dataExtraction(){
+      dataExtraction(isSyncData : boolean){
         this.dualAxisColumnData = [];
         this.tablePreviewColumn = [];
         this.tablePreviewRow = [];
@@ -784,12 +802,19 @@ try {
               this.chartType = 'sidebyside'
             }
             if(this.pivotTable){
-              this.pivotTableDatatransform();
+              this.pivotTableDatatransform(isSyncData);
             }
             if(this.table){
               this.page = 1;
               this.pageNo = 1;
-              this.tableDisplayPagination();
+              this.tableDisplayPagination(isSyncData);
+            }
+            if(isSyncData && !this.table && !this.pivotTable){
+              if(this.kpi){
+                this.sheetSave();
+              } else{
+                this.isSheetSaveOrUpdate = true;
+              }
             }
           },
           error: (error) => {
@@ -803,14 +828,14 @@ try {
       pageChangeTableDisplay(page:any){
         this.sortedData = [];
         this.pageNo=page;
-        this.tableDisplayPagination();
+        this.tableDisplayPagination(false);
       }
       tableDisplayPaginationSearch(){
         this.pageNo = 1;
         this.page = 1;
-        this.tableDisplayPagination();
+        this.tableDisplayPagination(false);
       }
-      tableDisplayPagination() {
+      tableDisplayPagination(isSyncData : boolean) {
         if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
           const obj = {
             hierarchy_id: this.databaseId,
@@ -856,6 +881,9 @@ try {
                   this.tableDataDisplay.push(tableRow);
                  // console.log('display row data ', this.tableDataDisplay)
                 }
+                if(isSyncData){
+                  this.sheetSave();
+                }
               },
               error: (error) => {
                 console.log(error);
@@ -872,7 +900,7 @@ try {
       pivotRowData = [] as any;
       pivotColumnData = [] as any;
       pivotMeasureData = [] as any;
-        pivotTableDatatransform() {
+        pivotTableDatatransform(isSyncData : boolean) {
           if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
             this.transformedData =[];
           let headers: string[] = [];
@@ -915,11 +943,11 @@ try {
 
             this.transformedData.push(rowArray);
           }
-          this.renderPivotTable();        
+          this.renderPivotTable(isSyncData);        
         }
         }
 
-        renderPivotTable() {
+        renderPivotTable(isSyncData : boolean) {
           setTimeout(() => {
 
           if (this.pivotContainer && this.pivotContainer.nativeElement) {
@@ -929,8 +957,10 @@ try {
                 // vals: this.valueKeys, 
                 aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
                 rendererName: "Table"
-              });
-            // }, 1000);
+              }); 
+            if(isSyncData){
+              this.sheetSave();
+            }
           }        
                       }, 1000);
 
@@ -1171,8 +1201,10 @@ try {
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
-        this.dataExtraction();
+        this.dataExtraction(false);
       }
+      this.checkDateFormatForYOY();
+      // this.checkAggregationForYOY();
     }
     //dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32','date32'];
     // integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
@@ -1245,7 +1277,7 @@ try {
       this.rowMeasuresCount(element, event.currentIndex, 'sum');
       this.rowaggregateType = 'sum'
     } else {
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
 
   }
@@ -1280,11 +1312,11 @@ try {
      if(type === ''){
       this.draggedRowsData[index] = [rows.column,rows.data_type,type,rows.alias ? rows.alias : ""];
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
-      this.dataExtraction();
+      // this.dataExtraction();
      }else if(type === '-Select-'){
       this.draggedRowsData[index] = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'',alias:rows.alias};
-      this.dataExtraction();
+      // this.dataExtraction();
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
@@ -1302,8 +1334,9 @@ try {
       this.donutDecimalPlaces = 2;
     }
     this.checkAggregationForYOY();
-    this.dataExtraction();
-     }
+    // this.dataExtraction();
+    }
+    this.dataExtraction(false);
   }
   checkAggregateNotNone = false;
   checkAggregationForYOY(){
@@ -1324,7 +1357,7 @@ try {
     if (this.draggedColumnsData[index]) {
       this.draggedColumnsData[index][3] = column.alias ? column.alias : "";
       this.draggedColumns[index].alias = column.alias ? column.alias : "";
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
   }
   onPivotRowAliasChange(column : any , index : any){
@@ -1332,7 +1365,7 @@ try {
     if (this.draggedMeasureValuesData[index]) {
       this.draggedMeasureValuesData[index][3] = column.alias ? column.alias : "";
       this.draggedMeasureValues[index].alias = column.alias ? column.alias : "";
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
   }
    drop(event: CdkDragDrop<string[]>) {
@@ -1403,7 +1436,7 @@ try {
       }
       
     }
-   this.dataExtraction();
+   this.dataExtraction(false);
    this.checkDateFormatForYOY();
   }
   dragStartedRow(index:any,column:any){
@@ -1433,7 +1466,7 @@ try {
       this.sortType = 0;
     }
   }
-   this.dataExtraction();
+   this.dataExtraction(false);
   }
   rightArrow(){
     console.log(this.draggedColumns.length)
@@ -1488,7 +1521,6 @@ try {
     this.guage = guage;
     this.map = map;
     this.calendar = calendar;
-    // this.dataExtraction();
     if(!(this.bar|| this.pie || this.donut)){
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
@@ -2642,7 +2674,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.calendar = false;
-          this.tableDisplayPagination();
+          this.tableDisplayPagination(false);
         }
         if(responce.chart_id == 9){
           // this.tableData = this.sheetResponce.results.tableData;
@@ -2667,7 +2699,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.calendar = false;
-          this.pivotTableDatatransform();
+          this.pivotTableDatatransform(false);
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce?.results?.kpiData;
@@ -3111,7 +3143,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false;
           this.calendar = true;
        }
+       if(this.sheetResponce.customizeOptions){
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
+       }
        this.getDimensionAndMeasures();
        this.changeSelectedColumn();
         // setTimeout(()=>{
@@ -3152,22 +3186,94 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   ceil: any;
   minDate: string = '';
   maxDate: string = '';
-  options: Options ={};
+  options: Options ={
+    floor: 0,
+    ceil: 100,
+    step: 1,
+    showSelectionBar: true,
+    selectionBarGradient: {
+      from: '#5a66f1',
+      to: '#5a66f1',
+    }
+  };
   filterDateRange : any[] = [];
-  updateDateRange() {
-    const format: Intl.DateTimeFormatOptions = { 
-      year: 'numeric',
-      month: '2-digit', 
-      day: '2-digit',  
-    };
-    const minDateObj = new Date(this.minValue);
-    const maxDateObj = new Date(this.maxValue);
-    this.minDate = `${minDateObj.getFullYear()}/${(minDateObj.getMonth() + 1).toString().padStart(2, '0')}/${minDateObj.getDate().toString().padStart(2, '0')}`;
-    this.maxDate = `${maxDateObj.getFullYear()}/${(maxDateObj.getMonth() + 1).toString().padStart(2, '0')}/${maxDateObj.getDate().toString().padStart(2, '0')}`;
-    this.filterDateRange = [this.minDate, this.maxDate];
+  dateRangeError : string = '';
+  updateDateRange(isInput:boolean) {
+    const datePattern = /^\d{4}\/\d{2}\/\d{2}$/;
+
+    if(isInput){
+      if (!datePattern.test(this.minDate) || !datePattern.test(this.maxDate)) {
+        this.dateRangeError = 'Invalid date format. Please enter the date in YYYY/MM/DD format.';
+        return;
+      }
+      const minDateObj = new Date(this.minDate);
+      const maxDateObj = new Date(this.maxDate); 
+      if (isNaN(minDateObj.getTime()) || isNaN(maxDateObj.getTime())) {
+        this.dateRangeError = 'Invalid date value. Please enter a valid date in YYYY/MM/DD format.';
+        return;
+      }     
+      if (minDateObj > maxDateObj) {
+        this.dateRangeError = 'Start date cannot be after the end date. Please choose an earlier start date or a later end date.';
+      } else if (maxDateObj < minDateObj) {
+        this.dateRangeError = 'End date cannot be before the start date. Please choose a later end date or an earlier start date.';
+      } else{
+        // if (minDateObj < (this.options.floor ?? this.minValue)) {
+        //   this.options = {
+        //     ...this.options,
+        //     floor: minDateObj.getTime()
+        //   };
+        // }
+        // if(maxDateObj > (this.options.ceil ?? this.maxValue)){
+        //   this.options = {
+        //     ...this.options,
+        //     ceil: maxDateObj.getTime()
+        //   };
+        // }
+        this.minValue = minDateObj.getTime();
+        this.maxValue = maxDateObj.getTime();
+        this.dateRangeError = '';
+      }
+    } else{
+      this.minDate = this.formatDate(new Date(this.minValue));
+      this.maxDate = this.formatDate(new Date(this.maxValue));
+      this.dateRangeError = '';
+    }
+    this.filterDateRange = [this.formatDate(new Date(this.minValue)), this.formatDate(new Date(this.maxValue))];
+  }
+  formatDate(date: Date): string {
+    return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+  }
+  updateMeasureRange(isInput:boolean){
+    if (isInput){
+      if(this.minRangeValueInput > this.maxRangeValueInput){
+        this.measureRangeError = 'The minimum value cannot be greater than the maximum range. Please enter a lower value for the minimum or increase the maximum range.'
+      } else if(this.maxRangeValueInput < this.minRangeValueInput){
+        this.measureRangeError = 'The maximum value cannot be less than the minimum range. Please enter a higher value for the maximum or decrease the minimum range.'
+      } else{
+        // if (this.minRangeValueInput < (this.measureValuesOptions.floor ?? this.minRangeValue)) {
+        //   this.measureValuesOptions = {
+        //     ...this.measureValuesOptions,
+        //     floor: this.minRangeValueInput
+        //   };
+        // }
+        // if(this.maxRangeValueInput > (this.measureValuesOptions.ceil ?? this.maxRangeValue)){
+        //   this.measureValuesOptions = {
+        //     ...this.measureValuesOptions,
+        //     ceil: this.maxRangeValueInput
+        //   };
+        // }
+        this.minRangeValue = this.minRangeValueInput;
+        this.maxRangeValue = this.maxRangeValueInput;
+        this.measureRangeError = '';
+      }
+    } else{
+      this.minRangeValueInput = this.minRangeValue;
+      this.maxRangeValueInput = this.maxRangeValue;
+      this.measureRangeError = '';
+    }
   }
   formatExtractType : string = '';
-  extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
+  extractTypesForTab : any[] = ['year','quarter','month','day','week numbers','weekdays','count','count_distinct','min','max'];
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     if(this.activeTabId === 4){
@@ -3190,21 +3296,26 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         console.log(responce);
         const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
         this.filterData = convertedArray;
-        if(this.dateList.includes(responce.dtype)){
+        if(this.dateList.includes(responce.dtype) && this.activeTabId === 2){
           let rawLabel = this.filterData[0].label;
-          let datePart = rawLabel.split(" ")[0];
-          let [year, month, day] = datePart.split("/");
-          this.floor = new Date(`${year}-${month}-${day}`).getTime();
-          // this.floor = new Date(this.filterData[0].label).getTime();
+          // let datePart = rawLabel.split(" ")[0];
+          // let [year, month, day] = datePart.split("/");
+          // this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          if(!rawLabel || rawLabel === '' || rawLabel.toLowerCase === 'nan' || rawLabel === null){
+            rawLabel = this.filterData[1].label;
+          }
+          this.floor = new Date(rawLabel).getTime();
 
           rawLabel = this.filterData[this.filterData.length - 1].label;
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
-          this.ceil = new Date(`${year}-${month}-${day}`).getTime();
-          // this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
+          // this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          this.ceil = new Date(rawLabel).getTime();
 
           this.minValue = this.floor;
           this.maxValue = this.ceil;
+          this.minDate = this.floor;
+          this.maxDate = this.ceil;
           this.options = {
             floor: this.floor,
             ceil: this.ceil,
@@ -3215,16 +3326,42 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
               to: '#5a66f1',
             },
             translate: (value: number): string => {
-              return new Date(value).toLocaleDateString();
+              const date = new Date(value);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0');
+              const day = String(date.getDate()).padStart(2, '0');
+              return `${year}/${month}/${day}`;
             }
           };
-          this.updateDateRange();
           this.filterDateRange = [];
+          this.updateDateRange(false);
+        }
+        if(this.integerList.includes(responce.dtype) && this.activeTabId === 6){
+          let min = this.filterData[0].label;
+          if(min === undefined || min === '' || String(min).toLowerCase() === 'nan' || min === null){
+            min = this.filterData[1].label;
+          }
+          this.minRangeValue = min;
+          this.maxRangeValue = this.filterData[this.filterData.length - 1].label;
+          this.minRangeValueInput = this.minRangeValue;
+          this.maxRangeValueInput = this.maxRangeValue;
+          this.measureValuesOptions = {
+            floor: this.minRangeValue,
+            ceil: this.maxRangeValue,
+            step: 0.1,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            }
+          };
+          this.updateMeasureRange(false);
         }
         //this.filter_id = responce.filter_id;
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3301,7 +3438,7 @@ trackByFn(index: number, item: any): number {
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
-    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
+    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
     "select_values":Array.from(this.filterDataArray),
     "col_name":this.filterName,
     "data_type":this.filterType,
@@ -3319,7 +3456,7 @@ trackByFn(index: number, item: any): number {
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-        this.dataExtraction();
+        this.dataExtraction(false);
         this.filterDataArray.clear();
         this.filterDateRange = [];
         this.formatExtractType = '';
@@ -3332,6 +3469,7 @@ trackByFn(index: number, item: any): number {
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3362,8 +3500,12 @@ trackByFn(index: number, item: any): number {
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day' && !responce?.relative_date){
-          this.activeTabId = 2;
+        else if(responce?.range_values && responce?.range_values.length > 0 && !responce?.relative_date){
+          if(responce?.format_type === 'year/month/day'){
+            this.activeTabId = 2;
+          } else{
+            this.activeTabId = 6;
+          }
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
           this.activeTabId = 4;
@@ -3386,33 +3528,45 @@ trackByFn(index: number, item: any): number {
         //   this.filterData.push(element);
         //  // Force update
         // });
-        this.filterData.forEach((filter:any)=>{
-          if(filter.selected){
-            this.filterDataArray.add(filter.label);
-          }
-        })
+        if(![2,6].includes(this.activeTabId)){
+          this.filterData.forEach((filter:any)=>{
+            if(filter.selected){
+              this.filterDataArray.add(filter.label);
+            }
+          });
+        }
         if(this.dateList.includes(responce.data_type) && responce?.range_values){
           let rawLabel = this.filterData[0].label;
-          let datePart = rawLabel.split(" ")[0];
-          let [year, month, day] = datePart.split("/");
-          this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          // let datePart = rawLabel.split(" ")[0];
+          // let [year, month, day] = datePart.split("/");
+          // this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          if(!rawLabel || rawLabel === '' || rawLabel.toLowerCase === 'nan' || rawLabel === null){
+            rawLabel = this.filterData[1].label;
+          }
+          this.floor = new Date(rawLabel).getTime();
 
           rawLabel = this.filterData[this.filterData.length - 1].label;
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
-          this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
+          // this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          this.ceil = new Date(rawLabel).getTime();
 
           rawLabel = responce.range_values[0];
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
 
-          this.minValue = new Date(`${year}-${month}-${day}`).getTime();
+          // this.minValue = new Date(`${year}-${month}-${day}`).getTime();
+          this.minValue = new Date(rawLabel).getTime();
+
 
           rawLabel = responce.range_values[responce.range_values.length - 1];
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
 
-          this.maxValue = new Date(`${year}-${month}-${day}`).getTime();
+          // this.maxValue = new Date(`${year}-${month}-${day}`).getTime();
+          this.maxValue = new Date(rawLabel).getTime();
+          this.minDate = this.minValue;
+          this.maxDate = this.maxValue;
 
           this.options = {
             floor: this.floor,
@@ -3424,16 +3578,41 @@ trackByFn(index: number, item: any): number {
               to: '#5a66f1',
             },
             translate: (value: number): string => {
-              return new Date(value).toLocaleDateString();
+              const date = new Date(value);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0');
+              const day = String(date.getDate()).padStart(2, '0');
+              return `${year}/${month}/${day}`;
             }
           };
-
-          this.updateDateRange();
           this.filterDateRange = [];
+          this.updateDateRange(false);
+        }
+        if(this.integerList.includes(responce.data_type) && this.activeTabId === 6){
+          this.minRangeValue = responce.range_values[0];
+          this.maxRangeValue =  responce.range_values[responce.range_values.length - 1];
+          this.minRangeValueInput = this.minRangeValue;
+          this.maxRangeValueInput = this.maxRangeValue;
+          let min = this.filterData[0].label;
+          if(min === undefined || min === '' || String(min).toLowerCase() === 'nan' || min === null){
+            min = this.filterData[1].label;
+          }
+          this.measureValuesOptions = {
+            floor: min,
+            ceil: this.filterData[this.filterData.length - 1].label,
+            step: 0.1,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            }
+          };
+          this.updateMeasureRange(false);
         }
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3459,7 +3638,7 @@ trackByFn(index: number, item: any): number {
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
-      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
+      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
       "select_values":Array.from(this.filterDataArray),
       "col_name":this.filterName,
       "data_type":this.filterType,
@@ -3473,7 +3652,7 @@ trackByFn(index: number, item: any): number {
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-          this.dataExtraction();
+          this.dataExtraction(false);
           this.filterDataArray.clear();
           this.filterDateRange = [];
           this.isAllSelected = false;
@@ -3485,6 +3664,7 @@ trackByFn(index: number, item: any): number {
         },
         error: (error) => {
           console.log(error);
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
         }
       }
     )
@@ -3497,10 +3677,11 @@ trackByFn(index: number, item: any): number {
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-         this.dataExtraction();
+         this.dataExtraction(false);
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3591,31 +3772,6 @@ this.oldColumn = name;
 let reName=`${this.draggedColumnsData.at(index)}`;
 console.log(reName.split(',')[0])
 }
-
-renameColumn(index:any,column:any,event:any){
-  this.newColumn = '';
-  this.newColumn = column;
-  if (event.keyCode === 13) {
-  this.renameColumns();
- }
-}
-renameColumns(){
-  const obj={
-    "database_id":this.databaseId,
-    "queryset_id":this.qrySetId,
-    "old_col_name" :this.oldColumn,
-    "new_col_name":this.newColumn
-}
-  this.workbechService.renameColumn(obj).subscribe({next: (responce:any) => {
-        console.log(responce);
-        this.columnsData();
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    }
-  )
- }
 
   editorConfig = {
     fontFamily: {
@@ -3855,7 +4011,7 @@ fetchChartData(chartData: any){
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
             this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,10);
           }
-          this.dataExtraction();
+          this.dataExtraction(false);
 
 }
 customizechangeChartPlugin() {
@@ -4261,7 +4417,7 @@ customizechangeChartPlugin() {
       console.log(this.draggedColumns);
      }
      this.checkDateFormatForYOY();
-     this.dataExtraction();
+     this.dataExtraction(false);
   }
   checkdatetype= false;
   checkDateFormatForYOY(){
@@ -4286,7 +4442,8 @@ customizechangeChartPlugin() {
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
     }
-    this.dataExtraction();
+    this.dataExtraction(false);
+    this.checkDateFormatForYOY();
   }
   dateFormatForPivotRow(column:any, index:any, format:any){
     if(format === ''){
@@ -4300,7 +4457,7 @@ customizechangeChartPlugin() {
       this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: format, alias: column.alias ? column.alias : "" };
       console.log(this.draggedMeasureValues);
     }
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
   dateAggregationForPivotRow(column:any, index:any, type:any){
     if (type === '') {
@@ -4312,7 +4469,7 @@ customizechangeChartPlugin() {
       this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedMeasureValues);
     }
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
 
   sliderOptions = {
@@ -4355,7 +4512,7 @@ customizechangeChartPlugin() {
       this.drillDownObject = this.drillDownObject.slice(0, index - 1);
       this.drillDownIndex = index - 1;
     } 
-       this.dataExtraction();
+       this.dataExtraction(false);
       }
       draggedMeasureValuesData = [] as any;
       measureValuesdrop(event: CdkDragDrop<string[]>){
@@ -4382,14 +4539,14 @@ customizechangeChartPlugin() {
           this.dateFormatForPivotRow(element, event.currentIndex, 'year');
         } else {
           console.log('measurerows',this.draggedMeasureValuesData)
-          this.dataExtraction();
+          this.dataExtraction(false);
         }
       }
 
       removemeasureValuesRow(index:any,column:any){
         this.draggedMeasureValues.splice(index, 1);
         this.draggedMeasureValuesData.splice(index, 1);
-        this.dataExtraction();
+        this.dataExtraction(false);
 
       }
       toggleDateSwitch(){
@@ -4410,7 +4567,7 @@ customizechangeChartPlugin() {
               this.drillDownObject = [];
             }
              
-            this.dataExtraction();
+            this.dataExtraction(false);
          }
 
   toggleLocationSwitch(onColumnRemove : boolean) {
@@ -4448,11 +4605,11 @@ customizechangeChartPlugin() {
       this.drillDownObject = [];
     }
 
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
         
           callDrillDown(){
-            this.dataExtraction();
+            this.dataExtraction(false);
           }
         
           goDrillDownBack(){
@@ -4746,6 +4903,9 @@ customizechangeChartPlugin() {
         case 'zn':
         this.calculatedFieldLogic = 'ZN("' + tableName + '"."' + columnName + '")';
            break; 
+       case 'ifnull':
+            this.calculatedFieldLogic = 'COALESCE("' + tableName + '"."' + columnName + '")';
+               break; 
         case 'left': 
         regex = /^LEFT\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
         this.calculatedFieldLogic.trim();
@@ -5241,7 +5401,7 @@ customizechangeChartPlugin() {
           } 
           break; 
         case 'ifnull': 
-        if(!this.validateFormula(/^COALESCE\(\s*([^,]+(?:\s*,\s*[^,]+)*)\s*\)$/)){
+        if(!this.validateFormula(/^COALESCE\s*\(\s*("?[a-zA-Z_][\w]*"?(?:\."?[a-zA-Z_][\w]*"?)*)(?:\s*,\s*("?[a-zA-Z_][\w]*"?(?:\."?[a-zA-Z_][\w]*"?)*|\d+|'[^']*'|"[^"]*"))+\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5519,7 +5679,7 @@ customizechangeChartPlugin() {
       //   }
       // }
       this.setOriginalData();
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
@@ -5627,12 +5787,23 @@ customizechangeChartPlugin() {
     }
     changeSelectedColumn(){
       console.log(this.sortColumn);
-      this.columnNamesForSort.forEach((column:any,index:any)=>{
-        if((this.sortColumn.alias && this.sortColumn.alias === column.alias) || (this.sortColumn.field_name && this.sortColumn.field_name === column.field_name) || (this.sortColumn.type && this.sortColumn.type === column.type && this.sortColumn.column === column.column) || (this.sortColumn.column && this.sortColumn.column === column.column)){
-          this.sortColumn = column;
-          this.selectedColumnIndex = index;
+      if(this.sortColumn !== 'select'){
+        for (let index = 0; index < this.columnNamesForSort.length; index++) {
+          const column = this.columnNamesForSort[index];
+        
+          const isMatch =
+            (!this.sortColumn?.alias || this.sortColumn?.alias === column?.alias) &&
+            (!this.sortColumn?.field_name || this.sortColumn?.field_name === column?.field_name) &&
+            (!this.sortColumn?.type || this.sortColumn?.type === column?.type) &&
+            (!this.sortColumn?.column || this.sortColumn?.column === column?.column);
+        
+          if (isMatch) {
+            this.sortColumn = column;
+            this.selectedColumnIndex = index;
+            break;
+          }
         }
-      });
+      }
     }
     sortColumns(){
       if(this.sortType === 'none' || this.sortType === 0){
@@ -5644,7 +5815,7 @@ customizechangeChartPlugin() {
           this.selectedSortColumnData = column;
         }
       }
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
     
     //years
@@ -5678,8 +5849,13 @@ customizechangeChartPlugin() {
         startDate = firstYear.start;
         endDate = lastYear.end;
       }
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getYearDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5729,8 +5905,13 @@ customizechangeChartPlugin() {
         endDate = lastQuarter.end;
       }
       
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getQuarterDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5788,8 +5969,13 @@ customizechangeChartPlugin() {
         endDate = lastMonth.end;
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getMonthDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5846,8 +6032,13 @@ customizechangeChartPlugin() {
         endDate = lastWeek.end;
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getWeekDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5890,8 +6081,13 @@ customizechangeChartPlugin() {
         endDate = this.getDayDate(this.next - 1); // End N days forward
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getDayDate(offset: number): Date {
       let now;
@@ -6289,4 +6485,8 @@ getCaretCoordinates(textarea: HTMLTextAreaElement, position: number) {
 
   return { top, left };
 }
+  refreshSheetData(){
+    this.columnsData();
+    this.dataExtraction(true);
+  }
 }

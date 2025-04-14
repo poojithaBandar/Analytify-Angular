@@ -284,7 +284,7 @@ button.viewQueryImg {  border: none;  background: none;}
 .description-text{ overflow-y: auto;  height: 250px; }
 .example-box-bg{ padding: 3px 13px; background: #75cce621; border-radius: 15px; border: 1px solid; white-space: pre;}
 .example-box1-bg{ padding: 3px 13px; background-color: #61c4831a; border-radius: 15px; border: 1px solid; white-space: pre;}
-.sheets-page-fixed{ position: fixed; width: -webkit-fill-available; padding-right: 25px; padding-left: 9px;}
+// .sheets-page-fixed{ position: fixed; width: -webkit-fill-available; padding-right: 25px; padding-left: 9px;}
 .calculated-parent-card{ position: relative;min-height: 100px; padding: 2px;}
 .calculated-child-card{ max-height: 420px; overflow: auto; }
 .calculated-hide-card{ width:inherit;}
@@ -354,19 +354,38 @@ input[type="color"] {
   margin: 0;
 }
 
+.mat-mdc-tab-group {display: flex; flex-direction: column; max-width: 100%; justify-content: flex-end; }
 
-@media ( 1280px <= width <= 1600px) {
+
+@media ( 1280px <= width <= 1422px) {
   .dropdown-menu.SelectDropDownCard.show {
     position: absolute;
     transform: none !important;
-    left: -107px !important;
+    left: -105px !important;
     min-width: 110px !important;
     top: 24px !important;
   }
   .dropdown-menu.filtersDropDown.show {
     transform: none !important;
-    left: -107px !important;
+    left: -105px !important;
     min-width: 110px !important;
+    top: 24px !important;
+}
+}
+
+
+@media ( 1422px <= width <= 1600px) {
+  .dropdown-menu.SelectDropDownCard.show {
+    position: absolute;
+    transform: none !important;
+    left: -155px !important;
+    min-width: 177px !important;
+    top: 24px !important;
+  }
+  .dropdown-menu.filtersDropDown.show {
+    transform: none !important;
+    left: -155px !important;
+    min-width: 177px !important;
     top: 24px !important;
 }
 }
