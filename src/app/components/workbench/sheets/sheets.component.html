@@ -73,7 +73,7 @@
 
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="ifelse">IF ELSE/ELSE IF</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="ifelse">IF ELSE/ELSEIF</option>
 
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
@@ -171,7 +171,7 @@
                                                                             @if(nestedCalculatedFieldData == 'ifelse'){
                                                                                 <span> <p class="fw-600 mb-0">IF / ELSE IF :<br></p>Executes conditional logic with if-else branching.</span><br><br>
                                                                                 <span><p class="fw-600 mb-0">Syntax :<br></p> IF condition THEN result ELSE IF condition THEN result ELSE default END</span> <br><br>
-                                                                                <span><p class="fw-600 mb-0">Example :<br></p>IF "finance"."Amount" > 1000 THEN 'High' ELSE IF "finance"."Amount" > 0 THEN 'Medium' ELSE 'Low' END </span>
+                                                                                <span><p class="fw-600 mb-0">Example :<br></p>IF "finance"."Amount" > 1000 THEN 'High' ELSEIF "finance"."Amount" > 0 THEN 'Medium' ELSE 'Low' END </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'average'){
                                                                                 <span > <p class="fw-600 mb-0">AVG(expression) :<br> </p> Returns the average.</span> <br><br>
@@ -290,6 +290,9 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" + "tablename"."column_name"</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example : 2 + 2 = 4<br> </p>   </span>
                                                                             }
+                                                                            @if(calculatedFieldFunction == 'Custom'){
+                                                                                <span > <p class="fw-600 mb-0"><br> </p>Custom calculated field evaluates multiple conditions using logical operators (AND, OR, IF, CASE) and applies aggregation functions (like SUM, AVG, COUNT, MAX, MIN) to produce a summarized or conditional result</span> <br><br>
+                                                                            }
                                                                         </div>
                                                                         
                                                                     </div>
@@ -297,7 +300,7 @@
                                                                         <i class="fa fa-angle-left"></i>
                                                                     </div> -->
                                                                 </div>
-                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
+                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'Custom') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
                                                                     <i *ngIf="calculationfieldid.hidden" class="fa fa-angle-left cursor-pointer"></i>
                                                                     <i *ngIf="!calculationfieldid.hidden" class="fa fa-angle-right cursor-pointer"></i>
                                                                 </div>

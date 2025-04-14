@@ -5409,7 +5409,7 @@ customizechangeChartPlugin() {
           this.calculatedFieldLogic = 'CASE expression WHEN value THEN result ELSE default END';
         break; 
         case 'ifelse':
-          this.calculatedFieldLogic = 'IF condition THEN result ELSE IF condition THEN result ELSE default END';
+          this.calculatedFieldLogic = 'IF condition THEN result ELSEIF condition THEN result ELSE default END';
         break; 
         case 'ifnull':
           this.calculatedFieldLogic = 'COALESCE()';
