@@ -267,7 +267,7 @@
                                                                                 <label *ngIf="transformation.key == 'pivot'" class="form-label">Columns <span  class="text-red"></span><i ngbTooltip="Select Columns is Optional" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
                                                                                 <ng-select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].index && selectedTransformations[index][transformationIndex].value)" *ngIf="transformation.key == 'pivot'" 
-                                                                                    [items]="item.columns" bindLabel="col" bindValue="col" dropdownPosition="bottom"[multiple]="true" placeholder="Select Columns" [searchable]="true" [clearable]="false"
+                                                                                    [items]="ngSelectPivotColumns" bindLabel="col" bindValue="col" dropdownPosition="bottom"[multiple]="true" placeholder="Select Columns" [searchable]="true" [clearable]="false"
                                                                                     [(ngModel)]="transformation.columns" (change)="setTransformationType(index, transformation.key, $event, false, false, transformationIndex, false, false,false,false,true,false)">
                                                                                 </ng-select>
 
@@ -318,7 +318,7 @@
                                                                                     <option value="inner">Inner</option>
                                                                                     <option value="left">Left</option>
                                                                                     <option value="right">Right</option>
-                                                                                    <option value="full_outer">Full Outer</option>
+                                                                                    <option value="full outer">Full Outer</option>
                                                                                 </select>
 
                                                                                 <label *ngIf="transformation.key == 'joining'" class="form-label">Operator<span  class="text-red">*</span><i ngbTooltip="Select a Operator" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
