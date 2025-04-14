@@ -237,7 +237,7 @@ export class DatabaseComponent {
       Swal.fire({
         position: "center",
         icon: "question",
-        title: "Would like to view any sample dashboard?",
+        title: "Would like to view any template dashboard?",
         showConfirmButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes',
@@ -259,7 +259,7 @@ export class DatabaseComponent {
       Swal.fire({
         position: "center",
         icon: "question",
-        title: "Would like to view any sample dashboard?",
+        title: "Would like to view any template dashboard?",
         showConfirmButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes',
