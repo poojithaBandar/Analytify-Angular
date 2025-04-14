@@ -646,7 +646,7 @@ try {
  
       tableDimentions = [] as any;
       tableMeasures = [] as any;
-      columnsData(){
+       columnsData(){
         const obj = {
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -655,7 +655,6 @@ try {
         this.workbechService.getColumnsData(obj).subscribe({
           next: (responce: any) => {
             console.log(responce);
-            if(responce.length > 0){
             this.tableColumnsData = responce;
             this.database_name = responce[0].database_name;
             this.isCustomSql = responce[0].is_custom_sql;
