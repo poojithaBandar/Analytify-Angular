@@ -68,6 +68,8 @@
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="zn">ZN</option>
+
 
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
@@ -148,8 +150,13 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'round'){
                                                                                 <span > <p class="fw-600 mb-0">ROUND(number, [decimals]) :<br> </p> Rounds to a specified number of decimals.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ZN("tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  ROUND(2.65,1) = 2.6 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'zn'){
+                                                                                <span > <p class="fw-600 mb-0">ZN(number) :<br> </p> Returns the value if exists else return 0 for null values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> ZN(2)=2 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'ifnull'){
                                                                                 <span > <p class="fw-600 mb-0">IFNULL(expression1, expression2) :<br> </p> Returns the first non-null expression.</span> <br><br>

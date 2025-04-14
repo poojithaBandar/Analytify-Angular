@@ -4742,6 +4742,9 @@ customizechangeChartPlugin() {
         break; 
         case 'round':
         this.calculatedFieldLogic = 'ROUND("' + tableName + '"."' + columnName + '")';
+        break;
+        case 'zn':
+        this.calculatedFieldLogic = 'ZN("' + tableName + '"."' + columnName + '")';
            break; 
         case 'left': 
         regex = /^LEFT\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
@@ -5060,6 +5063,17 @@ customizechangeChartPlugin() {
             return true;
           }
            break; 
+           case 'zn':
+            if(!this.validateFormula(/^ZN\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
+              this.isValidCalculatedField = false;
+              this.validationMessage = 'Invalid Syntax';
+              return false;
+            } 
+            else{
+              this.isValidCalculatedField = true;
+              return true;
+            }
+             break; 
         case 'left': 
         if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
@@ -5339,6 +5353,9 @@ customizechangeChartPlugin() {
         break; 
         case 'round':
         this.calculatedFieldLogic = 'ROUND()';
+           break; 
+        case 'zn':
+        this.calculatedFieldLogic = 'ZN()';
            break; 
         case 'left': 
         this.calculatedFieldLogic = 'LEFT( , )';
