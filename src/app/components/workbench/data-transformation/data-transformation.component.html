@@ -276,19 +276,19 @@
                                                                                 <select [disabled]="!(selectedTransformations[index][transformationIndex].key && selectedTransformations[index][transformationIndex].index && selectedTransformations[index][transformationIndex].value)" *ngIf="transformation.key == 'pivot'" 
                                                                                     class="form-select" [(ngModel)]="transformation.aggregation" (change)="setTransformationType(index, transformation.key, $event, false, false,transformationIndex,false,false,false,false,false,true)">
                                                                                     <option value="mean">Mean</option>
-                                                                                    <option value="median">Median</option>
-                                                                                    <option value="mode">Mode</option>
+                                                                                    <!-- <option value="median">Median</option> -->
+                                                                                    <!-- <option value="mode">Mode</option> -->
                                                                                     <option value="sum">Sum</option>
                                                                                     <option value="max">Max</option>
                                                                                     <option value="min">Min</option>
                                                                                     <option value="count">Count</option>
-                                                                                    <option value="count_distinct">Count Distinct</option>
+                                                                                    <!-- <option value="count_distinct">Count Distinct</option> -->
                                                                                 </select>
                                                                                 
                                                                                 <label *ngIf="transformation.key == 'replace_values'" class="form-label">Replace Value<span  class="text-red">*</span><i ngbTooltip="Replace Value" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
                                                                                 <input [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" [(ngModel)]="transformation.input" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex,false,false,false,false,false,false)" class="form-control border">
-                                                                                
+
                                                                                 <label *ngIf="transformation.key == 'alter_datatypes'" class="form-label">Data Type<span  class="text-red">*</span><i ngbTooltip="Select a column" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
                                                                                 <select [disabled]="!(selectedTransformations[index][transformationIndex].key || selectedTransformations[index][transformationIndex].dropdown)" *ngIf="transformation.key == 'alter_datatypes'" class="form-select" [(ngModel)]="transformation.input" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex,false,false,false,false,false,false)">
