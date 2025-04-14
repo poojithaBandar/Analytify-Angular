@@ -551,7 +551,7 @@ export class DataTransformationComponent {
         this.tableData = [];
         this.tableName = '';
         this.totalRows = 0;
-        this.showingRows = 0;
+        this.showingRows = 100;
         Swal.fire({
           icon: 'error',
           title: 'oops!',
