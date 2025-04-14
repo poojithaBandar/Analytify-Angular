@@ -2526,12 +2526,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     }
     }
     this.canNavigateToAnotherPage = true;
-    if(this.dashboardId){
-      // if(this.active == 2){
+    if(this.dashboardId && item['type'] !=='image'){
         this.deleteSheetFilter(item.sheetId);
-      // } else if(this.active == 3){
       this.actionUpdateOnSheetRemove(item.sheetId);
-      // }
     }
     let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
     this.databaseId.splice(popIndex, 1);
