@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -57,6 +57,7 @@ import 'pivottable';
 import 'jquery-ui/ui/widgets/sortable';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
+
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -77,6 +78,11 @@ declare global {
     sortable(): JQuery;
   }
 }
+interface SqlSuggestion {
+  display: string;      // tablename.columnname
+  insert: string;       // "tablename"."columnname"
+}
+
 
 declare var $:any;
 
@@ -96,7 +102,7 @@ declare var $:any;
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
-export class SheetsComponent {
+export class SheetsComponent{
   tableColumnsData = [] as any;
   draggedtables = [] as any;
   draggedColumns = [] as any;
@@ -372,6 +378,7 @@ export class SheetsComponent {
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  @ViewChild('sqlEditor') sqlEditor!: ElementRef<HTMLTextAreaElement>;
 
   transformedData: any[] = [];
   columnKeys: string[] = [];
@@ -480,32 +487,6 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    }
-  //  if(this.router.url.includes('/analytify/home/fileId/sheets/')){
-  //   this.fromFileId = true;
-  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
-  //     this.fileId = +atob(route.snapshot.params['id1']);
-  //     this.qrySetId = +atob(route.snapshot.params['id2'])
-  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
-  //     console.log(this.retriveDataSheet_id);
-  //     //this.tabs[0] = this.sheetName;
-  //     // this.sheetRetrive();
-  //     }
-  //  }
-
-
-  //  if(this.router.url.includes('/analytify/sheetsdashboard/sheets/fileId/')){
-  //   this.sheetsDashboard = true;
-  //   this.fromFileId = true;
-  //   console.log("landing page")
-  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
-  //     this.fileId = +atob(route.snapshot.params['id1']);
-  //     this.qrySetId = +atob(route.snapshot.params['id2']);
-  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
-  //     this.dashboardId = +atob(route.snapshot.params['id4']);
-  //     console.log(this.retriveDataSheet_id)
-  //     // this.sheetRetrive();
-  //     }
-  //  } 
    if(this.router.url.includes('/analytify/sheetsdashboard/sheets/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
@@ -524,6 +505,9 @@ export class SheetsComponent {
    this.canDrop = !this.canEditDb
   }
 
+  ngAfterViewInit(): void {
+
+  }
   ngOnInit(): void {
     this.loaderService.hide();
     this.columnsData();
@@ -677,7 +661,7 @@ try {
             this.isCustomSql = responce[0].is_custom_sql;
             this.tableDimentions = responce.dimensions;
             this.tableMeasures = responce.measures;
-            }
+            this.buildSuggestionsForCalculations(responce);
           },
           error: (error) => {
             console.log(error);
@@ -1581,7 +1565,7 @@ try {
       }).then((result) => {
         if(result.isConfirmed){
           this.hasUnSavedChanges = false;
-          this.columnsData();
+          // this.columnsData();
           if (this.active !== 3){
             this.active = 1;
           }
@@ -1614,7 +1598,7 @@ try {
         }
       })
     }else{
-    this.columnsData();
+    // this.columnsData();
     if (this.active !== 3){
       this.active = 1;
     }
@@ -1886,7 +1870,7 @@ try {
             this.displayedColumns = [];
             this.retriveDataSheet_id = '';
             this.getChartData();
-            this.columnsData();
+            // this.columnsData();
             if (selectedSheetId) {
               this.retriveDataSheet_id = selectedSheetId;
               this.sheetRetrive(false);
@@ -1927,7 +1911,7 @@ try {
         this.displayedColumns = [];
         this.retriveDataSheet_id = '';
         this.getChartData();
-        this.columnsData();
+        // this.columnsData();
         if (selectedSheetId) {
           this.retriveDataSheet_id = selectedSheetId;
           this.sheetRetrive(false);
@@ -4915,6 +4899,9 @@ customizechangeChartPlugin() {
         break; 
         case 'round':
         this.calculatedFieldLogic = 'ROUND("' + tableName + '"."' + columnName + '")';
+        break;
+        case 'zn':
+        this.calculatedFieldLogic = 'ZN("' + tableName + '"."' + columnName + '")';
            break; 
        case 'ifnull':
             this.calculatedFieldLogic = 'COALESCE("' + tableName + '"."' + columnName + '")';
@@ -5079,7 +5066,7 @@ customizechangeChartPlugin() {
     console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
     if (item && item.column && item.table_name) {
-      if (!((this.calculatedFieldFunction == 'logical' && this.calculatedFieldLogic !== 'COALESCE()') || this.calculatedFieldFunction == 'arithematic')) {
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic' || this.calculatedFieldFunction == 'Custom')) {
         this.dropCalculatedField(item.table_name, item.column); 
       } else {
         if (this.calculatedFieldLogic?.length) {
@@ -5101,7 +5088,7 @@ customizechangeChartPlugin() {
   }
 
   applyCalculatedFields(event: any, ngbdropdownevent: any) {
-    if (!(this.calculatedFieldFunction == 'arithematic')) {
+    if (!(this.calculatedFieldFunction == 'arithematic' || this.calculatedFieldFunction == 'Custom')) {
       this.validateCalculatedField();
     } else {
       this.validateExpression();
@@ -5236,6 +5223,17 @@ customizechangeChartPlugin() {
             return true;
           }
            break; 
+           case 'zn':
+            if(!this.validateFormula(/^ZN\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
+              this.isValidCalculatedField = false;
+              this.validationMessage = 'Invalid Syntax';
+              return false;
+            } 
+            else{
+              this.isValidCalculatedField = true;
+              return true;
+            }
+             break; 
         case 'left': 
         if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
@@ -5413,6 +5411,17 @@ customizechangeChartPlugin() {
           return true;
         }
         break; 
+        case 'ifelse': 
+        if(!this.validateFormula(/^IF\s+.+?\s+THEN\s+.+?(\s+ELSE\s+IF\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END$/i)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break;
         case 'average': 
         if(!this.validateFormula(/^AVG\(\s*.+?\s*\)$/)){
           this.isValidCalculatedField = false;
@@ -5487,9 +5496,11 @@ customizechangeChartPlugin() {
     calculatedFieldData(){
       this.nestedCalculatedFieldData = '';
       this.calculatedFieldLogic = '';
+      this.validationMessage = '';
     }
 
     nestedCalculatedFieldFunction(){
+      this.validationMessage = '';
       switch(this.nestedCalculatedFieldData) {
         case 'abs':
           this.calculatedFieldLogic = 'ABS()';
@@ -5502,6 +5513,9 @@ customizechangeChartPlugin() {
         break; 
         case 'round':
         this.calculatedFieldLogic = 'ROUND()';
+           break; 
+        case 'zn':
+        this.calculatedFieldLogic = 'ZN()';
            break; 
         case 'left': 
         this.calculatedFieldLogic = 'LEFT( , )';
@@ -5553,6 +5567,9 @@ customizechangeChartPlugin() {
         break; 
         case 'case':
           this.calculatedFieldLogic = 'CASE expression WHEN value THEN result ELSE default END';
+        break; 
+        case 'ifelse':
+          this.calculatedFieldLogic = 'IF condition THEN result ELSEIF condition THEN result ELSE default END';
         break; 
         case 'ifnull':
           this.calculatedFieldLogic = 'COALESCE()';
@@ -6294,14 +6311,180 @@ toggleQuickCalculation() {
 }
 yearLength = 2; // Example value, dynamically set based on your data
 yearColumns = [];
-// @HostListener('document:click', ['$event'])
-// closeQuickCalcDropdown(event: Event) {
-//     const targetElement = event.target as HTMLElement;
-//     if (!targetElement.closest('.position-relative')) {
-//         this.quickCalcOpen = false;
-//     }
-// }
+// calculatedFieldLogic = '';
+showSuggestions = false;
+filteredSuggestions: SqlSuggestion[] = [];
+caretTop = 0;
+caretLeft = 0;
 
+// suggestions: string[] = [
+//   'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'JOIN',
+//   'COALESCE', 'IFNULL', 'COUNT', 'SUM', 'AVG'
+// ];
+suggestions: SqlSuggestion[] = [];
+
+buildSuggestionsForCalculations(data:any){
+  const results: SqlSuggestion[] = [];
+
+  data.forEach((table: { table_name: any; dimensions: any; measures: any; }) => {
+    const tableName = table.table_name;
+    (table.dimensions || []).forEach((dim: any) => {
+      if (dim.column) {
+        results.push({
+          display: `${tableName}.${dim.column}`,
+          insert: `"${tableName}"."${dim.column}"`
+        });
+      }
+    });
+
+    (table.measures || []).forEach((meas: any) => {
+      if (meas.column) {
+        results.push({
+          display: `${tableName}.${meas.column}`,
+          insert: `"${tableName}"."${meas.column}"`
+        });
+      }
+    });
+  });
+  this.suggestions.push(...results);
+  console.log('calculationsuggestions',this.suggestions)
+}
+selectedSuggestionIndex: number = -1;
+
+onTextAreaKeyUp(event: KeyboardEvent) {
+  const input = this.sqlEditor.nativeElement;
+  const caretPosition = input.selectionStart || 0;
+  const textBefore = input.value.slice(0, caretPosition);
+  const wordMatch = textBefore.match(/(\w+)$/);
+  const currentWord = wordMatch ? wordMatch[1] : '';
+
+  if (event.key === 'ArrowDown' && this.showSuggestions) {
+    this.selectedSuggestionIndex = Math.min(this.selectedSuggestionIndex + 1, this.filteredSuggestions.length - 1);
+    event.preventDefault();
+    return;
+  }
+
+  if (event.key === 'ArrowUp' && this.showSuggestions) {
+    this.selectedSuggestionIndex = Math.max(this.selectedSuggestionIndex - 1, 0);
+    event.preventDefault();
+    return;
+  }
+
+  if (event.key === 'Enter' && this.showSuggestions && this.selectedSuggestionIndex >= 0) {
+    event.preventDefault();
+    const selected = this.filteredSuggestions[this.selectedSuggestionIndex];
+    if (selected) {
+      this.selectSuggestion(selected);
+    }
+    return;
+  }
+
+  if (event.ctrlKey && event.key === ' ') {
+    this.filteredSuggestions = [...this.suggestions];
+    this.showSuggestions = true;
+    this.selectedSuggestionIndex = 0;
+    this.setSuggestionDropdownPosition();
+    return;
+  }
+
+  if (currentWord.length > 0) {
+    this.filteredSuggestions = this.suggestions.filter(s =>
+      s.display.toLowerCase().includes(currentWord.toLowerCase())
+    );
+    this.showSuggestions = true;
+    this.selectedSuggestionIndex = 0;
+    this.setSuggestionDropdownPosition();
+  } else {
+    this.filteredSuggestions = [];
+    this.showSuggestions = false;
+    this.selectedSuggestionIndex = -1;
+  }
+}
+
+
+selectSuggestion(suggestion: SqlSuggestion) {
+  const input = this.sqlEditor.nativeElement;
+  const caretPosition = input.selectionStart || 0;
+  const textBefore = input.value.slice(0, caretPosition);
+  const textAfter = input.value.slice(caretPosition);
+  const match = textBefore.match(/(\w+)$/);
+  const wordStart = match ? caretPosition - match[1].length : caretPosition;
+
+  this.calculatedFieldLogic =
+    textBefore.slice(0, wordStart) + suggestion.insert + textAfter;
+
+  setTimeout(() => {
+    input.focus();
+    const newCaretPos = wordStart + suggestion.insert.length;
+    input.setSelectionRange(newCaretPos, newCaretPos);
+  });
+
+  this.showSuggestions = false;
+}
+
+
+setSuggestionDropdownPosition() {
+  const textarea = this.sqlEditor.nativeElement;
+  const coords = this.getCaretCoordinates(textarea, textarea.selectionEnd);
+
+  const containerRect = textarea.getBoundingClientRect(); // textarea position on screen
+  const viewportHeight = window.innerHeight;
+
+  const dropdownHeight = 200; // estimated
+  const lineHeight = 20;      // estimated line height
+  const dropdownWidth = 250;
+
+  // Calculate available space below the caret relative to viewport
+  const caretAbsoluteTop = containerRect.top + coords.top;
+  const showAbove = caretAbsoluteTop + dropdownHeight > viewportHeight;
+
+  // Set top relative to textarea
+  this.caretTop = showAbove
+    ? coords.top - dropdownHeight - 4 // a little spacing
+    : coords.top + lineHeight;
+
+  // Prevent overflow on X
+  const maxLeft = textarea.offsetWidth - dropdownWidth;
+  this.caretLeft = Math.min(coords.left, maxLeft);
+}
+
+
+updateCaretPosition() {
+  this.setSuggestionDropdownPosition();
+}
+
+hideSuggestions() {
+  setTimeout(() => this.showSuggestions = false, 200); // small delay for click
+}
+
+// Use a small utility to get caret coordinates
+getCaretCoordinates(textarea: HTMLTextAreaElement, position: number) {
+  const div = document.createElement('div');
+  const style = getComputedStyle(textarea);
+
+  for (let i = 0; i < style.length; i++) {
+    const prop = style[i];
+    div.style.setProperty(prop, style.getPropertyValue(prop));
+  }
+
+  div.style.position = 'absolute';
+  div.style.visibility = 'hidden';
+  div.style.whiteSpace = 'pre-wrap';
+  div.style.wordWrap = 'break-word';
+  div.style.width = textarea.offsetWidth + 'px';
+
+  const text = textarea.value.substring(0, position);
+  const span = document.createElement('span');
+  span.textContent = '\u200b'; // zero-width space
+  div.textContent = text;
+  div.appendChild(span);
+  document.body.appendChild(div);
+
+  const { offsetLeft: left, offsetTop: top } = span;
+  document.body.removeChild(div);
+
+  return { top, left };
+}
   refreshSheetData(){
     this.columnsData();
     this.dataExtraction(true);

@@ -57,6 +57,7 @@
                                                                         <option value="date">Date</option>
                                                                         <option value="logical">Logical</option>
                                                                         <option value="aggregation">Aggregate</option>
+                                                                        <option value="Custom">Custom</option>
                                                                     </select>
                                                                 </div>
                                                                 <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
@@ -67,10 +68,13 @@
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="zn">ZN</option>
+
 
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
-                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="ifelse">IF ELSE/ELSEIF</option>
+
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
@@ -106,11 +110,22 @@
                                                             <!-- <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label> -->
                                                             <div class="d-flex">
                                                                 <div class="col-6 p-0">
-                                                                    <textarea [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
-                                                                       
+                                                                    <textarea #sqlEditor [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
+                                                                    (keydown)="onTextAreaKeyUp($event)"
+                                                                    (click)="updateCaretPosition()"
+                                                                    (blur)="hideSuggestions()"
                                                                         class="query-text mb-1 px-3" [(ngModel)]="calculatedFieldLogic" [style.width]="calculationfieldid.hidden ? '195%' : '100%'"
                                                                         placeholder="Drop Column or Enter Logic"></textarea>
-                                                                    
+                                                                        <ul *ngIf="filteredSuggestions.length && showSuggestions"
+                                                                        class="suggestions-dropdown"
+                                                                        [style.top.px]="caretTop"
+                                                                        [style.left.px]="caretLeft">
+                                                                        <li *ngFor="let suggestion of filteredSuggestions; let i = index"
+                                                                        (mousedown)="selectSuggestion(suggestion)"
+                                                                        [class.selected]="i === selectedSuggestionIndex">
+                                                                      {{ suggestion.display }}
+                                                                    </li>
+                                                                    </ul>
                                                                 </div>
                                                                 <div #calculationfieldid [hidden]="true" class="col-6 p-0 d-flex">
                                                                     <div class="calculated-hide-card bg-light mb-1 border rounded-2 d-flex">
@@ -135,8 +150,13 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'round'){
                                                                                 <span > <p class="fw-600 mb-0">ROUND(number, [decimals]) :<br> </p> Rounds to a specified number of decimals.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ZN("tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  ROUND(2.65,1) = 2.6 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'zn'){
+                                                                                <span > <p class="fw-600 mb-0">ZN(number) :<br> </p> Returns the value if exists else return 0 for null values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> ZN(2)=2 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'ifnull'){
                                                                                 <span > <p class="fw-600 mb-0">IFNULL(expression1, expression2) :<br> </p> Returns the first non-null expression.</span> <br><br>
@@ -148,10 +168,20 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> CASE expression WHEN value THEN result ELSE default END</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  case  when "finance"."Amount" > 0 then 1 else 0 end </span>
                                                                             }
+                                                                            @if(nestedCalculatedFieldData == 'ifelse'){
+                                                                                <span> <p class="fw-600 mb-0">IF / ELSE IF :<br></p>Executes conditional logic with if-else branching.</span><br><br>
+                                                                                <span><p class="fw-600 mb-0">Syntax :<br></p> IF condition THEN result ELSE IF condition THEN result ELSE default END</span> <br><br>
+                                                                                <span><p class="fw-600 mb-0">Example :<br></p>IF "finance"."Amount" > 1000 THEN 'High' ELSEIF "finance"."Amount" > 0 THEN 'Medium' ELSE 'Low' END </span>
+                                                                            }
                                                                             @if(nestedCalculatedFieldData == 'average'){
                                                                                 <span > <p class="fw-600 mb-0">AVG(expression) :<br> </p> Returns the average.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> AVG("tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  AVG("finance"."Amount") </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'count'){
+                                                                                <span > <p class="fw-600 mb-0">COUNT(string) :<br> </p> Counts total number of non-null values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> COUNT("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  COUNT("finance"."Name") </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'countd'){
                                                                                 <span > <p class="fw-600 mb-0">COUNTD(string) :<br> </p> Counts distinct values.</span> <br><br>
@@ -229,7 +259,7 @@
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  current_date + INTERVAL '5 days'(days/months/years)  </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'datediff'){
-                                                                                <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the difference between two dates.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">DATEDIFF :<br> </p> Returns the difference between two dates.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" - "tablename"."column_name"</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  CURRENT_DATE - '2024-10-03' </span>
                                                                             }
@@ -260,6 +290,9 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" + "tablename"."column_name"</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example : 2 + 2 = 4<br> </p>   </span>
                                                                             }
+                                                                            @if(calculatedFieldFunction == 'Custom'){
+                                                                                <span > <p class="fw-600 mb-0"><br> </p>Custom calculated field evaluates multiple conditions using logical operators (AND, OR, IF, CASE) and applies aggregation functions (like SUM, AVG, COUNT, MAX, MIN) to produce a summarized or conditional result</span> <br><br>
+                                                                            }
                                                                         </div>
                                                                         
                                                                     </div>
@@ -267,7 +300,7 @@
                                                                         <i class="fa fa-angle-left"></i>
                                                                     </div> -->
                                                                 </div>
-                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
+                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'Custom') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
                                                                     <i *ngIf="calculationfieldid.hidden" class="fa fa-angle-left cursor-pointer"></i>
                                                                     <i *ngIf="!calculationfieldid.hidden" class="fa fa-angle-right cursor-pointer"></i>
                                                                 </div>
