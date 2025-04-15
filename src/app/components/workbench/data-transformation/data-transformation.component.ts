@@ -475,18 +475,18 @@ export class DataTransformationComponent {
         this.originalTableData = response.tables;
         this.schema = response.schema;
         this.databaseName = response.databas_name;
-        // const tab1 = JSON.parse(JSON.stringify(response.tables));
-        // this.ngSelectJoin = JSON.parse(JSON.stringify(tab1.flatMap((table : any) =>
-        //   table.columns.map((col : any) => ({
-        //     label: col.col,
-        //     value: col.col,
-        //     group: table.tables,
-        //     dtype: col.dtype
-        //   }))
-        // )));
-        // this.ngSelectUnion = JSON.parse(JSON.stringify(tab1));
-        // this.ngSelectPivotValues = JSON.parse(JSON.stringify(tab1));
-        // this.ngSelectPivotColumns = JSON.parse(JSON.stringify(tab1));
+        const tab1 = JSON.parse(JSON.stringify(response.tables));
+        this.ngSelectJoin = JSON.parse(JSON.stringify(tab1.flatMap((table : any) =>
+          table.columns.map((col : any) => ({
+            label: col.col,
+            value: col.col,
+            group: table.tables,
+            dtype: col.dtype
+          }))
+        )));
+        this.ngSelectUnion = JSON.parse(JSON.stringify(tab1));
+        this.ngSelectPivotValues = JSON.parse(JSON.stringify(tab1));
+        this.ngSelectPivotColumns = JSON.parse(JSON.stringify(tab1));
         
         if(this.hierarchyId && this.transformationsPreview.length >0){
           this.setTransformationsEditPreview();
