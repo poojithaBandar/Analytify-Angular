@@ -4916,7 +4916,7 @@ customizechangeChartPlugin() {
         }
       }
     }else if(item && item.column && item.data_type === 'calculated'){
-      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic' || this.calculatedFieldFunction == 'Custom')) {
         this.dropCalculatedField('calculated_fields', item.field_name); 
       } else {
         if (this.calculatedFieldLogic?.length) {
@@ -4999,6 +4999,9 @@ customizechangeChartPlugin() {
     }
 
     validateExpression(): void {
+      if(this.calculatedFieldFunction == 'Custom'){
+        this.isValidCalculatedField = true;
+      }else{
       try {
         this.preValidateExpression(this.calculatedFieldLogic);
         const regex = /"([^"]+)"\.\"([^"]+)\"/g;
@@ -5012,6 +5015,7 @@ customizechangeChartPlugin() {
         this.validationMessage = (error as Error).message;
         this.isValidCalculatedField = false;
       }
+    }
     }
 
     validateFormula(regex: RegExp){
