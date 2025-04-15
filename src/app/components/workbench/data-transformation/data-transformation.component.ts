@@ -18,7 +18,7 @@ type TransformationType = {
   dropdown?: string | null;
   joinType?: string;
   operator?: string;
-  input?: string | string[] | null;
+  input?: string | number | string[] | null;
   index?: string[] | string | null;
   value?: string | null;
   columns?: string[] | string | null;
@@ -311,6 +311,11 @@ export class DataTransformationComponent {
     if(isInput){
       if(transformationKey === 'joining'){
         this.selectedTransformations[index][transformationIndex].input = event;
+      } else if(transformationKey === 'replace_values'){
+        const value = event.target.value;
+        const parsedValue = !isNaN(value) && value.trim() !== '' ? parseInt(value, 10) : value;
+
+        this.selectedTransformations[index][transformationIndex].input = parsedValue;
       } else{
         this.selectedTransformations[index][transformationIndex].input = event.target.value;
       }
