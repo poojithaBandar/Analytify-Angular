@@ -237,7 +237,7 @@ export class DatabaseComponent {
       Swal.fire({
         position: "center",
         icon: "question",
-        title: "Would you like to view template dashboards based on your connected data?",
+        title: "Would you like to view template dashboard?",
         showConfirmButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes',
@@ -259,11 +259,11 @@ export class DatabaseComponent {
       Swal.fire({
         position: "center",
         icon: "question",
-        title: "Would you like to view template dashboards based on your connected data?",
+        title: "Would you like to view template dashboard?",
         showConfirmButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes',
-        cancelButtonText: 'Skip',
+        cancelButtonText: 'No',
       }).then((result) => {
         if (result.isConfirmed) {
           this.templateDashboardService.buildSampleSalesforceDashboard(this.container, this.databaseId);

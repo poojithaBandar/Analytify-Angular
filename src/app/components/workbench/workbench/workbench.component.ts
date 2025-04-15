@@ -684,7 +684,7 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 icon: "question",
-                title: "Would you like to view template dashboards based on your connected data?",
+                title: "Would you like to view template dashboard?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -731,7 +731,7 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 icon: "question",
-                title: "Would you like to view template dashboards based on your connected data?",
+                title: "Would you like to view template dashboard?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
