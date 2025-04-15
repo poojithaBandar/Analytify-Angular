@@ -220,7 +220,11 @@ export class DataTransformationComponent {
 
     if(key === type.key){
       if(type?.dropdown === '' || type?.dropdown !== ''){
-        this.transformationTypes[typeIndex].dropdown = dropdown;
+        if(type.key === 'union'){
+          this.transformationTypes[typeIndex].dropdown = dropdown?.tables ? dropdown?.tables : dropdown;
+        } else{
+          this.transformationTypes[typeIndex].dropdown = dropdown;
+        }
       }
       if(type?.input === '' || type?.input !== ''){
         this.transformationTypes[typeIndex].input = input;
@@ -379,8 +383,6 @@ export class DataTransformationComponent {
             this.ngSelectPivotColumns = this.draggedTables[index].columns.filter((column:any) => !this.selectedTransformations[index][transformationIndex]?.index.includes(column.col) && this.selectedTransformations[index][transformationIndex]?.value !== column.col);
           }
         }
-        this.ngSelectPivotValues = this.draggedTables[index].columns.filter((column:any) => this.integerList.includes(column.dtype) && !this.selectedTransformations[index][transformationIndex].index.includes(column.col));
-        this.ngSelectPivotColumns = this.draggedTables[index].columns.filter((column:any) => !this.selectedTransformations[index][transformationIndex].index.includes(column.col) && this.selectedTransformations[index][transformationIndex].value !== column.col);
       }
     }
 
