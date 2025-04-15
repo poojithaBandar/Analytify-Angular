@@ -136,7 +136,7 @@ export class DataTransformationComponent {
 
   addNewTransform(index: number){
     if (!this.selectedTransformations[index]) {
-      this.selectedTransformations[index] = [{}]; // Initialize if not set
+      this.selectedTransformations[index] = [{input : '',dropdown:'',keys:[],key:'', label:'',isError:true, joinType:'', operator:'',index:[],value:'',columns:[],aggregation:'mean'}]; // Initialize if not set
     } else {
       this.selectedTransformations[index].push({input : '',dropdown:'',keys:[],key:'', label:'',isError:true, joinType:'', operator:'',index:[],value:'',columns:[],aggregation:'mean'});
     }
