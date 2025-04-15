@@ -662,7 +662,8 @@ try {
             this.tableDimentions = responce.dimensions;
             this.tableMeasures = responce.measures;
             this.buildSuggestionsForCalculations(responce);
-          },
+          }
+        },
           error: (error) => {
             console.log(error);
           }
