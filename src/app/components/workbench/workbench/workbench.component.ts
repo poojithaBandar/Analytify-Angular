@@ -684,11 +684,11 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 icon: "question",
-                title: "Would like to view any template dashboard?",
+                title: "Would you like to view template dashboards based on your connected data?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
+                cancelButtonText: 'Skip',
               }).then((result) => {
                 if (result.isConfirmed) {
                   this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
@@ -731,11 +731,11 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 icon: "question",
-                title: "Would like to view any template dashboard?",
+                title: "Would you like to view template dashboards based on your connected data?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
+                cancelButtonText: 'Skip',
               }).then((result) => {
                 if (result.isConfirmed) {
                   this.templateDashboardService.buildSampleHALOPSADashboard(this.container, this.databaseId);
