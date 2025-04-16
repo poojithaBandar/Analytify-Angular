@@ -647,6 +647,7 @@ try {
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
+        this.suggestions=[];
         const obj = {
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,

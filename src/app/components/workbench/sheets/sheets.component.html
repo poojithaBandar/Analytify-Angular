@@ -150,12 +150,12 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'round'){
                                                                                 <span > <p class="fw-600 mb-0">ROUND(number, [decimals]) :<br> </p> Rounds to a specified number of decimals.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ZN("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  ROUND(2.65,1) = 2.6 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'zn'){
                                                                                 <span > <p class="fw-600 mb-0">ZN(number) :<br> </p> Returns the value if exists else return 0 for null values.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ZN("tablename"."column_name", [decimals])</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p> ZN(2)=2 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'ifnull'){
@@ -206,12 +206,12 @@
                                                                             @if(nestedCalculatedFieldData == 'left'){
                                                                                 <span > <p class="fw-600 mb-0">LEFT(string, number) :<br> </p> Returns the specified number of characters from left part of a string.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> LEFT("Tablename"."column_name", number)</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Left('Electronics',3)=Ele </span>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  LEFT('Electronics',3)=Ele </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'right'){
                                                                                 <span > <p class="fw-600 mb-0">RIGHT(string, number) :<br> </p> Returns the specified number of characters from right part of a string.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LEFT("Tablename"."column_name", number)</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Left('Electronics',3)=ics </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> RIGHT("Tablename"."column_name", number)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  RIGHT('Electronics',3)=ics </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'mid'){
                                                                                 <span > <p class="fw-600 mb-0">substring(string, [from int], [for int]) :<br> </p> Extracts part of a string by giving starting position and the length of the string.</span> <br><br>
@@ -221,7 +221,7 @@
                                                                             @if(nestedCalculatedFieldData == 'length'){
                                                                                 <span > <p class="fw-600 mb-0">LENGTH(string) :<br> </p> Returns the length of a string.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> LENGTH("tablename"."column_name")</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Length('electronics') = 12 </span>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  LENGTH('electronics') = 12 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'trim'){
                                                                                 <span > <p class="fw-600 mb-0">TRIM(string) :<br> </p> Removes spaces at the beginning and end of a string.</span> <br><br>
