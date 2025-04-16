@@ -39,6 +39,10 @@ export class TransformationListComponent {
 
 
   getTransformationList(){
+    if(this.transformationList.length === 0){
+      this.itemsPerPage = 10;
+      this.page = 1;
+    }
     this.workbechService.getTransformationList(this.page, this.itemsPerPage, this.searchTransformation).subscribe({
       next: (response) => {
         console.log(response);

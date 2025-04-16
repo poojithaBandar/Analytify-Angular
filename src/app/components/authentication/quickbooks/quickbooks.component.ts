@@ -78,7 +78,7 @@ getSalesforceToken(url:any){
             // this.getCompanyDetails();
             // const quickBooksId = data.quickbooks_id;
             const salesforceId = btoa(data.salesforce_id.toString());
-            this.router.navigate(['/analytify/database-connection/tables/quickbooks/'+salesforceId]);
+            this.router.navigate(['/analytify/database-connection/tables/salesforce/'+salesforceId]);
           }
         },
         error: (error: any) => {
