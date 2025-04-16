@@ -6677,4 +6677,3 @@ downloadAsImage() {
 
 }
 
-}
