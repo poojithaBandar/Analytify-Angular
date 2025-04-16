@@ -18,7 +18,7 @@ type TransformationType = {
   dropdown?: string | null;
   joinType?: string;
   operator?: string;
-  input?: string | string[] | null;
+  input?: string | number | string[] | null;
   index?: string[] | string | null;
   value?: string | null;
   columns?: string[] | string | null;
@@ -138,7 +138,7 @@ export class DataTransformationComponent {
 
   addNewTransform(index: number){
     if (!this.selectedTransformations[index]) {
-      this.selectedTransformations[index] = [{}]; // Initialize if not set
+      this.selectedTransformations[index] = [{input : '',dropdown:'',keys:[],key:'', label:'',isError:true, joinType:'', operator:'',index:[],value:'',columns:[],aggregation:'mean'}]; // Initialize if not set
     } else {
       this.selectedTransformations[index].push({input : '',dropdown:'',keys:[],key:'', label:'',isError:true, joinType:'', operator:'',index:[],value:'',columns:[],aggregation:'mean'});
     }
@@ -222,7 +222,11 @@ export class DataTransformationComponent {
 
     if(key === type.key){
       if(type?.dropdown === '' || type?.dropdown !== ''){
-        this.transformationTypes[typeIndex].dropdown = dropdown;
+        if(type.key === 'union'){
+          this.transformationTypes[typeIndex].dropdown = dropdown?.tables ? dropdown?.tables : dropdown;
+        } else{
+          this.transformationTypes[typeIndex].dropdown = dropdown;
+        }
       }
       if(type?.input === '' || type?.input !== ''){
         this.transformationTypes[typeIndex].input = input;
@@ -313,6 +317,11 @@ export class DataTransformationComponent {
     if(isInput){
       if(transformationKey === 'joining'){
         this.selectedTransformations[index][transformationIndex].input = event;
+      } else if(transformationKey === 'replace_values'){
+        const value = event.target.value;
+        const parsedValue = !isNaN(value) && value.trim() !== '' ? parseInt(value, 10) : value;
+
+        this.selectedTransformations[index][transformationIndex].input = parsedValue;
       } else{
         this.selectedTransformations[index][transformationIndex].input = event.target.value;
       }
@@ -376,8 +385,6 @@ export class DataTransformationComponent {
             this.ngSelectPivotColumns = this.draggedTables[index].columns.filter((column:any) => !this.selectedTransformations[index][transformationIndex]?.index.includes(column.col) && this.selectedTransformations[index][transformationIndex]?.value !== column.col);
           }
         }
-        this.ngSelectPivotValues = this.draggedTables[index].columns.filter((column:any) => this.integerList.includes(column.dtype) && !this.selectedTransformations[index][transformationIndex].index.includes(column.col));
-        this.ngSelectPivotColumns = this.draggedTables[index].columns.filter((column:any) => !this.selectedTransformations[index][transformationIndex].index.includes(column.col) && this.selectedTransformations[index][transformationIndex].value !== column.col);
       }
     }
 

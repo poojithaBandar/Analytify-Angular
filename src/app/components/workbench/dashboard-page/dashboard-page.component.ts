@@ -293,13 +293,13 @@ applyButtonEnableOnEditUser = false;
 getAddedDashboardProperties(){
   this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
     next:(data)=>{
-      this.selectedRoleIds = data?.roles?.map((role: any) => role.id);
+      this.selectedRoleIds = Array.isArray(data?.roles) ? data.roles.map((role: any) => role.id): [];
       this.selectedUserIds = data?.users?.map((user:any)=>user.user_id);
       console.log('savedrolesandUsers',data);
       // this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
       // this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
-      this.selectedRoleIdsToNumbers = this.selectedRoleIds?.map((id: string) => Number(id));
-      this.selectedUserIdsToNumbers = this.selectedUserIds?.map((id: string) => Number(id));
+      this.selectedRoleIdsToNumbers =  (this.selectedRoleIds || []).map((id: string) => Number(id));;
+        this.selectedUserIdsToNumbers = (this.selectedUserIds || []).map((id: string) => Number(id));
       console.log('Loaded selected roles:', this.selectedRoleIds);
       console.log('Loaded selected users:', this.selectedUserIds);
       if(this.selectedRoleIds.length > 0){

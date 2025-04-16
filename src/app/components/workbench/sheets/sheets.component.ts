@@ -5670,6 +5670,7 @@ customizechangeChartPlugin() {
      this.calculatedFieldLogic = '';
      this.isEditCalculatedField = false;
       }
+      this.validationMessage = '';
     }
 
     isMapChartDrillDown : boolean = false;

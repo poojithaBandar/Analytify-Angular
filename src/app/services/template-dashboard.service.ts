@@ -737,7 +737,24 @@ export class TemplateDashboardService {
     const componentRef =container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleHALOPSADashbaord(databaseId).subscribe({next: (responce) => {
+      const obj ={
+        query_set_id:responce.datasource_query.queryset_id,
+        hierarchy_id:responce.datasource_query.hierarchy_id,
+        joining_tables: responce.datasource_query.joining_tables,
+        join_type:responce.datasource_query.join_type,
+        joining_conditions:responce.datasource_query.joining_conditions,
+        dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
+      } as any
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {        
       this.buildDashboardResponseData(responce,"HALOPSA");      
+        },
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      }
+    )
+    this.buildDashboardResponseData(responce,'quickbooks');
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -750,7 +767,24 @@ export class TemplateDashboardService {
     const componentRef =container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleSalesforceDashbaord(databaseId).subscribe({next: (responce) => {
+      const obj ={
+        query_set_id:responce.datasource_query.queryset_id,
+        hierarchy_id:responce.datasource_query.hierarchy_id,
+        joining_tables: responce.datasource_query.joining_tables,
+        join_type:responce.datasource_query.join_type,
+        joining_conditions:responce.datasource_query.joining_conditions,
+        dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
+      } as any
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
       this.buildDashboardResponseData(responce,'salesforce');      
+        },
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      }
+    )
+    this.buildDashboardResponseData(responce,'quickbooks');
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
