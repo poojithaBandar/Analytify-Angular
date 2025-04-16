@@ -1524,7 +1524,7 @@
         <span class="p-2" (dblclick)="enableEdit(i)">
           {{ tab.name }}
         </span>
-          <i  aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i>
+          <i *ngIf ="!isPublicUrl" aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i>
       </ng-template>
     </ng-template>
 
