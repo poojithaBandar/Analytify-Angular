@@ -1511,6 +1511,26 @@
                                 </div>
                                 <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 me-1 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                                 <button [disabled]="!retriveDataSheet_id" ngbTooltip="Refresh" container="body" type="button" class="btn btn-primary mt-0 ps-2 pe-2" (click)="refreshSheetData()"><i class="fa fa-refresh w-4 h-4"></i></button>
+
+                                <!-- More Options Button -->
+                                <div ngbDropdown>
+                                    <button
+                                    class="btn btn-primary mt-0 ps-2 pe-2"
+                                    type="button"
+                                    id="menuOptionsDropdown"
+                                    ngbTooltip="Menu Options"
+                                    container="body"
+                                    ngbDropdownToggle
+                                    [disabled]="!retriveDataSheet_id"
+                                    >
+                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </button>
+                                    <div ngbDropdownMenu aria-labelledby="menuOptionsDropdown">
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsCSV()">Export to CSV</a>
+                                    <!-- <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDF()">Download as PDF</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsImage()">Download Image</a> -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         </div>
