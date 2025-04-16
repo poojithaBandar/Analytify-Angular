@@ -672,6 +672,9 @@ try {
         }
         )
       }
+        
+      
+
 
       dataExtraction(isSyncData : boolean){
         this.dualAxisColumnData = [];
@@ -6497,7 +6500,6 @@ getCaretCoordinates(textarea: HTMLTextAreaElement, position: number) {
     this.columnsData();
     this.dataExtraction(true);
   }
-
   downloadAsCSV() {
     if (!this.retriveDataSheet_id) return;
 
@@ -6671,6 +6673,8 @@ downloadAsPDF() {
 downloadAsImage() {
   // Implement your image download logic here
   console.log('Download as Image clicked');
+}
+
 }
 
 }
