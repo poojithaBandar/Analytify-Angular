@@ -627,12 +627,13 @@ export class TemplateDashboardService {
           // "decimalplaces": this.donutDecimalPlaces,
           //     "donutOptions":this.donutOptions,
 
-          // "kpiData": kpiData,
+          "kpiData": tranformedData.rows_data,
           "kpiFontSize": 16,
           // "kpicolor": kpiColor,
           "kpiNumber": tranformedData.rows_data[0]?.result_data[0],
-          // "kpiPrefix": null,
-          // "kpiSuffix": this.KPISuffix,
+          "kpiPrefix": "",
+          "kpiSuffix": "",
+          kpiDecimalUnit: "none"
           // "kpiDecimalUnit": this.KPIDisplayUnits,
           // "kpiDecimalPlaces": this.KPIDecimalPlaces
         },
@@ -643,7 +644,7 @@ export class TemplateDashboardService {
 
       }
     }
-    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,rows:tranformedData.rows_data},formType,tableDataStore,displayedColumns);
+    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,"kpiPrefix": "","kpiSuffix": "",kpiDecimalUnit: "none",rows:tranformedData.rows_data},formType,tableDataStore,displayedColumns);
     dashboardData.push(dashbaordObj);
    return this.workbechService.sheetUpdate(obj, data.sheet_id);
 
