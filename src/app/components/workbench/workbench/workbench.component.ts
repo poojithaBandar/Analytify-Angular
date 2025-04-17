@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -12,7 +12,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { of } from 'rxjs';
+import { forkJoin, of, switchMap } from 'rxjs';
 // import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
 import { GalleryModule } from 'ng-gallery';
@@ -23,17 +23,23 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import _ from 'lodash';
+
+import { TemplateDashboardService } from '../../../services/template-dashboard.service';
+
+
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent],
+  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent],
   templateUrl: './workbench.component.html',
   styleUrl: './workbench.component.scss'
 })
 export class WorkbenchComponent implements OnInit{
   @ViewChild('fileInput') fileInput:any;
   @ViewChild('fileInput1') fileInput1:any;
-
+  @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   
   tableList = [] as any;
   dragedTableName: any;
@@ -90,9 +96,10 @@ export class WorkbenchComponent implements OnInit{
   schemaList: any[] = [];
   selectedSchema : string = 'public';
   querysetIdFromDataSource :any;
+
   isCustomSql = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService){ 
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
 
@@ -673,7 +680,22 @@ export class WorkbenchComponent implements OnInit{
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
               }else{
-              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              Swal.fire({
+                position: "center",
+                icon: "question",
+                title: "Would you like to view template dashboard?",
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Skip',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
+                } else {
+                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
+              });
               }
             }
           },
@@ -705,7 +727,22 @@ export class WorkbenchComponent implements OnInit{
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
               }else{
-              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              Swal.fire({
+                position: "center",
+                icon: "question",
+                title: "Would you like to view template dashboard?",
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Skip',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.templateDashboardService.buildSampleHALOPSADashboard(this.container, this.databaseId);
+                } else {
+                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
+              });
               }
             }
           },
@@ -1801,4 +1838,5 @@ connectGoogleSheets(){
     const encodedId = btoa(hierarchyId.toString());
     this.router.navigate(['/analytify/transformationList/dataTransformation/' + encodedId]);
   }
+
 }

@@ -55424,17 +55424,20 @@ button.btn {
 
 .app-header { padding-inline-start: 13rem ;}
 .app-content { margin-inline-start: 13rem ; }
+.sheets-footer-card .mat-mdc-tab:not(.mdc-tab--stacked) { height: auto !important; padding: 5px 10px; }
 
  /* for 90% Resolution */
  @media ( 1420px <= width <= 1560px) {
   .app-header { padding-inline-start: 11rem; }
   .app-content { margin-inline-start: 11rem;  }
+  .sheets-footer-card .mat-mdc-tab:not(.mdc-tab--stacked) { font-size: 12px; }
 }
 
  /* for 100% Resolution */
  @media ( 1280px <= width <= 1420px) {
   .app-header { padding-inline-start: 10rem;}
   .app-content { margin-inline-start: 10rem;  }
+  .sheets-footer-card .mat-mdc-tab:not(.mdc-tab--stacked) { font-size: 11px; }
 }
 
     /* for 110% Resolution  */
