@@ -4342,31 +4342,36 @@ if(isLiveReloadData && isLastIndex){
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
   let formattedNumber = value+'';
   let KPINumber;
-  if (KPIDisplayUnits !== 'none') {
-    switch (KPIDisplayUnits) {
-      case 'K':
-        formattedNumber = (value / 1_000).toFixed(KPIDecimalPlaces) + 'K';
-        break;
-      case 'M':
-        formattedNumber = (value / 1_000_000).toFixed(KPIDecimalPlaces) + 'M';
-        break;
-      case 'B':
-        formattedNumber = (value / 1_000_000_000).toFixed(KPIDecimalPlaces) + 'B';
-        break;
-      case 'G':
-        formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
-        break;
-      case '%':
-        let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
-        let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
-        formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
-        break;
-    }
-  } else {
-    formattedNumber = (value).toFixed(KPIDecimalPlaces)
+  if(value === null || value === undefined){
+    KPINumber = 0;
+  } else{
+    if (KPIDisplayUnits !== 'none') {
+      switch (KPIDisplayUnits) {
+        case 'K':
+          formattedNumber = (value / 1_000).toFixed(KPIDecimalPlaces) + 'K';
+          break;
+        case 'M':
+          formattedNumber = (value / 1_000_000).toFixed(KPIDecimalPlaces) + 'M';
+          break;
+        case 'B':
+          formattedNumber = (value / 1_000_000_000).toFixed(KPIDecimalPlaces) + 'B';
+          break;
+        case 'G':
+          formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
+          break;
+        case '%':
+          let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+          let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
+          formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
+          break;
+      }
+    } else {
+      formattedNumber = (value).toFixed(KPIDecimalPlaces)
+    }  
+    KPINumber = KPIPrefix + formattedNumber + KPISuffix
   }
 
-  return KPINumber = KPIPrefix + formattedNumber + KPISuffix;
+  return KPINumber;
 }
 
 closeFilterModal(){

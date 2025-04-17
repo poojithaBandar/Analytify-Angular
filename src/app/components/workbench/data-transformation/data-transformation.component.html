@@ -252,7 +252,7 @@
 
                                                                                 <label *ngIf="transformation.key == 'pivot'" class="form-label">Index <span  class="text-red">*</span><i ngbTooltip="Select Index" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
-                                                                                <ng-select *ngIf="transformation.key == 'pivot'" [items]="item.columns" bindLabel="col" bindValue="col" dropdownPosition="bottom"
+                                                                                <ng-select *ngIf="transformation.key == 'pivot'" [items]="ngSelectPivotIndex" bindLabel="col" bindValue="col" dropdownPosition="bottom"
                                                                                     [multiple]="true" placeholder="Select Index" [searchable]="true" [clearable]="false"[(ngModel)]="transformation.index"
                                                                                     (change)="setTransformationType(index, transformation.key, $event, false, false, transformationIndex, false, false,true,false,false,false)">
                                                                                 </ng-select>

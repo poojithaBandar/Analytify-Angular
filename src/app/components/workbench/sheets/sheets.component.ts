@@ -3756,31 +3756,35 @@ renameColumns(){
   formatKPINumber() {
     let formattedNumber = this.tablePreviewRow[0]?.result_data[0]+'';
     let value = this.tablePreviewRow[0]?.result_data[0];
-    if (this.KPIDisplayUnits !== 'none') {
-      switch (this.KPIDisplayUnits) {
-        case 'K':
-          formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
-          break;
-        case 'M':
-          formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
-          break;
-        case 'B':
-          formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
-          break;
-        case 'G':
-          formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
-          break;
-        case '%':
-          this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
-          let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
-          formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
-          break;
+    if(value === null || value === undefined){
+      this.KPINumber = 0;
+    } else{
+      if (this.KPIDisplayUnits !== 'none') {
+        switch (this.KPIDisplayUnits) {
+          case 'K':
+            formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
+            break;
+          case 'M':
+            formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
+            break;
+          case 'B':
+            formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
+            break;
+          case 'G':
+            formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
+            break;
+          case '%':
+            this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+            let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+            formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+            break;
+        }
+      } else {
+        formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
       }
-    } else {
-      formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
+  
+      this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
     }
-
-    this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
   }
   numberPopupTrigger(){
     this.numberPopup = !this.numberPopup;
