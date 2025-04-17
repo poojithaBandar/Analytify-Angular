@@ -923,4 +923,29 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.get<any>(`${environment.apiUrl}/colour_palette/`+this.accessToken+`/${id}`);
     }
+
+    buildSampleDashbaord(id : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/connectwise_dashboard/`+id+'/'+this.accessToken);
+    }
+
+    buildSampleHALOPSADashbaord(id : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/halops_dashboard/`+id+'/'+this.accessToken);
+    }
+
+    buildQuickBooksDashbaord(id : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/quickbooks_dashboard/`+id+'/'+this.accessToken);
+    }
+
+    buildSampleSalesforceDashbaord(id : number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/salesforce_dashbaord/`+id+'/'+this.accessToken);
+    }
+
 }

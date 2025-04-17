@@ -165,7 +165,11 @@ export class InsightEchartComponent {
     }
   }
 
-  barChart(){
+  barChart(chartsColumnData? : any ,chartsRowData?: any ){
+    if(chartsColumnData && chartsRowData){
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
     this.chartOptions = {
       backgroundColor: this.backgroundColor,
       legend: {
@@ -284,6 +288,7 @@ export class InsightEchartComponent {
       colorBy: 'data',
 
     };
+    return this.chartOptions;
 }
 flattenDimensions(dimensions: Dimension[]): string[] {
   const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
@@ -291,7 +296,11 @@ flattenDimensions(dimensions: Dimension[]): string[] {
     return dimensions.map(dim => dim.values[index] === null ? 'null' : dim.values[index] || '').join(',');
   });
 }
-funnelchart(){
+funnelchart(dualAxisColumnData? : any ,dualAxisRowData?: any){
+  if(dualAxisRowData && dualAxisColumnData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+  }
   const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
   const combinedArray: any[] = [];
@@ -330,6 +339,7 @@ funnelchart(){
       },
     ],
   };
+  return this.chartOptions;
 }
 stackedChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -439,7 +449,11 @@ stackedChart(){
 
   };
 }
-sidebySide(){
+sidebySide(dualAxisColumnData? : any ,dualAxisRowData? : any ){
+  if(dualAxisColumnData && dualAxisRowData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+  }
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
@@ -546,8 +560,13 @@ sidebySide(){
       }
   })),
   };
+  return this.chartOptions;
 }
-hgroupedChart(){
+hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
+  if(dualAxisColumnData && dualAxisRowData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+  }
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
@@ -653,6 +672,7 @@ hgroupedChart(){
   })),
 
   };
+  return this.chartOptions;
 }
 hstackedChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -968,7 +988,11 @@ lineChart(){
 
   };
 }
-pieChart(){
+pieChart(chartsColumnData?:any[],chartsRowData?:any[]){
+  if(chartsColumnData && chartsRowData){
+    this.chartsColumnData = chartsColumnData;
+    this.chartsRowData = chartsRowData;
+  }
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
     value: value,
     name: this.chartsColumnData[index]
@@ -1012,9 +1036,13 @@ pieChart(){
     }
     ]
   };
-  console.log('pieoptions',this.chartOptions)
+  return this.chartOptions;
 }
-donutChart(){
+donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
+  if(chartsColumnData && chartsRowData){
+    this.chartsColumnData = chartsColumnData;
+    this.chartsRowData = chartsRowData;
+  }
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
     value: value,
     name: this.chartsColumnData[index]
@@ -1058,6 +1086,7 @@ donutChart(){
       }
     ]
   };
+  return this.chartOptions;
 }
 barLineChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1211,7 +1240,11 @@ barLineChart(){
     ]
   };
 }
-multiLineChart(){
+multiLineChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+  if(dualAxisColumnData && dualAxisRowData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+  }
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
@@ -1316,6 +1349,7 @@ multiLineChart(){
       }
   })),
   };
+  return this.chartOptions;
 }
 radarChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1578,7 +1612,12 @@ getMaxValue(rowData:any) {
   });
   return max === Number.NEGATIVE_INFINITY ? 0 : max; // Return 0 if no valid values found
 }
-mapChart(){
+mapChart(dualAxisColumnData? :any, dualAxisRowData ?:any, chartsRowData?: any){
+  if(dualAxisColumnData && dualAxisRowData){
+    this.dualAxisColumnData = dualAxisColumnData;
+    this.dualAxisRowData = dualAxisRowData;
+    this.chartsRowData = chartsRowData;
+  }
   let minData : number = 0;
   let maxData: number = Math.max(...this.chartsRowData);
   let result:any[] = [];
@@ -1763,8 +1802,8 @@ let barChartOptions = {
   color: this.color
 
 };
-this.chartOptions = this.draggedDrillDownColumns.length > 0 ? (this.drillDownIndex > 0 ? barChartOptions : mapChartOptions) : mapChartOptions
-console.log(this.chartOptions);
+this.chartOptions = this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0 ? (this.drillDownIndex > 0 ? barChartOptions : mapChartOptions) : mapChartOptions
+return this.chartOptions;
  }
 formatNumber(value: number): string {
   let formattedNumber = value+'';
