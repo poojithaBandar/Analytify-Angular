@@ -666,7 +666,7 @@
 
                                                                       <cdk-virtual-scroll-viewport itemSize="5" class="viewport" style="height: 100px;">
                                                                         <div *cdkVirtualFor="let col of filterList.colData | test:searchText:'label';" >
-                                                                          <div class="form-check" style="width: 46px;">
+                                                                          <div class="form-check" >
                                                                           <input type="checkbox" [id]="'defaultCheck' + col.label" [(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList, col)" class="form-check-input"> 
                                                                           <label [for]="'defaultCheck' + col.label" class="form-check-label"> <p>{{ col.label }}</p> </label>
                                                                           </div>
