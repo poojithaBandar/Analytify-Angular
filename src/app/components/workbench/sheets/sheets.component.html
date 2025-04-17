@@ -495,7 +495,7 @@
                                                         </div> -->
                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                             <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn">
-                                                                <div class="form-check d-flex" style="width: 46px;">
+                                                                <div class="form-check d-flex" >
                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -1548,7 +1548,7 @@
                                 <!-- More Options Button -->
                                 <div ngbDropdown>
                                     <button
-                                    class="btn btn-primary mt-0 ps-2 pe-2"
+                                    class="btn btn-primary mt-0"
                                     type="button"
                                     id="menuOptionsDropdown"
                                     ngbTooltip="Menu Options"
@@ -1559,7 +1559,7 @@
                                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                     </button>
                                     <div ngbDropdownMenu aria-labelledby="menuOptionsDropdown">
-                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsCSV()">Export to CSV</a>
+                                    <button class="dropdown-item btn-primary-light" href="javascript:void(0)" (click)="downloadAsCSV()">Export to CSV</button>
                                     <!-- <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDF()">Download as PDF</a>
                                     <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsImage()">Download Image</a> -->
                                     </div>
@@ -1613,7 +1613,7 @@
                                             } <i (click)="isDimensionEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                             <li  *ngIf="isDimensionEdit"><input (blur)="onColumnAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
                                             </li>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown>
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1628,7 +1628,7 @@
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown >
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1719,7 +1719,7 @@
                                             } <i (click)="isPivotRowEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                             <li  *ngIf="isPivotRowEdit"><input (blur)="onPivotRowAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
                                             </li>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown>
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1733,7 +1733,7 @@
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown >
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1805,7 +1805,7 @@
                                                     } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
-                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center">
+                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center p-0">
                                                     <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem >Aggregation</li>
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
@@ -1819,7 +1819,7 @@
                                                         <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" >None</a></li>  
                                                     </ul>
                                                 </div>
-                                                <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
+                                                <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center p-0" ngbDropdown #quickCalcDrop="ngbDropdown">
                                                     <li class="dropdown-item btn btn-primary-light Quick-Calc-text border" ngbDropdownToggle>Quick Calculation</li>
                                                     <!-- <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
                                                        ngbDropdownToggle></i>
@@ -2310,7 +2310,7 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link  btn-sm btn-info-light border">View Dashboard</button></div>        
+                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link  btn-sm btn-info-light border move-text">View Dashboard</button></div>        
                     </div>
                 </div>
 
@@ -2383,7 +2383,7 @@
                                                                                         } -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check d-flex" style="width: 46px;">
+                                                                                                <div class="form-check d-flex">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2752,7 +2752,7 @@
                                                                                         </div> -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check d-flex" style="width: 46px;">
+                                                                                                <div class="form-check d-flex" >
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
