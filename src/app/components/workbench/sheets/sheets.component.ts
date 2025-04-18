@@ -2664,12 +2664,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           // this.tableData = this.sheetResponce.results.tableData;
-          // this.displayedColumns = this.sheetResponce?.results.tableColumns;
-          this.tableColumnsDisplay = this.displayedColumns;
-          this.tableDataDisplay = this.tableDataStore;
-          this.totalItems = this.sheetResponce.results.total_items;
-          this.itemsPerPage = this.sheetResponce.results.items_per_page;
-          this.pageNo = 1;
+          this.displayedColumns = this.sheetResponce?.results.tableColumns;
           this.bandingSwitch = this.sheetResponce?.results.banding;
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
@@ -2693,7 +2688,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.calendar = false;
-          // this.tableDisplayPagination(false);
+          this.tableDisplayPagination(false);
         }
         if(responce.chart_id == 9){
           // this.tableData = this.sheetResponce.results.tableData;
