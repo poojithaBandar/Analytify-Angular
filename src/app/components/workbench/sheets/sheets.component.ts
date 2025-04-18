@@ -887,6 +887,10 @@ try {
                   this.tableDataDisplay.push(tableRow);
                  // console.log('display row data ', this.tableDataDisplay)
                 }
+                if(this.page === 1 && this.pageNo === 1){
+                  this.displayedColumns = this.tableColumnsDisplay;
+                  this.tableDataStore = this.tableDataDisplay;
+                }
                 if(isSyncData){
                   this.sheetSave();
                 }
@@ -2656,7 +2660,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           // this.tableData = this.sheetResponce.results.tableData;
-          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          // this.displayedColumns = this.sheetResponce?.results.tableColumns;
           this.bandingSwitch = this.sheetResponce?.results.banding;
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
