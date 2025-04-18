@@ -3283,7 +3283,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     const obj={
       "hierarchy_id" :this.databaseId,
@@ -3425,7 +3425,7 @@ trackByFn(index: number, item: any): number {
     let relativeDateRange : any[]=[];
     this.sortedData = [];
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
@@ -3502,6 +3502,7 @@ trackByFn(index: number, item: any): number {
           this.topLimit = responce?.top_bottom[2];
           this.selectedTopColumn = responce?.top_bottom[0];
           this.topAggregate = responce?.top_bottom[1];
+          this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
         }
         if(this.formatExtractType){
           this.activeTabId = 3;
@@ -3627,6 +3628,9 @@ trackByFn(index: number, item: any): number {
   filterDataEditPut(){
     this.sortedData = [];
     let relativeDateRange : any[] = [];
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
+    }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
         const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
