@@ -641,8 +641,8 @@
                                                                 <p class="p-1 mb-0 category-text">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
-                                                                  <button type="button" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList).length > 20 ? (getColumnSelectionLabel(filterList) | slice: 0:20) + '...' : getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
-                                                                  <!-- <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button> -->
+                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList).length > 20 ? (getColumnSelectionLabel(filterList) | slice: 0:20) + '...' : getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
+                                                                  <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList).length > 20 ? (getColumnSelectionLabel(filterList) | slice: 0:20) + '...' : getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
 
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox select-data-card-a">
                                                                     <div class="scrollable-content" style="max-height: calc(100% - 50px); overflow-y: auto;"> <!-- Adjust the height to account for buttons -->
@@ -666,7 +666,7 @@
 
                                                                       <cdk-virtual-scroll-viewport itemSize="5" class="viewport" style="height: 100px;">
                                                                         <div *cdkVirtualFor="let col of filterList.colData | test:searchText:'label';" >
-                                                                          <div class="form-check" style="width: 46px;">
+                                                                          <div class="form-check" >
                                                                           <input type="checkbox" [id]="'defaultCheck' + col.label" [(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList, col)" class="form-check-input"> 
                                                                           <label [for]="'defaultCheck' + col.label" class="form-check-label"> <p>{{ col.label }}</p> </label>
                                                                           </div>
@@ -1155,6 +1155,30 @@
                         <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'"
                           [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, false)" [isIcon]="false">
                         </app-insights-button>
+                        <!-- <app-insights-button [classesList]="'dropdown-item'" 
+                          [buttonName]="'PDF'" 
+                          [previledgeIdsList]="[20,18]" 
+                          [isBtn]="false"
+                          (btnClickEvent)="downloadSheet(item, 'pdf')" 
+                          [isIcon]="false">
+                        </app-insights-button> -->
+                        <app-insights-button [classesList]="'dropdown-item'" 
+                          [buttonName]="'Download CSV'" 
+                          [previledgeIdsList]="[20,18]" 
+                          [isBtn]="false"
+                          (btnClickEvent)="downloadSheet(item, 'csv')" 
+                          [isIcon]="false">
+                        </app-insights-button>
+                        <!-- <app-insights-button [classesList]="'dropdown-item'" 
+                          [buttonName]="'HTML'" 
+                          [previledgeIdsList]="[20,18]" 
+                          [isBtn]="false"
+                          (btnClickEvent)="downloadSheet(item, 'html')" 
+                          [isIcon]="false">
+                        </app-insights-button> -->
+                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
+                          [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
+                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
                           [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
@@ -1500,7 +1524,7 @@
         <span class="p-2" (dblclick)="enableEdit(i)">
           {{ tab.name }}
         </span>
-          <i  aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i>
+          <i *ngIf ="!isPublicUrl" aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i>
       </ng-template>
     </ng-template>
 
