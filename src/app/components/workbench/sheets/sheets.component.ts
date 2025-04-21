@@ -890,6 +890,10 @@ try {
                   this.tableDataDisplay.push(tableRow);
                  // console.log('display row data ', this.tableDataDisplay)
                 }
+                if(this.page === 1 && this.pageNo === 1){
+                  this.displayedColumns = this.tableColumnsDisplay;
+                  this.tableDataStore = this.tableDataDisplay;
+                }
                 if(isSyncData){
                   this.sheetSave();
                 }
@@ -2669,7 +2673,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           // this.tableData = this.sheetResponce.results.tableData;
-          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          // this.displayedColumns = this.sheetResponce?.results.tableColumns;
           this.bandingSwitch = this.sheetResponce?.results.banding;
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
@@ -3296,7 +3300,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     const obj={
       "hierarchy_id" :this.databaseId,
@@ -3438,7 +3442,7 @@ trackByFn(index: number, item: any): number {
     let relativeDateRange : any[]=[];
     this.sortedData = [];
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
@@ -3515,6 +3519,7 @@ trackByFn(index: number, item: any): number {
           this.topLimit = responce?.top_bottom[2];
           this.selectedTopColumn = responce?.top_bottom[0];
           this.topAggregate = responce?.top_bottom[1];
+          this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
         }
         if(this.formatExtractType){
           this.activeTabId = 3;
@@ -3640,6 +3645,9 @@ trackByFn(index: number, item: any): number {
   filterDataEditPut(){
     this.sortedData = [];
     let relativeDateRange : any[] = [];
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
+    }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
         const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
@@ -3916,31 +3924,35 @@ console.log(reName.split(',')[0])
   formatKPINumber() {
     let formattedNumber = this.tablePreviewRow[0]?.result_data[0]+'';
     let value = this.tablePreviewRow[0]?.result_data[0];
-    if (this.KPIDisplayUnits !== 'none') {
-      switch (this.KPIDisplayUnits) {
-        case 'K':
-          formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
-          break;
-        case 'M':
-          formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
-          break;
-        case 'B':
-          formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
-          break;
-        case 'G':
-          formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
-          break;
-        case '%':
-          this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
-          let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
-          formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
-          break;
+    if(value === null || value === undefined){
+      this.KPINumber = 0;
+    } else{
+      if (this.KPIDisplayUnits !== 'none') {
+        switch (this.KPIDisplayUnits) {
+          case 'K':
+            formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
+            break;
+          case 'M':
+            formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
+            break;
+          case 'B':
+            formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
+            break;
+          case 'G':
+            formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
+            break;
+          case '%':
+            this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+            let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+            formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+            break;
+        }
+      } else {
+        formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
       }
-    } else {
-      formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
+  
+      this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
     }
-
-    this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
   }
   numberPopupTrigger(){
     this.numberPopup = !this.numberPopup;

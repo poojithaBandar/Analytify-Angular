@@ -876,54 +876,60 @@
                                                     </ng-template>
                                                 </li>
                                                 @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
-                                                    <li [ngbNavItem]="4" *ngIf="isTopFilter" (click)="filterSearch = ''; filterDataGet()">
-                                                        <a ngbNavLink class="p-3">Top</a>
-                                                        <ng-template ngbNavContent>
-                                                            <div class="tab-pane active" id="activetabs">
-                                                                <div class="filter-options">
-                                                                    <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
-                                                                    <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
-                                                                </div>
-                                                                <div class="ms-4">
-                                                                    <div class="field-options">
-                                                                        <select [(ngModel)]="topType">
-                                                                          <option value="desc">Top</option>
-                                                                          <option value="asc">Bottom</option>
-                                                                        </select>
-                                                                        <select [(ngModel)] = "topLimit">
-                                                                            <option *ngIf="totalDataLength > 0" value="5">5</option>
-                                                                            <option *ngIf="totalDataLength > 5" value="10">10</option>
-                                                                            <option *ngIf="totalDataLength > 10" value="20">20</option>
-                                                                            <option *ngIf="totalDataLength > 20" value="30">30</option>
-                                                                            <option *ngIf="totalDataLength > 30" value="40">40</option>
-                                                                            <option *ngIf="totalDataLength > 40" value="50">50</option>
-                                                                            <option *ngIf="totalDataLength > 50" value="100">100</option>
-                                                                            <option *ngIf="totalDataLength > 100" value="500">500</option>
-                                                                            <option *ngIf="totalDataLength > 500" value="1000">1000</option>
-                                                                            <option *ngIf="totalDataLength > 1000" value="2000">2000</option>
-                                                                            <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
-                                                                            <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
-                                                                            <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                          </select>
-                                                                        <!-- <input type="number" value="10" /><span>by</span> -->
+                                                    @if(draggedRows.length === 0){
+                                                        <li [ngbNavItem]="4" *ngIf="isTopFilter" [ngbTooltip]="draggedRows.length === 0 ? 'Drop a measure in Row Shelf to Enable.' : ''" container="body" position="top">
+                                                            <a ngbNavLink class="p-3" [class.disabled]="draggedRows.length === 0">Top</a>
+                                                        </li>
+                                                    } @else{
+                                                        <li [ngbNavItem]="4" *ngIf="isTopFilter" (click)="filterSearch = ''; filterDataGet()">
+                                                            <a ngbNavLink class="p-3">Top</a>
+                                                            <ng-template ngbNavContent>
+                                                                <div class="tab-pane active" id="activetabs">
+                                                                    <div class="filter-options">
+                                                                        <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                        <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
                                                                     </div>
-                                                                    <div class="field-options ">
-                                                                        <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
-                                                                            <option value="select" selected disabled> select </option>
-                                                                            <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
-                                                                        </select>
-                                                                        <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
-                                                                            <option value="sum">Sum</option>
-                                                                            <option value="avg">Avg</option>
-                                                                            <option value="min">Min</option>
-                                                                            <option value="max">Max</option>
-                                                                            <option value="count">Count</option>
-                                                                        </select>
+                                                                    <div class="ms-4">
+                                                                        <div class="field-options">
+                                                                            <select [(ngModel)]="topType">
+                                                                              <option value="desc">Top</option>
+                                                                              <option value="asc">Bottom</option>
+                                                                            </select>
+                                                                            <select [(ngModel)] = "topLimit">
+                                                                                <option *ngIf="totalDataLength > 0" value="5">5</option>
+                                                                                <option *ngIf="totalDataLength > 5" value="10">10</option>
+                                                                                <option *ngIf="totalDataLength > 10" value="20">20</option>
+                                                                                <option *ngIf="totalDataLength > 20" value="30">30</option>
+                                                                                <option *ngIf="totalDataLength > 30" value="40">40</option>
+                                                                                <option *ngIf="totalDataLength > 40" value="50">50</option>
+                                                                                <option *ngIf="totalDataLength > 50" value="100">100</option>
+                                                                                <option *ngIf="totalDataLength > 100" value="500">500</option>
+                                                                                <option *ngIf="totalDataLength > 500" value="1000">1000</option>
+                                                                                <option *ngIf="totalDataLength > 1000" value="2000">2000</option>
+                                                                                <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
+                                                                                <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
+                                                                                <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
+                                                                              </select>
+                                                                            <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                        </div>
+                                                                        <div class="field-options ">
+                                                                            <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
+                                                                                <option value="select" selected disabled> select </option>
+                                                                                <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                            </select>
+                                                                            <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
+                                                                                <option value="sum">Sum</option>
+                                                                                <option value="avg">Avg</option>
+                                                                                <option value="min">Min</option>
+                                                                                <option value="max">Max</option>
+                                                                                <option value="count">Count</option>
+                                                                            </select>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </ng-template>
-                                                    </li>
+                                                            </ng-template>
+                                                        </li>
+                                                    }
                                                 }
                                                 @if(integerList.includes(filterType)){
                                                     <li [ngbNavItem]="6" (click)="filterSearch = ''; filterDataGet()">
@@ -1520,7 +1526,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
                                 <div class="title-container border-0 rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
-                                    <span class="card mb-0 SearchBarCu" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;"></span>
+                                    <span class="card mb-0 SearchBarCu" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;height: 33px;"></span>
                                     <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor> -->
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary FaFaIconProperties"><i class="fa fa-pencil FaFaIconProperties"></i></button>
@@ -1543,7 +1549,7 @@
                                     <button class="viewQueryImg" container="body" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
                                 <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 me-1 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
-                                <button [disabled]="!retriveDataSheet_id" ngbTooltip="Refresh" container="body" type="button" class="btn btn-primary mt-0 ps-2 pe-2" (click)="refreshSheetData()"><i class="fa fa-refresh w-4 h-4"></i></button>
+                                <button [disabled]="!retriveDataSheet_id" triggers="hover" ngbTooltip="Refresh" container="body" type="button" class="btn btn-primary mt-0 ps-2 pe-2" (click)="refreshSheetData()"><i class="fa fa-refresh w-4 h-4"></i></button>
 
                                 <!-- More Options Button -->
                                 <div ngbDropdown>
@@ -1552,6 +1558,7 @@
                                     type="button"
                                     id="menuOptionsDropdown"
                                     ngbTooltip="Menu Options"
+                                    triggers="hover"
                                     container="body"
                                     ngbDropdownToggle
                                     [disabled]="!retriveDataSheet_id"
