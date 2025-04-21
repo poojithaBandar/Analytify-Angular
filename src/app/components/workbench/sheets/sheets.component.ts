@@ -344,6 +344,9 @@ export class SheetsComponent{
   tableDataFontColor : any = '#000000';
   tableDataFontAlignment : any = 'left';
 
+  pivotColumnTotals:boolean = true;
+  pivotRowTotals:boolean = true;
+
   headerFontFamily : any = "'Arial', sans-serif";
   headerFontSize : any = '16px';
   headerFontWeight : any = 700;
@@ -953,22 +956,29 @@ try {
         }
         }
 
-        renderPivotTable(isSyncData : boolean) {
+        renderPivotTable(isSyncData: boolean) {
           setTimeout(() => {
 
-          if (this.pivotContainer && this.pivotContainer.nativeElement) {
+            if (this.pivotContainer && this.pivotContainer.nativeElement) {
               ($(this.pivotContainer.nativeElement) as any).pivot(this.transformedData, {
-                rows: this.columnKeys,  
-                cols: this.valueKeys, 
+                rows: this.columnKeys,
+                cols: this.valueKeys,
                 // vals: this.valueKeys, 
-                aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
-                rendererName: "Table"
-              }); 
-            if(isSyncData){
-              this.sheetSave();
+                aggregator: $.pivotUtilities.aggregators["Sum"](this.rowKeys),
+                rendererName: "Table",
+                rendererOptions:{
+                  table:{
+                    rowTotals:this.pivotRowTotals,
+                    colTotals:this.pivotColumnTotals
+                  }
+                }
+              });
+              if (isSyncData) {
+                this.sheetSave();
+              }
             }
-          }        
-                      }, 1000);
+            this.applyDynamicStylesToPivot()
+          }, 1000);
 
         }
 
@@ -2297,7 +2307,10 @@ sheetSave(){
     KPIDecimalPlaces : this.KPIDecimalPlaces,
     KPIDisplayUnits : this.KPIDisplayUnits,
     KPIPrefix : this.KPIPrefix,
-    KPISuffix : this.KPISuffix
+    KPISuffix : this.KPISuffix,
+
+    pivotRowTotals:this.pivotRowTotals,
+    pivotColumnTotals : this.pivotColumnTotals
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -4159,7 +4172,9 @@ customizechangeChartPlugin() {
     this.KPIDecimalPlaces = data.KPIDecimalPlaces ?? 2,
     this.KPIDisplayUnits = data.KPIDisplayUnits ?? 'none',
     this.KPIPrefix = data.KPIPrefix ?? '',
-    this.KPISuffix = data.KPISuffix ?? ''
+    this.KPISuffix = data.KPISuffix ?? '',
+    this.pivotRowTotals = data.pivotRowTotals ?? true,
+    this.pivotColumnTotals = data.pivotColumnTotals ?? true
   }
 
   resetCustomizations(){
@@ -4251,6 +4266,9 @@ customizechangeChartPlugin() {
     this.rightLegend = null
     this.sortColumn = 'select';
     this.locationDrillDownSwitch = false;
+
+    this.pivotColumnTotals = true;
+    this.pivotRowTotals = true
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
     // this.KPIPrefix = '',
@@ -4780,6 +4798,9 @@ customizechangeChartPlugin() {
       }
       resetBackgroundColor(){
         this.backgroundColor = '#ffffff';
+        if(this.pivotTable){
+          this.applyDynamicStylesToPivot();
+        }
       }
       resetKpiColor(){
         this.kpiColor = '#0f0f0f';
@@ -5613,6 +5634,9 @@ customizechangeChartPlugin() {
       this.selectedElement = event.target as HTMLElement;
       this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.tableDataFontColor = window.getComputedStyle(element).backgroundColor;
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     headerColorChange(event:any){
       if (this.selectedElement) {
@@ -5622,6 +5646,9 @@ customizechangeChartPlugin() {
       this.selectedElement = event.target as HTMLElement;
       this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.headerFontColor = window.getComputedStyle(element).backgroundColor;
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     sortedData : TableRow[] = [];
     tableColumnSort(sortType:any, column : any){
@@ -6673,6 +6700,40 @@ downloadAsPDF() {
 downloadAsImage() {
   // Implement your image download logic here
   console.log('Download as Image clicked');
+}
+
+applyPIvotHeaderBg() {
+  setTimeout(() => {
+    this.applyDynamicStylesToPivot();
+  }, 0);
+}
+
+applyDynamicStylesToPivot() {
+  const headers = document.querySelectorAll('.pvtTable th');
+  headers.forEach(header => {
+    (header as HTMLElement).style.backgroundColor = this.backgroundColor;
+    (header as HTMLElement).style.color = this.headerFontColor;
+    (header as HTMLElement).style.fontSize = this.headerFontSize;
+    (header as HTMLElement).style.fontFamily = this.headerFontFamily;
+    (header as HTMLElement).style.fontWeight = this.headerFontWeight;
+    (header as HTMLElement).style.fontStyle = this.headerFontStyle;
+    (header as HTMLElement).style.textDecoration = this.headerFontDecoration;
+    (header as HTMLElement).style.textAlign = this.headerFontAlignment;
+
+  });
+
+  const cells = document.querySelectorAll('.pvtTable td');
+  cells.forEach(cell => {
+    // (cell as HTMLElement).style.backgroundColor = this.backgroundColor;
+    (cell as HTMLElement).style.color = this.tableDataFontColor;
+    (cell as HTMLElement).style.fontSize = this.tableDataFontSize;
+    (cell as HTMLElement).style.fontFamily = this.tableDataFontFamily;
+    (cell as HTMLElement).style.fontWeight = this.tableDataFontWeight;
+    (cell as HTMLElement).style.fontStyle = this.tableDataFontStyle;
+    (cell as HTMLElement).style.textDecoration = this.tableDataFontDecoration;
+    (cell as HTMLElement).style.textAlign = this.tableDataFontAlignment;
+
+  });
 }
 
 }

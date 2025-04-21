@@ -1063,13 +1063,51 @@ export class SheetsdashboardComponent {
           this.pivotContainers.forEach((pivotContainer, index) => {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+            const nativeEl = pivotContainer.nativeElement;
             ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
               rows: pivotData['columnKeys'],  
               cols: pivotData['valueKeys'], 
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData.customizeOptions?.pivotRowTotals,
+                      colTotals:pivotData.customizeOptions?.pivotColumnTotals
+                    }
+                  }
                 });
+                const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+                  }
+            }
         }   
       });     
       }, 1000);
@@ -1317,9 +1355,17 @@ export class SheetsdashboardComponent {
     setTimeout(() => {
       const element = document.getElementById('capture-element');
       if (element) {
+        const originalHeight = element.style.height;
+        const originalOverflow = element.style.overflow;
+  
+        // Expand to show all content
+        element.style.height = '2(originalHeight)' + 'px';
+        element.style.overflow = 'visible';
         htmlToImage.toPng(element)
           .then((dataUrl) => {
             // Download the image
+            element.style.height = originalHeight;
+            element.style.overflow = originalOverflow;
             const link = document.createElement('a');
             link.href = dataUrl;
             link.download = 'screenshot.png'; // Set the filename
@@ -2342,13 +2388,52 @@ allowDrop(ev : any): void {
         this.pivotContainers.forEach((pivotContainer, index) => {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
+            const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
             rows: pivotData['columnKeys'],  
             cols: pivotData['valueKeys'], 
                 aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                rendererName: "Table"
+                rendererName: "Table",
+                rendererOptions:{
+                  table:{
+                    rowTotals:pivotData.customizeOptions.pivotRowTotals,
+                    colTotals:pivotData.customizeOptions.pivotColumnTotals
+                  }
+                }
               });
             // }
+            const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+                  }
+            }
           }
         });
       }, 1000);
@@ -2549,7 +2634,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 
           let filterIdStr = data.filter_id.map(String);
           filterIdStr.forEach((key: string) => {
-            if (this.storeSelectedColData?.test.hasOwnProperty(key)) {
+            if (this.storeSelectedColData?.test?.hasOwnProperty(key)) {
               delete this.storeSelectedColData.test[key];
               console.log(`Deleted key from storeSelectedColData: ${key}`);
             }
@@ -3806,13 +3891,51 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       this.pivotContainers.forEach((pivotContainer, index) => {
       if (pivotContainer && pivotContainer.nativeElement) {
         const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+        const nativeEl = pivotContainer.nativeElement;
         ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
           rows: pivotData['columnKeys'],  
           cols: pivotData['valueKeys'], 
               aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-              rendererName: "Table"
+              rendererName: "Table",
+              rendererOptions:{
+                table:{
+                  rowTotals:pivotData.customizeOptions.pivotRowTotals,
+                  colTotals:pivotData.customizeOptions.pivotColumnTotals
+                }
+              }
             });
+            const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+                  }
+            }
       }      
     });  
     }, 1000);
@@ -4938,14 +5061,51 @@ kpiData?: KpiData;
             this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+                const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
                   rows: pivotData['columnKeys'],
                   cols: pivotData['valueKeys'],
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData['customizeOptions'].pivotRowTotals,
+                      colTotals:pivotData['customizeOptions'].pivotColumnTotals
+                    }
+                  }
                 });
-              }
+                const styleConfig = pivotData['customizeOptions'];
+                if (styleConfig) {
+                  const table = nativeEl.querySelector('table.pvtTable');
+                  if (table) {
+                    const headers = table.querySelectorAll('th');
+                      headers.forEach((th: HTMLElement) => {
+                        th.style.backgroundColor = styleConfig.backgroundColor;
+                        th.style.fontSize = styleConfig.headerFontSize;
+                        th.style.color = styleConfig.headerFontColor;
+                        th.style.fontFamily = styleConfig.headerFontFamily;
+                        th.style.fontWeight = styleConfig.headerFontWeight;
+                        th.style.fontStyle = styleConfig.headerFontStyle;
+                        th.style.textDecoration = styleConfig.headerFontDecoration;
+                        th.style.textAlign = styleConfig.headerFontAlignment;
+                        th.style.verticalAlign = 'middle';
+                        th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                      });
+                      // Apply styles to data cells <td>
+                      const cells = table.querySelectorAll('td');
+                      cells.forEach((td: HTMLElement) => {
+                        td.style.fontSize = styleConfig.tableDataFontSize;
+                        td.style.color = styleConfig.tableDataFontColor;
+                        td.style.fontFamily = styleConfig.tableDataFontFamily;
+                        td.style.fontWeight = styleConfig.tableDataFontWeight;
+                        td.style.fontStyle = styleConfig.tableDataFontStyle;
+                        td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                        td.style.textAlign = styleConfig.tableDataFontAlignment;
+                        td.style.verticalAlign = 'middle';
+                        td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                      });
+                      }
+                }              }
             });
           }, 1000);
         }
@@ -5011,13 +5171,51 @@ kpiData?: KpiData;
             this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+                const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
                   rows: pivotData['columnKeys'],
                   cols: pivotData['valueKeys'],
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData['customizeOptions'].pivotRowTotals,
+                      colTotals:pivotData['customizeOptions'].pivotColumnTotals
+                    }
+                  }
                 });
+                const styleConfig = pivotData['customizeOptions'];
+                if (styleConfig) {
+                  const table = nativeEl.querySelector('table.pvtTable');
+                  if (table) {
+                    const headers = table.querySelectorAll('th');
+                      headers.forEach((th: HTMLElement) => {
+                        th.style.backgroundColor = styleConfig.backgroundColor;
+                        th.style.fontSize = styleConfig.headerFontSize;
+                        th.style.color = styleConfig.headerFontColor;
+                        th.style.fontFamily = styleConfig.headerFontFamily;
+                        th.style.fontWeight = styleConfig.headerFontWeight;
+                        th.style.fontStyle = styleConfig.headerFontStyle;
+                        th.style.textDecoration = styleConfig.headerFontDecoration;
+                        th.style.textAlign = styleConfig.headerFontAlignment;
+                        th.style.verticalAlign = 'middle';
+                        th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                      });
+                      // Apply styles to data cells <td>
+                      const cells = table.querySelectorAll('td');
+                      cells.forEach((td: HTMLElement) => {
+                        td.style.fontSize = styleConfig.tableDataFontSize;
+                        td.style.color = styleConfig.tableDataFontColor;
+                        td.style.fontFamily = styleConfig.tableDataFontFamily;
+                        td.style.fontWeight = styleConfig.tableDataFontWeight;
+                        td.style.fontStyle = styleConfig.tableDataFontStyle;
+                        td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                        td.style.textAlign = styleConfig.tableDataFontAlignment;
+                        td.style.verticalAlign = 'middle';
+                        td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                      });
+                      }
+                }
               }
             });
           }, 1000);
@@ -7078,6 +7276,67 @@ exportToCSV(sheetData: any) {
 
   runExport();
 }
+// downloadPdfFromGridster() {
+//   this.startMethod();
+//   this.loaderService.show();
+//   // this.isCapturingScreenshot = true;
+
+//   setTimeout(() => {
+//     const element = document.getElementById('capture-element');
+//     if (element) {
+//       const originalHeight = element.style.height;
+//       const originalOverflow = element.style.overflow;
+
+//       // Expand to fit content
+//       element.style.height = '1400' + 'px';
+//       element.style.overflow = 'visible';
+
+//       // Resize Gridster layout
+//       // this.gridster?.resize();
+
+//       // Wait for layout to settle
+//       setTimeout(() => {
+//         html2canvas(element, { scrollY: -window.scrollY }).then(canvas => {
+//           const imgData = canvas.toDataURL('image/png');
+
+//           // Create PDF
+//           const pdf = new jsPDF('p', 'mm', 'a4');
+//           const imgProps = pdf.getImageProperties(imgData);
+
+//           const pdfWidth = pdf.internal.pageSize.getWidth();
+//           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+//           // Handle page splitting if needed
+//           let heightLeft = pdfHeight;
+//           let position = 0;
+
+//           pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+//           heightLeft -= pdf.internal.pageSize.getHeight();
+
+//           while (heightLeft > 0) {
+//             position -= pdf.internal.pageSize.getHeight();
+//             pdf.addPage();
+//             pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+//             heightLeft -= pdf.internal.pageSize.getHeight();
+//           }
+
+//           pdf.save('gridster-export.pdf');
+
+//           // Revert DOM
+//           element.style.height = originalHeight;
+//           element.style.overflow = originalOverflow;
+//           // this.isCapturingScreenshot = false;
+//           this.loaderService.hide();
+//           this.endMethod();
+//         });
+//       }, 3000);
+//     } else {
+//       // this.isCapturingScreenshot = false;
+//       this.loaderService.hide();
+//       console.error('Element not found for PDF export');
+//     }
+//   }, 1000);
+// }
 
 
 }
