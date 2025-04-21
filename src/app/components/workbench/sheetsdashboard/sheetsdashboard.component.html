@@ -1012,7 +1012,7 @@
                   <div class="flex-grow-1">                     
                     <div class="title-container" [ngClass]="{'border': dashboardId}" *ngIf="!editor">
                       <input *ngIf="!dashboardId && !editor" (click)="editor =true && !isPublicUrl" type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
-                      <div *ngIf="dashboardId && !editor" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
+                      <div *ngIf="dashboardId && !editor" class="SearchBarCu" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle"></div>              
                        
                         </div>
                         <ckeditor *ngIf="editor && !isPublicUrl" placeholder="dashbaord Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName" (ngModelChange)="updatedashboardName(dashboardTagName)" style="color: black;" ></ckeditor>
