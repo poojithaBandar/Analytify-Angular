@@ -2947,12 +2947,12 @@
                                         </div>
                                     </ng-template>
                                 </li>
-                                <li [ngbNavItem]="2" [class.disabled]="pivotTable || (draggedColumns?.length === 0 && draggedRows?.length ===0)">
+                                <li [ngbNavItem]="2" [class.disabled]="(draggedColumns?.length === 0 && draggedRows?.length ===0)">
                                      <a ngbNavLink class="p-1">Customize</a>
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="((table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="(((table && chartId) || (pivotTable && chartId) )&& (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -2977,7 +2977,7 @@
                                                                                                 <div class="dropup" ngbDropdown>
                                                                                                     <div class="form-group mb-0 p-1">
                                                                                                         <select class="form-select form-select select2 fs-14"
-                                                                                                            [(ngModel)]="headerFontFamily">
+                                                                                                            [(ngModel)]="headerFontFamily" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                             <option value="'Arial', sans-serif">Arial</option>
                                                                                                             <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                             <option value="'Verdana', sans-serif">Verdana</option>
@@ -2996,7 +2996,7 @@
                                                                                                         <div class="row">
                                                                                                             <div class="form-group mb-0 d-flex">
                                                                                                                 <select class="form-select form-select select2 fs-14"
-                                                                                                                     [(ngModel)]="headerFontSize">
+                                                                                                                     [(ngModel)]="headerFontSize" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <option value="10px">10px</option>
                                                                                                                     <option value="11px">11px</option>
                                                                                                                     <option value="12px">12px</option>
@@ -3011,17 +3011,17 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontStyle === 'italic' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal';pivotTable ? applyDynamicStylesToPivot() : null ">
                                                                                                                     <p>I</p>
                                                                                                                 </div>
                                                                                                                 <div class="underline-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontDecoration === 'underline' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none';pivotTable ? applyDynamicStylesToPivot() : null ">
                                                                                                                     <p>U</p>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3056,17 +3056,17 @@
                                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                   <div class="dropup" ngbDropdown >
                                                                                                       <div class=" p-1">
-                                                                                                              <div class="form-group mb-0 text-center" (click)="headerFontAlignment = 'left'">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="headerFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                 <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                               </div>
                                                                                                               <div class="form-group mb-0 alignment-sides">
-                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'left'">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-left"></i>
                                                                                                                 </div>
-                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'center'">
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'center';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-center"></i>
                                                                                                                 </div>
-                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'right'">
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'right';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-right"></i>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3085,7 +3085,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="((table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="((table && chartId || pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -3110,7 +3110,7 @@
                                                                                                 <div class="dropup" ngbDropdown>
                                                                                                     <div class="form-group mb-0 p-1">
                                                                                                         <select class="form-select form-select select2 fs-14"
-                                                                                                            [(ngModel)]="tableDataFontFamily">
+                                                                                                            [(ngModel)]="tableDataFontFamily" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                             <option value="'Arial', sans-serif">Arial</option>
                                                                                                             <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                             <option value="'Verdana', sans-serif">Verdana</option>
@@ -3129,7 +3129,7 @@
                                                                                                         <div class="row">
                                                                                                             <div class="form-group mb-0 d-flex">
                                                                                                                 <select class="form-select form-select select2 fs-14"
-                                                                                                                     [(ngModel)]="tableDataFontSize">
+                                                                                                                     [(ngModel)]="tableDataFontSize" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <option value="10px">10px</option>
                                                                                                                     <option value="11px">11px</option>
                                                                                                                     <option value="12px">12px</option>
@@ -3144,17 +3144,17 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontStyle === 'italic' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>I</p>
                                                                                                                 </div>
                                                                                                                 <div class="underline-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontDecoration === 'underline' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>U</p>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3189,17 +3189,17 @@
                                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                   <div class="dropup" ngbDropdown >
                                                                                                       <div class=" p-1">
-                                                                                                              <div class="form-group mb-0 text-center" (click)="tableDataFontAlignment = 'left'">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="tableDataFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                 <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                               </div>
                                                                                                               <div class="form-group mb-0 alignment-sides">
-                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'left'">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-left"></i>
                                                                                                                 </div>
-                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'center'">
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'center';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-center"></i>
                                                                                                                 </div>
-                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'right'">
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'right';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-right"></i>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3218,7 +3218,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!(table || kpi)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!(table || kpi || pivotTable)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 fw-500 border-0 rounded-2" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -3247,7 +3247,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -3388,7 +3388,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -3531,7 +3531,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || pivotTable || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3833,7 +3833,28 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                             
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                        <div class=""> 
+                                                            <label class="mb-0">Column Totals </label>
+                                                        </div>
+                                                        <div *ngIf="pivotColumnTotals" class="toggle toggle-sm on mb-0" (click)="renderPivotTable(false);pivotColumnTotals = false" >
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!pivotColumnTotals" class="toggle toggle-sm off mb-0" (click)="renderPivotTable(false);pivotColumnTotals = true" >
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                        <div class=""> 
+                                                            <label class="mb-0">Row Totals </label>
+                                                        </div>
+                                                        <div *ngIf="pivotRowTotals" class="toggle toggle-sm on mb-0" (click)="renderPivotTable(false);pivotRowTotals = false" >
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!pivotRowTotals" class="toggle toggle-sm off mb-0" (click)="renderPivotTable(false);pivotRowTotals = true" >
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
                                                     <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class=" mb-2 p-2 border rounded-2">
                                                         <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
                                                             <label class="mb-0">Page Length</label>
@@ -3847,7 +3868,7 @@
                                                             </select>
                                                          </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Zoom </label>
                                                         </div>
@@ -3859,7 +3880,7 @@
                                                         </div>
                                                     </div>
                                                   
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3915,14 +3936,14 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
                                                             class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                             type="button"
                                                             data-bs-toggle="collapse"
-                                                            data-bs-target="#collapse"
+                                                            data-bs-target="#collapse" 
                                                             aria-expanded="true"
                                                             aria-controls="collapse"
                                                             >
@@ -3997,7 +4018,8 @@
                                                             <ng-template>
                                                                 <div *ngIf="!((table && chartId) || kpi || calendar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
-                                                                        <p>Background</p>
+                                                                        <p *ngIf="!pivotTable">Background</p>
+                                                                        <p *ngIf="pivotTable">Header Background</p>
                                                                     </div>
                                                                     <div *ngIf="backgroundColorSwitch" class="toggle toggle-sm on mb-0" (click)="backgroundColorSwitch = !backgroundColorSwitch; resetBackgroundColor()">
                                                                         <span></span>
@@ -4007,7 +4029,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="backgroundColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="backgroundColor"
+                                                                    [(ngModel)]="backgroundColor" (change)="pivotTable ? applyPIvotHeaderBg() : null"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -4289,7 +4311,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="(draggedColumns?.length !== 0 || draggedRows?.length !==0) && !(kpi || guage || calendar || (!isApexCharts && funnel))" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="(draggedColumns?.length !== 0 || draggedRows?.length !==0) && !(kpi || guage || calendar ||pivotTable || (!isApexCharts && funnel))" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
