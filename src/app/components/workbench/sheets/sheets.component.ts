@@ -3856,6 +3856,9 @@ console.log(reName.split(',')[0])
         this.color1 = undefined;
         this.color2 = undefined;
       }
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
@@ -6734,6 +6737,18 @@ applyDynamicStylesToPivot() {
     (cell as HTMLElement).style.textAlign = this.tableDataFontAlignment;
 
   });
+  const rows = document.querySelectorAll('.pvtTable tr');
+  rows.forEach((row, rowIndex) => {
+    // Only apply to rows that contain data cells
+    if (row.querySelectorAll('td').length > 0) {
+      row.classList.remove('even-row', 'odd-row');
+
+      if (this.bandingSwitch) {
+        row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+      }
+    }
+});
+
 }
 
 }

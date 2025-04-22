@@ -3822,7 +3822,7 @@
                                                         </div>
                                                   </div>
 
-                                                    <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="(table && chartId || pivotTable) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Banding </label>
                                                         </div>

@@ -295,3 +295,10 @@ p { font-size: 12px;}
 .form-control{ font-size: 10px; padding: 3px;}
 .dropdown-menu { min-width: 10rem;}
 }
+::ng-deep .pvtTable tr.even-row td {
+  background-color: #ffffff; // or your even row color
+}
+
+::ng-deep .pvtTable tr.odd-row td {
+  background-color: #f5f7fa; // or your odd row color
+}
