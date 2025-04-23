@@ -59,6 +59,9 @@ import 'jquery-ui/ui/widgets/sortable';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
 
+import domtoimage from 'dom-to-image';
+import jsPDF from 'jspdf';
+
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -380,6 +383,7 @@ export class SheetsComponent{
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
   @ViewChild('sqlEditor') sqlEditor!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('pdfcontainer') pdfcontainer!: ElementRef;
 
   transformedData: any[] = [];
   columnKeys: string[] = [];
@@ -4890,6 +4894,8 @@ customizechangeChartPlugin() {
       })
     }
 
+    
+    
     dropCalculatedField(tableName: string , columnName : string){
       let regex;
       let hasContentInsideParentheses;
@@ -5005,7 +5011,8 @@ customizechangeChartPlugin() {
         case 'datepart': 
         this.calculatedFieldLogic = 'DATE_PART("year", ' + '"'+ tableName +'"."'+ columnName + '")';
         break; 
-        case 'now': break; 
+        case 'now': 
+        break;
         case 'today': break; 
         case 'parse': 
         this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '", "dd-mm-yyyy")';
@@ -5567,7 +5574,7 @@ customizechangeChartPlugin() {
         this.calculatedFieldLogic = "DATE_PART('year', current_timestamp)";
         break; 
         case 'now': 
-        this.calculatedFieldLogic = 'current_timestamp()';
+        this.calculatedFieldLogic = 'now()';
         break; 
         case 'today': 
         this.calculatedFieldLogic = 'CURRENT_DATE()';
@@ -6665,14 +6672,67 @@ getCaretCoordinates(textarea: HTMLTextAreaElement, position: number) {
   runExport();
 }
 
-downloadAsPDF() {
-  // Implement your PDF download logic here
-  console.log('Download as PDF clicked');
-}
+downloadAsPDFImage(format: 'pdf' | 'png') {
+  const element = document.getElementById('pdfcontainer');
+  if (!element) return;
+ 
+  this.loaderService.show(); 
+  const scale = 2;
+  // Save original styles
+  const originalOverflow = element.style.overflow;
+  const originalHeight = element.style.height;
+  const originalWidth = element.style.width;
 
-downloadAsImage() {
-  // Implement your image download logic here
-  console.log('Download as Image clicked');
+  // Expand the element to show full content
+  element.style.overflow = 'visible';
+  element.style.height = element.scrollHeight + 'px';
+  element.style.width = element.scrollWidth + 'px';
+
+  const width = element.scrollWidth * scale;
+  const height = element.scrollHeight * scale;
+
+  domtoimage.toPng(element, {
+    width,
+    height,
+    style: {
+      transform: `scale(${scale})`,
+      transformOrigin: 'top left',
+      width: element.scrollWidth + 'px',
+      height: element.scrollHeight + 'px'
+    }
+  }).then((dataUrl) => {
+    // Restore original styles
+    element.style.overflow = originalOverflow;
+    element.style.height = originalHeight;
+    element.style.width = originalWidth;
+    if (format === 'png') {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = this.sheetTitle + '.png';
+      link.click();
+      this.loaderService.hide();
+    } else {
+      const img = new Image();
+      img.onload = () => {
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const imgWidth = pdfWidth;
+        const imgHeight = (img.height * imgWidth) / img.width;
+
+        pdf.addImage(dataUrl, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(this.sheetTitle + '.pdf');
+        this.loaderService.hide();
+      };
+      img.src = dataUrl;
+    }
+  }).catch(error => {
+    console.error('Error generating image:', error);
+    // Restore even if failed
+    element.style.overflow = originalOverflow;
+    element.style.height = originalHeight;
+    element.style.width = originalWidth;
+  });
+
 }
 
 }
