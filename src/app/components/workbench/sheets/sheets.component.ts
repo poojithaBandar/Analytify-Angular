@@ -1537,6 +1537,10 @@ try {
       this.drillDownIndex = 0;
       this.dateDrillDownSwitch = false;
     }
+    if(!this.pivotTable){
+      this.draggedMeasureValues=[]
+      this.draggedMeasureValuesData=[]
+    }
     this.resetCustomizations();
     this.chartsOptionsSet(); 
     this.hasUnSavedChanges=true;

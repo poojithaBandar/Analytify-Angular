@@ -1062,8 +1062,8 @@
                               <i class="fa fa-download" aria-hidden="true"></i>
                               </button>
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
-                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="downloadAsPDFImage('png')">Download Image</a>
-                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="downloadAsPDFImage('pdf');">Download Pdf</a>
+                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="downloadAsImage()">Download Image</a>
+                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="downloadAsPDF();">Download Pdf</a>
                               </div>
                               </div>
                               
@@ -1562,7 +1562,7 @@
           <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="tabHeightGrid"
             [style.width.px]="tabWidthGrid">
             <!-- <div style="height: inherit;" > -->
-              <gridster [options]="options" #gridsterTab>
+              <gridster [options]="options" #gridsterTab id="capture-image-pdf-2">
                 <gridster-item [item]="item" *ngFor="let item of dashboardTest;let i = index"
                   [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                   <div class="card mb-0 grid-item-border card-panel" style="height: 100%;" [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 

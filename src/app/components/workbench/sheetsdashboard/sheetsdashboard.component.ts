@@ -7080,27 +7080,94 @@ exportToCSV(sheetData: any) {
 
   runExport();
 }
-downloadAsPDFImage(format: 'pdf' | 'png') {
-  const element = document.getElementById('capture-image-pdf');
-  if (!element) return;
+// downloadAsImage() {
+//   const element = document.getElementById('capture-image-pdf');
+//   if (!element) return;
  
-  this.loaderService.show(); 
+//   this.loaderService.show(); 
+//   this.startMethod();
+//   const scale = 2;
+//   // Save original styles
+//   const originalOverflow = element.style.overflow;
+//   const originalHeight = element.style.height;
+//   const originalWidth = element.style.width;
+
+//   // Expand the element to show full content
+//   element.style.overflow = 'visible';
+//   element.style.height = element.scrollHeight + 'px';
+//   element.style.width = element.scrollWidth + 'px';
+
+//   const width = element.scrollWidth * scale;
+//   const height = element.scrollHeight * scale;
+
+//   domtoimage.toPng(element, {
+//     width,
+//     height,
+//     style: {
+//       transform: `scale(${scale})`,
+//       transformOrigin: 'top left',
+//       width: element.scrollWidth + 'px',
+//       height: element.scrollHeight + 'px'
+//     }
+//   }).then((dataUrl) => {
+//     // Restore original styles
+//     element.style.overflow = originalOverflow;
+//     element.style.height = originalHeight;
+//     element.style.width = originalWidth;
+//       const link = document.createElement('a');
+//       link.href = dataUrl;
+//       link.download = this.dashboardName + '.png';
+//       link.click();
+//       this.loaderService.hide();
+//       this.endMethod();
+    
+//   }).catch(error => {
+//     console.error('Error generating image:', error);
+//     // Restore even if failed
+//     element.style.overflow = originalOverflow;
+//     element.style.height = originalHeight;
+//     element.style.width = originalWidth;
+//   });
+
+// }
+
+downloadAsImage() {
+  const element1 = document.getElementById('capture-image-pdf');
+  if (!element1) return;
+
+  const element2 = this.displayTabs
+    ? document.getElementById('capture-image-pdf-2')
+    : null;
+
+  this.loaderService.show();
   this.startMethod();
+
   const scale = 2;
-  // Save original styles
-  const originalOverflow = element.style.overflow;
-  const originalHeight = element.style.height;
-  const originalWidth = element.style.width;
 
-  // Expand the element to show full content
-  element.style.overflow = 'visible';
-  element.style.height = element.scrollHeight + 'px';
-  element.style.width = element.scrollWidth + 'px';
+  const prepareElement = (element: HTMLElement) => {
+    const original = {
+      overflow: element.style.overflow,
+      height: element.style.height,
+      width: element.style.width
+    };
+    element.style.overflow = 'visible';
+    element.style.height = element.scrollHeight + 'px';
+    element.style.width = element.scrollWidth + 'px';
 
-  const width = element.scrollWidth * scale;
-  const height = element.scrollHeight * scale;
+    return {
+      width: element.scrollWidth * scale,
+      height: element.scrollHeight * scale,
+      original
+    };
+  };
 
-  domtoimage.toPng(element, {
+  const restoreElement = (element: HTMLElement, styles: any) => {
+    element.style.overflow = styles.overflow;
+    element.style.height = styles.height;
+    element.style.width = styles.width;
+  };
+
+  const config = (element: HTMLElement, width: number, height: number) => ({
     width,
     height,
     style: {
@@ -7109,41 +7176,186 @@ downloadAsPDFImage(format: 'pdf' | 'png') {
       width: element.scrollWidth + 'px',
       height: element.scrollHeight + 'px'
     }
-  }).then((dataUrl) => {
-    // Restore original styles
-    element.style.overflow = originalOverflow;
-    element.style.height = originalHeight;
-    element.style.width = originalWidth;
-    if (format === 'png') {
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = this.dashboardName + '.png';
-      link.click();
-      this.loaderService.hide();
-      this.endMethod();
-    } else {
-      const img = new Image();
-      img.onload = () => {
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const imgWidth = pdfWidth;
-        const imgHeight = (img.height * imgWidth) / img.width;
-
-        pdf.addImage(dataUrl, 'PNG', 0, 0, imgWidth, imgHeight);
-        pdf.save(this.dashboardName + '.pdf');
-        this.loaderService.hide();
-      };
-      img.src = dataUrl;
-    }
-  }).catch(error => {
-    console.error('Error generating image:', error);
-    // Restore even if failed
-    element.style.overflow = originalOverflow;
-    element.style.height = originalHeight;
-    element.style.width = originalWidth;
   });
 
+  const el1Props = prepareElement(element1);
+  const el2Props = element2 ? prepareElement(element2) : null;
+
+  const captureImages = element2
+    ? Promise.all([
+        domtoimage.toPng(element1, config(element1, el1Props.width, el1Props.height)),
+        domtoimage.toPng(element2, config(element2, el2Props!.width, el2Props!.height))
+      ])
+    : Promise.all([
+        domtoimage.toPng(element1, config(element1, el1Props.width, el1Props.height))
+      ]);
+
+  captureImages
+    .then(([img1, img2]) => {
+      restoreElement(element1, el1Props.original);
+      if (element2 && el2Props) restoreElement(element2, el2Props.original);
+
+        if (img2) {
+          const image1 = new Image();
+          const image2 = new Image();
+
+          image1.onload = () => {
+            image2.onload = () => {
+              const canvas = document.createElement('canvas');
+              const width = Math.max(image1.width, image2.width);
+              const height = image1.height + image2.height;
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d')!;
+              ctx.drawImage(image1, 0, 0);
+              ctx.drawImage(image2, 0, image1.height);
+
+              const mergedDataUrl = canvas.toDataURL('image/png');
+              const link = document.createElement('a');
+              link.href = mergedDataUrl;
+              link.download = this.dashboardName +'-Dashboard.png';
+              link.click();
+
+              this.loaderService.hide();
+              this.endMethod();
+            };
+            image2.src = img2!;
+          };
+          image1.src = img1;
+        } else {
+          const link = document.createElement('a');
+          link.href = img1;
+          link.download = this.dashboardName + '-Dashboard.png';
+          link.click();
+          this.loaderService.hide();
+          this.endMethod();
+        }
+        return;
+    })
+    .catch((error) => {
+      console.error('Error generating image:', error);
+      restoreElement(element1, el1Props.original);
+      if (element2 && el2Props) restoreElement(element2, el2Props.original);
+      this.loaderService.hide();
+    });
 }
+
+downloadAsPDF() {
+  const element1 = document.getElementById('capture-image-pdf');
+  const element2 = document.getElementById('capture-image-pdf-2');
+
+  if (!element1) return;
+
+  this.loaderService.show();
+  this.startMethod();
+  const scale = 2;
+
+  const prepareElement = (element: HTMLElement) => {
+    const originalStyles = {
+      overflow: element.style.overflow,
+      height: element.style.height,
+      width: element.style.width,
+    };
+
+    element.style.overflow = 'visible';
+    element.style.height = element.scrollHeight + 'px';
+    element.style.width = element.scrollWidth + 'px';
+
+    return {
+      width: element.scrollWidth * scale,
+      height: element.scrollHeight * scale,
+      originalStyles
+    };
+  };
+
+  const restoreElement = (element: HTMLElement, styles: any) => {
+    element.style.overflow = styles.overflow;
+    element.style.height = styles.height;
+    element.style.width = styles.width;
+  };
+
+  const config = (width: number, height: number, element: HTMLElement) => ({
+    width,
+    height,
+    style: {
+      transform: `scale(${scale})`,
+      transformOrigin: 'top left',
+      width: element.scrollWidth + 'px',
+      height: element.scrollHeight + 'px'
+    }
+  });
+
+  const el1 = prepareElement(element1);
+  const el2 = this.displayTabs && element2 ? prepareElement(element2) : null;
+
+  const capturePromises = [domtoimage.toPng(element1, config(el1.width, el1.height, element1))];
+
+  if (this.displayTabs && element2) {
+    capturePromises.push(domtoimage.toPng(element2, config(el2!.width, el2!.height, element2)));
+  }
+
+  Promise.all(capturePromises).then((images: string[]) => {
+    restoreElement(element1, el1.originalStyles);
+    if (this.displayTabs && element2 && el2) {
+      restoreElement(element2, el2.originalStyles);
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    const addImageToPDF = (imgData: string, yOffset: number = 0): Promise<number> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const imgWidth = pdfWidth;
+          const imgHeight = (img.height * imgWidth) / img.width;
+
+          if (yOffset + imgHeight > pdfHeight) {
+            pdf.addPage();
+            yOffset = 0;
+          }
+
+          pdf.addImage(imgData, 'PNG', 0, yOffset, imgWidth, imgHeight);
+          resolve(yOffset + imgHeight + 5);
+        };
+        img.src = imgData;
+      });
+    };
+
+    let currentYOffset = 0;
+
+    addImageToPDF(images[0], currentYOffset).then((newOffset) => {
+      if (images.length === 2) {
+        addImageToPDF(images[1], newOffset).then(() => {
+          pdf.save(this.dashboardName + '-Dashboardpdf');
+          this.loaderService.hide();
+          this.endMethod();
+        });
+      } else {
+        pdf.save(this.dashboardName +'-Dashboard.pdf');
+        this.loaderService.hide();
+        this.endMethod()
+      }
+    });
+
+  }).catch(error => {
+    console.error('Error generating PDF:', error);
+    restoreElement(element1, el1.originalStyles);
+    if (this.displayTabs && element2 && el2) {
+      restoreElement(element2, el2.originalStyles);
+    }
+    this.loaderService.hide();
+    this.endMethod();
+  });
+}
+
+
+
+
+
+
 
 
 }
