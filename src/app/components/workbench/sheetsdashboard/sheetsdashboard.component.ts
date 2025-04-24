@@ -1106,6 +1106,15 @@ export class SheetsdashboardComponent {
                     td.style.verticalAlign = 'middle';
                     td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
                   });
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    if (styleConfig.bandingSwitch) {
+                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                    }
+                  });
                   }
             }
         }   
@@ -2431,6 +2440,16 @@ allowDrop(ev : any): void {
                     td.style.textAlign = styleConfig.tableDataFontAlignment;
                     td.style.verticalAlign = 'middle';
                     td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    if (styleConfig.bandingSwitch) {
+                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                    }
                   });
                   }
             }
@@ -3934,6 +3953,15 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                     td.style.verticalAlign = 'middle';
                     td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
                   });
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    if (styleConfig.bandingSwitch) {
+                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                    }
+                  });
                   }
             }
       }      
@@ -5109,6 +5137,15 @@ kpiData?: KpiData;
                         td.style.verticalAlign = 'middle';
                         td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
                       });
+                      const rows = table.querySelectorAll('tr');
+                      rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                        const hasDataCells = row.querySelectorAll('td').length > 0;
+                        row.classList.remove('even-row', 'odd-row');
+                  
+                        if (styleConfig.bandingSwitch) {
+                          row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                        }
+                      });
                       }
                 }              }
             });
@@ -5218,6 +5255,16 @@ kpiData?: KpiData;
                         td.style.textAlign = styleConfig.tableDataFontAlignment;
                         td.style.verticalAlign = 'middle';
                         td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                      });
+
+                      const rows = table.querySelectorAll('tr');
+                      rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                        const hasDataCells = row.querySelectorAll('td').length > 0;
+                        row.classList.remove('even-row', 'odd-row');
+                  
+                        if (styleConfig.bandingSwitch) {
+                          row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                        }
                       });
                       }
                 }
