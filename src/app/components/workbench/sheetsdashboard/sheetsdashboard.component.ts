@@ -1065,13 +1065,60 @@ export class SheetsdashboardComponent {
           this.pivotContainers.forEach((pivotContainer, index) => {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+            const nativeEl = pivotContainer.nativeElement;
             ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
               rows: pivotData['columnKeys'],  
               cols: pivotData['valueKeys'], 
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData.customizeOptions?.pivotRowTotals,
+                      colTotals:pivotData.customizeOptions?.pivotColumnTotals
+                    }
+                  }
                 });
+                const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    if (styleConfig.bandingSwitch) {
+                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                    }
+                  });
+                  }
+            }
         }   
       });     
       }, 1000);
@@ -1319,9 +1366,17 @@ export class SheetsdashboardComponent {
     setTimeout(() => {
       const element = document.getElementById('capture-element');
       if (element) {
+        const originalHeight = element.style.height;
+        const originalOverflow = element.style.overflow;
+  
+        // Expand to show all content
+        element.style.height = '2(originalHeight)' + 'px';
+        element.style.overflow = 'visible';
         htmlToImage.toPng(element)
           .then((dataUrl) => {
             // Download the image
+            element.style.height = originalHeight;
+            element.style.overflow = originalOverflow;
             const link = document.createElement('a');
             link.href = dataUrl;
             link.download = 'screenshot.png'; // Set the filename
@@ -2344,13 +2399,62 @@ allowDrop(ev : any): void {
         this.pivotContainers.forEach((pivotContainer, index) => {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
+            const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
             rows: pivotData['columnKeys'],  
             cols: pivotData['valueKeys'], 
                 aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                rendererName: "Table"
+                rendererName: "Table",
+                rendererOptions:{
+                  table:{
+                    rowTotals:pivotData.customizeOptions.pivotRowTotals,
+                    colTotals:pivotData.customizeOptions.pivotColumnTotals
+                  }
+                }
               });
             // }
+            const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    if (styleConfig.bandingSwitch) {
+                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                    }
+                  });
+                  }
+            }
           }
         });
       }, 1000);
@@ -2551,7 +2655,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 
           let filterIdStr = data.filter_id.map(String);
           filterIdStr.forEach((key: string) => {
-            if (this.storeSelectedColData?.test.hasOwnProperty(key)) {
+            if (this.storeSelectedColData?.test?.hasOwnProperty(key)) {
               delete this.storeSelectedColData.test[key];
               console.log(`Deleted key from storeSelectedColData: ${key}`);
             }
@@ -3808,13 +3912,60 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       this.pivotContainers.forEach((pivotContainer, index) => {
       if (pivotContainer && pivotContainer.nativeElement) {
         const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+        const nativeEl = pivotContainer.nativeElement;
         ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
           rows: pivotData['columnKeys'],  
           cols: pivotData['valueKeys'], 
               aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-              rendererName: "Table"
+              rendererName: "Table",
+              rendererOptions:{
+                table:{
+                  rowTotals:pivotData.customizeOptions.pivotRowTotals,
+                  colTotals:pivotData.customizeOptions.pivotColumnTotals
+                }
+              }
             });
+            const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    if (styleConfig.bandingSwitch) {
+                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                    }
+                  });
+                  }
+            }
       }      
     });  
     }, 1000);
@@ -4356,31 +4507,36 @@ if(isLiveReloadData && isLastIndex){
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
   let formattedNumber = value+'';
   let KPINumber;
-  if (KPIDisplayUnits !== 'none') {
-    switch (KPIDisplayUnits) {
-      case 'K':
-        formattedNumber = (value / 1_000).toFixed(KPIDecimalPlaces) + 'K';
-        break;
-      case 'M':
-        formattedNumber = (value / 1_000_000).toFixed(KPIDecimalPlaces) + 'M';
-        break;
-      case 'B':
-        formattedNumber = (value / 1_000_000_000).toFixed(KPIDecimalPlaces) + 'B';
-        break;
-      case 'G':
-        formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
-        break;
-      case '%':
-        let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
-        let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
-        formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
-        break;
-    }
-  } else {
-    formattedNumber = (value).toFixed(KPIDecimalPlaces)
+  if(value === null || value === undefined){
+    KPINumber = 0;
+  } else{
+    if (KPIDisplayUnits !== 'none') {
+      switch (KPIDisplayUnits) {
+        case 'K':
+          formattedNumber = (value / 1_000).toFixed(KPIDecimalPlaces) + 'K';
+          break;
+        case 'M':
+          formattedNumber = (value / 1_000_000).toFixed(KPIDecimalPlaces) + 'M';
+          break;
+        case 'B':
+          formattedNumber = (value / 1_000_000_000).toFixed(KPIDecimalPlaces) + 'B';
+          break;
+        case 'G':
+          formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
+          break;
+        case '%':
+          let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+          let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
+          formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
+          break;
+      }
+    } else {
+      formattedNumber = (value).toFixed(KPIDecimalPlaces)
+    }  
+    KPINumber = KPIPrefix + formattedNumber + KPISuffix
   }
 
-  return KPINumber = KPIPrefix + formattedNumber + KPISuffix;
+  return KPINumber;
 }
 
 closeFilterModal(){
@@ -4940,14 +5096,60 @@ kpiData?: KpiData;
             this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+                const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
                   rows: pivotData['columnKeys'],
                   cols: pivotData['valueKeys'],
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData['customizeOptions'].pivotRowTotals,
+                      colTotals:pivotData['customizeOptions'].pivotColumnTotals
+                    }
+                  }
                 });
-              }
+                const styleConfig = pivotData['customizeOptions'];
+                if (styleConfig) {
+                  const table = nativeEl.querySelector('table.pvtTable');
+                  if (table) {
+                    const headers = table.querySelectorAll('th');
+                      headers.forEach((th: HTMLElement) => {
+                        th.style.backgroundColor = styleConfig.backgroundColor;
+                        th.style.fontSize = styleConfig.headerFontSize;
+                        th.style.color = styleConfig.headerFontColor;
+                        th.style.fontFamily = styleConfig.headerFontFamily;
+                        th.style.fontWeight = styleConfig.headerFontWeight;
+                        th.style.fontStyle = styleConfig.headerFontStyle;
+                        th.style.textDecoration = styleConfig.headerFontDecoration;
+                        th.style.textAlign = styleConfig.headerFontAlignment;
+                        th.style.verticalAlign = 'middle';
+                        th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                      });
+                      // Apply styles to data cells <td>
+                      const cells = table.querySelectorAll('td');
+                      cells.forEach((td: HTMLElement) => {
+                        td.style.fontSize = styleConfig.tableDataFontSize;
+                        td.style.color = styleConfig.tableDataFontColor;
+                        td.style.fontFamily = styleConfig.tableDataFontFamily;
+                        td.style.fontWeight = styleConfig.tableDataFontWeight;
+                        td.style.fontStyle = styleConfig.tableDataFontStyle;
+                        td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                        td.style.textAlign = styleConfig.tableDataFontAlignment;
+                        td.style.verticalAlign = 'middle';
+                        td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                      });
+                      const rows = table.querySelectorAll('tr');
+                      rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                        const hasDataCells = row.querySelectorAll('td').length > 0;
+                        row.classList.remove('even-row', 'odd-row');
+                  
+                        if (styleConfig.bandingSwitch) {
+                          row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                        }
+                      });
+                      }
+                }              }
             });
           }, 1000);
         }
@@ -5013,13 +5215,61 @@ kpiData?: KpiData;
             this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+                const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
                   rows: pivotData['columnKeys'],
                   cols: pivotData['valueKeys'],
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData['customizeOptions'].pivotRowTotals,
+                      colTotals:pivotData['customizeOptions'].pivotColumnTotals
+                    }
+                  }
                 });
+                const styleConfig = pivotData['customizeOptions'];
+                if (styleConfig) {
+                  const table = nativeEl.querySelector('table.pvtTable');
+                  if (table) {
+                    const headers = table.querySelectorAll('th');
+                      headers.forEach((th: HTMLElement) => {
+                        th.style.backgroundColor = styleConfig.backgroundColor;
+                        th.style.fontSize = styleConfig.headerFontSize;
+                        th.style.color = styleConfig.headerFontColor;
+                        th.style.fontFamily = styleConfig.headerFontFamily;
+                        th.style.fontWeight = styleConfig.headerFontWeight;
+                        th.style.fontStyle = styleConfig.headerFontStyle;
+                        th.style.textDecoration = styleConfig.headerFontDecoration;
+                        th.style.textAlign = styleConfig.headerFontAlignment;
+                        th.style.verticalAlign = 'middle';
+                        th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                      });
+                      // Apply styles to data cells <td>
+                      const cells = table.querySelectorAll('td');
+                      cells.forEach((td: HTMLElement) => {
+                        td.style.fontSize = styleConfig.tableDataFontSize;
+                        td.style.color = styleConfig.tableDataFontColor;
+                        td.style.fontFamily = styleConfig.tableDataFontFamily;
+                        td.style.fontWeight = styleConfig.tableDataFontWeight;
+                        td.style.fontStyle = styleConfig.tableDataFontStyle;
+                        td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                        td.style.textAlign = styleConfig.tableDataFontAlignment;
+                        td.style.verticalAlign = 'middle';
+                        td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                      });
+
+                      const rows = table.querySelectorAll('tr');
+                      rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                        const hasDataCells = row.querySelectorAll('td').length > 0;
+                        row.classList.remove('even-row', 'odd-row');
+                  
+                        if (styleConfig.bandingSwitch) {
+                          row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                        }
+                      });
+                      }
+                }
               }
             });
           }, 1000);
@@ -7350,14 +7600,6 @@ downloadAsPDF() {
     this.endMethod();
   });
 }
-
-
-
-
-
-
-
-
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

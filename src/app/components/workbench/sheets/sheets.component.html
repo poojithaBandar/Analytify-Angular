@@ -495,7 +495,7 @@
                                                         </div> -->
                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                             <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn">
-                                                                <div class="form-check d-flex" style="width: 46px;">
+                                                                <div class="form-check d-flex" >
                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -876,54 +876,60 @@
                                                     </ng-template>
                                                 </li>
                                                 @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
-                                                    <li [ngbNavItem]="4" *ngIf="isTopFilter" (click)="filterSearch = ''; filterDataGet()">
-                                                        <a ngbNavLink class="p-3">Top</a>
-                                                        <ng-template ngbNavContent>
-                                                            <div class="tab-pane active" id="activetabs">
-                                                                <div class="filter-options">
-                                                                    <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
-                                                                    <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
-                                                                </div>
-                                                                <div class="ms-4">
-                                                                    <div class="field-options">
-                                                                        <select [(ngModel)]="topType">
-                                                                          <option value="desc">Top</option>
-                                                                          <option value="asc">Bottom</option>
-                                                                        </select>
-                                                                        <select [(ngModel)] = "topLimit">
-                                                                            <option *ngIf="totalDataLength > 0" value="5">5</option>
-                                                                            <option *ngIf="totalDataLength > 5" value="10">10</option>
-                                                                            <option *ngIf="totalDataLength > 10" value="20">20</option>
-                                                                            <option *ngIf="totalDataLength > 20" value="30">30</option>
-                                                                            <option *ngIf="totalDataLength > 30" value="40">40</option>
-                                                                            <option *ngIf="totalDataLength > 40" value="50">50</option>
-                                                                            <option *ngIf="totalDataLength > 50" value="100">100</option>
-                                                                            <option *ngIf="totalDataLength > 100" value="500">500</option>
-                                                                            <option *ngIf="totalDataLength > 500" value="1000">1000</option>
-                                                                            <option *ngIf="totalDataLength > 1000" value="2000">2000</option>
-                                                                            <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
-                                                                            <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
-                                                                            <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                          </select>
-                                                                        <!-- <input type="number" value="10" /><span>by</span> -->
+                                                    @if(draggedRows.length === 0){
+                                                        <li [ngbNavItem]="4" *ngIf="isTopFilter" [ngbTooltip]="draggedRows.length === 0 ? 'Drop a measure in Row Shelf to Enable.' : ''" container="body" position="top">
+                                                            <a ngbNavLink class="p-3" [class.disabled]="draggedRows.length === 0">Top</a>
+                                                        </li>
+                                                    } @else{
+                                                        <li [ngbNavItem]="4" *ngIf="isTopFilter" (click)="filterSearch = ''; filterDataGet()">
+                                                            <a ngbNavLink class="p-3">Top</a>
+                                                            <ng-template ngbNavContent>
+                                                                <div class="tab-pane active" id="activetabs">
+                                                                    <div class="filter-options">
+                                                                        <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                        <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
                                                                     </div>
-                                                                    <div class="field-options ">
-                                                                        <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
-                                                                            <option value="select" selected disabled> select </option>
-                                                                            <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
-                                                                        </select>
-                                                                        <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
-                                                                            <option value="sum">Sum</option>
-                                                                            <option value="avg">Avg</option>
-                                                                            <option value="min">Min</option>
-                                                                            <option value="max">Max</option>
-                                                                            <option value="count">Count</option>
-                                                                        </select>
+                                                                    <div class="ms-4">
+                                                                        <div class="field-options">
+                                                                            <select [(ngModel)]="topType">
+                                                                              <option value="desc">Top</option>
+                                                                              <option value="asc">Bottom</option>
+                                                                            </select>
+                                                                            <select [(ngModel)] = "topLimit">
+                                                                                <option *ngIf="totalDataLength > 0" value="5">5</option>
+                                                                                <option *ngIf="totalDataLength > 5" value="10">10</option>
+                                                                                <option *ngIf="totalDataLength > 10" value="20">20</option>
+                                                                                <option *ngIf="totalDataLength > 20" value="30">30</option>
+                                                                                <option *ngIf="totalDataLength > 30" value="40">40</option>
+                                                                                <option *ngIf="totalDataLength > 40" value="50">50</option>
+                                                                                <option *ngIf="totalDataLength > 50" value="100">100</option>
+                                                                                <option *ngIf="totalDataLength > 100" value="500">500</option>
+                                                                                <option *ngIf="totalDataLength > 500" value="1000">1000</option>
+                                                                                <option *ngIf="totalDataLength > 1000" value="2000">2000</option>
+                                                                                <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
+                                                                                <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
+                                                                                <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
+                                                                              </select>
+                                                                            <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                        </div>
+                                                                        <div class="field-options ">
+                                                                            <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
+                                                                                <option value="select" selected disabled> select </option>
+                                                                                <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                            </select>
+                                                                            <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
+                                                                                <option value="sum">Sum</option>
+                                                                                <option value="avg">Avg</option>
+                                                                                <option value="min">Min</option>
+                                                                                <option value="max">Max</option>
+                                                                                <option value="count">Count</option>
+                                                                            </select>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </ng-template>
-                                                    </li>
+                                                            </ng-template>
+                                                        </li>
+                                                    }
                                                 }
                                                 @if(integerList.includes(filterType)){
                                                     <li [ngbNavItem]="6" (click)="filterSearch = ''; filterDataGet()">
@@ -1520,7 +1526,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
                                 <div class="title-container border-0 rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
-                                    <span class="card mb-0 SearchBarCu" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;"></span>
+                                    <span class="card mb-0 SearchBarCu" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;height: 33px;"></span>
                                     <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor> -->
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary FaFaIconProperties"><i class="fa fa-pencil FaFaIconProperties"></i></button>
@@ -1543,15 +1549,16 @@
                                     <button class="viewQueryImg" container="body" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
                                 <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 me-1 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
-                                <button [disabled]="!retriveDataSheet_id" ngbTooltip="Refresh" container="body" type="button" class="btn btn-primary mt-0 ps-2 pe-2" (click)="refreshSheetData()"><i class="fa fa-refresh w-4 h-4"></i></button>
+                                <button [disabled]="!retriveDataSheet_id" triggers="hover" ngbTooltip="Refresh" container="body" type="button" class="btn btn-primary mt-0 ps-2 pe-2" (click)="refreshSheetData()"><i class="fa fa-refresh w-4 h-4"></i></button>
 
                                 <!-- More Options Button -->
                                 <div ngbDropdown class="ps-1">
                                     <button
-                                    class="btn btn-primary mt-0 ps-2 pe-2"
+                                    class="btn btn-primary mt-0"
                                     type="button"
                                     id="menuOptionsDropdown"
                                     ngbTooltip="Download Options"
+                                    triggers="hover"
                                     container="body"
                                     ngbDropdownToggle
                                     [disabled]="!retriveDataSheet_id"
@@ -1562,6 +1569,8 @@
                                     <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsCSV()">Export to CSV</a>
                                     <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDFImage('pdf')">Download as PDF</a>
                                     <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDFImage('png')">Download Image</a>
+                                    <!-- <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDF()">Download as PDF</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsImage()">Download Image</a> -->
                                     </div>
                                 </div>
                             </div>
@@ -1613,7 +1622,7 @@
                                             } <i (click)="isDimensionEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                             <li  *ngIf="isDimensionEdit"><input (blur)="onColumnAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
                                             </li>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown>
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1628,7 +1637,7 @@
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown >
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1719,7 +1728,7 @@
                                             } <i (click)="isPivotRowEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                             <li  *ngIf="isPivotRowEdit"><input (blur)="onPivotRowAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
                                             </li>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown>
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1733,7 +1742,7 @@
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown >
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1805,7 +1814,7 @@
                                                     } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
-                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center">
+                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center p-0">
                                                     <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem >Aggregation</li>
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
@@ -1819,7 +1828,7 @@
                                                         <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" >None</a></li>  
                                                     </ul>
                                                 </div>
-                                                <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
+                                                <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center p-0" ngbDropdown #quickCalcDrop="ngbDropdown">
                                                     <li class="dropdown-item btn btn-primary-light Quick-Calc-text border" ngbDropdownToggle>Quick Calculation</li>
                                                     <!-- <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
                                                        ngbDropdownToggle></i>
@@ -2310,7 +2319,7 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link  btn-sm btn-info-light border">View Dashboard</button></div>        
+                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link  btn-sm btn-info-light border move-text">View Dashboard</button></div>        
                     </div>
                 </div>
 
@@ -2383,7 +2392,7 @@
                                                                                         } -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check d-flex" style="width: 46px;">
+                                                                                                <div class="form-check d-flex">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2752,7 +2761,7 @@
                                                                                         </div> -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check d-flex" style="width: 46px;">
+                                                                                                <div class="form-check d-flex" >
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2947,12 +2956,12 @@
                                         </div>
                                     </ng-template>
                                 </li>
-                                <li [ngbNavItem]="2" [class.disabled]="pivotTable || (draggedColumns?.length === 0 && draggedRows?.length ===0)">
+                                <li [ngbNavItem]="2" [class.disabled]="(draggedColumns?.length === 0 && draggedRows?.length ===0)">
                                      <a ngbNavLink class="p-1">Customize</a>
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="((table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="(((table && chartId) || (pivotTable && chartId) )&& (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -2977,7 +2986,7 @@
                                                                                                 <div class="dropup" ngbDropdown>
                                                                                                     <div class="form-group mb-0 p-1">
                                                                                                         <select class="form-select form-select select2 fs-14"
-                                                                                                            [(ngModel)]="headerFontFamily">
+                                                                                                            [(ngModel)]="headerFontFamily" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                             <option value="'Arial', sans-serif">Arial</option>
                                                                                                             <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                             <option value="'Verdana', sans-serif">Verdana</option>
@@ -2996,7 +3005,7 @@
                                                                                                         <div class="row">
                                                                                                             <div class="form-group mb-0 d-flex">
                                                                                                                 <select class="form-select form-select select2 fs-14"
-                                                                                                                     [(ngModel)]="headerFontSize">
+                                                                                                                     [(ngModel)]="headerFontSize" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <option value="10px">10px</option>
                                                                                                                     <option value="11px">11px</option>
                                                                                                                     <option value="12px">12px</option>
@@ -3011,17 +3020,17 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontStyle === 'italic' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal';pivotTable ? applyDynamicStylesToPivot() : null ">
                                                                                                                     <p>I</p>
                                                                                                                 </div>
                                                                                                                 <div class="underline-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontDecoration === 'underline' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none';pivotTable ? applyDynamicStylesToPivot() : null ">
                                                                                                                     <p>U</p>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3056,17 +3065,17 @@
                                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                   <div class="dropup" ngbDropdown >
                                                                                                       <div class=" p-1">
-                                                                                                              <div class="form-group mb-0 text-center" (click)="headerFontAlignment = 'left'">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="headerFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                 <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                               </div>
                                                                                                               <div class="form-group mb-0 alignment-sides">
-                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'left'">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-left"></i>
                                                                                                                 </div>
-                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'center'">
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'center';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-center"></i>
                                                                                                                 </div>
-                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'right'">
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'right';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-right"></i>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3085,7 +3094,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="((table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="((table && chartId || pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -3110,7 +3119,7 @@
                                                                                                 <div class="dropup" ngbDropdown>
                                                                                                     <div class="form-group mb-0 p-1">
                                                                                                         <select class="form-select form-select select2 fs-14"
-                                                                                                            [(ngModel)]="tableDataFontFamily">
+                                                                                                            [(ngModel)]="tableDataFontFamily" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                             <option value="'Arial', sans-serif">Arial</option>
                                                                                                             <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                             <option value="'Verdana', sans-serif">Verdana</option>
@@ -3129,7 +3138,7 @@
                                                                                                         <div class="row">
                                                                                                             <div class="form-group mb-0 d-flex">
                                                                                                                 <select class="form-select form-select select2 fs-14"
-                                                                                                                     [(ngModel)]="tableDataFontSize">
+                                                                                                                     [(ngModel)]="tableDataFontSize" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <option value="10px">10px</option>
                                                                                                                     <option value="11px">11px</option>
                                                                                                                     <option value="12px">12px</option>
@@ -3144,17 +3153,17 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontStyle === 'italic' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>I</p>
                                                                                                                 </div>
                                                                                                                 <div class="underline-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontDecoration === 'underline' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>U</p>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3189,17 +3198,17 @@
                                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                   <div class="dropup" ngbDropdown >
                                                                                                       <div class=" p-1">
-                                                                                                              <div class="form-group mb-0 text-center" (click)="tableDataFontAlignment = 'left'">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="tableDataFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                 <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                               </div>
                                                                                                               <div class="form-group mb-0 alignment-sides">
-                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'left'">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-left"></i>
                                                                                                                 </div>
-                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'center'">
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'center';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-center"></i>
                                                                                                                 </div>
-                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'right'">
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'right';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-right"></i>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3218,7 +3227,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!(table || kpi)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!(table || kpi || pivotTable)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 fw-500 border-0 rounded-2" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -3247,7 +3256,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -3388,7 +3397,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -3531,7 +3540,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || pivotTable || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3822,7 +3831,7 @@
                                                         </div>
                                                   </div>
 
-                                                    <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="(table && chartId || pivotTable) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Banding </label>
                                                         </div>
@@ -3833,7 +3842,28 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                             
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                        <div class=""> 
+                                                            <label class="mb-0">Column Totals </label>
+                                                        </div>
+                                                        <div *ngIf="pivotColumnTotals" class="toggle toggle-sm on mb-0" (click)="renderPivotTable(false);pivotColumnTotals = false" >
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!pivotColumnTotals" class="toggle toggle-sm off mb-0" (click)="renderPivotTable(false);pivotColumnTotals = true" >
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                        <div class=""> 
+                                                            <label class="mb-0">Row Totals </label>
+                                                        </div>
+                                                        <div *ngIf="pivotRowTotals" class="toggle toggle-sm on mb-0" (click)="renderPivotTable(false);pivotRowTotals = false" >
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!pivotRowTotals" class="toggle toggle-sm off mb-0" (click)="renderPivotTable(false);pivotRowTotals = true" >
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
                                                     <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class=" mb-2 p-2 border rounded-2">
                                                         <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
                                                             <label class="mb-0">Page Length</label>
@@ -3847,7 +3877,7 @@
                                                             </select>
                                                          </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Zoom </label>
                                                         </div>
@@ -3859,7 +3889,7 @@
                                                         </div>
                                                     </div>
                                                   
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3915,14 +3945,14 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
                                                             class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                             type="button"
                                                             data-bs-toggle="collapse"
-                                                            data-bs-target="#collapse"
+                                                            data-bs-target="#collapse" 
                                                             aria-expanded="true"
                                                             aria-controls="collapse"
                                                             >
@@ -3997,7 +4027,8 @@
                                                             <ng-template>
                                                                 <div *ngIf="!((table && chartId) || kpi || calendar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
-                                                                        <p>Background</p>
+                                                                        <p *ngIf="!pivotTable">Background</p>
+                                                                        <p *ngIf="pivotTable">Header Background</p>
                                                                     </div>
                                                                     <div *ngIf="backgroundColorSwitch" class="toggle toggle-sm on mb-0" (click)="backgroundColorSwitch = !backgroundColorSwitch; resetBackgroundColor()">
                                                                         <span></span>
@@ -4007,7 +4038,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="backgroundColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="backgroundColor"
+                                                                    [(ngModel)]="backgroundColor" (change)="pivotTable ? applyPIvotHeaderBg() : null"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -4289,7 +4320,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="(draggedColumns?.length !== 0 || draggedRows?.length !==0) && !(kpi || guage || calendar || (!isApexCharts && funnel))" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="(draggedColumns?.length !== 0 || draggedRows?.length !==0) && !(kpi || guage || calendar ||pivotTable || (!isApexCharts && funnel))" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton

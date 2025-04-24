@@ -565,3 +565,10 @@ input.BitSpace {
   .show-chart-card {height: calc(100% - 180px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 140px);}
 }
+::ng-deep .pvtTable tr.even-row td {
+  background-color: #ffffff; // or your even row color
+}
+
+::ng-deep .pvtTable tr.odd-row td {
+  background-color: #f5f7fa; // or your odd row color
+}

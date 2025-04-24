@@ -347,6 +347,9 @@ export class SheetsComponent{
   tableDataFontColor : any = '#000000';
   tableDataFontAlignment : any = 'left';
 
+  pivotColumnTotals:boolean = true;
+  pivotRowTotals:boolean = true;
+
   headerFontFamily : any = "'Arial', sans-serif";
   headerFontSize : any = '16px';
   headerFontWeight : any = 700;
@@ -891,6 +894,10 @@ try {
                   this.tableDataDisplay.push(tableRow);
                  // console.log('display row data ', this.tableDataDisplay)
                 }
+                if(this.page === 1 && this.pageNo === 1){
+                  this.displayedColumns = this.tableColumnsDisplay;
+                  this.tableDataStore = this.tableDataDisplay;
+                }
                 if(isSyncData){
                   this.sheetSave();
                 }
@@ -957,22 +964,29 @@ try {
         }
         }
 
-        renderPivotTable(isSyncData : boolean) {
+        renderPivotTable(isSyncData: boolean) {
           setTimeout(() => {
 
-          if (this.pivotContainer && this.pivotContainer.nativeElement) {
+            if (this.pivotContainer && this.pivotContainer.nativeElement) {
               ($(this.pivotContainer.nativeElement) as any).pivot(this.transformedData, {
-                rows: this.columnKeys,  
-                cols: this.valueKeys, 
+                rows: this.columnKeys,
+                cols: this.valueKeys,
                 // vals: this.valueKeys, 
-                aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
-                rendererName: "Table"
-              }); 
-            if(isSyncData){
-              this.sheetSave();
+                aggregator: $.pivotUtilities.aggregators["Sum"](this.rowKeys),
+                rendererName: "Table",
+                rendererOptions:{
+                  table:{
+                    rowTotals:this.pivotRowTotals,
+                    colTotals:this.pivotColumnTotals
+                  }
+                }
+              });
+              if (isSyncData) {
+                this.sheetSave();
+              }
             }
-          }        
-                      }, 1000);
+            this.applyDynamicStylesToPivot()
+          }, 1000);
 
         }
 
@@ -2305,7 +2319,10 @@ sheetSave(){
     KPIDecimalPlaces : this.KPIDecimalPlaces,
     KPIDisplayUnits : this.KPIDisplayUnits,
     KPIPrefix : this.KPIPrefix,
-    KPISuffix : this.KPISuffix
+    KPISuffix : this.KPISuffix,
+
+    pivotRowTotals:this.pivotRowTotals,
+    pivotColumnTotals : this.pivotColumnTotals
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2664,7 +2681,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           // this.tableData = this.sheetResponce.results.tableData;
-          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          // this.displayedColumns = this.sheetResponce?.results.tableColumns;
           this.bandingSwitch = this.sheetResponce?.results.banding;
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
@@ -3291,7 +3308,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     const obj={
       "hierarchy_id" :this.databaseId,
@@ -3433,7 +3450,7 @@ trackByFn(index: number, item: any): number {
     let relativeDateRange : any[]=[];
     this.sortedData = [];
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
@@ -3510,6 +3527,7 @@ trackByFn(index: number, item: any): number {
           this.topLimit = responce?.top_bottom[2];
           this.selectedTopColumn = responce?.top_bottom[0];
           this.topAggregate = responce?.top_bottom[1];
+          this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
         }
         if(this.formatExtractType){
           this.activeTabId = 3;
@@ -3635,6 +3653,9 @@ trackByFn(index: number, item: any): number {
   filterDataEditPut(){
     this.sortedData = [];
     let relativeDateRange : any[] = [];
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
+    }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
         const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
@@ -3851,6 +3872,9 @@ console.log(reName.split(',')[0])
         this.color1 = undefined;
         this.color2 = undefined;
       }
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
@@ -3911,31 +3935,35 @@ console.log(reName.split(',')[0])
   formatKPINumber() {
     let formattedNumber = this.tablePreviewRow[0]?.result_data[0]+'';
     let value = this.tablePreviewRow[0]?.result_data[0];
-    if (this.KPIDisplayUnits !== 'none') {
-      switch (this.KPIDisplayUnits) {
-        case 'K':
-          formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
-          break;
-        case 'M':
-          formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
-          break;
-        case 'B':
-          formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
-          break;
-        case 'G':
-          formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
-          break;
-        case '%':
-          this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
-          let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
-          formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
-          break;
+    if(value === null || value === undefined){
+      this.KPINumber = 0;
+    } else{
+      if (this.KPIDisplayUnits !== 'none') {
+        switch (this.KPIDisplayUnits) {
+          case 'K':
+            formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
+            break;
+          case 'M':
+            formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
+            break;
+          case 'B':
+            formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
+            break;
+          case 'G':
+            formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
+            break;
+          case '%':
+            this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+            let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+            formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+            break;
+        }
+      } else {
+        formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
       }
-    } else {
-      formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
+  
+      this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
     }
-
-    this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
   }
   numberPopupTrigger(){
     this.numberPopup = !this.numberPopup;
@@ -4167,7 +4195,9 @@ customizechangeChartPlugin() {
     this.KPIDecimalPlaces = data.KPIDecimalPlaces ?? 2,
     this.KPIDisplayUnits = data.KPIDisplayUnits ?? 'none',
     this.KPIPrefix = data.KPIPrefix ?? '',
-    this.KPISuffix = data.KPISuffix ?? ''
+    this.KPISuffix = data.KPISuffix ?? '',
+    this.pivotRowTotals = data.pivotRowTotals ?? true,
+    this.pivotColumnTotals = data.pivotColumnTotals ?? true
   }
 
   resetCustomizations(){
@@ -4259,6 +4289,9 @@ customizechangeChartPlugin() {
     this.rightLegend = null
     this.sortColumn = 'select';
     this.locationDrillDownSwitch = false;
+
+    this.pivotColumnTotals = true;
+    this.pivotRowTotals = true
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
     // this.KPIPrefix = '',
@@ -4788,6 +4821,9 @@ customizechangeChartPlugin() {
       }
       resetBackgroundColor(){
         this.backgroundColor = '#ffffff';
+        if(this.pivotTable){
+          this.applyDynamicStylesToPivot();
+        }
       }
       resetKpiColor(){
         this.kpiColor = '#0f0f0f';
@@ -5624,6 +5660,9 @@ customizechangeChartPlugin() {
       this.selectedElement = event.target as HTMLElement;
       this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.tableDataFontColor = window.getComputedStyle(element).backgroundColor;
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     headerColorChange(event:any){
       if (this.selectedElement) {
@@ -5633,6 +5672,9 @@ customizechangeChartPlugin() {
       this.selectedElement = event.target as HTMLElement;
       this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.headerFontColor = window.getComputedStyle(element).backgroundColor;
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     sortedData : TableRow[] = [];
     tableColumnSort(sortType:any, column : any){
@@ -6736,6 +6778,52 @@ downloadAsPDFImage(format: 'pdf' | 'png') {
     element.style.height = originalHeight;
     element.style.width = originalWidth;
   });
+
+}
+
+applyPIvotHeaderBg() {
+  setTimeout(() => {
+    this.applyDynamicStylesToPivot();
+  }, 0);
+}
+
+applyDynamicStylesToPivot() {
+  const headers = document.querySelectorAll('.pvtTable th');
+  headers.forEach(header => {
+    (header as HTMLElement).style.backgroundColor = this.backgroundColor;
+    (header as HTMLElement).style.color = this.headerFontColor;
+    (header as HTMLElement).style.fontSize = this.headerFontSize;
+    (header as HTMLElement).style.fontFamily = this.headerFontFamily;
+    (header as HTMLElement).style.fontWeight = this.headerFontWeight;
+    (header as HTMLElement).style.fontStyle = this.headerFontStyle;
+    (header as HTMLElement).style.textDecoration = this.headerFontDecoration;
+    (header as HTMLElement).style.textAlign = this.headerFontAlignment;
+
+  });
+
+  const cells = document.querySelectorAll('.pvtTable td');
+  cells.forEach(cell => {
+    // (cell as HTMLElement).style.backgroundColor = this.backgroundColor;
+    (cell as HTMLElement).style.color = this.tableDataFontColor;
+    (cell as HTMLElement).style.fontSize = this.tableDataFontSize;
+    (cell as HTMLElement).style.fontFamily = this.tableDataFontFamily;
+    (cell as HTMLElement).style.fontWeight = this.tableDataFontWeight;
+    (cell as HTMLElement).style.fontStyle = this.tableDataFontStyle;
+    (cell as HTMLElement).style.textDecoration = this.tableDataFontDecoration;
+    (cell as HTMLElement).style.textAlign = this.tableDataFontAlignment;
+
+  });
+  const rows = document.querySelectorAll('.pvtTable tr');
+  rows.forEach((row, rowIndex) => {
+    // Only apply to rows that contain data cells
+    if (row.querySelectorAll('td').length > 0) {
+      row.classList.remove('even-row', 'odd-row');
+
+      if (this.bandingSwitch) {
+        row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+      }
+    }
+});
 
 }
 

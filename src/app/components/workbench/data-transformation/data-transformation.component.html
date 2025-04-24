@@ -193,7 +193,7 @@
                                                         <img src="../../../../assets/images/data-transformation/right_arrow.png" class="image-width" alt="arrow image">
                                                   
                                                         <div class="example-box p-2 border rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " [ngClass]="selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'border-danger' : 'border-dark-subtle'"
-                                                            ngbDropdown #dropdownRef="ngbDropdown">
+                                                            ngbDropdown #dropdownRef="ngbDropdown" [placement]="'bottom-end'">
                                                             <span class="flex-grow-1 text-nowrap" ngbTooltip="{{ selectedTransformations?.[index]?.[transformationIndex]?.isError ? 'This transformation is INCOMPLETE' : selectedTransformations[index][transformationIndex].label }}" placement="top"
                                                                 container="body">
                                                                 {{ selectedTransformations[index][transformationIndex].label | slice:0:13 }}
@@ -252,7 +252,7 @@
 
                                                                                 <label *ngIf="transformation.key == 'pivot'" class="form-label">Index <span  class="text-red">*</span><i ngbTooltip="Select Index" container="body" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
-                                                                                <ng-select *ngIf="transformation.key == 'pivot'" [items]="item.columns" bindLabel="col" bindValue="col" dropdownPosition="bottom"
+                                                                                <ng-select *ngIf="transformation.key == 'pivot'" [items]="ngSelectPivotIndex" bindLabel="col" bindValue="col" dropdownPosition="bottom"
                                                                                     [multiple]="true" placeholder="Select Index" [searchable]="true" [clearable]="false"[(ngModel)]="transformation.index"
                                                                                     (change)="setTransformationType(index, transformation.key, $event, false, false, transformationIndex, false, false,true,false,false,false)">
                                                                                 </ng-select>
