@@ -354,10 +354,6 @@ input[type="color"] {
   margin: 0;
 }
 
-.dropdown {
-  padding: 1px 6px
-}
-
 .mat-mdc-tab-group {display: flex; flex-direction: column; max-width: 100%; justify-content: flex-end; }
 
 
@@ -568,4 +564,11 @@ input.BitSpace {
   .dataCuCardHeight {height: calc(100% - 21px);}
   .show-chart-card {height: calc(100% - 180px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 140px);}
+}
+::ng-deep .pvtTable tr.even-row td {
+  background-color: #ffffff; // or your even row color
+}
+
+::ng-deep .pvtTable tr.odd-row td {
+  background-color: #f5f7fa; // or your odd row color
 }
