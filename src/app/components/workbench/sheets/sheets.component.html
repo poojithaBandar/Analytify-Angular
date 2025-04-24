@@ -272,8 +272,8 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'now'){
                                                                                 <span > <p class="fw-600 mb-0">Current_timestamp :<br> </p> Returns the current date and time.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> current_timestamp()</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> current_timestamp() </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> now()</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> now() </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'today'){
                                                                                 <span > <p class="fw-600 mb-0">Current_date :<br> </p> Returns the current date without the time.</span> <br><br>
@@ -1552,21 +1552,23 @@
                                 <button [disabled]="!retriveDataSheet_id" triggers="hover" ngbTooltip="Refresh" container="body" type="button" class="btn btn-primary mt-0 ps-2 pe-2" (click)="refreshSheetData()"><i class="fa fa-refresh w-4 h-4"></i></button>
 
                                 <!-- More Options Button -->
-                                <div ngbDropdown>
+                                <div ngbDropdown class="ps-1">
                                     <button
                                     class="btn btn-primary mt-0"
                                     type="button"
                                     id="menuOptionsDropdown"
-                                    ngbTooltip="Menu Options"
+                                    ngbTooltip="Download Options"
                                     triggers="hover"
                                     container="body"
                                     ngbDropdownToggle
                                     [disabled]="!retriveDataSheet_id"
                                     >
-                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
                                     </button>
                                     <div ngbDropdownMenu aria-labelledby="menuOptionsDropdown">
-                                    <button class="dropdown-item btn-primary-light" href="javascript:void(0)" (click)="downloadAsCSV()">Export to CSV</button>
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsCSV()">Export to CSV</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDFImage('pdf')">Download as PDF</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDFImage('png')">Download Image</a>
                                     <!-- <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDF()">Download as PDF</a>
                                     <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsImage()">Download Image</a> -->
                                     </div>
@@ -1998,7 +2000,7 @@
                        
                         <!-- @if((tab.sheet_name || tab) === sheetName){ -->
                           
-                            <div class="body table-responsive sheet-table-responsive">
+                            <div class="body table-responsive sheet-table-responsive" id="pdfcontainer" #pdfcontainer>
                                 
                                 @if(table && chartId){
                                 <table>

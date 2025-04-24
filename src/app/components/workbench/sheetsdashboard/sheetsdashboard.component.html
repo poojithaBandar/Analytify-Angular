@@ -1037,17 +1037,36 @@
                             <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
                             (btnClickEvent)="updateDashboard(false);editor =false"></app-insights-button>
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
-                            <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button>
-                            <button *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
-                            <div class=" p-1" ngbDropdown>
-                              <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
-                                aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                              </a>
+                            <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button> -->
+                            <div *ngIf="!isPublicUrl && !isSampleDashboard" class=" p-1" ngbDropdown>
+                            <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" class="btn btn-primary mt-0 ps-2 pe-2" type="button" ngbTooltip="Sync Options" container="body" ngbDropdownToggle>
+                              <i class="fa fa-refresh" aria-hidden="true"></i>
+                            </button>
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
-                                <button *ngIf="!isPublicUrl && dashboardId" type="button" [disabled]="canNavigateToAnotherPage" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button>
+                                <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();">sync data</button> -->
+                                <!-- <button *ngIf="!isPublicUrl && dashboardId" type="button" [disabled]="canNavigateToAnotherPage" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button> -->
+                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="refreshDashboard()">Sync data</a>
+                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</a>
+
                               </div>
                               </div>
-                            <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
+                            <button *ngIf="!isPublicUrl" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
+                            <div class=" p-1" ngbDropdown>
+                              <button
+                              [disabled]="dashboard.length === 0 || !updateDashbpardBoolen"
+                              class="btn btn-primary mt-0 ps-2 pe-2"
+                              type="button"
+                              container="body"
+                              ngbDropdownToggle
+                              >
+                              <i class="fa fa-download" aria-hidden="true"></i>
+                              </button>
+                              <div class="dropdown-menu mt-2" ngbDropdownMenu>
+                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="downloadAsImage()">Download Image</a>
+                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="downloadAsPDF();">Download Pdf</a>
+                              </div>
+                              </div>
+                              
                             <div *ngIf="isPublicUrl" class="dashboard-option">
                               <div class="d-flex justify-content-end p-1" ngbDropdown>
                                   <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -1093,7 +1112,7 @@
       
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
         
-        <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
+        <gridster [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event,false)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard">
@@ -1420,7 +1439,7 @@
                 </div>
               }
               <div *ngIf="item['chartType'] === 'Table'">
-                <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" >
+                <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                   <table class="table border text-nowrap text-md-nowrap mb-0">
                       <thead>
                         <tr>
@@ -1543,7 +1562,7 @@
           <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="tabHeightGrid"
             [style.width.px]="tabWidthGrid">
             <!-- <div style="height: inherit;" > -->
-              <gridster [options]="options" #gridsterTab>
+              <gridster [options]="options" #gridsterTab id="capture-image-pdf-2">
                 <gridster-item [item]="item" *ngFor="let item of dashboardTest;let i = index"
                   [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                   <div class="card mb-0 grid-item-border card-panel" style="height: 100%;" [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
