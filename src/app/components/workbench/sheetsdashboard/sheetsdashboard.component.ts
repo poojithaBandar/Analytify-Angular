@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -22,7 +22,7 @@ import * as _ from 'lodash';
 // import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
-import { debounceTime, fromEvent, map, Observable, throwError } from 'rxjs';
+import { debounceTime, fromEvent, map, Observable, throwError, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -47,7 +47,7 @@ import * as echarts from 'echarts';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
-import { tap } from 'rxjs/operators'; 
+import { tap, takeUntil } from 'rxjs/operators'; 
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.json';
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
@@ -114,9 +114,10 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
-export class SheetsdashboardComponent {
+export class SheetsdashboardComponent implements OnDestroy {
  // @HostListener('window:resize', ['$event'])
  itemsPerPage:any;
+  private destroy$ = new Subject<void>();
  pageNo = 1;
  page: number = 1;
  totalItems:any;
@@ -491,14 +492,18 @@ export class SheetsdashboardComponent {
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
 
-    this.sharedService.downloadRequested$.subscribe(() => {
-      this.downloadImageInPublic();
-    });
+    this.sharedService.downloadRequested$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.downloadImageInPublic();
+      });
 
     // Subscribe to refresh requests
-    this.sharedService.refreshRequested$.subscribe(() => {
-      this.getSavedDashboardDataPublic();
-    });
+    this.sharedService.refreshRequested$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.getSavedDashboardDataPublic();
+      });
 
   }
 
@@ -6890,6 +6895,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     validateTabs(): boolean {
       return this.sheetTabs.some(sheet => !sheet.name || sheet.name.trim() === "");
     }
+    ngOnDestroy(): void {
+        this.destroy$.next();
+          this.destroy$.complete();
+        }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
