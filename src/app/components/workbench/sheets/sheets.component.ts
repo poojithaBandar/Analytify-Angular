@@ -1356,8 +1356,8 @@ try {
     if (type !== 'yoy' && type !== 'yoyRemove' && type !== 'mom' && type !== 'momRemove' && type !== 'qoq' && type !== 'qoqRemove') {
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     } 
-    if (['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
-      yoyType = '';
+    if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+      yoyType = yoyType.split(' ')[2];
     }
     if(type == 'yoy'){
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'yoy of '+yoyType,alias:rows.alias};
