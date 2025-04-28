@@ -1797,7 +1797,7 @@
                                         }@else{   
                                              {{ rows.column }}
                                         }
-                                        <div class="dropup" ngbDropdown style="line-height: 0;">
+                                        <div class="dropup" ngbDropdown [autoClose]="'outside'" style="line-height: 0;">
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                 <div class="dropup" ngbDropdown #aggDrop="ngbDropdown">
@@ -1828,27 +1828,113 @@
                                                         <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" >None</a></li>  
                                                     </ul>
                                                 </div>
+
+                                                
+                                                        <!-- <div class="dropup" ngbDropdown #quickCalculation="ngbDropdown">
+                                                            <div class="d-flex text-center">
+                                                                <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem >Quick Calculation</li>
+                                                                <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                            </div>
+                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                <li ><a  class="dropdown-item border Aggregation-select-padding" ngbDropdownItem  >QOQ</a></li>
+                                                                <li ><a  class="dropdown-item border Aggregation-select-padding" ngbDropdownItem  >YOY</a></li>
+                                                                <li ><a  class="dropdown-item border Aggregation-select-padding" ngbDropdownItem  >MOM</a></li>
+
+                                                            </ul>
+                                                           
+                                                        </div> -->
+                                                        <div *ngIf="checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center" class="dropup" [autoClose]="'outside'" ngbDropdown>
+                                                            <div class="d-flex text-center">
+                                                              <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem>
+                                                                Quick Calculation
+                                                              </li>
+                                                              <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
+                                                                 ngbDropdownToggle>
+                                                              </i>
+                                                            </div>
+                                                         
+                                                            <!-- Main Dropdown Menu -->
+                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                             
+                                                              <!-- Reusable dropdown option component -->
+                                                              <li class="dropdown-submenu" ngbDropdown>
+                                                                <a class="dropdown-item border d-flex justify-content-between align-items-center"
+                                                                   ngbDropdownToggle [class.disabled]="!hasQuaterType"
+                                                                   [attr.tabindex]="hasQuaterType ? '0' : '-1'"
+                                                                   (click)="!hasQuaterType ? $event.preventDefault() : null">
+                                                                  QOQ
+                                                                  <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                                </a>
+                                                                <ul ngbDropdownMenu class="dropdown-menu custom-dropdown">
+                                                                  <li *ngFor="let column of quaterColumns" [ngClass]="draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
+                                                                    <a class="dropdown-item border Aggregation-select-padding"
+                                                                    (click)="selectedColumnForPeriodType=column;rowMeasuresCount(rows, index, 'qoq');">{{column}}(QOQ)</a>
+                                                                  </li>
+                                                                  <li>
+                                                                    <a *ngIf="draggedRowsData[index][1] == 'qoq'" class="dropdown-item border Aggregation-select-padding" 
+                                                                       (click)="selectedColumnForPeriodType='';rowMeasuresCount(rows,index,'qoqRemove')">Remove</a>
+                                                                </li>
+                                                                </ul>
+                                                              </li>
+                                                             
+                                                         
+                                                              <li class="dropdown-submenu" ngbDropdown>
+                                                                <a class="dropdown-item border d-flex justify-content-between align-items-center"
+                                                                   ngbDropdownToggle [class.disabled]="!hasMonthType"
+                                                                   [attr.tabindex]="hasMonthType ? '0' : '-1'"
+                                                                   (click)="!hasMonthType ? $event.preventDefault() : null">
+                                                                  MOM
+                                                                  <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                                </a>
+                                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                  <li *ngFor="let column of monthColumns" [ngClass]="draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
+                                                                    <a class="dropdown-item border Aggregation-select-padding" 
+                                                                    (click)="selectedColumnForPeriodType=column;rowMeasuresCount(rows, index, 'mom');">
+                                                                    {{column}}(MOM)
+                                                                    </a>
+                                                                  </li>
+                                                                  <li>
+                                                                    <a *ngIf="draggedRowsData[index][1] == 'mom'" class="dropdown-item border Aggregation-select-padding" 
+                                                                       (click)="selectedColumnForPeriodType='';rowMeasuresCount(rows,index,'momRemove')">Remove</a>
+                                                                </li>
+                                                                </ul>
+                                                              </li>
+                                                         
+                                                              <li class="dropdown-submenu" ngbDropdown>
+                                                                <a class="dropdown-item border d-flex justify-content-between align-items-center"
+                                                                   ngbDropdownToggle [class.disabled]="!hasYearType"
+                                                                   [attr.tabindex]="hasYearType ? '0' : '-1'"
+                                                                   (click)="!hasYearType ? $event.preventDefault() : null">
+                                                                  YOY
+                                                                  <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                                </a>
+                                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                  <li *ngFor="let column of yearColumns" [ngClass]="draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
+                                                                    <a class="dropdown-item border Aggregation-select-padding"
+                                                                    (click)="selectedColumnForPeriodType=column;rowMeasuresCount(rows, index, 'yoy');">{{ column }}(yoy)</a>
+                                                                  </li>
+                                                                  <li>
+                                                                    <a *ngIf="draggedRowsData[index][1] == 'yoy'" class="dropdown-item border Aggregation-select-padding" 
+                                                                       (click)="selectedColumnForPeriodType='';rowMeasuresCount(rows,index,'yoyRemove')">Remove</a>
+                                                                </li>
+                                                                </ul>
+                                                              </li>
+                                                         
+                                                            </ul>
+                                                          </div>
+                                                          
+
+                                                <!-- <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
                                                 <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center p-0" ngbDropdown #quickCalcDrop="ngbDropdown">
                                                     <li class="dropdown-item btn btn-primary-light Quick-Calc-text border" ngbDropdownToggle>Quick Calculation</li>
-                                                    <!-- <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
-                                                       ngbDropdownToggle></i>
-                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                        <li>
-                                                            <a class="dropdown-item border Aggregation-select-padding"
-                                                               href="javascript:void(0);" >Year Over Year (YOY)</a>
-                                                        </li>
-                                                    </ul> -->
+                                       
 
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
                                                     ngbDropdownToggle (click)="toggleQuickCalculation()"></i>
                                              
-                                                 <!-- YOY Dropdown (Appears to the Right of Quick Calculation) -->
                                                  <ul class="dropdown-menu custom-dropdown position-absolute dropdown-menu-end"
                                                      [ngClass]="{'show': quickCalcOpen}" style="top: 70px; left: 100%; min-width: 150px;">
-                                                     <!-- <li>
-                                                         <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'yoy')"
-                                                            >Year Over Year (YOY)</a>
-                                                     </li> -->
+                                        
                                                      <ng-container *ngIf="yearLength > 0; else singleYOY">
                                                         <li *ngFor="let column of yearColumns" [ngClass]=" draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
                                                             <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
@@ -1860,7 +1946,6 @@
                                                         </li>
                                                     </ng-container>
                                             
-                                                    <!-- Single YOY option -->
                                                     <ng-template #singleYOY>
                                                         <li>
                                                             <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
@@ -1868,7 +1953,7 @@
                                                         </li>
                                                     </ng-template>
                                                  </ul>
-                                                </div>
+                                                </div> -->
                                                 <li> <a class="btn btn-secondary-light mx-0 w-100" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
                                             </ul>
                                         </div>
