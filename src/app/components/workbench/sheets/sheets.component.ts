@@ -394,6 +394,8 @@ export class SheetsComponent{
   valueKeys: string[] = [];
   rawData: any = {};
   
+  bandingEvenColor= '#ffffff' 
+  bandingOddColor= '#f5f7fa' 
   // colorSchemes = [
   //   ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
   //   ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -1310,7 +1312,8 @@ try {
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
-  selectedColumnForYOY :any;
+  // selectedColumnForYOY :any;
+  selectedColumnForPeriodType:any
   rowMeasuresCount(rows:any,index:any,type:any){
     // this.rowaggregateType = type;
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
@@ -1320,16 +1323,42 @@ try {
       }
     }
       this.measureValues = [];
-      if(type){
-        if(type == 'yoy'){
-          this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-        }else if(type == 'yoyRemove'){
-          this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-        }
-        else{
-        this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
+      // if(type){
+      //   if(type == 'yoy'){
+      //     this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
+      //   }else if(type == 'yoyRemove'){
+      //     this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
+      //   }
+      //   else{
+      //   this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
+      //   }
+      // }
+      let yoyType = this.draggedRows[index].type;
+      if (type) {
+        if (type === 'yoy' || type === 'mom' || type === 'qoq') {
+          this.measureValues = [
+            rows.column,
+            type,
+            this.selectedColumnForPeriodType + ':' + this.draggedRows[index].type,
+            rows.alias ? rows.alias : ""
+          ];
+        } else if (type === 'yoyRemove' || type === 'momRemove' || type === 'qoqRemove') {
+          this.measureValues = [
+            rows.column,
+            "aggregate",
+            this.draggedRows[index].type,
+            rows.alias ? rows.alias : ""
+          ];
+        } else {
+          this.measureValues = [
+            rows.column,
+            "aggregate",
+            type,
+            rows.alias ? rows.alias : ""
+          ];
         }
       }
+      
       else{
         this.measureValues = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
       }
@@ -1344,8 +1373,18 @@ try {
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
-    if(type !== 'yoy' && type !== 'yoyRemove'){
-    this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
+    if (type !== 'yoy' && type !== 'yoyRemove' && type !== 'mom' && type !== 'momRemove' && type !== 'qoq' && type !== 'qoqRemove') {
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
+    } 
+    if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+      yoyType = yoyType.split(' ')[2];
+    }
+    if(type == 'yoy'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'yoy of '+yoyType,alias:rows.alias};
+    } else if(type == 'mom'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'mom of '+yoyType,alias:rows.alias};
+    } else if(type == 'qoq'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'qoq of '+yoyType,alias:rows.alias};
     }
     console.log(this.draggedRows)
     if(type === 'count' || type === 'count_distinct'){
@@ -2322,7 +2361,9 @@ sheetSave(){
     KPISuffix : this.KPISuffix,
 
     pivotRowTotals:this.pivotRowTotals,
-    pivotColumnTotals : this.pivotColumnTotals
+    pivotColumnTotals : this.pivotColumnTotals,
+    bandingOddColor :this.bandingOddColor,
+    bandingEvenColor:this.bandingEvenColor,
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -4197,7 +4238,9 @@ customizechangeChartPlugin() {
     this.KPIPrefix = data.KPIPrefix ?? '',
     this.KPISuffix = data.KPISuffix ?? '',
     this.pivotRowTotals = data.pivotRowTotals ?? true,
-    this.pivotColumnTotals = data.pivotColumnTotals ?? true
+    this.pivotColumnTotals = data.pivotColumnTotals ?? true,
+    this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff' 
+    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa' 
   }
 
   resetCustomizations(){
@@ -4291,7 +4334,9 @@ customizechangeChartPlugin() {
     this.locationDrillDownSwitch = false;
 
     this.pivotColumnTotals = true;
-    this.pivotRowTotals = true
+    this.pivotRowTotals = true;
+    this.bandingEvenColor= '#ffffff' 
+    this.bandingOddColor= '#f5f7fa' 
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
     // this.KPIPrefix = '',
@@ -4451,6 +4496,7 @@ customizechangeChartPlugin() {
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = format;
     }
+    // const prvFormat = this.draggedColumnsData[index][2];
     if(format === ''){
       this.draggedColumnsData[index] = [column.column,column.data_type,format,column.alias ? column.alias : ""];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format, alias: column.alias ? column.alias : ""};
@@ -4464,18 +4510,56 @@ customizechangeChartPlugin() {
       console.log(this.draggedColumns);
      }
      this.checkDateFormatForYOY();
+    // if (prvFormat && prvFormat !== '') {
+    //   let i = 0;
+    //   for (const row of this.draggedRowsData) {
+    //     if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+    //       const [col, agg] = row[2].split(':');
+
+    //       if (this.draggedColumnsData[index][0] === col) {
+    //         if (prvFormat && prvFormat !== this.draggedColumnsData[index][2] && ['year', 'month', 'quarter'].includes(prvFormat) && prvFormat !== '') {
+    //           if((prvFormat === 'year' && row[1] ==='yoy') || (prvFormat === 'month' && row[1] ==='mom') || (prvFormat === 'quarter' && row[1] ==='qoq')){
+    //             row[1] = 'aggregate';
+    //             row[2] = agg;
+    //             this.draggedRows[i].type = agg;
+    //             break;
+    //           }
+    //         }
+    //       }
+    //       i++;
+    //     }
+    //   }
+    // }
      this.dataExtraction(false);
   }
   checkdatetype= false;
+  hasYearType = false;
+  hasMonthType = false;
+  hasQuaterType = false;
   checkDateFormatForYOY(){
     // this.checkdatetype = this.draggedColumns.every((col: { type: string; }) => col.type === 'year');
-    const hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
-    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
-    this.checkdatetype = hasYearType && hasDateFormat;
+    this.hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
+    this.hasMonthType = this.draggedColumns.some((col: { type: string; }) => col.type === 'month');
+    this.hasQuaterType = this.draggedColumns.some((col: { type: string; }) => col.type === 'quarter');
 
-    this.yearColumns = this.draggedColumns
-  .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
+    // this.checkdatetype = hasYearType && hasDateFormat;
+
+    if (this.hasYearType) {
+      this.yearColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    }
+    if (this.hasMonthType) {
+      this.monthColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'month').map((col: { column: any; }) => col.column);
+    }
+    if (this.hasQuaterType) {
+      this.quaterColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'quarter').map((col: { column: any; }) => col.column);
+    }
   }
+ 
+
   dateAggregation(column:any, index:any, type:any){
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = type;
@@ -6375,6 +6459,8 @@ toggleQuickCalculation() {
 }
 yearLength = 2; // Example value, dynamically set based on your data
 yearColumns = [];
+monthColumns = [];
+quaterColumns = [];
 // calculatedFieldLogic = '';
 showSuggestions = false;
 filteredSuggestions: SqlSuggestion[] = [];
@@ -6814,18 +6900,49 @@ applyDynamicStylesToPivot() {
 
   });
   const rows = document.querySelectorAll('.pvtTable tr');
-  rows.forEach((row, rowIndex) => {
-    // Only apply to rows that contain data cells
-    if (row.querySelectorAll('td').length > 0) {
-      row.classList.remove('even-row', 'odd-row');
+//   rows.forEach((row, rowIndex) => {
+//     // Only apply to rows that contain data cells
+//     if (row.querySelectorAll('td').length > 0) {
+//       row.classList.remove('even-row', 'odd-row');
 
-      if (this.bandingSwitch) {
-        row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-      }
+//       if (this.bandingSwitch) {
+//         row.classList.add(rowIndex % 2 === 0 ? this.bandingEvenColor : this.bandingOddColor);
+//       }
+//     }
+// });
+rows.forEach((row, rowIndex) => {
+  const hasDataCells = row.querySelectorAll('td').length > 0;
+  
+  if (hasDataCells) {
+    row.classList.remove('even-row', 'odd-row');
+
+    if (this.bandingSwitch) {
+      const tds = row.querySelectorAll('td');
+      const bgColor = (rowIndex % 2 === 0) 
+        ? this.bandingEvenColor 
+        : this.bandingOddColor;
+      tds.forEach((td: HTMLElement) => {
+        td.style.backgroundColor = bgColor;
+      });
+    } else {
+      const tds = row.querySelectorAll('td');
+      tds.forEach((td: HTMLElement) => {
+        td.style.backgroundColor = ''; // Reset
+      });
     }
+  }
 });
 
 }
+qoqOpen = false
+toggleQOQDropdown() {
+  this.qoqOpen = !this.qoqOpen;
+}
+qoqOptions = [
+  'QOQ Option 1', 'QOQ Option 2', 'QOQ Option 3',
+  'QOQ Option 4', 'QOQ Option 5', 'QOQ Option 6',
+  'QOQ Option 7', 'QOQ Option 8'
+];
 
 }
 
