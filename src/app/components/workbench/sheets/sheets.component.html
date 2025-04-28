@@ -1857,7 +1857,7 @@
                                                                   <i class="fe fe-chevron-right fs-12 ms-2"></i>
                                                                 </a>
                                                                 <ul ngbDropdownMenu class="dropdown-menu custom-dropdown">
-                                                                  <li *ngFor="let column of quaterColumns">
+                                                                  <li *ngFor="let column of quaterColumns" [ngClass]="draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
                                                                     <a class="dropdown-item border Aggregation-select-padding"
                                                                     (click)="selectedColumnForPeriodType=column;rowMeasuresCount(rows, index, 'qoq');">{{column}}(QOQ)</a>
                                                                   </li>
@@ -1878,7 +1878,7 @@
                                                                   <i class="fe fe-chevron-right fs-12 ms-2"></i>
                                                                 </a>
                                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                                  <li *ngFor="let column of monthColumns">
+                                                                  <li *ngFor="let column of monthColumns" [ngClass]="draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
                                                                     <a class="dropdown-item border Aggregation-select-padding" 
                                                                     (click)="selectedColumnForPeriodType=column;rowMeasuresCount(rows, index, 'mom');">
                                                                     {{column}}(MOM)

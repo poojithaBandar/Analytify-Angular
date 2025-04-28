@@ -1352,8 +1352,8 @@ try {
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
-    if(type !== 'yoy' && type !== 'yoyRemove'){
-    this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
+    if (type !== 'yoy' && type !== 'yoyRemove' && type !== 'mom' && type !== 'momRemove' && type !== 'qoq' && type !== 'qoqRemove') {
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     }
     console.log(this.draggedRows)
     if(type === 'count' || type === 'count_distinct'){
@@ -4470,11 +4470,11 @@ customizechangeChartPlugin() {
     }
     if (this.hasMonthType) {
       this.monthColumns = this.draggedColumns
-        .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+        .filter((col: { type: string; }) => col.type === 'month').map((col: { column: any; }) => col.column);
     }
     if (this.hasQuaterType) {
       this.quaterColumns = this.draggedColumns
-        .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+        .filter((col: { type: string; }) => col.type === 'quarter').map((col: { column: any; }) => col.column);
     }
   }
  
