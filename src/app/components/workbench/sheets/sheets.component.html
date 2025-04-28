@@ -3841,6 +3841,18 @@
                                                         <div *ngIf="!bandingSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('banding')">
                                                             <span></span>
                                                         </div>
+                                                        <ngx-colors *ngIf="bandingSwitch && pivotTable"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="bandingEvenColor"
+                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                     <ngx-colors *ngIf="bandingSwitch && pivotTable"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="bandingOddColor"
+                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
                                                     </div>
                                                     <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
