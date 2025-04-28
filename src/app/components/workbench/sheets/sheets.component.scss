@@ -577,3 +577,10 @@ input.BitSpace {
 //   max-height: 160px;
 //   overflow-y: auto;
 // }
+// ::ng-deep .pvtTable tr.even-row td {
+//   background-color: #ffffff; // or your even row color
+// }
+
+// ::ng-deep .pvtTable tr.odd-row td {
+//   background-color: #f5f7fa; // or your odd row color
+// }
