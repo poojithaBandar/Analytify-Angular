@@ -1292,7 +1292,8 @@ try {
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
-  selectedColumnForYOY :any;
+  // selectedColumnForYOY :any;
+  selectedColumnForPeriodType:any
   rowMeasuresCount(rows:any,index:any,type:any){
     // this.rowaggregateType = type;
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
@@ -1302,16 +1303,41 @@ try {
       }
     }
       this.measureValues = [];
-      if(type){
-        if(type == 'yoy'){
-          this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-        }else if(type == 'yoyRemove'){
-          this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-        }
-        else{
-        this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
+      // if(type){
+      //   if(type == 'yoy'){
+      //     this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
+      //   }else if(type == 'yoyRemove'){
+      //     this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
+      //   }
+      //   else{
+      //   this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
+      //   }
+      // }
+      if (type) {
+        if (type === 'yoy' || type === 'mom' || type === 'qoq') {
+          this.measureValues = [
+            rows.column,
+            type,
+            this.selectedColumnForPeriodType + ':' + this.draggedRows[index].type,
+            rows.alias ? rows.alias : ""
+          ];
+        } else if (type === 'yoyRemove' || type === 'momRemove' || type === 'qoqRemove') {
+          this.measureValues = [
+            rows.column,
+            "aggregate",
+            this.draggedRows[index].type,
+            rows.alias ? rows.alias : ""
+          ];
+        } else {
+          this.measureValues = [
+            rows.column,
+            "aggregate",
+            type,
+            rows.alias ? rows.alias : ""
+          ];
         }
       }
+      
       else{
         this.measureValues = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
       }
@@ -4426,15 +4452,33 @@ customizechangeChartPlugin() {
      this.dataExtraction(false);
   }
   checkdatetype= false;
+  hasYearType = false;
+  hasMonthType = false;
+  hasQuaterType = false;
   checkDateFormatForYOY(){
     // this.checkdatetype = this.draggedColumns.every((col: { type: string; }) => col.type === 'year');
-    const hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
-    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
-    this.checkdatetype = hasYearType && hasDateFormat;
+    this.hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
+    this.hasMonthType = this.draggedColumns.some((col: { type: string; }) => col.type === 'month');
+    this.hasQuaterType = this.draggedColumns.some((col: { type: string; }) => col.type === 'quarter');
 
-    this.yearColumns = this.draggedColumns
-  .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
+    // this.checkdatetype = hasYearType && hasDateFormat;
+
+    if (this.hasYearType) {
+      this.yearColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    }
+    if (this.hasMonthType) {
+      this.monthColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    }
+    if (this.hasQuaterType) {
+      this.quaterColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    }
   }
+ 
+
   dateAggregation(column:any, index:any, type:any){
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = type;
@@ -6322,6 +6366,8 @@ toggleQuickCalculation() {
 }
 yearLength = 2; // Example value, dynamically set based on your data
 yearColumns = [];
+monthColumns = [];
+quaterColumns = [];
 // calculatedFieldLogic = '';
 showSuggestions = false;
 filteredSuggestions: SqlSuggestion[] = [];
@@ -6674,6 +6720,15 @@ downloadAsImage() {
   // Implement your image download logic here
   console.log('Download as Image clicked');
 }
+qoqOpen = false
+toggleQOQDropdown() {
+  this.qoqOpen = !this.qoqOpen;
+}
+qoqOptions = [
+  'QOQ Option 1', 'QOQ Option 2', 'QOQ Option 3',
+  'QOQ Option 4', 'QOQ Option 5', 'QOQ Option 6',
+  'QOQ Option 7', 'QOQ Option 8'
+];
 
 }
 
