@@ -1107,13 +1107,24 @@ export class SheetsdashboardComponent {
                     td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
                   });
                   const rows = table.querySelectorAll('tr');
-                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
                     const hasDataCells = row.querySelectorAll('td').length > 0;
                     row.classList.remove('even-row', 'odd-row');
               
+                    // if (styleConfig.bandingSwitch) {
+                    //   row.classList.add(rowIndex % 2 === 0 ? styleConfig.bandingEvenColor : styleConfig.bandingOddColor);
+                    // }
                     if (styleConfig.bandingSwitch) {
-                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-                    }
+                      const tds = row.querySelectorAll('td');
+                      const bgColor = (rowIndex % 2 === 0) 
+                        ? styleConfig.bandingEvenColor 
+                        : styleConfig.bandingOddColor;
+                      tds.forEach((td: HTMLElement) => {
+                        td.style.backgroundColor = bgColor;
+                      });                   
+                     }
                   });
                   }
             }
@@ -2443,13 +2454,21 @@ allowDrop(ev : any): void {
                   });
 
                   const rows = table.querySelectorAll('tr');
-                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
                     const hasDataCells = row.querySelectorAll('td').length > 0;
                     row.classList.remove('even-row', 'odd-row');
               
                     if (styleConfig.bandingSwitch) {
-                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-                    }
+                      const tds = row.querySelectorAll('td');
+                      const bgColor = (rowIndex % 2 === 0) 
+                        ? styleConfig.bandingEvenColor 
+                        : styleConfig.bandingOddColor;
+                      tds.forEach((td: HTMLElement) => {
+                        td.style.backgroundColor = bgColor;
+                      });                   
+                     }
                   });
                   }
             }
@@ -3954,13 +3973,24 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                     td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
                   });
                   const rows = table.querySelectorAll('tr');
-                  rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
                     const hasDataCells = row.querySelectorAll('td').length > 0;
                     row.classList.remove('even-row', 'odd-row');
               
+                    // if (styleConfig.bandingSwitch) {
+                    //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                    // }
                     if (styleConfig.bandingSwitch) {
-                      row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-                    }
+                      const tds = row.querySelectorAll('td');
+                      const bgColor = (rowIndex % 2 === 0) 
+                        ? styleConfig.bandingEvenColor 
+                        : styleConfig.bandingOddColor;
+                      tds.forEach((td: HTMLElement) => {
+                        td.style.backgroundColor = bgColor;
+                      });                   
+                     }
                   });
                   }
             }
@@ -5133,13 +5163,24 @@ kpiData?: KpiData;
                         td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
                       });
                       const rows = table.querySelectorAll('tr');
-                      rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                      rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                        forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
                         const hasDataCells = row.querySelectorAll('td').length > 0;
                         row.classList.remove('even-row', 'odd-row');
                   
+                        // if (styleConfig.bandingSwitch) {
+                        //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                        // }
                         if (styleConfig.bandingSwitch) {
-                          row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-                        }
+                          const tds = row.querySelectorAll('td');
+                          const bgColor = (rowIndex % 2 === 0) 
+                            ? styleConfig.bandingEvenColor 
+                            : styleConfig.bandingOddColor;
+                          tds.forEach((td: HTMLElement) => {
+                            td.style.backgroundColor = bgColor;
+                          });                   
+                         }
                       });
                       }
                 }              }
@@ -5253,13 +5294,24 @@ kpiData?: KpiData;
                       });
 
                       const rows = table.querySelectorAll('tr');
-                      rows.forEach((row: { querySelectorAll: (arg0: string) => { (): any; new(): any; length: number; }; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                      rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                        forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
                         const hasDataCells = row.querySelectorAll('td').length > 0;
                         row.classList.remove('even-row', 'odd-row');
                   
+                        // if (styleConfig.bandingSwitch) {
+                        //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                        // }
                         if (styleConfig.bandingSwitch) {
-                          row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-                        }
+                          const tds = row.querySelectorAll('td');
+                          const bgColor = (rowIndex % 2 === 0) 
+                            ? styleConfig.bandingEvenColor 
+                            : styleConfig.bandingOddColor;
+                          tds.forEach((td: HTMLElement) => {
+                            td.style.backgroundColor = bgColor;
+                          });                   
+                         }
                       });
                       }
                 }

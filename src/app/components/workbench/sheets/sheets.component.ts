@@ -390,6 +390,8 @@ export class SheetsComponent{
   valueKeys: string[] = [];
   rawData: any = {};
   
+  bandingEvenColor= '#ffffff' 
+  bandingOddColor= '#f5f7fa' 
   // colorSchemes = [
   //   ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
   //   ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -2310,7 +2312,9 @@ sheetSave(){
     KPISuffix : this.KPISuffix,
 
     pivotRowTotals:this.pivotRowTotals,
-    pivotColumnTotals : this.pivotColumnTotals
+    pivotColumnTotals : this.pivotColumnTotals,
+    bandingOddColor :this.bandingOddColor,
+    bandingEvenColor:this.bandingEvenColor,
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -4177,7 +4181,9 @@ customizechangeChartPlugin() {
     this.KPIPrefix = data.KPIPrefix ?? '',
     this.KPISuffix = data.KPISuffix ?? '',
     this.pivotRowTotals = data.pivotRowTotals ?? true,
-    this.pivotColumnTotals = data.pivotColumnTotals ?? true
+    this.pivotColumnTotals = data.pivotColumnTotals ?? true,
+    this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff' 
+    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa' 
   }
 
   resetCustomizations(){
@@ -4271,7 +4277,9 @@ customizechangeChartPlugin() {
     this.locationDrillDownSwitch = false;
 
     this.pivotColumnTotals = true;
-    this.pivotRowTotals = true
+    this.pivotRowTotals = true;
+    this.bandingEvenColor= '#ffffff' 
+    this.bandingOddColor= '#f5f7fa' 
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
     // this.KPIPrefix = '',
@@ -6738,15 +6746,37 @@ applyDynamicStylesToPivot() {
 
   });
   const rows = document.querySelectorAll('.pvtTable tr');
-  rows.forEach((row, rowIndex) => {
-    // Only apply to rows that contain data cells
-    if (row.querySelectorAll('td').length > 0) {
-      row.classList.remove('even-row', 'odd-row');
+//   rows.forEach((row, rowIndex) => {
+//     // Only apply to rows that contain data cells
+//     if (row.querySelectorAll('td').length > 0) {
+//       row.classList.remove('even-row', 'odd-row');
 
-      if (this.bandingSwitch) {
-        row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-      }
+//       if (this.bandingSwitch) {
+//         row.classList.add(rowIndex % 2 === 0 ? this.bandingEvenColor : this.bandingOddColor);
+//       }
+//     }
+// });
+rows.forEach((row, rowIndex) => {
+  const hasDataCells = row.querySelectorAll('td').length > 0;
+  
+  if (hasDataCells) {
+    row.classList.remove('even-row', 'odd-row');
+
+    if (this.bandingSwitch) {
+      const tds = row.querySelectorAll('td');
+      const bgColor = (rowIndex % 2 === 0) 
+        ? this.bandingEvenColor 
+        : this.bandingOddColor;
+      tds.forEach((td: HTMLElement) => {
+        td.style.backgroundColor = bgColor;
+      });
+    } else {
+      const tds = row.querySelectorAll('td');
+      tds.forEach((td: HTMLElement) => {
+        td.style.backgroundColor = ''; // Reset
+      });
     }
+  }
 });
 
 }
