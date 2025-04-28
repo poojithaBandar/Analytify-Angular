@@ -1313,7 +1313,7 @@ try {
       //   this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
       //   }
       // }
-      const yoyType = this.draggedRows[index].type;
+      let yoyType = this.draggedRows[index].type;
       if (type) {
         if (type === 'yoy' || type === 'mom' || type === 'qoq') {
           this.measureValues = [
@@ -1356,6 +1356,9 @@ try {
     if (type !== 'yoy' && type !== 'yoyRemove' && type !== 'mom' && type !== 'momRemove' && type !== 'qoq' && type !== 'qoqRemove') {
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     } 
+    if (['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+      yoyType = '';
+    }
     if(type == 'yoy'){
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'yoy of '+yoyType,alias:rows.alias};
     } else if(type == 'mom'){
