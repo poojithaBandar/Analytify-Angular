@@ -137,7 +137,7 @@
         return res.json();
       })
       .then(function (data) {
-        _token = data.data.accessToken;
+        _token = data.data.access_token;
         return _token;
       });
   }
