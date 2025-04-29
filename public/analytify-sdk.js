@@ -100,7 +100,6 @@
     if (!config || !config.clientId || !config.apiBaseUrl) {
       throw new Error('AnalytifySDK.init: clientId and apiBaseUrl are required');
     }
-    debugger;
     _config.clientId = config.clientId;
     _config.clientSecret = config.clientSecret || '';
     _config.apiBaseUrl = config.apiBaseUrl.replace(/\/+$/, '');
@@ -120,9 +119,7 @@
     if (_token && Date.now() < _tokenExpiry - 60000) {
       return Promise.resolve(_token);
     }
-    var endpoint = _config.tokenEndpoint.match(/^https?:\/\//)
-      ? _config.tokenEndpoint
-      : _config.apiBaseUrl + (_config.tokenEndpoint.charAt(0) === '/' ? '' : '/') + _config.tokenEndpoint;
+    var endpoint = _config.tokenEndpoint + '/app_access_token/'
 
     return fetch(endpoint, {
       method: 'POST',
@@ -169,15 +166,20 @@
       console.error('AnalytifySDK.loadDashboard: Container not found', options.container);
       return;
     }
+    var src =  _config.apiBaseUrl+'/analytify/embed/dashboard/' + encodeURIComponent(dashboardToken);
+        var params = ['token=' + encodeURIComponent("test")];
+        if (options.filters && typeof options.filters === 'object') {
+          params.unshift('filters=' + encodeURIComponent(JSON.stringify(options.filters)));
+        }
+        src += '?' + params.join('&');
 
     return fetchToken(options.dashboardToken)
       .then(function (token) {
-        var src =  'localhost:4200/analytify/embed/dashboard/' + encodeURIComponent(dashboardToken);
+        var src =  _config.apiBaseUrl+'/analytify/embed/dashboard/' + encodeURIComponent(dashboardToken);
         var params = ['token=' + encodeURIComponent(token)];
         if (options.filters && typeof options.filters === 'object') {
           params.unshift('filters=' + encodeURIComponent(JSON.stringify(options.filters)));
         }
-        debugger;
         src += '?' + params.join('&');
         var iframe = document.createElement('iframe');
         console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
