@@ -167,22 +167,19 @@
 
     return fetchToken(options.dashboardToken)
       .then(function (token) {
-        var src =  _config.apiBaseUrl+'/analytify/embed/dashboard/' + encodeURIComponent(options.dashboardToken)+'/'+encodeURIComponent(token) +'/'+ encodeURIComponent(_config.clientId);
+        var src =  _config.apiBaseUrl+'/embed/dashboard/' + encodeURIComponent(options.dashboardToken)+'/'+encodeURIComponent(token) +'/'+ encodeURIComponent(_config.clientId);
         if (options.filters && typeof options.filters === 'object') {
           params.unshift('filters=' + encodeURIComponent(JSON.stringify(options.filters)));
         }
         src += '?' + params.join('&');
         var iframe = document.createElement('iframe');
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        console.log(src)
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         iframe.src = src;
         iframe.style.border = 'none';
         iframe.style.width = options.width || '100%';
         iframe.style.height = options.height || '100%';
         containerEl.innerHTML = '';
         containerEl.appendChild(iframe);
-        return iframe;
+        // return iframe;
       })
       .catch(function (err) {
         console.error('AnalytifySDK.loadDashboard error:', err);
