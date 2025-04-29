@@ -4520,8 +4520,9 @@ customizechangeChartPlugin() {
               }
             }
           }
-          i++;
+          
         }
+        i++;
       }
     }
      this.dataExtraction(false);
@@ -4558,6 +4559,7 @@ customizechangeChartPlugin() {
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = type;
     }
+    const prvFormat = this.draggedColumnsData[index][2];
     if (type === '') {
       this.draggedColumnsData[index] = [column.column, column.data_type, type, column.alias ? column.alias : ""];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
@@ -4566,6 +4568,27 @@ customizechangeChartPlugin() {
       this.draggedColumnsData[index] = [column.column, "aggregate", type, column.alias ? column.alias : ""];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
+    }
+    if (prvFormat && prvFormat !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
+
+          if (this.draggedColumnsData[index][0] === col) {
+            if (prvFormat && prvFormat !== this.draggedColumnsData[index][2] && ['year', 'month', 'quarter'].includes(prvFormat) && prvFormat !== '') {
+              if((prvFormat === 'year' && row[1] ==='yoy') || (prvFormat === 'month' && row[1] ==='mom') || (prvFormat === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          
+        }
+        i++;
+      }
     }
     this.dataExtraction(false);
     this.checkDateFormatForYOY();
