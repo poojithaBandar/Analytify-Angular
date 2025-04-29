@@ -137,9 +137,7 @@
         return res.json();
       })
       .then(function (data) {
-        _token = data.accessToken || data.token;
-        var expiresIn = data.expiresIn || data.expires_in || 3600;
-        _tokenExpiry = Date.now() + expiresIn * 1000;
+        _token = data.data.accessToken;
         return _token;
       });
   }
@@ -166,17 +164,10 @@
       console.error('AnalytifySDK.loadDashboard: Container not found', options.container);
       return;
     }
-    var src =  _config.apiBaseUrl+'/analytify/embed/dashboard/' + encodeURIComponent(options.dashboardToken);
-        var params = ['token=' + encodeURIComponent("test")];
-        if (options.filters && typeof options.filters === 'object') {
-          params.unshift('filters=' + encodeURIComponent(JSON.stringify(options.filters)));
-        }
-        src += '?' + params.join('&');
 
     return fetchToken(options.dashboardToken)
       .then(function (token) {
-        var src =  _config.apiBaseUrl+'/analytify/embed/dashboard/' + encodeURIComponent(dashboardToken);
-        var params = ['token=' + encodeURIComponent(token)];
+        var src =  _config.apiBaseUrl+'/analytify/embed/dashboard/' + encodeURIComponent(dashboardToken)+'/'+encodeURIComponent(token) +'/'+ encodeURIComponent(clientId);
         if (options.filters && typeof options.filters === 'object') {
           params.unshift('filters=' + encodeURIComponent(JSON.stringify(options.filters)));
         }
