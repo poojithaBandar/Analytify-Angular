@@ -170,7 +170,7 @@
       return;
     }
 
-    return fetchToken(dashboardToken)
+    return fetchToken(options.dashboardToken)
       .then(function (token) {
         var src =  'localhost:4200/analytify/embed/dashboard/' + encodeURIComponent(dashboardToken);
         var params = ['token=' + encodeURIComponent(token)];
