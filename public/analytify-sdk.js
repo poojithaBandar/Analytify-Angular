@@ -166,7 +166,7 @@
       console.error('AnalytifySDK.loadDashboard: Container not found', options.container);
       return;
     }
-    var src =  _config.apiBaseUrl+'/analytify/embed/dashboard/' + encodeURIComponent(dashboardToken);
+    var src =  _config.apiBaseUrl+'/analytify/embed/dashboard/' + encodeURIComponent(options.dashboardToken);
         var params = ['token=' + encodeURIComponent("test")];
         if (options.filters && typeof options.filters === 'object') {
           params.unshift('filters=' + encodeURIComponent(JSON.stringify(options.filters)));
