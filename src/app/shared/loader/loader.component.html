@@ -7,17 +7,56 @@
         </div>
     </div>
 </div> -->
-
+<!-- 
 @if (loading){
 <div class="loader">
-    <!-- <div class="dimmer active">
-        <div class="spinner2">
-            <div class="cube1"></div>
-            <div class="cube2"></div>
-        </div>
-    </div> -->
+
     <div class="dimmer active">
         <div class="spinner"></div>
     </div>
   </div>
-}
+} -->
+
+
+@if (loading) {
+    <div class="loader">
+      <div class="dimmer active">
+        <!-- @switch(loading){
+          @case ('connecting') {
+            <div class="spinner-connecting"></div>
+          }
+          @case ('transforming') {
+            <div class="spinner-transforming"></div>
+          }
+          @case ('building-charts') {-->
+          <div class="chart-building-animation">
+            <div class="chart-rotate">
+              @switch (chartIcons[currentChartIndex]) {
+                @case ('bar') {
+                  <div class="chart-icon bar-chart"></div>
+                }
+                @case ('line') {
+                  <div class="chart-icon line-chart"></div>
+                }
+                @case ('pie') {
+                  <div class="chart-icon pie-chart"></div>
+                }
+                @case ('doughnut') {
+                  <div class="chart-icon doughnut-chart"></div>
+                }
+              }
+            </div>
+            </div>
+            </div>
+            </div>
+          }
+          <!-- @case ('building-dashboard') {
+            <div class="spinner-building-dashboard"></div>
+          }
+          @default {
+            <div class="spinner-default"></div>
+          } 
+        }-->
+      <!-- </div> -->
+    
+    
