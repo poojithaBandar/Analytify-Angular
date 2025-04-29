@@ -39,9 +39,10 @@ export class EmbedSdkComponent {
     this.workbechService.fetchSDKData().subscribe({
       next: (responce: any) => {
         console.log(responce);
-        if(responce && responce[0]){
+        if(responce && responce[0] && responce[0].redirect_url){
           this.userName = responce[0].app_name;
           this.apibaseurl = responce[0].redirect_url;
+          this.clientId = responce[0].client_id;
           this.disableSDKName = true;
         } else {
           const currentUser = localStorage.getItem( 'username' );
@@ -78,7 +79,7 @@ export class EmbedSdkComponent {
     import AnalytifySDK from 'https://cdn.jsdelivr.net/gh/Rajashekarreddy24/Analytify-Angular@v1.0.1/dist/analytify-dashboard/esm2022/lib/sdk.mjs';
 
     const analytify = AnalytifySDK.init({
-      appName: '${this.userName}'
+      appName: '${this.userName}',
       clientId: '${this.clientId}',
       clientSecret: '${this.clientSecret}',
       apiBaseUrl: '${this.apibaseurl}'
@@ -96,13 +97,32 @@ export class EmbedSdkComponent {
   submitSDKKeys(){
     let payload = {
       app_name: this.userName,
-      redirect_url : this.apibaseurl,
-      dashboard_id: this.selectedDashboardId
+      redirect_uri : this.apibaseurl,
     }
-    this.workbechService.saveSDKData(payload).subscribe({
+    if(this.disableSDKName){ 
+       this.submitDashboardId();
+    } else {
+     this.workbechService.saveSDKData(payload).subscribe({
       next: (data: any) => {
         this.clientId = data.client_id;
         this.clientSecret = data.client_secret;
+        this.disableSDKName = true;
+        this.submitDashboardId();
+      },
+      error: (error:any) => {
+        console.log(error);
+      }
+    })
+  }
+  }
+
+  submitDashboardId(){
+    let dashboardPayload = {
+      client_id : this.clientId,
+      dashboard_id: this.selectedDashboardId
+    }
+    this.workbechService.fetchDashboardToken(dashboardPayload).subscribe({
+      next: (data: any) => {
         this.dashboardToken = data.dashboard_token;
         this.disableSDKName = true;
         this.displayScript = true;
@@ -112,5 +132,6 @@ export class EmbedSdkComponent {
         console.log(error);
       }
     })
-  }
+  }                                                                                                           
+            
 }

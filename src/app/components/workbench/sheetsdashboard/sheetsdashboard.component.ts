@@ -217,6 +217,10 @@ export class SheetsdashboardComponent implements OnDestroy {
   lastRefresh: any;
   nextRefresh: any;
   tabData: any;
+  clientId!: string;
+  dashboardToken!: string;
+  isEmbedDashboard: boolean = false;
+  embedFilters: any;
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -268,6 +272,27 @@ export class SheetsdashboardComponent implements OnDestroy {
       }
         else if(currentUrl.includes('analytify/sheetsdashboard')){
           this.sheetsNewDashboard = true;
+    } else if(currentUrl.includes('embed/dashboard')){
+      this.updateDashbpardBoolen = true;
+      this.isEmbedDashboard = true;
+      this.active = 2;
+     this.dashboardToken = this.route.snapshot.params['dashboardToken'];
+     this.clientId = this.route.snapshot.params['clientId'];
+     let accessToken = this.route.snapshot.params['token'];
+     const userToken = { Token: accessToken,};
+     localStorage.setItem('currentUser', JSON.stringify(userToken));
+     this.route.queryParams.subscribe(params => {
+      const rawFilters = params['filters'];
+      if (rawFilters) {
+        try {
+          this.embedFilters = JSON.parse(rawFilters);
+          console.log('Filters object:', this.embedFilters);
+          // Expected output: { name: ['US', 'UK'], idList: [3, 4] }
+        } catch (e) {
+          console.error('Error parsing filters:', e);
+        }
+      }
+    });
     }
     
   }
@@ -411,7 +436,8 @@ export class SheetsdashboardComponent implements OnDestroy {
         return ''; // Handle unsupported styles
     }
   }
-  ngOnInit() {  
+
+  initialiserMethods(){
     let displayGrid = DisplayGrid.Always;
     this.iconList = Object.entries(iconsData).map(([key, value]: [string, any]) => ({
       name: key,
@@ -426,13 +452,12 @@ export class SheetsdashboardComponent implements OnDestroy {
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
-      if(!this.isPublicUrl){
+      if(!this.isPublicUrl || !this.isEmbedDashboard){
         if(this.fileId.length > 0 || this.databaseId.length > 0){
           this.sheetsDataWithQuerysetIdTest();
         }
       }
       if(this.isPublicUrl){
-        // this.dashboardId = 145
         this.getSavedDashboardDataPublic();
         this.getDashboardFilterredListPublic();
         displayGrid = DisplayGrid.None;
@@ -441,9 +466,11 @@ export class SheetsdashboardComponent implements OnDestroy {
         //   this.sheetsDataWithQuerysetId();
         // }
         if(this.dashboardView){
-    
           this.getSavedDashboardData();
           // this.sheetsDataWithQuerysetId();
+          this.getDashboardFilterredList();
+        } else if(this.isEmbedDashboard){
+          this.getEmbedDashboardData();
           this.getDashboardFilterredList();
         }
         if(this.dashboardId != undefined || null){
@@ -452,7 +479,90 @@ export class SheetsdashboardComponent implements OnDestroy {
 
     });    
    
-    //this.getSheetData();
+  }
+
+  getEmbedDashboardData(){
+    let filterKeys ;
+    let filterValues;
+    let obj;
+    if(this.embedFilters){
+      filterKeys = Object.keys(this.embedFilters);
+      filterValues = Object.values(this.embedFilters);
+      obj = {
+ "filter_name": filterKeys,
+ "dashbaord_id": this.dashboardId,
+ "input_list": filterValues
+ // "exclude_ids":[]
+      }
+    } else {
+      obj ={ 
+      "dashbaord_id": this.dashboardId,
+      }
+    }
+    
+    this.workbechService.getEmbedDashboardData(obj).subscribe({
+      next:(data)=>{
+        console.log('savedDashboard',data);
+        if(data.refresh_required){
+          this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
+            next:(data)=>{
+              this.refreshDashboardSheetsData(data);
+              },
+            error:(error)=>{
+              console.log(error)
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.message,
+                width: '400px',
+              })
+            }
+          });
+        }
+        this.assignDashboardParams(data.dashbaord_retrieve_data);
+        data.dashbaord_filter_data.forEach((item: any) => {
+          this.filteredRowData = [];
+          this.filteredColumnData = [];
+        this.tablePreviewColumn.push(item.columns);
+        this.tablePreviewRow.push(item.rows);
+        item.columns.forEach((res:any) => {      
+          let obj1={
+            name:res.column,
+            values: res.result
+          }
+          this.filteredColumnData.push(obj1);
+          console.log('filtercolumn',this.filteredColumnData)
+        });
+        item.rows.forEach((res:any) => {
+          let obj={
+            name: res.column,
+            data: res.result
+          }
+          this.filteredRowData.push(obj);
+          console.log('filterowData',this.filteredRowData)
+        });
+        if(item.chart_id === 1){
+          this.pageChangeTableDisplay(item,1,false,false)
+          // this.tablePageNo =1;
+          this.tablePage=1
+        }else{
+        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
+        if (this.displayTabs) {
+          this.sheetTabs.forEach((tabData: any) => {
+            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
+          })
+        }
+        }
+      });
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
+
+  ngOnInit() {  
+    let displayGrid = DisplayGrid.Always;
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.CompactLeftAndUp,
@@ -490,6 +600,12 @@ export class SheetsdashboardComponent implements OnDestroy {
         enabled: this.editDashboard,
       }
     };
+    if(this.dashboardToken){
+      this.fetchDashboardIdFromToken();
+    } else {
+      this.initialiserMethods();
+    }
+    //this.getSheetData();
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
 
     this.sharedService.downloadRequested$
@@ -505,6 +621,20 @@ export class SheetsdashboardComponent implements OnDestroy {
         this.getSavedDashboardDataPublic();
       });
 
+  }
+
+  fetchDashboardIdFromToken(){
+    let payload = {dashboard_token: this.dashboardToken}
+    this.workbechService.getDashboardIdFromToken(payload).subscribe({
+      next:(data:any)=>{
+        console.log('savedDashboard',data);
+         this.dashboardId = data.dashboard_id;
+         this.initialiserMethods();
+      },
+      error:(error:any)=>{
+        console.log(error)
+      }
+    })
   }
 
   onItemResize(item: GridsterItem, itemComponent: any): void {
@@ -794,7 +924,16 @@ export class SheetsdashboardComponent implements OnDestroy {
             }
           });
         }
-        this.dashboardName=data.dashboard_name;
+        this.assignDashboardParams(data);
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
+
+  assignDashboardParams(data: any){
+    this.dashboardName=data.dashboard_name;
         this.isSampleDashboard = data.is_sample;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
@@ -847,11 +986,6 @@ export class SheetsdashboardComponent implements OnDestroy {
             }
           });
         }
-      },
-      error:(error)=>{
-        console.log(error)
-      }
-    })
   }
 
   dynamicOptionsUpdateinDashboard(dashboard: any, isPublic: boolean){

@@ -1,4 +1,5 @@
 <app-page-header title="Embed-SDK" title1="Home" activeitem="Embed-SDK"></app-page-header>
+
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 row">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <form #sdkForm="ngForm" (ngSubmit)="submitSDKKeys()">
@@ -13,13 +14,23 @@
                 </div>
 
                 <!-- API Base URL -->
-                <label for="apiBaseUrl">API Base URL
+                <label for="apiUrl">API Base URL
                     <i ngbTooltip="Enter base URL..." class="icon icon-info ms-1 cursor-pointer"></i>
                 </label>
                 <div style="width: 50%;">
-                    <input type="text" id="apiBaseUrl" [readonly]="disableSDKName" name="apiBaseUrl" [(ngModel)]="apibaseurl" required
+                    <input type="text" id="apiUrl" [readonly]="disableSDKName" name="apiUrl" [(ngModel)]="apibaseurl" required
                         style="width: 100%; padding: 10px; padding-right: 40px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px;" />
                 </div>
+               
+                @if(disableSDKName) {
+                <label for="apiBaseUrl">Client Secret
+                    <i ngbTooltip="Enter base URL..." class="icon icon-info ms-1 cursor-pointer"></i>
+                </label>
+                <div style="width: 50%;">
+                    <input type="text" id="apiBaseUrl" name="apiBaseUrl" [(ngModel)]="clientSecret" required
+                        style="width: 100%; padding: 10px; padding-right: 40px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px;" />
+                </div>
+            }
 
                 <!-- Select Dashboard -->
                 <label for="dashboardName">Select Dashboard
@@ -38,12 +49,20 @@
 
             <button type="submit" class="btn btn-primary" [disabled]="!sdkForm.valid">Generate SDK</button>
         </form>
+        @if(this.clientSecret && !this.disableSDKName){
+            <div class="alert alert-danger mt-3" role="alert">
+                ⚠️ <strong>Do not lose your <code>client_secret : {{clientSecret}}</code></strong>! It is used for authentication to generate SDK for dashbaords and cannot be recovered if lost. Please save it securely.
+              </div>
+            }
     </div>
+
     @if(displayScript){
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <textarea rows="25" style="width: 100%; font-family: monospace;" readonly>
            {{scriptContent}}
             </textarea>
+
+            <div id="dashboard-container" style="width: 100%; height: 600px; margin-top: 20px;"></div> 
     </div>
 }
 </div>

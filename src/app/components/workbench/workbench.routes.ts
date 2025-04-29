@@ -387,7 +387,7 @@ export const admin: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
-      },
+      }
     ]
   }
  ];

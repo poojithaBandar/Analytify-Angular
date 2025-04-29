@@ -2,7 +2,7 @@
 <app-header *ngIf="publicHeader" [isPublicUrl]="publicHeader"></app-header>
 
 <!-- <div *ngIf="dashboardView"> -->
-<app-page-header title="Dashboard" moduleId="dashboard" title1="Home" activeitem="Dashboard"></app-page-header>
+<app-page-header *ngIf="!isEmbedDashboard" title="Dashboard" moduleId="dashboard" title1="Home" activeitem="Dashboard"></app-page-header>
 <!-- </div> -->
 <!-- <div *ngIf="sheetsNewDashboard">
   <app-page-header title="Dashboard" moduleId="dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/analytify/sheets" activeitem="Dashboard"></app-page-header>
@@ -159,7 +159,7 @@
                     <div class="tabs-menu1">
                         <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs dashboard-tabs-space">
 
-                            <li *ngIf="!isPublicUrl" [ngbNavItem]="1">
+                            <li *ngIf="!isPublicUrl && !isEmbedDashboard" [ngbNavItem]="1">
                                 <a ngbNavLink class="dashboard-tab-padding">Dashboard</a>
                                 <ng-template ngbNavContent>
                                     <div class="tab-pane active" id="activetabs">
@@ -607,7 +607,7 @@
                                 </div>
                             </div>
                             </ng-template>
-                            <!-- @if(updateDashbpardBoolen){ -->                           
+                            <!-- @if(updateDashbpardBoolen){ -->    
                             <li [ngbNavItem]="2">
                               <div class="tooltip-wrapper"
                                 [ngbTooltip]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'Please save / update the dashboard' : null"
@@ -632,7 +632,7 @@
                                                   <div class="card-content p-0">
                                                       <div class=" mt-2 mb-2">
                                                           <div class="dropdown" ngbDropdown [autoClose]="'outside'" #mainDropdown="ngbDropdown">
-                                                              <button *ngIf="!isPublicUrl" [disabled]="dashboard.length < 1 || canNavigateToAnotherPage" class="btn btn-primary dropdown-toggle w-100" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                              <button *ngIf="!isPublicUrl || !isEmbedDashboard" [disabled]="dashboard.length < 1 || canNavigateToAnotherPage" class="btn btn-primary dropdown-toggle w-100" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                               <i class="fa fa-plus"></i> Add/Edit Filters
                                                               </button>
                                                               <div >
@@ -1004,7 +1004,7 @@
         <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left fs-18"></i>
         <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right fs-18"></i>
       </div>
-      <div class="dashboard-edit-title-card">
+      <div *ngIf="!isEmbedDashboard" class="dashboard-edit-title-card">
         
          <div *ngIf="!isPublicUrl" class="card mb-1 public-url-position">
             <div class="card-body p-1">
@@ -1092,7 +1092,6 @@
             <!-- </div> -->
       
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
-        
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event,false)" #gridster>

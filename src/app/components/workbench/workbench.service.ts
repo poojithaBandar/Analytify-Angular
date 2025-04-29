@@ -951,13 +951,31 @@ deleteUser(id:any){
     fetchSDKData(){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/create_app/`+this.accessToken);
+      return this.http.get<any>(`${environment.apiUrl}/get_app_details/`+this.accessToken);
     }
 
     saveSDKData(object: any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/create_app/`+this.accessToken,object);
+    }
+
+    fetchDashboardToken(object: any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_token/`+this.accessToken,object);
+    }
+
+    getDashboardIdFromToken(object: any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/app_dashboard_token/`+this.accessToken,object);
+    }
+
+    getEmbedDashboardData(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dynamic_filter_embedded_dashboard/`+this.accessToken,obj);
     }
 
 }
