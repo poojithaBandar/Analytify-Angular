@@ -126,8 +126,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         client_id: _config.clientId,
-        client_secret: _config.clientSecret,
-        dashboard_token: dashboardToken
+        client_secret: _config.clientSecret
       })
     })
       .then(function (res) {
@@ -164,6 +163,7 @@
       console.error('AnalytifySDK.loadDashboard: Container not found', options.container);
       return;
     }
+    var params = [];
 
     return fetchToken(options.dashboardToken)
       .then(function (token) {
