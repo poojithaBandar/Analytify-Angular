@@ -10,7 +10,7 @@
 //     return src.substr(0, src.lastIndexOf('/')) + '/';
 //   })()) + 'embed/';
 
-import { convertToObject } from "typescript";
+// import { convertToObject } from "typescript";
 
 //   function buildUrl(dashboardID, clientId, clientSecret, appName, filters) {
 //     var parts = [
