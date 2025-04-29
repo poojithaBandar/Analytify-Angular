@@ -1323,17 +1323,11 @@ try {
       }
     }
       this.measureValues = [];
-      // if(type){
-      //   if(type == 'yoy'){
-      //     this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-      //   }else if(type == 'yoyRemove'){
-      //     this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-      //   }
-      //   else{
-      //   this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
-      //   }
-      // }
       let yoyType = this.draggedRows[index].type;
+      if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+        this.draggedRows[index].type = yoyType.split(' ')[2];
+        yoyType = this.draggedRows[index].type;
+      }
       if (type) {
         if (type === 'yoy' || type === 'mom' || type === 'qoq') {
           this.measureValues = [
@@ -1376,9 +1370,9 @@ try {
     if (type !== 'yoy' && type !== 'yoyRemove' && type !== 'mom' && type !== 'momRemove' && type !== 'qoq' && type !== 'qoqRemove') {
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     } 
-    if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
-      yoyType = yoyType.split(' ')[2];
-    }
+    // if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+    //   yoyType = yoyType.split(' ')[2];
+    // }
     if(type == 'yoy'){
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'yoy of '+yoyType,alias:rows.alias};
     } else if(type == 'mom'){
@@ -4496,7 +4490,7 @@ customizechangeChartPlugin() {
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = format;
     }
-    // const prvFormat = this.draggedColumnsData[index][2];
+    const prvFormat = this.draggedColumnsData[index][2];
     if(format === ''){
       this.draggedColumnsData[index] = [column.column,column.data_type,format,column.alias ? column.alias : ""];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format, alias: column.alias ? column.alias : ""};
@@ -4510,26 +4504,26 @@ customizechangeChartPlugin() {
       console.log(this.draggedColumns);
      }
      this.checkDateFormatForYOY();
-    // if (prvFormat && prvFormat !== '') {
-    //   let i = 0;
-    //   for (const row of this.draggedRowsData) {
-    //     if (['yoy', 'mom', 'qoq'].includes(row[1])) {
-    //       const [col, agg] = row[2].split(':');
+    if (prvFormat && prvFormat !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
 
-    //       if (this.draggedColumnsData[index][0] === col) {
-    //         if (prvFormat && prvFormat !== this.draggedColumnsData[index][2] && ['year', 'month', 'quarter'].includes(prvFormat) && prvFormat !== '') {
-    //           if((prvFormat === 'year' && row[1] ==='yoy') || (prvFormat === 'month' && row[1] ==='mom') || (prvFormat === 'quarter' && row[1] ==='qoq')){
-    //             row[1] = 'aggregate';
-    //             row[2] = agg;
-    //             this.draggedRows[i].type = agg;
-    //             break;
-    //           }
-    //         }
-    //       }
-    //       i++;
-    //     }
-    //   }
-    // }
+          if (this.draggedColumnsData[index][0] === col) {
+            if (prvFormat && prvFormat !== this.draggedColumnsData[index][2] && ['year', 'month', 'quarter'].includes(prvFormat) && prvFormat !== '') {
+              if((prvFormat === 'year' && row[1] ==='yoy') || (prvFormat === 'month' && row[1] ==='mom') || (prvFormat === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          i++;
+        }
+      }
+    }
      this.dataExtraction(false);
   }
   checkdatetype= false;
