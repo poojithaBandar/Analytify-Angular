@@ -1,0 +1,9 @@
+/*
+ * Public API Surface of analytify-dashboard
+ */
+// export * from './lib/analytify-dashboard.service';
+// export * from './lib/analytify-dashboard.component';
+// export * from './lib/analytify-dashboard.module';
+// export * from './lib/dashboard/dashboard/dashboard.component';
+export * from './lib/sdk.mjs';
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicHVibGljLWFwaS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3Byb2plY3RzL2FuYWx5dGlmeS1kYXNoYm9hcmQvc3JjL3B1YmxpYy1hcGkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7O0dBRUc7QUFFSCxxREFBcUQ7QUFDckQsdURBQXVEO0FBQ3ZELG9EQUFvRDtBQUNwRCxpRUFBaUU7QUFDakUsY0FBYyxXQUFXLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIvKlxuICogUHVibGljIEFQSSBTdXJmYWNlIG9mIGFuYWx5dGlmeS1kYXNoYm9hcmRcbiAqL1xuXG4vLyBleHBvcnQgKiBmcm9tICcuL2xpYi9hbmFseXRpZnktZGFzaGJvYXJkLnNlcnZpY2UnO1xuLy8gZXhwb3J0ICogZnJvbSAnLi9saWIvYW5hbHl0aWZ5LWRhc2hib2FyZC5jb21wb25lbnQnO1xuLy8gZXhwb3J0ICogZnJvbSAnLi9saWIvYW5hbHl0aWZ5LWRhc2hib2FyZC5tb2R1bGUnO1xuLy8gZXhwb3J0ICogZnJvbSAnLi9saWIvZGFzaGJvYXJkL2Rhc2hib2FyZC9kYXNoYm9hcmQuY29tcG9uZW50JztcbmV4cG9ydCAqIGZyb20gJy4vbGliL3Nkayc7XG4iXX0=
