@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -22,7 +22,7 @@ import * as _ from 'lodash';
 // import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
-import { debounceTime, fromEvent, map, Observable, throwError } from 'rxjs';
+import { debounceTime, fromEvent, map, Observable, throwError, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -47,7 +47,7 @@ import * as echarts from 'echarts';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
-import { tap } from 'rxjs/operators'; 
+import { tap, takeUntil } from 'rxjs/operators'; 
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.json';
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
@@ -117,9 +117,10 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
-export class SheetsdashboardComponent {
+export class SheetsdashboardComponent implements OnDestroy {
  // @HostListener('window:resize', ['$event'])
  itemsPerPage:any;
+  private destroy$ = new Subject<void>();
  pageNo = 1;
  page: number = 1;
  totalItems:any;
@@ -219,6 +220,12 @@ export class SheetsdashboardComponent {
   lastRefresh: any;
   nextRefresh: any;
   tabData: any;
+  clientId!: string;
+  dashboardToken!: string;
+  isEmbedDashboard: boolean = false;
+  embedFilters: any;
+  isdashboardSDKGenerated: boolean = false;
+  isEmbeddedFilter : boolean = false;
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -270,6 +277,27 @@ export class SheetsdashboardComponent {
       }
         else if(currentUrl.includes('analytify/sheetsdashboard')){
           this.sheetsNewDashboard = true;
+    } else if(currentUrl.includes('embed/dashboard')){
+      this.updateDashbpardBoolen = true;
+      this.isEmbedDashboard = true;
+      this.active = 2;
+     this.dashboardToken = this.route.snapshot.params['dashboardToken'];
+     this.clientId = this.route.snapshot.params['clientId'];
+     let accessToken = this.route.snapshot.params['token'];
+     const userToken = { Token: accessToken,};
+     localStorage.setItem('currentUser', JSON.stringify(userToken));
+     this.route.queryParams.subscribe(params => {
+      const rawFilters = params['filters'];
+      if (rawFilters) {
+        try {
+          this.embedFilters = JSON.parse(rawFilters);
+          console.log('Filters object:', this.embedFilters);
+          // Expected output: { name: ['US', 'UK'], idList: [3, 4] }
+        } catch (e) {
+          console.error('Error parsing filters:', e);
+        }
+      }
+    });
     }
     
   }
@@ -413,7 +441,8 @@ export class SheetsdashboardComponent {
         return ''; // Handle unsupported styles
     }
   }
-  ngOnInit() {  
+
+  initialiserMethods(){
     let displayGrid = DisplayGrid.Always;
     this.iconList = Object.entries(iconsData).map(([key, value]: [string, any]) => ({
       name: key,
@@ -428,13 +457,12 @@ export class SheetsdashboardComponent {
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
-      if(!this.isPublicUrl){
+      if(!this.isPublicUrl || !this.isEmbedDashboard){
         if(this.fileId.length > 0 || this.databaseId.length > 0){
           this.sheetsDataWithQuerysetIdTest();
         }
       }
       if(this.isPublicUrl){
-        // this.dashboardId = 145
         this.getSavedDashboardDataPublic();
         this.getDashboardFilterredListPublic();
         displayGrid = DisplayGrid.None;
@@ -443,10 +471,11 @@ export class SheetsdashboardComponent {
         //   this.sheetsDataWithQuerysetId();
         // }
         if(this.dashboardView){
-    
           this.getSavedDashboardData();
           // this.sheetsDataWithQuerysetId();
           this.getDashboardFilterredList();
+        } else if(this.isEmbedDashboard){
+          this.getEmbedDashboardData();
         }
         if(this.dashboardId != undefined || null){
           this.getDrillThroughActionList();
@@ -454,7 +483,40 @@ export class SheetsdashboardComponent {
 
     });    
    
-    //this.getSheetData();
+  }
+
+  getEmbedDashboardData(){
+    let filterKeys ;
+    let filterValues;
+    let obj;
+    if(this.embedFilters){
+      filterKeys = Object.keys(this.embedFilters);
+      filterValues = Object.values(this.embedFilters);
+      obj = {
+ "filter_name": filterKeys,
+ "dashbaord_id": this.dashboardId,
+ "input_list": filterValues
+ // "exclude_ids":[]
+      }
+    } else {
+      obj ={ 
+      "dashbaord_id": this.dashboardId,
+      }
+    }
+    
+    this.workbechService.getEmbedDashboardData(obj).subscribe({
+      next:(data)=>{
+        this.getDashboardFilterredList(false,data);
+        this.assignDashboardParams(data.dashbaord_retrieve_data);
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
+
+  ngOnInit() {  
+    let displayGrid = DisplayGrid.Always;
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.CompactLeftAndUp,
@@ -492,17 +554,41 @@ export class SheetsdashboardComponent {
         enabled: this.editDashboard,
       }
     };
+    if(this.dashboardToken){
+      this.fetchDashboardIdFromToken();
+    } else {
+      this.initialiserMethods();
+    }
+    //this.getSheetData();
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
 
-    this.sharedService.downloadRequested$.subscribe(() => {
-      this.downloadImageInPublic();
-    });
+    this.sharedService.downloadRequested$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.downloadImageInPublic();
+      });
 
     // Subscribe to refresh requests
-    this.sharedService.refreshRequested$.subscribe(() => {
-      this.getSavedDashboardDataPublic();
-    });
+    this.sharedService.refreshRequested$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.getSavedDashboardDataPublic();
+      });
 
+  }
+
+  fetchDashboardIdFromToken(){
+    let payload = {dashboard_token: this.dashboardToken}
+    this.workbechService.getDashboardIdFromToken(payload).subscribe({
+      next:(data:any)=>{
+        console.log('savedDashboard',data);
+         this.dashboardId = data.dashboard_id;
+         this.initialiserMethods();
+      },
+      error:(error:any)=>{
+        console.log(error)
+      }
+    })
   }
 
   onItemResize(item: GridsterItem, itemComponent: any): void {
@@ -792,13 +878,23 @@ export class SheetsdashboardComponent {
             }
           });
         }
-        this.dashboardName=data.dashboard_name;
+        this.assignDashboardParams(data);
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
+
+  assignDashboardParams(data: any){
+    this.dashboardName=data.dashboard_name;
         this.isSampleDashboard = data.is_sample;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
+        this.isdashboardSDKGenerated = data.is_embedded;
         // if(data.file_id && data.file_id.length){
         //   this.fileId = data.file_id;
         // }
@@ -845,11 +941,6 @@ export class SheetsdashboardComponent {
             }
           });
         }
-      },
-      error:(error)=>{
-        console.log(error)
-      }
-    })
   }
 
   dynamicOptionsUpdateinDashboard(dashboard: any, isPublic: boolean){
@@ -3563,6 +3654,7 @@ if(this.filterName === ''){
     dashboard_id:this.dashboardId,
     filter_name:this.filterName,
     column:this.selectClmn,
+    is_embedded : this.isEmbeddedFilter,
     sheets:this.selectedRows,
     datatype:this.selectdColmnDtype,
     queryset_id:this.selectedQuerySetId,
@@ -3601,7 +3693,7 @@ if(this.filterName === ''){
 }
 }
 
-getDashboardFilterredList(onSheetRemove? : boolean){
+getDashboardFilterredList(onSheetRemove? : boolean,embedFilterData?: any){
   const Obj ={
     dashboard_id:this.dashboardId
   }
@@ -3612,6 +3704,7 @@ getDashboardFilterredList(onSheetRemove? : boolean){
       if(onSheetRemove && data?.length <= 0){
         this.active = 1;
       }
+      this.assignSDKFiltertoDashboard(embedFilterData);
     },
     error:(error)=>{
       console.log(error)
@@ -3623,6 +3716,57 @@ getDashboardFilterredList(onSheetRemove? : boolean){
       })
     }
   })
+}
+
+assignSDKFiltertoDashboard(embedFilterData?: any){
+  if (this.DahboardListFilters.length > 0 && this.isEmbedDashboard && this.embedFilters) {
+    const nameToIdMap = Object.fromEntries(this.DahboardListFilters.map((item: any) => [item.filter_name, item.dashboard_filter_id]));
+
+    const transformedData: any = {};
+
+    for (const [name, values] of Object.entries(_.cloneDeep(this.embedFilters))) {
+      const id = nameToIdMap[name];
+      if (id !== undefined) {
+        transformedData[id] = values;
+      }
+    }
+    this.storeSelectedColData['test'] = transformedData;
+  }
+  this.extractKeysAndData();
+  embedFilterData?.dashbaord_filter_data.forEach((item: any) => {
+    this.filteredRowData = [];
+    this.filteredColumnData = [];
+  this.tablePreviewColumn.push(item.columns);
+  this.tablePreviewRow.push(item.rows);
+  item.columns.forEach((res:any) => {      
+    let obj1={
+      name:res.column,
+      values: res.result
+    }
+    this.filteredColumnData.push(obj1);
+    console.log('filtercolumn',this.filteredColumnData)
+  });
+  item.rows.forEach((res:any) => {
+    let obj={
+      name: res.column,
+      data: res.result
+    }
+    this.filteredRowData.push(obj);
+    console.log('filterowData',this.filteredRowData)
+  });
+  if(item.chart_id === 1){
+    this.pageChangeTableDisplay(item,1,false,false)
+    // this.tablePageNo =1;
+    this.tablePage=1
+  } else{
+  this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
+  if (this.displayTabs) {
+    this.sheetTabs.forEach((tabData: any) => {
+      this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
+    })
+  }
+  }
+});
 }
 getFilteredColumns(filterList: any) {
   const searchText = filterList?.searchText ? filterList.searchText.toLowerCase() : '';
@@ -3827,6 +3971,7 @@ clearAllFilters(): void {
       if(this.isPublicUrl){
         this.getFilteredDataPublic()
       }else{
+        this.assignSDKFiltertoDashboard();
         this.getFilteredData();
       }
   } else {
@@ -4688,6 +4833,7 @@ editFiltersData(id:any){
     next:(data)=>{
       console.log(data);
       this.filterName = data.filter_name;
+      this.isEmbeddedFilter = data.is_embedded;
       // this.sheetsFilterNamesFromEdit = data.sheets;
       this.querysetNameEdit = data.queryname;
       this.selectClmnEdit = data.selected_column;
@@ -4837,6 +4983,7 @@ updateFilters(){
   }else{
 const obj ={
   dashboard_filter_id:this.dashboardFilterIdEdit,
+  is_embedded : this.isEmbeddedFilter,
   dashboard_id:this.dashboardId,
   filter_name:this.filterName,
   column:this.selectClmn,
@@ -7207,6 +7354,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       return this.sheetTabs.some(sheet => !sheet.name || sheet.name.trim() === "");
     }
 
+    ngOnDestroy(): void {
+        this.destroy$.next();
+          this.destroy$.complete();
+        }
+
 downloadSheet(item: any, format: 'pdf' | 'csv' | 'html'): void {
   if (!item || !item.sheetId) return;
 
@@ -7652,6 +7804,7 @@ downloadAsPDF() {
     this.endMethod();
   });
 }
+
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
