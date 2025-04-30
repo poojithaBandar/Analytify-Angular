@@ -14,7 +14,7 @@
                         </div>
                         <div class=" mb-0 p-2 br-0 ">
                             <h6 class="mb-0">Database</h6>
-                            <p class=" mb-0" ngbTooltip="{{database_name}}">{{database_name}}</p> 
+                            <p class="mb-0" [ngbTooltip]="database_name?.length > 15 ? database_name : null">{{database_name?.length > 15 ? (database_name| slice:0:15)+'...':database_name}}</p>
                         </div>
                 </div>
                 <div class="card-body p-1">
@@ -57,6 +57,7 @@
                                                                         <option value="date">Date</option>
                                                                         <option value="logical">Logical</option>
                                                                         <option value="aggregation">Aggregate</option>
+                                                                        <option value="Custom">Custom</option>
                                                                     </select>
                                                                 </div>
                                                                 <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
@@ -67,10 +68,13 @@
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="zn">ZN</option>
+
 
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
-                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="ifelse">IF ELSE/ELSEIF</option>
+
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
@@ -106,11 +110,22 @@
                                                             <!-- <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label> -->
                                                             <div class="d-flex">
                                                                 <div class="col-6 p-0">
-                                                                    <textarea [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
-                                                                       
+                                                                    <textarea #sqlEditor [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
+                                                                    (keydown)="onTextAreaKeyUp($event)"
+                                                                    (click)="updateCaretPosition()"
+                                                                    (blur)="hideSuggestions()"
                                                                         class="query-text mb-1 px-3" [(ngModel)]="calculatedFieldLogic" [style.width]="calculationfieldid.hidden ? '195%' : '100%'"
                                                                         placeholder="Drop Column or Enter Logic"></textarea>
-                                                                    
+                                                                        <ul *ngIf="filteredSuggestions.length && showSuggestions"
+                                                                        class="suggestions-dropdown"
+                                                                        [style.top.px]="caretTop"
+                                                                        [style.left.px]="caretLeft">
+                                                                        <li *ngFor="let suggestion of filteredSuggestions; let i = index"
+                                                                        (mousedown)="selectSuggestion(suggestion)"
+                                                                        [class.selected]="i === selectedSuggestionIndex">
+                                                                      {{ suggestion.display }}
+                                                                    </li>
+                                                                    </ul>
                                                                 </div>
                                                                 <div #calculationfieldid [hidden]="true" class="col-6 p-0 d-flex">
                                                                     <div class="calculated-hide-card bg-light mb-1 border rounded-2 d-flex">
@@ -135,8 +150,13 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'round'){
                                                                                 <span > <p class="fw-600 mb-0">ROUND(number, [decimals]) :<br> </p> Rounds to a specified number of decimals.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  ROUND(2.65,1) = 2.6 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'zn'){
+                                                                                <span > <p class="fw-600 mb-0">ZN(number) :<br> </p> Returns the value if exists else return 0 for null values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ZN("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> ZN(2)=2 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'ifnull'){
                                                                                 <span > <p class="fw-600 mb-0">IFNULL(expression1, expression2) :<br> </p> Returns the first non-null expression.</span> <br><br>
@@ -148,10 +168,20 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> CASE expression WHEN value THEN result ELSE default END</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  case  when "finance"."Amount" > 0 then 1 else 0 end </span>
                                                                             }
+                                                                            @if(nestedCalculatedFieldData == 'ifelse'){
+                                                                                <span> <p class="fw-600 mb-0">IF / ELSE IF :<br></p>Executes conditional logic with if-else branching.</span><br><br>
+                                                                                <span><p class="fw-600 mb-0">Syntax :<br></p> IF condition THEN result ELSE IF condition THEN result ELSE default END</span> <br><br>
+                                                                                <span><p class="fw-600 mb-0">Example :<br></p>IF "finance"."Amount" > 1000 THEN 'High' ELSEIF "finance"."Amount" > 0 THEN 'Medium' ELSE 'Low' END </span>
+                                                                            }
                                                                             @if(nestedCalculatedFieldData == 'average'){
                                                                                 <span > <p class="fw-600 mb-0">AVG(expression) :<br> </p> Returns the average.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> AVG("tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  AVG("finance"."Amount") </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'count'){
+                                                                                <span > <p class="fw-600 mb-0">COUNT(string) :<br> </p> Counts total number of non-null values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> COUNT("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  COUNT("finance"."Name") </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'countd'){
                                                                                 <span > <p class="fw-600 mb-0">COUNTD(string) :<br> </p> Counts distinct values.</span> <br><br>
@@ -176,12 +206,12 @@
                                                                             @if(nestedCalculatedFieldData == 'left'){
                                                                                 <span > <p class="fw-600 mb-0">LEFT(string, number) :<br> </p> Returns the specified number of characters from left part of a string.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> LEFT("Tablename"."column_name", number)</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Left('Electronics',3)=Ele </span>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  LEFT('Electronics',3)=Ele </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'right'){
                                                                                 <span > <p class="fw-600 mb-0">RIGHT(string, number) :<br> </p> Returns the specified number of characters from right part of a string.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LEFT("Tablename"."column_name", number)</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Left('Electronics',3)=ics </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> RIGHT("Tablename"."column_name", number)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  RIGHT('Electronics',3)=ics </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'mid'){
                                                                                 <span > <p class="fw-600 mb-0">substring(string, [from int], [for int]) :<br> </p> Extracts part of a string by giving starting position and the length of the string.</span> <br><br>
@@ -191,7 +221,7 @@
                                                                             @if(nestedCalculatedFieldData == 'length'){
                                                                                 <span > <p class="fw-600 mb-0">LENGTH(string) :<br> </p> Returns the length of a string.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> LENGTH("tablename"."column_name")</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Length('electronics') = 12 </span>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  LENGTH('electronics') = 12 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'trim'){
                                                                                 <span > <p class="fw-600 mb-0">TRIM(string) :<br> </p> Removes spaces at the beginning and end of a string.</span> <br><br>
@@ -229,7 +259,7 @@
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  current_date + INTERVAL '5 days'(days/months/years)  </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'datediff'){
-                                                                                <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the difference between two dates.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">DATEDIFF :<br> </p> Returns the difference between two dates.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" - "tablename"."column_name"</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  CURRENT_DATE - '2024-10-03' </span>
                                                                             }
@@ -242,8 +272,8 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'now'){
                                                                                 <span > <p class="fw-600 mb-0">Current_timestamp :<br> </p> Returns the current date and time.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> current_timestamp()</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> current_timestamp() </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> now()</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> now() </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'today'){
                                                                                 <span > <p class="fw-600 mb-0">Current_date :<br> </p> Returns the current date without the time.</span> <br><br>
@@ -260,6 +290,9 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" + "tablename"."column_name"</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example : 2 + 2 = 4<br> </p>   </span>
                                                                             }
+                                                                            @if(calculatedFieldFunction == 'Custom'){
+                                                                                <span > <p class="fw-600 mb-0"><br> </p>Custom calculated field evaluates multiple conditions using logical operators (AND, OR, IF, CASE) and applies aggregation functions (like SUM, AVG, COUNT, MAX, MIN) to produce a summarized or conditional result</span> <br><br>
+                                                                            }
                                                                         </div>
                                                                         
                                                                     </div>
@@ -267,7 +300,7 @@
                                                                         <i class="fa fa-angle-left"></i>
                                                                     </div> -->
                                                                 </div>
-                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
+                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'Custom') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
                                                                     <i *ngIf="calculationfieldid.hidden" class="fa fa-angle-left cursor-pointer"></i>
                                                                     <i *ngIf="!calculationfieldid.hidden" class="fa fa-angle-right cursor-pointer"></i>
                                                                 </div>
@@ -409,10 +442,10 @@
                                                 aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.field_name)"><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
-                                                <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
+                                                <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
-                                                    <a class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
+                                                    <a class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;validationMessage = '';fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                     <a class="dropdown-item btn-secondary-light border" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
                                                 </div>
                                             </div>
@@ -462,7 +495,7 @@
                                                         </div> -->
                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                             <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn">
-                                                                <div class="form-check" style="width: 46px;">
+                                                                <div class="form-check d-flex" >
                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -478,18 +511,19 @@
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body">
                                                                 <div class="date-box">
-                                                                    <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                    <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                 </div>
                                                                 <div id="merging-tooltips">
                                                                   <ngx-slider 
                                                                   [(value)]="minValue"
                                                                   [(highValue)]="maxValue"
                                                                   [options]="options"
-                                                                  (valueChange)="updateDateRange()"
-                                                                  (highValueChange)="updateDateRange()"
+                                                                  (valueChange)="updateDateRange(false)"
+                                                                  (highValueChange)="updateDateRange(false)"
                                                                 ></ngx-slider>
                                                                 </div>
+                                                                <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -842,50 +876,81 @@
                                                     </ng-template>
                                                 </li>
                                                 @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
-                                                    <li [ngbNavItem]="4" *ngIf="isTopFilter" (click)="filterSearch = ''; filterDataGet()">
-                                                        <a ngbNavLink class="p-3">Top</a>
-                                                        <ng-template ngbNavContent>
-                                                            <div class="tab-pane active" id="activetabs">
-                                                                <div class="filter-options">
-                                                                    <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
-                                                                    <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
+                                                    @if(draggedRows.length === 0){
+                                                        <li [ngbNavItem]="4" *ngIf="isTopFilter" [ngbTooltip]="draggedRows.length === 0 ? 'Drop a measure in Row Shelf to Enable.' : ''" container="body" position="top">
+                                                            <a ngbNavLink class="p-3" [class.disabled]="draggedRows.length === 0">Top</a>
+                                                        </li>
+                                                    } @else{
+                                                        <li [ngbNavItem]="4" *ngIf="isTopFilter" (click)="filterSearch = ''; filterDataGet()">
+                                                            <a ngbNavLink class="p-3">Top</a>
+                                                            <ng-template ngbNavContent>
+                                                                <div class="tab-pane active" id="activetabs">
+                                                                    <div class="filter-options">
+                                                                        <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                        <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
+                                                                    </div>
+                                                                    <div class="ms-4">
+                                                                        <div class="field-options">
+                                                                            <select [(ngModel)]="topType">
+                                                                              <option value="desc">Top</option>
+                                                                              <option value="asc">Bottom</option>
+                                                                            </select>
+                                                                            <select [(ngModel)] = "topLimit">
+                                                                                <option *ngIf="totalDataLength > 0" value="5">5</option>
+                                                                                <option *ngIf="totalDataLength > 5" value="10">10</option>
+                                                                                <option *ngIf="totalDataLength > 10" value="20">20</option>
+                                                                                <option *ngIf="totalDataLength > 20" value="30">30</option>
+                                                                                <option *ngIf="totalDataLength > 30" value="40">40</option>
+                                                                                <option *ngIf="totalDataLength > 40" value="50">50</option>
+                                                                                <option *ngIf="totalDataLength > 50" value="100">100</option>
+                                                                                <option *ngIf="totalDataLength > 100" value="500">500</option>
+                                                                                <option *ngIf="totalDataLength > 500" value="1000">1000</option>
+                                                                                <option *ngIf="totalDataLength > 1000" value="2000">2000</option>
+                                                                                <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
+                                                                                <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
+                                                                                <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
+                                                                              </select>
+                                                                            <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                        </div>
+                                                                        <div class="field-options ">
+                                                                            <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
+                                                                                <option value="select" selected disabled> select </option>
+                                                                                <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                            </select>
+                                                                            <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
+                                                                                <option value="sum">Sum</option>
+                                                                                <option value="avg">Avg</option>
+                                                                                <option value="min">Min</option>
+                                                                                <option value="max">Max</option>
+                                                                                <option value="count">Count</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="ms-4">
-                                                                    <div class="field-options">
-                                                                        <select [(ngModel)]="topType">
-                                                                          <option value="desc">Top</option>
-                                                                          <option value="asc">Bottom</option>
-                                                                        </select>
-                                                                        <select [(ngModel)] = "topLimit">
-                                                                            <option *ngIf="totalDataLength > 0" value="5">5</option>
-                                                                            <option *ngIf="totalDataLength > 5" value="10">10</option>
-                                                                            <option *ngIf="totalDataLength > 10" value="20">20</option>
-                                                                            <option *ngIf="totalDataLength > 20" value="30">30</option>
-                                                                            <option *ngIf="totalDataLength > 30" value="40">40</option>
-                                                                            <option *ngIf="totalDataLength > 40" value="50">50</option>
-                                                                            <option *ngIf="totalDataLength > 50" value="100">100</option>
-                                                                            <option *ngIf="totalDataLength > 100" value="500">500</option>
-                                                                            <option *ngIf="totalDataLength > 500" value="1000">1000</option>
-                                                                            <option *ngIf="totalDataLength > 1000" value="2000">2000</option>
-                                                                            <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
-                                                                            <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
-                                                                            <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                          </select>
-                                                                        <!-- <input type="number" value="10" /><span>by</span> -->
+                                                            </ng-template>
+                                                        </li>
+                                                    }
+                                                }
+                                                @if(integerList.includes(filterType)){
+                                                    <li [ngbNavItem]="6" (click)="filterSearch = ''; filterDataGet()">
+                                                        <a ngbNavLink class="p-3 TabShadow">Range of Values</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane" id="linktabs">
+                                                                <div class="card-body">
+                                                                    <div class="date-box">
+                                                                        <input type="number" step="1" id="input" [(ngModel)]="minRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                        <input type="number" step="1" id="input" [(ngModel)]="maxRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
                                                                     </div>
-                                                                    <div class="field-options ">
-                                                                        <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
-                                                                            <option value="select" selected disabled> select </option>
-                                                                            <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
-                                                                        </select>
-                                                                        <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
-                                                                            <option value="sum">Sum</option>
-                                                                            <option value="avg">Avg</option>
-                                                                            <option value="min">Min</option>
-                                                                            <option value="max">Max</option>
-                                                                            <option value="count">Count</option>
-                                                                        </select>
+                                                                    <div id="merging-tooltips">
+                                                                      <ngx-slider 
+                                                                      [(value)]="minRangeValue"
+                                                                      [(highValue)]="maxRangeValue"
+                                                                      [options]="measureValuesOptions"
+                                                                      (valueChange)="updateMeasureRange(false)"
+                                                                      (highValueChange)="updateMeasureRange(false)"
+                                                                    ></ngx-slider>
                                                                     </div>
+                                                                    <span *ngIf="measureRangeError" class="text-danger"> *Note :- {{measureRangeError}} </span>
                                                                 </div>
                                                             </div>
                                                         </ng-template>
@@ -903,12 +968,12 @@
                             }
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="activeTabId === 1">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray.size > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -968,18 +1033,19 @@
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body">
                                                                 <div class="date-box">
-                                                                    <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                    <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                 </div>
                                                                 <div id="merging-tooltips">
                                                                   <ngx-slider 
                                                                   [(value)]="minValue"
                                                                   [(highValue)]="maxValue"
                                                                   [options]="options"
-                                                                  (valueChange)="updateDateRange()"
-                                                                  (highValueChange)="updateDateRange()"
+                                                                  (valueChange)="updateDateRange(false)"
+                                                                  (highValueChange)="updateDateRange(false)"
                                                                 ></ngx-slider>
                                                                 </div>
+                                                                <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -1384,6 +1450,31 @@
                                                         </ng-template>
                                                     </li>
                                                 }
+                                                @if(integerList.includes(filterType)){
+                                                    <li [ngbNavItem]="6" [class.disabled]="activeTabId !== 6">
+                                                        <a ngbNavLink class="p-3 TabShadow">Range of Values</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane" id="linktabs">
+                                                                <div class="card-body">
+                                                                    <div class="date-box">
+                                                                        <input type="number" step="1" id="input" [(ngModel)]="minRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                        <input type="number" step="1" id="input" [(ngModel)]="maxRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                    </div>
+                                                                    <div id="merging-tooltips">
+                                                                      <ngx-slider 
+                                                                      [(value)]="minRangeValue"
+                                                                      [(highValue)]="maxRangeValue"
+                                                                      [options]="measureValuesOptions"
+                                                                      (valueChange)="updateMeasureRange(false)"
+                                                                      (highValueChange)="updateMeasureRange(false)"
+                                                                    ></ngx-slider>
+                                                                    </div>
+                                                                    <span *ngIf="measureRangeError" class="text-danger"> *Note :- {{measureRangeError}} </span>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </li>
+                                                }
                                             </ul>
                                             <div class="panel-body tabs-menu-body p-1 panel-body-h">
                                                 <div class="tab-content">
@@ -1405,12 +1496,12 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="activeTabId === 1">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray.size > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -1435,7 +1526,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
                                 <div class="title-container border-0 rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
-                                    <span class="card mb-0 SearchBarCu" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;"></span>
+                                    <span class="card mb-0 SearchBarCu" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;height: 33px;"></span>
                                     <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor> -->
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary FaFaIconProperties"><i class="fa fa-pencil FaFaIconProperties"></i></button>
@@ -1443,22 +1534,45 @@
                                 </div> 
                                 <ckeditor *ngIf="editor" placeholder="Sheet Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName" (ngModelChange)="updateSheetName()"></ckeditor>
                             </div>
-
-                            <div class="col-lg-3 col-md-3 col-sm-3 p-1 d-flex justify-content-end" >
-                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
+                            <div class="col-lg-3 col-md-3 col-sm-3 p-1 d-flex" >
+                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
                                     <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false"></app-insights-button>
                                     <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
-                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
+                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
                                     <!-- <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
                                         (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
                                     </app-insights-button> -->
                                     <button class="viewQueryImg" container="body" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
-                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
+                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 me-1 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
+                                <button [disabled]="!retriveDataSheet_id" triggers="hover" ngbTooltip="Refresh" container="body" type="button" class="btn btn-primary mt-0 ps-2 pe-2" (click)="refreshSheetData()"><i class="fa fa-refresh w-4 h-4"></i></button>
+
+                                <!-- More Options Button -->
+                                <div ngbDropdown class="ps-1">
+                                    <button
+                                    class="btn btn-primary mt-0"
+                                    type="button"
+                                    id="menuOptionsDropdown"
+                                    ngbTooltip="Download Options"
+                                    triggers="hover"
+                                    container="body"
+                                    ngbDropdownToggle
+                                    [disabled]="!retriveDataSheet_id || (draggedColumnsData.length === 0 && draggedRowsData.length === 0)"
+                                    >
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                    </button>
+                                    <div ngbDropdownMenu aria-labelledby="menuOptionsDropdown">
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsCSV()">Export to CSV</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDFImage('pdf')">Download as PDF</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDFImage('png')">Download Image</a>
+                                    <!-- <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsPDF()">Download as PDF</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" (click)="downloadAsImage()">Download Image</a> -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         </div>
@@ -1490,7 +1604,6 @@
                                             {{ columns.field_name }}
                                         } @else {   
                                             {{ columns.column }}
-                                            <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
                                         }
 
                                      <div class="dropup" ngbDropdown style="line-height: 0;">
@@ -1509,7 +1622,7 @@
                                             } <i (click)="isDimensionEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                             <li  *ngIf="isDimensionEdit"><input (blur)="onColumnAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
                                             </li>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown>
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1524,7 +1637,7 @@
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown >
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1615,7 +1728,7 @@
                                             } <i (click)="isPivotRowEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                             <li  *ngIf="isPivotRowEdit"><input (blur)="onPivotRowAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
                                             </li>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown>
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1629,7 +1742,7 @@
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormatForPivotRow(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown >
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -1684,7 +1797,7 @@
                                         }@else{   
                                              {{ rows.column }}
                                         }
-                                        <div class="dropup" ngbDropdown style="line-height: 0;">
+                                        <div class="dropup" ngbDropdown [autoClose]="'outside'" style="line-height: 0;">
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                 <div class="dropup" ngbDropdown #aggDrop="ngbDropdown">
@@ -1701,7 +1814,7 @@
                                                     } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
-                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center">
+                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center p-0">
                                                     <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem >Aggregation</li>
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
@@ -1715,27 +1828,113 @@
                                                         <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" >None</a></li>  
                                                     </ul>
                                                 </div>
-                                                <div *ngIf="checkdatetype && checkAggregateNotNone" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
+
+                                                
+                                                        <!-- <div class="dropup" ngbDropdown #quickCalculation="ngbDropdown">
+                                                            <div class="d-flex text-center">
+                                                                <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem >Quick Calculation</li>
+                                                                <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                            </div>
+                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                <li ><a  class="dropdown-item border Aggregation-select-padding" ngbDropdownItem  >QOQ</a></li>
+                                                                <li ><a  class="dropdown-item border Aggregation-select-padding" ngbDropdownItem  >YOY</a></li>
+                                                                <li ><a  class="dropdown-item border Aggregation-select-padding" ngbDropdownItem  >MOM</a></li>
+
+                                                            </ul>
+                                                           
+                                                        </div> -->
+                                                        <div *ngIf="checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center" class="dropup" [autoClose]="'outside'" ngbDropdown>
+                                                            <div class="d-flex text-center">
+                                                              <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem>
+                                                                Quick Calculation
+                                                              </li>
+                                                              <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
+                                                                 ngbDropdownToggle>
+                                                              </i>
+                                                            </div>
+                                                         
+                                                            <!-- Main Dropdown Menu -->
+                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                             
+                                                              <!-- Reusable dropdown option component -->
+                                                              <li class="dropdown-submenu" ngbDropdown>
+                                                                <a class="dropdown-item border d-flex justify-content-between align-items-center"
+                                                                   ngbDropdownToggle [class.disabled]="!hasQuaterType"
+                                                                   [attr.tabindex]="hasQuaterType ? '0' : '-1'"
+                                                                   (click)="!hasQuaterType ? $event.preventDefault() : null">
+                                                                  QOQ
+                                                                  <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                                </a>
+                                                                <ul ngbDropdownMenu class="dropdown-menu custom-dropdown">
+                                                                  <li *ngFor="let column of quaterColumns" [ngClass]="draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
+                                                                    <a class="dropdown-item border Aggregation-select-padding"
+                                                                    (click)="selectedColumnForPeriodType=column;rowMeasuresCount(rows, index, 'qoq');">{{column}}(QOQ)</a>
+                                                                  </li>
+                                                                  <li>
+                                                                    <a *ngIf="draggedRowsData[index][1] == 'qoq'" class="dropdown-item border Aggregation-select-padding" 
+                                                                       (click)="selectedColumnForPeriodType='';rowMeasuresCount(rows,index,'qoqRemove')">Remove</a>
+                                                                </li>
+                                                                </ul>
+                                                              </li>
+                                                             
+                                                         
+                                                              <li class="dropdown-submenu" ngbDropdown>
+                                                                <a class="dropdown-item border d-flex justify-content-between align-items-center"
+                                                                   ngbDropdownToggle [class.disabled]="!hasMonthType"
+                                                                   [attr.tabindex]="hasMonthType ? '0' : '-1'"
+                                                                   (click)="!hasMonthType ? $event.preventDefault() : null">
+                                                                  MOM
+                                                                  <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                                </a>
+                                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                  <li *ngFor="let column of monthColumns" [ngClass]="draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
+                                                                    <a class="dropdown-item border Aggregation-select-padding" 
+                                                                    (click)="selectedColumnForPeriodType=column;rowMeasuresCount(rows, index, 'mom');">
+                                                                    {{column}}(MOM)
+                                                                    </a>
+                                                                  </li>
+                                                                  <li>
+                                                                    <a *ngIf="draggedRowsData[index][1] == 'mom'" class="dropdown-item border Aggregation-select-padding" 
+                                                                       (click)="selectedColumnForPeriodType='';rowMeasuresCount(rows,index,'momRemove')">Remove</a>
+                                                                </li>
+                                                                </ul>
+                                                              </li>
+                                                         
+                                                              <li class="dropdown-submenu" ngbDropdown>
+                                                                <a class="dropdown-item border d-flex justify-content-between align-items-center"
+                                                                   ngbDropdownToggle [class.disabled]="!hasYearType"
+                                                                   [attr.tabindex]="hasYearType ? '0' : '-1'"
+                                                                   (click)="!hasYearType ? $event.preventDefault() : null">
+                                                                  YOY
+                                                                  <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                                </a>
+                                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                  <li *ngFor="let column of yearColumns" [ngClass]="draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
+                                                                    <a class="dropdown-item border Aggregation-select-padding"
+                                                                    (click)="selectedColumnForPeriodType=column;rowMeasuresCount(rows, index, 'yoy');">{{ column }}(yoy)</a>
+                                                                  </li>
+                                                                  <li>
+                                                                    <a *ngIf="draggedRowsData[index][1] == 'yoy'" class="dropdown-item border Aggregation-select-padding" 
+                                                                       (click)="selectedColumnForPeriodType='';rowMeasuresCount(rows,index,'yoyRemove')">Remove</a>
+                                                                </li>
+                                                                </ul>
+                                                              </li>
+                                                         
+                                                            </ul>
+                                                          </div>
+                                                          
+
+                                                <!-- <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center" ngbDropdown #quickCalcDrop="ngbDropdown">
+                                                <div *ngIf="checkdatetype && checkAggregateNotNone && integerList.includes(rows.data_type)" class="d-flex text-center p-0" ngbDropdown #quickCalcDrop="ngbDropdown">
                                                     <li class="dropdown-item btn btn-primary-light Quick-Calc-text border" ngbDropdownToggle>Quick Calculation</li>
-                                                    <!-- <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
-                                                       ngbDropdownToggle></i>
-                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                        <li>
-                                                            <a class="dropdown-item border Aggregation-select-padding"
-                                                               href="javascript:void(0);" >Year Over Year (YOY)</a>
-                                                        </li>
-                                                    </ul> -->
+                                       
 
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border"
                                                     ngbDropdownToggle (click)="toggleQuickCalculation()"></i>
                                              
-                                                 <!-- YOY Dropdown (Appears to the Right of Quick Calculation) -->
                                                  <ul class="dropdown-menu custom-dropdown position-absolute dropdown-menu-end"
                                                      [ngClass]="{'show': quickCalcOpen}" style="top: 70px; left: 100%; min-width: 150px;">
-                                                     <!-- <li>
-                                                         <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'yoy')"
-                                                            >Year Over Year (YOY)</a>
-                                                     </li> -->
+                                        
                                                      <ng-container *ngIf="yearLength > 0; else singleYOY">
                                                         <li *ngFor="let column of yearColumns" [ngClass]=" draggedRowsData[index][2].split(':')[0] == column ? 'aggregation-select' : ''">
                                                             <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
@@ -1747,7 +1946,6 @@
                                                         </li>
                                                     </ng-container>
                                             
-                                                    <!-- Single YOY option -->
                                                     <ng-template #singleYOY>
                                                         <li>
                                                             <a class="dropdown-item border Aggregation-select-padding" href="javascript:void(0);"
@@ -1755,7 +1953,7 @@
                                                         </li>
                                                     </ng-template>
                                                  </ul>
-                                                </div>
+                                                </div> -->
                                                 <li> <a class="btn btn-secondary-light mx-0 w-100" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
                                             </ul>
                                         </div>
@@ -1814,7 +2012,7 @@
                             
                         </div>
                     </div>
-                    <div  [ngStyle]="{'display': ((bar || pie || donut || map) && draggedColumns && draggedColumns.length > 0 ? '' : 'none')}" class="row align-items-center">
+                    <div  [ngStyle]="{'display': ((bar || pie || donut || map) && draggedColumns && draggedColumns?.length > 0 ? '' : 'none')}" class="row align-items-center">
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                                                    <div class="card-area d-flex gap-2">
                                                        <label for="inputName" class="form-control mb-0 border">Hierarchy</label>
@@ -1875,7 +2073,7 @@
                 <div class="sheet-search">
                     <div class="">
                     </div>
-                    <div *ngIf="table &&(draggedRows.length > 0 || draggedColumns.length > 0 )" class="input-group mt-1 p-1 sheet-table-search">
+                    <div *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 )" class="input-group mt-1 p-1 sheet-table-search">
                         <input type="text" placeholder="Search" aria-describedby="button-addon2" [(ngModel)]="tableChartSearch" (keyup.enter)="tableDisplayPaginationSearch()" class="form-control border-end-0 ">
                         <button type="button" id="button-addon2" class="btn btn-primary border me-2 search-icon-border-radius" (click)="tableDisplayPaginationSearch()" >
                         <i class="fe fe-search"></i></button>
@@ -1887,7 +2085,7 @@
                        
                         <!-- @if((tab.sheet_name || tab) === sheetName){ -->
                           
-                            <div class="body table-responsive sheet-table-responsive">
+                            <div class="body table-responsive sheet-table-responsive" id="pdfcontainer" #pdfcontainer>
                                 
                                 @if(table && chartId){
                                 <table>
@@ -1925,7 +2123,7 @@
                                     
                                     </tbody>
                                   </table>
-                                  <pagination-controls *ngIf="table &&(draggedRows.length > 0 || draggedColumns.length > 0 )" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
+                                  <pagination-controls *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 )" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(pivotTable && chartId){
                                     <div id="pivotTableContainer" #pivotTableContainer></div>                                }
@@ -2130,7 +2328,7 @@
         <!-- } -->
         <!-- }-->
                  </div>
-                    <div class="card-footer d-flex p-2 sheets-footer-card">
+                    <div class="card-footer d-flex p-1 sheets-footer-card">
                         <mat-tab-group [selectedIndex]="selectedTabIndex"
                         (selectedIndexChange)="selected.setValue($event)"
                         (selectedTabChange)="onChange($event);" 
@@ -2154,30 +2352,30 @@
                         <ul ngbnav="" id="footer-tab border-1 " role="tablist" class="nav nav-pills fs-12 " style=" display: contents;">
                             
                             <div>
-                                <li role="presentation" class="nav-item">
+                                <li role="presentation" class="nav-item me-1 ms-1">
                                     <button type="button" ngbnavlink="" ngbTooltip="Add Sheet" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
-                                        class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" >
+                                        class="btn-sm btn-info-light" (click)="addSheet(false)" >
                                         <i class="fa fa-plus-square"></i>
                                     </button>
                                 </li>
                             </div>
-                            <li role="presentation" class="nav-item">
+                            <li role="presentation" class="nav-item me-1">
                                 <button type="button" ngbnavlink="" ngbTooltip="Delete Sheet" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0 && !deleteSheetInSheetComponent" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="btn-sm btn-danger-light"
                                     (click)="removeTab()" >
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
-                            <li role="presentation" class="nav-item">
+                            <li role="presentation" class="nav-item me-1">
                                 <button type="button" ngbnavlink="" ngbTooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="btn-sm btn-info-light"
                                     (click)="sheetDuplicate()" >
                                     <i class="fa fa-copy"></i>
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" class="movetodashboard-text-btn"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2 move-text" >Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" ><button (click)="openSelectDashboard(content)" class="btn-sm btn-info-light move-text" >Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -2206,7 +2404,7 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle  sheet-bottom-icon px-2">view Dashboard</button></div>        
+                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link  btn-sm btn-info-light border move-text">View Dashboard</button></div>        
                     </div>
                 </div>
 
@@ -2279,7 +2477,7 @@
                                                                                         } -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check" style="width: 46px;">
+                                                                                                <div class="form-check d-flex">
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2295,18 +2493,19 @@
                                                                                     <div class="tab-pane" id="linktabs">
                                                                                         <div class="card-body">
                                                                                             <div class="date-box">
-                                                                                                <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
-                                                                                                <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                                                <input type="text" id="input" [(ngModel)]="minDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
+                                                                                                <input type="text" id="input" [(ngModel)]="maxDate" (keyup.enter)="updateDateRange(true)" (blur)="updateDateRange(true)" class="form-control date-box-width">
                                                                                             </div>
                                                                                             <div id="merging-tooltips">
                                                                                               <ngx-slider 
                                                                                               [(value)]="minValue"
                                                                                               [(highValue)]="maxValue"
                                                                                               [options]="options"
-                                                                                              (valueChange)="updateDateRange()"
-                                                                                              (highValueChange)="updateDateRange()"
+                                                                                              (valueChange)="updateDateRange(false)"
+                                                                                              (highValueChange)="updateDateRange(false)"
                                                                                             ></ngx-slider>
                                                                                             </div>
+                                                                                            <span *ngIf="dateRangeError" class="text-danger"> *Note :- {{dateRangeError}} </span>
                                                                                         </div>
                                                                                     </div>
                                                                                 </ng-template>
@@ -2647,7 +2846,7 @@
                                                                                         </div> -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
-                                                                                                <div class="form-check" style="width: 46px;">
+                                                                                                <div class="form-check d-flex" >
                                                                                                     <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
                                                                                                     <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
@@ -2707,6 +2906,31 @@
                                                                                     </ng-template>
                                                                                 </li>
                                                                             }
+                                                                            @if(integerList.includes(filterType)){
+                                                                                <li [ngbNavItem]="6" [class.disabled]="activeTabId !== 6">
+                                                                                    <a ngbNavLink class="p-3 TabShadow">Range of Values</a>
+                                                                                    <ng-template ngbNavContent>
+                                                                                        <div class="tab-pane" id="linktabs">
+                                                                                            <div class="card-body">
+                                                                                                <div class="date-box">
+                                                                                                    <input type="number" step="1" id="input" [(ngModel)]="minRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                                                    <input type="number" step="1" id="input" [(ngModel)]="maxRangeValueInput" (keyup.enter)="updateMeasureRange(true)" (blur)="updateMeasureRange(true)" class="form-control date-box-width">
+                                                                                                </div>
+                                                                                                <div id="merging-tooltips">
+                                                                                                  <ngx-slider 
+                                                                                                  [(value)]="minRangeValue"
+                                                                                                  [(highValue)]="maxRangeValue"
+                                                                                                  [options]="measureValuesOptions"
+                                                                                                  (valueChange)="updateMeasureRange(false)"
+                                                                                                  (highValueChange)="updateMeasureRange(false)"
+                                                                                                ></ngx-slider>
+                                                                                                </div>
+                                                                                                <span *ngIf="measureRangeError" class="text-danger"> *Note :- {{measureRangeError}} </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </ng-template>
+                                                                                </li>
+                                                                            }
                                                                         </ul>
                                                                         <div class="panel-body tabs-menu-body p-1 panel-body-h">
                                                                             <div class="tab-content">
@@ -2726,12 +2950,12 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
+                                                        <div class="col text-left p-0" *ngIf="activeTabId === 1">
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="!(filterDataArray.size > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button"
+                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close
@@ -2746,68 +2970,68 @@
                                                 </div>
                                                 <div class="card-body single-axis-card">
                                                     <div class="row">
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination();"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows?.length<1 && draggedColumns?.length<1}">
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination(false);"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Pivot Table" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,9);pivotTableDatatransform();"><img src="./assets/images/charts/pivot-chart.jpg" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': pivotTable}"></a>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows?.length<1 && draggedColumns?.length<1}">
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Pivot Table" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,9);pivotTableDatatransform(false);"><img src="./assets/images/charts/pivot-chart.jpg" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': pivotTable}"></a>
                                                         </div>
                                                         <div class="card-title fs-12 mt-2 mb-1 border bg-light text-center" >Single Axis</div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': bar}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)} ">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)} ">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': area}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': line}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': pie}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': donut}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows.length>1 || draggedColumns.length>1) || draggedRows.length<1 || draggedColumns.length>0}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows?.length>1 || draggedColumns?.length>1) || draggedRows?.length<1 || draggedColumns?.length>0}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,25)"><img src="./assets/images/charts/kpi-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
                                                         </div>
-                                                        <div *ngIf="isApexCharts" class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows.length>1 || draggedColumns.length>1) || draggedRows.length<1 || draggedColumns.length>0 || guagechartRowData > 1 }">
+                                                        <div *ngIf="isApexCharts" class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows?.length>1 || draggedColumns?.length>1) || draggedRows?.length<1 || draggedColumns?.length>0 || guagechartRowData > 1 }">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,28)"><img src="./assets/images/charts/gauge-icon-new.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': guage}"></a>
                                                         </div>
-                                                        <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !(dateList.includes(draggedColumnsData[0]?.[1]) && draggedRows.length ===1 && draggedColumns.length === 1) }">
+                                                        <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !(dateList.includes(draggedColumnsData[0]?.[1]) && draggedRows?.length ===1 && draggedColumns?.length === 1) }">
                                                             <a href="javascript:void(0);"  triggers="hover" [ngbTooltip]="draggedColumnsData[0]?.[2] === '' ? 'Calendar Chart' : 'change Date Extract to None'" tooltipClass="tooltip-primary" container="body" placement="top" (click)="(draggedColumnsData[0]?.[2] === '') ? chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,11) : null">
                                                                 <img src="./assets/images/charts/calendar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar, 'disabled': draggedColumnsData[0]?.[2] !== ''}">
                                                             </a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
                                                         <div class="card-title fs-12 mt-2 mb-1 border bg-light text-center ">Dual Axis</div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': sidebyside}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': stocked}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length !== 2 || draggedColumns.length<1}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows?.length !== 2 || draggedColumns?.length<1}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': barLine}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': horizentalStocked}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': grouped}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,8)"><img src="./assets/images/charts/multi-line-new.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': multiLine}"></a>
                                                         </div>
-                                                        <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,12)"><img src="./assets/images/charts/spider.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': radar}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,26)"><img src="./assets/images/charts/heatmap-new.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
                                                         </div>
-                                                        <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length!=1)}">
+                                                        <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length!=1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="World Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,29)"><img src="./assets/images/charts/world-map.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': map}"></a>
                                                         </div>
                                                     </div>
@@ -2817,12 +3041,12 @@
                                         </div>
                                     </ng-template>
                                 </li>
-                                <li [ngbNavItem]="2" [class.disabled]="pivotTable || (draggedColumns.length === 0 && draggedRows.length ===0)">
+                                <li [ngbNavItem]="2" [class.disabled]="(draggedColumns?.length === 0 && draggedRows?.length ===0)">
                                      <a ngbNavLink class="p-1">Customize</a>
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="(((table && chartId) || (pivotTable && chartId) )&& (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -2847,7 +3071,7 @@
                                                                                                 <div class="dropup" ngbDropdown>
                                                                                                     <div class="form-group mb-0 p-1">
                                                                                                         <select class="form-select form-select select2 fs-14"
-                                                                                                            [(ngModel)]="headerFontFamily">
+                                                                                                            [(ngModel)]="headerFontFamily" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                             <option value="'Arial', sans-serif">Arial</option>
                                                                                                             <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                             <option value="'Verdana', sans-serif">Verdana</option>
@@ -2866,7 +3090,7 @@
                                                                                                         <div class="row">
                                                                                                             <div class="form-group mb-0 d-flex">
                                                                                                                 <select class="form-select form-select select2 fs-14"
-                                                                                                                     [(ngModel)]="headerFontSize">
+                                                                                                                     [(ngModel)]="headerFontSize" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <option value="10px">10px</option>
                                                                                                                     <option value="11px">11px</option>
                                                                                                                     <option value="12px">12px</option>
@@ -2881,17 +3105,17 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontStyle === 'italic' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal';pivotTable ? applyDynamicStylesToPivot() : null ">
                                                                                                                     <p>I</p>
                                                                                                                 </div>
                                                                                                                 <div class="underline-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontDecoration === 'underline' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none';pivotTable ? applyDynamicStylesToPivot() : null ">
                                                                                                                     <p>U</p>
                                                                                                                 </div>
                                                                                                             </div>
@@ -2926,17 +3150,17 @@
                                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                   <div class="dropup" ngbDropdown >
                                                                                                       <div class=" p-1">
-                                                                                                              <div class="form-group mb-0 text-center" (click)="headerFontAlignment = 'left'">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="headerFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                 <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                               </div>
                                                                                                               <div class="form-group mb-0 alignment-sides">
-                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'left'">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-left"></i>
                                                                                                                 </div>
-                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'center'">
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'center';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-center"></i>
                                                                                                                 </div>
-                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'right'">
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'right';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-right"></i>
                                                                                                                 </div>
                                                                                                             </div>
@@ -2955,7 +3179,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="((table && chartId || pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0))" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -2980,7 +3204,7 @@
                                                                                                 <div class="dropup" ngbDropdown>
                                                                                                     <div class="form-group mb-0 p-1">
                                                                                                         <select class="form-select form-select select2 fs-14"
-                                                                                                            [(ngModel)]="tableDataFontFamily">
+                                                                                                            [(ngModel)]="tableDataFontFamily" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                             <option value="'Arial', sans-serif">Arial</option>
                                                                                                             <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                             <option value="'Verdana', sans-serif">Verdana</option>
@@ -2999,7 +3223,7 @@
                                                                                                         <div class="row">
                                                                                                             <div class="form-group mb-0 d-flex">
                                                                                                                 <select class="form-select form-select select2 fs-14"
-                                                                                                                     [(ngModel)]="tableDataFontSize">
+                                                                                                                     [(ngModel)]="tableDataFontSize" (change)="pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <option value="10px">10px</option>
                                                                                                                     <option value="11px">11px</option>
                                                                                                                     <option value="12px">12px</option>
@@ -3014,17 +3238,17 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontStyle === 'italic' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>I</p>
                                                                                                                 </div>
                                                                                                                 <div class="underline-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontDecoration === 'underline' ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ;pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <p>U</p>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3059,17 +3283,17 @@
                                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                                   <div class="dropup" ngbDropdown >
                                                                                                       <div class=" p-1">
-                                                                                                              <div class="form-group mb-0 text-center" (click)="tableDataFontAlignment = 'left'">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="tableDataFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                 <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                               </div>
                                                                                                               <div class="form-group mb-0 alignment-sides">
-                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'left'">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'left';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-left"></i>
                                                                                                                 </div>
-                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'center'">
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'center';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-center"></i>
                                                                                                                 </div>
-                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'right'">
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'right';pivotTable ? applyDynamicStylesToPivot() : null">
                                                                                                                     <i class="fa fa-align-right"></i>
                                                                                                                 </div>
                                                                                                             </div>
@@ -3088,7 +3312,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!(table || kpi)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!(table || kpi || pivotTable)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-2 fw-500 border-0 rounded-2" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -3117,7 +3341,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -3258,7 +3482,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -3401,7 +3625,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || (table && draggedRows.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || pivotTable || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3692,7 +3916,7 @@
                                                         </div>
                                                   </div>
 
-                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="(table && chartId || pivotTable) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Banding </label>
                                                         </div>
@@ -3702,12 +3926,45 @@
                                                         <div *ngIf="!bandingSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('banding')">
                                                             <span></span>
                                                         </div>
+                                                        <ngx-colors *ngIf="bandingSwitch && pivotTable"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="bandingEvenColor"
+                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                     <ngx-colors *ngIf="bandingSwitch && pivotTable"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="bandingOddColor"
+                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
                                                     </div>
-                                             
-                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class=" mb-2 p-2 border rounded-2">
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                        <div class=""> 
+                                                            <label class="mb-0">Column Totals </label>
+                                                        </div>
+                                                        <div *ngIf="pivotColumnTotals" class="toggle toggle-sm on mb-0" (click)="renderPivotTable(false);pivotColumnTotals = false" >
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!pivotColumnTotals" class="toggle toggle-sm off mb-0" (click)="renderPivotTable(false);pivotColumnTotals = true" >
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                        <div class=""> 
+                                                            <label class="mb-0">Row Totals </label>
+                                                        </div>
+                                                        <div *ngIf="pivotRowTotals" class="toggle toggle-sm on mb-0" (click)="renderPivotTable(false);pivotRowTotals = false" >
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!pivotRowTotals" class="toggle toggle-sm off mb-0" (click)="renderPivotTable(false);pivotRowTotals = true" >
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class=" mb-2 p-2 border rounded-2">
                                                         <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
                                                             <label class="mb-0">Page Length</label>
-                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination()" class="form-control cursor w-40 p-1">
+                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination(false)" class="form-control cursor w-40 p-1">
                                                                 <option  [ngValue]="''" disabled> select page length</option>
                                                                   <option  [ngValue]="10"> 10</option>
                                                                   <option  value="50"> 50</option>
@@ -3717,7 +3974,7 @@
                                                             </select>
                                                          </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Zoom </label>
                                                         </div>
@@ -3729,7 +3986,7 @@
                                                         </div>
                                                     </div>
                                                   
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3785,14 +4042,14 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
                                                             class="accordion-button p-2 fw-500 border-0 rounded-2"
                                                             type="button"
                                                             data-bs-toggle="collapse"
-                                                            data-bs-target="#collapse"
+                                                            data-bs-target="#collapse" 
                                                             aria-expanded="true"
                                                             aria-controls="collapse"
                                                             >
@@ -3841,7 +4098,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((table && bandingSwitch && (draggedColumns.length !== 0 || draggedRows.length !==0)) || (((kpi || guage) && draggedRows.length === 1) || !(calendar || map || table)))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="((table && bandingSwitch && (draggedColumns?.length !== 0 || draggedRows?.length !==0)) || (((kpi || guage) && draggedRows?.length === 1) || !(calendar || map || table)))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3867,7 +4124,8 @@
                                                             <ng-template>
                                                                 <div *ngIf="!((table && chartId) || kpi || calendar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
-                                                                        <p>Background</p>
+                                                                        <p *ngIf="!pivotTable">Background</p>
+                                                                        <p *ngIf="pivotTable">Header Background</p>
                                                                     </div>
                                                                     <div *ngIf="backgroundColorSwitch" class="toggle toggle-sm on mb-0" (click)="backgroundColorSwitch = !backgroundColorSwitch; resetBackgroundColor()">
                                                                         <span></span>
@@ -3877,7 +4135,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="backgroundColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="backgroundColor"
+                                                                    [(ngModel)]="backgroundColor" (change)="pivotTable ? applyPIvotHeaderBg() : null"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -4017,7 +4275,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Banding color </p>
                                                                     </div>
@@ -4159,7 +4417,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage || calendar)" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="(draggedColumns?.length !== 0 || draggedRows?.length !==0) && !(kpi || guage || calendar ||pivotTable || (!isApexCharts && funnel))" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -4279,7 +4537,7 @@
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                    
-                                                    <div *ngIf="((pie && chartId) || donut || bar || map)  && draggedColumns && draggedColumns.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="((pie && chartId) || donut || bar || map)  && draggedColumns && draggedColumns?.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton

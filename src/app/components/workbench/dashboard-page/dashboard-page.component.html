@@ -189,7 +189,7 @@
           <div *ngIf="shareAsPrivate" class="">
             
             <p class="fw-semibold mb-2 mt-3">Users</p>
-            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(open)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
+            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(open)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [disabled]="selectedRoleIds.length === 0" [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
                 <ng-option *ngFor="let user of usersOnSelectedRole" [value]="user.user_id">{{user.username}}</ng-option>
               
             </ng-select>

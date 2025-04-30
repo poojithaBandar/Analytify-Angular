@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -52,11 +52,16 @@ import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 // import $ from 'jquery';
+import { saveAs } from 'file-saver';
 import 'pivottable';
 // import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/sortable';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
+
+import domtoimage from 'dom-to-image';
+import jsPDF from 'jspdf';
+
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -77,6 +82,11 @@ declare global {
     sortable(): JQuery;
   }
 }
+interface SqlSuggestion {
+  display: string;      // tablename.columnname
+  insert: string;       // "tablename"."columnname"
+}
+
 
 declare var $:any;
 
@@ -96,7 +106,7 @@ declare var $:any;
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
-export class SheetsComponent {
+export class SheetsComponent{
   tableColumnsData = [] as any;
   draggedtables = [] as any;
   draggedColumns = [] as any;
@@ -337,6 +347,9 @@ export class SheetsComponent {
   tableDataFontColor : any = '#000000';
   tableDataFontAlignment : any = 'left';
 
+  pivotColumnTotals:boolean = true;
+  pivotRowTotals:boolean = true;
+
   headerFontFamily : any = "'Arial', sans-serif";
   headerFontSize : any = '16px';
   headerFontWeight : any = 700;
@@ -372,6 +385,8 @@ export class SheetsComponent {
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  @ViewChild('sqlEditor') sqlEditor!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('pdfcontainer') pdfcontainer!: ElementRef;
 
   transformedData: any[] = [];
   columnKeys: string[] = [];
@@ -379,6 +394,8 @@ export class SheetsComponent {
   valueKeys: string[] = [];
   rawData: any = {};
   
+  bandingEvenColor= '#ffffff' 
+  bandingOddColor= '#f5f7fa' 
   // colorSchemes = [
   //   ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
   //   ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -401,6 +418,23 @@ export class SheetsComponent {
   deleteSheetInSheetComponent = false;
   canAddDashbaordInSheet = false;
   canEditDashbaordInSheet = false;
+
+  isRelativeDateValid : boolean = false;
+  minRangeValue : any = 1;
+  maxRangeValue : any = 100;
+  minRangeValueInput : any;
+  maxRangeValueInput : any;
+  measureRangeError : string = '';
+  measureValuesOptions : Options = {
+    floor: this.minRangeValue,
+    ceil: this.maxRangeValue,
+    step: 1,
+    showSelectionBar: true,
+    selectionBarGradient: {
+      from: '#5a66f1',
+      to: '#5a66f1',
+    }
+  };
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
       this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
@@ -463,32 +497,6 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    }
-  //  if(this.router.url.includes('/analytify/home/fileId/sheets/')){
-  //   this.fromFileId = true;
-  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
-  //     this.fileId = +atob(route.snapshot.params['id1']);
-  //     this.qrySetId = +atob(route.snapshot.params['id2'])
-  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
-  //     console.log(this.retriveDataSheet_id);
-  //     //this.tabs[0] = this.sheetName;
-  //     // this.sheetRetrive();
-  //     }
-  //  }
-
-
-  //  if(this.router.url.includes('/analytify/sheetsdashboard/sheets/fileId/')){
-  //   this.sheetsDashboard = true;
-  //   this.fromFileId = true;
-  //   console.log("landing page")
-  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
-  //     this.fileId = +atob(route.snapshot.params['id1']);
-  //     this.qrySetId = +atob(route.snapshot.params['id2']);
-  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
-  //     this.dashboardId = +atob(route.snapshot.params['id4']);
-  //     console.log(this.retriveDataSheet_id)
-  //     // this.sheetRetrive();
-  //     }
-  //  } 
    if(this.router.url.includes('/analytify/sheetsdashboard/sheets/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
@@ -507,6 +515,9 @@ export class SheetsComponent {
    this.canDrop = !this.canEditDb
   }
 
+  ngAfterViewInit(): void {
+
+  }
   ngOnInit(): void {
     this.loaderService.hide();
     this.columnsData();
@@ -646,6 +657,7 @@ try {
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
+        this.suggestions=[];
         const obj = {
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -654,20 +666,26 @@ try {
         this.workbechService.getColumnsData(obj).subscribe({
           next: (responce: any) => {
             console.log(responce);
+            if(responce.length > 0){
             this.tableColumnsData = responce;
             this.database_name = responce[0].database_name;
             this.isCustomSql = responce[0].is_custom_sql;
             this.tableDimentions = responce.dimensions;
             this.tableMeasures = responce.measures;
-          },
+            this.buildSuggestionsForCalculations(responce);
+          }
+        },
           error: (error) => {
             console.log(error);
           }
         }
         )
       }
+        
+      
 
-      dataExtraction(){
+
+      dataExtraction(isSyncData : boolean){
         this.dualAxisColumnData = [];
         this.tablePreviewColumn = [];
         this.tablePreviewRow = [];
@@ -799,12 +817,19 @@ try {
               this.chartType = 'sidebyside'
             }
             if(this.pivotTable){
-              this.pivotTableDatatransform();
+              this.pivotTableDatatransform(isSyncData);
             }
             if(this.table){
               this.page = 1;
               this.pageNo = 1;
-              this.tableDisplayPagination();
+              this.tableDisplayPagination(isSyncData);
+            }
+            if(isSyncData && !this.table && !this.pivotTable){
+              if(this.kpi){
+                this.sheetSave();
+              } else{
+                this.isSheetSaveOrUpdate = true;
+              }
             }
           },
           error: (error) => {
@@ -818,14 +843,14 @@ try {
       pageChangeTableDisplay(page:any){
         this.sortedData = [];
         this.pageNo=page;
-        this.tableDisplayPagination();
+        this.tableDisplayPagination(false);
       }
       tableDisplayPaginationSearch(){
         this.pageNo = 1;
         this.page = 1;
-        this.tableDisplayPagination();
+        this.tableDisplayPagination(false);
       }
-      tableDisplayPagination() {
+      tableDisplayPagination(isSyncData : boolean) {
         if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
           const obj = {
             hierarchy_id: this.databaseId,
@@ -871,6 +896,13 @@ try {
                   this.tableDataDisplay.push(tableRow);
                  // console.log('display row data ', this.tableDataDisplay)
                 }
+                if(this.page === 1 && this.pageNo === 1){
+                  this.displayedColumns = this.tableColumnsDisplay;
+                  this.tableDataStore = this.tableDataDisplay;
+                }
+                if(isSyncData){
+                  this.sheetSave();
+                }
               },
               error: (error) => {
                 console.log(error);
@@ -887,7 +919,7 @@ try {
       pivotRowData = [] as any;
       pivotColumnData = [] as any;
       pivotMeasureData = [] as any;
-        pivotTableDatatransform() {
+        pivotTableDatatransform(isSyncData : boolean) {
           if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
             this.transformedData =[];
           let headers: string[] = [];
@@ -930,24 +962,33 @@ try {
 
             this.transformedData.push(rowArray);
           }
-          this.renderPivotTable();        
+          this.renderPivotTable(isSyncData);        
         }
         }
 
-        renderPivotTable() {
+        renderPivotTable(isSyncData: boolean) {
           setTimeout(() => {
 
-          if (this.pivotContainer && this.pivotContainer.nativeElement) {
+            if (this.pivotContainer && this.pivotContainer.nativeElement) {
               ($(this.pivotContainer.nativeElement) as any).pivot(this.transformedData, {
-                rows: this.columnKeys,  
-                cols: this.valueKeys, 
+                rows: this.columnKeys,
+                cols: this.valueKeys,
                 // vals: this.valueKeys, 
-                aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
-                rendererName: "Table"
+                aggregator: $.pivotUtilities.aggregators["Sum"](this.rowKeys),
+                rendererName: "Table",
+                rendererOptions:{
+                  table:{
+                    rowTotals:this.pivotRowTotals,
+                    colTotals:this.pivotColumnTotals
+                  }
+                }
               });
-            // }, 1000);
-          }        
-                      }, 1000);
+              if (isSyncData) {
+                this.sheetSave();
+              }
+            }
+            this.applyDynamicStylesToPivot()
+          }, 1000);
 
         }
 
@@ -1186,8 +1227,10 @@ try {
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
-        this.dataExtraction();
+        this.dataExtraction(false);
       }
+      this.checkDateFormatForYOY();
+      // this.checkAggregationForYOY();
     }
     //dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32','date32'];
     // integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
@@ -1260,7 +1303,7 @@ try {
       this.rowMeasuresCount(element, event.currentIndex, 'sum');
       this.rowaggregateType = 'sum'
     } else {
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
 
   }
@@ -1269,7 +1312,8 @@ try {
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
-  selectedColumnForYOY :any;
+  // selectedColumnForYOY :any;
+  selectedColumnForPeriodType:any
   rowMeasuresCount(rows:any,index:any,type:any){
     // this.rowaggregateType = type;
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
@@ -1279,32 +1323,62 @@ try {
       }
     }
       this.measureValues = [];
-      if(type){
-        if(type == 'yoy'){
-          this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-        }else if(type == 'yoyRemove'){
-          this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-        }
-        else{
-        this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
+      let yoyType = this.draggedRows[index].type;
+      if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+        this.draggedRows[index].type = yoyType.split(' ')[2];
+        yoyType = this.draggedRows[index].type;
+      }
+      if (type) {
+        if (type === 'yoy' || type === 'mom' || type === 'qoq') {
+          this.measureValues = [
+            rows.column,
+            type,
+            this.selectedColumnForPeriodType + ':' + this.draggedRows[index].type,
+            rows.alias ? rows.alias : ""
+          ];
+        } else if (type === 'yoyRemove' || type === 'momRemove' || type === 'qoqRemove') {
+          this.measureValues = [
+            rows.column,
+            "aggregate",
+            this.draggedRows[index].type,
+            rows.alias ? rows.alias : ""
+          ];
+        } else {
+          this.measureValues = [
+            rows.column,
+            "aggregate",
+            type,
+            rows.alias ? rows.alias : ""
+          ];
         }
       }
+      
       else{
         this.measureValues = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
       }
      if(type === ''){
       this.draggedRowsData[index] = [rows.column,rows.data_type,type,rows.alias ? rows.alias : ""];
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
-      this.dataExtraction();
+      // this.dataExtraction();
      }else if(type === '-Select-'){
       this.draggedRowsData[index] = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'',alias:rows.alias};
-      this.dataExtraction();
+      // this.dataExtraction();
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
-    if(type !== 'yoy' && type !== 'yoyRemove'){
-    this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
+    if (type !== 'yoy' && type !== 'yoyRemove' && type !== 'mom' && type !== 'momRemove' && type !== 'qoq' && type !== 'qoqRemove') {
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
+    } 
+    // if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+    //   yoyType = yoyType.split(' ')[2];
+    // }
+    if(type == 'yoy'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'yoy of '+yoyType,alias:rows.alias};
+    } else if(type == 'mom'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'mom of '+yoyType,alias:rows.alias};
+    } else if(type == 'qoq'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'qoq of '+yoyType,alias:rows.alias};
     }
     console.log(this.draggedRows)
     if(type === 'count' || type === 'count_distinct'){
@@ -1317,8 +1391,9 @@ try {
       this.donutDecimalPlaces = 2;
     }
     this.checkAggregationForYOY();
-    this.dataExtraction();
-     }
+    // this.dataExtraction();
+    }
+    this.dataExtraction(false);
   }
   checkAggregateNotNone = false;
   checkAggregationForYOY(){
@@ -1339,7 +1414,7 @@ try {
     if (this.draggedColumnsData[index]) {
       this.draggedColumnsData[index][3] = column.alias ? column.alias : "";
       this.draggedColumns[index].alias = column.alias ? column.alias : "";
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
   }
   onPivotRowAliasChange(column : any , index : any){
@@ -1347,7 +1422,7 @@ try {
     if (this.draggedMeasureValuesData[index]) {
       this.draggedMeasureValuesData[index][3] = column.alias ? column.alias : "";
       this.draggedMeasureValues[index].alias = column.alias ? column.alias : "";
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
   }
    drop(event: CdkDragDrop<string[]>) {
@@ -1367,23 +1442,28 @@ try {
     console.log(this.draggedColumns);
     console.log(this.draggedColumnsData);
     console.log(index);
-    // this.draggedColumns.splice(index, 1);
-    // (this.draggedColumnsData as any[]).forEach((data,index1)=>{
-    //   if(this.dateList.includes(data[1])){
-    //     if(this.draggedColumns[index].column === data[0] && this.draggedColumns[index].data_type === data[1] 
-    //       && this.draggedColumns[index].type === data[2]){
-    //         this.draggedColumnsData.splice(index, 1);
-    //     }
-    //   }
-    //   else{
-    //     (data as any[]).forEach((aa)=>{ 
-    //       if(column === aa){
-    //         console.log(aa);
-    //         this.draggedColumnsData.splice(index1, 1);
-    //       }
-    //     } );
-    //   }
-    // });
+    const format = this.draggedColumnsData[index][2];
+    if (format && format !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
+
+          if (this.draggedColumnsData[index][0] === col) {
+            if (format && ['year', 'month', 'quarter'].includes(format) && format !== '') {
+              if((format === 'year' && row[1] ==='yoy') || (format === 'month' && row[1] ==='mom') || (format === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          
+        }
+        i++;
+      }
+    }
     if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
       this.draggedDrillDownColumns = [];
     }
@@ -1418,7 +1498,7 @@ try {
       }
       
     }
-   this.dataExtraction();
+   this.dataExtraction(false);
    this.checkDateFormatForYOY();
   }
   dragStartedRow(index:any,column:any){
@@ -1448,7 +1528,7 @@ try {
       this.sortType = 0;
     }
   }
-   this.dataExtraction();
+   this.dataExtraction(false);
   }
   rightArrow(){
     console.log(this.draggedColumns.length)
@@ -1503,12 +1583,15 @@ try {
     this.guage = guage;
     this.map = map;
     this.calendar = calendar;
-    // this.dataExtraction();
     if(!(this.bar|| this.pie || this.donut)){
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
       this.drillDownIndex = 0;
       this.dateDrillDownSwitch = false;
+    }
+    if(!this.pivotTable){
+      this.draggedMeasureValues=[]
+      this.draggedMeasureValuesData=[]
     }
     this.resetCustomizations();
     this.chartsOptionsSet(); 
@@ -1548,7 +1631,7 @@ try {
       }).then((result) => {
         if(result.isConfirmed){
           this.hasUnSavedChanges = false;
-          this.columnsData();
+          // this.columnsData();
           if (this.active !== 3){
             this.active = 1;
           }
@@ -1581,7 +1664,7 @@ try {
         }
       })
     }else{
-    this.columnsData();
+    // this.columnsData();
     if (this.active !== 3){
       this.active = 1;
     }
@@ -1853,7 +1936,7 @@ try {
             this.displayedColumns = [];
             this.retriveDataSheet_id = '';
             this.getChartData();
-            this.columnsData();
+            // this.columnsData();
             if (selectedSheetId) {
               this.retriveDataSheet_id = selectedSheetId;
               this.sheetRetrive(false);
@@ -1894,7 +1977,7 @@ try {
         this.displayedColumns = [];
         this.retriveDataSheet_id = '';
         this.getChartData();
-        this.columnsData();
+        // this.columnsData();
         if (selectedSheetId) {
           this.retriveDataSheet_id = selectedSheetId;
           this.sheetRetrive(false);
@@ -2274,7 +2357,12 @@ sheetSave(){
     KPIDecimalPlaces : this.KPIDecimalPlaces,
     KPIDisplayUnits : this.KPIDisplayUnits,
     KPIPrefix : this.KPIPrefix,
-    KPISuffix : this.KPISuffix
+    KPISuffix : this.KPISuffix,
+
+    pivotRowTotals:this.pivotRowTotals,
+    pivotColumnTotals : this.pivotColumnTotals,
+    bandingOddColor :this.bandingOddColor,
+    bandingEvenColor:this.bandingEvenColor,
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2633,7 +2721,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           // this.tableData = this.sheetResponce.results.tableData;
-          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          // this.displayedColumns = this.sheetResponce?.results.tableColumns;
           this.bandingSwitch = this.sheetResponce?.results.banding;
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
@@ -2657,7 +2745,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.calendar = false;
-          this.tableDisplayPagination();
+          this.tableDisplayPagination(false);
         }
         if(responce.chart_id == 9){
           // this.tableData = this.sheetResponce.results.tableData;
@@ -2682,7 +2770,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.calendar = false;
-          this.pivotTableDatatransform();
+          this.pivotTableDatatransform(false);
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce?.results?.kpiData;
@@ -3126,7 +3214,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false;
           this.calendar = true;
        }
+       if(this.sheetResponce.customizeOptions){
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
+       }
        this.getDimensionAndMeasures();
        this.changeSelectedColumn();
         // setTimeout(()=>{
@@ -3167,26 +3257,98 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   ceil: any;
   minDate: string = '';
   maxDate: string = '';
-  options: Options ={};
+  options: Options ={
+    floor: 0,
+    ceil: 100,
+    step: 1,
+    showSelectionBar: true,
+    selectionBarGradient: {
+      from: '#5a66f1',
+      to: '#5a66f1',
+    }
+  };
   filterDateRange : any[] = [];
-  updateDateRange() {
-    const format: Intl.DateTimeFormatOptions = { 
-      year: 'numeric',
-      month: '2-digit', 
-      day: '2-digit',  
-    };
-    const minDateObj = new Date(this.minValue);
-    const maxDateObj = new Date(this.maxValue);
-    this.minDate = `${minDateObj.getFullYear()}/${(minDateObj.getMonth() + 1).toString().padStart(2, '0')}/${minDateObj.getDate().toString().padStart(2, '0')}`;
-    this.maxDate = `${maxDateObj.getFullYear()}/${(maxDateObj.getMonth() + 1).toString().padStart(2, '0')}/${maxDateObj.getDate().toString().padStart(2, '0')}`;
-    this.filterDateRange = [this.minDate, this.maxDate];
+  dateRangeError : string = '';
+  updateDateRange(isInput:boolean) {
+    const datePattern = /^\d{4}\/\d{2}\/\d{2}$/;
+
+    if(isInput){
+      if (!datePattern.test(this.minDate) || !datePattern.test(this.maxDate)) {
+        this.dateRangeError = 'Invalid date format. Please enter the date in YYYY/MM/DD format.';
+        return;
+      }
+      const minDateObj = new Date(this.minDate);
+      const maxDateObj = new Date(this.maxDate); 
+      if (isNaN(minDateObj.getTime()) || isNaN(maxDateObj.getTime())) {
+        this.dateRangeError = 'Invalid date value. Please enter a valid date in YYYY/MM/DD format.';
+        return;
+      }     
+      if (minDateObj > maxDateObj) {
+        this.dateRangeError = 'Start date cannot be after the end date. Please choose an earlier start date or a later end date.';
+      } else if (maxDateObj < minDateObj) {
+        this.dateRangeError = 'End date cannot be before the start date. Please choose a later end date or an earlier start date.';
+      } else{
+        // if (minDateObj < (this.options.floor ?? this.minValue)) {
+        //   this.options = {
+        //     ...this.options,
+        //     floor: minDateObj.getTime()
+        //   };
+        // }
+        // if(maxDateObj > (this.options.ceil ?? this.maxValue)){
+        //   this.options = {
+        //     ...this.options,
+        //     ceil: maxDateObj.getTime()
+        //   };
+        // }
+        this.minValue = minDateObj.getTime();
+        this.maxValue = maxDateObj.getTime();
+        this.dateRangeError = '';
+      }
+    } else{
+      this.minDate = this.formatDate(new Date(this.minValue));
+      this.maxDate = this.formatDate(new Date(this.maxValue));
+      this.dateRangeError = '';
+    }
+    this.filterDateRange = [this.formatDate(new Date(this.minValue)), this.formatDate(new Date(this.maxValue))];
+  }
+  formatDate(date: Date): string {
+    return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+  }
+  updateMeasureRange(isInput:boolean){
+    if (isInput){
+      if(this.minRangeValueInput > this.maxRangeValueInput){
+        this.measureRangeError = 'The minimum value cannot be greater than the maximum range. Please enter a lower value for the minimum or increase the maximum range.'
+      } else if(this.maxRangeValueInput < this.minRangeValueInput){
+        this.measureRangeError = 'The maximum value cannot be less than the minimum range. Please enter a higher value for the maximum or decrease the minimum range.'
+      } else{
+        // if (this.minRangeValueInput < (this.measureValuesOptions.floor ?? this.minRangeValue)) {
+        //   this.measureValuesOptions = {
+        //     ...this.measureValuesOptions,
+        //     floor: this.minRangeValueInput
+        //   };
+        // }
+        // if(this.maxRangeValueInput > (this.measureValuesOptions.ceil ?? this.maxRangeValue)){
+        //   this.measureValuesOptions = {
+        //     ...this.measureValuesOptions,
+        //     ceil: this.maxRangeValueInput
+        //   };
+        // }
+        this.minRangeValue = this.minRangeValueInput;
+        this.maxRangeValue = this.maxRangeValueInput;
+        this.measureRangeError = '';
+      }
+    } else{
+      this.minRangeValueInput = this.minRangeValue;
+      this.maxRangeValueInput = this.maxRangeValue;
+      this.measureRangeError = '';
+    }
   }
   formatExtractType : string = '';
-  extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
+  extractTypesForTab : any[] = ['year','quarter','month','day','week numbers','weekdays','count','count_distinct','min','max'];
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     const obj={
       "hierarchy_id" :this.databaseId,
@@ -3205,21 +3367,26 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         console.log(responce);
         const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
         this.filterData = convertedArray;
-        if(this.dateList.includes(responce.dtype)){
+        if(this.dateList.includes(responce.dtype) && this.activeTabId === 2){
           let rawLabel = this.filterData[0].label;
-          let datePart = rawLabel.split(" ")[0];
-          let [year, month, day] = datePart.split("/");
-          this.floor = new Date(`${year}-${month}-${day}`).getTime();
-          // this.floor = new Date(this.filterData[0].label).getTime();
+          // let datePart = rawLabel.split(" ")[0];
+          // let [year, month, day] = datePart.split("/");
+          // this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          if(!rawLabel || rawLabel === '' || rawLabel.toLowerCase === 'nan' || rawLabel === null){
+            rawLabel = this.filterData[1].label;
+          }
+          this.floor = new Date(rawLabel).getTime();
 
           rawLabel = this.filterData[this.filterData.length - 1].label;
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
-          this.ceil = new Date(`${year}-${month}-${day}`).getTime();
-          // this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
+          // this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          this.ceil = new Date(rawLabel).getTime();
 
           this.minValue = this.floor;
           this.maxValue = this.ceil;
+          this.minDate = this.floor;
+          this.maxDate = this.ceil;
           this.options = {
             floor: this.floor,
             ceil: this.ceil,
@@ -3230,16 +3397,42 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
               to: '#5a66f1',
             },
             translate: (value: number): string => {
-              return new Date(value).toLocaleDateString();
+              const date = new Date(value);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0');
+              const day = String(date.getDate()).padStart(2, '0');
+              return `${year}/${month}/${day}`;
             }
           };
-          this.updateDateRange();
           this.filterDateRange = [];
+          this.updateDateRange(false);
+        }
+        if(this.integerList.includes(responce.dtype) && this.activeTabId === 6){
+          let min = this.filterData[0].label;
+          if(min === undefined || min === '' || String(min).toLowerCase() === 'nan' || min === null){
+            min = this.filterData[1].label;
+          }
+          this.minRangeValue = min;
+          this.maxRangeValue = this.filterData[this.filterData.length - 1].label;
+          this.minRangeValueInput = this.minRangeValue;
+          this.maxRangeValueInput = this.maxRangeValue;
+          this.measureValuesOptions = {
+            floor: this.minRangeValue,
+            ceil: this.maxRangeValue,
+            step: 0.1,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            }
+          };
+          this.updateMeasureRange(false);
         }
         //this.filter_id = responce.filter_id;
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3297,7 +3490,7 @@ trackByFn(index: number, item: any): number {
     let relativeDateRange : any[]=[];
     this.sortedData = [];
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
@@ -3316,7 +3509,7 @@ trackByFn(index: number, item: any): number {
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
-    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
+    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
     "select_values":Array.from(this.filterDataArray),
     "col_name":this.filterName,
     "data_type":this.filterType,
@@ -3334,7 +3527,7 @@ trackByFn(index: number, item: any): number {
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-        this.dataExtraction();
+        this.dataExtraction(false);
         this.filterDataArray.clear();
         this.filterDateRange = [];
         this.formatExtractType = '';
@@ -3347,6 +3540,7 @@ trackByFn(index: number, item: any): number {
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3373,12 +3567,17 @@ trackByFn(index: number, item: any): number {
           this.topLimit = responce?.top_bottom[2];
           this.selectedTopColumn = responce?.top_bottom[0];
           this.topAggregate = responce?.top_bottom[1];
+          this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
         }
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day' && !responce?.relative_date){
-          this.activeTabId = 2;
+        else if(responce?.range_values && responce?.range_values.length > 0 && !responce?.relative_date){
+          if(responce?.format_type === 'year/month/day'){
+            this.activeTabId = 2;
+          } else{
+            this.activeTabId = 6;
+          }
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
           this.activeTabId = 4;
@@ -3401,33 +3600,45 @@ trackByFn(index: number, item: any): number {
         //   this.filterData.push(element);
         //  // Force update
         // });
-        this.filterData.forEach((filter:any)=>{
-          if(filter.selected){
-            this.filterDataArray.add(filter.label);
-          }
-        })
+        if(![2,6].includes(this.activeTabId)){
+          this.filterData.forEach((filter:any)=>{
+            if(filter.selected){
+              this.filterDataArray.add(filter.label);
+            }
+          });
+        }
         if(this.dateList.includes(responce.data_type) && responce?.range_values){
           let rawLabel = this.filterData[0].label;
-          let datePart = rawLabel.split(" ")[0];
-          let [year, month, day] = datePart.split("/");
-          this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          // let datePart = rawLabel.split(" ")[0];
+          // let [year, month, day] = datePart.split("/");
+          // this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          if(!rawLabel || rawLabel === '' || rawLabel.toLowerCase === 'nan' || rawLabel === null){
+            rawLabel = this.filterData[1].label;
+          }
+          this.floor = new Date(rawLabel).getTime();
 
           rawLabel = this.filterData[this.filterData.length - 1].label;
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
-          this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
+          // this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          this.ceil = new Date(rawLabel).getTime();
 
           rawLabel = responce.range_values[0];
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
 
-          this.minValue = new Date(`${year}-${month}-${day}`).getTime();
+          // this.minValue = new Date(`${year}-${month}-${day}`).getTime();
+          this.minValue = new Date(rawLabel).getTime();
+
 
           rawLabel = responce.range_values[responce.range_values.length - 1];
-          datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("/");
+          // datePart = rawLabel.split(" ")[0];
+          // [year, month, day] = datePart.split("/");
 
-          this.maxValue = new Date(`${year}-${month}-${day}`).getTime();
+          // this.maxValue = new Date(`${year}-${month}-${day}`).getTime();
+          this.maxValue = new Date(rawLabel).getTime();
+          this.minDate = this.minValue;
+          this.maxDate = this.maxValue;
 
           this.options = {
             floor: this.floor,
@@ -3439,16 +3650,41 @@ trackByFn(index: number, item: any): number {
               to: '#5a66f1',
             },
             translate: (value: number): string => {
-              return new Date(value).toLocaleDateString();
+              const date = new Date(value);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0');
+              const day = String(date.getDate()).padStart(2, '0');
+              return `${year}/${month}/${day}`;
             }
           };
-
-          this.updateDateRange();
           this.filterDateRange = [];
+          this.updateDateRange(false);
+        }
+        if(this.integerList.includes(responce.data_type) && this.activeTabId === 6){
+          this.minRangeValue = responce.range_values[0];
+          this.maxRangeValue =  responce.range_values[responce.range_values.length - 1];
+          this.minRangeValueInput = this.minRangeValue;
+          this.maxRangeValueInput = this.maxRangeValue;
+          let min = this.filterData[0].label;
+          if(min === undefined || min === '' || String(min).toLowerCase() === 'nan' || min === null){
+            min = this.filterData[1].label;
+          }
+          this.measureValuesOptions = {
+            floor: min,
+            ceil: this.filterData[this.filterData.length - 1].label,
+            step: 0.1,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            }
+          };
+          this.updateMeasureRange(false);
         }
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3457,6 +3693,9 @@ trackByFn(index: number, item: any): number {
   filterDataEditPut(){
     this.sortedData = [];
     let relativeDateRange : any[] = [];
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
+    }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
         const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
@@ -3474,7 +3713,7 @@ trackByFn(index: number, item: any): number {
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
-      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
+      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
       "select_values":Array.from(this.filterDataArray),
       "col_name":this.filterName,
       "data_type":this.filterType,
@@ -3488,7 +3727,7 @@ trackByFn(index: number, item: any): number {
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-          this.dataExtraction();
+          this.dataExtraction(false);
           this.filterDataArray.clear();
           this.filterDateRange = [];
           this.isAllSelected = false;
@@ -3500,6 +3739,7 @@ trackByFn(index: number, item: any): number {
         },
         error: (error) => {
           console.log(error);
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
         }
       }
     )
@@ -3512,10 +3752,11 @@ trackByFn(index: number, item: any): number {
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-         this.dataExtraction();
+         this.dataExtraction(false);
       },
       error: (error) => {
         console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
       }
     }
   )
@@ -3607,31 +3848,6 @@ let reName=`${this.draggedColumnsData.at(index)}`;
 console.log(reName.split(',')[0])
 }
 
-renameColumn(index:any,column:any,event:any){
-  this.newColumn = '';
-  this.newColumn = column;
-  if (event.keyCode === 13) {
-  this.renameColumns();
- }
-}
-renameColumns(){
-  const obj={
-    "database_id":this.databaseId,
-    "queryset_id":this.qrySetId,
-    "old_col_name" :this.oldColumn,
-    "new_col_name":this.newColumn
-}
-  this.workbechService.renameColumn(obj).subscribe({next: (responce:any) => {
-        console.log(responce);
-        this.columnsData();
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    }
-  )
- }
-
   editorConfig = {
     fontFamily: {
       options: [
@@ -3696,6 +3912,9 @@ renameColumns(){
         this.color1 = undefined;
         this.color2 = undefined;
       }
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
@@ -3756,31 +3975,35 @@ renameColumns(){
   formatKPINumber() {
     let formattedNumber = this.tablePreviewRow[0]?.result_data[0]+'';
     let value = this.tablePreviewRow[0]?.result_data[0];
-    if (this.KPIDisplayUnits !== 'none') {
-      switch (this.KPIDisplayUnits) {
-        case 'K':
-          formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
-          break;
-        case 'M':
-          formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
-          break;
-        case 'B':
-          formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
-          break;
-        case 'G':
-          formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
-          break;
-        case '%':
-          this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
-          let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
-          formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
-          break;
+    if(value === null || value === undefined){
+      this.KPINumber = 0;
+    } else{
+      if (this.KPIDisplayUnits !== 'none') {
+        switch (this.KPIDisplayUnits) {
+          case 'K':
+            formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
+            break;
+          case 'M':
+            formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
+            break;
+          case 'B':
+            formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
+            break;
+          case 'G':
+            formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
+            break;
+          case '%':
+            this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+            let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+            formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+            break;
+        }
+      } else {
+        formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
       }
-    } else {
-      formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
+  
+      this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
     }
-
-    this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
   }
   numberPopupTrigger(){
     this.numberPopup = !this.numberPopup;
@@ -3870,7 +4093,7 @@ fetchChartData(chartData: any){
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
             this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,10);
           }
-          this.dataExtraction();
+          this.dataExtraction(false);
 
 }
 customizechangeChartPlugin() {
@@ -4012,7 +4235,11 @@ customizechangeChartPlugin() {
     this.KPIDecimalPlaces = data.KPIDecimalPlaces ?? 2,
     this.KPIDisplayUnits = data.KPIDisplayUnits ?? 'none',
     this.KPIPrefix = data.KPIPrefix ?? '',
-    this.KPISuffix = data.KPISuffix ?? ''
+    this.KPISuffix = data.KPISuffix ?? '',
+    this.pivotRowTotals = data.pivotRowTotals ?? true,
+    this.pivotColumnTotals = data.pivotColumnTotals ?? true,
+    this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff' 
+    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa' 
   }
 
   resetCustomizations(){
@@ -4104,6 +4331,11 @@ customizechangeChartPlugin() {
     this.rightLegend = null
     this.sortColumn = 'select';
     this.locationDrillDownSwitch = false;
+
+    this.pivotColumnTotals = true;
+    this.pivotRowTotals = true;
+    this.bandingEvenColor= '#ffffff' 
+    this.bandingOddColor= '#f5f7fa' 
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
     // this.KPIPrefix = '',
@@ -4263,6 +4495,7 @@ customizechangeChartPlugin() {
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = format;
     }
+    const prvFormat = this.draggedColumnsData[index][2];
     if(format === ''){
       this.draggedColumnsData[index] = [column.column,column.data_type,format,column.alias ? column.alias : ""];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format, alias: column.alias ? column.alias : ""};
@@ -4276,22 +4509,62 @@ customizechangeChartPlugin() {
       console.log(this.draggedColumns);
      }
      this.checkDateFormatForYOY();
-     this.dataExtraction();
+    if (prvFormat && prvFormat !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
+
+          if (this.draggedColumnsData[index][0] === col) {
+            if (prvFormat && prvFormat !== this.draggedColumnsData[index][2] && ['year', 'month', 'quarter'].includes(prvFormat) && prvFormat !== '') {
+              if((prvFormat === 'year' && row[1] ==='yoy') || (prvFormat === 'month' && row[1] ==='mom') || (prvFormat === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          
+        }
+        i++;
+      }
+    }
+     this.dataExtraction(false);
   }
   checkdatetype= false;
+  hasYearType = false;
+  hasMonthType = false;
+  hasQuaterType = false;
   checkDateFormatForYOY(){
     // this.checkdatetype = this.draggedColumns.every((col: { type: string; }) => col.type === 'year');
-    const hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
-    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
-    this.checkdatetype = hasYearType && hasDateFormat;
+    this.hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
+    this.hasMonthType = this.draggedColumns.some((col: { type: string; }) => col.type === 'month');
+    this.hasQuaterType = this.draggedColumns.some((col: { type: string; }) => col.type === 'quarter');
 
-    this.yearColumns = this.draggedColumns
-  .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
+    // this.checkdatetype = hasYearType && hasDateFormat;
+
+    if (this.hasYearType) {
+      this.yearColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    }
+    if (this.hasMonthType) {
+      this.monthColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'month').map((col: { column: any; }) => col.column);
+    }
+    if (this.hasQuaterType) {
+      this.quaterColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'quarter').map((col: { column: any; }) => col.column);
+    }
   }
+ 
+
   dateAggregation(column:any, index:any, type:any){
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = type;
     }
+    const prvFormat = this.draggedColumnsData[index][2];
     if (type === '') {
       this.draggedColumnsData[index] = [column.column, column.data_type, type, column.alias ? column.alias : ""];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
@@ -4301,7 +4574,29 @@ customizechangeChartPlugin() {
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
     }
-    this.dataExtraction();
+    if (prvFormat && prvFormat !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
+
+          if (this.draggedColumnsData[index][0] === col) {
+            if (prvFormat && prvFormat !== this.draggedColumnsData[index][2] && ['year', 'month', 'quarter'].includes(prvFormat) && prvFormat !== '') {
+              if((prvFormat === 'year' && row[1] ==='yoy') || (prvFormat === 'month' && row[1] ==='mom') || (prvFormat === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          
+        }
+        i++;
+      }
+    }
+    this.dataExtraction(false);
+    this.checkDateFormatForYOY();
   }
   dateFormatForPivotRow(column:any, index:any, format:any){
     if(format === ''){
@@ -4315,7 +4610,7 @@ customizechangeChartPlugin() {
       this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: format, alias: column.alias ? column.alias : "" };
       console.log(this.draggedMeasureValues);
     }
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
   dateAggregationForPivotRow(column:any, index:any, type:any){
     if (type === '') {
@@ -4327,7 +4622,7 @@ customizechangeChartPlugin() {
       this.draggedMeasureValues[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedMeasureValues);
     }
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
 
   sliderOptions = {
@@ -4370,7 +4665,7 @@ customizechangeChartPlugin() {
       this.drillDownObject = this.drillDownObject.slice(0, index - 1);
       this.drillDownIndex = index - 1;
     } 
-       this.dataExtraction();
+       this.dataExtraction(false);
       }
       draggedMeasureValuesData = [] as any;
       measureValuesdrop(event: CdkDragDrop<string[]>){
@@ -4397,14 +4692,14 @@ customizechangeChartPlugin() {
           this.dateFormatForPivotRow(element, event.currentIndex, 'year');
         } else {
           console.log('measurerows',this.draggedMeasureValuesData)
-          this.dataExtraction();
+          this.dataExtraction(false);
         }
       }
 
       removemeasureValuesRow(index:any,column:any){
         this.draggedMeasureValues.splice(index, 1);
         this.draggedMeasureValuesData.splice(index, 1);
-        this.dataExtraction();
+        this.dataExtraction(false);
 
       }
       toggleDateSwitch(){
@@ -4425,7 +4720,7 @@ customizechangeChartPlugin() {
               this.drillDownObject = [];
             }
              
-            this.dataExtraction();
+            this.dataExtraction(false);
          }
 
   toggleLocationSwitch(onColumnRemove : boolean) {
@@ -4463,11 +4758,11 @@ customizechangeChartPlugin() {
       this.drillDownObject = [];
     }
 
-    this.dataExtraction();
+    this.dataExtraction(false);
   }
         
           callDrillDown(){
-            this.dataExtraction();
+            this.dataExtraction(false);
           }
         
           goDrillDownBack(){
@@ -4632,6 +4927,9 @@ customizechangeChartPlugin() {
       }
       resetBackgroundColor(){
         this.backgroundColor = '#ffffff';
+        if(this.pivotTable){
+          this.applyDynamicStylesToPivot();
+        }
       }
       resetKpiColor(){
         this.kpiColor = '#0f0f0f';
@@ -4742,6 +5040,8 @@ customizechangeChartPlugin() {
       })
     }
 
+    
+    
     dropCalculatedField(tableName: string , columnName : string){
       let regex;
       let hasContentInsideParentheses;
@@ -4757,7 +5057,13 @@ customizechangeChartPlugin() {
         break; 
         case 'round':
         this.calculatedFieldLogic = 'ROUND("' + tableName + '"."' + columnName + '")';
+        break;
+        case 'zn':
+        this.calculatedFieldLogic = 'ZN("' + tableName + '"."' + columnName + '")';
            break; 
+       case 'ifnull':
+            this.calculatedFieldLogic = 'COALESCE("' + tableName + '"."' + columnName + '")';
+               break; 
         case 'left': 
         regex = /^LEFT\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
         this.calculatedFieldLogic.trim();
@@ -4851,7 +5157,8 @@ customizechangeChartPlugin() {
         case 'datepart': 
         this.calculatedFieldLogic = 'DATE_PART("year", ' + '"'+ tableName +'"."'+ columnName + '")';
         break; 
-        case 'now': break; 
+        case 'now': 
+        break;
         case 'today': break; 
         case 'parse': 
         this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '", "dd-mm-yyyy")';
@@ -4918,7 +5225,7 @@ customizechangeChartPlugin() {
     console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
     if (item && item.column && item.table_name) {
-      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic' || this.calculatedFieldFunction == 'Custom')) {
         this.dropCalculatedField(item.table_name, item.column); 
       } else {
         if (this.calculatedFieldLogic?.length) {
@@ -4928,7 +5235,7 @@ customizechangeChartPlugin() {
         }
       }
     }else if(item && item.column && item.data_type === 'calculated'){
-      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic' || this.calculatedFieldFunction == 'Custom')) {
         this.dropCalculatedField('calculated_fields', item.field_name); 
       } else {
         if (this.calculatedFieldLogic?.length) {
@@ -4940,7 +5247,7 @@ customizechangeChartPlugin() {
   }
 
   applyCalculatedFields(event: any, ngbdropdownevent: any) {
-    if (!(this.calculatedFieldFunction == 'arithematic')) {
+    if (!(this.calculatedFieldFunction == 'arithematic' || this.calculatedFieldFunction == 'Custom')) {
       this.validateCalculatedField();
     } else {
       this.validateExpression();
@@ -5011,6 +5318,9 @@ customizechangeChartPlugin() {
     }
 
     validateExpression(): void {
+      if(this.calculatedFieldFunction == 'Custom'){
+        this.isValidCalculatedField = true;
+      }else{
       try {
         this.preValidateExpression(this.calculatedFieldLogic);
         const regex = /"([^"]+)"\.\"([^"]+)\"/g;
@@ -5024,6 +5334,7 @@ customizechangeChartPlugin() {
         this.validationMessage = (error as Error).message;
         this.isValidCalculatedField = false;
       }
+    }
     }
 
     validateFormula(regex: RegExp){
@@ -5075,6 +5386,17 @@ customizechangeChartPlugin() {
             return true;
           }
            break; 
+           case 'zn':
+            if(!this.validateFormula(/^ZN\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
+              this.isValidCalculatedField = false;
+              this.validationMessage = 'Invalid Syntax';
+              return false;
+            } 
+            else{
+              this.isValidCalculatedField = true;
+              return true;
+            }
+             break; 
         case 'left': 
         if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
@@ -5242,7 +5564,7 @@ customizechangeChartPlugin() {
           } 
           break; 
         case 'ifnull': 
-        if(!this.validateFormula(/^COALESCE\(\s*([^,]+(?:\s*,\s*[^,]+)*)\s*\)$/)){
+        if(!this.validateFormula(/^COALESCE\s*\(\s*("?[a-zA-Z_][\w]*"?(?:\."?[a-zA-Z_][\w]*"?)*)(?:\s*,\s*("?[a-zA-Z_][\w]*"?(?:\."?[a-zA-Z_][\w]*"?)*|\d+|'[^']*'|"[^"]*"))+\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5252,6 +5574,17 @@ customizechangeChartPlugin() {
           return true;
         }
         break; 
+        case 'ifelse': 
+        if(!this.validateFormula(/^IF\s+.+?\s+THEN\s+.+?(\s+ELSE\s+IF\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END$/i)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break;
         case 'average': 
         if(!this.validateFormula(/^AVG\(\s*.+?\s*\)$/)){
           this.isValidCalculatedField = false;
@@ -5326,9 +5659,11 @@ customizechangeChartPlugin() {
     calculatedFieldData(){
       this.nestedCalculatedFieldData = '';
       this.calculatedFieldLogic = '';
+      this.validationMessage = '';
     }
 
     nestedCalculatedFieldFunction(){
+      this.validationMessage = '';
       switch(this.nestedCalculatedFieldData) {
         case 'abs':
           this.calculatedFieldLogic = 'ABS()';
@@ -5341,6 +5676,9 @@ customizechangeChartPlugin() {
         break; 
         case 'round':
         this.calculatedFieldLogic = 'ROUND()';
+           break; 
+        case 'zn':
+        this.calculatedFieldLogic = 'ZN()';
            break; 
         case 'left': 
         this.calculatedFieldLogic = 'LEFT( , )';
@@ -5382,7 +5720,7 @@ customizechangeChartPlugin() {
         this.calculatedFieldLogic = "DATE_PART('year', current_timestamp)";
         break; 
         case 'now': 
-        this.calculatedFieldLogic = 'current_timestamp()';
+        this.calculatedFieldLogic = 'now()';
         break; 
         case 'today': 
         this.calculatedFieldLogic = 'CURRENT_DATE()';
@@ -5392,6 +5730,9 @@ customizechangeChartPlugin() {
         break; 
         case 'case':
           this.calculatedFieldLogic = 'CASE expression WHEN value THEN result ELSE default END';
+        break; 
+        case 'ifelse':
+          this.calculatedFieldLogic = 'IF condition THEN result ELSEIF condition THEN result ELSE default END';
         break; 
         case 'ifnull':
           this.calculatedFieldLogic = 'COALESCE()';
@@ -5425,6 +5766,9 @@ customizechangeChartPlugin() {
       this.selectedElement = event.target as HTMLElement;
       this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.tableDataFontColor = window.getComputedStyle(element).backgroundColor;
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     headerColorChange(event:any){
       if (this.selectedElement) {
@@ -5434,6 +5778,9 @@ customizechangeChartPlugin() {
       this.selectedElement = event.target as HTMLElement;
       this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.headerFontColor = window.getComputedStyle(element).backgroundColor;
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     sortedData : TableRow[] = [];
     tableColumnSort(sortType:any, column : any){
@@ -5484,6 +5831,7 @@ customizechangeChartPlugin() {
      this.calculatedFieldLogic = '';
      this.isEditCalculatedField = false;
       }
+      this.validationMessage = '';
     }
 
     isMapChartDrillDown : boolean = false;
@@ -5501,7 +5849,7 @@ customizechangeChartPlugin() {
       //   }
       // }
       this.setOriginalData();
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
@@ -5609,12 +5957,23 @@ customizechangeChartPlugin() {
     }
     changeSelectedColumn(){
       console.log(this.sortColumn);
-      this.columnNamesForSort.forEach((column:any,index:any)=>{
-        if((this.sortColumn.alias && this.sortColumn.alias === column.alias) || (this.sortColumn.field_name && this.sortColumn.field_name === column.field_name) || (this.sortColumn.type && this.sortColumn.type === column.type && this.sortColumn.column === column.column) || (this.sortColumn.column && this.sortColumn.column === column.column)){
-          this.sortColumn = column;
-          this.selectedColumnIndex = index;
+      if(this.sortColumn !== 'select'){
+        for (let index = 0; index < this.columnNamesForSort.length; index++) {
+          const column = this.columnNamesForSort[index];
+        
+          const isMatch =
+            (!this.sortColumn?.alias || this.sortColumn?.alias === column?.alias) &&
+            (!this.sortColumn?.field_name || this.sortColumn?.field_name === column?.field_name) &&
+            (!this.sortColumn?.type || this.sortColumn?.type === column?.type) &&
+            (!this.sortColumn?.column || this.sortColumn?.column === column?.column);
+        
+          if (isMatch) {
+            this.sortColumn = column;
+            this.selectedColumnIndex = index;
+            break;
+          }
         }
-      });
+      }
     }
     sortColumns(){
       if(this.sortType === 'none' || this.sortType === 0){
@@ -5626,7 +5985,7 @@ customizechangeChartPlugin() {
           this.selectedSortColumnData = column;
         }
       }
-      this.dataExtraction();
+      this.dataExtraction(false);
     }
     
     //years
@@ -5660,8 +6019,13 @@ customizechangeChartPlugin() {
         startDate = firstYear.start;
         endDate = lastYear.end;
       }
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getYearDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5711,8 +6075,13 @@ customizechangeChartPlugin() {
         endDate = lastQuarter.end;
       }
       
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getQuarterDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5770,8 +6139,13 @@ customizechangeChartPlugin() {
         endDate = lastMonth.end;
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getMonthDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5828,8 +6202,13 @@ customizechangeChartPlugin() {
         endDate = lastWeek.end;
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getWeekDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5872,8 +6251,13 @@ customizechangeChartPlugin() {
         endDate = this.getDayDate(this.next - 1); // End N days forward
       }
 
-      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
-      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      if(startDate){
+        this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      }
+      if(endDate){
+        this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+      }
+      this.isRelativeDateValid = this.applyButtonDisableForRelativeDates();
     }
     getDayDate(offset: number): Date {
       let now;
@@ -6097,11 +6481,490 @@ toggleQuickCalculation() {
 }
 yearLength = 2; // Example value, dynamically set based on your data
 yearColumns = [];
-// @HostListener('document:click', ['$event'])
-// closeQuickCalcDropdown(event: Event) {
-//     const targetElement = event.target as HTMLElement;
-//     if (!targetElement.closest('.position-relative')) {
-//         this.quickCalcOpen = false;
-//     }
-// }
+monthColumns = [];
+quaterColumns = [];
+// calculatedFieldLogic = '';
+showSuggestions = false;
+filteredSuggestions: SqlSuggestion[] = [];
+caretTop = 0;
+caretLeft = 0;
+
+// suggestions: string[] = [
+//   'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'JOIN',
+//   'COALESCE', 'IFNULL', 'COUNT', 'SUM', 'AVG'
+// ];
+suggestions: SqlSuggestion[] = [];
+
+buildSuggestionsForCalculations(data:any){
+  const results: SqlSuggestion[] = [];
+
+  data.forEach((table: { table_name: any; dimensions: any; measures: any; }) => {
+    const tableName = table.table_name;
+    (table.dimensions || []).forEach((dim: any) => {
+      if (dim.column) {
+        results.push({
+          display: `${tableName}.${dim.column}`,
+          insert: `"${tableName}"."${dim.column}"`
+        });
+      }
+    });
+
+    (table.measures || []).forEach((meas: any) => {
+      if (meas.column) {
+        results.push({
+          display: `${tableName}.${meas.column}`,
+          insert: `"${tableName}"."${meas.column}"`
+        });
+      }
+    });
+  });
+  this.suggestions.push(...results);
+  console.log('calculationsuggestions',this.suggestions)
 }
+selectedSuggestionIndex: number = -1;
+
+onTextAreaKeyUp(event: KeyboardEvent) {
+  const input = this.sqlEditor.nativeElement;
+  const caretPosition = input.selectionStart || 0;
+  const textBefore = input.value.slice(0, caretPosition);
+  const wordMatch = textBefore.match(/(\w+)$/);
+  const currentWord = wordMatch ? wordMatch[1] : '';
+
+  if (event.key === 'ArrowDown' && this.showSuggestions) {
+    this.selectedSuggestionIndex = Math.min(this.selectedSuggestionIndex + 1, this.filteredSuggestions.length - 1);
+    event.preventDefault();
+    return;
+  }
+
+  if (event.key === 'ArrowUp' && this.showSuggestions) {
+    this.selectedSuggestionIndex = Math.max(this.selectedSuggestionIndex - 1, 0);
+    event.preventDefault();
+    return;
+  }
+
+  if (event.key === 'Enter' && this.showSuggestions && this.selectedSuggestionIndex >= 0) {
+    event.preventDefault();
+    const selected = this.filteredSuggestions[this.selectedSuggestionIndex];
+    if (selected) {
+      this.selectSuggestion(selected);
+    }
+    return;
+  }
+
+  if (event.ctrlKey && event.key === ' ') {
+    this.filteredSuggestions = [...this.suggestions];
+    this.showSuggestions = true;
+    this.selectedSuggestionIndex = 0;
+    this.setSuggestionDropdownPosition();
+    return;
+  }
+
+  if (currentWord.length > 0) {
+    this.filteredSuggestions = this.suggestions.filter(s =>
+      s.display.toLowerCase().includes(currentWord.toLowerCase())
+    );
+    this.showSuggestions = true;
+    this.selectedSuggestionIndex = 0;
+    this.setSuggestionDropdownPosition();
+  } else {
+    this.filteredSuggestions = [];
+    this.showSuggestions = false;
+    this.selectedSuggestionIndex = -1;
+  }
+}
+
+
+selectSuggestion(suggestion: SqlSuggestion) {
+  const input = this.sqlEditor.nativeElement;
+  const caretPosition = input.selectionStart || 0;
+  const textBefore = input.value.slice(0, caretPosition);
+  const textAfter = input.value.slice(caretPosition);
+  const match = textBefore.match(/(\w+)$/);
+  const wordStart = match ? caretPosition - match[1].length : caretPosition;
+
+  this.calculatedFieldLogic =
+    textBefore.slice(0, wordStart) + suggestion.insert + textAfter;
+
+  setTimeout(() => {
+    input.focus();
+    const newCaretPos = wordStart + suggestion.insert.length;
+    input.setSelectionRange(newCaretPos, newCaretPos);
+  });
+
+  this.showSuggestions = false;
+}
+
+
+setSuggestionDropdownPosition() {
+  const textarea = this.sqlEditor.nativeElement;
+  const coords = this.getCaretCoordinates(textarea, textarea.selectionEnd);
+
+  const containerRect = textarea.getBoundingClientRect(); // textarea position on screen
+  const viewportHeight = window.innerHeight;
+
+  const dropdownHeight = 200; // estimated
+  const lineHeight = 20;      // estimated line height
+  const dropdownWidth = 250;
+
+  // Calculate available space below the caret relative to viewport
+  const caretAbsoluteTop = containerRect.top + coords.top;
+  const showAbove = caretAbsoluteTop + dropdownHeight > viewportHeight;
+
+  // Set top relative to textarea
+  this.caretTop = showAbove
+    ? coords.top - dropdownHeight - 4 // a little spacing
+    : coords.top + lineHeight;
+
+  // Prevent overflow on X
+  const maxLeft = textarea.offsetWidth - dropdownWidth;
+  this.caretLeft = Math.min(coords.left, maxLeft);
+}
+
+
+updateCaretPosition() {
+  this.setSuggestionDropdownPosition();
+}
+
+hideSuggestions() {
+  setTimeout(() => this.showSuggestions = false, 200); // small delay for click
+}
+
+// Use a small utility to get caret coordinates
+getCaretCoordinates(textarea: HTMLTextAreaElement, position: number) {
+  const div = document.createElement('div');
+  const style = getComputedStyle(textarea);
+
+  for (let i = 0; i < style.length; i++) {
+    const prop = style[i];
+    div.style.setProperty(prop, style.getPropertyValue(prop));
+  }
+
+  div.style.position = 'absolute';
+  div.style.visibility = 'hidden';
+  div.style.whiteSpace = 'pre-wrap';
+  div.style.wordWrap = 'break-word';
+  div.style.width = textarea.offsetWidth + 'px';
+
+  const text = textarea.value.substring(0, position);
+  const span = document.createElement('span');
+  span.textContent = '\u200b'; // zero-width space
+  div.textContent = text;
+  div.appendChild(span);
+  document.body.appendChild(div);
+
+  const { offsetLeft: left, offsetTop: top } = span;
+  document.body.removeChild(div);
+
+  return { top, left };
+}
+  refreshSheetData(){
+    this.columnsData();
+    this.dataExtraction(true);
+  }
+  downloadAsCSV() {
+    if (!this.retriveDataSheet_id) return;
+
+    this.loaderService.show();
+    const obj = {
+      "queryset_id": this.qrySetId,
+      "server_id": this.databaseId,
+    };
+
+    this.workbechService.sheetGet(obj, this.retriveDataSheet_id).subscribe({
+      next: (sheetData) => {
+        if (!sheetData) {
+          this.toasterService.error('Failed to retrieve sheet data.', 'Error');
+          this.loaderService.hide();
+          return;
+        }
+        this.exportToCSV(sheetData);
+        this.loaderService.hide();
+      },
+      error: (error) => {
+        console.error('Sheet retrieval failed:', error);
+        this.toasterService.error('Failed to retrieve sheet data. Try again.', 'Error');
+        this.loaderService.hide();
+      }
+    });
+  }
+  
+  exportToCSV(sheetData: any) {
+  const CHUNK_SIZE = 10000; // Adjust as needed
+
+  const escapeCSV = (value: any): string => {
+    if (value == null) return '';
+    const str = String(value).replace(/"/g, '""');
+    return `"${str}"`;
+  };
+
+  const generateCSVBlob = async (data: any[], headers: string[]): Promise<Blob> => {
+    let csvChunks: string[] = [];
+    csvChunks.push(headers.map(escapeCSV).join(','));
+
+    for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+      await new Promise(resolve => setTimeout(resolve)); // yield to UI
+      const chunk = data.slice(i, i + CHUNK_SIZE);
+      chunk.forEach(row => {
+        const line = headers.map(header => escapeCSV(row[header])).join(',');
+        csvChunks.push(line);
+      });
+    }
+
+    const csvString = csvChunks.join('\n');
+    return new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+  };
+
+  const runExport = async () => {
+    try {
+      if (!sheetData?.sheet_data) {
+        this.toasterService.error('Invalid sheet data. Try again.', 'Error');
+        return;
+      }
+
+      let formattedData = [];
+      const sheetName = sheetData.sheet_name || 'SheetData';
+
+      if (
+        sheetData.sheet_data.pivotTransformedData &&
+        sheetData.sheet_data.pivotTransformedData.length > 0
+      ) {
+        const pivotData = sheetData.sheet_data.pivotTransformedData;
+        const columnNames: string[] = pivotData[0];
+
+        formattedData = pivotData.slice(1).map((row: any[]) => {
+          const rowObj: any = {};
+          columnNames.forEach((colName, index) => {
+            rowObj[colName] = row[index] || '';
+          });
+          return rowObj;
+        });
+
+        const blob = await generateCSVBlob(formattedData, columnNames);
+        saveAs(blob, `${sheetName}.csv`);
+        this.toasterService.info('CSV downloaded successfully.', 'Success');
+
+      } else if (
+        sheetData.sheet_data.col &&
+        sheetData.sheet_data.col.length === 0 &&
+        sheetData.sheet_data.row &&
+        sheetData.sheet_data.row.length > 0
+      ) {
+        const row = sheetData.sheet_data.row;
+        const rowNames: string[] = row.map((rowItem: any) => rowItem.col);
+        const numRecords = row[0]?.result_data?.length || 0;
+      
+        formattedData = Array.from({ length: numRecords }, (_, index) => {
+          const rowObj: any = {};
+          rowNames.forEach((rowName, rowIndex) => {
+            rowObj[rowName] = row[rowIndex]?.result_data[index] || '';
+          });
+          return rowObj;
+        });
+      
+        const blob = await generateCSVBlob(formattedData, rowNames);
+        saveAs(blob, `${sheetName}.csv`);
+        this.toasterService.info('CSV downloaded successfully.', 'Success');
+      
+      } else if (
+        sheetData.sheet_data.row &&
+        sheetData.sheet_data.row.length === 0 &&
+        sheetData.sheet_data.col &&
+        sheetData.sheet_data.col.length > 0
+      ) {
+        const col = sheetData.sheet_data.col;
+        const columnNames: string[] = col.map((colItem: any) => colItem.column);
+        const numRecords = col[0]?.result_data?.length || 0;
+      
+        formattedData = Array.from({ length: numRecords }, (_, index) => {
+          const rowObj: any = {};
+          columnNames.forEach((colName, colIndex) => {
+            rowObj[colName] = col[colIndex]?.result_data[index] || '';
+          });
+          return rowObj;
+        });
+      
+        const blob = await generateCSVBlob(formattedData, columnNames);
+        saveAs(blob, `${sheetName}.csv`);
+        this.toasterService.info('CSV downloaded successfully.', 'Success');
+      
+      } else if (sheetData.sheet_data.col && sheetData.sheet_data.row) {
+        const col = sheetData.sheet_data.col;
+        const row = sheetData.sheet_data.row;
+
+        const columnNames: string[] = col.map((colItem: any) => colItem.column);
+        const rowNames: string[] = row.map((rowItem: any) => rowItem.col);
+        const headers = [...columnNames, ...rowNames];
+
+        const numRecords = col[0]?.result_data?.length || 0;
+
+        formattedData = Array.from({ length: numRecords }, (_, index) => {
+          const rowObj: any = {};
+
+          columnNames.forEach((colName, colIndex) => {
+            rowObj[colName] = col[colIndex]?.result_data[index] || '';
+          });
+
+          rowNames.forEach((rowName, rowIndex) => {
+            rowObj[rowName] = row[rowIndex]?.result_data[index] || '';
+          });
+
+          return rowObj;
+        });
+
+        const blob = await generateCSVBlob(formattedData, headers);
+        saveAs(blob, `${sheetName}.csv`);
+        this.toasterService.info('CSV downloaded successfully.', 'Success');
+      } else {
+        this.toasterService.error('No valid data available for export.', 'Error');
+      }
+    } catch (error) {
+      console.error('CSV export failed:', error);
+      this.toasterService.error('CSV export failed. Try again.', 'Error');
+    }
+  };
+
+  runExport();
+}
+
+downloadAsPDFImage(format: 'pdf' | 'png') {
+  const element = document.getElementById('pdfcontainer');
+  if (!element) return;
+ 
+  this.loaderService.show(); 
+  const scale = 2;
+  // Save original styles
+  const originalOverflow = element.style.overflow;
+  const originalHeight = element.style.height;
+  const originalWidth = element.style.width;
+
+  // Expand the element to show full content
+  element.style.overflow = 'visible';
+  element.style.height = element.scrollHeight + 'px';
+  element.style.width = element.scrollWidth + 'px';
+
+  const width = element.scrollWidth * scale;
+  const height = element.scrollHeight * scale;
+
+  domtoimage.toPng(element, {
+    width,
+    height,
+    style: {
+      transform: `scale(${scale})`,
+      transformOrigin: 'top left',
+      width: element.scrollWidth + 'px',
+      height: element.scrollHeight + 'px'
+    }
+  }).then((dataUrl) => {
+    // Restore original styles
+    element.style.overflow = originalOverflow;
+    element.style.height = originalHeight;
+    element.style.width = originalWidth;
+    if (format === 'png') {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = this.sheetTitle + '.png';
+      link.click();
+      this.loaderService.hide();
+    } else {
+      const img = new Image();
+      img.onload = () => {
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const imgWidth = pdfWidth;
+        const imgHeight = (img.height * imgWidth) / img.width;
+
+        pdf.addImage(dataUrl, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(this.sheetTitle + '.pdf');
+        this.loaderService.hide();
+      };
+      img.src = dataUrl;
+    }
+  }).catch(error => {
+    console.error('Error generating image:', error);
+    // Restore even if failed
+    element.style.overflow = originalOverflow;
+    element.style.height = originalHeight;
+    element.style.width = originalWidth;
+  });
+
+}
+
+applyPIvotHeaderBg() {
+  setTimeout(() => {
+    this.applyDynamicStylesToPivot();
+  }, 0);
+}
+
+applyDynamicStylesToPivot() {
+  const headers = document.querySelectorAll('.pvtTable th');
+  headers.forEach(header => {
+    (header as HTMLElement).style.backgroundColor = this.backgroundColor;
+    (header as HTMLElement).style.color = this.headerFontColor;
+    (header as HTMLElement).style.fontSize = this.headerFontSize;
+    (header as HTMLElement).style.fontFamily = this.headerFontFamily;
+    (header as HTMLElement).style.fontWeight = this.headerFontWeight;
+    (header as HTMLElement).style.fontStyle = this.headerFontStyle;
+    (header as HTMLElement).style.textDecoration = this.headerFontDecoration;
+    (header as HTMLElement).style.textAlign = this.headerFontAlignment;
+
+  });
+
+  const cells = document.querySelectorAll('.pvtTable td');
+  cells.forEach(cell => {
+    // (cell as HTMLElement).style.backgroundColor = this.backgroundColor;
+    (cell as HTMLElement).style.color = this.tableDataFontColor;
+    (cell as HTMLElement).style.fontSize = this.tableDataFontSize;
+    (cell as HTMLElement).style.fontFamily = this.tableDataFontFamily;
+    (cell as HTMLElement).style.fontWeight = this.tableDataFontWeight;
+    (cell as HTMLElement).style.fontStyle = this.tableDataFontStyle;
+    (cell as HTMLElement).style.textDecoration = this.tableDataFontDecoration;
+    (cell as HTMLElement).style.textAlign = this.tableDataFontAlignment;
+
+  });
+  const rows = document.querySelectorAll('.pvtTable tr');
+//   rows.forEach((row, rowIndex) => {
+//     // Only apply to rows that contain data cells
+//     if (row.querySelectorAll('td').length > 0) {
+//       row.classList.remove('even-row', 'odd-row');
+
+//       if (this.bandingSwitch) {
+//         row.classList.add(rowIndex % 2 === 0 ? this.bandingEvenColor : this.bandingOddColor);
+//       }
+//     }
+// });
+rows.forEach((row, rowIndex) => {
+  const hasDataCells = row.querySelectorAll('td').length > 0;
+  
+  if (hasDataCells) {
+    row.classList.remove('even-row', 'odd-row');
+
+    if (this.bandingSwitch) {
+      const tds = row.querySelectorAll('td');
+      const bgColor = (rowIndex % 2 === 0) 
+        ? this.bandingEvenColor 
+        : this.bandingOddColor;
+      tds.forEach((td: HTMLElement) => {
+        td.style.backgroundColor = bgColor;
+      });
+    } else {
+      const tds = row.querySelectorAll('td');
+      tds.forEach((td: HTMLElement) => {
+        td.style.backgroundColor = ''; // Reset
+      });
+    }
+  }
+});
+
+}
+qoqOpen = false
+toggleQOQDropdown() {
+  this.qoqOpen = !this.qoqOpen;
+}
+qoqOptions = [
+  'QOQ Option 1', 'QOQ Option 2', 'QOQ Option 3',
+  'QOQ Option 4', 'QOQ Option 5', 'QOQ Option 6',
+  'QOQ Option 7', 'QOQ Option 8'
+];
+
+}
+

@@ -201,6 +201,7 @@ p { margin-bottom: 0px !important;}
 .select-data-card-a{ width: 100%;padding: 6px;max-height: 240px;overflow-y: auto;}
 .form-control-pad{ padding: 0.170rem 0.65rem;}
 // .PositionSticky{position: sticky; z-index: 10;}
+.SearchBarCu{ padding: 6px 8px !important; border-top-left-radius: 5px !important; border-top-right-radius: 0px !important; border-bottom-right-radius: 0px !important;  border-bottom-left-radius: 6px !important; }
 
 
  // for Mobile Resolution //
@@ -294,4 +295,11 @@ p { font-size: 12px;}
 .form-select{ font-size: 11px;}
 .form-control{ font-size: 10px; padding: 3px;}
 .dropdown-menu { min-width: 10rem;}
+}
+::ng-deep .pvtTable tr.even-row td {
+  background-color: #ffffff; // or your even row color
+}
+
+::ng-deep .pvtTable tr.odd-row td {
+  background-color: #f5f7fa; // or your odd row color
 }
