@@ -77,7 +77,7 @@ export class EmbedSdkComponent {
 
   setScriptData(){
     this.scriptContent = `
-    import AnalytifySDK from 'https://cdn.jsdelivr.net/gh/Rajashekarreddy24/Analytify-Angular@v1.0.1/dist/analytify-dashboard/esm2022/lib/sdk.mjs';
+    import AnalytifySDK from 'https://cdn.jsdelivr.net/gh/Rajashekarreddy24/Analytify-Angular@v2.1.1/public/analytify-sdk.js';
 
     const analytify = AnalytifySDK.init({
       appName: '${this.userName}',
