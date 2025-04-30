@@ -92,6 +92,7 @@ export class DataTransformationComponent {
   ngSelectUnion : any;
   ngSelectPivotValues : any;
   ngSelectPivotColumns : any;
+  ngSelectPivotIndex : any;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal) {
     localStorage.setItem('QuerySetId', '0');
@@ -192,15 +193,11 @@ export class DataTransformationComponent {
     const columns = this.selectedTransformations[index][transformationIndex].columns ?? [];
     const aggregation = this.selectedTransformations[index][transformationIndex].aggregation;
 
-    // const tTypeIndex = this.transformationTypes.findIndex(trans => trans.key === key);
     const type = this.transformationTypes?.[typeIndex];
     if(type.key === 'pivot'){
-      if(indexs.length > 0){
-        this.ngSelectPivotValues = this.draggedTables[index].columns.filter((column:any) => this.integerList.includes(column.dtype) && !this.selectedTransformations[index][transformationIndex]?.index.includes(column.col));
-        if(value){
-          this.ngSelectPivotColumns = this.draggedTables[index].columns.filter((column:any) => !this.selectedTransformations[index][transformationIndex]?.index.includes(column.col) && this.selectedTransformations[index][transformationIndex]?.value !== column.col);
-        }
-      }
+      this.ngSelectPivotIndex = this.draggedTables[index].columns.filter((column:any) => !columns.includes(column.col) && value !== column.col);
+      this.ngSelectPivotValues = this.draggedTables[index].columns.filter((column:any) => this.integerList.includes(column.dtype) && !indexs.includes(column.col) && !columns.includes(column.col));
+      this.ngSelectPivotColumns = this.draggedTables[index].columns.filter((column:any) => !indexs.includes(column.col) && value !== column.col);
     }
     if(type.key === 'joining'){
       this.ngSelectJoin = JSON.parse(JSON.stringify(
@@ -379,12 +376,9 @@ export class DataTransformationComponent {
         });
       }
       if(transformationKey === 'pivot'){
-        if(this.selectedTransformations[index][transformationIndex]?.index.length > 0){
-          this.ngSelectPivotValues = this.draggedTables[index].columns.filter((column:any) => this.integerList.includes(column.dtype) && !this.selectedTransformations[index][transformationIndex]?.index.includes(column.col));
-          if(this.selectedTransformations[index][transformationIndex]?.value){
-            this.ngSelectPivotColumns = this.draggedTables[index].columns.filter((column:any) => !this.selectedTransformations[index][transformationIndex]?.index.includes(column.col) && this.selectedTransformations[index][transformationIndex]?.value !== column.col);
-          }
-        }
+        this.ngSelectPivotIndex = this.draggedTables[index].columns.filter((column:any) => !this.selectedTransformations[index][transformationIndex]?.columns.includes(column.col) && this.selectedTransformations[index][transformationIndex]?.value !== column.col);
+        this.ngSelectPivotValues = this.draggedTables[index].columns.filter((column:any) => this.integerList.includes(column.dtype) && !this.selectedTransformations[index][transformationIndex]?.index.includes(column.col) && !this.selectedTransformations[index][transformationIndex]?.columns.includes(column.col));
+        this.ngSelectPivotColumns = this.draggedTables[index].columns.filter((column:any) => !this.selectedTransformations[index][transformationIndex]?.index.includes(column.col) && this.selectedTransformations[index][transformationIndex]?.value !== column.col);
       }
     }
 
@@ -496,6 +490,7 @@ export class DataTransformationComponent {
         this.ngSelectUnion = JSON.parse(JSON.stringify(tab1));
         this.ngSelectPivotValues = JSON.parse(JSON.stringify(tab1));
         this.ngSelectPivotColumns = JSON.parse(JSON.stringify(tab1));
+        this.ngSelectPivotIndex = JSON.parse(JSON.stringify(tab1));
         
         if(this.hierarchyId && this.transformationsPreview.length >0){
           this.setTransformationsEditPreview();

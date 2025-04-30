@@ -1619,17 +1619,17 @@ mapChart(dualAxisColumnData? :any, dualAxisRowData ?:any, chartsRowData?: any){
     this.chartsRowData = chartsRowData;
   }
   let minData : number = 0;
-  let maxData: number = Math.max(...this.chartsRowData);
+  let maxData: number = 1;
   let result:any[] = [];
 
-  if(!(this.draggedDrillDownColumns>0 || this.drillDownIndex>0)){
+  // if(!(this.draggedDrillDownColumns.length>0 || this.drillDownIndex>0)){
     // Loop through the countries (assuming both data sets align by index)
-  this.dualAxisColumnData[0].values.forEach((country: string, index: number) => {
+  this.dualAxisColumnData[0]?.values.forEach((country: string, index: number) => {
     // Create an object for each country
     const countryData: any = { name: country , value : this.chartsRowData[index]};
 
     // Add each measure to the country object
-    this.dualAxisRowData.forEach((measure:any) => {
+    this.dualAxisRowData?.forEach((measure:any) => {
       const measureName = measure.name; // e.g., sum(Sales), sum(Quantity)
       const measureValue = measure.data[index]; // Value for that measure
       countryData[measureName] = measureValue;
@@ -1637,10 +1637,11 @@ mapChart(dualAxisColumnData? :any, dualAxisRowData ?:any, chartsRowData?: any){
 
     result.push(countryData);
   });
-  }
+  // }
 
-if(this.chartsColumnData && this.chartsColumnData.length > 1){
-minData= Math.min(...this.chartsRowData);
+if(this.chartsRowData && this.chartsRowData.length > 0){
+minData = Math.min(...this.chartsRowData);
+maxData = Math.max(...this.chartsRowData);
 }
 if(Number.isNaN(minData) || Number.isNaN(maxData)){
  minData = 0;

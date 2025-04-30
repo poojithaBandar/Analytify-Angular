@@ -57,6 +57,8 @@ import { cloneDeep } from 'lodash';
 import { FixedSizeVirtualScrollStrategy, ScrollingModule, VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
 import { saveAs } from 'file-saver';
+import domtoimage from 'dom-to-image';
+import jsPDF from 'jspdf';
 
 interface TableRow {
   [key: string]: any;
@@ -1063,13 +1065,71 @@ export class SheetsdashboardComponent {
           this.pivotContainers.forEach((pivotContainer, index) => {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+            const nativeEl = pivotContainer.nativeElement;
             ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
               rows: pivotData['columnKeys'],  
               cols: pivotData['valueKeys'], 
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData.customizeOptions?.pivotRowTotals,
+                      colTotals:pivotData.customizeOptions?.pivotColumnTotals
+                    }
+                  }
                 });
+                const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    // if (styleConfig.bandingSwitch) {
+                    //   row.classList.add(rowIndex % 2 === 0 ? styleConfig.bandingEvenColor : styleConfig.bandingOddColor);
+                    // }
+                    if (styleConfig.bandingSwitch) {
+                      const tds = row.querySelectorAll('td');
+                      const bgColor = (rowIndex % 2 === 0) 
+                        ? styleConfig.bandingEvenColor 
+                        : styleConfig.bandingOddColor;
+                      tds.forEach((td: HTMLElement) => {
+                        td.style.backgroundColor = bgColor;
+                      });                   
+                     }
+                  });
+                  }
+            }
         }   
       });     
       }, 1000);
@@ -1317,9 +1377,17 @@ export class SheetsdashboardComponent {
     setTimeout(() => {
       const element = document.getElementById('capture-element');
       if (element) {
+        const originalHeight = element.style.height;
+        const originalOverflow = element.style.overflow;
+  
+        // Expand to show all content
+        element.style.height = '2(originalHeight)' + 'px';
+        element.style.overflow = 'visible';
         htmlToImage.toPng(element)
           .then((dataUrl) => {
             // Download the image
+            element.style.height = originalHeight;
+            element.style.overflow = originalOverflow;
             const link = document.createElement('a');
             link.href = dataUrl;
             link.download = 'screenshot.png'; // Set the filename
@@ -2342,13 +2410,70 @@ allowDrop(ev : any): void {
         this.pivotContainers.forEach((pivotContainer, index) => {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
+            const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
             rows: pivotData['columnKeys'],  
             cols: pivotData['valueKeys'], 
                 aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                rendererName: "Table"
+                rendererName: "Table",
+                rendererOptions:{
+                  table:{
+                    rowTotals:pivotData.customizeOptions.pivotRowTotals,
+                    colTotals:pivotData.customizeOptions.pivotColumnTotals
+                  }
+                }
               });
             // }
+            const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    if (styleConfig.bandingSwitch) {
+                      const tds = row.querySelectorAll('td');
+                      const bgColor = (rowIndex % 2 === 0) 
+                        ? styleConfig.bandingEvenColor 
+                        : styleConfig.bandingOddColor;
+                      tds.forEach((td: HTMLElement) => {
+                        td.style.backgroundColor = bgColor;
+                      });                   
+                     }
+                  });
+                  }
+            }
           }
         });
       }, 1000);
@@ -2549,7 +2674,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 
           let filterIdStr = data.filter_id.map(String);
           filterIdStr.forEach((key: string) => {
-            if (this.storeSelectedColData?.test.hasOwnProperty(key)) {
+            if (this.storeSelectedColData?.test?.hasOwnProperty(key)) {
               delete this.storeSelectedColData.test[key];
               console.log(`Deleted key from storeSelectedColData: ${key}`);
             }
@@ -3806,13 +3931,71 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       this.pivotContainers.forEach((pivotContainer, index) => {
       if (pivotContainer && pivotContainer.nativeElement) {
         const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+        const nativeEl = pivotContainer.nativeElement;
         ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
           rows: pivotData['columnKeys'],  
           cols: pivotData['valueKeys'], 
               aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-              rendererName: "Table"
+              rendererName: "Table",
+              rendererOptions:{
+                table:{
+                  rowTotals:pivotData.customizeOptions.pivotRowTotals,
+                  colTotals:pivotData.customizeOptions.pivotColumnTotals
+                }
+              }
             });
+            const styleConfig = pivotData.customizeOptions;
+            if (styleConfig) {
+              const table = nativeEl.querySelector('table.pvtTable');
+              if (table) {
+                const headers = table.querySelectorAll('th');
+                  headers.forEach((th: HTMLElement) => {
+                    th.style.backgroundColor = styleConfig.backgroundColor;
+                    th.style.fontSize = styleConfig.headerFontSize;
+                    th.style.color = styleConfig.headerFontColor;
+                    th.style.fontFamily = styleConfig.headerFontFamily;
+                    th.style.fontWeight = styleConfig.headerFontWeight;
+                    th.style.fontStyle = styleConfig.headerFontStyle;
+                    th.style.textDecoration = styleConfig.headerFontDecoration;
+                    th.style.textAlign = styleConfig.headerFontAlignment;
+                    th.style.verticalAlign = 'middle';
+                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                  });
+                  // Apply styles to data cells <td>
+                  const cells = table.querySelectorAll('td');
+                  cells.forEach((td: HTMLElement) => {
+                    td.style.fontSize = styleConfig.tableDataFontSize;
+                    td.style.color = styleConfig.tableDataFontColor;
+                    td.style.fontFamily = styleConfig.tableDataFontFamily;
+                    td.style.fontWeight = styleConfig.tableDataFontWeight;
+                    td.style.fontStyle = styleConfig.tableDataFontStyle;
+                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                    td.style.textAlign = styleConfig.tableDataFontAlignment;
+                    td.style.verticalAlign = 'middle';
+                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                  });
+                  const rows = table.querySelectorAll('tr');
+                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                    const hasDataCells = row.querySelectorAll('td').length > 0;
+                    row.classList.remove('even-row', 'odd-row');
+              
+                    // if (styleConfig.bandingSwitch) {
+                    //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                    // }
+                    if (styleConfig.bandingSwitch) {
+                      const tds = row.querySelectorAll('td');
+                      const bgColor = (rowIndex % 2 === 0) 
+                        ? styleConfig.bandingEvenColor 
+                        : styleConfig.bandingOddColor;
+                      tds.forEach((td: HTMLElement) => {
+                        td.style.backgroundColor = bgColor;
+                      });                   
+                     }
+                  });
+                  }
+            }
       }      
     });  
     }, 1000);
@@ -4354,31 +4537,36 @@ if(isLiveReloadData && isLastIndex){
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
   let formattedNumber = value+'';
   let KPINumber;
-  if (KPIDisplayUnits !== 'none') {
-    switch (KPIDisplayUnits) {
-      case 'K':
-        formattedNumber = (value / 1_000).toFixed(KPIDecimalPlaces) + 'K';
-        break;
-      case 'M':
-        formattedNumber = (value / 1_000_000).toFixed(KPIDecimalPlaces) + 'M';
-        break;
-      case 'B':
-        formattedNumber = (value / 1_000_000_000).toFixed(KPIDecimalPlaces) + 'B';
-        break;
-      case 'G':
-        formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
-        break;
-      case '%':
-        let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
-        let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
-        formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
-        break;
-    }
-  } else {
-    formattedNumber = (value).toFixed(KPIDecimalPlaces)
+  if(value === null || value === undefined){
+    KPINumber = 0;
+  } else{
+    if (KPIDisplayUnits !== 'none') {
+      switch (KPIDisplayUnits) {
+        case 'K':
+          formattedNumber = (value / 1_000).toFixed(KPIDecimalPlaces) + 'K';
+          break;
+        case 'M':
+          formattedNumber = (value / 1_000_000).toFixed(KPIDecimalPlaces) + 'M';
+          break;
+        case 'B':
+          formattedNumber = (value / 1_000_000_000).toFixed(KPIDecimalPlaces) + 'B';
+          break;
+        case 'G':
+          formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
+          break;
+        case '%':
+          let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+          let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
+          formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
+          break;
+      }
+    } else {
+      formattedNumber = (value).toFixed(KPIDecimalPlaces)
+    }  
+    KPINumber = KPIPrefix + formattedNumber + KPISuffix
   }
 
-  return KPINumber = KPIPrefix + formattedNumber + KPISuffix;
+  return KPINumber;
 }
 
 closeFilterModal(){
@@ -4938,14 +5126,71 @@ kpiData?: KpiData;
             this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+                const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
                   rows: pivotData['columnKeys'],
                   cols: pivotData['valueKeys'],
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData['customizeOptions'].pivotRowTotals,
+                      colTotals:pivotData['customizeOptions'].pivotColumnTotals
+                    }
+                  }
                 });
-              }
+                const styleConfig = pivotData['customizeOptions'];
+                if (styleConfig) {
+                  const table = nativeEl.querySelector('table.pvtTable');
+                  if (table) {
+                    const headers = table.querySelectorAll('th');
+                      headers.forEach((th: HTMLElement) => {
+                        th.style.backgroundColor = styleConfig.backgroundColor;
+                        th.style.fontSize = styleConfig.headerFontSize;
+                        th.style.color = styleConfig.headerFontColor;
+                        th.style.fontFamily = styleConfig.headerFontFamily;
+                        th.style.fontWeight = styleConfig.headerFontWeight;
+                        th.style.fontStyle = styleConfig.headerFontStyle;
+                        th.style.textDecoration = styleConfig.headerFontDecoration;
+                        th.style.textAlign = styleConfig.headerFontAlignment;
+                        th.style.verticalAlign = 'middle';
+                        th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                      });
+                      // Apply styles to data cells <td>
+                      const cells = table.querySelectorAll('td');
+                      cells.forEach((td: HTMLElement) => {
+                        td.style.fontSize = styleConfig.tableDataFontSize;
+                        td.style.color = styleConfig.tableDataFontColor;
+                        td.style.fontFamily = styleConfig.tableDataFontFamily;
+                        td.style.fontWeight = styleConfig.tableDataFontWeight;
+                        td.style.fontStyle = styleConfig.tableDataFontStyle;
+                        td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                        td.style.textAlign = styleConfig.tableDataFontAlignment;
+                        td.style.verticalAlign = 'middle';
+                        td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                      });
+                      const rows = table.querySelectorAll('tr');
+                      rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                        forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                        const hasDataCells = row.querySelectorAll('td').length > 0;
+                        row.classList.remove('even-row', 'odd-row');
+                  
+                        // if (styleConfig.bandingSwitch) {
+                        //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                        // }
+                        if (styleConfig.bandingSwitch) {
+                          const tds = row.querySelectorAll('td');
+                          const bgColor = (rowIndex % 2 === 0) 
+                            ? styleConfig.bandingEvenColor 
+                            : styleConfig.bandingOddColor;
+                          tds.forEach((td: HTMLElement) => {
+                            td.style.backgroundColor = bgColor;
+                          });                   
+                         }
+                      });
+                      }
+                }              }
             });
           }, 1000);
         }
@@ -5011,13 +5256,72 @@ kpiData?: KpiData;
             this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
-
+                const nativeEl = pivotContainer.nativeElement;
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
                   rows: pivotData['columnKeys'],
                   cols: pivotData['valueKeys'],
                   aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table"
+                  rendererName: "Table",
+                  rendererOptions:{
+                    table:{
+                      rowTotals:pivotData['customizeOptions'].pivotRowTotals,
+                      colTotals:pivotData['customizeOptions'].pivotColumnTotals
+                    }
+                  }
                 });
+                const styleConfig = pivotData['customizeOptions'];
+                if (styleConfig) {
+                  const table = nativeEl.querySelector('table.pvtTable');
+                  if (table) {
+                    const headers = table.querySelectorAll('th');
+                      headers.forEach((th: HTMLElement) => {
+                        th.style.backgroundColor = styleConfig.backgroundColor;
+                        th.style.fontSize = styleConfig.headerFontSize;
+                        th.style.color = styleConfig.headerFontColor;
+                        th.style.fontFamily = styleConfig.headerFontFamily;
+                        th.style.fontWeight = styleConfig.headerFontWeight;
+                        th.style.fontStyle = styleConfig.headerFontStyle;
+                        th.style.textDecoration = styleConfig.headerFontDecoration;
+                        th.style.textAlign = styleConfig.headerFontAlignment;
+                        th.style.verticalAlign = 'middle';
+                        th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+                      });
+                      // Apply styles to data cells <td>
+                      const cells = table.querySelectorAll('td');
+                      cells.forEach((td: HTMLElement) => {
+                        td.style.fontSize = styleConfig.tableDataFontSize;
+                        td.style.color = styleConfig.tableDataFontColor;
+                        td.style.fontFamily = styleConfig.tableDataFontFamily;
+                        td.style.fontWeight = styleConfig.tableDataFontWeight;
+                        td.style.fontStyle = styleConfig.tableDataFontStyle;
+                        td.style.textDecoration = styleConfig.tableDataFontDecoration;
+                        td.style.textAlign = styleConfig.tableDataFontAlignment;
+                        td.style.verticalAlign = 'middle';
+                        td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+                      });
+
+                      const rows = table.querySelectorAll('tr');
+                      rows.forEach((row: { querySelectorAll: (arg0: string) => {
+                        forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
+}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
+                        const hasDataCells = row.querySelectorAll('td').length > 0;
+                        row.classList.remove('even-row', 'odd-row');
+                  
+                        // if (styleConfig.bandingSwitch) {
+                        //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
+                        // }
+                        if (styleConfig.bandingSwitch) {
+                          const tds = row.querySelectorAll('td');
+                          const bgColor = (rowIndex % 2 === 0) 
+                            ? styleConfig.bandingEvenColor 
+                            : styleConfig.bandingOddColor;
+                          tds.forEach((td: HTMLElement) => {
+                            td.style.backgroundColor = bgColor;
+                          });                   
+                         }
+                      });
+                      }
+                }
               }
             });
           }, 1000);
@@ -7078,8 +7382,276 @@ exportToCSV(sheetData: any) {
 
   runExport();
 }
+// downloadAsImage() {
+//   const element = document.getElementById('capture-image-pdf');
+//   if (!element) return;
+ 
+//   this.loaderService.show(); 
+//   this.startMethod();
+//   const scale = 2;
+//   // Save original styles
+//   const originalOverflow = element.style.overflow;
+//   const originalHeight = element.style.height;
+//   const originalWidth = element.style.width;
 
+//   // Expand the element to show full content
+//   element.style.overflow = 'visible';
+//   element.style.height = element.scrollHeight + 'px';
+//   element.style.width = element.scrollWidth + 'px';
 
+//   const width = element.scrollWidth * scale;
+//   const height = element.scrollHeight * scale;
+
+//   domtoimage.toPng(element, {
+//     width,
+//     height,
+//     style: {
+//       transform: `scale(${scale})`,
+//       transformOrigin: 'top left',
+//       width: element.scrollWidth + 'px',
+//       height: element.scrollHeight + 'px'
+//     }
+//   }).then((dataUrl) => {
+//     // Restore original styles
+//     element.style.overflow = originalOverflow;
+//     element.style.height = originalHeight;
+//     element.style.width = originalWidth;
+//       const link = document.createElement('a');
+//       link.href = dataUrl;
+//       link.download = this.dashboardName + '.png';
+//       link.click();
+//       this.loaderService.hide();
+//       this.endMethod();
+    
+//   }).catch(error => {
+//     console.error('Error generating image:', error);
+//     // Restore even if failed
+//     element.style.overflow = originalOverflow;
+//     element.style.height = originalHeight;
+//     element.style.width = originalWidth;
+//   });
+
+// }
+
+downloadAsImage() {
+  const element1 = document.getElementById('capture-image-pdf');
+  if (!element1) return;
+
+  const element2 = this.displayTabs
+    ? document.getElementById('capture-image-pdf-2')
+    : null;
+
+  this.loaderService.show();
+  this.startMethod();
+
+  const scale = 2;
+
+  const prepareElement = (element: HTMLElement) => {
+    const original = {
+      overflow: element.style.overflow,
+      height: element.style.height,
+      width: element.style.width
+    };
+    element.style.overflow = 'visible';
+    element.style.height = element.scrollHeight + 'px';
+    element.style.width = element.scrollWidth + 'px';
+
+    return {
+      width: element.scrollWidth * scale,
+      height: element.scrollHeight * scale,
+      original
+    };
+  };
+
+  const restoreElement = (element: HTMLElement, styles: any) => {
+    element.style.overflow = styles.overflow;
+    element.style.height = styles.height;
+    element.style.width = styles.width;
+  };
+
+  const config = (element: HTMLElement, width: number, height: number) => ({
+    width,
+    height,
+    style: {
+      transform: `scale(${scale})`,
+      transformOrigin: 'top left',
+      width: element.scrollWidth + 'px',
+      height: element.scrollHeight + 'px'
+    }
+  });
+
+  const el1Props = prepareElement(element1);
+  const el2Props = element2 ? prepareElement(element2) : null;
+
+  const captureImages = element2
+    ? Promise.all([
+        domtoimage.toPng(element1, config(element1, el1Props.width, el1Props.height)),
+        domtoimage.toPng(element2, config(element2, el2Props!.width, el2Props!.height))
+      ])
+    : Promise.all([
+        domtoimage.toPng(element1, config(element1, el1Props.width, el1Props.height))
+      ]);
+
+  captureImages
+    .then(([img1, img2]) => {
+      restoreElement(element1, el1Props.original);
+      if (element2 && el2Props) restoreElement(element2, el2Props.original);
+
+        if (img2) {
+          const image1 = new Image();
+          const image2 = new Image();
+
+          image1.onload = () => {
+            image2.onload = () => {
+              const canvas = document.createElement('canvas');
+              const width = Math.max(image1.width, image2.width);
+              const height = image1.height + image2.height;
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d')!;
+              ctx.drawImage(image1, 0, 0);
+              ctx.drawImage(image2, 0, image1.height);
+
+              const mergedDataUrl = canvas.toDataURL('image/png');
+              const link = document.createElement('a');
+              link.href = mergedDataUrl;
+              link.download = this.dashboardName +'-Dashboard.png';
+              link.click();
+
+              this.loaderService.hide();
+              this.endMethod();
+            };
+            image2.src = img2!;
+          };
+          image1.src = img1;
+        } else {
+          const link = document.createElement('a');
+          link.href = img1;
+          link.download = this.dashboardName + '-Dashboard.png';
+          link.click();
+          this.loaderService.hide();
+          this.endMethod();
+        }
+        return;
+    })
+    .catch((error) => {
+      console.error('Error generating image:', error);
+      restoreElement(element1, el1Props.original);
+      if (element2 && el2Props) restoreElement(element2, el2Props.original);
+      this.loaderService.hide();
+    });
+}
+
+downloadAsPDF() {
+  const element1 = document.getElementById('capture-image-pdf');
+  const element2 = document.getElementById('capture-image-pdf-2');
+
+  if (!element1) return;
+
+  this.loaderService.show();
+  this.startMethod();
+  const scale = 2;
+
+  const prepareElement = (element: HTMLElement) => {
+    const originalStyles = {
+      overflow: element.style.overflow,
+      height: element.style.height,
+      width: element.style.width,
+    };
+
+    element.style.overflow = 'visible';
+    element.style.height = element.scrollHeight + 'px';
+    element.style.width = element.scrollWidth + 'px';
+
+    return {
+      width: element.scrollWidth * scale,
+      height: element.scrollHeight * scale,
+      originalStyles
+    };
+  };
+
+  const restoreElement = (element: HTMLElement, styles: any) => {
+    element.style.overflow = styles.overflow;
+    element.style.height = styles.height;
+    element.style.width = styles.width;
+  };
+
+  const config = (width: number, height: number, element: HTMLElement) => ({
+    width,
+    height,
+    style: {
+      transform: `scale(${scale})`,
+      transformOrigin: 'top left',
+      width: element.scrollWidth + 'px',
+      height: element.scrollHeight + 'px'
+    }
+  });
+
+  const el1 = prepareElement(element1);
+  const el2 = this.displayTabs && element2 ? prepareElement(element2) : null;
+
+  const capturePromises = [domtoimage.toPng(element1, config(el1.width, el1.height, element1))];
+
+  if (this.displayTabs && element2) {
+    capturePromises.push(domtoimage.toPng(element2, config(el2!.width, el2!.height, element2)));
+  }
+
+  Promise.all(capturePromises).then((images: string[]) => {
+    restoreElement(element1, el1.originalStyles);
+    if (this.displayTabs && element2 && el2) {
+      restoreElement(element2, el2.originalStyles);
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    const addImageToPDF = (imgData: string, yOffset: number = 0): Promise<number> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const imgWidth = pdfWidth;
+          const imgHeight = (img.height * imgWidth) / img.width;
+
+          if (yOffset + imgHeight > pdfHeight) {
+            pdf.addPage();
+            yOffset = 0;
+          }
+
+          pdf.addImage(imgData, 'PNG', 0, yOffset, imgWidth, imgHeight);
+          resolve(yOffset + imgHeight + 5);
+        };
+        img.src = imgData;
+      });
+    };
+
+    let currentYOffset = 0;
+
+    addImageToPDF(images[0], currentYOffset).then((newOffset) => {
+      if (images.length === 2) {
+        addImageToPDF(images[1], newOffset).then(() => {
+          pdf.save(this.dashboardName + '-Dashboardpdf');
+          this.loaderService.hide();
+          this.endMethod();
+        });
+      } else {
+        pdf.save(this.dashboardName +'-Dashboard.pdf');
+        this.loaderService.hide();
+        this.endMethod()
+      }
+    });
+
+  }).catch(error => {
+    console.error('Error generating PDF:', error);
+    restoreElement(element1, el1.originalStyles);
+    if (this.displayTabs && element2 && el2) {
+      restoreElement(element2, el2.originalStyles);
+    }
+    this.loaderService.hide();
+    this.endMethod();
+  });
+}
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
