@@ -1058,7 +1058,7 @@
                         </div>
 
                         <div class="min-w-fit-content ms-1 d-flex align-items-center">              
-                        <span *ngIf="!isPublicUrl" ngbTooltip="Edit Title" class="title-editor ms-1" (click)="toggleEditor()">
+                        <span *ngIf="!isPublicUrl && !isEmbedDashboard" ngbTooltip="Edit Title" class="title-editor ms-1" (click)="toggleEditor()">
                           <button  class="btn btn-primary me-1"><i class="fa fa-pencil"></i></button>
                         </span>
                         <span [ngbTooltip]="dashboard.length === 0 ? 'Add sheet to save dashboard' : ''">
@@ -1171,7 +1171,7 @@
                   <i class="fa fa-filter filter-icon-count" ngbTooltip="{{filter?.filter_count}} Filters Applied"></i>
                   }
                   }
-                  <div *ngIf="!isPublicUrl" class="dashboard-option">
+                  <div *ngIf="!isPublicUrl && !isEmbedDashboard" class="dashboard-option">
                     <div class=" p-1" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -1596,7 +1596,7 @@
                   <i class="fa fa-filter filter-icon-count" ngbTooltip="{{filter?.filter_count}} Filters Applied"></i>
                   }
                   }
-                  <div *ngIf="!isPublicUrl" class="dashboard-option">
+                  <div *ngIf="!isPublicUrl && !isEmbedDashboard" class="dashboard-option">
                     <div class=" p-1" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
