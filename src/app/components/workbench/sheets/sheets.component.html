@@ -1561,7 +1561,7 @@
                                     triggers="hover"
                                     container="body"
                                     ngbDropdownToggle
-                                    [disabled]="!retriveDataSheet_id"
+                                    [disabled]="!retriveDataSheet_id || (draggedColumnsData.length === 0 && draggedRowsData.length === 0)"
                                     >
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                     </button>

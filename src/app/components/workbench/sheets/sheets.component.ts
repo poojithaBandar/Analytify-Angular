@@ -1442,23 +1442,28 @@ try {
     console.log(this.draggedColumns);
     console.log(this.draggedColumnsData);
     console.log(index);
-    // this.draggedColumns.splice(index, 1);
-    // (this.draggedColumnsData as any[]).forEach((data,index1)=>{
-    //   if(this.dateList.includes(data[1])){
-    //     if(this.draggedColumns[index].column === data[0] && this.draggedColumns[index].data_type === data[1] 
-    //       && this.draggedColumns[index].type === data[2]){
-    //         this.draggedColumnsData.splice(index, 1);
-    //     }
-    //   }
-    //   else{
-    //     (data as any[]).forEach((aa)=>{ 
-    //       if(column === aa){
-    //         console.log(aa);
-    //         this.draggedColumnsData.splice(index1, 1);
-    //       }
-    //     } );
-    //   }
-    // });
+    const format = this.draggedColumnsData[index][2];
+    if (format && format !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
+
+          if (this.draggedColumnsData[index][0] === col) {
+            if (format && ['year', 'month', 'quarter'].includes(format) && format !== '') {
+              if((format === 'year' && row[1] ==='yoy') || (format === 'month' && row[1] ==='mom') || (format === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          
+        }
+        i++;
+      }
+    }
     if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
       this.draggedDrillDownColumns = [];
     }
