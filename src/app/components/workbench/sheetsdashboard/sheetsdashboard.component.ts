@@ -586,7 +586,6 @@ export class SheetsdashboardComponent implements OnDestroy {
          this.initialiserMethods();
       },
       error:(error:any)=>{
-        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         console.log(error)
       }
     })
