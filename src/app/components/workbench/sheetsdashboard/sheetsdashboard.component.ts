@@ -245,9 +245,6 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.dashboardId = +atob(route.snapshot.params['id1'])
       }
     }
-    if(!this.isPublicUrl){
-      this.editDashboard = this.viewTemplateService.editDashboard();
-    }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
@@ -298,6 +295,9 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
       }
     });
+    }
+    if(!this.isPublicUrl && !this.isEmbedDashboard){
+      this.editDashboard = this.viewTemplateService.editDashboard();
     }
     
   }
@@ -586,6 +586,7 @@ export class SheetsdashboardComponent implements OnDestroy {
          this.initialiserMethods();
       },
       error:(error:any)=>{
+        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         console.log(error)
       }
     })
