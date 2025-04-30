@@ -221,6 +221,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   dashboardToken!: string;
   isEmbedDashboard: boolean = false;
   embedFilters: any;
+  isdashboardSDKGenerated: boolean = false;
+  isEmbeddedFilter : boolean = false;
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -471,7 +473,6 @@ export class SheetsdashboardComponent implements OnDestroy {
           this.getDashboardFilterredList();
         } else if(this.isEmbedDashboard){
           this.getEmbedDashboardData();
-          this.getDashboardFilterredList();
         }
         if(this.dashboardId != undefined || null){
           this.getDrillThroughActionList();
@@ -502,58 +503,8 @@ export class SheetsdashboardComponent implements OnDestroy {
     
     this.workbechService.getEmbedDashboardData(obj).subscribe({
       next:(data)=>{
-        console.log('savedDashboard',data);
-        if(data.refresh_required){
-          this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
-            next:(data)=>{
-              this.refreshDashboardSheetsData(data);
-              },
-            error:(error)=>{
-              console.log(error)
-              Swal.fire({
-                icon: 'error',
-                title: 'oops!',
-                text: error.error.message,
-                width: '400px',
-              })
-            }
-          });
-        }
+        this.getDashboardFilterredList(false,data);
         this.assignDashboardParams(data.dashbaord_retrieve_data);
-        data.dashbaord_filter_data.forEach((item: any) => {
-          this.filteredRowData = [];
-          this.filteredColumnData = [];
-        this.tablePreviewColumn.push(item.columns);
-        this.tablePreviewRow.push(item.rows);
-        item.columns.forEach((res:any) => {      
-          let obj1={
-            name:res.column,
-            values: res.result
-          }
-          this.filteredColumnData.push(obj1);
-          console.log('filtercolumn',this.filteredColumnData)
-        });
-        item.rows.forEach((res:any) => {
-          let obj={
-            name: res.column,
-            data: res.result
-          }
-          this.filteredRowData.push(obj);
-          console.log('filterowData',this.filteredRowData)
-        });
-        if(item.chart_id === 1){
-          this.pageChangeTableDisplay(item,1,false,false)
-          // this.tablePageNo =1;
-          this.tablePage=1
-        }else{
-        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
-        if (this.displayTabs) {
-          this.sheetTabs.forEach((tabData: any) => {
-            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
-          })
-        }
-        }
-      });
       },
       error:(error)=>{
         console.log(error)
@@ -940,6 +891,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
+        this.isdashboardSDKGenerated = data.is_embedded;
         // if(data.file_id && data.file_id.length){
         //   this.fileId = data.file_id;
         // }
@@ -3565,6 +3517,7 @@ if(this.filterName === ''){
     dashboard_id:this.dashboardId,
     filter_name:this.filterName,
     column:this.selectClmn,
+    is_embedded : this.isEmbeddedFilter,
     sheets:this.selectedRows,
     datatype:this.selectdColmnDtype,
     queryset_id:this.selectedQuerySetId,
@@ -3603,7 +3556,7 @@ if(this.filterName === ''){
 }
 }
 
-getDashboardFilterredList(onSheetRemove? : boolean){
+getDashboardFilterredList(onSheetRemove? : boolean,embedFilterData?: any){
   const Obj ={
     dashboard_id:this.dashboardId
   }
@@ -3614,6 +3567,7 @@ getDashboardFilterredList(onSheetRemove? : boolean){
       if(onSheetRemove && data?.length <= 0){
         this.active = 1;
       }
+      this.assignSDKFiltertoDashboard(embedFilterData);
     },
     error:(error)=>{
       console.log(error)
@@ -3625,6 +3579,57 @@ getDashboardFilterredList(onSheetRemove? : boolean){
       })
     }
   })
+}
+
+assignSDKFiltertoDashboard(embedFilterData?: any){
+  if (this.DahboardListFilters.length > 0 && this.isEmbedDashboard && this.embedFilters) {
+    const nameToIdMap = Object.fromEntries(this.DahboardListFilters.map((item: any) => [item.filter_name, item.dashboard_filter_id]));
+
+    const transformedData: any = {};
+
+    for (const [name, values] of Object.entries(_.cloneDeep(this.embedFilters))) {
+      const id = nameToIdMap[name];
+      if (id !== undefined) {
+        transformedData[id] = values;
+      }
+    }
+    this.storeSelectedColData['test'] = transformedData;
+  }
+  this.extractKeysAndData();
+  embedFilterData?.dashbaord_filter_data.forEach((item: any) => {
+    this.filteredRowData = [];
+    this.filteredColumnData = [];
+  this.tablePreviewColumn.push(item.columns);
+  this.tablePreviewRow.push(item.rows);
+  item.columns.forEach((res:any) => {      
+    let obj1={
+      name:res.column,
+      values: res.result
+    }
+    this.filteredColumnData.push(obj1);
+    console.log('filtercolumn',this.filteredColumnData)
+  });
+  item.rows.forEach((res:any) => {
+    let obj={
+      name: res.column,
+      data: res.result
+    }
+    this.filteredRowData.push(obj);
+    console.log('filterowData',this.filteredRowData)
+  });
+  if(item.chart_id === 1){
+    this.pageChangeTableDisplay(item,1,false,false)
+    // this.tablePageNo =1;
+    this.tablePage=1
+  } else{
+  this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
+  if (this.displayTabs) {
+    this.sheetTabs.forEach((tabData: any) => {
+      this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
+    })
+  }
+  }
+});
 }
 getFilteredColumns(filterList: any) {
   const searchText = filterList?.searchText ? filterList.searchText.toLowerCase() : '';
@@ -3829,6 +3834,7 @@ clearAllFilters(): void {
       if(this.isPublicUrl){
         this.getFilteredDataPublic()
       }else{
+        this.assignSDKFiltertoDashboard();
         this.getFilteredData();
       }
   } else {
@@ -4627,6 +4633,7 @@ editFiltersData(id:any){
     next:(data)=>{
       console.log(data);
       this.filterName = data.filter_name;
+      this.isEmbeddedFilter = data.is_embedded;
       // this.sheetsFilterNamesFromEdit = data.sheets;
       this.querysetNameEdit = data.queryname;
       this.selectClmnEdit = data.selected_column;
@@ -4776,6 +4783,7 @@ updateFilters(){
   }else{
 const obj ={
   dashboard_filter_id:this.dashboardFilterIdEdit,
+  is_embedded : this.isEmbeddedFilter,
   dashboard_id:this.dashboardId,
   filter_name:this.filterName,
   column:this.selectClmn,

@@ -49,7 +49,7 @@
 
             <button type="submit" class="btn btn-primary" [disabled]="!sdkForm.valid">Generate SDK</button>
         </form>
-        @if(this.clientSecret && !this.disableSDKName){
+        @if(this.clientSecret && this.showNotifier){
             <div class="alert alert-danger mt-3" role="alert">
                 ⚠️ <strong>Do not lose your <code>client_secret : {{clientSecret}}</code></strong>! It is used for authentication to generate SDK for dashbaords and cannot be recovered if lost. Please save it securely.
               </div>

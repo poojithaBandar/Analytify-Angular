@@ -86,7 +86,7 @@
     clientId: '',
     clientSecret: '',
     apiBaseUrl: '',
-    tokenEndpoint: '/oauth/token'
+    tokenEndpoint: 'http://13.57.231.251:50/v1'
   };
   var _token = null;
   var _tokenExpiry = 0;

@@ -23,6 +23,7 @@ export class EmbedSdkComponent {
   clientSecret! : string;
   dashboardToken! : string;
   scriptContent!: string;
+  showNotifier: boolean = false;
 
   constructor(private workbechService: WorkbenchService){
 
@@ -107,6 +108,7 @@ export class EmbedSdkComponent {
         this.clientId = data.client_id;
         this.clientSecret = data.client_secret;
         this.disableSDKName = true;
+        this.showNotifier = true;
         this.submitDashboardId();
       },
       error: (error:any) => {
