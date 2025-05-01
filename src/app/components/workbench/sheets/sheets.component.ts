@@ -4961,6 +4961,105 @@ customizechangeChartPlugin() {
         case 'lower': 
         this.calculatedFieldLogic = 'LOWER("' + tableName + '"."' + columnName + '")';
         break; 
+        
+        case 'contains':
+        this.calculatedFieldLogic.trim();
+        regex = /^CONTAINS\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
+        if (!this.calculatedFieldLogic.startsWith('CONTAINS(') || !this.calculatedFieldLogic.endsWith(')') ||!regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else {
+          this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+          const params = this.calculatedFieldLogic.slice(9, -1).trim(); 
+          const [param1, param2] = params.split(',');
+          if (param2 === undefined) {
+            this.isValidCalculatedField = false;
+            this.validationMessage = "Missing or invalid substring parameter.";
+          } else {
+            this.calculatedFieldLogic = `CONTAINS("${tableName}"."${columnName}", ${param2})`;
+          }
+        }
+        break;
+
+        case 'concat':
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        if (!this.calculatedFieldLogic.startsWith('CONCAT(') || !this.calculatedFieldLogic.endsWith(')')) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid CONCAT format.';
+          break;
+        }
+        const rawParams = this.calculatedFieldLogic.slice(7, -1); // inside CONCAT(...)
+        let paramList = rawParams.split(',').map(p => p.trim());
+
+        const newField = `"${tableName}"."${columnName}"`;
+
+        // Find true empty slots (empty string or '')
+        const emptyIndices = paramList
+          .map((p, i) => (p === '' || p === "''") ? i : -1)
+          .filter(i => i !== -1);
+
+        if (emptyIndices.length > 0) {
+          paramList[emptyIndices[0]] = newField; // fill first available blank slot
+          this.calculatedFieldLogic = `CONCAT(${paramList.join(', ')})`;
+          this.isValidCalculatedField = true;
+        } else {
+          this.validationMessage = 'No empty slots available.';
+          this.isValidCalculatedField = false;
+        }
+        break;
+        case 'proper': 
+        this.calculatedFieldLogic = 'PROPER("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'startswith':
+          this.calculatedFieldLogic.trim();
+          regex = /^STARTSWITH\(\s*[^,]*\s*,\s*'.*'\s*\)$/;
+          if (!this.calculatedFieldLogic.startsWith('STARTSWITH(') || !this.calculatedFieldLogic.endsWith(')') ||!regex.test(this.calculatedFieldLogic)) {
+            this.isValidCalculatedField = false;
+            this.validationMessage = "Invalid Syntax.";
+          } else {
+            this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+            const params = this.calculatedFieldLogic.slice(11, -1).trim(); 
+            const [param1, param2] = params.split(',');
+            if (param2 === undefined) {
+              this.isValidCalculatedField = false;
+              this.validationMessage = "Missing or invalid substring parameter.";
+            } else {
+              this.calculatedFieldLogic = `STARTSWITH("${tableName}"."${columnName}", ${param2})`;
+            }
+          }
+          break;
+          case 'endswith':
+            this.calculatedFieldLogic.trim();
+            regex = /^ENDSWITH\(\s*[^,]*\s*,\s*'.*'\s*\)$/;
+            if (!this.calculatedFieldLogic.startsWith('ENDSWITH(') || !this.calculatedFieldLogic.endsWith(')') ||!regex.test(this.calculatedFieldLogic)) {
+              this.isValidCalculatedField = false;
+              this.validationMessage = "Invalid Syntax.";
+            } else {
+              this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+              const params = this.calculatedFieldLogic.slice(9, -1).trim(); 
+              const [param1, param2] = params.split(',');
+              if (param2 === undefined) {
+                this.isValidCalculatedField = false;
+                this.validationMessage = "Missing or invalid substring parameter.";
+              } else {
+                this.calculatedFieldLogic = `ENDSWITH("${tableName}"."${columnName}", ${param2})`;
+              }
+            }
+            break;
+
+        
+        
+
+
+
+
+        
+        
+
+        
+        
+        
+
         case 'replace': 
         this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
         regex = /^REPLACE\(\s*([^,]*)\s*,\s*([^,]*)\s*,\s*([^,]*)\s*\)$/;
@@ -5232,7 +5331,7 @@ customizechangeChartPlugin() {
             this.isValidCalculatedField = true;
             return true;
           }
-           break; 
+          break; 
            case 'zn':
             if(!this.validateFormula(/^ZN\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
               this.isValidCalculatedField = false;
@@ -5266,6 +5365,57 @@ customizechangeChartPlugin() {
           return true;
         }
         break;
+        case 'contains':
+        if (!this.validateFormula(/^CONTAINS\(\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } else {
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break;
+        case 'concat':
+        if (!this.validateFormula(/^CONCAT\(\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+"|'[^']*')(\s*,\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+"|'[^']*'))+\s*\)$/)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } else {
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break;
+        case 'proper':
+          if(!this.validateFormula(/^PROPER\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break;
+        case 'startswith':
+          if (!this.validateFormula(/^STARTSWITH\(\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } else {
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break;
+          case 'endswith':
+          if (!this.validateFormula(/^ENDSWITH\(\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } else {
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break;
         case 'mid': 
         if(!this.validateFormula(/^SUBSTRING\(\s*"([^"]+)"\.\"([^"]+)\"\s+FROM\s+(\d+)\s+FOR\s+(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
@@ -5557,6 +5707,21 @@ customizechangeChartPlugin() {
         case 'find':
           this.calculatedFieldLogic = "POSITION( '' IN )";
         break; 
+        case 'concat':
+          this.calculatedFieldLogic = "CONCAT(,'',)";
+        break; 
+        case 'contains':
+          this.calculatedFieldLogic = "CONTAINS( , )";
+        break;
+        case 'proper':
+          this.calculatedFieldLogic = "PROPER()";
+        break;
+        case 'startswith':
+          this.calculatedFieldLogic = "STARTSWITH(,'')";
+        break;
+        case 'endswith':
+          this.calculatedFieldLogic = "ENDSWITH(,'')";
+        break;
         case 'dateadd': 
         this.calculatedFieldLogic = 'CURRENT_DATE + INTERVAL ';
         break;

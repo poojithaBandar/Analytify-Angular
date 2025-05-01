@@ -92,6 +92,12 @@
                                                                         <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'string'" value="split">SPLIT</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="concat">CONCAT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="contains">CONTAINS</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="proper">PROPER</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="startswith">STARTSWITH</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="endswith">ENDSWITH</option>
+
                                             
                                                                         <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
@@ -253,6 +259,35 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> POSITION([string] in "tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p> POSITION('ctr' IN 'electronics') = 4 </span>
                                                                             }
+
+                                                                            @if(nestedCalculatedFieldData == 'concat'){
+                                                                                <span > <p class="fw-600 mb-0">CONCAT(Concatenate strings) :<br> </p> Concatenates First Name and Last Name with a space in between.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CONCAT("tablename"."column_name1",'_',"tablename"."column_name2")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> CONCAT('Test','_',123) = Test_123 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'contains'){
+                                                                                <span > <p class="fw-600 mb-0">CONTAINS (Check if substring exists) :<br> </p> Returns true if the sub string exists.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CONTAINS("tablename"."column_name",substring)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> CONTAINS('electronics', 'tronic') = true </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'proper'){
+                                                                                <span > <p class="fw-600 mb-0">PROPER(Capitalize first letter of each word):<br> </p> Capitalizes first letter of each word.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> PROPER("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> PROPER(TEST) = Test </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'startswith'){
+                                                                                <span > <p class="fw-600 mb-0">STARTSWITH (Checks if substring starts with) :<br> </p> Returns true if the string starts with the substring(BOOLEAN) .</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> STARTSWITH("tablename"."column_name",substring)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> STARTSWITH('electronics','ele') = true </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'endswith'){
+                                                                                <span > <p class="fw-600 mb-0">endswith(Concatenate strings) :<br> </p> Concatenates First Name and Last Name with a space in between.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ENDSWITH("tablename"."column_name",substring)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> ENDSWITH('electronics','nics') = true</span>
+                                                                            }
+
+
+
                                                                             @if(nestedCalculatedFieldData == 'dateadd'){
                                                                                 <span > <p class="fw-600 mb-0">DATEADD (date_field + interval date) :<br> </p> Adds a time interval to a date.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."columnname" + INTERVAL '[int] days' (days/months/years) </span><br><br>
