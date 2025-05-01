@@ -327,7 +327,12 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./configure/configure.component').then((m) => m.ConfigureComponent),
       },
-
+      {
+        path: 'configure-page/sdk',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./embed-sdk/embed-sdk.component').then((m) => m.EmbedSdkComponent),
+      },
       {
         path: 'databaseConnection/dataTransformation/:id',
         canActivate: [authGuard],
@@ -382,7 +387,7 @@ export const admin: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
-      },
+      }
     ]
   }
  ];

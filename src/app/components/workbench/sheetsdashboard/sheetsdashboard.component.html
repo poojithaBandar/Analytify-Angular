@@ -2,7 +2,7 @@
 <app-header *ngIf="publicHeader" [isPublicUrl]="publicHeader"></app-header>
 
 <!-- <div *ngIf="dashboardView"> -->
-<app-page-header title="Dashboard" moduleId="dashboard" title1="Home" activeitem="Dashboard"></app-page-header>
+<app-page-header *ngIf="!isEmbedDashboard" title="Dashboard" moduleId="dashboard" title1="Home" activeitem="Dashboard"></app-page-header>
 <!-- </div> -->
 <!-- <div *ngIf="sheetsNewDashboard">
   <app-page-header title="Dashboard" moduleId="dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/analytify/sheets" activeitem="Dashboard"></app-page-header>
@@ -159,7 +159,7 @@
                     <div class="tabs-menu1">
                         <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs dashboard-tabs-space">
 
-                            <li *ngIf="!isPublicUrl" [ngbNavItem]="1">
+                            <li *ngIf="!isPublicUrl && !isEmbedDashboard" [ngbNavItem]="1">
                                 <a ngbNavLink class="dashboard-tab-padding">Dashboard</a>
                                 <ng-template ngbNavContent>
                                     <div class="tab-pane active" id="activetabs">
@@ -369,6 +369,17 @@
                                                                                         </ng-option>
                                                                                       </ng-select>
                                             </div>
+                                            @if(isdashboardSDKGenerated){
+                                              <div class="form-group p-1 mb-0"> 
+                                                <label class="mb-0">Embed Filter </label>
+                                            </div>
+                                            <div *ngIf="isEmbeddedFilter" class="toggle toggle-sm on mb-0" (click)="this.isEmbeddedFilter = !this.isEmbeddedFilter">
+                                                <span></span>
+                                            </div>
+                                            <div *ngIf="!isEmbeddedFilter" class="toggle toggle-sm off mb-0" (click)="this.isEmbeddedFilter = !this.isEmbeddedFilter">
+                                              <span></span>
+                                            </div>
+                                          }
                                     
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Column <span class="text-red">*</span><i ngbTooltip="Pick the columns you want to display or analyze from the selected queryset." class="icon icon-info ms-1 cursor-pointer"></i>
@@ -511,6 +522,18 @@
                                           </ng-option>
                                         </ng-select>
                                           </div>
+
+                                          @if(isdashboardSDKGenerated){
+                                            <div class="form-group p-1 mb-0"> 
+                                              <label class="mb-0">Embed Filter </label>
+                                          </div>
+                                          <div *ngIf="isEmbeddedFilter" class="toggle toggle-sm on mb-0" (click)="this.isEmbeddedFilter = !this.isEmbeddedFilter">
+                                              <span></span>
+                                          </div>
+                                          <div *ngIf="!isEmbeddedFilter" class="toggle toggle-sm off mb-0" (click)="this.isEmbeddedFilter = !this.isEmbeddedFilter">
+                                            <span></span>
+                                          </div>
+                                        }
                                   
                                           <div class="form-group p-1">
                                 
@@ -607,7 +630,7 @@
                                 </div>
                             </div>
                             </ng-template>
-                            <!-- @if(updateDashbpardBoolen){ -->                           
+                            <!-- @if(updateDashbpardBoolen){ -->    
                             <li [ngbNavItem]="2">
                               <div class="tooltip-wrapper"
                                 [ngbTooltip]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'Please save / update the dashboard' : null"
@@ -632,12 +655,15 @@
                                                   <div class="card-content p-0">
                                                       <div class=" mt-2 mb-2">
                                                           <div class="dropdown" ngbDropdown [autoClose]="'outside'" #mainDropdown="ngbDropdown">
-                                                              <button *ngIf="!isPublicUrl" [disabled]="dashboard.length < 1 || canNavigateToAnotherPage" class="btn btn-primary dropdown-toggle w-100" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                              <button *ngIf="!isPublicUrl && !isEmbedDashboard" [disabled]="dashboard.length < 1 || canNavigateToAnotherPage" class="btn btn-primary dropdown-toggle w-100" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                               <i class="fa fa-plus"></i> Add/Edit Filters
                                                               </button>
                                                               <div >
                                                                 <!-- @for(filterList of DahboardListFilters;track filterList){ -->
-                                                               <div *ngFor="let filterList of DahboardListFilters" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2">
+                                                                  @for (filterList of DahboardListFilters; track filterList) {
+                                                                    @if(!isEmbedDashboard || (isEmbedDashboard && !filterList.is_embedded)){
+                                                               <div class="sub-category-card p-1 mt-2 border  rounded-3 mb-2">
+                                              
                                                                 <p class="p-1 mb-0 category-text">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
@@ -666,7 +692,7 @@
 
                                                                       <cdk-virtual-scroll-viewport itemSize="5" class="viewport" style="height: 100px;">
                                                                         <div *cdkVirtualFor="let col of filterList.colData | test:searchText:'label';" >
-                                                                          <div class="form-check" style="width: 46px;">
+                                                                          <div class="form-check" >
                                                                           <input type="checkbox" [id]="'defaultCheck' + col.label" [(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList, col)" class="form-check-input"> 
                                                                           <label [for]="'defaultCheck' + col.label" class="form-check-label"> <p>{{ col.label }}</p> </label>
                                                                           </div>
@@ -683,6 +709,7 @@
                                                                 </div>
                                                                   </ul>
                                                               </div>
+                                                  
                                                                 <!-- <div class="dropdown">
                                                                   <button class="btn btn-secondary dropdown-toggle" type="button" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList)" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     Select 
@@ -697,6 +724,8 @@
                                                                   </div>
                                                                 </div> -->
                                                               </div>
+                                                            }
+                                                          }
                                                             <!-- } -->
                                                               <div class="clear-filter-btn"  *ngIf="DahboardListFilters .length > 0; else noData"> 
                                                                 <button class="btn ripple btn-danger"
@@ -959,7 +988,7 @@
                                                <div class="card-content p-0">
                                                    <div class=" mt-2 mb-2">
                                                        <div class="">
-                                                        <button *ngIf="!isPublicUrl" [disabled]="dashboard.length < 1 || canNavigateToAnotherPage" class="btn btn-primary w-100" (click)="getQuerySetForFilter();clearActionForm();openSuperScaleForActions(dashboardActions);getDrillThroughActionList()" id="applyActions" type="button" aria-expanded="false">
+                                                        <button *ngIf="!isPublicUrl && !isEmbedDashboard" [disabled]="dashboard.length < 1 || canNavigateToAnotherPage" class="btn btn-primary w-100" (click)="getQuerySetForFilter();clearActionForm();openSuperScaleForActions(dashboardActions);getDrillThroughActionList()" id="applyActions" type="button" aria-expanded="false">
                                                           <i class="fa fa-plus"></i> Add/Edit Actions
                                                         </button>
                                                         <div >
@@ -1004,7 +1033,7 @@
         <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left fs-18"></i>
         <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right fs-18"></i>
       </div>
-      <div class="dashboard-edit-title-card">
+      <div *ngIf="!isEmbedDashboard" class="dashboard-edit-title-card">
         
          <div *ngIf="!isPublicUrl" class="card mb-1 public-url-position">
             <div class="card-body p-1">
@@ -1012,7 +1041,7 @@
                   <div class="flex-grow-1">                     
                     <div class="title-container" [ngClass]="{'border': dashboardId}" *ngIf="!editor">
                       <input *ngIf="!dashboardId && !editor" (click)="editor =true && !isPublicUrl" type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
-                      <div *ngIf="dashboardId && !editor" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
+                      <div *ngIf="dashboardId && !editor" class="SearchBarCu" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle"></div>              
                        
                         </div>
                         <ckeditor *ngIf="editor && !isPublicUrl" placeholder="dashbaord Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName" (ngModelChange)="updatedashboardName(dashboardTagName)" style="color: black;" ></ckeditor>
@@ -1029,7 +1058,7 @@
                         </div>
 
                         <div class="min-w-fit-content ms-1 d-flex align-items-center">              
-                        <span *ngIf="!isPublicUrl" ngbTooltip="Edit Title" class="title-editor ms-1" (click)="toggleEditor()">
+                        <span *ngIf="!isPublicUrl && !isEmbedDashboard" ngbTooltip="Edit Title" class="title-editor ms-1" (click)="toggleEditor()">
                           <button  class="btn btn-primary me-1"><i class="fa fa-pencil"></i></button>
                         </span>
                         <span [ngbTooltip]="dashboard.length === 0 ? 'Add sheet to save dashboard' : ''">
@@ -1037,17 +1066,36 @@
                             <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
                             (btnClickEvent)="updateDashboard(false);editor =false"></app-insights-button>
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
-                            <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button>
-                            <button *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
-                            <div class=" p-1" ngbDropdown>
-                              <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
-                                aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                              </a>
+                            <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button> -->
+                            <div *ngIf="!isPublicUrl && !isSampleDashboard" class=" p-1" ngbDropdown>
+                            <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" class="btn btn-primary mt-0 ps-2 pe-2" type="button" ngbTooltip="Sync Options" container="body" ngbDropdownToggle>
+                              <i class="fa fa-refresh" aria-hidden="true"></i>
+                            </button>
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
-                                <button *ngIf="!isPublicUrl && dashboardId" type="button" [disabled]="canNavigateToAnotherPage" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button>
+                                <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();">sync data</button> -->
+                                <!-- <button *ngIf="!isPublicUrl && dashboardId" type="button" [disabled]="canNavigateToAnotherPage" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button> -->
+                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="refreshDashboard()">Sync data</a>
+                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</a>
+
                               </div>
                               </div>
-                            <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
+                            <button *ngIf="!isPublicUrl" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
+                            <div class=" p-1" ngbDropdown>
+                              <button
+                              [disabled]="dashboard.length === 0 || !updateDashbpardBoolen"
+                              class="btn btn-primary mt-0 ps-2 pe-2"
+                              type="button"
+                              container="body"
+                              ngbDropdownToggle
+                              >
+                              <i class="fa fa-download" aria-hidden="true"></i>
+                              </button>
+                              <div class="dropdown-menu mt-2" ngbDropdownMenu>
+                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="downloadAsImage()">Download Image</a>
+                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="downloadAsPDF();">Download Pdf</a>
+                              </div>
+                              </div>
+                              
                             <div *ngIf="isPublicUrl" class="dashboard-option">
                               <div class="d-flex justify-content-end p-1" ngbDropdown>
                                   <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -1092,8 +1140,8 @@
             <!-- </div> -->
       
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
-        
-        <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
+       
+        <gridster [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event,false)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard">
@@ -1143,7 +1191,7 @@
                   <i class="fa fa-filter filter-icon-count" ngbTooltip="{{filter?.filter_count}} Filters Applied"></i>
                   }
                   }
-                  <div *ngIf="!isPublicUrl" class="dashboard-option">
+                  <div *ngIf="!isPublicUrl && !isEmbedDashboard" class="dashboard-option">
                     <div class=" p-1" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -1420,7 +1468,7 @@
                 </div>
               }
               <div *ngIf="item['chartType'] === 'Table'">
-                <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" >
+                <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                   <table class="table border text-nowrap text-md-nowrap mb-0">
                       <thead>
                         <tr>
@@ -1482,7 +1530,7 @@
             
                   }
                 </div>
-                <!-- <div *ngIf="item['chartType'] === PIVOT">
+                <div *ngIf="item['chartType'] === PIVOT">
                               <div id="pivotTableContainer" #pivotTableContainer></div>
                           </div> -->
             
@@ -1543,7 +1591,7 @@
           <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="tabHeightGrid"
             [style.width.px]="tabWidthGrid">
             <!-- <div style="height: inherit;" > -->
-              <gridster [options]="options" #gridsterTab>
+              <gridster [options]="options" #gridsterTab id="capture-image-pdf-2">
                 <gridster-item [item]="item" *ngFor="let item of dashboardTest;let i = index"
                   [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                   <div class="card mb-0 grid-item-border card-panel" style="height: 100%;" [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
@@ -1592,7 +1640,7 @@
                   <i class="fa fa-filter filter-icon-count" ngbTooltip="{{filter?.filter_count}} Filters Applied"></i>
                   }
                   }
-                  <div *ngIf="!isPublicUrl" class="dashboard-option">
+                  <div *ngIf="!isPublicUrl && !isEmbedDashboard" class="dashboard-option">
                     <div class=" p-1" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>

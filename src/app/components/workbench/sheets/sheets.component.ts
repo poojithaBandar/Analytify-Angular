@@ -59,6 +59,9 @@ import 'jquery-ui/ui/widgets/sortable';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
 
+import domtoimage from 'dom-to-image';
+import jsPDF from 'jspdf';
+
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -344,6 +347,9 @@ export class SheetsComponent{
   tableDataFontColor : any = '#000000';
   tableDataFontAlignment : any = 'left';
 
+  pivotColumnTotals:boolean = true;
+  pivotRowTotals:boolean = true;
+
   headerFontFamily : any = "'Arial', sans-serif";
   headerFontSize : any = '16px';
   headerFontWeight : any = 700;
@@ -380,6 +386,7 @@ export class SheetsComponent{
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
   @ViewChild('sqlEditor') sqlEditor!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('pdfcontainer') pdfcontainer!: ElementRef;
 
   transformedData: any[] = [];
   columnKeys: string[] = [];
@@ -387,6 +394,8 @@ export class SheetsComponent{
   valueKeys: string[] = [];
   rawData: any = {};
   
+  bandingEvenColor= '#ffffff' 
+  bandingOddColor= '#f5f7fa' 
   // colorSchemes = [
   //   ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
   //   ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -887,6 +896,10 @@ try {
                   this.tableDataDisplay.push(tableRow);
                  // console.log('display row data ', this.tableDataDisplay)
                 }
+                if(this.page === 1 && this.pageNo === 1){
+                  this.displayedColumns = this.tableColumnsDisplay;
+                  this.tableDataStore = this.tableDataDisplay;
+                }
                 if(isSyncData){
                   this.sheetSave();
                 }
@@ -953,22 +966,29 @@ try {
         }
         }
 
-        renderPivotTable(isSyncData : boolean) {
+        renderPivotTable(isSyncData: boolean) {
           setTimeout(() => {
 
-          if (this.pivotContainer && this.pivotContainer.nativeElement) {
+            if (this.pivotContainer && this.pivotContainer.nativeElement) {
               ($(this.pivotContainer.nativeElement) as any).pivot(this.transformedData, {
-                rows: this.columnKeys,  
-                cols: this.valueKeys, 
+                rows: this.columnKeys,
+                cols: this.valueKeys,
                 // vals: this.valueKeys, 
-                aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
-                rendererName: "Table"
-              }); 
-            if(isSyncData){
-              this.sheetSave();
+                aggregator: $.pivotUtilities.aggregators["Sum"](this.rowKeys),
+                rendererName: "Table",
+                rendererOptions:{
+                  table:{
+                    rowTotals:this.pivotRowTotals,
+                    colTotals:this.pivotColumnTotals
+                  }
+                }
+              });
+              if (isSyncData) {
+                this.sheetSave();
+              }
             }
-          }        
-                      }, 1000);
+            this.applyDynamicStylesToPivot()
+          }, 1000);
 
         }
 
@@ -1292,7 +1312,8 @@ try {
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
-  selectedColumnForYOY :any;
+  // selectedColumnForYOY :any;
+  selectedColumnForPeriodType:any
   rowMeasuresCount(rows:any,index:any,type:any){
     // this.rowaggregateType = type;
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
@@ -1302,16 +1323,36 @@ try {
       }
     }
       this.measureValues = [];
-      if(type){
-        if(type == 'yoy'){
-          this.measureValues = [rows.column,"yoy",this.selectedColumnForYOY+':'+this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-        }else if(type == 'yoyRemove'){
-          this.measureValues = [rows.column,"aggregate",this.draggedRows[index].type,rows.alias ? rows.alias : ""];
-        }
-        else{
-        this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
+      let yoyType = this.draggedRows[index].type;
+      if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+        this.draggedRows[index].type = yoyType.split(' ')[2];
+        yoyType = this.draggedRows[index].type;
+      }
+      if (type) {
+        if (type === 'yoy' || type === 'mom' || type === 'qoq') {
+          this.measureValues = [
+            rows.column,
+            type,
+            this.selectedColumnForPeriodType + ':' + this.draggedRows[index].type,
+            rows.alias ? rows.alias : ""
+          ];
+        } else if (type === 'yoyRemove' || type === 'momRemove' || type === 'qoqRemove') {
+          this.measureValues = [
+            rows.column,
+            "aggregate",
+            this.draggedRows[index].type,
+            rows.alias ? rows.alias : ""
+          ];
+        } else {
+          this.measureValues = [
+            rows.column,
+            "aggregate",
+            type,
+            rows.alias ? rows.alias : ""
+          ];
         }
       }
+      
       else{
         this.measureValues = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
       }
@@ -1326,8 +1367,18 @@ try {
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
-    if(type !== 'yoy' && type !== 'yoyRemove'){
-    this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
+    if (type !== 'yoy' && type !== 'yoyRemove' && type !== 'mom' && type !== 'momRemove' && type !== 'qoq' && type !== 'qoqRemove') {
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
+    } 
+    // if (['yoy','mom','qoq'].includes(type) && yoyType && ['yoy of', 'mom of', 'qoq of'].some(key => yoyType.includes(key))) {
+    //   yoyType = yoyType.split(' ')[2];
+    // }
+    if(type == 'yoy'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'yoy of '+yoyType,alias:rows.alias};
+    } else if(type == 'mom'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'mom of '+yoyType,alias:rows.alias};
+    } else if(type == 'qoq'){
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'qoq of '+yoyType,alias:rows.alias};
     }
     console.log(this.draggedRows)
     if(type === 'count' || type === 'count_distinct'){
@@ -1391,23 +1442,28 @@ try {
     console.log(this.draggedColumns);
     console.log(this.draggedColumnsData);
     console.log(index);
-    // this.draggedColumns.splice(index, 1);
-    // (this.draggedColumnsData as any[]).forEach((data,index1)=>{
-    //   if(this.dateList.includes(data[1])){
-    //     if(this.draggedColumns[index].column === data[0] && this.draggedColumns[index].data_type === data[1] 
-    //       && this.draggedColumns[index].type === data[2]){
-    //         this.draggedColumnsData.splice(index, 1);
-    //     }
-    //   }
-    //   else{
-    //     (data as any[]).forEach((aa)=>{ 
-    //       if(column === aa){
-    //         console.log(aa);
-    //         this.draggedColumnsData.splice(index1, 1);
-    //       }
-    //     } );
-    //   }
-    // });
+    const format = this.draggedColumnsData[index][2];
+    if (format && format !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
+
+          if (this.draggedColumnsData[index][0] === col) {
+            if (format && ['year', 'month', 'quarter'].includes(format) && format !== '') {
+              if((format === 'year' && row[1] ==='yoy') || (format === 'month' && row[1] ==='mom') || (format === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          
+        }
+        i++;
+      }
+    }
     if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
       this.draggedDrillDownColumns = [];
     }
@@ -1532,6 +1588,10 @@ try {
       this.drillDownObject = [];
       this.drillDownIndex = 0;
       this.dateDrillDownSwitch = false;
+    }
+    if(!this.pivotTable){
+      this.draggedMeasureValues=[]
+      this.draggedMeasureValuesData=[]
     }
     this.resetCustomizations();
     this.chartsOptionsSet(); 
@@ -2297,7 +2357,12 @@ sheetSave(){
     KPIDecimalPlaces : this.KPIDecimalPlaces,
     KPIDisplayUnits : this.KPIDisplayUnits,
     KPIPrefix : this.KPIPrefix,
-    KPISuffix : this.KPISuffix
+    KPISuffix : this.KPISuffix,
+
+    pivotRowTotals:this.pivotRowTotals,
+    pivotColumnTotals : this.pivotColumnTotals,
+    bandingOddColor :this.bandingOddColor,
+    bandingEvenColor:this.bandingEvenColor,
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2656,7 +2721,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           // this.tableData = this.sheetResponce.results.tableData;
-          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          // this.displayedColumns = this.sheetResponce?.results.tableColumns;
           this.bandingSwitch = this.sheetResponce?.results.banding;
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
@@ -3283,7 +3348,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     const obj={
       "hierarchy_id" :this.databaseId,
@@ -3425,7 +3490,7 @@ trackByFn(index: number, item: any): number {
     let relativeDateRange : any[]=[];
     this.sortedData = [];
     if(this.activeTabId === 4){
-      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
@@ -3502,6 +3567,7 @@ trackByFn(index: number, item: any): number {
           this.topLimit = responce?.top_bottom[2];
           this.selectedTopColumn = responce?.top_bottom[0];
           this.topAggregate = responce?.top_bottom[1];
+          this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
         }
         if(this.formatExtractType){
           this.activeTabId = 3;
@@ -3627,6 +3693,9 @@ trackByFn(index: number, item: any): number {
   filterDataEditPut(){
     this.sortedData = [];
     let relativeDateRange : any[] = [];
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
+    }
     if(this.activeTabId === 5){
       if (this.previewFromDate && this.previewToDate) {
         const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
@@ -3843,6 +3912,9 @@ console.log(reName.split(',')[0])
         this.color1 = undefined;
         this.color2 = undefined;
       }
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
@@ -3903,31 +3975,35 @@ console.log(reName.split(',')[0])
   formatKPINumber() {
     let formattedNumber = this.tablePreviewRow[0]?.result_data[0]+'';
     let value = this.tablePreviewRow[0]?.result_data[0];
-    if (this.KPIDisplayUnits !== 'none') {
-      switch (this.KPIDisplayUnits) {
-        case 'K':
-          formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
-          break;
-        case 'M':
-          formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
-          break;
-        case 'B':
-          formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
-          break;
-        case 'G':
-          formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
-          break;
-        case '%':
-          this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
-          let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
-          formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
-          break;
+    if(value === null || value === undefined){
+      this.KPINumber = 0;
+    } else{
+      if (this.KPIDisplayUnits !== 'none') {
+        switch (this.KPIDisplayUnits) {
+          case 'K':
+            formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
+            break;
+          case 'M':
+            formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
+            break;
+          case 'B':
+            formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
+            break;
+          case 'G':
+            formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
+            break;
+          case '%':
+            this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+            let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+            formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+            break;
+        }
+      } else {
+        formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
       }
-    } else {
-      formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
+  
+      this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
     }
-
-    this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
   }
   numberPopupTrigger(){
     this.numberPopup = !this.numberPopup;
@@ -4159,7 +4235,11 @@ customizechangeChartPlugin() {
     this.KPIDecimalPlaces = data.KPIDecimalPlaces ?? 2,
     this.KPIDisplayUnits = data.KPIDisplayUnits ?? 'none',
     this.KPIPrefix = data.KPIPrefix ?? '',
-    this.KPISuffix = data.KPISuffix ?? ''
+    this.KPISuffix = data.KPISuffix ?? '',
+    this.pivotRowTotals = data.pivotRowTotals ?? true,
+    this.pivotColumnTotals = data.pivotColumnTotals ?? true,
+    this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff' 
+    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa' 
   }
 
   resetCustomizations(){
@@ -4251,6 +4331,11 @@ customizechangeChartPlugin() {
     this.rightLegend = null
     this.sortColumn = 'select';
     this.locationDrillDownSwitch = false;
+
+    this.pivotColumnTotals = true;
+    this.pivotRowTotals = true;
+    this.bandingEvenColor= '#ffffff' 
+    this.bandingOddColor= '#f5f7fa' 
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
     // this.KPIPrefix = '',
@@ -4410,6 +4495,7 @@ customizechangeChartPlugin() {
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = format;
     }
+    const prvFormat = this.draggedColumnsData[index][2];
     if(format === ''){
       this.draggedColumnsData[index] = [column.column,column.data_type,format,column.alias ? column.alias : ""];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format, alias: column.alias ? column.alias : ""};
@@ -4423,22 +4509,62 @@ customizechangeChartPlugin() {
       console.log(this.draggedColumns);
      }
      this.checkDateFormatForYOY();
+    if (prvFormat && prvFormat !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
+
+          if (this.draggedColumnsData[index][0] === col) {
+            if (prvFormat && prvFormat !== this.draggedColumnsData[index][2] && ['year', 'month', 'quarter'].includes(prvFormat) && prvFormat !== '') {
+              if((prvFormat === 'year' && row[1] ==='yoy') || (prvFormat === 'month' && row[1] ==='mom') || (prvFormat === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          
+        }
+        i++;
+      }
+    }
      this.dataExtraction(false);
   }
   checkdatetype= false;
+  hasYearType = false;
+  hasMonthType = false;
+  hasQuaterType = false;
   checkDateFormatForYOY(){
     // this.checkdatetype = this.draggedColumns.every((col: { type: string; }) => col.type === 'year');
-    const hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
-    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
-    this.checkdatetype = hasYearType && hasDateFormat;
+    this.hasYearType = this.draggedColumns.some((col: { type: string; }) => col.type === 'year');
+    this.hasMonthType = this.draggedColumns.some((col: { type: string; }) => col.type === 'month');
+    this.hasQuaterType = this.draggedColumns.some((col: { type: string; }) => col.type === 'quarter');
 
-    this.yearColumns = this.draggedColumns
-  .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    const hasDateFormat = this.draggedColumns.some((col: { data_type: string; }) => this.dateList.includes(col.data_type));
+    // this.checkdatetype = hasYearType && hasDateFormat;
+
+    if (this.hasYearType) {
+      this.yearColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'year').map((col: { column: any; }) => col.column);
+    }
+    if (this.hasMonthType) {
+      this.monthColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'month').map((col: { column: any; }) => col.column);
+    }
+    if (this.hasQuaterType) {
+      this.quaterColumns = this.draggedColumns
+        .filter((col: { type: string; }) => col.type === 'quarter').map((col: { column: any; }) => col.column);
+    }
   }
+ 
+
   dateAggregation(column:any, index:any, type:any){
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
       this.selectedSortColumnData[2] = type;
     }
+    const prvFormat = this.draggedColumnsData[index][2];
     if (type === '') {
       this.draggedColumnsData[index] = [column.column, column.data_type, type, column.alias ? column.alias : ""];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
@@ -4447,6 +4573,27 @@ customizechangeChartPlugin() {
       this.draggedColumnsData[index] = [column.column, "aggregate", type, column.alias ? column.alias : ""];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
+    }
+    if (prvFormat && prvFormat !== '') {
+      let i = 0;
+      for (const row of this.draggedRowsData) {
+        if (['yoy', 'mom', 'qoq'].includes(row[1])) {
+          const [col, agg] = row[2].split(':');
+
+          if (this.draggedColumnsData[index][0] === col) {
+            if (prvFormat && prvFormat !== this.draggedColumnsData[index][2] && ['year', 'month', 'quarter'].includes(prvFormat) && prvFormat !== '') {
+              if((prvFormat === 'year' && row[1] ==='yoy') || (prvFormat === 'month' && row[1] ==='mom') || (prvFormat === 'quarter' && row[1] ==='qoq')){
+                row[1] = 'aggregate';
+                row[2] = agg;
+                this.draggedRows[i].type = agg;
+                break;
+              }
+            }
+          }
+          
+        }
+        i++;
+      }
     }
     this.dataExtraction(false);
     this.checkDateFormatForYOY();
@@ -4780,6 +4927,9 @@ customizechangeChartPlugin() {
       }
       resetBackgroundColor(){
         this.backgroundColor = '#ffffff';
+        if(this.pivotTable){
+          this.applyDynamicStylesToPivot();
+        }
       }
       resetKpiColor(){
         this.kpiColor = '#0f0f0f';
@@ -4890,6 +5040,8 @@ customizechangeChartPlugin() {
       })
     }
 
+    
+    
     dropCalculatedField(tableName: string , columnName : string){
       let regex;
       let hasContentInsideParentheses;
@@ -5005,7 +5157,8 @@ customizechangeChartPlugin() {
         case 'datepart': 
         this.calculatedFieldLogic = 'DATE_PART("year", ' + '"'+ tableName +'"."'+ columnName + '")';
         break; 
-        case 'now': break; 
+        case 'now': 
+        break;
         case 'today': break; 
         case 'parse': 
         this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '", "dd-mm-yyyy")';
@@ -5567,7 +5720,7 @@ customizechangeChartPlugin() {
         this.calculatedFieldLogic = "DATE_PART('year', current_timestamp)";
         break; 
         case 'now': 
-        this.calculatedFieldLogic = 'current_timestamp()';
+        this.calculatedFieldLogic = 'now()';
         break; 
         case 'today': 
         this.calculatedFieldLogic = 'CURRENT_DATE()';
@@ -5613,6 +5766,9 @@ customizechangeChartPlugin() {
       this.selectedElement = event.target as HTMLElement;
       this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.tableDataFontColor = window.getComputedStyle(element).backgroundColor;
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     headerColorChange(event:any){
       if (this.selectedElement) {
@@ -5622,6 +5778,9 @@ customizechangeChartPlugin() {
       this.selectedElement = event.target as HTMLElement;
       this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.headerFontColor = window.getComputedStyle(element).backgroundColor;
+      if(this.pivotTable){
+        this.applyDynamicStylesToPivot();
+      }
     }
     sortedData : TableRow[] = [];
     tableColumnSort(sortType:any, column : any){
@@ -6322,6 +6481,8 @@ toggleQuickCalculation() {
 }
 yearLength = 2; // Example value, dynamically set based on your data
 yearColumns = [];
+monthColumns = [];
+quaterColumns = [];
 // calculatedFieldLogic = '';
 showSuggestions = false;
 filteredSuggestions: SqlSuggestion[] = [];
@@ -6665,15 +6826,145 @@ getCaretCoordinates(textarea: HTMLTextAreaElement, position: number) {
   runExport();
 }
 
-downloadAsPDF() {
-  // Implement your PDF download logic here
-  console.log('Download as PDF clicked');
+downloadAsPDFImage(format: 'pdf' | 'png') {
+  const element = document.getElementById('pdfcontainer');
+  if (!element) return;
+ 
+  this.loaderService.show(); 
+  const scale = 2;
+  // Save original styles
+  const originalOverflow = element.style.overflow;
+  const originalHeight = element.style.height;
+  const originalWidth = element.style.width;
+
+  // Expand the element to show full content
+  element.style.overflow = 'visible';
+  element.style.height = element.scrollHeight + 'px';
+  element.style.width = element.scrollWidth + 'px';
+
+  const width = element.scrollWidth * scale;
+  const height = element.scrollHeight * scale;
+
+  domtoimage.toPng(element, {
+    width,
+    height,
+    style: {
+      transform: `scale(${scale})`,
+      transformOrigin: 'top left',
+      width: element.scrollWidth + 'px',
+      height: element.scrollHeight + 'px'
+    }
+  }).then((dataUrl) => {
+    // Restore original styles
+    element.style.overflow = originalOverflow;
+    element.style.height = originalHeight;
+    element.style.width = originalWidth;
+    if (format === 'png') {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = this.sheetTitle + '.png';
+      link.click();
+      this.loaderService.hide();
+    } else {
+      const img = new Image();
+      img.onload = () => {
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const imgWidth = pdfWidth;
+        const imgHeight = (img.height * imgWidth) / img.width;
+
+        pdf.addImage(dataUrl, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(this.sheetTitle + '.pdf');
+        this.loaderService.hide();
+      };
+      img.src = dataUrl;
+    }
+  }).catch(error => {
+    console.error('Error generating image:', error);
+    // Restore even if failed
+    element.style.overflow = originalOverflow;
+    element.style.height = originalHeight;
+    element.style.width = originalWidth;
+  });
+
 }
 
-downloadAsImage() {
-  // Implement your image download logic here
-  console.log('Download as Image clicked');
+applyPIvotHeaderBg() {
+  setTimeout(() => {
+    this.applyDynamicStylesToPivot();
+  }, 0);
 }
+
+applyDynamicStylesToPivot() {
+  const headers = document.querySelectorAll('.pvtTable th');
+  headers.forEach(header => {
+    (header as HTMLElement).style.backgroundColor = this.backgroundColor;
+    (header as HTMLElement).style.color = this.headerFontColor;
+    (header as HTMLElement).style.fontSize = this.headerFontSize;
+    (header as HTMLElement).style.fontFamily = this.headerFontFamily;
+    (header as HTMLElement).style.fontWeight = this.headerFontWeight;
+    (header as HTMLElement).style.fontStyle = this.headerFontStyle;
+    (header as HTMLElement).style.textDecoration = this.headerFontDecoration;
+    (header as HTMLElement).style.textAlign = this.headerFontAlignment;
+
+  });
+
+  const cells = document.querySelectorAll('.pvtTable td');
+  cells.forEach(cell => {
+    // (cell as HTMLElement).style.backgroundColor = this.backgroundColor;
+    (cell as HTMLElement).style.color = this.tableDataFontColor;
+    (cell as HTMLElement).style.fontSize = this.tableDataFontSize;
+    (cell as HTMLElement).style.fontFamily = this.tableDataFontFamily;
+    (cell as HTMLElement).style.fontWeight = this.tableDataFontWeight;
+    (cell as HTMLElement).style.fontStyle = this.tableDataFontStyle;
+    (cell as HTMLElement).style.textDecoration = this.tableDataFontDecoration;
+    (cell as HTMLElement).style.textAlign = this.tableDataFontAlignment;
+
+  });
+  const rows = document.querySelectorAll('.pvtTable tr');
+//   rows.forEach((row, rowIndex) => {
+//     // Only apply to rows that contain data cells
+//     if (row.querySelectorAll('td').length > 0) {
+//       row.classList.remove('even-row', 'odd-row');
+
+//       if (this.bandingSwitch) {
+//         row.classList.add(rowIndex % 2 === 0 ? this.bandingEvenColor : this.bandingOddColor);
+//       }
+//     }
+// });
+rows.forEach((row, rowIndex) => {
+  const hasDataCells = row.querySelectorAll('td').length > 0;
+  
+  if (hasDataCells) {
+    row.classList.remove('even-row', 'odd-row');
+
+    if (this.bandingSwitch) {
+      const tds = row.querySelectorAll('td');
+      const bgColor = (rowIndex % 2 === 0) 
+        ? this.bandingEvenColor 
+        : this.bandingOddColor;
+      tds.forEach((td: HTMLElement) => {
+        td.style.backgroundColor = bgColor;
+      });
+    } else {
+      const tds = row.querySelectorAll('td');
+      tds.forEach((td: HTMLElement) => {
+        td.style.backgroundColor = ''; // Reset
+      });
+    }
+  }
+});
+
+}
+qoqOpen = false
+toggleQOQDropdown() {
+  this.qoqOpen = !this.qoqOpen;
+}
+qoqOptions = [
+  'QOQ Option 1', 'QOQ Option 2', 'QOQ Option 3',
+  'QOQ Option 4', 'QOQ Option 5', 'QOQ Option 6',
+  'QOQ Option 7', 'QOQ Option 8'
+];
 
 }
 
