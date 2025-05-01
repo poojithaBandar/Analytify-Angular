@@ -683,12 +683,16 @@ export class WorkbenchComponent implements OnInit{
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               Swal.fire({
                 position: "center",
-                icon: "question",
-                title: "Would you like to view template dashboard?",
+                // icon: "question",
+                iconHtml: '<img src="./assets/images/copilot.gif">',
+                title: "Create smart dashboard from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'Skip',
+                customClass: {
+                  icon: 'no-icon-bg',
+                }
               }).then((result) => {
                 if (result.isConfirmed) {
                   this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
@@ -730,12 +734,15 @@ export class WorkbenchComponent implements OnInit{
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               Swal.fire({
                 position: "center",
-                icon: "question",
-                title: "Would you like to view template dashboard?",
+                iconHtml: '<img src="./assets/images/copilot.gif">',
+                title: "Create smart dashboard from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'Skip',
+                customClass: {
+                  icon: 'no-icon-bg',
+                }
               }).then((result) => {
                 if (result.isConfirmed) {
                   this.templateDashboardService.buildSampleHALOPSADashboard(this.container, this.databaseId);

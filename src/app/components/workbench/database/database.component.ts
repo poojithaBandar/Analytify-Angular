@@ -236,12 +236,16 @@ export class DatabaseComponent {
       this.databaseId = +atob(route.snapshot.params['id']);
       Swal.fire({
         position: "center",
-        icon: "question",
-        title: "Would you like to view template dashboard?",
+        // icon: "question",
+        iconHtml: '<img src="./assets/images/copilot.gif">',
+        title: "Create smart dashboard from your data with just one click?",
         showConfirmButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes',
         cancelButtonText: 'Skip',
+        customClass: {
+          icon: 'no-icon-bg',
+        }
       }).then((result) => {
         if (result.isConfirmed) {
           this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, this.databaseId);
@@ -258,12 +262,16 @@ export class DatabaseComponent {
       this.databaseId = +atob(route.snapshot.params['id']);
       Swal.fire({
         position: "center",
-        icon: "question",
-        title: "Would you like to view template dashboard?",
+        // icon: "question",
+        iconHtml: '<img src="./assets/images/copilot.gif">',
+        title: "Create smart dashboard from your data with just one click?",
         showConfirmButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes',
         cancelButtonText: 'No',
+        customClass: {
+          icon: 'no-icon-bg',
+        }
       }).then((result) => {
         if (result.isConfirmed) {
           this.templateDashboardService.buildSampleSalesforceDashboard(this.container, this.databaseId);

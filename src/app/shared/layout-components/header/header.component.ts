@@ -331,6 +331,10 @@ export class HeaderComponent implements OnInit {
   routeToConfigurePage() {
     this.router.navigate(['/analytify/configure-page/configure']);
   }
+  
+  routeToSDKPage() {
+    this.router.navigate(['/analytify/configure-page/sdk']);
+  }
   routeToUpdatePasswordPage(){
     this.router.navigate(['/analytify/update-password']);
   }

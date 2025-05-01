@@ -1,0 +1,13 @@
+
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/analytify-dashboard",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {  
+      "@angular/core": "ng.core",
+      "@angular/common": "ng.common"
+    }
+   
+  }
+}
