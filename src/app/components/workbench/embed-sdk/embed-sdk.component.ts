@@ -33,7 +33,7 @@ export class EmbedSdkComponent {
     const { hostname, port } = window.location;
     this.host = hostname;
     this.port = port;
-    this.apibaseurl = 'https://'+this.host+':'+this.port
+    this.apibaseurl = this.port ? 'https://'+this.host+':'+this.port + '/' : 'https://'+this.host + '/'
   }
 
   getAppDetails(){
