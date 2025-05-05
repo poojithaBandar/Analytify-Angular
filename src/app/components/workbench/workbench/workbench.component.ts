@@ -257,10 +257,12 @@ export class WorkbenchComponent implements OnInit{
       client_x509_cert_url: '',
       property_id: '',
       dimensions: [],
-      metrics: []
+      metrics: [],
+      displayname:''
     };
     availableDimensions =[
-   
+      "date",
+      "country",
       "firstUserDv360LineItemName",
       "firstUserDv360Medium",
       "firstUserDv360PartnerId",
@@ -471,7 +473,7 @@ export class WorkbenchComponent implements OnInit{
       const g = this.googleAnalytics;
       return !!g.type && !!g.project_id && !!g.private_key_id && !!g.private_key &&
              !!g.client_email && !!g.client_id && !!g.client_x509_cert_url &&
-             !!g.property_id && !!g.dimensions.length && !!g.metrics.length;
+             !!g.property_id && !!g.dimensions.length && !!g.metrics.length && !!g.displayname;
     }
     
   emptyVariables(){
@@ -795,11 +797,6 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
-    // googleAnalyticsTypeError(){
-    //   if(this.googleAnalyticsType){
-        
-    //   }
-    // }
     connectShopify(){
       this.openShopifyForm = true;
       this.databaseconnectionsList= false;
@@ -1281,7 +1278,8 @@ export class WorkbenchComponent implements OnInit{
       client_x509_cert_url: g.client_x509_cert_url,
       property_id: g.property_id,
       dimensions: g.dimensions, // Array of strings
-      metrics: g.metrics 
+      metrics: g.metrics,
+      display_name:g.displayname
      }
     this.confirmPopupForDataTransformation().then((isSkip) => {
       if (isSkip === true) {

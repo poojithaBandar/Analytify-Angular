@@ -906,7 +906,10 @@
                           <label class="col-form-label">Type <span class="text-danger ms-1">*</span></label>
                           <input type="text" class="form-control" [(ngModel)]="googleAnalytics.type" [ngModelOptions]="{standalone: true}" placeholder="service_account">
                         </div>
-          
+                        <div class="form-group">
+                          <label class="col-form-label">Display Name <span class="text-danger ms-1">*</span></label>
+                          <input type="text" class="form-control" [(ngModel)]="googleAnalytics.displayname" [ngModelOptions]="{standalone: true}" placeholder="display name">
+                        </div>
                         <div class="form-group">
                           <label class="col-form-label">Project ID <span class="text-danger ms-1">*</span></label>
                           <input type="text" class="form-control" [(ngModel)]="googleAnalytics.project_id" [ngModelOptions]="{standalone: true}" placeholder="analytify-access-data">
