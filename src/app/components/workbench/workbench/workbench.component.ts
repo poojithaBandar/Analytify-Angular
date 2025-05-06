@@ -247,7 +247,19 @@ export class WorkbenchComponent implements OnInit{
     shopifyToken = '';
     shopifyName = '';
 
-    googleAnalytics = {
+    googleAnalytics: {
+      type: string;
+      project_id: string;
+      private_key_id: string;
+      private_key: string;
+      client_email: string;
+      client_id: string;
+      client_x509_cert_url: string;
+      property_id: string;
+      dimensions: string[];  // <-- Explicitly typed
+      metrics: string[];     // <-- Explicitly typed
+      displayname: string;
+    } = {
       type: 'service_account',
       project_id: '',
       private_key_id: '',
@@ -258,7 +270,7 @@ export class WorkbenchComponent implements OnInit{
       property_id: '',
       dimensions: [],
       metrics: [],
-      displayname:''
+      displayname: ''
     };
     availableDimensions =[
       "date",
@@ -685,6 +697,36 @@ export class WorkbenchComponent implements OnInit{
         }
       )
 
+    }
+    googleAnalyticsUpdate(){
+      const g = this.googleAnalytics;
+     const obj = { type: g.type,
+      project_id: g.project_id,
+      private_key_id: g.private_key_id,
+      private_key: g.private_key,
+      client_email: g.client_email,
+      client_id: g.client_id,
+      client_x509_cert_url: g.client_x509_cert_url,
+      property_id: g.property_id,
+      dimensions: g.dimensions, // Array of strings
+      metrics: g.metrics,
+      display_name:g.displayname
+     }
+
+     this.workbechService.googleAnalyticsUpdate(obj).subscribe({next: (responce) => {
+      console.log(responce);
+      this.modalService.dismissAll('close');
+      if(responce){
+        this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+      }
+      this.getDbConnectionList();
+    },
+    error: (error) => {
+      console.log(error);
+      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+    }
+  }
+)
     }
     DatabaseUpdate(){
       const obj={
@@ -1641,6 +1683,20 @@ connectGoogleSheets(){
       this.displayName = editData.display_name;
       this.shopifyName = editData.shop_name;
       this.shopifyToken = editData.api_token;
+    }else if (this.databaseType === 'google_analytics') {
+      this.googleAnalytics = {
+        type: 'service_account',
+        project_id: editData.project_id || '',
+        private_key_id: editData.private_key_id || '',
+        private_key: editData.private_key || '',
+        client_email: editData.client_email || '',
+        client_id: editData.client_id || '',
+        client_x509_cert_url: editData.client_x509_cert_url || '',
+        property_id: editData.property_id || '',
+        dimensions: [...editData.dimensions],
+        metrics: [...editData.metrics],
+        displayname: editData.display_name || ''
+      };
     }
      else {
       this.postGreServerName = editData.hostname;
