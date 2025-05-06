@@ -84,7 +84,44 @@
                             <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
                         </div>
               </form>
-            } @else {
+            }@else if(databaseType == 'google_analytics') {
+              <form>
+                <div class="mb-2">
+                  <label class="col-form-label">Display Name</label>
+                  <input type="text" class="form-control"
+                         [(ngModel)]="googleAnalytics.displayname"
+                         [ngModelOptions]="{standalone: true}">
+                </div>
+            
+                <div class="mb-2">
+                  <label class="col-form-label">Dimensions <span class="text-danger ms-1">*</span></label>
+                  <ng-select
+                    [items]="availableDimensions"
+                    [multiple]="true"
+                    bindLabel="label"
+                    bindValue="value"
+                    [(ngModel)]="googleAnalytics.dimensions"
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="Select dimensions">
+                  </ng-select>
+                </div>
+            
+                <div class="mb-2">
+                  <label class="col-form-label">Metrics <span class="text-danger ms-1">*</span></label>
+                  <ng-select
+                    [items]="availableMetrics"
+                    [multiple]="true"
+                    bindLabel="label"
+                    bindValue="value"
+                    [(ngModel)]="googleAnalytics.metrics"
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="Select metrics">
+                  </ng-select>
+                </div>
+              </form>
+            }
+            
+             @else {
             <form>
               <div class="mb-2">
                 <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
@@ -146,6 +183,14 @@
             } @else if(databaseType == 'shopify') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
+            }
+            @else if(databaseType == 'google_analytics') {
+              <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary"
+                      (click)="googleAnalyticsUpdate()"
+                      [disabled]="!googleAnalytics.displayname || googleAnalytics.dimensions.length === 0 || googleAnalytics.metrics.length === 0">
+                Update
+              </button>
             } @else {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
@@ -274,7 +319,7 @@
                             <td  *ngIf="!iscrossDbSelect">
                               <div class="hstack gap-2 fs-1">
                                 <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL') && (!database?.transformation || database.is_cross_db)"
-                                  [disabled]="(database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS' || database.server_type ==='GOOGLE_ANALYTICS')"
+                                  [disabled]="(database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS')"
                                   aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
@@ -386,7 +431,7 @@
                                   class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                           </a>
                         <div class="dropdown-menu" ngbDropdownMenu>
-                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS' ||  database.server_type ==='GOOGLE_ANALYTICS')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
+                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                             <a *ngIf="database?.transformation && !database.is_cross_db" class="dropdown-item" (click)="goToTransformationLayer(database?.hierarchy_id)" ngbTooltip="Edit Transformation"><img src="./assets/images/icons/transformation_blue.png" class="avatar-databse-sm d-inline-flex me-2"> Edit Transforma...</a>
