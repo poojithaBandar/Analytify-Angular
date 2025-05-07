@@ -383,6 +383,13 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
       },
+
+      {
+        path: 'etl',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl/etl.component').then((m) => m.ETLComponent),
+      },
     ]
   }
  ];

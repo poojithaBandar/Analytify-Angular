@@ -36,12 +36,14 @@
             "styles": [
               "src/styles.scss",
               "node_modules/ckeditor5/dist/ckeditor5.css",
-                "node_modules/pivottable/dist/pivot.min.css"
+                "node_modules/pivottable/dist/pivot.min.css",
+                "node_modules/drawflow/dist/drawflow.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",      
               "node_modules/jquery-ui-dist/jquery-ui.min.js", 
-              "node_modules/pivottable/dist/pivot.min.js"
+              "node_modules/pivottable/dist/pivot.min.js",
+              "./node_modules/drawflow/dist/drawflow.min.js"
             ]
           },
           "configurations": {
@@ -102,7 +104,8 @@
             ],
             "styles": [
               "src/styles.scss",
-                "node_modules/pivottable/dist/pivot.min.css"
+                "node_modules/pivottable/dist/pivot.min.css",
+                "node_modules/drawflow/dist/drawflow.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",      
