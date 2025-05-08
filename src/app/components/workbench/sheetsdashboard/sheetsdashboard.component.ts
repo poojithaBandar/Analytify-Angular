@@ -565,9 +565,13 @@ export class SheetsdashboardComponent implements OnDestroy {
     this.sharedService.downloadRequested$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.downloadImageInPublic();
+        this.downloadAsImage();
       });
-
+    this.sharedService.downloadRequestedPdf$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
+      this.downloadAsPDF();
+    })
     // Subscribe to refresh requests
     this.sharedService.refreshRequested$
       .pipe(takeUntil(this.destroy$))
@@ -7178,9 +7182,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     });
     }
 
-    refreshDashboard(){
+    refreshDashboard(value:any){
       let object ={
-        "dashboard_id": this.dashboardId
+        "dashboard_id": this.dashboardId,
+        "refreshDashboard":value
       }
       this.workbechService.refreshDashboardData(object).subscribe({
         next:(data)=>{
@@ -7804,7 +7809,94 @@ downloadAsPDF() {
     this.endMethod();
   });
 }
+switchDatasourceModalOpen(modal:any){
+  this.modalService.open(modal, {
+    centered: true,size:'lg',
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+this.getCurrentDbs();
+}
 
+currentDbKeys: string[] = [];
+selectedCurrentDb: string = '';
+selectedCurrentDbDetails: any = null;
+targetDbData: any[] = [];  
+sourceDbData: any = {}; 
+selectedTargetDb: string = '';
+currentSelectedDbHierarchyId:any;
+targetSelectedDbHierarchyId:any = '';
+getCurrentDbs(){
+  const obj ={
+    dashboard_id:this.dashboardId
+  }
+  this.workbechService.getQuerySetInDashboardFilter(obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+       this.sourceDbData=data;
+       this.currentDbKeys = Object.keys(data);
+    },
+    error:(error)=>{
+      console.log(error)
+      this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+
+    }
+  })
+}
+loadTargetDbs(){
+  const obj ={
+    dashboard_id:this.dashboardId,
+    server_type:this.selectedCurrentDbDetails.server_type
+  }
+     this.workbechService.getTargetdbsForSwitch(obj).subscribe({
+        next:(data)=>{
+          this.targetDbData = data.user_connections;
+          console.log(data);
+        },
+        error:(error)=>{
+          console.log(error);
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+        }
+      })
+}
+onCurrentDbChange() {
+  const selectedList = this.sourceDbData[this.selectedCurrentDb];
+  this.selectedCurrentDbDetails = selectedList ? selectedList[0] : null;
+  if(this.selectedCurrentDbDetails){
+    this.currentSelectedDbHierarchyId = this.selectedCurrentDbDetails.hierarchy_id
+  }
+  this.loadTargetDbs();
+}
+onTargetDbChange(event: Event){
+  const selectedIndex = (event.target as HTMLSelectElement).value;
+  const selectedDatabase = this.targetDbData[+selectedIndex];
+  console.log('Selected Object:', selectedDatabase);
+  this.targetSelectedDbHierarchyId = selectedDatabase.hierarchy_id;
+}
+switchDatabase() {
+  const obj ={
+    existing_h_id:this.currentSelectedDbHierarchyId,
+    switch_h_id:this.targetSelectedDbHierarchyId,
+    dashboard_id:this.dashboardId
+  }
+  this.workbechService.datbaseSwitch(obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      if(data.message ==='Dashboard switched successfully'){
+        this.refreshDashboard(true);
+      }
+    },
+    error:(error)=>{
+      console.log(error);
+      this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+    }
+  })
+}
+addNewDatabaseConnection(){
+  this.modalService.dismissAll('close');
+  const encodedSourceDbId = btoa(this.currentSelectedDbHierarchyId.toString());
+  const encodedDashboardId = btoa(this.dashboardId.toString());
+  this.router.navigate(['analytify/datasources/datasource-switch/'+this.selectedCurrentDbDetails.server_type+'/'+encodedSourceDbId+'/'+encodedDashboardId])
+}
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

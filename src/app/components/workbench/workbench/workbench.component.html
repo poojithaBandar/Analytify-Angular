@@ -566,7 +566,9 @@
                           <div class="modal-footer">
                             <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
                               <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                              <button type="button" *ngIf="!datasourceSwitchUI" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                              <button type="button" *ngIf="datasourceSwitchUI" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">Connect & Switch</button>
+
                           </div>
                       </form>
                   </div>

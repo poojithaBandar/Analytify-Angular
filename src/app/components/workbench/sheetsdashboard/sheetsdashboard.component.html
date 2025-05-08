@@ -1074,12 +1074,12 @@
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
                                 <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();">sync data</button> -->
                                 <!-- <button *ngIf="!isPublicUrl && dashboardId" type="button" [disabled]="canNavigateToAnotherPage" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button> -->
-                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="refreshDashboard()">Sync data</a>
-                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</a>
+                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard" [class.disabled]="dashboard.length === 0 || !updateDashbpardBoolen" (click)="(dashboard.length === 0 || !updateDashbpardBoolen) ? $event.preventDefault() : refreshDashboard(false)">Sync data</a>
+                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId" [class.disabled]="canNavigateToAnotherPage" (click)="canNavigateToAnotherPage ? $event.preventDefault() : autoRefreshInterval(autorefresh)">Set auto-refresh interval</a>
 
                               </div>
                               </div>
-                            <button *ngIf="!isPublicUrl" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
+                            <button *ngIf="!isPublicUrl && dashboardId" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
                             <div class=" p-1" ngbDropdown>
                               <button
                               [disabled]="dashboard.length === 0 || !updateDashbpardBoolen"
@@ -1091,8 +1091,8 @@
                               <i class="fa fa-download" aria-hidden="true"></i>
                               </button>
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
-                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="downloadAsImage()">Download Image</a>
-                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="downloadAsPDF();">Download Pdf</a>
+                                <a class="dropdown-item border-bottom" (click)="downloadAsImage()">Download Image</a>
+                                <a class="dropdown-item" (click)="downloadAsPDF();">Download Pdf</a>
                               </div>
                               </div>
                               
@@ -1109,14 +1109,9 @@
                                   </div>
                               </div>
                             </div>
+                            <button class="btn btn-primary mt-0"  *ngIf="!this.isPublicUrl && !isSampleDashboard" (click)="switchDatasourceModalOpen(switchDatabaseModal)"><img src="./assets/images/icons/database-switch.png" alt="logo" class="w-4 h-4"> </button>
+
                             </div>
-                    <!-- <div class="min-w-fit-content ms-3">
-                            <a href=""><i class="fa fa-filter p-2"></i> </a>
-                            <a href=""><i class="fa fa-edit p-2"></i> </a>
-                            <a href=""><i class="fa fa-share p-2"></i></a>
-                            <a href=""><i class="fa fa-list p-2"></i></a>
-                    </div> -->
-                
             </div>
         </div> 
        </div>
@@ -2133,7 +2128,43 @@
   
   </ng-template>
 
-
+  <ng-template #switchDatabaseModal let-modal>
+    <div class="modal-header">
+      <h6 class="modal-title">Switch Database</h6>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+  
+    <div class="modal-body">
+      <div class="mb-3">
+        <p class="text-muted">
+          This operation will change the database context for your analysis. Please select the current and target databases carefully.
+        </p>
+      </div>
+  
+      <div class="form-group mb-3">
+        <label class="form-label">Current Database</label>
+        <select class="form-select" [(ngModel)]="selectedCurrentDb" (change)="onCurrentDbChange()">
+          <option value="" disabled selected>Select Current Database</option>
+          <option *ngFor="let db of currentDbKeys" [value]="db">{{ db }}</option>
+        </select>
+      </div>
+  
+      <div class="form-group mb-3">
+        <label class="form-label">Target Database</label>
+        <select  class="form-select" (change)="onTargetDbChange($event)">
+          <option value="" disabled selected>Select Target Database</option>
+          <option *ngFor="let db of targetDbData;  let i = index" [value]="i">{{db.display_name }}</option>
+        </select>
+      </div>
+    </div>
+  
+    <div class="modal-footer">
+      <button type="button" [disabled]="!selectedCurrentDb" class="btn btn-secondary" (click)="addNewDatabaseConnection()">Add New</button>
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Close</button>
+      <button type="button" [disabled]="!selectedCurrentDb || !targetSelectedDbHierarchyId" class="btn btn-primary" (click)="switchDatabase()" >Switch</button>
+    </div>
+  </ng-template>
+  
 
 
 
