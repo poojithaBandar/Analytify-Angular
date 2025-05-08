@@ -271,6 +271,15 @@ export class SheetsdashboardComponent implements OnDestroy {
         } else if(route.snapshot.params['id1']){
           this.dashboardId = +atob(route.snapshot.params['id1'])
         }
+
+        const navigation = this.router.getCurrentNavigation();
+        const dbSwitched = navigation?.extras?.state?.['dbSwitched'];
+      
+        if (dbSwitched) {
+          this.refreshDashboard(true);  // call only on DB switch
+        }
+
+
       }
         else if(currentUrl.includes('analytify/sheetsdashboard')){
           this.sheetsNewDashboard = true;
@@ -7185,7 +7194,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     refreshDashboard(value:any){
       let object ={
         "dashboard_id": this.dashboardId,
-        "refreshDashboard":value
+        "is_datasource_switched":value
       }
       this.workbechService.refreshDashboardData(object).subscribe({
         next:(data)=>{
@@ -7884,6 +7893,9 @@ switchDatabase() {
       if(data.message ==='Dashboard switched successfully'){
         this.refreshDashboard(true);
       }
+      this.modalService.dismissAll();
+      this.currentSelectedDbHierarchyId='';
+      this.targetSelectedDbHierarchyId='';
     },
     error:(error)=>{
       console.log(error);

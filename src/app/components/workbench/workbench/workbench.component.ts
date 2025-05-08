@@ -1832,10 +1832,15 @@ connectGoogleSheets(){
     this.workbechService.datbaseSwitch(obj).subscribe({
       next:(data)=>{
         console.log(data);
+        if(data.message ==='Dashboard switched successfully'){
+          const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
+          this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId],{state: {dbSwitched: true}})
+        }
       },
       error:(error)=>{
         console.log(error);
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+        this.openPostgreSqlForm = true;
       }
     })
   }
