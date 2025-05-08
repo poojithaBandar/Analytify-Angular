@@ -186,9 +186,55 @@
       });
   }
 
+   /**
+   * Embed a dashboard, automatically handling access tokens.
+   * @param {{sheetId: string|number, container: string|HTMLElement, filters?: object, width?: string, height?: string}} options
+   * @returns {Promise<HTMLIFrameElement>|void}
+   */
+    function embedSheet(options) {
+      console.log("loadSheet");
+      if (!_config.clientId || !_config.apiBaseUrl) {
+        console.error('AnalytifySDK.embedSheet: SDK not initialized; call init() first');
+        return;
+      }
+      if (!options || !options.sheetToken || !options.container) {
+        console.error('AnalytifySDK.embedSheet: Missing required options: sheetToken, container');
+        return;
+      }
+      var containerEl = typeof options.container === 'string'
+        ? document.querySelector(options.container)
+        : options.container;
+      if (!containerEl) {
+        console.error('AnalytifySDK.loadDashboard: Container not found', options.container);
+        return;
+      }
+      var params = [];
+  
+      return fetchToken(options.sheetToken)
+        .then(function (token) {
+          var src =  _config.apiBaseUrl+'/embed/sheet/' + encodeURIComponent(options.sheetToken)+'/'+encodeURIComponent(token) +'/'+ encodeURIComponent(_config.clientId);
+          if (options.filters && typeof options.filters === 'object') {
+            params.unshift('filters=' + encodeURIComponent(JSON.stringify(options.filters)));
+          }
+          src += '?' + params.join('&');
+          var iframe = document.createElement('iframe');
+          iframe.src = src;
+          iframe.style.border = 'none';
+          iframe.style.width = options.width || '100%';
+          iframe.style.height = options.height || '100%';
+          containerEl.innerHTML = '';
+          containerEl.appendChild(iframe);
+          // return iframe;
+        })
+        .catch(function (err) {
+          console.error('AnalytifySDK.sheetload error:', err);
+        });
+    }
+
   // Expose the two entry points
   global.AnalytifySDK = {
     init: init,
-    loadDashboard: loadDashboard
+    loadDashboard: loadDashboard,
+    embedSheet: embedSheet
   };
 })(typeof window !== 'undefined' ? window : this);
