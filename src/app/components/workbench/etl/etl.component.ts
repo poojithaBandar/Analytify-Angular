@@ -574,13 +574,13 @@ export class ETLComponent {
       task.format = 'database',
         task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
         task.path = '',
-        task.source_table_name = nodes[nodeId].data.nodeData.dataObject.table;
+        task.source_table_name = nodes[nodeId].data.nodeData.dataObject.tables;
     } else {
       if (nodes[nodeId].data.type === 'target_data_object') {
         task.format = 'database',
         task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
         task.path = '',
-        task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.table;
+        task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.Tables;
         task.truncate = nodes[nodeId].data.nodeData.properties.truncate;
         task.create = nodes[nodeId].data.nodeData.properties.create;
       } else if(nodes[nodeId].data.type === 'Rollup'){
@@ -714,13 +714,13 @@ export class ETLComponent {
           });
         }
       } 
-      // else{
-      //   let dataObjects = JSON.parse(JSON.stringify(childDataObjects[i]));
-      //   dataObjects.forEach((object:any)=>{
-      //     object.group = nodeName;
-      //   });
-      //   items = dataObjects;
-      // }
+      else if(!['Rollup', 'Expression'].includes(nodeType)){
+        let dataObjects = JSON.parse(JSON.stringify(childDataObjects[i]));
+        dataObjects.forEach((object:any)=>{
+          object.group = nodeName;
+        });
+        items = dataObjects;
+      }
        if(nodeType === 'Rollup'){
         const attr = childGrpAttributes[nodeName] || [];
         if(attr.length > 0){
