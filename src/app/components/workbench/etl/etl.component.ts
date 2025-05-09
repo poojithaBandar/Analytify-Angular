@@ -605,7 +605,7 @@ export class ETLComponent {
       } else if(nodes[nodeId].data.type === 'Expression'){
         let exps : any[] = [];
         nodes[nodeId].data.nodeData.attributes.forEach((atrr:any)=>{
-          const array = [atrr.attributeName, atrr.expression];
+          const array = [atrr.attributeName, atrr.dataType, atrr.expression];
           exps.push(array);
         });
         task.expressions_list = exps;
@@ -739,7 +739,7 @@ export class ETLComponent {
         items.push({
           label: attr.attributeName,
           value: attr.attributeName,
-          dataType: attr.datatype,
+          dataType: attr.dataType,
           group: nodeName
         });
       }
