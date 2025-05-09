@@ -33,7 +33,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [RouterModule,NgSelectModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent],
+  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent,NgSelectModule],
   templateUrl: './workbench.component.html',
   styleUrl: './workbench.component.scss'
 })
@@ -57,6 +57,7 @@ export class WorkbenchComponent implements OnInit{
   openConnectWiseForm = false;
   openHaloPSAForm = false;
   openShopifyForm =false;
+  openGoogleAnalyticsForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -253,6 +254,248 @@ export class WorkbenchComponent implements OnInit{
     path='';
     shopifyToken = '';
     shopifyName = '';
+
+    googleAnalytics: {
+      type: string;
+      project_id: string;
+      private_key_id: string;
+      private_key: string;
+      client_email: string;
+      client_id: string;
+      client_x509_cert_url: string;
+      property_id: string;
+      dimensions: string[];  // <-- Explicitly typed
+      metrics: string[];     // <-- Explicitly typed
+      displayname: string;
+    } = {
+      type: 'service_account',
+      project_id: '',
+      private_key_id: '',
+      private_key: '',
+      client_email: '',
+      client_id: '',
+      client_x509_cert_url: '',
+      property_id: '',
+      dimensions: [],
+      metrics: [],
+      displayname: ''
+    };
+    availableDimensions =[
+      "date",
+      "country",
+      "firstUserDv360LineItemName",
+      "firstUserDv360Medium",
+      "firstUserDv360PartnerId",
+      "firstUserDv360PartnerName",
+      "firstUserDv360Source",
+      "firstUserDv360SourceMedium",
+      "firstUserGoogleAdsAccountName",
+      "firstUserGoogleAdsAdGroupId",
+      "firstUserGoogleAdsAdGroupName",
+      "firstUserGoogleAdsAdNetworkType",
+      "firstUserGoogleAdsCampaignId",
+      "firstUserGoogleAdsCampaignName",
+      "firstUserGoogleAdsCampaignType",
+      "firstUserGoogleAdsCreativeId",
+      "firstUserGoogleAdsCustomerId",
+      "firstUserGoogleAdsKeyword",
+      "firstUserGoogleAdsQuery",
+      "firstUserManualAdContent",
+      "firstUserManualCampaignId",
+      "firstUserManualCampaignName",
+      "firstUserManualCreativeFormat",
+      "firstUserManualMarketingTactic",
+      "firstUserManualMedium",
+      "firstUserManualSource",
+      "firstUserManualSourceMedium",
+      "firstUserManualSourcePlatform",
+      "firstUserManualTerm",
+      "firstUserSa360AdGroupId",
+      "firstUserSa360AdGroupName",
+      "firstUserSa360CampaignId",
+      "firstUserSa360CampaignName",
+      "firstUserSa360CreativeFormat",
+      "firstUserSa360EngineAccountId",
+      "firstUserSa360EngineAccountName",
+      "firstUserSa360EngineAccountType",
+      "firstUserSa360KeywordText",
+      "firstUserSa360ManagerAccountId",
+      "firstUserSa360ManagerAccountName",
+      "firstUserSa360Medium",
+      "firstUserSa360Query",
+      "firstUserSa360Source",
+      "firstUserSa360SourceMedium",
+      "firstUserMedium",
+      "firstUserPrimaryChannelGroup",
+      "firstUserSource",
+      "firstUserSourceMedium",
+      "firstUserSourcePlatform",
+      "googleAdsAccountName",
+      "googleAdsAdGroupId",
+      "googleAdsAdGroupName",
+      "googleAdsAdNetworkType",
+      "googleAdsCampaignId",
+      "googleAdsCampaignName",
+      "googleAdsCampaignType",
+      "googleAdsCreativeId",
+      "googleAdsCustomerId",
+      "googleAdsKeyword",
+      "googleAdsQuery",
+      "groupId",
+      "hostName",
+      "hour",
+      "isKeyEvent",
+      "isoWeek",
+      "isoYear",
+      "isoYearIsoWeek",
+      "fullPageUrl",
+      "platform",
+      "platformDeviceCategory",
+      "primaryChannelGroup",
+      "region",
+      "sa360AdGroupId",
+      "sa360AdGroupName",
+      "sa360CampaignId",
+      "sa360CampaignName",
+      "sa360CreativeFormat",
+      "sa360EngineAccountId",
+      "sa360EngineAccountName",
+      "sa360EngineAccountType",
+      "sa360KeywordText",
+      "sa360ManagerAccountId",
+      "sa360ManagerAccountName",
+      "sa360Medium",
+      "sa360Query",
+      "sa360Source",
+      "sa360SourceMedium",
+      "searchTerm",
+      "sessionCampaignId",
+      "sessionCampaignName",
+      "sessionDefaultChannelGroup",
+      "sessionGoogleAdsAdGroupId",
+      "sessionGoogleAdsAdGroupName",
+      "sessionGoogleAdsCampaignType",
+      "shippingTier",
+      "signedInWithUserId",
+      "source",
+      "sourceMedium",
+      "sourcePlatform",
+      "streamId",
+      "streamName",
+      "testDataFilterId",
+      "testDataFilterName",
+      "transactionId",
+      "unifiedPagePathScreen",
+      "unifiedPageScreen",
+      "unifiedScreenClass",
+      "unifiedScreenName",
+      "userAgeBracket",
+      "userGender",
+      "videoProvider",
+      "videoTitle",
+      "videoUrl",
+      "virtualCurrencyName",
+      "visible",
+      "week",
+      "year",
+      "yearMonth",
+      "yearWeek"
+  ]
+    
+    availableMetrics =[
+      "active1DayUsers",
+      "active28DayUsers",
+      "active7DayUsers",
+      "activeUsers",
+      "adUnitExposure",
+      "addToCarts",
+      "advertiserAdClicks",
+      "advertiserAdCost",
+      "advertiserAdCostPerClick",
+      "advertiserAdCostPerKeyEvent",
+      "advertiserAdImpressions",
+      "averagePurchaseRevenue",
+      "averagePurchaseRevenuePerPayingUser",
+      "averagePurchaseRevenuePerUser",
+      "averageRevenuePerUser",
+      "averageSessionDuration",
+      "bounceRate",
+      "cartToViewRate",
+      "checkouts",
+      "cohortActiveUsers",
+      "cohortTotalUsers",
+      "crashAffectedUsers",
+      "crashFreeUsersRate",
+      "dauPerMau",
+      "dauPerWau",
+      "ecommercePurchases",
+      "engagedSessions",
+      "engagementRate",
+      "eventCount",
+      "eventCountPerUser",
+      "eventValue",
+      "eventsPerSession",
+      "firstTimePurchaserRate",
+      "firstTimePurchasers",
+      "firstTimePurchasersPerNewUser",
+      "grossItemRevenue",
+      "grossPurchaseRevenue",
+      "itemDiscountAmount",
+      "itemListClickEvents",
+      "itemListClickThroughRate",
+      "itemListViewEvents",
+      "itemPromotionClickThroughRate",
+      "itemRefundAmount",
+      "itemRevenue",
+      "itemViewEvents",
+      "itemsAddedToCart",
+      "itemsCheckedOut",
+      "itemsClickedInList",
+      "itemsClickedInPromotion",
+      "itemsPurchased",
+      "itemsViewed",
+      "itemsViewedInList",
+      "itemsViewedInPromotion",
+      "keyEvents",
+      "newUsers",
+      "organicGoogleSearchAveragePosition",
+      "organicGoogleSearchClickThroughRate",
+      "organicGoogleSearchClicks",
+      "organicGoogleSearchImpressions",
+      "promotionClicks",
+      "promotionViews",
+      "publisherAdClicks",
+      "publisherAdImpressions",
+      "purchaseRevenue",
+      "purchaseToViewRate",
+      "purchaserRate",
+      "refundAmount",
+      "returnOnAdSpend",
+      "screenPageViews",
+      "screenPageViewsPerSession",
+      "screenPageViewsPerUser",
+      "scrolledUsers",
+      "sessionKeyEventRate",
+      "sessions",
+      "sessionsPerUser",
+      "shippingAmount",
+      "taxAmount",
+      "totalAdRevenue",
+      "totalPurchasers",
+      "totalRevenue",
+      "totalUsers",
+      "transactions",
+      "transactionsPerPurchaser",
+      "userEngagementDuration",
+      "userKeyEventRate"
+  ]
+    isGoogleAnalyticsFormValid(): boolean {
+      const g = this.googleAnalytics;
+      return !!g.type && !!g.project_id && !!g.private_key_id && !!g.private_key &&
+             !!g.client_email && !!g.client_id && !!g.client_x509_cert_url &&
+             !!g.property_id && !!g.dimensions.length && !!g.metrics.length && !!g.displayname;
+    }
+    
   emptyVariables(){
     this.postGrePortName = '';
     this.postGreDatabaseName = '';
@@ -463,6 +706,36 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+    googleAnalyticsUpdate(){
+      const g = this.googleAnalytics;
+     const obj = { type: g.type,
+      project_id: g.project_id,
+      private_key_id: g.private_key_id,
+      private_key: g.private_key,
+      client_email: g.client_email,
+      client_id: g.client_id,
+      client_x509_cert_url: g.client_x509_cert_url,
+      property_id: g.property_id,
+      dimensions: g.dimensions, // Array of strings
+      metrics: g.metrics,
+      display_name:g.displayname
+     }
+
+     this.workbechService.googleAnalyticsUpdate(obj).subscribe({next: (responce) => {
+      console.log(responce);
+      this.modalService.dismissAll('close');
+      if(responce){
+        this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+      }
+      this.getDbConnectionList();
+    },
+    error: (error) => {
+      console.log(error);
+      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+    }
+  }
+)
+    }
     DatabaseUpdate(){
       const obj={
           // "database_type":"postgresql",
@@ -571,6 +844,12 @@ export class WorkbenchComponent implements OnInit{
 
     connectHaloPSA(){
       this.openHaloPSAForm = true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+    connectGoogleAnalytics(){
+      this.openGoogleAnalyticsForm = true;
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
       this.emptyVariables();
@@ -1105,7 +1384,52 @@ export class WorkbenchComponent implements OnInit{
       }
       });
     }
+    connectToGoogleAnalytics(){
 
+      if (!this.isGoogleAnalyticsFormValid()) {
+        this.toasterservice.error('Please fill in all required Google Analytics fields correctly.', 'Validation Error', {
+          positionClass: 'toast-top-center'
+        });
+        return;
+      }
+      const g = this.googleAnalytics;
+     const obj = { type: g.type,
+      project_id: g.project_id,
+      private_key_id: g.private_key_id,
+      private_key: g.private_key,
+      client_email: g.client_email,
+      client_id: g.client_id,
+      client_x509_cert_url: g.client_x509_cert_url,
+      property_id: g.property_id,
+      dimensions: g.dimensions, // Array of strings
+      metrics: g.metrics,
+      display_name:g.displayname
+     }
+    this.confirmPopupForDataTransformation().then((isSkip) => {
+      if (isSkip === true) {
+        this.workbechService.googleAnalyticsConnectionApi(obj).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                this.databaseId=responce.parent_id
+                this.modalService.dismissAll();
+                this.openGoogleAnalyticsForm = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            }
+          }
+        )
+      } else if(isSkip === false) {
+        this.checkDataSourceConnection(obj);
+      }
+    });
+    }
+        
     triggerFileUpload(value:any) {
       if(value === 'csv'){
       this.fileInput.nativeElement.click();
@@ -1323,6 +1647,7 @@ connectGoogleSheets(){
       )
     }}) 
 }
+
     deleteDbConnection(id:any){
       // const obj ={
       //   database_id:dbId
@@ -1440,6 +1765,20 @@ connectGoogleSheets(){
       this.displayName = editData.display_name;
       this.shopifyName = editData.shop_name;
       this.shopifyToken = editData.api_token;
+    }else if (this.databaseType === 'google_analytics') {
+      this.googleAnalytics = {
+        type: 'service_account',
+        project_id: editData.project_id || '',
+        private_key_id: editData.private_key_id || '',
+        private_key: editData.private_key || '',
+        client_email: editData.client_email || '',
+        client_id: editData.client_id || '',
+        client_x509_cert_url: editData.client_x509_cert_url || '',
+        property_id: editData.property_id || '',
+        dimensions: [...editData.dimensions],
+        metrics: [...editData.metrics],
+        displayname: editData.display_name || ''
+      };
     }
      else {
       this.postGreServerName = editData.hostname;
@@ -1562,6 +1901,8 @@ connectGoogleSheets(){
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
   this.openShopifyForm = false;
+  this.openGoogleAnalyticsForm = false;
+  this.openGoogleAnalyticsForm = false;
   this.postGreServerName = '';
   this.schemaList = [];
   this.selectedSchema = 'public';
