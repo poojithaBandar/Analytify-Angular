@@ -314,4 +314,8 @@ sheetsRoute(){
     } 
   // }
 }
+redirectSDK(sheetId: any){
+  const encodedSheetId =btoa(sheetId.toString());
+        this.router.navigate(['analytify/configure-page/sheet/sdk' + '/' + encodedSheetId])
+}
 }

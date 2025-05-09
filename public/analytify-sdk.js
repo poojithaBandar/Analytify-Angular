@@ -205,7 +205,7 @@
         ? document.querySelector(options.container)
         : options.container;
       if (!containerEl) {
-        console.error('AnalytifySDK.loadDashboard: Container not found', options.container);
+        console.error('AnalytifySDK.embedSheet: Container not found', options.container);
         return;
       }
       var params = [];
