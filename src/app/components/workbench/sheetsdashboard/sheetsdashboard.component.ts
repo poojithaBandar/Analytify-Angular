@@ -7964,8 +7964,14 @@ switchDatabase() {
   this.workbechService.datbaseSwitch(obj).subscribe({
     next:(data)=>{
       console.log(data);
-      if(data.message ==='Dashboard switched successfully'){
+      if(data.message ==='Datasource switched successfully'){
         this.refreshDashboard(true);
+        Swal.fire({
+          icon: 'success',
+          title: data.message,
+          text: 'Data updated with new datasource',
+          width: '400px',
+        })
       }
       this.modalService.dismissAll();
       this.currentSelectedDbHierarchyId='';
@@ -7973,7 +7979,13 @@ switchDatabase() {
     },
     error:(error)=>{
       console.log(error);
-      this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+      // this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
     }
   })
 }
