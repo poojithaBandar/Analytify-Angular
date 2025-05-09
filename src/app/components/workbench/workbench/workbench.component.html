@@ -565,7 +565,7 @@
                             }
                           <div class="modal-footer">
                             <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
-                              <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                              <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                               <button type="button" *ngIf="!datasourceSwitchUI" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               <button type="button" *ngIf="datasourceSwitchUI" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">Connect & Switch</button>
 
@@ -643,7 +643,7 @@
                                     </div>                  
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                 <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                             </div>
                         </form>
@@ -706,7 +706,7 @@
                                       <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                                   </div>
                               <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                  <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                   <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
@@ -776,7 +776,7 @@
                           (input)="siteUrlPSAError()">
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="haloPSASignIn()"
                           [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
@@ -848,7 +848,7 @@
                       </div>
                     
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="shopifySignIn()"
                           [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
@@ -932,7 +932,7 @@
                                       </div>                  
                               </div>
                               <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                  <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                   <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
@@ -1026,7 +1026,7 @@
                                 </div>
                               </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                    <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                     <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                 </div>
                             </form>
@@ -1102,7 +1102,7 @@
                                           </div>                 
                                   </div>
                                   <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                      <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                       <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                   </div>
                               </form>
@@ -1332,7 +1332,7 @@
                                         </div>
                                         
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                         <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()" [disabled]="pathError || displayNameError">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                     </div>
                                 </form>

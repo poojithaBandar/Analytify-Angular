@@ -878,7 +878,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         if(data.refresh_required){
           this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
             next:(data)=>{
-              this.refreshDashboardSheetsData(data);
+              this.refreshDashboardSheetsData(data,false);
               },
             error:(error)=>{
               console.log(error)
@@ -3993,13 +3993,16 @@ clearAllFilters(): void {
 }
 
 
-setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean, dashboard : any[]){
+setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean, dashboard : any[],switchDb?: boolean){
   dashboard.forEach((item1:any) => {
     if(item1.sheetId){
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
       if(item.chart_id == '1'){//table
         if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({tableData: item1.tableData});
+        }
+        if(switchDb){
+          item1.databaseId = item.databaseId;
         }
         this.tablePreviewColumn = item.columns;
         this.tablePreviewRow = item.rows;
@@ -4035,6 +4038,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       if(!item1.originalData && !isLiveReloadData){
         item1['originalData'] = _.cloneDeep({pivotData: item1.pivotData});
       }
+      if(switchDb){
+        item1.databaseId = item.databaseId;
+     }
       let transformedData :any =[];
       let headers: string[] = [];
 
@@ -4158,13 +4164,14 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     });  
     }, 1000);
     }
-
-
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
+          if(switchDb){
+            item1.databaseId = item.databaseId;
+         }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
             item1.drillDownIndex = 0;
             item1.drillDownObject = [];
@@ -4191,11 +4198,17 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep(item1['kpiData']);
         }
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
         item1['kpiData'].rows = [obj];
         item1.kpiData.kpiNumber = this.formatKPINumber(item.rows[0].result[0], item1.kpiData.kpiDecimalUnit , item1.kpiData.kpiDecimalPlaces, item1.kpiData.kpiPrefix, item1.kpiData.kpiSuffix);
       }
       if((item.chart_id == '24' || item.chartId == '24' && (isFilter || isDrillDown)) || (item1.chartId == '24' && isDrillThrough)){//pie
+        if(switchDb){
+           item1.databaseId = item.databaseId;
+        }
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4225,6 +4238,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
     }
       if((item.chart_id == '10'|| item.chartId == '10' && (isFilter || isDrillDown)) || (item1.chartId == '10' && isDrillThrough)){//donut
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4254,6 +4270,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
     }
       if((item.chart_id == '13'|| item.chartId == '13' && (isFilter || isDrillDown)) || (item1.chartId == '13' && isDrillThrough)){//line
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4277,6 +4296,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         }
       }
       if((item.chart_id == '17'|| item.chartId == '17' && (isFilter || isDrillDown)) || (item1.chartId == '17' && isDrillThrough)){//area
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4300,6 +4322,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
     }
       if((item.chart_id == '7' && (isFilter || isDrillDown)) || (item1.chartId == '7' && isDrillThrough)){//sidebyside
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
@@ -4324,6 +4349,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '2' && (isFilter || isDrillDown)) || (item1.chartId == '2' && isDrillThrough)){//hstacked
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
@@ -4348,6 +4376,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '5' && (isFilter || isDrillDown)) || (item1.chartId == '5' && isDrillThrough)){//stacked
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
@@ -4372,6 +4403,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '4' && (isFilter || isDrillDown)) || (item1.chartId == '4' && isDrillThrough)){//barline
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
@@ -4395,6 +4429,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '3' && (isFilter || isDrillDown)) || (item1.chartId == '3' && isDrillThrough)){//hgrouped
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
@@ -4418,6 +4455,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '8' && (isFilter || isDrillDown)) || (item1.chartId == '8' && isDrillThrough)){//multiline
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
@@ -4445,6 +4485,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '28' && (isFilter || isDrillDown)) || (item1.chartId == '28' && isDrillThrough)){//guage
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
@@ -4452,6 +4495,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.series = seriesval;
       }
       if((item.chart_id == '12' && (isFilter || isDrillDown)) || (item1.chartId == '12' && isDrillThrough)){//radar
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         const dimensions: Dimension[] = this.filteredColumnData;
         const categories = this.flattenDimensions(dimensions);
         let radarArray = categories.map((value: any, index: number) => ({
@@ -4478,6 +4524,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '29' && (isFilter)) || (item1.chartId == '29' && isDrillThrough)){//world MAP
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
@@ -4530,9 +4579,11 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     item1.echartOptions = {
       ...item1.echartOptions,
     };
-  }
-
+      }
       if((item.chart_id == '27' && (isFilter || isDrillDown)) || (item1.chartId == '27' && isDrillThrough)){//funnel
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         if(item1.isEChart){
           if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4575,6 +4626,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if(item.chart_id == '26'){//heatmap
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){
@@ -4601,8 +4655,11 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.xaxis.categories = categories;
         item1.chartOptions.series = this.filteredRowData;
       }
-    }
+      }
       if((item.chart_id == '11' && (isFilter || isDrillDown)) || (item1.chartId == '11' && isDrillThrough)){//calendar
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
         if(item1.isEChart){
           if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -5605,7 +5662,7 @@ kpiData?: KpiData;
         if(data.refresh_required){
           this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
             next:(data)=>{
-              this.refreshDashboardSheetsData(data);
+              this.refreshDashboardSheetsData(data,false);
               },
             error:(error)=>{
               console.log(error)
@@ -7149,7 +7206,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     sheetFilters : any[] = [];
     // [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
 
-    refreshDashboardSheetsData(data: any){
+    refreshDashboardSheetsData(data: any,value : boolean){
       let isLastIndex = false;
       data.forEach((item: any,index:any) => {
       this.filteredRowData = [];
@@ -7181,10 +7238,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.pageChangeTableDisplay(item,1,true,isLastIndex);
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard);
+      this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard,value);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard);
+          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard,value);
         })
       }
       }
@@ -7199,7 +7256,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       this.workbechService.refreshDashboardData(object).subscribe({
         next:(data)=>{
           console.log(data);
-          this.refreshDashboardSheetsData(data);
+          this.refreshDashboardSheetsData(data,value);
           },
         error:(error)=>{
           console.log(error)
@@ -7315,7 +7372,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           if(this.refreshNow){
           this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
             next:(data)=>{
-              this.refreshDashboardSheetsData(data);
+              this.refreshDashboardSheetsData(data,false);
               },
             error:(error)=>{
               console.log(error)
@@ -7834,6 +7891,7 @@ sourceDbData: any = {};
 selectedTargetDb: string = '';
 currentSelectedDbHierarchyId:any;
 targetSelectedDbHierarchyId:any = '';
+disableAddNew=false;
 getCurrentDbs(){
   const obj ={
     dashboard_id:this.dashboardId
@@ -7871,8 +7929,10 @@ onCurrentDbChange() {
   const selectedList = this.sourceDbData[this.selectedCurrentDb];
   this.selectedCurrentDbDetails = selectedList ? selectedList[0] : null;
   if(this.selectedCurrentDbDetails){
-    this.currentSelectedDbHierarchyId = this.selectedCurrentDbDetails.hierarchy_id
-  }
+    this.currentSelectedDbHierarchyId = this.selectedCurrentDbDetails.hierarchy_id;
+    const restrictedTypes = ['GOOGLE_SHEETS', 'GOOGLE_ANALYTICS', 'SALESFORCE', 'QUICKBOOKS'];
+    this.disableAddNew = restrictedTypes.includes(this.selectedCurrentDbDetails.server_type);
+      }
   this.loadTargetDbs();
 }
 onTargetDbChange(event: Event){

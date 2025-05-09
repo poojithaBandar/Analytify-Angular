@@ -2159,7 +2159,7 @@
     </div>
   
     <div class="modal-footer">
-      <button type="button" [disabled]="!selectedCurrentDb" class="btn btn-info" (click)="addNewDatabaseConnection()">Add New</button>
+      <button type="button" [disabled]="!selectedCurrentDb || disableAddNew" class="btn btn-info" (click)="addNewDatabaseConnection()">Add New</button>
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Close</button>
       <button type="button" [disabled]="!selectedCurrentDb || !targetSelectedDbHierarchyId" class="btn btn-primary" (click)="switchDatabase()" >Switch</button>
     </div>

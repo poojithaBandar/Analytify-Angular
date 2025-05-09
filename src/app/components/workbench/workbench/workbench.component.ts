@@ -169,6 +169,30 @@ export class WorkbenchComponent implements OnInit{
     if(this.databaseSwitchType === 'POSTGRESQL'){
     this.openPostgreSql();
     }
+    else if(this.databaseSwitchType === 'ORACLE'){
+    this.openOracle();
+    }
+    else if(this.databaseSwitchType === 'MYSQL'){
+    this.openMySql();
+    }
+    else if(this.databaseSwitchType === 'SQLITE'){
+    this.opensqlLite();
+    }
+    else if(this.databaseSwitchType === 'MICROSOFTSQLSERVER'){
+    this.openMicrosoftSqlServer();
+    }
+    else if(this.databaseSwitchType === 'SNOWFLAKE'){
+    this.openSnowflakeServer();
+    }
+    else if(this.databaseSwitchType === 'SHOPIFY'){
+    this.connectShopify();
+    }
+    else if(this.databaseSwitchType === 'CONNECTWISE'){
+    this.connectWise();
+    }
+    else if(this.databaseSwitchType === 'HALOPS'){
+    this.connectHaloPSA();
+    }
   }
   routeNewDatabase(){
     if (this.iscrossDbSelect) {
@@ -1843,5 +1867,9 @@ connectGoogleSheets(){
         this.openPostgreSqlForm = true;
       }
     })
+  }
+  gotoDashboardWithoutSwitch(){
+    const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
+    this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId])
   }
 }
