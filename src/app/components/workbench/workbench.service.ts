@@ -62,6 +62,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/connectwise/`+this.accessToken,obj);
   }
+  ninjaRMMConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/ninja_authentication/`+this.accessToken,obj);
+  }
   haloPSAConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -83,6 +88,11 @@ export class WorkbenchService {
     return this.http.post<any>(`${environment.apiUrl}/GA4_connection/`+this.accessToken,obj);
   }
   haloPSAConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/halops/`+this.accessToken,obj);
+  }
+  ninjaRMMConnectionUpdate(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/halops/`+this.accessToken,obj);
@@ -986,5 +996,14 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/dynamic_filter_embedded_dashboard/`+this.accessToken,obj);
     }
-
+    getTargetdbsForSwitch(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_connection_list/`+this.accessToken,obj);
+    }
+    datbaseSwitch(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_switch/`+this.accessToken,obj);
+    }
 }

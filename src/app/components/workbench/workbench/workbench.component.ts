@@ -98,10 +98,22 @@ export class WorkbenchComponent implements OnInit{
   schemaList: any[] = [];
   selectedSchema : string = 'public';
   querysetIdFromDataSource :any;
-
+  datasourceSwitchUI=false;
+  databaseSwitchType:any;
+  selectedSourceSwithDbId:any;
+  dashbaordIdToSwitch:any;
   isCustomSql = false;
+  openNinjaRMMForm: boolean = false;
+  ninjaRMMClientIdError : boolean = false;
+  ninjaRMMClientid!: string;
+  ninjaRMMClientSecretError : boolean = false;
+  ninjaRMMClientSecret! : string;
+  ninjaRMMScopes = ['monitoring', 'management', 'control'];
+  selectedNinjaRMMScopes: string[] = [];
+  ninjaRMMScopeError: boolean = false;
+
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService){ 
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService){ 
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
 
@@ -148,54 +160,50 @@ export class WorkbenchComponent implements OnInit{
         if (route.snapshot.paramMap.has('id2')) {
           this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
         }
-        
-      //   if (route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')) {
-      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }else if(route.snapshot.paramMap.has('id1')){
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }
-      //   this.iscrossDbSelect = true;
-      //   this.databaseconnectionsList = true;
-      //   this.viewNewDbs = false;
-      //   this.isGoogleSheetsPage = false;
-      // }else if(currentUrl.includes('crossdatabase/newconnection')){
-      //   if(route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')){
-      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }else if(route.snapshot.paramMap.has('id1')){
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }
-      //   this.iscrossDbSelect = true;
-      //   this.viewNewDbs = true;
-      //   this.databaseconnectionsList = false;
-      //   this.isGoogleSheetsPage = false;
-      // }
-      // else if(currentUrl.includes('crossdatabase/customsql/viewconnection')){
-      //   if (route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')) {
-      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }else if(route.snapshot.paramMap.has('id1')){
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }
-      //   this.iscrossDbSelect = true;
-      //   this.databaseconnectionsList = true;
-      //   this.viewNewDbs = false;
-      //   this.isGoogleSheetsPage = false;
-      // }else if(currentUrl.includes('crossdatabase/customsql/newconnection')){
-      //   if(route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')){
-      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }else if(route.snapshot.paramMap.has('id1')){
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }
-      //   this.iscrossDbSelect = true;
-      //   this.viewNewDbs = true;
-      //   this.databaseconnectionsList = false;
-      //   this.isGoogleSheetsPage = false;
+      }
+      else if(currentUrl.includes('datasource-switch/')){
+        this.databaseconnectionsList = false;
+        this.viewNewDbs = false;
+        this.isGoogleSheetsPage = false;
+        this.datasourceSwitchUI=true;
+        if (route.snapshot.paramMap.has('id1')) {
+          this.databaseSwitchType = route.snapshot.params['id1'];
+          this.selectedSourceSwithDbId = +atob(route.snapshot.params['id2']);
+          this.dashbaordIdToSwitch = +atob(route.snapshot.params['id3'])
+        }
+        this.openConnectionOnDatasourceSwitch();
       }
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
+  }
+  openConnectionOnDatasourceSwitch(){
+    if(this.databaseSwitchType === 'POSTGRESQL'){
+    this.openPostgreSql();
+    }
+    else if(this.databaseSwitchType === 'ORACLE'){
+    this.openOracle();
+    }
+    else if(this.databaseSwitchType === 'MYSQL'){
+    this.openMySql();
+    }
+    else if(this.databaseSwitchType === 'SQLITE'){
+    this.opensqlLite();
+    }
+    else if(this.databaseSwitchType === 'MICROSOFTSQLSERVER'){
+    this.openMicrosoftSqlServer();
+    }
+    else if(this.databaseSwitchType === 'SNOWFLAKE'){
+    this.openSnowflakeServer();
+    }
+    else if(this.databaseSwitchType === 'SHOPIFY'){
+    this.connectShopify();
+    }
+    else if(this.databaseSwitchType === 'CONNECTWISE'){
+    this.connectWise();
+    }
+    else if(this.databaseSwitchType === 'HALOPS'){
+    this.connectHaloPSA();
+    }
   }
   routeNewDatabase(){
     if (this.iscrossDbSelect) {
@@ -506,6 +514,9 @@ export class WorkbenchComponent implements OnInit{
     this.siteURLPSA = '';
     this.clientIdPSA = '';
     this.clientSecret = '';
+    this.ninjaRMMClientid = '';
+    this.ninjaRMMClientSecret = '';
+    this.selectedNinjaRMMScopes = [];
     
   } 
   googleSheetsData = [] as any;
@@ -605,7 +616,10 @@ export class WorkbenchComponent implements OnInit{
                 if (this.iscrossDbSelect) {
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
-                } else {
+                }else if(this.datasourceSwitchUI){
+                  this.switchDatabase();
+                }
+                 else {
                   this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
                 }
               }
@@ -647,6 +661,31 @@ export class WorkbenchComponent implements OnInit{
         }
       )
 
+    }
+
+    ninjaRMMUpdate(){
+      const obj = {
+        "client_id": this.ninjaRMMClientid,
+        "client_secret": this.ninjaRMMClientSecret,
+        "display_name": this.displayName,
+        "scopes": this.selectedNinjaRMMScopes,
+        "hierarchy_id":this.databaseId
+      }
+
+      this.workbechService.ninjaRMMConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
     }
     
     haloPSAUpdate(){
@@ -827,6 +866,13 @@ export class WorkbenchComponent implements OnInit{
       this.emptyVariables();
     }
 
+    connectNinjaRMM(){
+      this.openNinjaRMMForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
     connectHaloPSA(){
       this.openHaloPSAForm = true;
       this.databaseconnectionsList= false;
@@ -849,6 +895,22 @@ export class WorkbenchComponent implements OnInit{
         this.companyIDError = false;
       }else{
         this.companyIDError = true;
+      }
+    }
+
+    ninjaRMMClient(){
+      if(this.ninjaRMMClientid){
+        this.ninjaRMMClientIdError = false;
+      }else{
+        this.ninjaRMMClientIdError = true;
+      }
+    }
+
+    ninjaRMMClientSecretData(){
+      if(this.ninjaRMMClientSecret){
+        this.ninjaRMMClientSecretError = false;
+      }else{
+        this.ninjaRMMClientSecretError = true;
       }
     }
 
@@ -929,6 +991,38 @@ export class WorkbenchComponent implements OnInit{
                 this.connectCrossDbs();
               }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
+    ninjaRMMSignIn(){
+      const obj = {
+        "client_id": this.ninjaRMMClientid,
+        "client_secret": this.ninjaRMMClientSecret,
+        "display_name": this.displayName,
+        "scopes": this.selectedNinjaRMMScopes
+      }
+      this.workbechService.ninjaRMMConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              this.openNinjaRMMForm = false;
+              const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             }
           },
@@ -1674,7 +1768,13 @@ connectGoogleSheets(){
         this.publicKey = editData.public_key;
         this.privateKey = editData.private_key;
         this.displayName = editData.display_name;
-    } else if (this.databaseType == "halops") {
+    } else if (this.databaseType == "ninja") {
+       this.displayName = editData.display_name;
+       this.ninjaRMMClientid = editData.client_secret;
+       this.ninjaRMMClientSecret = editData.client_id;
+       this.selectedNinjaRMMScopes = editData.scopes;
+    }
+    else if (this.databaseType == "halops") {
       this.siteURLPSA = editData.site_url;
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
@@ -1977,6 +2077,11 @@ connectGoogleSheets(){
       this.disableConnectBtn = false;
     }
   }
+
+  onNinjaRMMScopeChange(event: any) {
+    this.selectedNinjaRMMScopes = event;
+    this.ninjaRMMScopeError = this.selectedNinjaRMMScopes.length <= 0;
+  }
   replaceExcelOrCsvFile(fileInput: any,database:any) {
     const formData: FormData = new FormData();
     formData.append('file_path', this.fileData, this.fileData.name);
@@ -2187,5 +2292,29 @@ connectGoogleSheets(){
     const encodedId = btoa(hierarchyId.toString());
     this.router.navigate(['/analytify/transformationList/dataTransformation/' + encodedId]);
   }
-
+  switchDatabase(){
+    const obj ={
+      existing_h_id:this.selectedSourceSwithDbId,
+      switch_h_id:this.databaseId,
+      dashboard_id:this.dashbaordIdToSwitch
+    }
+    this.workbechService.datbaseSwitch(obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        if(data.message ==='Dashboard switched successfully'){
+          const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
+          this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId],{state: {dbSwitched: true}})
+        }
+      },
+      error:(error)=>{
+        console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+        this.openPostgreSqlForm = true;
+      }
+    })
+  }
+  gotoDashboardWithoutSwitch(){
+    const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
+    this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId])
+  }
 }
