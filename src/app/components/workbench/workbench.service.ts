@@ -991,5 +991,14 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/dynamic_filter_embedded_dashboard/`+this.accessToken,obj);
     }
-
+    getTargetdbsForSwitch(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_connection_list/`+this.accessToken,obj);
+    }
+    datbaseSwitch(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_switch/`+this.accessToken,obj);
+    }
 }

@@ -227,6 +227,9 @@ export class HeaderComponent implements OnInit {
   downloadPublicDashbaord(){
     this.sharedService.download();
   }
+  downloadPublicDashboardPdf(){
+    this.sharedService.downloadPdf()
+  }
   logOut() {
     this.authService.logOut().subscribe((res) => {
       if (!res.success) {

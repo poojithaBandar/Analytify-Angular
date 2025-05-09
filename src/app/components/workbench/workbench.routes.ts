@@ -84,6 +84,12 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
+      {
+        path: 'datasources/datasource-switch/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
       //  {
       //   path: 'database-connection/tables/:id',
       //   canActivate:[authGuard],
