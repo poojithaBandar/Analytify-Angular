@@ -723,6 +723,73 @@
         </div>
     </div>
       }
+      @if(openNinjaRMMForm){
+        <div class="main-container container-fluid px-4 TopHeader">
+          <div class="row">
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card Relational-database-height">
+                      <div class="card-header">
+                          <h4 class="card-title">Connect To Connectwise</h4>
+                      </div>
+                      <div class="card-body">
+                          <form>
+                            <div class="form-group">
+                              <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                              <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                            </div>
+                                  <div class="form-group">
+                                      <label [ngClass]="{'error-label': ninjaRMMClientIdError}" for="recipient-name" class="col-form-label">Client Id<span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': ninjaRMMClientIdError}" type="text" class="form-control" [(ngModel)]="ninjaRMMClientid" [ngModelOptions]="{standalone: true}" placeholder="Client Id" (input)="ninjaRMMClient()">
+                                  </div>
+                                  <div class="form-group">
+                                      <label [ngClass]="{'error-label': ninjaRMMClientSecretError}" for="message-text" class="col-form-label">Client Secret<span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': ninjaRMMClientSecretError}" type="text" class="form-control" [(ngModel)]="ninjaRMMClientSecret" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://connectwise.com" (input)="ninjaRMMClientSecretData()">
+                                  </div>
+                                  <div class="form-group">
+                                      <label [ngClass]="{'error-label': ninjaRMMScopeError}" class="col-form-label">Scopes<span class="text-danger ms-1" >*</span></label>
+                                      <ng-select
+                                      [items]="ninjaRMMScopes"
+                                      bindLabel=""
+                                      placeholder="Select Scopes"
+                                      [(ngModel)]="selectedNinjaRMMScopes"
+                                      [multiple]="true"
+                                      (change)="onNinjaRMMScopeChange($event)">
+                                    </ng-select>
+                                  </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                  <button type="button" class="btn btn-primary" (click)="ninjaRMMSignIn()" [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card user-card border Relational-database-height">
+                  <div class="user-image">
+                      <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                        <img src="./assets/images/Db_server_images/connectwise-logo.jpg" alt="" class="rounded-circle bg-white user-image-border-color">
+                      </span>
+                  </div>
+                  <div class="card-body server-content-card">
+                    <ul class="">
+                      <li> <span class="mt-1">ConnectWise provides a seamless combination of Remote Monitoring and Management (RMM) tools with Professional Services Automation (PSA), enabling IT service providers to manage their operations effectively.
+                      </span></li>                    
+                      <li><h6 class=" mt-3"><strong>Inputs to connect</strong></h6></li>
+                      <li><span class="mb-0"><strong>Company ID:</strong> This ID uniquely identifies your company in the ConnectWise system, ensuring accurate data handling and integration.
+                      </span></li>
+                      <li><span class="mb-0"><strong>Site URL:</strong> 
+                        The staging site URL (https://staging.connectwisedev.com) for connecting and testing the integration before deploying it to production.</span></li>
+                      <li><span class="mb-0"><strong>Public Key:</strong> A secure key used for API authentication to ensure requests are authorized and data remains safe.</span></li>
+                      <li><span class="mb-0"><strong>Private Key:</strong> The private key works alongside the public key to provide additional security for API requests.</span></li>
+                      <li><span class="mb-0"><strong>Client ID:</strong> A unique identifier for your application that is required for authorization and API interactions.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+        }
       @if(openConnectWiseForm){
         <div class="main-container container-fluid px-4 TopHeader">
           <div class="row">
@@ -1860,6 +1927,15 @@
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span>Google Sheets</span>
                         </div>
+                      </div>    
+                      <div class="database-logo">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectNinjaRMM()">
+                          <img src="/assets/images/Db_server_images/ninjaRMM.png"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600">
+                          <span>NinjaRMM</span>
+                        </div>
+                      </div>    
                       </div>
                       <div class="database-logo">
                         <div class="imgcard p-4" (click)="connectGoogleAnalytics()">

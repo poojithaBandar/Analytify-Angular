@@ -98,8 +98,16 @@ export class WorkbenchComponent implements OnInit{
   schemaList: any[] = [];
   selectedSchema : string = 'public';
   querysetIdFromDataSource :any;
-
   isCustomSql = false;
+  openNinjaRMMForm: boolean = false;
+  ninjaRMMClientIdError : boolean = false;
+  ninjaRMMClientid!: string;
+  ninjaRMMClientSecretError : boolean = false;
+  ninjaRMMClientSecret! : string;
+  ninjaRMMScopes = ['monitoring', 'management', 'control'];
+  selectedNinjaRMMScopes: string[] = [];
+  ninjaRMMScopeError: boolean = false;
+
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService){ 
     localStorage.setItem('QuerySetId', '0');
@@ -827,6 +835,13 @@ export class WorkbenchComponent implements OnInit{
       this.emptyVariables();
     }
 
+    connectNinjaRMM(){
+      this.openNinjaRMMForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
     connectHaloPSA(){
       this.openHaloPSAForm = true;
       this.databaseconnectionsList= false;
@@ -849,6 +864,22 @@ export class WorkbenchComponent implements OnInit{
         this.companyIDError = false;
       }else{
         this.companyIDError = true;
+      }
+    }
+
+    ninjaRMMClient(){
+      if(this.ninjaRMMClientid){
+        this.ninjaRMMClientIdError = false;
+      }else{
+        this.ninjaRMMClientIdError = true;
+      }
+    }
+
+    ninjaRMMClientSecretData(){
+      if(this.ninjaRMMClientSecret){
+        this.ninjaRMMClientSecretError = false;
+      }else{
+        this.ninjaRMMClientSecretError = true;
       }
     }
 
@@ -929,6 +960,57 @@ export class WorkbenchComponent implements OnInit{
                 this.connectCrossDbs();
               }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
+    ninjaRMMSignIn(){
+      const obj={
+        "client_id":this.ninjaRMMClientid,
+    "client_secret":this.ninjaRMMClientSecret,
+    "display_name":this.displayName,
+    "scopes":this.selectedNinjaRMMScopes
+    }
+      this.workbechService.ninjaRMMConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              this.openNinjaRMMForm = false;
+              const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              Swal.fire({
+                position: "center",
+                // icon: "question",
+                iconHtml: '<img src="./assets/images/copilot.gif">',
+                title: "Create smart dashboard from your data with just one click?",
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Skip',
+                customClass: {
+                  icon: 'no-icon-bg',
+                }
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
+                } else {
+                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
+              });
               }
             }
           },
@@ -1976,6 +2058,11 @@ connectGoogleSheets(){
     } else{
       this.disableConnectBtn = false;
     }
+  }
+
+  onNinjaRMMScopeChange(event: any) {
+    this.selectedNinjaRMMScopes = event;
+    this.ninjaRMMScopeError = this.selectedNinjaRMMScopes.length <= 0;
   }
   replaceExcelOrCsvFile(fileInput: any,database:any) {
     const formData: FormData = new FormData();
