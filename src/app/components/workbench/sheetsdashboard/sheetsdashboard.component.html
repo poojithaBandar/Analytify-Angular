@@ -1501,9 +1501,9 @@
                   
                       </tbody>
                   </table>
-                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false)"></pagination-controls>
+                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false,false)"></pagination-controls>
                   <div class="pagination-count">
-                    <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage" (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
+                    <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage" (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false,false)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
                           <option  value="10"> 10</option>
                           <option  value="50"> 50</option>
                           <option  value="100"> 100</option>
@@ -1932,11 +1932,11 @@
                         </tbody>
                       </table>
                       <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'"
-                        (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false)">
+                        (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false,false)">
                       </pagination-controls>
                       <div class="pagination-count">
                         <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage"
-                          (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false)"
+                          (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false,false)"
                           (mousedown)="stopDragging($event)" class="form-control cursor form-control-pad">
                           <option value="10"> 10</option>
                           <option value="50"> 50</option>
@@ -2162,6 +2162,11 @@
       <button type="button" [disabled]="!selectedCurrentDb || disableAddNew" class="btn btn-info" (click)="addNewDatabaseConnection()">Add New</button>
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Close</button>
       <button type="button" [disabled]="!selectedCurrentDb || !targetSelectedDbHierarchyId" class="btn btn-primary" (click)="switchDatabase()" >Switch</button>
+
+
+      <input type="file" (change)="uploadfileCsv($event)" accept=".csv" #fileInput style="display: none;" />
+      <input type="file" (change)="uploadfileExcel($event)" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
+
     </div>
   </ng-template>
   

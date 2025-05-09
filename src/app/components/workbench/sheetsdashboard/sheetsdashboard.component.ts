@@ -217,6 +217,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   calendarTotalHeight : string = '400px';
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
+  @ViewChild('fileInput') fileInput:any;
+  @ViewChild('fileInput1') fileInput1:any;
   lastRefresh: any;
   nextRefresh: any;
   tabData: any;
@@ -230,7 +232,7 @@ export class SheetsdashboardComponent implements OnDestroy {
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
-     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService){
+     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -3768,14 +3770,14 @@ assignSDKFiltertoDashboard(embedFilterData?: any){
     console.log('filterowData',this.filteredRowData)
   });
   if(item.chart_id === 1){
-    this.pageChangeTableDisplay(item,1,false,false)
+    this.pageChangeTableDisplay(item,1,false,false,false)
     // this.tablePageNo =1;
     this.tablePage=1
   } else{
-  this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
+  this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
   if (this.displayTabs) {
     this.sheetTabs.forEach((tabData: any) => {
-      this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
+      this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
     })
   }
   }
@@ -3937,14 +3939,14 @@ getFilteredData(){
         console.log('filterowData',this.filteredRowData)
       });
       if(item.chart_id === 1){
-        this.pageChangeTableDisplay(item,1,false,false)
+        this.pageChangeTableDisplay(item,1,false,false,false)
         // this.tablePageNo =1;
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
+      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
+          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
         })
       }
       }
@@ -4834,10 +4836,10 @@ deleteDashboardFilter(id:any){
               this.filteredRowData.push(obj);
               console.log('filterowData',this.filteredRowData)
             });
-            this.setDashboardSheetData(item, true, false, false, false, '', false,false,this.dashboard);
+            this.setDashboardSheetData(item, true, false, false, false, '', false,false,this.dashboard,false);
             if(this.displayTabs){
               this.sheetTabs.forEach((sheet:any)=>{
-                this.setDashboardSheetData(item, true, false, false, false, '', false,false,sheet.dashboard);
+                this.setDashboardSheetData(item, true, false, false, false, '', false,false,sheet.dashboard,false);
               })
             }
           });
@@ -5794,10 +5796,10 @@ kpiData?: KpiData;
         if(item.chart_id === 1){
           this.pageChangeTableDisplayPublic(item,1)
         }else{
-        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard);
+        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
         if (this.displayTabs) {
           this.sheetTabs.forEach((tabData: any) => {
-            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard);
+            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
           })
         }
         }
@@ -5899,10 +5901,10 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard);
+      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard);
+          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard,false);
         })
       }
       // if(item.chartId == '29'){
@@ -5976,10 +5978,10 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard);
+      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard);
+          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard,false);
         })
       }
       // if(item.chartId == '29'){
@@ -6054,9 +6056,9 @@ kpiData?: KpiData;
 tableSearchDashboard(item:any,value:any){
   this.tablePageNo=1;
   this.tableSearch = value;
-  this.pageChangeTableDisplay(item,1,false,false);
+  this.pageChangeTableDisplay(item,1,false,false,false);
 }
-pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,isLastIndex:boolean){
+pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,isLastIndex:boolean,switchDb:boolean){
   if(item.tableData){
   item.tableData.tablePage = page;
   }
@@ -6081,10 +6083,10 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,isLastIndex:
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,isLastIndex,this.dashboard);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,isLastIndex,this.dashboard,switchDb);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard);
+          this.setDashboardSheetData(data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard,switchDb);
         })
       }
     },error:(error)=>{
@@ -6122,10 +6124,10 @@ pageChangeTableDisplayPublic(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', false,false,this.dashboard);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', false,false,this.dashboard,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(data.data, true, false, false, false, '', false, false, tabData.dashboard);
+          this.setDashboardSheetData(data.data, true, false, false, false, '', false, false, tabData.dashboard,false);
         })
       }
     },error:(error)=>{
@@ -6674,10 +6676,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
             this.filteredRowData.push(rowObject);
           }
-          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false,this.dashboard);
+          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false,this.dashboard,false);
           if (this.displayTabs) {
             this.sheetTabs.forEach((tabData: any) => {
-              this.setDashboardSheetData(sheet, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard);
+              this.setDashboardSheetData(sheet, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard,false);
             })
           }
         });
@@ -6736,10 +6738,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.filteredRowData.push(rowObject);
             console.log('filterowData', this.filteredRowData);
           });
-          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,false,this.dashboard);
+          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,false,this.dashboard,false);
           if (this.displayTabs) {
             this.sheetTabs.forEach((tabData: any) => {
-              this.setDashboardSheetData([], false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard);
+              this.setDashboardSheetData([], false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard,false);
             })
           }
         });
@@ -7235,7 +7237,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         isLastIndex = false;
       }
       if(item.chart_id === 1){
-        this.pageChangeTableDisplay(item,1,true,isLastIndex);
+        this.pageChangeTableDisplay(item,1,true,isLastIndex,value);
         this.tablePage=1
       }else{
       this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard,value);
@@ -7892,15 +7894,24 @@ selectedTargetDb: string = '';
 currentSelectedDbHierarchyId:any;
 targetSelectedDbHierarchyId:any = '';
 disableAddNew=false;
+fileData:any;
 getCurrentDbs(){
   const obj ={
     dashboard_id:this.dashboardId
   }
   this.workbechService.getQuerySetInDashboardFilter(obj).subscribe({
     next:(data)=>{
-      console.log(data);
-       this.sourceDbData=data;
-       this.currentDbKeys = Object.keys(data);
+      const filtered = Object.entries(data)
+      .filter(([key, value]: [string, any]) => value.server_type !== 'CROSS_DATABASE')
+      .reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, {} as Record<string, any>);
+
+    this.sourceDbData = filtered;
+    this.currentDbKeys = Object.keys(filtered);
+    console.log(this.sourceDbData);
+
     },
     error:(error)=>{
       console.log(error)
@@ -7916,8 +7927,11 @@ loadTargetDbs(){
   }
      this.workbechService.getTargetdbsForSwitch(obj).subscribe({
         next:(data)=>{
-          this.targetDbData = data.user_connections;
-          console.log(data);
+          const currentHierarchyId = this.selectedCurrentDbDetails.hierarchy_id;
+          this.targetDbData = data.user_connections.filter(
+            (db: any) => db.hierarchy_id !== currentHierarchyId
+          );
+          console.log('Filtered Target DBs:', this.targetDbData);
         },
         error:(error)=>{
           console.log(error);
@@ -7930,7 +7944,7 @@ onCurrentDbChange() {
   this.selectedCurrentDbDetails = selectedList ? selectedList[0] : null;
   if(this.selectedCurrentDbDetails){
     this.currentSelectedDbHierarchyId = this.selectedCurrentDbDetails.hierarchy_id;
-    const restrictedTypes = ['GOOGLE_SHEETS', 'GOOGLE_ANALYTICS', 'SALESFORCE', 'QUICKBOOKS'];
+    const restrictedTypes = ['GOOGLE_SHEETS', 'GOOGLE_ANALYTICS', 'SALESFORCE', 'QUICKBOOKS','CROSS_DATABASE'];
     this.disableAddNew = restrictedTypes.includes(this.selectedCurrentDbDetails.server_type);
       }
   this.loadTargetDbs();
@@ -7964,11 +7978,84 @@ switchDatabase() {
   })
 }
 addNewDatabaseConnection(){
+  if(this.selectedCurrentDbDetails.server_type === 'EXCEL'){
+      this.fileInput1.nativeElement.click();
+  }else if(this.selectedCurrentDbDetails.server_type === 'CSV'){
+        this.fileInput.nativeElement.click();
+  }else{
   this.modalService.dismissAll('close');
   const encodedSourceDbId = btoa(this.currentSelectedDbHierarchyId.toString());
   const encodedDashboardId = btoa(this.dashboardId.toString());
   this.router.navigate(['analytify/datasources/datasource-switch/'+this.selectedCurrentDbDetails.server_type+'/'+encodedSourceDbId+'/'+encodedDashboardId])
+  }
 }
+uploadfileCsv(event:any){
+  const file:File = event.target.files[0];
+  this.fileData = file;
+  if(this.fileData && this.fileData.type == 'text/csv'){
+    this.csvUpload(event.target);
+  }else{
+    this.toasterService.error('Not a supported file format. Please select an CSV file.','info',{ positionClass: 'toast-top-center'})
+  }
+}
+csvUpload(fileInput: any){
+  const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData,this.fileData.name); 
+    formData.append('file_type','csv');
+    this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
+      console.log(responce)
+          if(responce){
+            this.toasterService.success('Connected','success',{ positionClass: 'toast-top-right'});
+            this.targetSelectedDbHierarchyId = responce.hierarchy_id
+            this.switchDatabase();
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          fileInput.value = '';
+          this.cd.detectChanges();
+          this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        },
+        complete: () => {
+          fileInput.value = '';
+          this.cd.detectChanges();
+        }
+      }
+    )
+  }
+  uploadfileExcel(event:any){
+    const file:File = event.target.files[0];
+    this.fileData = file;
+    if(this.fileData && ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'].includes(this.fileData.type)){
+      this.excelUpload(event.target);
+    } else{
+      this.toasterService.error('Not a supported file format. Please select an Excel file.','info',{ positionClass: 'toast-top-center'})
+    }
+}
+excelUpload(fileInput: any){
+  const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData,this.fileData.name); 
+    formData.append('file_type','excel');
+    this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
+      console.log(responce)
+          if(responce){
+            this.targetSelectedDbHierarchyId = responce.hierarchy_id;
+            this.switchDatabase();
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          fileInput.value = '';
+          this.cd.detectChanges();
+          this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        },
+        complete: () => {
+          fileInput.value = '';
+          this.cd.detectChanges();
+        }
+      }
+    )
+  }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
