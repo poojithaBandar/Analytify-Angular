@@ -8,6 +8,7 @@ import { WorkbenchService } from '../workbench.service';
 import { FormsModule } from '@angular/forms';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { expression } from 'mathjs';
+import { EtlGraphService } from '../etl-graph.service';
 
 @Component({
   selector: 'app-etl',
@@ -41,8 +42,9 @@ export class ETLComponent {
   runId: string = '';
   nodeLogs: any[] = [];
   pollingInterval: any;
+  currentNodeColumns : any[] = [];
 
-  constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, private loaderService: LoaderService) {
+  constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, private loaderService: LoaderService, private etlGraphService: EtlGraphService) {
   }
 
   ngOnInit() {
@@ -58,17 +60,37 @@ export class ETLComponent {
 
       this.drawflow.on('connectionCreated', (connection: any) => {
         this.getConnectionData(connection);
-        if(this.drawflow.getNodeFromId(connection.input_id).data.type === 'Rollup'){
-          const sourceNodeColumns = this.drawflow.getNodeFromId(connection.output_id).data.nodeData.dataObject;
-          this.selectedNode.data.nodeData.groupAttributes = sourceNodeColumns
-        }
+        // if(this.drawflow.getNodeFromId(connection.input_id).data.type === 'Rollup'){
+        //   const sourceNodeColumns = this.drawflow.getNodeFromId(connection.output_id).data.nodeData.dataObject;
+        //   this.selectedNode.data.nodeData.groupAttributes = sourceNodeColumns
+        // }
+        this.getDropdownColumnsData(this.drawflow.getNodeFromId(connection.input_id));
       });
       this.drawflow.on('connectionSelected', (connection: any) => {
-        this.getConnectionData(connection);
+        // this.getConnectionData(connection);
+      });
+
+      this.drawflow.on('connectionRemoved', (connection: any) => {
+        const { output_id, input_id } = connection;
+
+        const sourceNode = this.drawflow.getNodeFromId(output_id);
+        const targetNode = this.drawflow.getNodeFromId(input_id);
+
+        if (targetNode.data.type === 'Joiner') {
+          const nodeNamesDropdown = targetNode.data.nodeData.properties.nodeNamesDropdown;
+          const sourceNodeName = sourceNode.data.nodeData.general.name;
+      
+          const index = nodeNamesDropdown.indexOf(sourceNodeName);
+          if (index !== -1) {
+            nodeNamesDropdown.splice(index, 1);
+            this.drawflow.updateNodeDataFromId(targetNode.id, targetNode.data);
+          }
+        }
       });
 
       this.drawflow.on('nodeSelected', (nodeId: number) => {
         const nodeEl = document.querySelector(`[id="node-${nodeId}"]`);
+        this.tableTabId = 1;
         if (nodeEl) {
           nodeEl.addEventListener('click', () => {
             const node = this.drawflow.getNodeFromId(nodeId);
@@ -89,6 +111,14 @@ export class ETLComponent {
 
     const sourceNode = this.drawflow.getNodeFromId(output_id);
     const targetNode = this.drawflow.getNodeFromId(input_id);
+
+    if(targetNode.data.type === 'Joiner'){
+      targetNode.data.nodeData.properties.nodeNamesDropdown.push(sourceNode.data.nodeData.general.name);
+      if(targetNode.data.nodeData.properties.nodeNamesDropdown.length > 1){
+        targetNode.data.nodeData.properties.joinList.push({joinType: '', secondaryObject: null, joinCondition: ''});
+      }
+      this.drawflow.updateNodeDataFromId(targetNode.id, targetNode.data);
+    }
 
     console.log('Output Node ID:', output_id);
     console.log('Input Node ID:', input_id);
@@ -130,7 +160,7 @@ export class ETLComponent {
       nodeData: { 
         general: { name: '' }, 
         connection: {}, dataObject: {}, 
-        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '' }, 
+        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes: [], 
         groupAttributes: [] 
       } 
@@ -147,7 +177,14 @@ export class ETLComponent {
         altText = 'PostgreSQL';
       }
       data.type = name;
-      data.nodeData = { connection: this.selectedConnection, dataObject: this.selectedDataObject, general: { name: 'SRC_' + this.selectedDataObject?.table }, properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '' }, attributes:[], groupAttributes:[] };
+      data.nodeData = { 
+        connection: this.selectedConnection, 
+        dataObject: this.selectedDataObject, 
+        general: { name: 'SRC_' + this.selectedDataObject?.table }, 
+        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
+        attributes:[], 
+        groupAttributes:[] 
+      };
       inputNodeCount = 0;
       outputNodeCount = 1;
     }
@@ -157,7 +194,14 @@ export class ETLComponent {
         altText = 'PostgreSQL';
       }
       data.type = name;
-      data.nodeData = { connection: this.selectedConnection, dataObject: this.selectedDataObject, general: { name: 'TGT_' + (this.objectType === 'select' ? this.selectedDataObject?.table : this.selectedDataObject) }, properties: { truncate: false, create: this.objectType === 'select' ? false : true, havingClause: '', filterCondition: '', whereClause: '' }, attributes:[], groupAttributes:[] };
+      data.nodeData = { 
+        connection: this.selectedConnection, 
+        dataObject: this.selectedDataObject, 
+        general: { name: 'TGT_' + (this.objectType === 'select' ? this.selectedDataObject?.table : this.selectedDataObject) }, 
+        properties: { truncate: false, create: this.objectType === 'select' ? false : true, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
+        attributes:[], 
+        groupAttributes:[] 
+      };
       inputNodeCount = 1;
       outputNodeCount = 0;
     }
@@ -166,28 +210,56 @@ export class ETLComponent {
       altText = 'Expression';
       data.type = baseName;
       this.nodeTypeCounts[baseName] = (this.nodeTypeCounts[baseName] || 0) + 1;
-      data.nodeData = { connection: {}, dataObject: {}, general: { name: `expression_${this.nodeTypeCounts[baseName]}` }, properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '' }, attributes:[], groupAttributes:[] }
+      data.nodeData = { 
+        connection: {}, 
+        dataObject: {}, 
+        general: { name: `expression_${this.nodeTypeCounts[baseName]}` }, 
+        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
+        attributes:[], 
+        groupAttributes:[] 
+      }
     }
     else if (baseName === 'Joiner') {
       iconPath = './assets/images/etl/mjoiner-etl.svg';
       altText = 'Joiner';
       data.type = baseName;
       this.nodeTypeCounts[baseName] = (this.nodeTypeCounts[baseName] || 0) + 1;
-      data.nodeData = { connection: {}, dataObject: {}, general: { name: `joiner_${this.nodeTypeCounts[baseName]}` }, properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '' }, attributes:[], groupAttributes:[] }
+      data.nodeData = { 
+        connection: {}, 
+        dataObject: {}, 
+        general: { name: `joiner_${this.nodeTypeCounts[baseName]}` }, 
+        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
+        attributes:[], 
+        groupAttributes:[] 
+      }
     }
     else if (baseName === 'Rollup') {
       iconPath = './assets/images/etl/rollup-etl.svg';
       altText = 'Rollup';
       data.type = baseName;
       this.nodeTypeCounts[baseName] = (this.nodeTypeCounts[baseName] || 0) + 1;
-      data.nodeData = { connection: {}, dataObject: {}, general: { name: `rollup_${this.nodeTypeCounts[baseName]}` }, properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '' }, attributes:[], groupAttributes:[] }
+      data.nodeData = { 
+        connection: {}, 
+        dataObject: {}, 
+        general: { name: `rollup_${this.nodeTypeCounts[baseName]}` }, 
+        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
+        attributes:[], 
+        groupAttributes:[] 
+      }
     }
     else if (baseName === 'Filter') {
       iconPath = './assets/images/etl/filter-etl.svg';
       altText = 'Filter';
       data.type = baseName;
       this.nodeTypeCounts[baseName] = (this.nodeTypeCounts[baseName] || 0) + 1;
-      data.nodeData = { connection: {}, dataObject: {}, general: { name: `filter_${this.nodeTypeCounts[baseName]}` }, properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '' }, attributes:[], groupAttributes:[] }
+      data.nodeData = { 
+        connection: {}, 
+        dataObject: {}, 
+        general: { name: `filter_${this.nodeTypeCounts[baseName]}` }, 
+        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
+        attributes:[], 
+        groupAttributes:[] 
+      }
     }
 
     let displayName = data.nodeData.general.name;
@@ -258,8 +330,19 @@ export class ETLComponent {
       data = {
         ...this.selectedNode.data
       };
+    } else{
+      nodeId = this.selectedNode.id;
+
+      data = {
+        ...this.selectedNode.data
+      };
     }
     this.drawflow.updateNodeDataFromId(nodeId, data);
+    const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
+    Object.entries(allNodes).forEach(([id, node]) => {
+      this.getDropdownColumnsData(node);
+    });
+    console.log(allNodes);
   }
 
   getSelectedNodeData(node: any) {
@@ -267,7 +350,7 @@ export class ETLComponent {
     this.selectedNode = node;
     this.nodeName = this.selectedNode.data.nodeData.general.name;
     console.log(this.selectedNode);
-    this.getDataFlowLogs(this.nodeName);  
+    // this.getDataFlowLogs(this.nodeName);
   }
 
   getConnections() {
@@ -401,7 +484,11 @@ export class ETLComponent {
         this.getDataFlowStatus(data.run_id);
       },
       error: (error: any) => {
-        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+        if (error?.error?.message?.detail?.includes('not found')) {
+          this.toasterService.info('Please Run After 5 seconds.', 'info', { positionClass: 'toast-top-right' });
+        } else {
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+        }
         console.log(error);
       }
     });
@@ -484,12 +571,42 @@ export class ETLComponent {
         task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.table;
         task.truncate = nodes[nodeId].data.nodeData.properties.truncate;
         task.create = nodes[nodeId].data.nodeData.properties.create;
+      } else if(nodes[nodeId].data.type === 'Rollup'){
+        let grp : any[] = [];
+        nodes[nodeId].data.nodeData.groupAttributes.forEach((atrr:any)=>{
+          const array = [atrr.aliasName, atrr.selectedColumn.label];
+          grp.push(array);
+        });
+        task.group_attributes = grp;
+        task.having_clause = nodes[nodeId].data.nodeData.properties.havingClause;
+      } else if(nodes[nodeId].data.type === 'Filter'){
+        task.filter_conditions = nodes[nodeId].data.nodeData.properties.filterCondition;
+      } else if(nodes[nodeId].data.type === 'Joiner'){
+        task.primary_table = nodes[nodeId].data.nodeData.properties.primaryObject;
+        let joins : any[] = [];
+        nodes[nodeId].data.nodeData.properties.joinList.forEach((join:any)=>{
+          const array = [join.joinType, join.secondaryObject, join.joinCondition];
+          joins.push(array);
+        });
+        task.joining_list = joins;
+        task.where_clause = nodes[nodeId].data.nodeData.properties.whereClause;
+      } else if(nodes[nodeId].data.type === 'Expression'){
+        let exps : any[] = [];
+        nodes[nodeId].data.nodeData.attributes.forEach((atrr:any)=>{
+          const array = [atrr.attributeName, atrr.expression];
+          exps.push(array);
+        });
+        task.expressions_list = exps;
       }
 
       const inputConnections = nodes[nodeId].inputs?.input_1?.connections || [];
       if (inputConnections.length > 0) {
         const prevTaskIds = inputConnections.map((conn: any) => nodes[conn.node].data.nodeData.general.name);
-        task.previous_task_id = prevTaskIds[0];
+        if(nodes[nodeId].data.type === 'Joiner'){
+          task.previous_task_id = prevTaskIds;
+        } else{
+          task.previous_task_id = prevTaskIds[0];
+        }
       }
     }
 
@@ -504,7 +621,7 @@ export class ETLComponent {
     this.updateNode('attribute');
   }
   addNewGroupAttribute(){
-    let attribute = {aliasName: '', selectColumnDropdown: this.selectedNode.data.nodeData.dataObject, selectedColumn: null, dataType: '',}
+    let attribute = {aliasName: '', selectColumnDropdown: this.currentNodeColumns, selectedColumn: null, dataType: '',}
     this.selectedNode.data.nodeData.groupAttributes.push(attribute);
   }
   deleteGroupAttribute(index:number){
@@ -521,5 +638,95 @@ export class ETLComponent {
     this.pollingInterval = setInterval(() => {
       this.getDataFlowStatus(runId);
     }, 2000); // Poll every 3 seconds
+  }
+
+  getDropdownColumnsData(node:any){
+    const tree = this.etlGraphService.buildUpstreamTree(this.drawflow, node.id);
+    console.log('nested upstream tree:', tree);
+
+    const list = this.etlGraphService.flattenUpstream(tree);
+    console.log('flattened topo list:', list);
+    
+    const childrenList = list.slice(1); // Exclude the selected node at index 0
+
+    const childDataObjects: any[] = [];
+    const childAttributes: any[] = [];
+    let childGrpAttributes: any = {};
+    const nodeNames: any[] = [];
+    const nodeTypes: any[] = [];
+
+
+    childrenList.forEach(childId => {
+      const childNode = this.drawflow.getNodeFromId(childId);
+      if (childNode?.data?.nodeData) {
+        childDataObjects.push(childNode.data.nodeData.dataObject);
+        childAttributes.push(childNode.data.nodeData.attributes);
+        if(childNode.data.type === 'Rollup'){
+          childGrpAttributes = {[childNode.data.nodeData.general.name]: childNode.data.nodeData.groupAttributes};
+        }
+        nodeNames.push(childNode.data.nodeData.general.name);
+        nodeTypes.push(childNode.data.type);
+      }
+    });
+
+    console.log('Children DataObjects:', childDataObjects);
+    console.log('Children Attributes:', childAttributes);
+
+    this.currentNodeColumns = [];
+
+    for (let i = 0; i < childDataObjects.length; i++) {
+      const nodeName = nodeNames[i];
+      const nodeType = nodeTypes[i];
+      const columns = childDataObjects[i]?.columns || [];
+      const attributes = childAttributes[i] || [];
+
+      let items = [];
+
+      if(nodeType === 'source_data_object'){
+        for (const col of columns) {
+          items.push({
+            label: col.column,
+            value: col.column,
+            dataType: col.datatype,
+            group: nodeName
+          });
+        }
+      } 
+      else if(nodeType === 'Rollup'){
+        const attr = childGrpAttributes[nodeName] || [];
+        if(attr.length > 0){
+          for (const atr of attr) {
+            items.push({
+              label: atr.aliasName,
+              value: atr.aliasName,
+              column: atr.selectedColumn,
+              group: nodeName
+            });
+          }
+        }
+      }
+
+      for (const attr of attributes) {
+        items.push({
+          label: attr.attributeName,
+          value: attr.attributeName,
+          dataType: attr.datatype,
+          group: nodeName
+        });
+      }
+
+      this.currentNodeColumns.push(...items);
+    }
+
+    console.log('Children columns:', this.currentNodeColumns);
+    if(!['source_data_object', 'target_data_object'].includes(node.data.type)){
+      node.data.nodeData.dataObject = this.currentNodeColumns;
+      this.drawflow.updateNodeDataFromId(node.id, node.data);
+    }
+
+    const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
+      Object.entries(allNodes).forEach(([id, node]) => {
+        console.log('Node ID:', id, 'Node Data:', node);
+    });
   }
 }
