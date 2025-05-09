@@ -305,7 +305,6 @@ export class TemplateDashboardService {
   rowsHALOPSAArray = [4,4,4,4,4,4,8,8,8,8,8];
   colsHALOPSAArray = [5,5,5,5,5,5,12,12,12,12,12];
   dashboardQuerySetIds: number[]=[];
-  sheetsData: any;
   constructor(private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService) { }
 
   buildSampleConnectWiseDashboard(container: ViewContainerRef, databaseId : any){
@@ -376,14 +375,6 @@ export class TemplateDashboardService {
   buildDashboardResponseData(responce: any,formType: string){
     let dashboardData: any[] = [];
     if(responce){
-      this.sheetsData = responce.sheets.map(function(obj:any) {
-        return {
-          sheet_id: obj.sheet_id,
-          chart_id: obj.chart_id,
-          chart_type: obj.chart_type
-        };
-      });
-      this.generateLayout(this.sheetsData);
       const updateRequests = responce.sheets.map((data:any,index:number) => {
         // if(data.chart_id == 1){
         //   data.chart_id = 8 
@@ -712,10 +703,10 @@ export class TemplateDashboardService {
     }
       let obj = {
         id : uuidv4(),
-        x :  this.xHALOPSAArray[index] ,
-        y: this.yHALOPSAArray[index],
-        rows : this.rowsHALOPSAArray[index],
-        cols:  this.colsHALOPSAArray[index],
+        x : formType == 'connectWise' ? this.xConnectWiseArray[index] : formType == 'quickbooks' ? this.xQuickbooksAArray[index] : formType == 'salesforce' ? this.xSalesforceArray[index] : this.xHALOPSAArray[index] ,
+        y: formType == 'connectWise' ? this.yConnectWiseArray[index] : formType == 'quickbooks' ? this.yQuickbooksAArray[index] :formType == 'salesforce' ? this.ySalesforcesAArray[index] : this.yHALOPSAArray[index],
+        rows : formType == 'connectWise' ? this.rowsConnectWiseArray[index] : formType == 'quickbooks' ? this.rowsQuickbooksAArray[index] : formType == 'salesforce' ? this.rowsSalesforceAArray[index] :this.rowsHALOPSAArray[index],
+        cols: formType == 'connectWise' ? this.colsConnectWiseArray[index] : formType == 'quickbooks' ? this.colsQuickbooksArray[index] :formType == 'salesforce' ? this.colsSalesforceArray[index] : this.colsHALOPSAArray[index],
         data: {
           sheetTagName
             :
@@ -756,7 +747,7 @@ export class TemplateDashboardService {
         dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
       } as any
       this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {        
-      this.buildDashboardResponseData(responce,'HALOPSA');      
+      this.buildDashboardResponseData(responce,"HALOPSA");      
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -764,7 +755,7 @@ export class TemplateDashboardService {
         }
       }
     )
-    this.buildDashboardResponseData(responce,'HALOPSA');
+    this.buildDashboardResponseData(responce,'quickbooks');
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -794,7 +785,7 @@ export class TemplateDashboardService {
         }
       }
     )
-    this.buildDashboardResponseData(responce,'salesforce');
+    this.buildDashboardResponseData(responce,'quickbooks');
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -803,81 +794,6 @@ export class TemplateDashboardService {
       }
     )
   }
-  private readonly KPI_MAX       = 8;
-  private readonly KPI_PER_ROW   = 8;
-  private readonly KPI_SIZE      = { cols: 5, rows: 4 };
 
-  private readonly TABLE_MAX     = 1;
-  private readonly TABLE_PER_ROW = 1;
-  private readonly TABLE_SIZE    = { cols: 20, rows: 15 };
-
-  private readonly MIDDLE_PER_ROW = 2;
-  private readonly MIDDLE_SIZE    = { cols: 10, rows: 8 };
-
-  /**
-   * Generate four arrays (x/y/cols/rows) for your Gridster layout.
-   * @param sheets  flat list of sheet metadata
-   */
-  public generateLayout(sheets: any[]) {
-    const n = sheets.length;
-    const xArray    = Array<number>(n).fill(0);
-    const yArray    = Array<number>(n).fill(0);
-    const colsArray = Array<number>(n).fill(0);
-    const rowsArray = Array<number>(n).fill(0);
-
-    // 1) Partition into three buckets, respecting limits.
-    const kpis: number[]    = [];
-    const tables: number[]  = [];
-    const middle: number[]  = [];
-    let kpiCount = 0, tableCount = 0;
-
-    sheets.forEach((sh, idx) => {
-      if (sh.chart_type === 'KPI' && kpiCount < this.KPI_MAX) {
-        kpis.push(idx);
-        kpiCount++;
-      } else if (sh.chart_type === 'Table' && tableCount < this.TABLE_MAX) {
-        tables.push(idx);
-        tableCount++;
-      } else {
-        middle.push(idx);
-      }
-    });
-
-    // 2) Helper to place a homogeneous group
-    const placeGroup = (
-      indices: number[],
-      offsetY: number,
-      perRow: number,
-      size: { cols: number; rows: number }
-    ): number => {
-      indices.forEach((sheetIdx, order) => {
-        const row = Math.floor(order / perRow);
-        const col = order % perRow;
-        xArray[sheetIdx]    = col * size.cols;
-        yArray[sheetIdx]    = offsetY + row * size.rows;
-        colsArray[sheetIdx] = size.cols;
-        rowsArray[sheetIdx] = size.rows;
-      });
-      // total height consumed by this group
-      const numRows = Math.ceil(indices.length / perRow);
-      return numRows * size.rows;
-    };
-
-    // 3) Stitch them together vertically
-    let cursorY = 0;
-    // a) KPIs at the very top
-    cursorY += placeGroup(kpis,   cursorY, this.KPI_PER_ROW,   this.KPI_SIZE);
-    // b) “Other” charts in the middle
-    cursorY += placeGroup(middle, cursorY, this.MIDDLE_PER_ROW, this.MIDDLE_SIZE);
-    // c) Tables at the bottom
-    placeGroup(tables, cursorY, this.TABLE_PER_ROW, this.TABLE_SIZE);
-
-      this.xHALOPSAArray = xArray;
-      this.yHALOPSAArray = yArray;
-      this.colsHALOPSAArray = colsArray;
-      this.rowsHALOPSAArray = rowsArray;  
-    }
   
-          
 }
-

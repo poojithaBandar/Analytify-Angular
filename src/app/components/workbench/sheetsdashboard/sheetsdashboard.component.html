@@ -147,7 +147,7 @@
       <div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
 
     <div class="col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card PositionSticky" id="sticky-sidebar">
-	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl && !isEmbedDashboard }" class="card p-0" >
+	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }" class="card p-0" >
         <!-- <div class="card mb-0"> -->
           <!-- <div class="card-body p-0"> -->
             <div class="mobile-nav-icon px-2 mb-1" (click)="togglePanel()">
@@ -1196,7 +1196,7 @@
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
-                      <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
+                      <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu>
                         <app-insights-button *ngIf="item['type'] !== 'image'" [classesList]="'dropdown-item'"
                           [buttonName]="'Goto Sheet'" [previledgeIdsList]="[20,18]" [isBtn]="false"
                           (btnClickEvent)="viewSheet(item)" [isIcon]="false"></app-insights-button>
@@ -1210,7 +1210,7 @@
                           (btnClickEvent)="downloadSheet(item, 'pdf')" 
                           [isIcon]="false">
                         </app-insights-button> -->
-                        <app-insights-button  *ngIf="item['type'] !== 'image'" [classesList]="'dropdown-item'" 
+                        <app-insights-button [classesList]="'dropdown-item'" 
                           [buttonName]="'Download CSV'" 
                           [previledgeIdsList]="[20,18]" 
                           [isBtn]="false"
@@ -1224,9 +1224,9 @@
                           (btnClickEvent)="downloadSheet(item, 'html')" 
                           [isIcon]="false">
                         </app-insights-button> -->
-                        <!-- <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
+                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
-                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button> -->
+                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
                           [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
@@ -1572,14 +1572,14 @@
         <span class="p-2" (dblclick)="enableEdit(i)">
           {{ tab.name }}
         </span>
-          <i *ngIf ="!isPublicUrl && !isEmbedDashboard" aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i>
+          <i *ngIf ="!isPublicUrl" aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i>
       </ng-template>
     </ng-template>
 
   </mat-tab>
   <!-- } -->
   </mat-tab-group>
-  <button *ngIf="!isPublicUrl && !isEmbedDashboard" type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
+  <button *ngIf="!isPublicUrl" type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
     tabindex="-1" class="nav-link BtnNewStyle p-2" (click)="addTabs()">
       <i class="fa fa-plus"></i>
   </button>

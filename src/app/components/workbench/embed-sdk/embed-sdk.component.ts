@@ -33,7 +33,7 @@ export class EmbedSdkComponent {
     const { hostname, port } = window.location;
     this.host = hostname;
     this.port = port;
-    this.apibaseurl = this.port ? 'https://'+this.host+':'+this.port + '/' : 'https://'+this.host + '/'
+    this.apibaseurl = 'https://'+this.host+':'+this.port
   }
 
   getAppDetails(){
@@ -77,7 +77,7 @@ export class EmbedSdkComponent {
 
   setScriptData(){
     this.scriptContent = `
-    <script src="https://dh21hlbo933ey.cloudfront.net/analytify-dashboard/v1.0.0/analytify-sdk.js"></script>
+    import AnalytifySDK from 'https://cdn.jsdelivr.net/gh/Rajashekarreddy24/Analytify-Angular@v2.1.1/public/analytify-sdk.js';
 
     const analytify = AnalytifySDK.init({
       appName: '${this.userName}',
