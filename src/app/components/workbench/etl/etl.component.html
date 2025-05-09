@@ -142,7 +142,7 @@
                                                                         </div>
                                                                     </ng-template>
                                                                 </li>
-                                                                <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type) || selectedNode.data.nodeData.properties.create" [ngbNavItem]="2" className="nav-link text-start"
+                                                                <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type)" [ngbNavItem]="2" className="nav-link text-start"
                                                                     id="properties-tab"><a ngbNavLink>Properties</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
@@ -660,9 +660,9 @@
                                                     </div>
                                                 </ng-template>
                                             </li>
-                                            <li [ngbNavItem]="2"> <a ngbNavLink class="p-3 TabShadow"> Logs </a>
+                                            <li *ngIf="isLogShow" [ngbNavItem]="2" (click)="getDataFlowLogs(selectedNode.data.nodeData.general.name)"> <a ngbNavLink class="p-3 TabShadow"> Logs </a>
                                                 <ng-template ngbNavContent>
-                                                    logs............................
+                                                    {{ logs | json }}
                                                 </ng-template>
                                             </li>
                                         </ul>
@@ -732,7 +732,7 @@
     <div class="modal-footer">
         <div class="text-right">
             <button type="button" class="btn ripple btn-secondary me-2"
-                (click)="modal.close('Cross click'); objectType = 'select';">Cancel</button>
+                (click)="modal.close('Cross click'); objectType = 'select'; selectedConnection = null; selectedDataObject = null;">Cancel</button>
             <button type="button" [disabled]="!selectedConnection || !selectedDataObject" class="btn ripple btn-primary" (click)="addNode(nodeToAdd, posX, posY); modal.dismiss('Save click')">Ok</button>
         </div>
     </div>

@@ -43,6 +43,8 @@ export class ETLComponent {
   nodeLogs: any[] = [];
   pollingInterval: any;
   currentNodeColumns : any[] = [];
+  logs : any = '';
+  isLogShow : boolean = false;
 
   constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, private loaderService: LoaderService, private etlGraphService: EtlGraphService) {
   }
@@ -493,9 +495,11 @@ export class ETLComponent {
             }
           }
         });
+        this.isLogShow = true;
         this.getDataFlowStatus(data.run_id);
       },
       error: (error: any) => {
+        this.isLogShow = false;
         if (error?.error?.message?.detail?.includes('not found')) {
           this.toasterService.info('Please Run After 5 seconds.', 'info', { positionClass: 'toast-top-right' });
         } else {
@@ -556,6 +560,7 @@ export class ETLComponent {
     this.workbechService.getDataFlowLogs(object).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.logs = data.content;
       },
       error: (error: any) => {
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
