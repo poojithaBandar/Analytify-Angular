@@ -514,6 +514,9 @@ export class WorkbenchComponent implements OnInit{
     this.siteURLPSA = '';
     this.clientIdPSA = '';
     this.clientSecret = '';
+    this.ninjaRMMClientid = '';
+    this.ninjaRMMClientSecret = '';
+    this.selectedNinjaRMMScopes = [];
     
   } 
   googleSheetsData = [] as any;
@@ -658,6 +661,31 @@ export class WorkbenchComponent implements OnInit{
         }
       )
 
+    }
+
+    ninjaRMMUpdate(){
+      const obj = {
+        "client_id": this.ninjaRMMClientid,
+        "client_secret": this.ninjaRMMClientSecret,
+        "display_name": this.displayName,
+        "scopes": this.selectedNinjaRMMScopes,
+        "hierarchy_id":this.databaseId
+      }
+
+      this.workbechService.ninjaRMMConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
     }
     
     haloPSAUpdate(){
@@ -975,12 +1003,12 @@ export class WorkbenchComponent implements OnInit{
     }
 
     ninjaRMMSignIn(){
-      const obj={
-        "client_id":this.ninjaRMMClientid,
-    "client_secret":this.ninjaRMMClientSecret,
-    "display_name":this.displayName,
-    "scopes":this.selectedNinjaRMMScopes
-    }
+      const obj = {
+        "client_id": this.ninjaRMMClientid,
+        "client_secret": this.ninjaRMMClientSecret,
+        "display_name": this.displayName,
+        "scopes": this.selectedNinjaRMMScopes
+      }
       this.workbechService.ninjaRMMConnection(obj).subscribe({next: (responce) => {
         console.log(responce)
             if(responce){
@@ -994,26 +1022,7 @@ export class WorkbenchComponent implements OnInit{
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
               }else{
-              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-              Swal.fire({
-                position: "center",
-                // icon: "question",
-                iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
-                showConfirmButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Skip',
-                customClass: {
-                  icon: 'no-icon-bg',
-                }
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
-                } else {
-                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-                }
-              });
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             }
           },
@@ -1759,7 +1768,13 @@ connectGoogleSheets(){
         this.publicKey = editData.public_key;
         this.privateKey = editData.private_key;
         this.displayName = editData.display_name;
-    } else if (this.databaseType == "halops") {
+    } else if (this.databaseType == "ninja") {
+       this.displayName = editData.display_name;
+       this.ninjaRMMClientid = editData.client_secret;
+       this.ninjaRMMClientSecret = editData.client_id;
+       this.selectedNinjaRMMScopes = editData.scopes;
+    }
+    else if (this.databaseType == "halops") {
       this.siteURLPSA = editData.site_url;
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;

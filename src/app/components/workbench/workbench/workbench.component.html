@@ -32,7 +32,35 @@
                           <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                       </div>
               </form>
-            } @else if(databaseType == 'halops') {
+            } @else if(databaseType == 'ninja') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': ninjaRMMClientIdError}" for="recipient-name" class="col-form-label">Client Id<span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': ninjaRMMClientIdError}" type="text" class="form-control" [(ngModel)]="ninjaRMMClientid" [ngModelOptions]="{standalone: true}" placeholder="Client Id" (input)="ninjaRMMClient()">
+                      </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': ninjaRMMClientSecretError}" for="message-text" class="col-form-label">Client Secret<span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': ninjaRMMClientSecretError}" type="text" class="form-control" [(ngModel)]="ninjaRMMClientSecret" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://connectwise.com" (input)="ninjaRMMClientSecretData()">
+                      </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': ninjaRMMScopeError}" class="col-form-label">Scopes<span class="text-danger ms-1" >*</span></label>
+                          <ng-select
+                          [items]="ninjaRMMScopes"
+                          bindLabel=""
+                          placeholder="Select Scopes"
+                          [(ngModel)]="selectedNinjaRMMScopes"
+                          [multiple]="true"
+                          (change)="onNinjaRMMScopeChange($event)">
+                        </ng-select>
+                      </div>
+              </form>
+            }
+            
+            @else if(databaseType == 'halops') {
               <form>
                 <div class="mb-2">
                   <label [ngClass]="{'error-label': clientIDPSAError}" class="col-form-label">Client Id <span
@@ -180,7 +208,12 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName )">Update</button>
       
-            } @else if(databaseType == 'shopify') {
+            } @else if(databaseType == 'ninja') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="ninjaRMMUpdate()"  [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName) ">Update</button>
+      
+            }
+             @else if(databaseType == 'shopify') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
             }
@@ -1947,7 +1980,6 @@
                           <span>Google Analytics</span>
                         </div>
                       </div>        
-                    </div>
                   </div>
                 </div>
               </div>
