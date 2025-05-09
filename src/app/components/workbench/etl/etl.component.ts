@@ -286,7 +286,7 @@ export class ETLComponent {
 
   updateNode(type: any) {
     let data = {};
-    let nodeId;
+    let nodeId = this.selectedNode.id;
     if (type === 'general') {
       const general = { name:  this.nodeName}
       nodeId = this.selectedNode.id;
@@ -340,6 +340,7 @@ export class ETLComponent {
     this.drawflow.updateNodeDataFromId(nodeId, data);
     const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
     Object.entries(allNodes).forEach(([id, node]) => {
+      // if(nodeId)
       this.getDropdownColumnsData(node);
     });
     console.log(allNodes);
@@ -481,6 +482,17 @@ export class ETLComponent {
         console.log(data);
         this.runId = data.run_id;
         // this.startPollingDataFlowStatus(data.run_id);
+        Object.entries(this.drawflow.drawflow.drawflow[this.drawflow.module].data).forEach(([id, node]) => {
+          const nodeElement = document.querySelector(`#node-${id}`);
+          if (nodeElement) {
+            const statusDiv = nodeElement.querySelector('.node-status') as HTMLElement;
+            if (statusDiv) {
+              statusDiv.textContent = '';
+              statusDiv.style.display = 'none';
+              statusDiv.className = 'node-status'; // remove any previous status class
+            }
+          }
+        });
         this.getDataFlowStatus(data.run_id);
       },
       error: (error: any) => {
@@ -574,7 +586,7 @@ export class ETLComponent {
       } else if(nodes[nodeId].data.type === 'Rollup'){
         let grp : any[] = [];
         nodes[nodeId].data.nodeData.groupAttributes.forEach((atrr:any)=>{
-          const array = [atrr.aliasName, atrr.selectedColumn.label];
+          const array = [atrr.aliasName, atrr.selectedColumn.group+'.'+atrr.selectedColumn.label];
           grp.push(array);
         });
         task.group_attributes = grp;
@@ -621,7 +633,7 @@ export class ETLComponent {
     this.updateNode('attribute');
   }
   addNewGroupAttribute(){
-    let attribute = {aliasName: '', selectColumnDropdown: this.currentNodeColumns, selectedColumn: null, dataType: '',}
+    let attribute = {aliasName: '', selectColumnDropdown: this.selectedNode.data.nodeData.dataObject, selectedColumn: null, dataType: '',}
     this.selectedNode.data.nodeData.groupAttributes.push(attribute);
   }
   deleteGroupAttribute(index:number){
@@ -647,7 +659,17 @@ export class ETLComponent {
     const list = this.etlGraphService.flattenUpstream(tree);
     console.log('flattened topo list:', list);
     
-    const childrenList = list.slice(1); // Exclude the selected node at index 0
+    let childrenList = list.slice(1); // Exclude the selected node at index 0
+
+    const inputIds: number[] = [];
+
+    Object.values(node.inputs).forEach((input:any) => {
+      input.connections.forEach((connection:any) => {
+        inputIds.push(connection.node);
+      });
+    });
+
+    childrenList = inputIds;
 
     const childDataObjects: any[] = [];
     const childAttributes: any[] = [];
@@ -692,7 +714,14 @@ export class ETLComponent {
           });
         }
       } 
-      else if(nodeType === 'Rollup'){
+      // else{
+      //   let dataObjects = JSON.parse(JSON.stringify(childDataObjects[i]));
+      //   dataObjects.forEach((object:any)=>{
+      //     object.group = nodeName;
+      //   });
+      //   items = dataObjects;
+      // }
+       if(nodeType === 'Rollup'){
         const attr = childGrpAttributes[nodeName] || [];
         if(attr.length > 0){
           for (const atr of attr) {

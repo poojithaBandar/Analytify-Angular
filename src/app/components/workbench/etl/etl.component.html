@@ -142,7 +142,7 @@
                                                                         </div>
                                                                     </ng-template>
                                                                 </li>
-                                                                <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type)" [ngbNavItem]="2" className="nav-link text-start"
+                                                                <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type) || selectedNode.data.nodeData.properties.create" [ngbNavItem]="2" className="nav-link text-start"
                                                                     id="properties-tab"><a ngbNavLink>Properties</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
@@ -296,11 +296,18 @@
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
-                                                                                <div style="height: 30px; display: flex; float: right;">
-                                                                                    <button class="me-2" (click)="addNewGroupAttribute()"><i class="fa fa-plus"
-                                                                                            ngbTooltip="Add"></i> Add</button>
-                                                                                    <span ngbTooltip="Search"><input type="text" placeholder="search"><i
-                                                                                            class="fa fa-search"></i></span>
+                                                                                <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
+                                                                                    <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add"
+                                                                                        (click)="addNewGroupAttribute()">
+                                                                                        <i class="fa fa-plus me-1"></i> Add
+                                                                                    </button>
+                                                    
+                                                                                    <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
+                                                                                        <input type="text" class="form-control" placeholder="Search" />
+                                                                                        <span class="input-group-text bg-primary" ngbTooltip="Search">
+                                                                                            <i class="fa fa-search text-light"></i>
+                                                                                        </span>
+                                                                                    </div>
                                                                                 </div>
                                                                                 <div style="height: 240px;">
                                                                                     <table
@@ -493,7 +500,7 @@
                                                                                         <i class="fa fa-plus me-1"></i> Add
                                                                                     </button>
                                                     
-                                                                                    <div class="input-group input-group-sm" style="max-width: 200px;">
+                                                                                    <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
                                                                                         <input type="text" class="form-control" placeholder="Search" />
                                                                                         <span class="input-group-text bg-primary" ngbTooltip="Search">
                                                                                             <i class="fa fa-search text-light"></i>
