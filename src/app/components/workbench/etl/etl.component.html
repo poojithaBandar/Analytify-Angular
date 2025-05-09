@@ -700,7 +700,7 @@
         </button>
     </div>
     <div class="modal-body">
-        <div class="card panel panel-primary">
+        <div class="panel panel-primary">
             <div class="tables-modal">
                 <label for="connection">Select connection <span class="text-danger">*</span></label>
                 <ng-select [items]="connectionOptions" bindLabel="display_name" placeholder="Select a connection" [searchable]="true" 
@@ -718,7 +718,7 @@
                 </div>
                 <div *ngIf="objectType === 'select'">
                     <label for="dataObject" class="mt-1">Select Data Object <span class="text-danger">*</span></label>
-                    <ng-select [items]="dataObjectOptions" bindLabel="table" placeholder="Select a Data Object" [searchable]="true" 
+                    <ng-select [items]="dataObjectOptions" bindLabel="tables" placeholder="Select a Data Object" [searchable]="true" 
                         [(ngModel)]="selectedDataObject" name="dataObject" id="dataObject" [disabled]="!selectedConnection">
                     </ng-select>
                 </div>

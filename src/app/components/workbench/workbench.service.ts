@@ -972,4 +972,10 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/Dataflow_Task_status/`+this.accessToken,object);
     }
+    getConnectionsForEtl(){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/etl_source_objects/`+this.accessToken);
+    }
+
 }

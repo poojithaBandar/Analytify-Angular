@@ -180,7 +180,7 @@ export class ETLComponent {
       data.nodeData = { 
         connection: this.selectedConnection, 
         dataObject: this.selectedDataObject, 
-        general: { name: 'SRC_' + this.selectedDataObject?.table }, 
+        general: { name: 'SRC_' + this.selectedDataObject?.tables }, 
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
         groupAttributes:[] 
@@ -197,7 +197,7 @@ export class ETLComponent {
       data.nodeData = { 
         connection: this.selectedConnection, 
         dataObject: this.selectedDataObject, 
-        general: { name: 'TGT_' + (this.objectType === 'select' ? this.selectedDataObject?.table : this.selectedDataObject) }, 
+        general: { name: 'TGT_' + (this.objectType === 'select' ? this.selectedDataObject?.tables : this.selectedDataObject) }, 
         properties: { truncate: false, create: this.objectType === 'select' ? false : true, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
         groupAttributes:[] 
@@ -355,11 +355,11 @@ export class ETLComponent {
   }
 
   getConnections() {
-    let object = {};
-    this.workbechService.getdatabaseConnectionsList(object).subscribe({
+    // let object = {};
+    this.workbechService.getConnectionsForEtl().subscribe({
       next: (data) => {
         console.log(data);
-        this.connectionOptions = data.sheets;
+        this.connectionOptions = data.server_data;
       },
       error: (error: any) => {
         console.log(error);
@@ -368,15 +368,15 @@ export class ETLComponent {
     });
   }
   getDataObjects() {
-    let hierarchyId = this.selectedConnection?.hierarchy_id
+    let server_id = this.selectedConnection?.server_id
     const object = {
-      hierarchy_ids: [hierarchyId]
+      hierarchy_ids: [server_id]
     }
-    if (hierarchyId) {
-      this.workbechService.getSchemaTablesFromConnectedDb(null, object).subscribe({
+    if (server_id) {
+      this.workbechService.getTablesForDataTransformation(this.selectedConnection.server_id).subscribe({
         next: (data) => {
           console.log(data);
-          this.dataObjectOptions = data[0].data.schemas[0].tables;
+          this.dataObjectOptions = data?.tables;
         },
         error: (error) => {
           console.log(error);
@@ -707,9 +707,9 @@ export class ETLComponent {
       if(nodeType === 'source_data_object'){
         for (const col of columns) {
           items.push({
-            label: col.column,
-            value: col.column,
-            dataType: col.datatype,
+            label: col.col,
+            value: col.col,
+            dataType: col.dtype,
             group: nodeName
           });
         }
