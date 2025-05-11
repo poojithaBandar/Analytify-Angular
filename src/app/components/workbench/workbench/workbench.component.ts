@@ -1770,8 +1770,8 @@ connectGoogleSheets(){
         this.displayName = editData.display_name;
     } else if (this.databaseType == "ninja") {
        this.displayName = editData.display_name;
-       this.ninjaRMMClientid = editData.client_secret;
-       this.ninjaRMMClientSecret = editData.client_id;
+       this.ninjaRMMClientid = editData.client_id;
+       this.ninjaRMMClientSecret = editData.client_secret;
        this.selectedNinjaRMMScopes = editData.scopes;
     }
     else if (this.databaseType == "halops") {
