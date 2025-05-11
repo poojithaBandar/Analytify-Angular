@@ -435,6 +435,7 @@ export class SheetsComponent{
       to: '#5a66f1',
     }
   };
+  isEmbed: boolean = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
       this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
@@ -3236,6 +3237,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     this.filterSearch = '';
     this.filterDataArray.clear();
     this.isExclude = false;
+    this.isEmbed = false;
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -3510,11 +3512,12 @@ trackByFn(index: number, item: any): number {
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
     "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
-    "select_values":Array.from(this.filterDataArray),
+    "select_values":this.isEmbed ? [""] :Array.from(this.filterDataArray),
     "col_name":this.filterName,
     "data_type":this.filterType,
     "parent_user":this.createdBy,
     "is_exclude":this.isExclude,
+    "is_embedded": this.isEmbed,
     "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
     "is_calculated": this.filterType == 'calculated' ? true : false,
     "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
@@ -3561,6 +3564,7 @@ trackByFn(index: number, item: any): number {
         this.filterType=responce.data_type;
         this.filterCalculatedFieldLogic = responce.field_logic;
         this.isExclude = responce.is_exclude;
+        this.isEmbed = responce.is_embedded;
         this.formatExtractType = this.extractTypesForTab.includes(responce?.format_type) ? responce?.format_type : '';
         if(responce?.top_bottom){
           this.topType = responce?.top_bottom[3];
@@ -3714,10 +3718,11 @@ trackByFn(index: number, item: any): number {
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
       "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
-      "select_values":Array.from(this.filterDataArray),
+      "select_values":this.isEmbed ? [""] : Array.from(this.filterDataArray),
       "col_name":this.filterName,
       "data_type":this.filterType,
       "is_exclude":this.isExclude,
+      "is_embedded":this.isEmbed,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
       "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,

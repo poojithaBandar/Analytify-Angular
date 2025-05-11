@@ -23,6 +23,7 @@ export class SheetSdkComponent {
   sheetToken!: string      
   isApexChart : boolean = false;                                                                                                      
   chartOptions: any;
+  embedFilters: any;
       constructor(                                                                                                        
         private route: ActivatedRoute,                                                                                    
         private workbenchService: WorkbenchService                                                                               
@@ -32,6 +33,18 @@ export class SheetSdkComponent {
 
         this.sheetToken = this.route.snapshot.params['sheetToken'];
         this.clientId = this.route.snapshot.params['clientId'];
+        this.route.queryParams.subscribe(params => {
+          const rawFilters = params['filters'];
+          if (rawFilters) {
+            try {
+              this.embedFilters = JSON.parse(rawFilters);
+              console.log('Filters object:', this.embedFilters);
+              // Expected output: { name: ['US', 'UK'], idList: [3, 4] }
+            } catch (e) {
+              console.error('Error parsing filters:', e);
+            }
+          }
+        });
         let accessToken = this.route.snapshot.params['token'];
         const userToken = { Token: accessToken,};
         localStorage.setItem('currentUser', JSON.stringify(userToken));                                                         
@@ -105,21 +118,34 @@ export class SheetSdkComponent {
         }
       }
                                                                                                                           
-      fetchData(): void {                                                                                                 
-        this.loading = true;   
-        let payload = {"sheet_id" : this.sheetId};                                                                                           
-        this.workbenchService.getSheetSdkData(payload).subscribe({                                                         
-          next: (data:any) => {                                                                                                  
-            console.log(data);  
-            this.isApexChart = data.sheet_retrieve_data.sheet_data.isApexChart; 
-            this.chartOptions = data.sheet_retrieve_data.sheet_data.savedChartOptions; 
-            this.setChartType(data.sheet_retrieve_data.chart_id)                                                                        
-          },                                                                                                              
-          error: (err : any) => {                                                                                                 
-            console.error(err);                                                                                           
-            this.error = 'Failed to load chart data';                                                                     
-            this.loading = false;                                                                                         
-          }                                                                                                               
-        });                                                                                                               
-      }       
+  fetchData(): void {
+    this.loading = true;
+    let filterKeys;
+    let filterValues;
+    let payload;
+    if (this.embedFilters) {
+      filterKeys = Object.keys(this.embedFilters);
+      filterValues = Object.values(this.embedFilters);
+      payload = {
+        "filter_name": filterKeys,
+        "sheet_id": this.sheetId,
+        "input_list": filterValues
+      }
+    } else {
+      let payload = { "sheet_id": this.sheetId };
+    }
+    this.workbenchService.getSheetSdkData(payload).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.isApexChart = data.sheet_retrieve_data.sheet_data.isApexChart;
+        this.chartOptions = data.sheet_retrieve_data.sheet_data.savedChartOptions;
+        this.setChartType(data.sheet_retrieve_data.chart_id)
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.error = 'Failed to load chart data';
+        this.loading = false;
+      }
+    });
+  }       
 }
