@@ -829,6 +829,29 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
+                                                @if(is_sheet_Embed){
+                                                <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                    <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane active" id="activetabs">
+                                                                <div class="form-group p-1 mb-0">
+                                                                <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                                                </label>
+                                                                <input type="text" placeholder="" [(ngModel)]="SDKFilterName" class="form-control border">
+                                                                </div>
+                                                                <div class="form-group p-1 mb-0">
+                                                                <label for="embed" class="form-check-label">Embed SDK</label>
+                                                                <div *ngIf="isEmbed" class="toggle toggle-sm on mb-0" (click)="isEmbed = !isEmbed">
+                                                                    <span></span>
+                                                                </div>
+                                                                <div *ngIf="!isEmbed" class="toggle toggle-sm off mb-0" (click)="isEmbed = !isEmbed">
+                                                                    <span></span>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                  </ng-template>
+                                                </li>
+                                            }
                                             </ul>
                                             <div class="panel-body tabs-menu-body p-0 panel-body-h">
                                                 <div class="tab-content">
@@ -956,6 +979,29 @@
                                                         </ng-template>
                                                     </li>
                                                 }
+                                                @if(is_sheet_Embed){
+                                                <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                    <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane active" id="activetabs">
+                                                                <div class="form-group p-1 mb-0">
+                                                                <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                                                </label>
+                                                                <input type="text" placeholder="" [(ngModel)]="SDKFilterName" class="form-control border">
+                                                                </div>
+                                                                <div class="form-group p-1 mb-0">
+                                                                <label for="embed" class="form-check-label">Embed SDK</label>
+                                                                <div *ngIf="isEmbed" class="toggle toggle-sm on mb-0" (click)="isEmbed = !isEmbed">
+                                                                    <span></span>
+                                                                </div>
+                                                                <div *ngIf="!isEmbed" class="toggle toggle-sm off mb-0" (click)="isEmbed = !isEmbed">
+                                                                    <span></span>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                  </ng-template>
+                                                </li>
+                                            }
                                             </ul>
                                             <div class="panel-body tabs-menu-body p-1 panel-body-h">
                                                 <div class="tab-content">
@@ -972,12 +1018,8 @@
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
-                            <div class="col text-left p-0" *ngIf="activeTabId === 1">
-                                <input type="checkbox" id="embed" [(ngModel)]="isEmbed" class="form-check-input">
-                                <label for="embed" class="form-check-label">Embed SDK</label>
-                            </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid) ||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -1354,6 +1396,29 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
+                                                @if(is_sheet_Embed){
+                                                    <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                        <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane active" id="activetabs">
+                                                                    <div class="form-group p-1 mb-0">
+                                                                    <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                                                    </label>
+                                                                    <input type="text" placeholder="" [(ngModel)]="SDKFilterName" class="form-control border">
+                                                                    </div>
+                                                                    <div class="form-group p-1 mb-0">
+                                                                    <label for="embed" class="form-check-label">Embed SDK</label>
+                                                                    <div *ngIf="isEmbed" class="toggle toggle-sm on mb-0" (click)="isEmbed = !isEmbed">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!isEmbed" class="toggle toggle-sm off mb-0" (click)="isEmbed = !isEmbed">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                </div>
+                                                      </ng-template>
+                                                    </li>
+                                                }
                                             </ul>
                                             <div class="panel-body tabs-menu-body p-1 ">
                                                 <div class="tab-content">
@@ -1479,6 +1544,29 @@
                                                         </ng-template>
                                                     </li>
                                                 }
+                                                @if(is_sheet_Embed){
+                                                    <li [ngbNavItem]="7">
+                                                        <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane active" id="activetabs">
+                                                                    <div class="form-group p-1 mb-0">
+                                                                    <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                                                    </label>
+                                                                    <input type="text" placeholder="" [(ngModel)]="SDKFilterName" class="form-control border">
+                                                                    </div>
+                                                                    <div class="form-group p-1 mb-0">
+                                                                    <label for="embed" class="form-check-label">Embed SDK</label>
+                                                                    <div *ngIf="isEmbed" class="toggle toggle-sm on mb-0" (click)="isEmbed = !isEmbed">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!isEmbed" class="toggle toggle-sm off mb-0" (click)="isEmbed = !isEmbed">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    </div>
+                                                                </div>
+                                                      </ng-template>
+                                                    </li>
+                                                }
                                             </ul>
                                             <div class="panel-body tabs-menu-body p-1 panel-body-h">
                                                 <div class="tab-content">
@@ -1504,12 +1592,8 @@
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
-                            <div class="col text-left p-0" *ngIf="activeTabId === 1">
-                                <input type="checkbox" id="embed" [(ngModel)]="isEmbed" class="form-check-input">
-                                <label for="embed" class="form-check-label">Embed SDK</label>
-                            </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -2781,6 +2865,29 @@
                                                                                                                 </div>
                                                                                                             </ng-template>
                                                                                                         </li>
+                                                                                                        @if(is_sheet_Embed){
+                                                                                                            <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                                                                                <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
+                                                                                                                <ng-template ngbNavContent>
+                                                                                                                    <div class="tab-pane active" id="activetabs">
+                                                                                                                            <div class="form-group p-1 mb-0">
+                                                                                                                            <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                                                                                                            </label>
+                                                                                                                            <input type="text" placeholder="" [(ngModel)]="SDKFilterName" class="form-control border">
+                                                                                                                            </div>
+                                                                                                                            <div class="form-group p-1 mb-0">
+                                                                                                                            <label for="embed" class="form-check-label">Embed SDK</label>
+                                                                                                                            <div *ngIf="isEmbed" class="toggle toggle-sm on mb-0" (click)="isEmbed = !isEmbed">
+                                                                                                                                <span></span>
+                                                                                                                            </div>
+                                                                                                                            <div *ngIf="!isEmbed" class="toggle toggle-sm off mb-0" (click)="isEmbed = !isEmbed">
+                                                                                                                                <span></span>
+                                                                                                                            </div>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                              </ng-template>
+                                                                                                            </li>
+                                                                                                        }
                                                                                                     </ul>
                                                                                                 </div>
                                                                                         
@@ -2939,6 +3046,29 @@
                                                                                     </ng-template>
                                                                                 </li>
                                                                             }
+                                                                            @if(is_sheet_Embed){
+                                                                                <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                                                    <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
+                                                                                    <ng-template ngbNavContent>
+                                                                                        <div class="tab-pane active" id="activetabs">
+                                                                                                <div class="form-group p-1 mb-0">
+                                                                                                <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                                                                                </label>
+                                                                                                <input type="text" placeholder="" [(ngModel)]="SDKFilterName" class="form-control border">
+                                                                                                </div>
+                                                                                                <div class="form-group p-1 mb-0">
+                                                                                                <label for="embed" class="form-check-label">Embed SDK</label>
+                                                                                                <div *ngIf="isEmbed" class="toggle toggle-sm on mb-0" (click)="isEmbed = !isEmbed">
+                                                                                                    <span></span>
+                                                                                                </div>
+                                                                                                <div *ngIf="!isEmbed" class="toggle toggle-sm off mb-0" (click)="isEmbed = !isEmbed">
+                                                                                                    <span></span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            </div>
+                                                                                  </ng-template>
+                                                                                </li>
+                                                                            }
                                                                         </ul>
                                                                         <div class="panel-body tabs-menu-body p-1 panel-body-h">
                                                                             <div class="tab-content">
@@ -2962,12 +3092,8 @@
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
-                                                        <div class="col text-left p-0" *ngIf="activeTabId === 1">
-                                                            <input type="checkbox" id="embed" [(ngModel)]="isEmbed" class="form-check-input">
-                                                            <label for="embed" class="form-check-label">Embed SDK</label>
-                                                        </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)" type="button"
+                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close

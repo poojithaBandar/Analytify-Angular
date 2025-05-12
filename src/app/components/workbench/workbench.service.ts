@@ -409,10 +409,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/dashboardlist/`+this.accessToken);
   }
-  getSheetName(){
+  getSheetName(sheetId: number){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.get<any>(`${environment.apiUrl}/sheet_name/`+this.accessToken);
+    return this.http.get<any>(`${environment.apiUrl}/sheet_name/`+sheetId+'/'+this.accessToken);
   }
   getuserDashboardsListput(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );

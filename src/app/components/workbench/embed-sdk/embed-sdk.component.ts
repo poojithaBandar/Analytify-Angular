@@ -28,7 +28,7 @@ export class EmbedSdkComponent {
   isSheetSDK: boolean = false;
   isDashboardSDK: boolean = false;
   sheetId!: number;
-  sheetName: string = "test";
+  sheetName: string = "";
   sheetToken!: string;
 
   constructor(private workbechService: WorkbenchService,private router:Router,private route:ActivatedRoute){
@@ -83,10 +83,10 @@ export class EmbedSdkComponent {
   }
 
   fetchSheetName(){
-    this.workbechService.getSheetName().subscribe({
+    this.workbechService.getSheetName(this.sheetId).subscribe({
       next: (responce: any) => {
         console.log(responce);
-        this.sheetName = responce;
+        this.sheetName = responce.sheet_name;
       },
       error: (error:any) => {
         console.log(error);

@@ -108,7 +108,7 @@
                                   [previledgeId]="18" [isBtn]="false"
                                   (btnClickEvent)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                                   [toolTip]="'Edit'" [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
-                                  <a (click)="redirectSDK(sheets.sheet_id);" tabindex="0" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" style="cursor: pointer;"><i class="ri-edit-line" data-bs-toggle="tooltip" ngbTooltip="Embed SDK" ></i>Embed SDK</a>
+                                  <a (click)="redirectSDK(sheets.sheet_id);" tabindex="0" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" style="cursor: pointer;"><i class="fe fe-code" data-bs-toggle="tooltip" ngbTooltip="Embed SDK" ></i></a>
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
                                   [previledgeId]="19" [isBtn]="false" [toolTip]="'Delete sheet'"
                                   (btnClickEvent)="deleteSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
@@ -241,7 +241,7 @@
                     <app-insights-button [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="18" [isBtn]="false"
                       [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                       [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                      <a (click)="redirectSDK(sheets.sheet_id);" tabindex="0" class="dropdown-item" style="cursor: pointer;"><i class="fe fe-edit me-2 d-inline-flex" data-bs-toggle="tooltip" ngbTooltip="Embed SDK" ></i>Embed SDK</a>
+                      <a (click)="redirectSDK(sheets.sheet_id);" tabindex="0" class="dropdown-item" style="cursor: pointer;"><i class="fe fe-code me-2 d-inline-flex" data-bs-toggle="tooltip" ngbTooltip="Embed SDK" ></i>Embed SDK</a>
                     <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'"
                       [previledgeId]="19" [isBtn]="false" [tabIndex]="0"
                       (btnClickEvent)="deleteSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
