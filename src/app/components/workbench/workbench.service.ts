@@ -95,7 +95,7 @@ export class WorkbenchService {
   ninjaRMMConnectionUpdate(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.put<any>(`${environment.apiUrl}/halops/`+this.accessToken,obj);
+    return this.http.put<any>(`${environment.apiUrl}/ninja_authentication/`+this.accessToken,obj);
   }
   shopifyConnectionUpdate(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
