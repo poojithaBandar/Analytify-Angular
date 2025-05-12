@@ -1856,7 +1856,7 @@ connectGoogleSheets(){
     this.workbechService.datbaseSwitch(obj).subscribe({
       next:(data)=>{
         console.log(data);
-        if(data.message ==='Dashboard switched successfully'){
+        if(data.message ==='Datasource switched successfully'){
           const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
           this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId],{state: {dbSwitched: true}})
         }
