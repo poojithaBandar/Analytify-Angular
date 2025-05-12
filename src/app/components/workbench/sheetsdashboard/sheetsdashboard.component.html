@@ -1109,7 +1109,7 @@
                                   </div>
                               </div>
                             </div>
-                            <button class="btn btn-primary mt-0" style="padding:5px 6px !important"  *ngIf="!this.isPublicUrl && !isSampleDashboard" (click)="switchDatasourceModalOpen(switchDatabaseModal)"><img src="./assets/images/icons/Data Sources-switch.svg" alt="logo" class="db-switch"> </button>
+                            <button class="btn btn-primary mt-0" ngbTooltip="Switch Database" [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" style="padding:5px 6px !important"  *ngIf="!this.isPublicUrl && !isSampleDashboard && dashboardId" (click)="switchDatasourceModalOpen(switchDatabaseModal)"><img src="./assets/images/icons/Data Sources-switch.svg" alt="logo" class="db-switch"> </button>
 
                             </div>
             </div>
@@ -2127,6 +2127,8 @@
     </div>
   
   </ng-template>
+  <input type="file" (change)="uploadfileCsv($event)" accept=".csv" #fileInput style="display: none;" />
+  <input type="file" (change)="uploadfileExcel($event)" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
 
   <ng-template #switchDatabaseModal let-modal>
     <div class="modal-header">
@@ -2147,7 +2149,7 @@
         </div>
         <div>
           <p class="mb-0 text-muted">
-            <strong>Disclaimer:</strong> Switching is only allowed between environments with identical schemas. 
+            <strong>Note:</strong> Switching is only allowed between environments with identical schemas. 
             Cross-data source switching isn't supported. All sheets using <strong>[Current Data Source]</strong> will refresh with <strong>[New Data Source]</strong>.
           </p>
         </div>
@@ -2176,9 +2178,7 @@
       <button type="button" [disabled]="!selectedCurrentDb || !targetSelectedDbHierarchyId" class="btn btn-primary" (click)="switchDatabase()" >Switch</button>
 
 
-      <input type="file" (change)="uploadfileCsv($event)" accept=".csv" #fileInput style="display: none;" />
-      <input type="file" (change)="uploadfileExcel($event)" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
-
+      
     </div>
   </ng-template>
   

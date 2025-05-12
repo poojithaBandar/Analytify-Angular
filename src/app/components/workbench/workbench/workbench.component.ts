@@ -1908,6 +1908,7 @@ connectGoogleSheets(){
 
   gotoNewConnections(){
   this.openPostgreSqlForm=false;
+  this.openNinjaRMMForm = false;
   this.viewNewDbs=true;
   this.openMySqlForm=false;
   this.openOracleForm = false;
@@ -1936,6 +1937,9 @@ connectGoogleSheets(){
   this.siteURL = '';
   this.companyId = '';
   this.siteURLPSA = '';
+  this.ninjaRMMClientid = '';
+  this.ninjaRMMClientSecret = '';
+  this.selectedNinjaRMMScopes = [];
   }
 
   serverError:boolean = false;
@@ -2301,7 +2305,7 @@ connectGoogleSheets(){
     this.workbechService.datbaseSwitch(obj).subscribe({
       next:(data)=>{
         console.log(data);
-        if(data.message ==='Dashboard switched successfully'){
+        if(data.message ==='Datasource switched successfully'){
           const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
           this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId],{state: {dbSwitched: true}})
         }
