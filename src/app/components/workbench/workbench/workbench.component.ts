@@ -1908,6 +1908,7 @@ connectGoogleSheets(){
 
   gotoNewConnections(){
   this.openPostgreSqlForm=false;
+  this.openNinjaRMMForm = false;
   this.viewNewDbs=true;
   this.openMySqlForm=false;
   this.openOracleForm = false;
@@ -1936,6 +1937,9 @@ connectGoogleSheets(){
   this.siteURL = '';
   this.companyId = '';
   this.siteURLPSA = '';
+  this.ninjaRMMClientid = '';
+  this.ninjaRMMClientSecret = '';
+  this.selectedNinjaRMMScopes = [];
   }
 
   serverError:boolean = false;
