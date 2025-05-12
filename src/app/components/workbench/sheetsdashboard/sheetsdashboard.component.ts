@@ -7890,7 +7890,6 @@ selectedCurrentDb: string = '';
 selectedCurrentDbDetails: any = null;
 targetDbData: any[] = [];  
 sourceDbData: any = {}; 
-selectedTargetDb: string = '';
 currentSelectedDbHierarchyId:any;
 targetSelectedDbHierarchyId:any = '';
 disableAddNew=false;
@@ -7975,17 +7974,18 @@ switchDatabase() {
       }
       this.modalService.dismissAll();
       this.currentSelectedDbHierarchyId='';
-      this.targetSelectedDbHierarchyId='';
+      this.targetSelectedDbHierarchyId=null;
+      this.selectedCurrentDb = '';  
     },
     error:(error)=>{
       console.log(error);
-      // this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'oops!',
+      //   text: error.error.message,
+      //   width: '400px',
+      // })
     }
   })
 }
