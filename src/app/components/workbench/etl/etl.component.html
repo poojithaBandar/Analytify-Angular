@@ -142,8 +142,7 @@
                                                                         </div>
                                                                     </ng-template>
                                                                 </li>
-                                                                <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type)" [ngbNavItem]="2" className="nav-link text-start"
-                                                                    id="properties-tab"><a ngbNavLink>Properties</a>
+                                                                <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type)" [ngbNavItem]="2" className="nav-link text-start" id="properties-tab"><a ngbNavLink>Properties</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
@@ -191,7 +190,7 @@
                                                                                                 <tr>
                                                                                                 <td>{{i+1}}</td>
                                                                                                 <td>
-                                                                                                    <select [(ngModel)]="join.joinType" (change)="updateNode('properties')">
+                                                                                                    <select class="form-select form-select" [(ngModel)]="join.joinType" (change)="updateNode('properties')">
                                                                                                         <option value="" selected disabled>Select Join Type</option>
                                                                                                         <option value="inner join">INNER JOIN</option>
                                                                                                         <option value="left outer join">LEFT OUTER JOIN</option>
@@ -205,7 +204,9 @@
                                                                                                         [(ngModel)]="join.secondaryObject" [dropdownPosition]="'bottom'">
                                                                                                     </ng-select>
                                                                                                 </td>
-                                                                                                <td> <input type="text" placeholder="join condition" [(ngModel)]="join.joinCondition" (blur)="updateNode('properties')"> </td>
+                                                                                                <td> 
+                                                                                                    <input type="text" class="form-control form-control" placeholder="join condition" [(ngModel)]="join.joinCondition" (blur)="updateNode('properties')"> 
+                                                                                                </td>
                                                                                                 </tr>
                                                                                                 }
                                                                                         </tbody>
@@ -297,14 +298,14 @@
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
                                                                                 <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
-                                                                                    <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add"
-                                                                                        (click)="addNewGroupAttribute()">
-                                                                                        <i class="fa fa-plus me-1"></i> Add
+                                                                                    <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add" [triggers]="'hover'" [triggers]="'hover'"
+                                                                                        (click)="openAttributesSelection(attributesSelection)">
+                                                                                        <i class="fa fa-plus me-1"></i> Select Attribute To Add
                                                                                     </button>
                                                     
                                                                                     <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
                                                                                         <input type="text" class="form-control" placeholder="Search" />
-                                                                                        <span class="input-group-text bg-primary" ngbTooltip="Search">
+                                                                                        <span class="input-group-text bg-primary" ngbTooltip="Search" [triggers]="'hover'">
                                                                                             <i class="fa fa-search text-light"></i>
                                                                                         </span>
                                                                                     </div>
@@ -326,7 +327,9 @@
                                                                                             @for(grpAttribute of selectedNode.data.nodeData.groupAttributes; track grpAttribute; let i = $index){
                                                                                             <tr>
                                                                                                 <td>{{ i + 1 }}</td>
-                                                                                                <td> <input type="text" [(ngModel)]="grpAttribute.aliasName" (blur)="updateNode('groupAttribute')"> </td>
+                                                                                                <td> 
+                                                                                                    <input type="text" class="form-control form-control" [(ngModel)]="grpAttribute.aliasName" (blur)="updateNode('groupAttribute')"> 
+                                                                                                </td>
                                                                                                 <td>
                                                                                                     <ng-select [items]="grpAttribute.selectColumnDropdown" bindLabel="label" groupBy="group" (change)="updateNode('groupAttribute')"
                                                                                                         placeholder="Select a Column" [searchable]="true" [(ngModel)]="grpAttribute.selectedColumn" [dropdownPosition]="'bottom'">
@@ -334,7 +337,7 @@
                                                                                                 </td>
                                                                                                 <td> {{grpAttribute?.selectedColumn?.dataType}} </td>
                                                                                                 <td style="display: flex; align-items: center; justify-content: center;">
-                                                                                                    <button class="btn btn-outline-danger" ngbTooltip="Delete"
+                                                                                                    <button class="btn btn-outline-danger" ngbTooltip="Delete" [triggers]="'hover'"
                                                                                                         (click)="deleteGroupAttribute(i)">
                                                                                                         <i class="fa fa-trash"></i>
                                                                                                     </button>
@@ -348,15 +351,23 @@
                                                                         </div>
                                                                     </ng-template>
                                                                 </li>
-                                                                <!-- <li *ngIf="selectedNode.data.type === 'source_data_object'" [ngbNavItem]="4" className="nav-link text-start"
+                                                                <li *ngIf="selectedNode.data.type === 'source_data_object'" [ngbNavItem]="4" className="nav-link text-start"
                                                                     id="source-attributes-tab"><a ngbNavLink>Source Attributes</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
-                                                                                <div style="height: 30px; display: flex; float: right;">
-                                                                                    <button class="me-2"><i class="fa fa-plus" ngbTooltip="Add"></i> Add</button>
-                                                                                    <span ngbTooltip="Search"><input type="text" placeholder="search"><i
-                                                                                            class="fa fa-search"></i></span>
+                                                                                <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
+                                                                                    <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add" [triggers]="'hover'" [triggers]="'hover'"
+                                                                                        (click)="isSourceClicked = true; openAttributesSelection(attributesSelection)">
+                                                                                        <i class="fa fa-plus me-1"></i> Select Attribute To Add
+                                                                                    </button>
+                                                    
+                                                                                    <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
+                                                                                        <input type="text" class="form-control" placeholder="Search" />
+                                                                                        <span class="input-group-text bg-primary" ngbTooltip="Search" [triggers]="'hover'">
+                                                                                            <i class="fa fa-search text-light"></i>
+                                                                                        </span>
+                                                                                    </div>
                                                                                 </div>
                                                                                 <div style="height: 240px;">
                                                                                     <table
@@ -373,84 +384,54 @@
                                                     
                                                                                         </thead>
                                                                                         <tbody>
+                                                                                            @for(sourceAttribute of selectedNode.data.nodeData.sourceAttributes; track sourceAttribute; let i = $index){
                                                                                             <tr>
-                                                                                                <td>1</td>
-                                                                                                <td> <input type="text"> </td>
+                                                                                                <td>{{ i + 1 }}</td>
                                                                                                 <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">integer</option>
-                                                                                                        <option value="">float</option>
-                                                                                                        <option value="">boolean</option>
-                                                                                                        <option value="">date</option>
-                                                                                                        <option value="">bigint</option>
+                                                                                                    <input type="text" class="form-control form-control" [(ngModel)]="sourceAttribute.attributeName"
+                                                                                                        (blur)="updateNode('')">
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    <select class="form-select form-select" [(ngModel)]="sourceAttribute.dataType" (change)="updateNode('')">
+                                                                                                        <option value="">Select</option>
+                                                                                                        <option value="integer">integer</option>
+                                                                                                        <option value="float">float</option>
+                                                                                                        <option value="varchar">varchar</option>
+                                                                                                        <option value="boolean">boolean</option>
+                                                                                                        <option value="date">date</option>
+                                                                                                        <option value="bigint">bigint</option>
+                                                                                                        <option value="char">char</option>
+                                                                                                        <option value="decimal">decimal</option>
+                                                                                                        <option value="time">time</option>
+                                                                                                        <option value="time with time zone">time with time zone</option>
+                                                                                                        <option value="timestamp">timestamp</option>
+                                                                                                        <option value="timestamp with time zone">timestamp with time zone</option>
+                                                                                                        <option value="character varying">character varying</option>
                                                                                                     </select>
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">val1</option>
-                                                                                                        <option value="">val2</option>
-                                                                                                        <option value="">val3</option>
-                                                                                                        <option value="">val4</option>
-                                                                                                    </select>
+                                                                                                    <ng-select [items]="sourceAttribute.selectColumnDropdown" bindLabel="label" groupBy="group"
+                                                                                                        (change)="updateNode('groupAttribute')" placeholder="Select a Column" [searchable]="true"
+                                                                                                        [(ngModel)]="sourceAttribute.selectedColumn" [dropdownPosition]="'bottom'">
+                                                                                                    </ng-select>
                                                                                                 </td>
-                                                                                                <td>Data1</td>
-                                                                                                <td><span ngbTooltip="Delete"><i class="fa fa-trash"></i></span></td>
+                                                                                                <td> {{sourceAttribute?.selectedColumn?.dataType}} </td>
+                                                                                                <td style="display: flex; align-items: center; justify-content: center;">
+                                                                                                    <button class="btn btn-outline-danger" ngbTooltip="Delete" [triggers]="'hover'"
+                                                                                                        (click)="deleteSourceAttribute(i)">
+                                                                                                        <i class="fa fa-trash"></i>
+                                                                                                    </button>
+                                                                                                </td>
                                                                                             </tr>
-                                                                                            <tr>
-                                                                                                <td>1</td>
-                                                                                                <td> <input type="text"> </td>
-                                                                                                <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">integer</option>
-                                                                                                        <option value="">float</option>
-                                                                                                        <option value="">boolean</option>
-                                                                                                        <option value="">date</option>
-                                                                                                        <option value="">bigint</option>
-                                                                                                    </select>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">val1</option>
-                                                                                                        <option value="">val2</option>
-                                                                                                        <option value="">val3</option>
-                                                                                                        <option value="">val4</option>
-                                                                                                    </select>
-                                                                                                </td>
-                                                                                                <td>Data1</td>
-                                                                                                <td><span ngbTooltip="Delete"><i class="fa fa-trash"></i></span></td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td>1</td>
-                                                                                                <td> <input type="text"> </td>
-                                                                                                <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">integer</option>
-                                                                                                        <option value="">float</option>
-                                                                                                        <option value="">boolean</option>
-                                                                                                        <option value="">date</option>
-                                                                                                        <option value="">bigint</option>
-                                                                                                    </select>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">val1</option>
-                                                                                                        <option value="">val2</option>
-                                                                                                        <option value="">val3</option>
-                                                                                                        <option value="">val4</option>
-                                                                                                    </select>
-                                                                                                </td>
-                                                                                                <td>Data1</td>
-                                                                                                <td><span ngbTooltip="Delete"><i class="fa fa-trash"></i></span></td>
-                                                                                            </tr>
+                                                                                            }
                                                                                         </tbody>
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </ng-template>
-                                                                </li> -->
-                                                                <li *ngIf="!['Rollup', 'Joiner', 'Filter', 'source_data_object', 'target_data_object'].includes(selectedNode.data.type)" [ngbNavItem]="5" className="nav-link text-start"
-                                                                    id="attributes-tab"><a ngbNavLink>Attributes</a>
+                                                                </li>
+                                                                <li *ngIf="selectedNode.data.type !== 'Filter'" [ngbNavItem]="5" className="nav-link text-start" id="attributes-tab"><a ngbNavLink>Attributes</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
@@ -495,14 +476,18 @@
                                                                                 } @else{
                                                                                 @if(selectedNode.data.nodeData.attributes.length > 0){
                                                                                 <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
-                                                                                    <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add"
+                                                                                    <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add" [triggers]="'hover'"
                                                                                         (click)="addNewAttribute()">
                                                                                         <i class="fa fa-plus me-1"></i> Add
+                                                                                    </button>
+                                                                                    <button *ngIf="selectedNode.data.type !== 'Rollup'" class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add" [triggers]="'hover'"
+                                                                                        (click)="isSourceClicked = false; openAttributesSelection(attributesSelection)">
+                                                                                        <i class="fa fa-plus me-1"></i> Select Attribute To Add
                                                                                     </button>
                                                     
                                                                                     <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
                                                                                         <input type="text" class="form-control" placeholder="Search" />
-                                                                                        <span class="input-group-text bg-primary" ngbTooltip="Search">
+                                                                                        <span class="input-group-text bg-primary" ngbTooltip="Search" [triggers]="'hover'">
                                                                                             <i class="fa fa-search text-light"></i>
                                                                                         </span>
                                                                                     </div>
@@ -526,11 +511,11 @@
                                                                                             = $index){
                                                                                             <tr>
                                                                                                 <td>{{ i + 1 }}</td>
-                                                                                                <td><input type="text" class="form-control form-control-sm"
+                                                                                                <td><input type="text" class="form-control form-control"
                                                                                                         [(ngModel)]="attribute.attributeName"
                                                                                                         (blur)="updateNode('attribute')" /></td>
                                                                                                 <td>
-                                                                                                    <select class="form-select form-select-sm"
+                                                                                                    <select class="form-select form-select"
                                                                                                         [(ngModel)]="attribute.dataType" (change)="updateNode('attribute')">
                                                                                                         <option value="">Select</option>
                                                                                                         <option value="integer">integer</option>
@@ -539,13 +524,25 @@
                                                                                                         <option value="boolean">boolean</option>
                                                                                                         <option value="date">date</option>
                                                                                                         <option value="bigint">bigint</option>
+                                                                                                        <option value="char">char</option>
+                                                                                                        <option value="decimal">decimal</option>
+                                                                                                        <option value="time">time</option>
+                                                                                                        <option value="time with time zone">time with time zone</option>
+                                                                                                        <option value="timestamp">timestamp</option>
+                                                                                                        <option value="timestamp with time zone">timestamp with time zone</option>
+                                                                                                        <option value="character varying">character varying</option>
                                                                                                     </select>
                                                                                                 </td>
-                                                                                                <td><input type="text" class="form-control form-control-sm"
-                                                                                                        [(ngModel)]="attribute.expression"
-                                                                                                        (blur)="updateNode('attribute')" /></td>
+                                                                                                <td>
+                                                                                                    <div class="input-group input-group">
+                                                                                                        <input type="text" class="form-control" [(ngModel)]="attribute.expression" (blur)="updateNode('attribute')"/>
+                                                                                                        <span class="input-group-text bg-primary" ngbTooltip="" (click)="openExpressionEdit(expressionEdit, attribute)">
+                                                                                                            <i class="fa-solid fa-up-right-from-square"></i>
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                </td>
                                                                                                 <td style="display: flex; align-items: center; justify-content: center;">
-                                                                                                    <button class="btn btn-outline-danger" ngbTooltip="Delete"
+                                                                                                    <button class="btn btn-outline-danger" ngbTooltip="Delete" [triggers]="'hover'"
                                                                                                         (click)="deleteAttribute(i)">
                                                                                                         <i class="fa fa-trash"></i>
                                                                                                     </button>
@@ -558,8 +555,14 @@
                                                                                 } @else{
                                                                                 <div class="d-flex">
                                                                                     <span>No Attribute exists, to add </span> &nbsp;
-                                                                                    <button (click)="addNewAttribute()"><i class="fa fa-plus-circle"></i> Click
-                                                                                        Here</button>
+                                                                                    <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add Attribute" [triggers]="'hover'" (click)="addNewAttribute()">
+                                                                                        <i class="fa fa-plus me-2"></i> Click Here
+                                                                                    </button> &nbsp;
+                                                                                    <span *ngIf="selectedNode.data.type !== 'Rollup'"> or select Attributes</span> &nbsp;
+                                                                                    <button *ngIf="selectedNode.data.type !== 'Rollup'" class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add" [triggers]="'hover'"
+                                                                                        (click)="isSourceClicked = false; openAttributesSelection(attributesSelection)">
+                                                                                        <i class="fa fa-plus me-1"></i> Click Here
+                                                                                    </button>
                                                                                 </div>
                                                                                 }
                                                                                 }
@@ -737,3 +740,125 @@
         </div>
     </div>
 </ng-template>
+
+<ng-template #expressionEdit let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Expression Editor - {{selectedNode.data.nodeData.general.name}} ({{selectedNode.data.type}}) </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+
+    <div class="modal-body p-3">
+
+        <div class="mb-2 d-flex justify-content-between align-items-center">
+            <label class="form-label mb-0"><b>*{{selectedField.attributeName}} ({{selectedField.dataType}})</b></label>
+            <!-- <div class="d-flex flex-wrap gap-2">
+            <button *ngFor="let op of operators"
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    >
+              {{ op }}
+            </button>
+          </div> -->
+        </div>
+
+        <div class="mb-3">
+            <textarea class="form-control" rows="6" placeholder="Enter expression..." [(ngModel)]="expression"
+                style="width: 100%;">
+            </textarea>
+        </div>
+
+        <!-- TABLE WRAPPER -->
+        <div>
+            <table class="table table-bordered w-100">
+                <thead>
+                    <tr>
+                        <th class="fw-bold bg-primary text-white">Transforms</th>
+                        <th class="fw-bold bg-primary text-white">Selected Transform</th>
+                        <th class="fw-bold bg-primary text-white">Selected Column</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+
+                        <!-- Transforms Column -->
+                        <td class="align-top" style="width: 33%; max-height: 200px;">
+                            <div *ngFor="let field of ['aa', 'bb']" class="text-break py-1 px-2 hover-bg"
+                                style="cursor: pointer;">
+                                {{ field }}
+                            </div>
+                        </td>
+
+                        <!-- Selected Transform -->
+                        <td class="align-top" style="width: 33%; max-height: 200px; overflow: auto;">
+                            <input type="text" class="form-control form-control-sm mb-2" placeholder="Search fields..."
+                                [(ngModel)]="searchText" />
+                            <div *ngFor="let field of fields" class="text-break py-1 px-2 hover-bg"
+                                style="cursor: pointer;">
+                                {{ field }}
+                            </div>
+                        </td>
+
+                        <!-- Selected Column -->
+                        <td class="align-top" style="width: 34%;">
+                            <div *ngIf="selectedField">
+                                <div><b>{{ selectedField }}</b></div>
+                                <div>Data type: varchar</div>
+                                <div>Not Null: false</div>
+                                <div>Key Type: Not a Key</div>
+                            </div>
+                            <div *ngIf="!selectedField" class="text-muted">No column selected</div>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary">Validate</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel')">Cancel</button>
+        <button type="button" class="btn btn-primary">OK</button>
+    </div>
+</ng-template>
+
+<ng-template #attributesSelection let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Select Attributes</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+
+    <div class="modal-body">
+
+        <input type="text" [(ngModel)]="searchText" class="form-control mb-3" placeholder="Search..." />
+
+
+
+        <div *ngFor="let group of groupAttributesList" class="mb-3">
+            <!-- Group Header Checkbox -->
+            <div class="form-check mb-2 mt-2">
+                <input class="form-check-input border border-dark" type="checkbox" [(ngModel)]="group.isChecked"
+                    [id]="'group-' + group.group" (change)="toggleGroup(group)" />
+                <label class="form-check-label fw-bold" [for]="'group-' + group.group">
+                    {{ group.group }}
+                </label>
+            </div>
+
+            <!-- Attributes -->
+            <div class="form-check mb-1" *ngFor="let attr of group.attributes">
+                <input class="form-check-input border border-dark" type="checkbox" [(ngModel)]="attr.isChecked"
+                    [id]="attr.label" />
+                <label class="form-check-label" [for]="attr.label">
+                    {{ attr.label }}
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer bg-light">
+        <button class="btn btn-primary" (click)="applySelectedAttributes(); modal.dismiss('Save click')"> OK </button>
+        <button class="btn btn-outline-secondary" (click)="modal.dismiss('cancel')"> Cancel </button>
+    </div>
+</ng-template>
+  

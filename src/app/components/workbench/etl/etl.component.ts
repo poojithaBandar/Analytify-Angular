@@ -45,6 +45,10 @@ export class ETLComponent {
   currentNodeColumns : any[] = [];
   logs : any = '';
   isLogShow : boolean = false;
+  selectedGroupAttrs: any[] = [];
+  groupAttributesList: any[] = [];
+  allChecked: boolean = false;
+  isSourceClicked : boolean = false;
 
   constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, private loaderService: LoaderService, private etlGraphService: EtlGraphService) {
   }
@@ -61,12 +65,29 @@ export class ETLComponent {
       this.drawflow.start();
 
       this.drawflow.on('connectionCreated', (connection: any) => {
-        this.getConnectionData(connection);
-        // if(this.drawflow.getNodeFromId(connection.input_id).data.type === 'Rollup'){
-        //   const sourceNodeColumns = this.drawflow.getNodeFromId(connection.output_id).data.nodeData.dataObject;
-        //   this.selectedNode.data.nodeData.groupAttributes = sourceNodeColumns
-        // }
-        this.getDropdownColumnsData(this.drawflow.getNodeFromId(connection.input_id));
+
+        const module = this.drawflow.module;
+        const data = this.drawflow.drawflow.drawflow[module].data;
+
+        const { input_id, input_class } = connection;
+        const inputNode = data[input_id];
+        const inputPort = inputNode.inputs[input_class];
+        const nodeType = inputNode.data.type;
+        if (nodeType !== 'Joiner' && inputPort.connections.length > 1) {
+          const lastConnection = inputPort.connections[inputPort.connections.length - 1];
+      
+          // Remove the newly created connection (block it)
+          this.drawflow.removeSingleConnection(lastConnection.node, input_id, lastConnection.input, input_class);
+      
+          // Optionally, show a message to inform the user
+          console.log('Connection limit exceeded for this node type!');
+        } else {
+          this.getConnectionData(connection);
+          this.getDropdownColumnsData(this.drawflow.getNodeFromId(input_id));
+        }
+
+        // this.getConnectionData(connection);
+        // this.getDropdownColumnsData(this.drawflow.getNodeFromId(connection.input_id));
       });
       this.drawflow.on('connectionSelected', (connection: any) => {
         // this.getConnectionData(connection);
@@ -164,7 +185,8 @@ export class ETLComponent {
         connection: {}, dataObject: {}, 
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes: [], 
-        groupAttributes: [] 
+        groupAttributes: [],
+        sourceAttributes: []
       } 
     };
     let iconPath = '';
@@ -185,7 +207,8 @@ export class ETLComponent {
         general: { name: 'SRC_' + this.selectedDataObject?.tables }, 
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
-        groupAttributes:[] 
+        groupAttributes:[],
+        sourceAttributes: []
       };
       inputNodeCount = 0;
       outputNodeCount = 1;
@@ -202,7 +225,8 @@ export class ETLComponent {
         general: { name: 'TGT_' + (this.objectType === 'select' ? this.selectedDataObject?.tables : this.selectedDataObject) }, 
         properties: { truncate: false, create: this.objectType === 'select' ? false : true, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
-        groupAttributes:[] 
+        groupAttributes:[],
+        sourceAttributes: []
       };
       inputNodeCount = 1;
       outputNodeCount = 0;
@@ -218,7 +242,8 @@ export class ETLComponent {
         general: { name: `expression_${this.nodeTypeCounts[baseName]}` }, 
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
-        groupAttributes:[] 
+        groupAttributes:[],
+        sourceAttributes: [] 
       }
     }
     else if (baseName === 'Joiner') {
@@ -232,7 +257,8 @@ export class ETLComponent {
         general: { name: `joiner_${this.nodeTypeCounts[baseName]}` }, 
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
-        groupAttributes:[] 
+        groupAttributes:[],
+        sourceAttributes: [] 
       }
     }
     else if (baseName === 'Rollup') {
@@ -246,7 +272,8 @@ export class ETLComponent {
         general: { name: `rollup_${this.nodeTypeCounts[baseName]}` }, 
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
-        groupAttributes:[] 
+        groupAttributes:[],
+        sourceAttributes: [] 
       }
     }
     else if (baseName === 'Filter') {
@@ -260,7 +287,8 @@ export class ETLComponent {
         general: { name: `filter_${this.nodeTypeCounts[baseName]}` }, 
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
-        groupAttributes:[] 
+        groupAttributes:[],
+        sourceAttributes: [] 
       }
     }
 
@@ -269,13 +297,14 @@ export class ETLComponent {
       displayName = displayName.substring(0, 8) + '..';
     }
     var html = document.createElement('div');
-    html.innerHTML = `
+    html.innerHTML = `<div>
       <img src="${iconPath}" class="node-icon" alt="${altText}" />
       <div class="node-label" title="${data.nodeData.general.name}">${displayName}</div>
-      <div class="node-status" style="display: none;"></div>`;
+      <div class="node-status" style="display: none;"></div>
+      </div>`;
 
-    this.drawflow.registerNode(name, html);
-    this.drawflow.addNode(name, inputNodeCount, outputNodeCount, posX, posY, name, data, name, true);
+    // this.drawflow.registerNode(name, html);
+    this.drawflow.addNode(name, inputNodeCount, outputNodeCount, posX, posY, name, data, html.innerHTML);
 
     this.selectedConnection = null;
     this.selectedDataObject = null;
@@ -630,7 +659,8 @@ export class ETLComponent {
     return task;
   }
   addNewAttribute(){
-    let attribute = {attributeName: '', dataType: '', expression: ''}
+    let count = this.selectedNode.data.nodeData.attributes.length+1;
+    let attribute = {attributeName: 'ATTR_NAME_'+count, dataType: 'varchar', expression: ''}
     this.selectedNode.data.nodeData.attributes.push(attribute);
   }
   deleteAttribute(index:number){
@@ -645,7 +675,10 @@ export class ETLComponent {
     this.selectedNode.data.nodeData.groupAttributes.splice(index, 1);
     this.updateNode('groupattribute');
   }
-
+  deleteSourceAttribute(index:number){
+    this.selectedNode.data.nodeData.sourceAttributes.splice(index, 1);
+    this.updateNode('');
+  }
   startPollingDataFlowStatus(runId: any) {
     // Clear any existing polling
     if (this.pollingInterval) {
@@ -679,6 +712,7 @@ export class ETLComponent {
     const childDataObjects: any[] = [];
     const childAttributes: any[] = [];
     let childGrpAttributes: any = {};
+    let childSourceAttributes: any = {};
     const nodeNames: any[] = [];
     const nodeTypes: any[] = [];
 
@@ -688,6 +722,9 @@ export class ETLComponent {
       if (childNode?.data?.nodeData) {
         childDataObjects.push(childNode.data.nodeData.dataObject);
         childAttributes.push(childNode.data.nodeData.attributes);
+        if(childNode.data.type === 'source_data_object'){
+          childSourceAttributes = {[childNode.data.nodeData.general.name]: childNode.data.nodeData.sourceAttributes};
+        }
         if(childNode.data.type === 'Rollup'){
           childGrpAttributes = {[childNode.data.nodeData.general.name]: childNode.data.nodeData.groupAttributes};
         }
@@ -706,17 +743,25 @@ export class ETLComponent {
       const nodeType = nodeTypes[i];
       const columns = childDataObjects[i]?.columns || [];
       const attributes = childAttributes[i] || [];
+      const sourceAttributes = childSourceAttributes[i] || [];
 
       let items = [];
 
       if(nodeType === 'source_data_object'){
-        for (const col of columns) {
-          items.push({
-            label: col.col,
-            value: col.col,
-            dataType: col.dtype,
-            group: nodeName
-          });
+        // for (const col of columns) {
+        //   items.push({
+        //     label: col.col,
+        //     value: col.col,
+        //     dataType: col.dtype,
+        //     group: nodeName
+        //   });
+        // }
+        
+        const attr = childSourceAttributes[nodeName] || [];
+        if(attr.length > 0){
+          for (const atr of attr) {
+            items.push({...atr.selectedColumn, group: nodeName});
+          }
         }
       } 
       else if(!['Rollup', 'Expression'].includes(nodeType)){
@@ -752,6 +797,9 @@ export class ETLComponent {
       this.currentNodeColumns.push(...items);
     }
 
+    this.currentNodeColumns = this.currentNodeColumns.filter((item, index, self) => {
+      return index === self.findIndex(t => t.label === item.label && t.group === item.group);
+    });
     console.log('Children columns:', this.currentNodeColumns);
     if(!['source_data_object', 'target_data_object'].includes(node.data.type)){
       node.data.nodeData.dataObject = this.currentNodeColumns;
@@ -763,4 +811,202 @@ export class ETLComponent {
         console.log('Node ID:', id, 'Node Data:', node);
     });
   }
+
+  openAttributesSelection(modal: any) {
+    const dataObject = this.selectedNode.data.nodeData.dataObject || [];
+  
+    let flatList = [];
+  
+    if (this.selectedNode.data.type === 'Rollup') {
+      const selectedGroups = this.selectedNode.data.nodeData.groupAttributes || [];
+      flatList = dataObject.map((attr: any) => {
+        const matched = selectedGroups.find((grp: any) => grp.selectedColumn?.value === attr.value);
+        return {
+          ...attr,
+          isChecked: !!matched
+        };
+      });
+    } else if (['Expression', 'Joiner'].includes(this.selectedNode.data.type)) {
+      flatList = dataObject.map((attr: any) => ({
+        ...attr,
+        isChecked: false
+      }));
+    } else if (this.selectedNode.data.type === 'source_data_object') {
+      const columns = dataObject.columns || [];
+      flatList = columns.map((col: any) => {
+        const attr = {
+          label: col.col,
+          value: col.col,
+          dataType: col.dtype,
+          group: this.selectedNode.data.nodeData.general.name,
+        };
+
+        if (this.isSourceClicked) {
+          const selectedSources = this.selectedNode.data.nodeData.sourceAttributes || [];
+          const matched = selectedSources.find((grp: any) => grp.selectedColumn?.value === attr.value);
+          return {
+            ...attr,
+            isChecked: !!matched
+          };
+        } else {
+          return {
+            ...attr,
+            isChecked: false
+          };
+        }
+      });
+    }
+  
+    // Group the flat list by `group`
+    const grouped = flatList.reduce((acc: any[], attr: any) => {
+      let groupObj = acc.find(g => g.group === attr.group);
+      if (!groupObj) {
+        groupObj = { group: attr.group, isChecked: false, attributes: [] };
+        acc.push(groupObj);
+      }
+      groupObj.attributes.push({ ...attr });
+      return acc;
+    }, []);
+  
+    // Set group-level isChecked
+    grouped.forEach((group:any) => {
+      group.isChecked = group.attributes.every((attr: any) => attr.isChecked);
+    });
+  
+    this.groupAttributesList = grouped;
+  
+    this.modalService.open(modal, {
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn',
+      modalDialogClass: 'modal-lg modal-dialog-scrollable'
+    });
+  }
+  
+  toggleGroup(group: any) {
+    group.attributes.forEach((attr: any) => attr.isChecked = group.isChecked);
+  }
+
+  toggleAllAttributes() {
+    this.groupAttributesList.forEach(attr => {
+      attr.isChecked = this.allChecked;
+    });
+  }
+
+  applySelectedAttributes() {
+    const flatSelected = this.groupAttributesList
+      .flatMap(g => g.attributes)
+      .filter(attr => attr.isChecked);
+  
+    const dataObject = this.selectedNode.data.nodeData.dataObject;
+  
+    if (this.selectedNode.data.type === 'Rollup') {
+      this.selectedNode.data.nodeData.groupAttributes = flatSelected.map(attr => ({
+        aliasName: attr.label,
+        selectColumnDropdown: dataObject,
+        selectedColumn: attr,
+        dataType: attr.dataType || attr.column.dataType
+      }));
+      this.updateNode('groupAttribute');
+  
+    } else if (['Expression', 'Joiner'].includes(this.selectedNode.data.type)) {
+      const usedNames: { [key: string]: number } = {};
+      this.selectedNode.data.nodeData.attributes = flatSelected.map(attr => {
+        let name = attr.label;
+        if (usedNames[name]) {
+          usedNames[name]++;
+          name = `${name}_${usedNames[name]}`;
+        } else {
+          usedNames[name] = 0;
+        }
+        return {
+          attributeName: name,
+          dataType: attr.dataType || attr.column.dataType,
+          expression: `${attr.group}.${attr.label}`
+        };
+      });
+      this.updateNode('');
+    } else if(this.selectedNode.data.type === 'source_data_object'){
+      if(this.isSourceClicked){
+        let items : any[] = [];
+        for (const col of dataObject.columns) {
+          items.push({
+            label: col.col,
+            value: col.col,
+            dataType: col.dtype,
+            group: this.selectedNode.data.nodeData.general.name
+          });
+        }
+        this.selectedNode.data.nodeData.sourceAttributes = flatSelected.map(attr => ({
+          attributeName: attr.label,
+          selectColumnDropdown: items,
+          selectedColumn: attr,
+          dataType: attr.dataType || attr.column.dataType
+        }));
+      } else{
+        const usedNames: { [key: string]: number } = {};
+        const existingNames = new Set<string>();
+
+        // Include existing attribute names from both lists
+        const existingAttributes = this.selectedNode.data.nodeData.attributes || [];
+        const existingSourceAttributes = this.selectedNode.data.nodeData.sourceAttributes || [];
+
+        [...existingAttributes, ...existingSourceAttributes].forEach(attr => {
+          existingNames.add(attr.attributeName);
+
+          const match = attr.attributeName.match(/^(.+?)(?:_(\d+))?$/);
+          if (match) {
+            const base = match[1];
+            const suffix = match[2] ? parseInt(match[2]) : 0;
+            usedNames[base] = Math.max(usedNames[base] || 0, suffix);
+          }
+        });
+
+        flatSelected.forEach(attr => {
+          let baseName = attr.label;
+          let name = baseName;
+
+          if (existingNames.has(name)) {
+            let count = (usedNames[baseName] || 0) + 1;
+            do {
+              name = `${baseName}_${count}`;
+              count++;
+            } while (existingNames.has(name));
+            usedNames[baseName] = count - 1;
+          }
+
+          existingNames.add(name);
+
+          this.selectedNode.data.nodeData.attributes.push({
+            attributeName: name,
+            dataType: attr.dataType || attr.column?.dataType,
+            expression: `${attr.group}.${attr.label}`
+          });
+        });
+
+
+      }
+      this.updateNode('');
+    }
+  }
+
+  expression: string = '';
+  searchText: string = '';
+  selectedField: any = {};
+
+  operators: string[] = ['(', ')', '+', '-', '*', '/', '>', '<', '>=', '<=', '==', '!=', '&&', '||'];
+
+  fields: string[] = [
+    'SAMPLE_ID', 'VALUES_ST', 'KINGDOM', 'PHYLUM', 'CLASS_1', 'ORDER_1', 'FAMILY_1'
+  ];
+
+
+  openExpressionEdit(modal:any, attribute:any){
+    this.selectedField = attribute;
+    this.modalService.open(modal, {
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn',
+      modalDialogClass: 'modal-lg modal-dialog-scrollable'
+    });
+  }
+  
 }
