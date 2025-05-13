@@ -5046,17 +5046,145 @@ customizechangeChartPlugin() {
               }
             }
             break;
-
+            case 'regexp_extract':
+              this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+                regex = /^REGEXP_EXTRACT\(\s*[^,]*\s*,\s*'.*'\s*\)$/;
+              if (
+                !this.calculatedFieldLogic.startsWith('REGEXP_EXTRACT(') ||
+                !this.calculatedFieldLogic.endsWith(')') ||
+                !regex.test(this.calculatedFieldLogic)
+              ) {
+                this.isValidCalculatedField = false;
+                this.validationMessage = "Invalid Syntax.";
+              } else {
+                const params = this.calculatedFieldLogic.slice(15, -1).trim(); // "REGEXP_EXTRACT(" is 15 chars
+                const [param1, param2] = params.split(',').map(p => p.trim());
+            
+                if (!param2 || !/^'[^']*'$/.test(param2)) {
+                  this.isValidCalculatedField = false;
+                  this.validationMessage = "Missing or invalid regex pattern.";
+                } else {
+                  this.calculatedFieldLogic = `REGEXP_EXTRACT("${tableName}"."${columnName}", ${param2})`;
+                  this.isValidCalculatedField = true;
+                }
+              }
+              break;
+              case 'regexp_matches':
+                this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+                  regex = /^REGEXP_MATCHES\(\s*[^,]*\s*,\s*'.*'\s*\)$/;
+                if (
+                  !this.calculatedFieldLogic.startsWith('REGEXP_MATCHES(') ||
+                  !this.calculatedFieldLogic.endsWith(')') ||
+                  !regex.test(this.calculatedFieldLogic)
+                ) {
+                  this.isValidCalculatedField = false;
+                  this.validationMessage = "Invalid Syntax.";
+                } else {
+                  const params = this.calculatedFieldLogic.slice(15, -1).trim(); // "REGEXP_EXTRACT(" is 15 chars
+                  const [param1, param2] = params.split(',').map(p => p.trim());
+              
+                  if (!param2 || !/^'[^']*'$/.test(param2)) {
+                    this.isValidCalculatedField = false;
+                    this.validationMessage = "Missing or invalid regex pattern.";
+                  } else {
+                    this.calculatedFieldLogic = `REGEXP_MATCHES("${tableName}"."${columnName}", ${param2})`;
+                    this.isValidCalculatedField = true;
+                  }
+                }
+                break;
+                case 'regexp_replace':
+                  this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+                    regex = /^REGEXP_REPLACE\(\s*[^,]*\s*,\s*'.*'\s*\)$/;
+                  if (
+                    !this.calculatedFieldLogic.startsWith('REGEXP_REPLACE(') ||
+                    !this.calculatedFieldLogic.endsWith(')') ||
+                    !regex.test(this.calculatedFieldLogic)
+                  ) {
+                    this.isValidCalculatedField = false;
+                    this.validationMessage = "Invalid Syntax.";
+                  } else {
+                    const params = this.calculatedFieldLogic.slice(15, -1).trim(); // "REGEXP_EXTRACT(" is 15 chars
+                    const [param1, param2] = params.split(',').map(p => p.trim());
+                
+                    if (!param2 || !/^'[^']*'$/.test(param2)) {
+                      this.isValidCalculatedField = false;
+                      this.validationMessage = "Missing or invalid regex pattern.";
+                    } else {
+                      this.calculatedFieldLogic = `REGEXP_REPLACE("${tableName}"."${columnName}", ${param2})`;
+                      this.isValidCalculatedField = true;
+                    }
+                  }
+                  break;
         
-        
-
-
-
-
-        
-        
-
-        
+                  case 'datename':
+                    this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+                    regex = /^DATENAME\(\s*'[^']+'\s*,\s*(?:"[^"]+"\."[^"]+"|\s*)\)$/;                  
+                    if (
+                      !this.calculatedFieldLogic.startsWith('DATENAME(') ||
+                      !this.calculatedFieldLogic.endsWith(')') ||
+                      !regex.test(this.calculatedFieldLogic)
+                    ) {
+                      this.isValidCalculatedField = false;
+                      this.validationMessage = "Invalid Syntax.";
+                    } else {
+                      const params = this.calculatedFieldLogic.slice(9, -1).trim(); // remove 'DATENAME(' and ')'
+                      const [datePart, columnRef] = params.split(',');
+                  
+                      if (!datePart || datePart.trim() === '') {
+                        this.isValidCalculatedField = false;
+                        this.validationMessage = "Missing datepart.";
+                      }  else {
+                        // If both are valid, rewrite with dropped column
+                        this.calculatedFieldLogic = `DATENAME(${datePart.trim()}, "${tableName}"."${columnName}")`;
+                        this.isValidCalculatedField = true;
+                      }
+                    }
+                    break;
+                    case 'datetrunc':
+                      this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+                      regex = /^DATETRUNC\(\s*'[^']+'\s*,\s*(?:"[^"]+"\."[^"]+"|\s*)\)$/;                  
+                      if (
+                        !this.calculatedFieldLogic.startsWith('DATETRUNC(') ||
+                        !this.calculatedFieldLogic.endsWith(')') ||
+                        !regex.test(this.calculatedFieldLogic)
+                      ) {
+                        this.isValidCalculatedField = false;
+                        this.validationMessage = "Invalid Syntax.";
+                      } else {
+                        const params = this.calculatedFieldLogic.slice(10, -1).trim(); // remove 'DATENAME(' and ')'
+                        const [datePart, columnRef] = params.split(',');
+                    
+                        if (!datePart || datePart.trim() === '') {
+                          this.isValidCalculatedField = false;
+                          this.validationMessage = "Missing datepart.";
+                        }  else {
+                          // If both are valid, rewrite with dropped column
+                          this.calculatedFieldLogic = `DATETRUNC(${datePart.trim()}, "${tableName}"."${columnName}")`;
+                          this.isValidCalculatedField = true;
+                        }
+                      }
+                      break;
+                      case 'day': 
+                      this.calculatedFieldLogic = 'DAY("' + tableName + '"."' + columnName + '")';
+                      break; 
+                      case 'datemax': 
+                      this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + '")';
+                      break;
+                      case 'datemin': 
+                      this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + '")';
+                      break;
+                      case 'month': 
+                      this.calculatedFieldLogic = 'MONTH("' + tableName + '"."' + columnName + '")';
+                      break;
+                      case 'quarter': 
+                      this.calculatedFieldLogic = 'QUARTER("' + tableName + '"."' + columnName + '")';
+                      break;
+                      case 'week': 
+                      this.calculatedFieldLogic = 'WEEK("' + tableName + '"."' + columnName + '")';
+                      break;
+                      case 'year': 
+                      this.calculatedFieldLogic = 'YEAR("' + tableName + '"."' + columnName + '")';
+                      break;
         
         
 
@@ -5164,6 +5292,24 @@ customizechangeChartPlugin() {
           }
         break; 
         
+        case 'date': 
+        this.calculatedFieldLogic = 'DATE("' + tableName + '"."' + columnName + '")';
+        break;
+        case 'datetime': 
+        this.calculatedFieldLogic = 'DATETIME("' + tableName + '"."' + columnName + '")';
+        break;
+        case 'float': 
+        this.calculatedFieldLogic = 'FLOAT("' + tableName + '"."' + columnName + '")';
+        break;
+        case 'int': 
+        this.calculatedFieldLogic = 'INT("' + tableName + '"."' + columnName + '")';
+        break;
+        case 'makedate': 
+        this.calculatedFieldLogic = 'MAKEDATE("' + tableName + '"."' + columnName + '")';
+        break;
+        case 'str': 
+        this.calculatedFieldLogic = 'STR("' + tableName + '"."' + columnName + '")';
+        break;    
       }
     }
 
@@ -5415,7 +5561,39 @@ customizechangeChartPlugin() {
             this.isValidCalculatedField = true;
             return true;
           }
-          break;
+          // case 'regexp_extract':
+          //   if (
+          //     !this.validateFormula(
+          //       /^REGEXP_EXTRACT\(\s*(("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")|"[a-zA-Z0-9_()' \-]+")\s*,\s*"[a-zA-Z0-9_()' \-]+")\s*\)$/
+          //     )) {
+          //     this.isValidCalculatedField = false;
+          //     this.validationMessage = 'Invalid Syntax';
+          //     return false;
+          //   } else {
+          //     this.isValidCalculatedField = true;
+          //     return true;
+          //   }
+          // break;
+          // case 'regexp_matches':
+          // if (!this.validateFormula(/^REGEXP_MATCHES\(\s*(("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")|"[a-zA-Z0-9_()' \-]+")\s*,\s*"[a-zA-Z0-9_()' \-]+")\s*\)$/)) {
+          //   this.isValidCalculatedField = false;
+          //   this.validationMessage = 'Invalid Syntax';
+          //   return false;
+          // } else {
+          //   this.isValidCalculatedField = true;
+          //   return true;
+          // }
+          // break;
+          // case 'regexp_replace':
+          // if (!this.validateFormula(/^REGEXP_REPLACE\(\s*(("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")|"[a-zA-Z0-9_()' \-]+")\s*,\s*"[a-zA-Z0-9_()' \-]+")\s*\)$/)) {
+          //   this.isValidCalculatedField = false;
+          //   this.validationMessage = 'Invalid Syntax';
+          //   return false;
+          // } else {
+          //   this.isValidCalculatedField = true;
+          //   return true;
+          // }
+          // break;
         case 'mid': 
         if(!this.validateFormula(/^SUBSTRING\(\s*"([^"]+)"\.\"([^"]+)\"\s+FROM\s+(\d+)\s+FOR\s+(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
@@ -5504,7 +5682,7 @@ customizechangeChartPlugin() {
             return true;
           }
           break; 
-          case 'dateadd': 
+        case 'dateadd': 
           if(!this.validateFormula(/\+\s*INTERVAL/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
@@ -5515,11 +5693,11 @@ customizechangeChartPlugin() {
             return true;
           }
           break;
-          case 'datediff':
+        case 'datediff':
             this.isValidCalculatedField = true;
               return true;
           break; 
-          case 'datepart': 
+        case 'datepart': 
           if(!this.validateFormula(/^DATE_PART\(\s*(.+?)\s*,\s*(.+?)\s*\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
@@ -5530,15 +5708,115 @@ customizechangeChartPlugin() {
             return true;
           }
           break; 
-          case 'now': 
+          case 'datename':
+          if (!this.validateFormula(/^DATENAME\(\s*'([a-zA-Z_]+)'\s*,\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)) {
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } else {
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break;
+          case 'datetrunc':
+            if (!this.validateFormula(/^DATETRUNC\(\s*'([a-zA-Z_]+)'\s*,\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)) {
+              this.isValidCalculatedField = false;
+              this.validationMessage = 'Invalid Syntax';
+              return false;
+            } else {
+              this.isValidCalculatedField = true;
+              return true;
+            }
+            break;
+            case 'day':
+              if(!this.validateFormula(/^DAY\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break; 
+            case 'datemax':
+              if(!this.validateFormula(/^MAX\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'datemin':
+              if(!this.validateFormula(/^MIN\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'month':
+              if(!this.validateFormula(/^MONTH\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'quarter':
+              if(!this.validateFormula(/^QUARTER\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'week':
+              if(!this.validateFormula(/^WEEK\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'year':
+              if(!this.validateFormula(/^YEAR\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+
+
+
+        case 'now': 
           this.isValidCalculatedField = true;
             return true;
           break; 
-          case 'today': 
+        case 'today': 
           this.isValidCalculatedField = true;
             return true;
           break; 
-          case 'parse':
+        case 'parse':
             if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*(['"])dd-mm-yyyy\2\s*\)$/)){
               this.isValidCalculatedField = false;
               this.validationMessage = 'Invalid Syntax';
@@ -5549,7 +5827,7 @@ customizechangeChartPlugin() {
               return true;
             }
           break; 
-          case 'case': 
+        case 'case': 
           if(!this.validateFormula(/^CASE\s+(WHEN\s+.+?\s+THEN\s+.+?(\s+WHEN\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END)$/i)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
@@ -5650,6 +5928,73 @@ customizechangeChartPlugin() {
           }  
         break; 
         
+
+        case 'date':
+              if(!this.validateFormula(/^DATE\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'datetime':
+              if(!this.validateFormula(/^DATETIME\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'float':
+              if(!this.validateFormula(/^FLOAT\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'str':
+              if(!this.validateFormula(/^STR\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'int':
+              if(!this.validateFormula(/^INT\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
+            case 'makedate':
+              if(!this.validateFormula(/^MAKEDATE\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+                this.isValidCalculatedField = false;
+                this.validationMessage = 'Invalid Syntax';
+                return false;
+              } 
+              else{
+                this.isValidCalculatedField = true;
+                return true;
+              }
+            break;
       }
     }
 
@@ -5722,6 +6067,15 @@ customizechangeChartPlugin() {
         case 'endswith':
           this.calculatedFieldLogic = "ENDSWITH(,'')";
         break;
+        case 'regexp_extract':
+          this.calculatedFieldLogic = "REGEXP_EXTRACT(,'')";
+        break;
+        case 'regexp_matches':
+          this.calculatedFieldLogic = "REGEXP_MATCHES(,'')";
+        break;
+        case 'regexp_replace':
+          this.calculatedFieldLogic = "REGEXP_REPLACE(,'')";
+        break;
         case 'dateadd': 
         this.calculatedFieldLogic = 'CURRENT_DATE + INTERVAL ';
         break;
@@ -5731,6 +6085,34 @@ customizechangeChartPlugin() {
         case 'datepart': 
         this.calculatedFieldLogic = "DATE_PART('year', current_timestamp)";
         break; 
+        case 'datename': 
+        this.calculatedFieldLogic = "DATENAME('year', )";
+        break; 
+        case 'datetrunc': 
+        this.calculatedFieldLogic = "DATETRUNC('year', )";
+        break; 
+        case 'day': 
+        this.calculatedFieldLogic = "DAY()";
+        break; 
+        case 'datemax': 
+        this.calculatedFieldLogic = "MAX()";
+        break; 
+        case 'datemin': 
+        this.calculatedFieldLogic = "MIN()";
+        break; 
+        case 'month': 
+        this.calculatedFieldLogic = "MONTH()";
+        break; 
+        case 'quarter': 
+        this.calculatedFieldLogic = "QUARTER()";
+        break; 
+        case 'week': 
+        this.calculatedFieldLogic = "WEEK()";
+        break; 
+        case 'year': 
+        this.calculatedFieldLogic = "YEAR()";
+        break; 
+
         case 'now': 
         this.calculatedFieldLogic = 'current_timestamp()';
         break; 
@@ -5767,7 +6149,25 @@ customizechangeChartPlugin() {
         case 'sum': 
         this.calculatedFieldLogic = 'SUM()';
         break; 
-        
+
+        case 'date': 
+        this.calculatedFieldLogic = 'DATE()';
+        break;
+        case 'datetime': 
+        this.calculatedFieldLogic = 'DATETIME()';
+        break;
+        case 'float': 
+        this.calculatedFieldLogic = 'FLOAT()';
+        break;
+        case 'str': 
+        this.calculatedFieldLogic = 'STR()';
+        break;
+        case 'int': 
+        this.calculatedFieldLogic = 'INT()';
+        break;
+        case 'makedate': 
+        this.calculatedFieldLogic = 'MAKEDATE()';
+        break;
       }
     }
     tableDataColorChange(event:any){
