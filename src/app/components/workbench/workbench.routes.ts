@@ -340,6 +340,12 @@ export const admin: Routes = [
           import('./embed-sdk/embed-sdk.component').then((m) => m.EmbedSdkComponent),
       },
       {
+        path: 'configure-page/sheet/sdk/:sheetId',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./embed-sdk/embed-sdk.component').then((m) => m.EmbedSdkComponent),
+      },
+      {
         path: 'databaseConnection/dataTransformation/:id',
         canActivate: [authGuard],
         loadComponent: () =>

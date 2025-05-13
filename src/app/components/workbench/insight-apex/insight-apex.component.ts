@@ -71,6 +71,7 @@ export class InsightApexComponent {
   @Input() dataLabelsBarFontPosition:any;
   @Input() dataLabelsLineFontPosition:any;
   @Input() selectedColorScheme:any;
+  @Input() SDKChartOptions: any;
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   
@@ -99,9 +100,13 @@ export class InsightApexComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // if(changes['chartType']){
+
+    if(changes['SDKChartOptions']){
+      this.chartOptions = this.SDKChartOptions;
+      this.chartType = this.chartType;
+    } else {
       this.generateChart();
-    // }
+    }
     
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       // if(changes['chartsColumnData'].currentValue.length>0 || changes['dualAxisColumnData'].currentValue.length>0){

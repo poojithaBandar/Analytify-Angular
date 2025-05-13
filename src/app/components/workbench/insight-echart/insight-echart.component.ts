@@ -86,6 +86,7 @@ export class InsightEchartComponent {
   @Input() isDistributed : any;
   @Input() mapChartOptions:any;
   @Input() actionId:any;
+  @Input() SDKChartOptions: any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() drillThrough = new EventEmitter<object>();
@@ -1911,6 +1912,9 @@ chartInitialize(){
     }
      if(changes['chartType']){
       this.chartInitialize();
+     }
+     if(changes['SDKChartOptions']){
+      this.chartInstance?.setOption(this.SDKChartOptions, true); // Full reset
      }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       // if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){

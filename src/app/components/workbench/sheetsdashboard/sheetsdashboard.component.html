@@ -1037,7 +1037,7 @@
         
          <div *ngIf="!isPublicUrl" class="card mb-1 public-url-position">
             <div class="card-body p-1">
-                <div class="dashboard-title-card">
+                <div class="dashboard-title-card d-flex align-items-center">
                   <div class="flex-grow-1">                     
                     <div class="title-container" [ngClass]="{'border': dashboardId}" *ngIf="!editor">
                       <input *ngIf="!dashboardId && !editor" (click)="editor =true && !isPublicUrl" type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
