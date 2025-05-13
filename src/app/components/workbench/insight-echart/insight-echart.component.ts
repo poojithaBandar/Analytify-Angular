@@ -137,7 +137,7 @@ export class InsightEchartComponent {
     if(this.chartType === 'map'){
       this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
         echarts.registerMap('world', geoJson);
-        this.chartInstance?.setOption(this.chartOptions,true);
+        this.chartInstance?.setOption(this.SDKChartOptions ? this.SDKChartOptions :this.chartOptions,true);
       });
     }
     else{
