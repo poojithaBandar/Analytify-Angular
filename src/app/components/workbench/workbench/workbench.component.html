@@ -5,7 +5,7 @@
       <div >
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inputModalLabel">Edit Database</h1>
+            <h1 class="modal-title fs-5" id="inputModalLabel">Edit Database / Connection</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="schemaList = [];modal.close('cross click')"></button>
           </div>
           <div class="modal-body">
@@ -88,6 +88,42 @@
                     [(ngModel)]="siteURLPSA" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://HaloPSA.com"
                     (input)="siteUrlPSAError()">
                    </div>
+              </form>
+            } @else if(databaseType == 'immybot') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': clientIDImmyBotError}" class="col-form-label">Client Id <span
+                      class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': clientIDImmyBotError}" type="text" class="form-control"
+                    [(ngModel)]="clientIdImmybot" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+                    placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdErrorImmyBot()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': secretValueError}" for="recipient-name" class="col-form-label">
+                    Secret Value<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': secretValueError}" type="text" class="form-control"
+                    [(ngModel)]="secretValue" [ngModelOptions]="{standalone: true}"
+                    placeholder="12fgbcbb-9876-2345-asdf-218541bcf2d1-d1f8a3f7-34gf-45hj-78jh-295142fas34e"
+                    (input)="secretValueImmybotError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': tenantIdError}" for="message-text" class="col-form-label">Azure Domain
+                    <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': tenantIdError}" type="text" class="form-control"
+                    [(ngModel)]="tenantId" [ngModelOptions]="{standalone: true}" placeholder="e.g. http://yourcompany.onmicrosoft.com/"
+                    (input)="tenantIdImmyBotError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': subDomainError}" for="message-text" class="col-form-label">Instance Subdomain
+                    <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': subDomainError}" type="text" class="form-control"
+                    [(ngModel)]="subDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. analytify"
+                    (input)="subDomainImmyBotError()">
+                </div>
               </form>
             }
             @else if(databaseType == 'shopify') {
@@ -224,6 +260,9 @@
                       [disabled]="!googleAnalytics.displayname || googleAnalytics.dimensions.length === 0 || googleAnalytics.metrics.length === 0">
                 Update
               </button>
+            } @else if(databaseType == 'immybot') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="ImmybotConnectionUpdate()" [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot ) ">Update</button>
             } @else {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
@@ -337,6 +376,9 @@
                       <td *ngIf="database.server_type === 'HALOPS'">
                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'IMMYBOT'">
+                        <img alt="product" src="./assets/images/icons/immybot.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                       <td *ngIf="database.server_type === 'SHOPIFY'">
                         <img alt="product" src="./assets/images/icons/shopify-large-1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
@@ -440,6 +482,8 @@
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
+                                                <span *ngIf="database.server_type === 'IMMYBOT'" class="avatar avatar rounded-circle">
+                                                  <img src="./assets/images/icons/immybot.png" alt="" class="rounded-circle"></span>
                                                 <span *ngIf="database.server_type === 'SHOPIFY'" class="avatar avatar rounded-circle">
                                                   <img src="./assets/images/icons/shopify-large-1.jpg" alt="" class="rounded-circle"></span>
                                                   <span *ngIf="database.server_type === 'GOOGLE_SHEETS'" class="avatar avatar rounded-circle">
@@ -980,6 +1024,106 @@
             </div>
           </div>
           }
+          @if(openImmybot){
+            <div class="main-container container-fluid px-4 TopHeader" >
+              <div class="row">
+                <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card Relational-database-height">
+                    <div class="card-header">
+                      <h4 class="card-title">Connect To Immybot</h4>
+                    </div>
+                    <div class="card-body">
+                      <form>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': clientIDImmyBotError}" class="col-form-label">Client Id <span
+                              class="text-danger ms-1">*</span></label>
+                          <input [ngClass]="{'error-input': clientIDImmyBotError}" type="text" class="form-control"
+                            [(ngModel)]="clientIdImmybot" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+                            placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdErrorImmyBot()">
+                        </div>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                        </div>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': secretValueError}" for="recipient-name" class="col-form-label">
+                            Secret Value<span class="text-danger ms-1">*</span></label>
+                          <input [ngClass]="{'error-input': secretValueError}" type="text" class="form-control"
+                            [(ngModel)]="secretValue" [ngModelOptions]="{standalone: true}"
+                            placeholder="12fgbcbb-9876-2345-asdf-218541bcf2d1-d1f8a3f7-34gf-45hj-78jh-295142fas34e"
+                            (input)="secretValueImmybotError()">
+                        </div>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': tenantIdError}" for="message-text" class="col-form-label">Azure Domain
+                            <span class="text-danger ms-1">*</span></label>
+                          <input [ngClass]="{'error-input': tenantIdError}" type="text" class="form-control"
+                            [(ngModel)]="tenantId" [ngModelOptions]="{standalone: true}" placeholder="e.g. http://yourcompany.onmicrosoft.com/"
+                            (input)="tenantIdImmyBotError()">
+                        </div>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': subDomainError}" for="message-text" class="col-form-label">Instance Subdomain
+                            <span class="text-danger ms-1">*</span></label>
+                          <input [ngClass]="{'error-input': subDomainError}" type="text" class="form-control"
+                            [(ngModel)]="subDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. analytify"
+                            (input)="subDomainImmyBotError()">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
+                          <button type="button" class="btn btn-primary" (click)="ImmybotSignIn()"
+                            [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card user-card border Relational-database-height">
+                    <div class="user-image">
+                      <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                        <img src="./assets/images/Db_server_images/immybot.png" alt="" class="rounded-circle bg-white user-image-border-color">
+                      </span>
+                    </div>
+                    <div class="card-body server-content-card">
+                      <ul class="">
+                        <li> <span class="mt-1">Immy.bot is an automation platform designed to streamline IT operations by executing workflows
+                            and scripts across multiple systems with precision and control. It empowers IT teams to manage devices, users, and
+                            applications through powerful, repeatable automation all from a centralized dashboard.
+                          </span></li>
+                      <li>
+                          <h6 class=" mt-3"><strong>Key Features:</strong></h6>
+                        </li>
+                        <li><span class="mb-0"><strong>Automated Workflows & Scripts: </strong> Execute PowerShell and other scripts across endpoints, users, and cloud services.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Policy-Based Task Scheduling: </strong> Automate recurring tasks based on conditions,
+                            time intervals, or triggers.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Device & User Management: </strong> Easily manage endpoints, user profiles, and system
+                            configurations remotely.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Audit & Reporting: </strong> Track execution history and generate reports for compliance
+                            and performance analysis.
+                          </span></li>
+                      <li>
+                          <h6 class=" mt-3"><strong>Inputs to connect</strong></h6>
+                        </li>
+                        <li><span class="mb-0"><strong>Client ID:</strong> OAuth application identifier.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Secret Value:</strong> Authentication credential for API access.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Azure Domain:</strong> Your organization’s Azure Active Directory domain (e.g., yourcompany.onmicrosoft.com). 
+                          </span></li>
+                      
+                        <li><span class="mb-0"><strong>Instance Subdomain:</strong> Your Immy.bot instance name (e.g., acme for
+                            acme.immy.bot).</span></li>
+                        <li><span class="mb-0"><strong>Display Name:</strong>
+                            Friendly name for this connection (e.g., "Prod Immy.bot").</span></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
             @if(openShopifyForm){
           <div class="main-container container-fluid px-4 TopHeader">
             <div class="row">
@@ -1993,11 +2137,21 @@
                       </div>    
                       </div>
                               
+                      </div> 
+                      <div class="database-logo">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectImmybot()">
+                          <img src="/assets/images/Db_server_images/immybot.png"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600">
+                          <span>Immybot</span>
+                        <!-- </div> -->
+                      </div>        
+                    </div>
                   </div>
                 </div>
               </div>
           </div>
-        </div>
+        <!-- </div> -->
       </div>
         
     }
