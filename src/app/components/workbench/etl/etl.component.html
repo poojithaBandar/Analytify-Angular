@@ -536,7 +536,7 @@
                                                                                                 <td>
                                                                                                     <div class="input-group input-group">
                                                                                                         <input type="text" class="form-control" [(ngModel)]="attribute.expression" (blur)="updateNode('attribute')"/>
-                                                                                                        <span class="input-group-text bg-primary" ngbTooltip="" (click)="openExpressionEdit(expressionEdit, attribute)">
+                                                                                                        <span class="input-group-text bg-primary" ngbTooltip="" (click)="openExpressionEdit(expressionEdit, attribute, i)">
                                                                                                             <i class="fa-solid fa-up-right-from-square"></i>
                                                                                                         </span>
                                                                                                     </div>
@@ -744,21 +744,13 @@
 <ng-template #expressionEdit let-modal>
     <div class="modal-header">
         <h5 class="modal-title">Expression Editor - {{selectedNode.data.nodeData.general.name}} ({{selectedNode.data.type}}) </h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        <button type="button" class="btn-close text-light" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
 
     <div class="modal-body p-3">
 
         <div class="mb-2 d-flex justify-content-between align-items-center">
             <label class="form-label mb-0"><b>*{{selectedField.attributeName}} ({{selectedField.dataType}})</b></label>
-            <!-- <div class="d-flex flex-wrap gap-2">
-            <button *ngFor="let op of operators"
-                    type="button"
-                    class="btn btn-sm btn-outline-primary"
-                    >
-              {{ op }}
-            </button>
-          </div> -->
         </div>
 
         <div class="mb-3">
@@ -773,38 +765,39 @@
                 <thead>
                     <tr>
                         <th class="fw-bold bg-primary text-white">Transforms</th>
-                        <th class="fw-bold bg-primary text-white">Selected Transform</th>
-                        <th class="fw-bold bg-primary text-white">Selected Column</th>
+                        <th class="fw-bold bg-primary text-white"> {{selectedGroup}} </th>
+                        <th class="fw-bold bg-primary text-white"> {{selectedColumn.attributeName || selectedColumn.label}} </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
 
                         <!-- Transforms Column -->
-                        <td class="align-top" style="width: 33%; max-height: 200px;">
-                            <div *ngFor="let field of ['aa', 'bb']" class="text-break py-1 px-2 hover-bg"
-                                style="cursor: pointer;">
-                                {{ field }}
+                        <td class="align-top" style="width: 33%;">
+                            <div style="max-height: 200px; overflow-y: auto;">
+                                <div *ngFor="let group of groupedColumns | keyvalue" class="text-break py-1 px-2 hover-bg" style="cursor: pointer;" 
+                                    [class.bg-primary]="selectedGroup === group.key" [class.text-white]="selectedGroup === group.key" (click)="selectedGroup = group.key">
+                                    {{ group.key }}
+                                </div>
                             </div>
                         </td>
 
                         <!-- Selected Transform -->
-                        <td class="align-top" style="width: 33%; max-height: 200px; overflow: auto;">
-                            <input type="text" class="form-control form-control-sm mb-2" placeholder="Search fields..."
-                                [(ngModel)]="searchText" />
-                            <div *ngFor="let field of fields" class="text-break py-1 px-2 hover-bg"
-                                style="cursor: pointer;">
-                                {{ field }}
+                        <td class="align-top" style="width: 33%;">
+                            <input type="text" class="form-control form-control-sm mb-2" placeholder="Search fields..." [(ngModel)]="searchText" />
+                            <div style="max-height: 200px; overflow-y: auto;">
+                                <div *ngFor="let column of (groupedColumns[selectedGroup] || [])" class="text-break py-1 px-2 hover-bg" style="cursor: pointer;"
+                                    (click)="selectedColumn = column; expression = expression + (expression ? (' ' + selectedGroup + '.' + column.label) : (selectedGroup + '.'  + column.label))">
+                                    {{ column.label }}
+                                </div>
                             </div>
                         </td>
 
                         <!-- Selected Column -->
                         <td class="align-top" style="width: 34%;">
                             <div *ngIf="selectedField">
-                                <div><b>{{ selectedField }}</b></div>
-                                <div>Data type: varchar</div>
-                                <div>Not Null: false</div>
-                                <div>Key Type: Not a Key</div>
+                                <div><b>{{selectedColumn.attributeName || selectedColumn.label}}</b></div>
+                                <div>Data type: {{selectedColumn.dataType}}</div>
                             </div>
                             <div *ngIf="!selectedField" class="text-muted">No column selected</div>
                         </td>
@@ -817,9 +810,8 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary">Validate</button>
-        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel')">Cancel</button>
-        <button type="button" class="btn btn-primary">OK</button>
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="updateExpressionToNode(); modal.dismiss('Save click')">OK</button>
     </div>
 </ng-template>
 
@@ -858,7 +850,7 @@
 
     <div class="modal-footer bg-light">
         <button class="btn btn-primary" (click)="applySelectedAttributes(); modal.dismiss('Save click')"> OK </button>
-        <button class="btn btn-outline-secondary" (click)="modal.dismiss('cancel')"> Cancel </button>
+        <button class="btn btn-secondary" (click)="modal.dismiss('cancel')"> Cancel </button>
     </div>
 </ng-template>
   

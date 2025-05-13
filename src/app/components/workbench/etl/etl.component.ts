@@ -722,13 +722,14 @@ export class ETLComponent {
       if (childNode?.data?.nodeData) {
         childDataObjects.push(childNode.data.nodeData.dataObject);
         childAttributes.push(childNode.data.nodeData.attributes);
+        const nodeName = childNode.data.nodeData.general.name;
         if(childNode.data.type === 'source_data_object'){
-          childSourceAttributes = {[childNode.data.nodeData.general.name]: childNode.data.nodeData.sourceAttributes};
+          childSourceAttributes[nodeName] = childNode.data.nodeData.sourceAttributes;
         }
         if(childNode.data.type === 'Rollup'){
-          childGrpAttributes = {[childNode.data.nodeData.general.name]: childNode.data.nodeData.groupAttributes};
+          childGrpAttributes[nodeName] = childNode.data.nodeData.groupAttributes;
         }
-        nodeNames.push(childNode.data.nodeData.general.name);
+        nodeNames.push(nodeName);
         nodeTypes.push(childNode.data.type);
       }
     });
@@ -909,21 +910,33 @@ export class ETLComponent {
       this.updateNode('groupAttribute');
   
     } else if (['Expression', 'Joiner'].includes(this.selectedNode.data.type)) {
+      const existingAttributes = this.selectedNode.data.nodeData.attributes || [];
+
       const usedNames: { [key: string]: number } = {};
-      this.selectedNode.data.nodeData.attributes = flatSelected.map(attr => {
+      // Pre-fill usedNames with existing attribute names
+      existingAttributes.forEach((attr:any) => {
+        const baseName = attr.attributeName.split('_')[0];
+        usedNames[baseName] = Math.max(usedNames[baseName] || 0,
+          parseInt(attr.attributeName.split('_')[1] || '0'));
+      });
+
+      const newAttributes = flatSelected.map(attr => {
         let name = attr.label;
-        if (usedNames[name]) {
+        if (usedNames[name] !== undefined) {
           usedNames[name]++;
           name = `${name}_${usedNames[name]}`;
         } else {
           usedNames[name] = 0;
         }
+
         return {
           attributeName: name,
-          dataType: attr.dataType || attr.column.dataType,
+          dataType: attr.dataType || attr.column?.dataType,
           expression: `${attr.group}.${attr.label}`
         };
       });
+
+      this.selectedNode.data.nodeData.attributes = [...existingAttributes, ...newAttributes];
       this.updateNode('');
     } else if(this.selectedNode.data.type === 'source_data_object'){
       if(this.isSourceClicked){
@@ -992,21 +1005,59 @@ export class ETLComponent {
   expression: string = '';
   searchText: string = '';
   selectedField: any = {};
+  groupedColumns: any = {};
+  selectedGroup: any = '';
+  selectedColumn: any = {};
+  selectedIndex: number = -1;
 
-  operators: string[] = ['(', ')', '+', '-', '*', '/', '>', '<', '>=', '<=', '==', '!=', '&&', '||'];
+  openExpressionEdit(modal:any, attribute:any, index:number){
+    this.selectedIndex = index;
+    const nodeData = JSON.parse(JSON.stringify(this.selectedNode.data.nodeData));
 
-  fields: string[] = [
-    'SAMPLE_ID', 'VALUES_ST', 'KINGDOM', 'PHYLUM', 'CLASS_1', 'ORDER_1', 'FAMILY_1'
-  ];
+    let dataObject: any[] = [];
 
+    if (this.selectedNode.data.type === 'source_data_object') {
+      const columns = nodeData.dataObject.columns || [];
+      const group = this.selectedNode.data.nodeData.general.name;
 
-  openExpressionEdit(modal:any, attribute:any){
+      dataObject = columns.map((col: any) => ({
+        label: col.col,
+        value: col.col,
+        dataType: col.dtype,
+        group: group
+      }));
+    } else {
+      dataObject = nodeData.dataObject || [];
+    }
+
+    this.groupedColumns = dataObject.reduce((acc:any, attr:any) => {
+      if (!acc[attr.group]) {
+        acc[attr.group] = [];
+      }
+      acc[attr.group].push(attr);
+      return acc;
+    }, {} as { [groupName: string]: any[] });
+
+    const groupKeys = Object.keys(this.groupedColumns);
+    this.selectedGroup = groupKeys.length > 0 ? groupKeys[0] : null;
     this.selectedField = attribute;
+    this.selectedColumn = attribute;
+    this.expression = attribute.expression;
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
       modalDialogClass: 'modal-lg modal-dialog-scrollable'
     });
+  }
+
+  updateExpressionToNode(){
+    this.selectedNode.data.nodeData.attributes[this.selectedIndex].expression = this.expression;
+
+    this.updateNode('');
+    this.expression = '';
+    this.selectedGroup = '';
+    this.selectedColumn = {};
+    this.selectedIndex = -1;
   }
   
 }
