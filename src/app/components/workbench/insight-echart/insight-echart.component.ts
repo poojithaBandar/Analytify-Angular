@@ -1907,15 +1907,21 @@ chartInitialize(){
     }
   }
   ngOnChanges(changes: SimpleChanges) {
-    if (!this.chartInstance) {
+    
+     if(changes['SDKChartOptions']){
+      if(this.chartType === 'map'){
+        this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+          echarts.registerMap('world', geoJson);
+          this.chartInstance?.setOption(this.SDKChartOptions,true);
+        });
+      } else {
+      this.chartInstance?.setOption(this.SDKChartOptions, true); // Full reset
+      }
+     } else if(changes['chartType']){
+      this.chartInitialize();
+     } else if (!this.chartInstance) {
       this.chartInitialize();
     }
-     if(changes['chartType']){
-      this.chartInitialize();
-     }
-     if(changes['SDKChartOptions']){
-      this.chartInstance?.setOption(this.SDKChartOptions, true); // Full reset
-     }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       // if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
         // this.updateCategories();
