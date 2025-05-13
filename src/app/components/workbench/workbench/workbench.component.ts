@@ -729,7 +729,8 @@ export class WorkbenchComponent implements OnInit{
         "secret_value":this.secretValue,
         "azure_domain":this.tenantId,
         "instance_subdomain":this.subDomain,
-        "display_name":this.displayName
+        "display_name":this.displayName,
+        "hierarchy_id": this.databaseId
     }
       this.workbechService.immyBotConnectionUpdate(obj).subscribe({next: (responce) => {
         console.log(responce)
