@@ -1,25 +1,10 @@
-<div class="sheet-sdk-container">  
-                                                                                                                                                                                                     
-        <ng-container >  
-          @if(!(chartType =='kpi' || chartType =='pivot' || chartType =='table')){                                                                           
-           <app-insight-apex                                                                                                                                                                                 
-            [SDKChartOptions]="chartOptions"   
-            [chartType]="chartType"                                                                                  
-            >                                                                                            
-          </app-insight-apex>                                                                                             
-        <app-insight-echart                                                                                                                                                                                 
-            [SDKChartOptions]="chartOptions"                                                                                          
-            >                                                                                              
-          </app-insight-echart>  
-        }
-          @if(chartType =='kpi' || chartType =='pivot' || chartType =='table'){
-
-            <app-sheets
-          [sdkSheetId]="sheetId"
-          [sdkQuerySetID]="sdkQuerySetID"
-          [sdkDatabaseID]="sdkDatabaseID"></app-sheets>
-        <!-- Table rendering for non-chart sheets -->
-        <!-- <app-custom-sheets
+@if(chartType){
+<div class="sheet-sdk-container">
+  <ng-container>
+    @if(chartType =='kpi' || chartType =='pivot' || chartType =='table'){
+    <app-sheets [sdkSheetId]="sheetId" [sdkQuerySetID]="sdkQuerySetID" [sdkDatabaseID]="sdkDatabaseID"></app-sheets>
+    <!-- Table rendering for non-chart sheets -->
+    <!-- <app-custom-sheets
           *ngIf="!isApexChart"
           [table]="true"
           [chartId]="chartType"
@@ -52,6 +37,20 @@
           (pageChange)="pageChangeTable($event)">
         </app-custom-sheets> -->
 
-      }
-        </ng-container>                                                                                                                                                                                                     
-    </div> 
+    } @else {
+
+    @if(isApexChart){
+
+    <app-insight-apex [SDKChartOptions]="chartOptions" [chartType]="chartType">
+    </app-insight-apex>
+
+    } @else {
+
+    <app-insight-echart [chartType]="chartType" [SDKChartOptions]="chartOptions">
+    </app-insight-echart>
+
+    }
+    }
+  </ng-container>
+</div>
+}

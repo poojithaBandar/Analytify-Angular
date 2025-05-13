@@ -16,7 +16,7 @@ import { SheetsComponent } from '../sheets/sheets.component';
 })
 export class SheetSdkComponent {
   sheetId! : number;                                                                                                       
-      chartType = '';                                                                                                     
+      chartType! : string;                                                                                                     
       config: any;                                                                                                        
       data: any;                                                                                                          
       loading = true;                                                                                                     
@@ -156,6 +156,10 @@ export class SheetSdkComponent {
             this.chartType = 'heatmap';
             break;
 
+          case 29:
+            this.chartType = 'map';
+            break;
+
 
         }
       }
@@ -181,8 +185,8 @@ export class SheetSdkComponent {
         console.log(data);
         const sheet = data.sheet_retrieve_data.sheet_data;
         this.isApexChart = sheet.isApexChart;
-        this.chartOptions = sheet.savedChartOptions;
         this.setChartType(data.sheet_retrieve_data.chart_id);
+        this.chartOptions = sheet.savedChartOptions;
         // If it's not a chart, render table via CustomSheetsComponent
         if (!this.isApexChart) {
           // columns and rows arrays from API
