@@ -45,7 +45,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom, Subscription, timer } from 'rxjs';
-import { evaluate, parse } from 'mathjs';
+import { evaluate, i, parse } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
@@ -61,6 +61,7 @@ import { TestPipe } from '../../../test.pipe';
 
 import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
+import { CustomSheetsComponent } from '../custom-sheets/custom-sheets.component';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -102,7 +103,7 @@ declare var $:any;
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -159,6 +160,10 @@ export class SheetsComponent{
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
   suppressTabChangeEvent : boolean = false;
+  @Input() sdkSheetId! : number;
+  @Input() sdkQuerySetID! : number;
+  @Input() sdkDatabaseID! : number;
+
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -437,6 +442,7 @@ export class SheetsComponent{
   };
   isEmbed: boolean = false;
   is_sheet_Embed : boolean = false;
+  isEmbedSDK: boolean = false;;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
       this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
@@ -521,6 +527,13 @@ export class SheetsComponent{
 
   }
   ngOnInit(): void {
+    if(this.sdkSheetId){
+      this.retriveDataSheet_id = this.sdkSheetId;
+      this.qrySetId = this.sdkQuerySetID;
+      this.databaseId = this.sdkDatabaseID;
+      this.isEmbedSDK = true;
+      this.sheetRetrive(false);
+    } else {
     this.loaderService.hide();
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
@@ -553,6 +566,7 @@ export class SheetsComponent{
       this.getColorSchemesForDropdown();
     }
     console.log(this.defaultColorSchemes);
+  }
   }
   isColorSchemeDropdownOpen = false;
   toggleDropdownColorScheme() {
