@@ -111,6 +111,15 @@ export class WorkbenchComponent implements OnInit{
   ninjaRMMScopes = ['monitoring', 'management', 'control'];
   selectedNinjaRMMScopes: string[] = [];
   ninjaRMMScopeError: boolean = false;
+  openImmybot: boolean = false;
+  clientIDImmyBotError: boolean = false;
+  clientIdImmybot! : string ;
+  secretValue! : string;
+  secretValueError: boolean = false;
+  tenantIdError: boolean = false;
+  tenantId!: string
+  subDomain!: string;
+  subDomainError: boolean = false;
 
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService){ 
@@ -713,6 +722,30 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+
+    ImmybotConnectionUpdate(){
+      const obj={
+        "client_id":this.clientIdImmybot,
+        "secret_value":this.secretValue,
+        "azure_domain":this.tenantId,
+        "instance_subdomain":this.subDomain,
+        "display_name":this.displayName
+    }
+      this.workbechService.immyBotConnectionUpdate(obj).subscribe({next: (responce) => {
+        console.log(responce)
+        if(responce){
+          this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+        }
+        this.getDbConnectionList();
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
     shopifyConnectionUpdate(){
       const obj = {
         "api_token": this.shopifyToken,
@@ -865,6 +898,12 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+    connectImmybot(){
+      this.openImmybot = true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
 
     connectNinjaRMM(){
       this.openNinjaRMMForm=true;
@@ -942,6 +981,39 @@ export class WorkbenchComponent implements OnInit{
         this.clientIDPSAError = true;
       }
     }
+
+    secretValueImmybotError(){
+      if(this.secretValue){
+        this.secretValueError = false;
+      }else{
+        this.secretValueError = true;
+      }
+    }
+
+    clientIdErrorImmyBot(){
+      if(this.clientIdImmybot){
+        this.clientIDImmyBotError = false;
+      }else{
+        this.clientIDImmyBotError = true;
+      }
+    }
+
+    tenantIdImmyBotError(){
+      if(this.tenantId){
+        this.tenantIdError = false;
+      }else{
+        this.tenantIdError = true;
+      }
+    }
+
+    subDomainImmyBotError(){
+      if(this.subDomain){
+        this.subDomainError = false;
+      }else{
+        this.subDomainError = true;
+      }
+    }
+
     privateConnectWiseError(){
       if(this.privateKey){
         this.privateKeyError = false;
@@ -1033,6 +1105,59 @@ export class WorkbenchComponent implements OnInit{
         }
       )
     }
+
+    ImmybotSignIn(){
+      const obj={
+        "client_id":this.clientIdImmybot,
+        "secret_value":this.secretValue,
+        "azure_domain":this.tenantId,
+        "instance_subdomain":this.subDomain,
+        "display_name":this.displayName
+    }
+      this.workbechService.immyBotConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              this.openImmybot = false;
+              const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              Swal.fire({
+                position: "center",
+                // icon: "question",
+                iconHtml: '<img src="./assets/images/copilot.gif">',
+                title: "Create smart dashboard from your data with just one click?",
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Skip',
+                customClass: {
+                  icon: 'no-icon-bg',
+                }
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
+                } else {
+                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
+              });
+              }
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+    
     connectWiseSignIn(){
       const obj={
         "company_id":this.companyId,
@@ -1779,7 +1904,13 @@ connectGoogleSheets(){
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
-    }else if(this.databaseType == "shopify"){
+    }  else if (this.databaseType == "immybot") {
+      this.clientIdImmybot = editData.client_id;
+      this.secretValue = editData.secret_value;
+      this.tenantId = editData.azure_domain;
+      this.subDomain = editData.instance_subdomain;
+      this.displayName = editData.display_name;
+    } else if(this.databaseType == "shopify"){
       this.displayName = editData.display_name;
       this.shopifyName = editData.shop_name;
       this.shopifyToken = editData.api_token;
