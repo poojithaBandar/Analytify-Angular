@@ -428,6 +428,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/dashboardlist/`+this.accessToken);
   }
+  getSheetName(sheetId: number){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/sheet_name/`+sheetId+'/'+this.accessToken);
+  }
   getuserDashboardsListput(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -983,6 +988,24 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/dashboard_token/`+this.accessToken,object);
+    }
+
+    fetchSheetToken(object: any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/sheet_token/`+this.accessToken,object);
+    }
+
+    getSheetSdkData(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dynamic_filter_embedded_sheet/`+this.accessToken,object);
+    }
+
+    fetchSheetId(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/app_sheet_token/`+this.accessToken,object);
     }
 
     getDashboardIdFromToken(object: any){

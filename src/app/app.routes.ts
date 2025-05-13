@@ -24,6 +24,11 @@ export const App_Route: Route[] = [
         loadComponent: () =>
           import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent)
       },
+      {
+        path: 'embed/sheet/:sheetToken/:token/:clientId',
+        loadComponent: () =>
+          import('../app/components/workbench/sheet-sdk/sheet-sdk.component').then((m) => m.SheetSdkComponent)
+      },
       // { path: '', component: ContentLayoutComponent, children: content },
       { path: '', component: AuthenticationLayoutComponent, children: authen },
       // { path: '', component: LandingpageLayoutComponent, children: landing },

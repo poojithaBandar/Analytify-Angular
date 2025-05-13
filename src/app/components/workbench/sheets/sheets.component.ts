@@ -45,7 +45,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom, Subscription, timer } from 'rxjs';
-import { evaluate, parse } from 'mathjs';
+import { evaluate, i, parse } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
@@ -61,6 +61,7 @@ import { TestPipe } from '../../../test.pipe';
 
 import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
+import { CustomSheetsComponent } from '../custom-sheets/custom-sheets.component';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -102,7 +103,7 @@ declare var $:any;
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -159,6 +160,10 @@ export class SheetsComponent{
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
   suppressTabChangeEvent : boolean = false;
+  @Input() sdkSheetId! : number;
+  @Input() sdkQuerySetID! : number;
+  @Input() sdkDatabaseID! : number;
+
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -435,6 +440,9 @@ export class SheetsComponent{
       to: '#5a66f1',
     }
   };
+  isEmbed: boolean = false;
+  is_sheet_Embed : boolean = false;
+  isEmbedSDK: boolean = false;;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
       this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
@@ -519,6 +527,13 @@ export class SheetsComponent{
 
   }
   ngOnInit(): void {
+    if(this.sdkSheetId){
+      this.retriveDataSheet_id = this.sdkSheetId;
+      this.qrySetId = this.sdkQuerySetID;
+      this.databaseId = this.sdkDatabaseID;
+      this.isEmbedSDK = true;
+      this.sheetRetrive(false);
+    } else {
     this.loaderService.hide();
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
@@ -551,6 +566,7 @@ export class SheetsComponent{
       this.getColorSchemesForDropdown();
     }
     console.log(this.defaultColorSchemes);
+  }
   }
   isColorSchemeDropdownOpen = false;
   toggleDropdownColorScheme() {
@@ -2606,6 +2622,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.retriveDataSheet_id = responce?.sheet_id;
           this.sheetName = responce?.sheet_name;
           this.sheetTitle = responce?.sheet_name;
+          this.is_sheet_Embed = responce?.is_embedded;
           this.sheetfilter_querysets_id = responce?.sheetfilter_querysets_id || responce?.sheet_filter_quereyset_ids;
           if(!responce.sheet_tag_name){
             this.sheetTagName = responce?.sheet_name;
@@ -3231,11 +3248,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   )
   }
   filterName:any
+  SDKFilterName : string ='';
   filterType:any;
   openSuperScaled(modal: any,data:any) {
     this.filterSearch = '';
     this.filterDataArray.clear();
     this.isExclude = false;
+    this.isEmbed = false;
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -3510,11 +3529,13 @@ trackByFn(index: number, item: any): number {
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
     "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
-    "select_values":Array.from(this.filterDataArray),
+    "select_values":this.isEmbed ? [null] :Array.from(this.filterDataArray),
+    "filter_name": this.isEmbed ? this.SDKFilterName : null,
     "col_name":this.filterName,
     "data_type":this.filterType,
     "parent_user":this.createdBy,
     "is_exclude":this.isExclude,
+    "is_embedded": this.isEmbed,
     "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
     "is_calculated": this.filterType == 'calculated' ? true : false,
     "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
@@ -3561,6 +3582,8 @@ trackByFn(index: number, item: any): number {
         this.filterType=responce.data_type;
         this.filterCalculatedFieldLogic = responce.field_logic;
         this.isExclude = responce.is_exclude;
+        this.isEmbed = responce.is_embedded;
+        this.SDKFilterName = responce.filter_name;
         this.formatExtractType = this.extractTypesForTab.includes(responce?.format_type) ? responce?.format_type : '';
         if(responce?.top_bottom){
           this.topType = responce?.top_bottom[3];
@@ -3714,10 +3737,12 @@ trackByFn(index: number, item: any): number {
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
       "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : (this.activeTabId === 6 ? [this.minRangeValue,this.maxRangeValue] : [])),
-      "select_values":Array.from(this.filterDataArray),
+      "select_values":this.isEmbed ? [null] : Array.from(this.filterDataArray),
+      "filter_name": this.isEmbed ? this.SDKFilterName : null,
       "col_name":this.filterName,
       "data_type":this.filterType,
       "is_exclude":this.isExclude,
+      "is_embedded":this.isEmbed,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
       "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,

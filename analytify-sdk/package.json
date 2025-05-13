@@ -1,0 +1,20 @@
+{
+  "name": "analytify-sdk",
+  "version": "1.0.0",
+  "description": "Analytify SDK for embedding dashboards and sheets via iframe",
+  "main": "dist/analytify-sdk.cjs.js",
+  "module": "dist/analytify-sdk.esm.js",
+  "browser": "dist/analytify-sdk.umd.js",
+  "files": ["dist"],
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "rollup": "^2.0.0",
+    "rollup-plugin-terser": "^7.0.0"
+  }
+}
