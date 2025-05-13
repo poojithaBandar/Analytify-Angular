@@ -445,9 +445,6 @@ export class SheetsComponent{
   isEmbedSDK: boolean = false;;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
-      this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
-      this.canEditDashbaordInSheet = this.templateService.editDashboard();
-      this.canAddDashbaordInSheet = this.templateService.addDashboard();
 
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
@@ -519,8 +516,15 @@ export class SheetsComponent{
       // this.sheetRetrive();
       }
    } 
+   if(this.router.url.includes('/embed/sheet/')){
+
+   } else {
+   this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
+   this.canEditDashbaordInSheet = this.templateService.editDashboard();
+   this.canAddDashbaordInSheet = this.templateService.addDashboard();
    this.canEditDb = this.templateService.addDatasource();
    this.canDrop = !this.canEditDb
+   }
   }
 
   ngAfterViewInit(): void {
