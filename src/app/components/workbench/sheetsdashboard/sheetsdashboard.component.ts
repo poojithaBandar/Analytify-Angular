@@ -1565,7 +1565,7 @@ export class SheetsdashboardComponent implements OnDestroy {
      })
    
   }
-  updateDashboard(isLiveReloadData : boolean){
+  updateDashboard(isLiveReloadData : boolean,isShowpopup:boolean){
     this.sheetsIdArray = [
       ...this.dashboard.map(item => item.sheetId).filter(id => id !== undefined),
       ...this.sheetTabs
@@ -1704,7 +1704,9 @@ export class SheetsdashboardComponent implements OnDestroy {
             }
           });
         }
+        if(isShowpopup){
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
+        }
         if(!isLiveReloadData){
           this.saveDashboardimageUpdate();
         }
@@ -4746,8 +4748,12 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     
   }
 })
+if(!switchDb){
 if(isLiveReloadData && isLastIndex){
-  this.updateDashboard(isLiveReloadData);
+  this.updateDashboard(isLiveReloadData,false);
+}
+}else if(switchDb && isLastIndex){
+  this.updateDashboard(false,false);
 }
 }
 
@@ -6081,6 +6087,7 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,isLastIndex:
     next:(data)=>{
       data.data['chart_id']=1,
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
+      data.data['databaseId']=item.databaseId ?? item.databaseId,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
       this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,isLastIndex,this.dashboard,switchDb);
@@ -7241,13 +7248,29 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.tablePage=1
       }else{
       this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard,value);
+      // if (this.displayTabs) {
+      //   this.sheetTabs.forEach((tabData: any) => {
+      //     this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard,value);
+      //   })
+      // }
       if (this.displayTabs) {
-        this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard,value);
-        })
+        this.sheetTabs.forEach(tabData => {
+          const isLastInThisTab = this.isLastSheetInData(item.sheet_id, tabData.dashboard, data);
+          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastInThisTab, tabData.dashboard, value);
+        });
       }
       }
     });
+    }
+    isLastSheetInData(sheetId: number, dashboard: any[], apiData: any[]): boolean {
+      if (!dashboard || dashboard.length === 0) return false;
+    
+      const dashboardSheetIds = dashboard.map(d => d.sheet_id);
+      const matchingData = apiData.filter(d => dashboardSheetIds.includes(d.sheet_id));
+      
+      if (matchingData.length === 0) return false;
+    
+      return matchingData[matchingData.length - 1].sheet_id === sheetId;
     }
 
     refreshDashboard(value:any){

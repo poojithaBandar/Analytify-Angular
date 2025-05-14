@@ -74,7 +74,7 @@
                                                     [isBtn]="false" [buttonName]="' View Dashboard'"
                                                     (btnClickEvent)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
                                                     [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
-                                                <app-insights-button [classesList]="'dropdown-item'" [tabIndex]="0"
+                                                <app-insights-button [classesList]="'dropdown-item'"
                                                     [previledgeId]="43" [isBtn]="false" [buttonName]="' Properties'"
                                                     (btnClickEvent)="viewPropertiesTab(dashboardList.dashboard_name,dashboardList.dashboard_id)"
                                                     [faIconList]="'fa fa-sliders me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>           
@@ -109,10 +109,10 @@
                                                     [isBtn]="false" [buttonName]="' View Dashboard'"
                                                     (btnClickEvent)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
                                                     [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
-                                                <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
-                                                    [previledgeId]="43" [isBtn]="false" [toolTip]="'Properties'"
+                                                <app-insights-button [classesList]="'dropdown-item'"
+                                                    [previledgeId]="43" [isBtn]="false"  [buttonName]="' Properties'"
                                                     (btnClickEvent)="viewPropertiesTab(dashboardList.dashboard_name,dashboardList.dashboard_id)"
-                                                    [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
+                                                    [faIconList]="'fa fa-sliders me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                                                 <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
                                                     [previledgeId]="35" [isBtn]="false" [buttonName]="' Delete'"
                                                     (btnClickEvent)="deleteDashboard(dashboardList.dashboard_id)"
