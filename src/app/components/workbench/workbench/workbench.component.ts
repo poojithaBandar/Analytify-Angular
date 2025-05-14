@@ -801,6 +801,7 @@ export class WorkbenchComponent implements OnInit{
     error: (error) => {
       console.log(error);
       if(error.error.error){
+        this.modalService.dismissAll('close');
       // this.toasterservice.error(error.error.error,'error',{ positionClass: 'toast-center-center'})
       Swal.fire({
         icon: 'error',
