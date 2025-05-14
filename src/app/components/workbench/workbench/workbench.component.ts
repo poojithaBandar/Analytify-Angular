@@ -626,7 +626,9 @@ export class WorkbenchComponent implements OnInit{
                 this.databaseName = responce.database.display_name
                 this.databaseId = responce.database?.hierarchy_id
                 this.toasterservice.success('Connected', 'success', { positionClass: 'toast-top-right' });
+                if(!this.datasourceSwitchUI){
                 this.openPostgreSqlForm = false;
+                }
                 const encodedId = btoa(this.databaseId.toString());
                 if (this.iscrossDbSelect) {
                   this.selectedHirchyIdCrsDb = this.databaseId
@@ -888,7 +890,9 @@ export class WorkbenchComponent implements OnInit{
                 this.databaseId = responce.database?.hierarchy_id
                 this.toasterservice.success('Connected', 'success', { positionClass: 'toast-top-right' });
                 this.modalService.dismissAll();
+                if(!this.datasourceSwitchUI){
                 this.openOracleForm = false;
+                }
                 const encodedId = btoa(this.databaseId.toString());
                 if (this.iscrossDbSelect) {
                   this.selectedHirchyIdCrsDb = this.databaseId
@@ -1078,7 +1082,9 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.databaseId=data?.hierarchy_id;
               this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
               this.openShopifyForm = false;
+              }
               const encodedId = btoa(this.databaseId.toString());
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
@@ -1110,7 +1116,9 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
               this.openNinjaRMMForm = false;
+              }
               const encodedId = btoa(this.databaseId.toString());
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
@@ -1145,7 +1153,9 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
               this.openImmybot = false;
+              }
               const encodedId = btoa(this.databaseId.toString());
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
@@ -1180,7 +1190,9 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
               this.openConnectWiseForm = false;
+              }
               const encodedId = btoa(this.databaseId.toString());
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
@@ -1231,7 +1243,9 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
               this.openHaloPSAForm = false;
+              }
               const encodedId = btoa(this.databaseId.toString());
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
@@ -1287,7 +1301,9 @@ export class WorkbenchComponent implements OnInit{
                  this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                  this.databaseId=responce.database?.hierarchy_id
                  this.modalService.dismissAll();
+                 if(!this.datasourceSwitchUI){
                  this.openMySqlForm = false;
+                 }
                  const encodedId = btoa(this.databaseId.toString());
                  if(this.iscrossDbSelect){
                    this.selectedHirchyIdCrsDb = this.databaseId
@@ -1333,7 +1349,9 @@ export class WorkbenchComponent implements OnInit{
                   this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                   this.databaseId=responce.database?.hierarchy_id
                   this.modalService.dismissAll();
+                  if(!this.datasourceSwitchUI){
                   this.openMicrosoftSqlServerForm = false;
+                  }
                   const encodedId = btoa(this.databaseId.toString());
                   if(this.iscrossDbSelect){
                     this.selectedHirchyIdCrsDb = this.databaseId
@@ -1378,7 +1396,9 @@ export class WorkbenchComponent implements OnInit{
                   this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                   this.databaseId=responce.database?.hierarchy_id
                   this.modalService.dismissAll();
+                  if(!this.datasourceSwitchUI){
                   this.openSnowflakeServerForm = false;
+                  }
                   const encodedId = btoa(this.databaseId.toString());
                   if(this.iscrossDbSelect){
                     this.selectedHirchyIdCrsDb = this.databaseId
@@ -1508,7 +1528,9 @@ export class WorkbenchComponent implements OnInit{
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.hierarchy_id
                 this.modalService.dismissAll();
+                if(!this.datasourceSwitchUI){
                 this.ibmDb2Form = false;
+                }
                 const encodedId = btoa(this.databaseId.toString());
                 if(this.iscrossDbSelect){
                   this.selectedHirchyIdCrsDb = this.databaseId
