@@ -752,27 +752,8 @@ export class WorkbenchComponent implements OnInit{
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
-              }else{
-              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-              Swal.fire({
-                position: "center",
-                // icon: "question",
-                iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
-                showConfirmButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Skip',
-                customClass: {
-                  icon: 'no-icon-bg',
-                }
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
-                } else {
-                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-                }
-              });
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             }
           },
