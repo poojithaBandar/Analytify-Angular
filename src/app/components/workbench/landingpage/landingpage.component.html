@@ -55,7 +55,7 @@
                         <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
                             <div *ngIf="showAllDasboards && i < 4" class="card img-shadow mb-0">
                                 <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
-                                    src="{{dashboardList.dashboard_image}}" class="card-img-top-dashboard img-cursor" alt="img">
+                                    [src]="dashboardList.dashboard_image ? dashboardList.dashboard_image : '/assets/images/Db_server_images/smartdashboard.jpg'" class="card-img-top-dashboard img-cursor" alt="img">
                                 <div class="card-body p-2 d-flex align-items-center justify-content-between">
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{dashboardList.dashboard_name}}"
