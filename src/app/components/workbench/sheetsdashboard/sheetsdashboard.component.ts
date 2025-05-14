@@ -4752,12 +4752,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     
   }
 })
-if(!switchDb){
-if(isLiveReloadData && isLastIndex){
-  this.updateDashboard(isLiveReloadData,false);
-}
-}else if(switchDb && isLastIndex){
-  this.updateDashboard(false,false);
+if (switchDb && isLastIndex) {
+  this.updateDashboard(false, false);
+} else if (!switchDb && isLiveReloadData && isLastIndex) {
+  this.updateDashboard(isLiveReloadData, false);
 }
 }
 

@@ -2059,6 +2059,7 @@ connectGoogleSheets(){
   gotoNewConnections(){
   this.openPostgreSqlForm=false;
   this.openNinjaRMMForm = false;
+  this.openImmybot = false;
   this.viewNewDbs=true;
   this.openMySqlForm=false;
   this.openOracleForm = false;

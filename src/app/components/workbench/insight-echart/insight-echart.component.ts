@@ -1915,7 +1915,9 @@ chartInitialize(){
           this.chartInstance?.setOption(this.SDKChartOptions,true);
         });
       } else {
-      this.chartInstance?.setOption(this.SDKChartOptions, true); // Full reset
+        setTimeout(() => {
+                this.chartInstance?.setOption(this.SDKChartOptions, true); // Full reset
+        }, 100);
       }
      } else if(changes['chartType']){
       this.chartInitialize();
