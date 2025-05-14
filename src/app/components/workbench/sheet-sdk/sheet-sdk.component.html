@@ -1,0 +1,56 @@
+@if(chartType){
+<div class="sheet-sdk-container">
+  <ng-container>
+    @if(chartType =='kpi' || chartType =='pivot' || chartType =='table'){
+    <app-sheets [sdkSheetId]="sheetId" [sdkQuerySetID]="sdkQuerySetID" [sdkDatabaseID]="sdkDatabaseID"></app-sheets>
+    <!-- Table rendering for non-chart sheets -->
+    <!-- <app-custom-sheets
+          *ngIf="!isApexChart"
+          [table]="true"
+          [chartId]="chartType"
+          [tableColumnsDisplay]="tableColumnsDisplay"
+          [tableDataDisplay]="tableDataDisplay"
+          [itemsPerPage]="itemsPerPage"
+          [page]="page"
+          [totalItems]="totalItems"
+          [bandingSwitch]="bandingSwitch"
+          [color1]="color1"
+          [color2]="color2"
+          [headerFontFamily]="headerFontFamily"
+          [headerFontStyle]="headerFontStyle"
+          [headerFontDecoration]="headerFontDecoration"
+          [headerFontColor]="headerFontColor"
+          [headerFontAlignment]="headerFontAlignment"
+          [headerFontWeight]="headerFontWeight"
+          [headerFontSize]="headerFontSize"
+          [tableDataFontFamily]="tableDataFontFamily"
+          [tableDataFontWeight]="tableDataFontWeight"
+          [tableDataFontStyle]="tableDataFontStyle"
+          [tableDataFontDecoration]="tableDataFontDecoration"
+          [tableDataFontColor]="tableDataFontColor"
+          [tableDataFontAlignment]="tableDataFontAlignment"
+          [tableDataFontSize]="tableDataFontSize"
+          [decimalPlaces]="decimalPlaces"
+          [prefix]="prefix"
+          [suffix]="suffix"
+          [displayUnits]="displayUnits"
+          (pageChange)="pageChangeTable($event)">
+        </app-custom-sheets> -->
+
+    } @else {
+
+    @if(isApexChart){
+
+    <app-insight-apex [SDKChartOptions]="chartOptions" [chartType]="chartType">
+    </app-insight-apex>
+
+    } @else {
+
+    <app-insight-echart [chartType]="chartType" [SDKChartOptions]="chartOptions">
+    </app-insight-echart>
+
+    }
+    }
+  </ng-container>
+</div>
+}

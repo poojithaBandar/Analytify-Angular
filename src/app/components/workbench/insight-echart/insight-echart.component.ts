@@ -86,6 +86,7 @@ export class InsightEchartComponent {
   @Input() isDistributed : any;
   @Input() mapChartOptions:any;
   @Input() actionId:any;
+  @Input() SDKChartOptions: any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() drillThrough = new EventEmitter<object>();
@@ -136,7 +137,7 @@ export class InsightEchartComponent {
     if(this.chartType === 'map'){
       this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
         echarts.registerMap('world', geoJson);
-        this.chartInstance?.setOption(this.chartOptions,true);
+        this.chartInstance?.setOption(this.SDKChartOptions ? this.SDKChartOptions :this.chartOptions,true);
       });
     }
     else{
@@ -1906,12 +1907,23 @@ chartInitialize(){
     }
   }
   ngOnChanges(changes: SimpleChanges) {
-    if (!this.chartInstance) {
+    
+     if(changes['SDKChartOptions']){
+      if(this.chartType === 'map'){
+        this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+          echarts.registerMap('world', geoJson);
+          this.chartInstance?.setOption(this.SDKChartOptions,true);
+        });
+      } else {
+        setTimeout(() => {
+                this.chartInstance?.setOption(this.SDKChartOptions, true); // Full reset
+        }, 100);
+      }
+     } else if(changes['chartType']){
+      this.chartInitialize();
+     } else if (!this.chartInstance) {
       this.chartInitialize();
     }
-     if(changes['chartType']){
-      this.chartInitialize();
-     }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       // if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
         // this.updateCategories();

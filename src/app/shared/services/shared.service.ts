@@ -7,9 +7,11 @@ import { BehaviorSubject, Subject } from 'rxjs';
 export class SharedService {
   [x: string]: any;
     private downloadRequestSource = new Subject<void>();
+    private downloadRequestSourcePdf = new Subject<void>();
     private refreshRequestSource = new Subject<void>();
 
     downloadRequested$ = this.downloadRequestSource.asObservable();
+    downloadRequestedPdf$ = this.downloadRequestSourcePdf.asObservable();
     refreshRequested$ = this.refreshRequestSource.asObservable();
 
     private localStorageValue = new BehaviorSubject<string | null>(localStorage.getItem('myValue'));
@@ -29,7 +31,9 @@ export class SharedService {
   download() {
        this.downloadRequestSource.next(); 
   }
-
+  downloadPdf(){
+    this.downloadRequestSourcePdf.next();
+  }
   refresh() {
     this.refreshRequestSource.next(); // Notify subscribers that a refresh has been requested
 

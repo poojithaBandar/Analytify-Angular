@@ -62,6 +62,23 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/connectwise/`+this.accessToken,obj);
   }
+  ninjaRMMConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/ninja_authentication/`+this.accessToken,obj);
+  }
+  
+  immyBotConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/immybot_authentication/`+this.accessToken,obj);
+  }
+
+  immyBotConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/immybot_authentication/`+this.accessToken,obj);
+  }
   haloPSAConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -77,16 +94,30 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/connectwise/`+this.accessToken,obj);
   }
-
+  googleAnalyticsConnectionApi(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/GA4_connection/`+this.accessToken,obj);
+  }
   haloPSAConnectionUpdate(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/halops/`+this.accessToken,obj);
   }
+  ninjaRMMConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/ninja_authentication/`+this.accessToken,obj);
+  }
   shopifyConnectionUpdate(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/shopify_authentication/`+this.accessToken,obj);
+  }
+  googleAnalyticsUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/GA4_connection/`+this.accessToken,obj);
   }
   DbConnectionFiles(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -408,6 +439,11 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/dashboardlist/`+this.accessToken);
+  }
+  getSheetName(sheetId: number){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/sheet_name/`+sheetId+'/'+this.accessToken);
   }
   getuserDashboardsListput(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -966,6 +1002,24 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/dashboard_token/`+this.accessToken,object);
     }
 
+    fetchSheetToken(object: any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/sheet_token/`+this.accessToken,object);
+    }
+
+    getSheetSdkData(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dynamic_filter_embedded_sheet/`+this.accessToken,object);
+    }
+
+    fetchSheetId(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/app_sheet_token/`+this.accessToken,object);
+    }
+
     getDashboardIdFromToken(object: any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -977,5 +1031,14 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/dynamic_filter_embedded_dashboard/`+this.accessToken,obj);
     }
-
+    getTargetdbsForSwitch(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_connection_list/`+this.accessToken,obj);
+    }
+    datbaseSwitch(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_switch/`+this.accessToken,obj);
+    }
 }

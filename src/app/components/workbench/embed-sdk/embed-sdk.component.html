@@ -32,6 +32,7 @@
                 </div>
             }
 
+            @if(isDashboardSDK){
                 <!-- Select Dashboard -->
                 <label for="dashboardName">Select Dashboard
                     <i ngbTooltip="Choose dashboard..." class="icon icon-info ms-1 cursor-pointer"></i>
@@ -45,6 +46,15 @@
                         </option>
                     </select>
                 </div>
+            } @else if(isSheetSDK){
+                <label for="dashboardName">Selected Sheet Name
+                    <i class="icon icon-info ms-1 cursor-pointer"></i>
+                </label>
+                <div style="width: 50%;">
+                    <input type="text" id="sheetName" [readonly]="true" name="sheetName" [(ngModel)]="sheetName" required
+                        style="width: 100%; padding: 10px; padding-right: 40px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px;" />
+                </div>
+            }
             </div>
 
             <button type="submit" class="btn btn-primary" [disabled]="!sdkForm.valid">Generate SDK</button>

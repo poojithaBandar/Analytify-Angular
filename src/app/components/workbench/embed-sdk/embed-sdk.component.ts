@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { WorkbenchService } from '../workbench.service';
 
@@ -24,16 +25,31 @@ export class EmbedSdkComponent {
   dashboardToken! : string;
   scriptContent!: string;
   showNotifier: boolean = false;
+  isSheetSDK: boolean = false;
+  isDashboardSDK: boolean = false;
+  sheetId!: number;
+  sheetName: string = "";
+  sheetToken!: string;
 
-  constructor(private workbechService: WorkbenchService){
-
+  constructor(private workbechService: WorkbenchService,private router:Router,private route:ActivatedRoute){
+    const currentUrl = this.router.url; 
+    if (currentUrl.includes('configure-page/sheet/sdk')) {
+      this.isSheetSDK = true;
+      this.isDashboardSDK = false;
+      if (route.snapshot.paramMap.has('sheetId')) {
+        this.sheetId = +atob(route.snapshot.params['sheetId']);
+      }
+    } else {
+      this.isDashboardSDK = true;
+      this.isSheetSDK = false;
+    }
   }
 
   getHostAndPort(): void {
     const { hostname, port } = window.location;
     this.host = hostname;
     this.port = port;
-    this.apibaseurl = 'https://'+this.host+':'+this.port
+    this.apibaseurl = this.port ? 'https://'+this.host+':'+this.port + '/' : 'https://'+this.host + '/'
   }
 
   getAppDetails(){
@@ -59,7 +75,23 @@ export class EmbedSdkComponent {
 
   ngOnInit(){
     this.getAppDetails();
-    this.getDashboardsList();
+    if(this.isDashboardSDK){
+      this.getDashboardsList();
+    } else if(this.isSheetSDK){
+      this.fetchSheetName();
+    }
+  }
+
+  fetchSheetName(){
+    this.workbechService.getSheetName(this.sheetId).subscribe({
+      next: (responce: any) => {
+        console.log(responce);
+        this.sheetName = responce.sheet_name;
+      },
+      error: (error:any) => {
+        console.log(error);
+      }
+    })
   }
 
   dashboardList : any[] = [];
@@ -75,9 +107,29 @@ export class EmbedSdkComponent {
     })
   }
 
-  setScriptData(){
+  setSheetScriptData(){
     this.scriptContent = `
     import AnalytifySDK from 'https://cdn.jsdelivr.net/gh/Rajashekarreddy24/Analytify-Angular@v2.1.1/public/analytify-sdk.js';
+
+    const analytify = AnalytifySDK.init({
+      appName: '${this.userName}',
+      clientId: '${this.clientId}',
+      clientSecret: '${this.clientSecret}',
+      apiBaseUrl: '${this.apibaseurl}'
+    });
+
+    analytify.embedSheet({
+      container: '#sheet-container',
+      sheetToken: '${this.sheetToken}',
+      width: '100%',
+      height: '500px',
+    });
+  `;
+  }
+
+  setScriptData(){
+    this.scriptContent = `
+    <script src="https://dh21hlbo933ey.cloudfront.net/analytify-dashboard/v1.0.0/analytify-sdk.js"></script>
 
     const analytify = AnalytifySDK.init({
       appName: '${this.userName}',
@@ -100,9 +152,11 @@ export class EmbedSdkComponent {
       app_name: this.userName,
       redirect_uri : this.apibaseurl,
     }
-    if(this.disableSDKName){ 
+    if(this.disableSDKName && this.isDashboardSDK){ 
        this.submitDashboardId();
-    } else {
+    } else if(this.disableSDKName && this.isSheetSDK){ 
+      this.submitSheetId();
+   } else {
      this.workbechService.saveSDKData(payload).subscribe({
       next: (data: any) => {
         this.clientId = data.client_id;
@@ -116,6 +170,23 @@ export class EmbedSdkComponent {
       }
     })
   }
+  }
+  submitSheetId(){
+    let dashboardPayload = {
+      client_id : this.clientId,
+      sheet_id: this.sheetId
+    }
+    this.workbechService.fetchSheetToken(dashboardPayload).subscribe({
+      next: (data: any) => {
+        this.sheetToken = data.sheet_token;
+        this.disableSDKName = true;
+        this.displayScript = true;
+        this.setSheetScriptData();
+      },
+      error: (error:any) => {
+        console.log(error);
+      }
+    })
   }
 
   submitDashboardId(){
