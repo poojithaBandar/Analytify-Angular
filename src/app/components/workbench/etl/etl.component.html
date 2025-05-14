@@ -95,7 +95,8 @@
                             </div>
                             <div class="d-flex justify-content-end mb-2">
                                 <input type="text" placeholder="ETL Name" class="form-control me-1" [(ngModel)]="etlName">
-                                <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveEtlDataFlow()">Save</button>
+                                <button *ngIf="!dataFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">Save</button>
+                                <button *ngIf="dataFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">update</button>
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" (click)="getDataFlowLogs()">Export</button> -->
                                 <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRunEnable" (click)="runDataFlow()">Run</button>
                                 <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRunEnable" (click)="getDataFlowStatus(runId)">Refresh</button>
@@ -205,7 +206,12 @@
                                                                                                     </ng-select>
                                                                                                 </td>
                                                                                                 <td> 
-                                                                                                    <input type="text" class="form-control form-control" placeholder="join condition" [(ngModel)]="join.joinCondition" (blur)="updateNode('properties')"> 
+                                                                                                    <div class="input-group input-group">
+                                                                                                        <input type="text" class="form-control" placeholder="join condition" [(ngModel)]="join.joinCondition" (blur)="updateNode('properties')"/>
+                                                                                                        <span class="input-group-text bg-primary" ngbTooltip="" (click)="openExpressionEdit(expressionEdit, join, i)">
+                                                                                                            <i class="fa-solid fa-up-right-from-square"></i>
+                                                                                                        </span>
+                                                                                                    </div>
                                                                                                 </td>
                                                                                                 </tr>
                                                                                                 }
@@ -431,7 +437,7 @@
                                                                         </div>
                                                                     </ng-template>
                                                                 </li>
-                                                                <li *ngIf="selectedNode.data.type !== 'Filter'" [ngbNavItem]="5" className="nav-link text-start" id="attributes-tab"><a ngbNavLink>Attributes</a>
+                                                                <li *ngIf="!['Filter', 'target_data_object'].includes(selectedNode.data.type)" [ngbNavItem]="5" className="nav-link text-start" id="attributes-tab"><a ngbNavLink>Attributes</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
@@ -750,7 +756,11 @@
     <div class="modal-body p-3">
 
         <div class="mb-2 d-flex justify-content-between align-items-center">
+            @if(isJoinerCondition){
+            <label class="form-label mb-0"><b>*{{selectedField}} (boolean)</b></label>
+            } @else{
             <label class="form-label mb-0"><b>*{{selectedField.attributeName}} ({{selectedField.dataType}})</b></label>
+            }
         </div>
 
         <div class="mb-3">
@@ -840,8 +850,8 @@
             <!-- Attributes -->
             <div class="form-check mb-1" *ngFor="let attr of group.attributes">
                 <input class="form-check-input border border-dark" type="checkbox" [(ngModel)]="attr.isChecked"
-                    [id]="attr.label" />
-                <label class="form-check-label" [for]="attr.label">
+                    [id]="group.group + '.' +attr.label" />
+                <label class="form-check-label" [for]="group.group + '.' +attr.label">
                     {{ attr.label }}
                 </label>
             </div>

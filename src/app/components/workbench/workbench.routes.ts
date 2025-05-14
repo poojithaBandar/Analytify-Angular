@@ -385,10 +385,24 @@ export const admin: Routes = [
       },
 
       {
-        path: 'etl',
+        path: 'etlList/etl',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./etl/etl.component').then((m) => m.ETLComponent),
+      },
+
+      {
+        path: 'etlList/etl/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl/etl.component').then((m) => m.ETLComponent),
+      },
+
+      {
+        path: 'etlList',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl-list/etl-list.component').then((m) => m.EtlListComponent),
       },
     ]
   }

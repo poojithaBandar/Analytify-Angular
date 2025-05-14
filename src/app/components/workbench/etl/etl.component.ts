@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { expression } from 'mathjs';
 import { EtlGraphService } from '../etl-graph.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-etl',
@@ -35,6 +36,7 @@ export class ETLComponent {
   tableTypeTabId: number = 1;
   nodeTypeCounts: { [key: string]: number } = {};
   etlName: string = '';
+  dataFlowId!: string;
   nodeName: string = '';
   isRunEnable : boolean = false;
   objectType : string = 'select';
@@ -50,7 +52,15 @@ export class ETLComponent {
   allChecked: boolean = false;
   isSourceClicked : boolean = false;
 
-  constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, private loaderService: LoaderService, private etlGraphService: EtlGraphService) {
+  constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, 
+    private loaderService: LoaderService, private etlGraphService: EtlGraphService, private router: Router,private route: ActivatedRoute) {
+      
+      if (this.router.url.includes('/analytify/analytify/etlList/etl')) {
+        if (route.snapshot.params['id1']) {
+          const id = +atob(route.snapshot.params['id1']);
+          this.dataFlowId = id.toString();
+        }
+      }
   }
 
   ngOnInit() {
@@ -106,6 +116,7 @@ export class ETLComponent {
           const index = nodeNamesDropdown.indexOf(sourceNodeName);
           if (index !== -1) {
             nodeNamesDropdown.splice(index, 1);
+            targetNode.data.nodeData.properties.joinList.splice(index, 1);
             this.drawflow.updateNodeDataFromId(targetNode.id, targetNode.data);
           }
         }
@@ -390,7 +401,7 @@ export class ETLComponent {
     this.workbechService.getConnectionsForEtl().subscribe({
       next: (data) => {
         console.log(data);
-        this.connectionOptions = data.server_data;
+        this.connectionOptions = data.data;
       },
       error: (error: any) => {
         console.log(error);
@@ -416,7 +427,7 @@ export class ETLComponent {
       });
     }
   }
-  saveEtlDataFlow() {
+  saveOrUpdateEtlDataFlow() {
     const exportedData = this.drawflow.export();
     const nodes = exportedData.drawflow.Home.data;
     console.log(exportedData);
@@ -491,21 +502,44 @@ export class ETLComponent {
 
     console.log(etlFlow);
 
-    const object = {
-      ETL_flow : etlFlow
-    }
+    const jsonString = JSON.stringify(exportedData);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const file = new File([blob], 'etl-drawflow.json', { type: 'application/json' });
 
-    this.workbechService.saveEtl(object).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.isRunEnable = true;
-      },
-      error: (error: any) => {
-        this.isRunEnable = false;
-        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
-        console.log(error);
-      }
-    });
+    const formData = new FormData();
+    formData.append('transformation_flow', file);
+    formData.append('ETL_flow', JSON.stringify(etlFlow));
+
+    if(this.dataFlowId){
+      formData.append('id', this.dataFlowId);
+      this.workbechService.updateEtl(formData).subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.isRunEnable = true;
+          this.dataFlowId = data.dataflow_id;
+          this.toasterService.success(data.message, 'success', { positionClass: 'toast-top-right' });
+        },
+        error: (error: any) => {
+          this.isRunEnable = false;
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          console.log(error);
+        }
+      });
+    } else{
+      this.workbechService.saveEtl(formData).subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.isRunEnable = true;
+          this.dataFlowId = data.dataflow_id;
+          this.toasterService.success(data.message, 'success', { positionClass: 'toast-top-right' });
+        },
+        error: (error: any) => {
+          this.isRunEnable = false;
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          console.log(error);
+        }
+      });
+    }
   }
   runDataFlow() {
     this.workbechService.runEtl(this.etlName).subscribe({
@@ -605,10 +639,22 @@ export class ETLComponent {
     };
 
     if (nodes[nodeId].data.type === 'source_data_object') {
+      let sourceAttr: any[] = [];
+      nodes[nodeId].data.nodeData.sourceAttributes.forEach((atrr: any) => {
+        const array = [atrr.attributeName, atrr.dataType, atrr.selectedColumn.label, atrr.selectedColumn.dataType];
+        sourceAttr.push(array);
+      });
+      let attr: any[] = [];
+      nodes[nodeId].data.nodeData.attributes.forEach((atrr: any) => {
+        const array = [atrr.attributeName, atrr.dataType, atrr.expression];
+        attr.push(array);
+      });
       task.format = 'database',
-        task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
-        task.path = '',
-        task.source_table_name = nodes[nodeId].data.nodeData.dataObject.tables;
+      task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
+      task.path = '',
+      task.source_table_name = nodes[nodeId].data.nodeData.dataObject.tables;
+      task.attributes = attr;
+      task.source_attributes = sourceAttr;
     } else {
       if (nodes[nodeId].data.type === 'target_data_object') {
         task.format = 'database',
@@ -623,8 +669,14 @@ export class ETLComponent {
           const array = [atrr.aliasName, atrr.selectedColumn.group+'.'+atrr.selectedColumn.label];
           grp.push(array);
         });
+        let attr : any[] = [];
+        nodes[nodeId].data.nodeData.attributes.forEach((atrr:any)=>{
+          const array = [atrr.attributeName, atrr.dataType, atrr.expression];
+          attr.push(array);
+        });
         task.group_attributes = grp;
         task.having_clause = nodes[nodeId].data.nodeData.properties.havingClause;
+        task.attributes = attr;
       } else if(nodes[nodeId].data.type === 'Filter'){
         task.filter_conditions = nodes[nodeId].data.nodeData.properties.filterCondition;
       } else if(nodes[nodeId].data.type === 'Joiner'){
@@ -634,8 +686,14 @@ export class ETLComponent {
           const array = [join.joinType, join.secondaryObject, join.joinCondition];
           joins.push(array);
         });
+        let attr : any[] = [];
+        nodes[nodeId].data.nodeData.attributes.forEach((atrr:any)=>{
+          const array = [atrr.attributeName, atrr.dataType, atrr.expression];
+          attr.push(array);
+        });
         task.joining_list = joins;
         task.where_clause = nodes[nodeId].data.nodeData.properties.whereClause;
+        task.attributes = attr;
       } else if(nodes[nodeId].data.type === 'Expression'){
         let exps : any[] = [];
         nodes[nodeId].data.nodeData.attributes.forEach((atrr:any)=>{
@@ -1009,6 +1067,7 @@ export class ETLComponent {
   selectedGroup: any = '';
   selectedColumn: any = {};
   selectedIndex: number = -1;
+  isJoinerCondition: boolean = false;
 
   openExpressionEdit(modal:any, attribute:any, index:number){
     this.selectedIndex = index;
@@ -1040,9 +1099,17 @@ export class ETLComponent {
 
     const groupKeys = Object.keys(this.groupedColumns);
     this.selectedGroup = groupKeys.length > 0 ? groupKeys[0] : null;
-    this.selectedField = attribute;
-    this.selectedColumn = attribute;
-    this.expression = attribute.expression;
+    if(attribute.secondaryObject){
+      this.isJoinerCondition = true;
+      this.selectedField = attribute.secondaryObject;
+      this.selectedColumn = this.groupedColumns[this.selectedGroup][0];
+      this.expression = attribute.joinCondition;
+    } else{
+      this.isJoinerCondition = false;
+      this.selectedField = attribute;
+      this.selectedColumn = attribute;
+      this.expression = attribute.expression;
+    }
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -1051,13 +1118,18 @@ export class ETLComponent {
   }
 
   updateExpressionToNode(){
-    this.selectedNode.data.nodeData.attributes[this.selectedIndex].expression = this.expression;
+    if(this.isJoinerCondition){
+      this.selectedNode.data.nodeData.properties.joinList[this.selectedIndex].joinCondition = this.expression;
+    } else{
+      this.selectedNode.data.nodeData.attributes[this.selectedIndex].expression = this.expression;
+    }
 
     this.updateNode('');
     this.expression = '';
     this.selectedGroup = '';
     this.selectedColumn = {};
     this.selectedIndex = -1;
+    this.isJoinerCondition = false;
   }
   
 }

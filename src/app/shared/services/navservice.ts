@@ -403,7 +403,7 @@ export class NavService implements OnDestroy {
       active: false,
       badgeClass: 'badge badge-sm bg-secondary badge-hide',
       badgeValue: 'new',
-      path: 'analytify/etl',
+      path: 'analytify/etlList',
       type: 'link',
       nochild: true,
     },
