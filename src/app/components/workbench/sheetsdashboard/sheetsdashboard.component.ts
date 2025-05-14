@@ -278,7 +278,10 @@ export class SheetsdashboardComponent implements OnDestroy {
         const dbSwitched = navigation?.extras?.state?.['dbSwitched'];
       
         if (dbSwitched) {
-          this.refreshDashboard(true);  // call only on DB switch
+          this.getSavedDashboardData();
+           setTimeout(() => {
+            this.refreshDashboard(true);  // might run before API completes!
+          }, 1000);
         }
 
 
@@ -877,6 +880,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     this.workbechService.getSavedDashboardData(obj).subscribe({
       next:(data)=>{
         console.log('savedDashboard',data);
+        this.dashboardName = data.dashboard_name
         if(data.refresh_required){
           this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
             next:(data)=>{
@@ -4748,12 +4752,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     
   }
 })
-if(!switchDb){
-if(isLiveReloadData && isLastIndex){
-  this.updateDashboard(isLiveReloadData,false);
-}
-}else if(switchDb && isLastIndex){
-  this.updateDashboard(false,false);
+if (switchDb && isLastIndex) {
+  this.updateDashboard(false, false);
+} else if (!switchDb && isLiveReloadData && isLastIndex) {
+  this.updateDashboard(isLiveReloadData, false);
 }
 }
 

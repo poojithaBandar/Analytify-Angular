@@ -213,6 +213,12 @@ export class WorkbenchComponent implements OnInit{
     else if(this.databaseSwitchType === 'HALOPS'){
     this.connectHaloPSA();
     }
+    else if(this.databaseSwitchType === 'IMMYBOT'){
+    this.connectImmybot();
+    }
+    else if(this.databaseSwitchType === 'NINJA'){
+    this.connectNinjaRMM();
+    }
   }
   routeNewDatabase(){
     if (this.iscrossDbSelect) {
@@ -1110,6 +1116,8 @@ export class WorkbenchComponent implements OnInit{
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                  this.switchDatabase();
               }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
@@ -1143,6 +1151,8 @@ export class WorkbenchComponent implements OnInit{
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                  this.switchDatabase();
               } else {
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
@@ -2053,6 +2063,7 @@ connectGoogleSheets(){
   gotoNewConnections(){
   this.openPostgreSqlForm=false;
   this.openNinjaRMMForm = false;
+  this.openImmybot = false;
   this.viewNewDbs=true;
   this.openMySqlForm=false;
   this.openOracleForm = false;

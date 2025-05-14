@@ -117,7 +117,7 @@ export class SheetSdkComponent {
           case 24:
             this.chartType = 'pie';
             break;
-          case 11:
+          case 13:
             this.chartType = 'line';
             break;
           case 17:
@@ -158,6 +158,9 @@ export class SheetSdkComponent {
 
           case 29:
             this.chartType = 'map';
+            break;
+            case 11:
+            this.chartType = 'calendar';
             break;
 
 

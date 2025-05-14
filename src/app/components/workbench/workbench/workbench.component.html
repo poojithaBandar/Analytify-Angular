@@ -842,7 +842,7 @@
                                     </ng-select>
                                   </div>
                               <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                  <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                   <button type="button" class="btn btn-primary" (click)="ninjaRMMSignIn()" [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
@@ -1068,7 +1068,7 @@
                             (input)="subDomainImmyBotError()">
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
+                          <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
                           <button type="button" class="btn btn-primary" (click)="ImmybotSignIn()"
                             [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                         </div>
