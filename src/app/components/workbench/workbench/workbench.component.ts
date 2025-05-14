@@ -445,9 +445,10 @@ export class WorkbenchComponent implements OnInit{
       const obj={
         "client_id":this.clientIdImmybot,
         "secret_value":this.secretValue,
-        "tenant_id":this.tenantId,
+        "azure_domain":this.tenantId,
         "instance_subdomain":this.subDomain,
-        "display_name":this.displayName
+        "display_name":this.displayName,
+        "hierarchy_id": this.databaseId
     }
       this.workbechService.immyBotConnectionUpdate(obj).subscribe({next: (responce) => {
         console.log(responce)
@@ -736,7 +737,7 @@ export class WorkbenchComponent implements OnInit{
       const obj={
         "client_id":this.clientIdImmybot,
         "secret_value":this.secretValue,
-        "tenant_id":this.tenantId,
+        "azure_domain":this.tenantId,
         "instance_subdomain":this.subDomain,
         "display_name":this.displayName
     }
@@ -1459,10 +1460,10 @@ connectGoogleSheets(){
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
-    }  else if (this.databaseType == "Immybot") {
+    }  else if (this.databaseType == "immybot") {
       this.clientIdImmybot = editData.client_id;
       this.secretValue = editData.secret_value;
-      this.tenantId = editData.tenant_id;
+      this.tenantId = editData.azure_domain;
       this.subDomain = editData.instance_subdomain;
       this.displayName = editData.display_name;
     } else if(this.databaseType == "shopify"){
