@@ -1116,6 +1116,8 @@ export class WorkbenchComponent implements OnInit{
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                  this.switchDatabase();
               }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
@@ -1149,6 +1151,8 @@ export class WorkbenchComponent implements OnInit{
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                  this.switchDatabase();
               } else {
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
