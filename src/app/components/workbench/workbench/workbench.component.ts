@@ -213,6 +213,12 @@ export class WorkbenchComponent implements OnInit{
     else if(this.databaseSwitchType === 'HALOPS'){
     this.connectHaloPSA();
     }
+    else if(this.databaseSwitchType === 'IMMYBOT'){
+    this.connectImmybot();
+    }
+    else if(this.databaseSwitchType === 'NINJA'){
+    this.connectNinjaRMM();
+    }
   }
   routeNewDatabase(){
     if (this.iscrossDbSelect) {
