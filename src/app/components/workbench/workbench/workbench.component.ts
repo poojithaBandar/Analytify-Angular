@@ -794,11 +794,27 @@ export class WorkbenchComponent implements OnInit{
       }
       this.getDbConnectionList();
     },
+    // error: (error) => {
+    //   console.log(error);
+    //   this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+    // }
     error: (error) => {
       console.log(error);
-      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-    }
+      if(error.error.error){
+        this.modalService.dismissAll('close');
+      // this.toasterservice.error(error.error.error,'error',{ positionClass: 'toast-center-center'})
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.error,
+        width: '400px',
+      })
+      }else {
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+
+      }
   }
+}
 )
     }
     DatabaseUpdate(){
@@ -1127,27 +1143,8 @@ export class WorkbenchComponent implements OnInit{
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
-              }else{
-              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-              Swal.fire({
-                position: "center",
-                // icon: "question",
-                iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
-                showConfirmButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Skip',
-                customClass: {
-                  icon: 'no-icon-bg',
-                }
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
-                } else {
-                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-                }
-              });
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             }
           },
@@ -1556,10 +1553,25 @@ export class WorkbenchComponent implements OnInit{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
+            // error: (error) => {
+            //   console.log(error);
+            //   this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            // }
             error: (error) => {
               console.log(error);
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-            }
+              if(error.error.error){
+              // this.toasterservice.error(error.error.error,'error',{ positionClass: 'toast-center-center'})
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.error,
+                width: '400px',
+              })
+              }else {
+                      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        
+              }
+          }
           }
         )
       } else if(isSkip === false) {
