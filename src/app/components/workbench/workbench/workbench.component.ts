@@ -721,11 +721,26 @@ export class WorkbenchComponent implements OnInit{
       }
       this.getDbConnectionList();
     },
+    // error: (error) => {
+    //   console.log(error);
+    //   this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+    // }
     error: (error) => {
       console.log(error);
-      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-    }
+      if(error.error.error){
+      // this.toasterservice.error(error.error.error,'error',{ positionClass: 'toast-center-center'})
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.error,
+        width: '400px',
+      })
+      }else {
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+
+      }
   }
+}
 )
     }
     DatabaseUpdate(){
@@ -1336,10 +1351,25 @@ export class WorkbenchComponent implements OnInit{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
+            // error: (error) => {
+            //   console.log(error);
+            //   this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            // }
             error: (error) => {
               console.log(error);
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-            }
+              if(error.error.error){
+              // this.toasterservice.error(error.error.error,'error',{ positionClass: 'toast-center-center'})
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.error,
+                width: '400px',
+              })
+              }else {
+                      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        
+              }
+          }
           }
         )
       } else if(isSkip === false) {
