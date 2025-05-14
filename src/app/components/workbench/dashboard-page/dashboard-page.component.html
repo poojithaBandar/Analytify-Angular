@@ -52,7 +52,7 @@
                             <td>
                               <div class="d-flex">
                                 <div (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="imgdf">
-                                  <img src="{{dashboard.dashboard_image}}" alt="" class="w-7 h-7 border rounded-3  me-4 img-cursor">
+                                  <img  [src]="dashboard.dashboard_image ? dashboard.dashboard_image : '/assets/images/Db_server_images/smartdashboard.jpg'" alt="" class="w-7 h-7 border rounded-3  me-4 img-cursor">
                                 </div>
                                 <div class="content">
                                   <a class="cursor-pointer" [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null"
@@ -99,7 +99,7 @@
                   }" class="col-md-12 col-xl-3">
                   <div class="card  ">
                     <div class="user-image card-box-shadow ">                        
-                          <img src="{{dashboard.dashboard_image}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" alt="" class="card-img-top img-cursor dashboard-user-img-h">
+                          <img [src]="dashboard.dashboard_image ? dashboard.dashboard_image : '/assets/images/Db_server_images/smartdashboard.jpg'"  (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" alt="" class="card-img-top img-cursor dashboard-user-img-h">
                     </div>
                     <div class="card-body p-1 mt-1 text-center">
                         <a  class="card-title fw-bold d-block"  [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name.length > 13 ? (dashboard.dashboard_name | slice:0:15)+'...' : dashboard.dashboard_name }}</a>
