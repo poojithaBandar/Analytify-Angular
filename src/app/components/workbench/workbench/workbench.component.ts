@@ -2468,7 +2468,6 @@ connectGoogleSheets(){
       error:(error)=>{
         console.log(error);
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
-        this.openPostgreSqlForm = true;
       }
     })
   }
