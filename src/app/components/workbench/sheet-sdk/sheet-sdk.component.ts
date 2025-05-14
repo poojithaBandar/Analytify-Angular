@@ -162,6 +162,9 @@ export class SheetSdkComponent {
             case 11:
             this.chartType = 'calendar';
             break;
+             case 12:
+            this.chartType = 'radar';
+            break;
 
 
         }
