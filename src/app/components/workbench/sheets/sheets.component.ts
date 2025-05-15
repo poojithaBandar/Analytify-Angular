@@ -5436,7 +5436,7 @@ customizechangeChartPlugin() {
     validateCalculatedField(){
       switch(this.nestedCalculatedFieldData) {
         case 'abs':
-          if(!this.validateFormula(/^ABS\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
+          if(!this.validateFormula(/^ABS\((-?\d+(\.\d+)?|"[a-zA-Z0-9_() \-]+"\."[a-zA-Z0-9_() \-]+")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5447,7 +5447,7 @@ customizechangeChartPlugin() {
 
         break; 
         case 'ceiling':
-          if(!this.validateFormula(/^CEILING\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
+          if(!this.validateFormula(/^CEILING\((-?\d+(\.\d+)?|"[a-zA-Z0-9_() \-]+"\."[a-zA-Z0-9_() \-]+")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5458,7 +5458,7 @@ customizechangeChartPlugin() {
           }
           break; 
         case 'floor': 
-        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
+        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_() \-]+"\."[a-zA-Z0-9_() \-]+")\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
         }
@@ -5468,7 +5468,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_ \-]+\"\.)?\"[a-zA-Z0-9_ \-]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5479,7 +5479,7 @@ customizechangeChartPlugin() {
           }
           break; 
            case 'zn':
-            if(!this.validateFormula(/^ZN\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_]+\"\.)?\"[a-zA-Z0-9_]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
+            if(!this.validateFormula(/^ZN\((-?\d+(\.\d+)?|(?:\"[a-zA-Z0-9_ \-]+\"\.)?\"[a-zA-Z0-9_ \-]+\"|\b[a-zA-Z0-9_]+\.[a-zA-Z0-9_()]*\b)(?:,\s*\d+)?\)$/)){
               this.isValidCalculatedField = false;
               this.validationMessage = 'Invalid Syntax';
               return false;
@@ -5490,7 +5490,7 @@ customizechangeChartPlugin() {
             }
              break; 
         case 'left': 
-        if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_ ()\-]+"\."[a-zA-Z0-9_ ()\-\[\]]+")\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5501,7 +5501,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'right': 
-        if(!this.validateFormula(/^RIGHT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^RIGHT\(\s*("[a-zA-Z0-9_ ()\-]+"\."[a-zA-Z0-9_ ()\-\[\]]+")\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5512,7 +5512,7 @@ customizechangeChartPlugin() {
         }
         break;
         case 'contains':
-        if (!this.validateFormula(/^CONTAINS\(\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
+        if (!this.validateFormula(/^CONTAINS\(\s*("[a-zA-Z0-9_ ()\-]+"\."[a-zA-Z0-9_ ()\-\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5522,7 +5522,7 @@ customizechangeChartPlugin() {
         }
         break;
         case 'concat':
-        if (!this.validateFormula(/^CONCAT\(\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+"|'[^']*')(\s*,\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+"|'[^']*'))+\s*\)$/)) {
+        if (!this.validateFormula(/^CONCAT\(\s*(?:"[a-zA-Z0-9_ ()\-]+"\."[a-zA-Z0-9_ ()\-\[\]]+"|'[^']*')(\s*,\s*(?:"[a-zA-Z0-9_ ()\-]+"\."[a-zA-Z0-9_ ()\-\[\]]+"|'[^']*'))+\s*\)$/)) {
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5532,7 +5532,7 @@ customizechangeChartPlugin() {
         }
         break;
         case 'proper':
-          if(!this.validateFormula(/^PROPER\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^PROPER\("([a-zA-Z0-9_ ()\-]+)"\."([a-zA-Z0-9_ ()\-\[\]]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5543,7 +5543,7 @@ customizechangeChartPlugin() {
           }
         break;
         case 'startswith':
-          if (!this.validateFormula(/^STARTSWITH\(\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
+          if (!this.validateFormula(/^STARTSWITH\(\s*("[a-zA-Z0-9_ ()\-]+"\."[a-zA-Z0-9_ ()\-\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5553,7 +5553,7 @@ customizechangeChartPlugin() {
           }
           break;
           case 'endswith':
-          if (!this.validateFormula(/^ENDSWITH\(\s*("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
+          if (!this.validateFormula(/^ENDSWITH\(\s*("[a-zA-Z0-9_ ()\-]+"\."[a-zA-Z0-9_ ()\-\[\]]+")\s*,\s*'[^']*'\s*\)$/)) {
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5561,41 +5561,20 @@ customizechangeChartPlugin() {
             this.isValidCalculatedField = true;
             return true;
           }
-          // case 'regexp_extract':
-          //   if (
-          //     !this.validateFormula(
-          //       /^REGEXP_EXTRACT\(\s*(("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")|"[a-zA-Z0-9_()' \-]+")\s*,\s*"[a-zA-Z0-9_()' \-]+")\s*\)$/
-          //     )) {
-          //     this.isValidCalculatedField = false;
-          //     this.validationMessage = 'Invalid Syntax';
-          //     return false;
-          //   } else {
-          //     this.isValidCalculatedField = true;
-          //     return true;
-          //   }
-          // break;
-          // case 'regexp_matches':
-          // if (!this.validateFormula(/^REGEXP_MATCHES\(\s*(("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")|"[a-zA-Z0-9_()' \-]+")\s*,\s*"[a-zA-Z0-9_()' \-]+")\s*\)$/)) {
-          //   this.isValidCalculatedField = false;
-          //   this.validationMessage = 'Invalid Syntax';
-          //   return false;
-          // } else {
-          //   this.isValidCalculatedField = true;
-          //   return true;
-          // }
-          // break;
-          // case 'regexp_replace':
-          // if (!this.validateFormula(/^REGEXP_REPLACE\(\s*(("[a-zA-Z0-9_()]+"\."[a-zA-Z0-9_()\[\]]+")|"[a-zA-Z0-9_()' \-]+")\s*,\s*"[a-zA-Z0-9_()' \-]+")\s*\)$/)) {
-          //   this.isValidCalculatedField = false;
-          //   this.validationMessage = 'Invalid Syntax';
-          //   return false;
-          // } else {
-          //   this.isValidCalculatedField = true;
-          //   return true;
-          // }
-          // break;
+          case 'regexp_extract':
+             this.isValidCalculatedField = true;
+            return true;
+          break;
+          case 'regexp_matches':
+           this.isValidCalculatedField = true;
+            return true;
+          break;
+          case 'regexp_replace':
+           this.isValidCalculatedField = true;
+            return true;
+          break;
         case 'mid': 
-        if(!this.validateFormula(/^SUBSTRING\(\s*"([^"]+)"\.\"([^"]+)\"\s+FROM\s+(\d+)\s+FOR\s+(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^SUBSTRING\(\s*"([a-zA-Z0-9_ ()\-]+)"\.\"([a-zA-Z0-9_ ()\-\[\]]+)\"\s+FROM\s+(\d+)\s+FOR\s+(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5606,7 +5585,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'length':
-          if(!this.validateFormula(/^LENGTH\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^LENGTH\("([a-zA-Z0-9_ ()\-]+)"\."([a-zA-Z0-9_ ()\-\[\]]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5617,7 +5596,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'trim':
-          if(!this.validateFormula(/^TRIM\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^TRIM\("([a-zA-Z0-9_ ()\-]+)"\."([a-zA-Z0-9_ ()\-\[\]]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5628,7 +5607,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'upper':
-          if(!this.validateFormula(/^UPPER\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^UPPER\("([a-zA-Z0-9_ ()\-]+)"\."([a-zA-Z0-9_ ()\-\[\]]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5639,7 +5618,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'lower':
-          if(!this.validateFormula(/^LOWER\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^LOWER\("([a-zA-Z0-9_ ()\-]+)"\."([a-zA-Z0-9_ ()\-\[\]]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5650,7 +5629,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'replace': 
-        if(!this.validateFormula(/^REPLACE\(\s*"([^"]+)"\."([^"]+)"\s*,\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)$/)){
+        if(!this.validateFormula(/^REPLACE\(\s*"([a-zA-Z0-9_ ()\-\[\]]+)"\."([a-zA-Z0-9_ ()\-\[\]]+)"\s*,\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5661,7 +5640,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'split': 
-        if(!this.validateFormula(/^split_part\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*'([^']*)'\s*,\s*(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^split_part\(\s*"([a-zA-Z0-9_ ()\-\[\]]+)"\."([a-zA-Z0-9_ ()\-\[\]]+)"\s*,\s*'([^']*)'\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5672,7 +5651,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'find':
-          if(!this.validateFormula(/^POSITION\(\s*(['"])([^\1]+)\1\s+IN\s+"([^"]+)"\.\"([^"]+)\"\s*\)$/)){
+          if(!this.validateFormula(/^POSITION\(\s*(['"])(.+?)\1\s+IN\s+"([a-zA-Z0-9_\-\s\(\)]+)"\."([a-zA-Z0-9_\-\s\(\)]+)"\s*\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5698,7 +5677,7 @@ customizechangeChartPlugin() {
               return true;
           break; 
         case 'datepart': 
-          if(!this.validateFormula(/^DATE_PART\(\s*(.+?)\s*,\s*(.+?)\s*\)$/)){
+          if(!this.validateFormula(/^DATE_PART\(\s*'([a-zA-Z0-9_\-\s\(\)]+)'\s*,\s*"([a-zA-Z0-9_\-\s\(\)]+)"\."([a-zA-Z0-9_\-\s\(\)]+)"\s*\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5709,7 +5688,7 @@ customizechangeChartPlugin() {
           }
           break; 
           case 'datename':
-          if (!this.validateFormula(/^DATENAME\(\s*'([a-zA-Z_]+)'\s*,\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)) {
+          if (!this.validateFormula(/^DATENAME\(\s*'([a-zA-Z_]+)'\s*,\s*"[\w\s()\-]+"."[\w\s()\-]+"\s*\)$/)) {
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5719,7 +5698,7 @@ customizechangeChartPlugin() {
           }
           break;
           case 'datetrunc':
-            if (!this.validateFormula(/^DATETRUNC\(\s*'([a-zA-Z_]+)'\s*,\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)) {
+            if (!this.validateFormula(/^DATETRUNC\(\s*'([a-zA-Z_]+)'\s*,\s*"[\w\s()\-]+"."[\w\s()\-]+"\s*\)$/)) {
               this.isValidCalculatedField = false;
               this.validationMessage = 'Invalid Syntax';
               return false;
@@ -5729,7 +5708,7 @@ customizechangeChartPlugin() {
             }
             break;
             case 'day':
-              if(!this.validateFormula(/^DAY\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^DAY\(\s*"[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5740,7 +5719,7 @@ customizechangeChartPlugin() {
               }
             break; 
             case 'datemax':
-              if(!this.validateFormula(/^MAX\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^MAX\(\s*"[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5751,7 +5730,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'datemin':
-              if(!this.validateFormula(/^MIN\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^MIN\(\s*"[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5762,7 +5741,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'month':
-              if(!this.validateFormula(/^MONTH\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^MONTH\(\s*"[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5773,7 +5752,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'quarter':
-              if(!this.validateFormula(/^QUARTER\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^QUARTER\(\s*"[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5784,7 +5763,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'week':
-              if(!this.validateFormula(/^WEEK\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^WEEK\(\s*"[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5795,7 +5774,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'year':
-              if(!this.validateFormula(/^YEAR\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^YEAR\(\s*"[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5817,7 +5796,7 @@ customizechangeChartPlugin() {
             return true;
           break; 
         case 'parse':
-            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*(['"])dd-mm-yyyy\2\s*\)$/)){
+            if(!this.validateFormula(/^TO_CHAR\(\s*"[\w\s\-]+"\."[\w\s\-]+"\s*,\s*(['"])dd-mm-yyyy\1\s*\)$/)){
               this.isValidCalculatedField = false;
               this.validationMessage = 'Invalid Syntax';
               return false;
@@ -5828,7 +5807,7 @@ customizechangeChartPlugin() {
             }
           break; 
         case 'case': 
-          if(!this.validateFormula(/^CASE\s+(WHEN\s+.+?\s+THEN\s+.+?(\s+WHEN\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END)$/i)){
+          if(!this.validateFormula(/^CASE\s+(WHEN\s+("[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"|\S+)\s*(IS|=|<>|!=|<|>|<=|>=|LIKE|IN)\s*('[^']*'|\d+|NULL|\S+)\s+THEN\s+("[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"|\S+|'[^']*'|\d+|NULL)(\s+WHEN\s+("[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"|\S+)\s*(IS|=|<>|!=|<|>|<=|>=|LIKE|IN)\s*('[^']*'|\d+|NULL|\S+)\s+THEN\s+("[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"|\S+|'[^']*'|\d+|NULL))*\s*(ELSE\s+("[\w\s\-\(\)]+"\."[\w\s\-\(\)]+"|\S+|'[^']*'|\d+|NULL))?\s+END)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5839,7 +5818,7 @@ customizechangeChartPlugin() {
           } 
           break; 
         case 'ifnull': 
-        if(!this.validateFormula(/^COALESCE\s*\(\s*("?[a-zA-Z_][\w]*"?(?:\."?[a-zA-Z_][\w]*"?)*)(?:\s*,\s*("?[a-zA-Z_][\w]*"?(?:\."?[a-zA-Z_][\w]*"?)*|\d+|'[^']*'|"[^"]*"))+\s*\)$/)){
+        if(!this.validateFormula(/^COALESCE\s*\(\s*("?[a-zA-Z0-9_\- \[\]()]+"?(?:\."?[a-zA-Z0-9_\- \[\]()]+"?)*)(?:\s*,\s*("?[a-zA-Z0-9_\- \[\]()]+"?(?:\."?[a-zA-Z0-9_\- \[\]()]+"?)*|\d+|'[^']*'|"[^"]*"))+\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5850,7 +5829,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'ifelse': 
-        if(!this.validateFormula(/^IF\s+.+?\s+THEN\s+.+?(\s+ELSE\s+IF\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END$/i)){
+        if(!this.validateFormula(/^IF\s+(.+?"[\w\s\-\(\)\[\]]+"\."[\w\s\-\(\)\[\]]+".+?)\s+THEN\s+(.+?"[\w\s\-\(\)\[\]]+"\."[\w\s\-\(\)\[\]]+".+?)(\s+ELSE\s+IF\s+(.+?"[\w\s\-\(\)\[\]]+"\."[\w\s\-\(\)\[\]]+".+?)\s+THEN\s+(.+?"[\w\s\-\(\)\[\]]+"\."[\w\s\-\(\)\[\]]+".+?))*?(\s+ELSE\s+(.+?"[\w\s\-\(\)\[\]]+"\."[\w\s\-\(\)\[\]]+".+?))?\s+END$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5861,7 +5840,7 @@ customizechangeChartPlugin() {
         }
         break;
         case 'average': 
-        if(!this.validateFormula(/^AVG\(\s*.+?\s*\)$/)){
+        if(!this.validateFormula(/^AVG\(\s*"[\w\s\-\[\]\(\)]+"\."[\w\s\-\[\]\(\)]+"\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -5872,7 +5851,7 @@ customizechangeChartPlugin() {
         }
         break; 
         case 'count':
-          if(!this.validateFormula(/^COUNT\(\s*.+?\s*\)$/)){
+          if(!this.validateFormula(/^COUNT\(\s*"[\w\s\-\[\]\(\)]+"\."[\w\s\-\[\]\(\)]+"\s*\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5895,7 +5874,7 @@ customizechangeChartPlugin() {
           
         break;
         case 'max':
-          if(!this.validateFormula(/^MAX\(\s*.+?\s*\)$/)){
+          if(!this.validateFormula(/^MAX\(\s*"[\w\s\-\[\]\(\)]+"\."[\w\s\-\[\]\(\)]+"\s*\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5906,7 +5885,7 @@ customizechangeChartPlugin() {
           }
           break; 
         case 'min':
-          if(!this.validateFormula(/^MIN\(\s*.+?\s*\)$/)){
+          if(!this.validateFormula(/^MIN\(\s*"[\w\s\-\[\]\(\)]+"\."[\w\s\-\[\]\(\)]+"\s*\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5917,7 +5896,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'sum':
-          if(!this.validateFormula(/^SUM\(\s*.+?\s*\)$/)){
+          if(!this.validateFormula(/^SUM\(\s*"[\w\s\-\[\]\(\)]+"\."[\w\s\-\[\]\(\)]+"\s*\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -5930,7 +5909,7 @@ customizechangeChartPlugin() {
         
 
         case 'date':
-              if(!this.validateFormula(/^DATE\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^DATE\(\s*"[\w\s()\[\]\-]+"\."[\w\s()\[\]\-]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5941,7 +5920,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'datetime':
-              if(!this.validateFormula(/^DATETIME\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^DATETIME\(\s*"[\w\s()\[\]\-]+"\."[\w\s()\[\]\-]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5952,7 +5931,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'float':
-              if(!this.validateFormula(/^FLOAT\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^FLOAT\(\s*"[\w\s()\[\]\-]+"\."[\w\s()\[\]\-]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5963,7 +5942,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'str':
-              if(!this.validateFormula(/^STR\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^STR\(\s*"[\w\s()\[\]\-]+"\."[\w\s()\[\]\-]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5974,7 +5953,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'int':
-              if(!this.validateFormula(/^INT\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^INT\(\s*"[\w\s()\[\]\-]+"\."[\w\s()\[\]\-]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
@@ -5985,7 +5964,7 @@ customizechangeChartPlugin() {
               }
             break;
             case 'makedate':
-              if(!this.validateFormula(/^MAKEDATE\(\s*"[\w\s()]+"\."[\w\s()]+"\s*\)$/)){
+              if(!this.validateFormula(/^MAKEDATE\(\s*"[\w\s()\[\]\-]+"\."[\w\s()\[\]\-]+"\s*\)$/)){
                 this.isValidCalculatedField = false;
                 this.validationMessage = 'Invalid Syntax';
                 return false;
