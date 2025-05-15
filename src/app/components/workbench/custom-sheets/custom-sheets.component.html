@@ -1,0 +1,65 @@
+
+<!-- KPI display -->
+<div *ngIf="kpi && chartId" class="big-number-container">
+  <h1 class="big-number"
+      [style.font-size]="getFontSize()"
+      [style.color]="kpiColor">
+    {{ KPINumber }}
+  </h1>
+</div>
+<!-- Table display -->
+<div *ngIf="table && chartId">
+  <table>
+    <thead>
+      <tr>
+        <th *ngFor="let column of tableColumnsDisplay; trackBy: trackByColumn" [ngStyle]="headerStyleObj">
+          {{ column }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of (tableDataDisplay | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }); let i = index"
+          [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+          [ngStyle]="{ 'background-color': i % 2 === 0 ? color1 : color2 }">
+        <td *ngFor="let column of tableColumnsDisplay; trackBy: trackByColumn" [ngStyle]="dataStyleObj">
+          {{ row[column] | formatMeasure: decimalPlaces : prefix : suffix : displayUnits }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <pagination-controls *ngIf="table "
+                       previousLabel="Prev"
+                       nextLabel="Next"
+                       (pageChange)="onPageChange($event)">
+  </pagination-controls>
+</div>
+
+
+<!-- @if(table && chartId){
+  <table>
+      <thead>
+        <tr>
+          @for(column of tableColumnsDisplay;track column){
+          <th [ngStyle]="{ 'font-family': headerFontFamily, 'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 
+          'color': headerFontColor, 'text-align': headerFontAlignment, 'font-weight': headerFontWeight, 'font-size': headerFontSize }">{{ column }}
+
+          </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of (tableDataDisplay| paginate: { itemsPerPage: itemsPerPage,
+                                  currentPage: page,
+                                  totalItems: totalItems }) ; let i = index"
+          [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+          [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2) }">
+          @for(column of tableColumnsDisplay;track column){
+          <td [ngStyle]="{ 'font-family': tableDataFontFamily, 'font-weight': tableDataFontWeight, 'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 
+          'color': tableDataFontColor, 'text-align': tableDataFontAlignment, 'font-size': tableDataFontSize }">{{row[column] | formatMeasure : decimalPlaces : prefix : suffix : displayUnits }}</td>
+          }
+      </tr>
+      
+      </tbody>
+    </table>
+    <pagination-controls *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 )" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
+  } -->

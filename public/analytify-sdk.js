@@ -1,72 +1,3 @@
-//  (function (global) {
-//   // Default base URL for embed
-//   var BASE_URL = (global.ANALYTIFY_BASE_URL || (function () {
-//     var script = document.currentScript || (function () {
-//       var scripts = document.getElementsByTagName('script');
-//       return scripts[scripts.length - 1];
-//     })();
-//     var src = script && script.src;
-//     if (!src) return '';
-//     return src.substr(0, src.lastIndexOf('/')) + '/';
-//   })()) + 'embed/';
-
-// import { convertToObject } from "typescript";
-
-//   function buildUrl(dashboardID, clientId, clientSecret, appName, filters) {
-//     var parts = [
-//       'dashboard',
-//       encodeURIComponent(dashboardID),
-//       encodeURIComponent(clientId),
-//       encodeURIComponent(clientSecret),
-//       encodeURIComponent(appName)
-//     ];
-//     var url = BASE_URL + parts.join('/');
-//     if (filters && typeof filters === 'object' && Object.keys(filters).length > 0) {
-//       var query = Object.keys(filters).map(function (key) {
-//         return encodeURIComponent(key) + '=' + encodeURIComponent(JSON.stringify(filters[key]));
-//       }).join('&');
-//       url += '?' + query;
-//     }
-//     return url;
-//   }
-
-//   function loadDashboard(options) {
-//     var dashboardID = options.dashboardID;
-//     var clientId = options.clientId;
-//     var clientSecret = options.clientSecret;
-//     var appName = options.appName;
-//     var filters = options.filters;
-//     var container = options.container;
-
-//     if (!dashboardID || !clientId || !clientSecret || !appName || !container) {
-//       console.error('AnalytifySDK.loadDashboard: Missing required options');
-//       return;
-//     }
-
-//     var url = buildUrl(dashboardID, clientId, clientSecret, appName, filters);
-
-//     var containerEl = typeof container === 'string' ? document.getElementById(container) : container;
-//     if (!containerEl) {
-//       console.error('AnalytifySDK.loadDashboard: Container not found', container);
-//       return;
-//     }
-
-//     containerEl.innerHTML = '';
-//     var iframe = document.createElement('iframe');
-//     iframe.src = url;
-//     iframe.width = '100%';
-//     iframe.height = '100%';
-//     iframe.style.border = 'none';
-//     containerEl.appendChild(iframe);
-
-//     return iframe;
-//   }
-
-//   global.AnalytifySDK = {
-//     loadDashboard: loadDashboard
-//   };
-// })(typeof window !== 'undefined' ? window : this);
-
 (function (global) {
   // Default embed base URL, relative to this script's location
   var EMBED_BASE = (global.ANALYTIFY_BASE_URL ||
@@ -86,7 +17,7 @@
     clientId: '',
     clientSecret: '',
     apiBaseUrl: '',
-    tokenEndpoint: 'http://13.57.231.251:50/v1'
+    tokenEndpoint: 'https://api.insightapps.ai/v1'
   };
   var _token = null;
   var _tokenExpiry = 0;
@@ -186,9 +117,55 @@
       });
   }
 
+   /**
+   * Embed a dashboard, automatically handling access tokens.
+   * @param {{sheetId: string|number, container: string|HTMLElement, filters?: object, width?: string, height?: string}} options
+   * @returns {Promise<HTMLIFrameElement>|void}
+   */
+    function embedSheet(options) {
+      console.log("loadSheet");
+      if (!_config.clientId || !_config.apiBaseUrl) {
+        console.error('AnalytifySDK.embedSheet: SDK not initialized; call init() first');
+        return;
+      }
+      if (!options || !options.sheetToken || !options.container) {
+        console.error('AnalytifySDK.embedSheet: Missing required options: sheetToken, container');
+        return;
+      }
+      var containerEl = typeof options.container === 'string'
+        ? document.querySelector(options.container)
+        : options.container;
+      if (!containerEl) {
+        console.error('AnalytifySDK.embedSheet: Container not found', options.container);
+        return;
+      }
+      var params = [];
+  
+      return fetchToken(options.sheetToken)
+        .then(function (token) {
+          var src =  _config.apiBaseUrl+'/embed/sheet/' + encodeURIComponent(options.sheetToken)+'/'+encodeURIComponent(token) +'/'+ encodeURIComponent(_config.clientId);
+          if (options.filters && typeof options.filters === 'object') {
+            params.unshift('filters=' + encodeURIComponent(JSON.stringify(options.filters)));
+          }
+          src += '?' + params.join('&');
+          var iframe = document.createElement('iframe');
+          iframe.src = src;
+          iframe.style.border = 'none';
+          iframe.style.width = options.width || '100%';
+          iframe.style.height = options.height || '100%';
+          containerEl.innerHTML = '';
+          containerEl.appendChild(iframe);
+          // return iframe;
+        })
+        .catch(function (err) {
+          console.error('AnalytifySDK.sheetload error:', err);
+        });
+    }
+
   // Expose the two entry points
   global.AnalytifySDK = {
     init: init,
-    loadDashboard: loadDashboard
+    loadDashboard: loadDashboard,
+    embedSheet: embedSheet
   };
 })(typeof window !== 'undefined' ? window : this);

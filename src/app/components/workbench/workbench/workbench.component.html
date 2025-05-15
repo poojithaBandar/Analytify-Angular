@@ -5,7 +5,7 @@
       <div >
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inputModalLabel">Edit Database</h1>
+            <h1 class="modal-title fs-5" id="inputModalLabel">Edit Database / Connection</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="schemaList = [];modal.close('cross click')"></button>
           </div>
           <div class="modal-body">
@@ -32,7 +32,35 @@
                           <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                       </div>
               </form>
-            } @else if(databaseType == 'halops') {
+            } @else if(databaseType == 'ninja') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': ninjaRMMClientIdError}" for="recipient-name" class="col-form-label">Client Id<span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': ninjaRMMClientIdError}" type="text" class="form-control" [(ngModel)]="ninjaRMMClientid" [ngModelOptions]="{standalone: true}" placeholder="Client Id" (input)="ninjaRMMClient()">
+                      </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': ninjaRMMClientSecretError}" for="message-text" class="col-form-label">Client Secret<span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': ninjaRMMClientSecretError}" type="text" class="form-control" [(ngModel)]="ninjaRMMClientSecret" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://connectwise.com" (input)="ninjaRMMClientSecretData()">
+                      </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': ninjaRMMScopeError}" class="col-form-label">Scopes<span class="text-danger ms-1" >*</span></label>
+                          <ng-select
+                          [items]="ninjaRMMScopes"
+                          bindLabel=""
+                          placeholder="Select Scopes"
+                          [(ngModel)]="selectedNinjaRMMScopes"
+                          [multiple]="true"
+                          (change)="onNinjaRMMScopeChange($event)">
+                        </ng-select>
+                      </div>
+              </form>
+            }
+            
+            @else if(databaseType == 'halops') {
               <form>
                 <div class="mb-2">
                   <label [ngClass]="{'error-label': clientIDPSAError}" class="col-form-label">Client Id <span
@@ -61,6 +89,42 @@
                     (input)="siteUrlPSAError()">
                    </div>
               </form>
+            } @else if(databaseType == 'immybot') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': clientIDImmyBotError}" class="col-form-label">Client Id <span
+                      class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': clientIDImmyBotError}" type="text" class="form-control"
+                    [(ngModel)]="clientIdImmybot" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+                    placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdErrorImmyBot()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': secretValueError}" for="recipient-name" class="col-form-label">
+                    Secret Value<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': secretValueError}" type="text" class="form-control"
+                    [(ngModel)]="secretValue" [ngModelOptions]="{standalone: true}"
+                    placeholder="12fgbcbb-9876-2345-asdf-218541bcf2d1-d1f8a3f7-34gf-45hj-78jh-295142fas34e"
+                    (input)="secretValueImmybotError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': tenantIdError}" for="message-text" class="col-form-label">Azure Domain
+                    <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': tenantIdError}" type="text" class="form-control"
+                    [(ngModel)]="tenantId" [ngModelOptions]="{standalone: true}" placeholder="e.g. http://yourcompany.onmicrosoft.com/"
+                    (input)="tenantIdImmyBotError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': subDomainError}" for="message-text" class="col-form-label">Instance Subdomain
+                    <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': subDomainError}" type="text" class="form-control"
+                    [(ngModel)]="subDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. analytify"
+                    (input)="subDomainImmyBotError()">
+                </div>
+              </form>
             }
             @else if(databaseType == 'shopify') {
               <form>
@@ -84,7 +148,44 @@
                             <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
                         </div>
               </form>
-            } @else {
+            }@else if(databaseType == 'google_analytics') {
+              <form>
+                <div class="mb-2">
+                  <label class="col-form-label">Display Name</label>
+                  <input type="text" class="form-control"
+                         [(ngModel)]="googleAnalytics.displayname"
+                         [ngModelOptions]="{standalone: true}">
+                </div>
+            
+                <div class="mb-2">
+                  <label class="col-form-label">Dimensions <span class="text-danger ms-1">*</span></label>
+                  <ng-select
+                    [items]="availableDimensions"
+                    [multiple]="true"
+                    bindLabel="label"
+                    bindValue="value"
+                    [(ngModel)]="googleAnalytics.dimensions"
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="Select dimensions">
+                  </ng-select>
+                </div>
+            
+                <div class="mb-2">
+                  <label class="col-form-label">Metrics <span class="text-danger ms-1">*</span></label>
+                  <ng-select
+                    [items]="availableMetrics"
+                    [multiple]="true"
+                    bindLabel="label"
+                    bindValue="value"
+                    [(ngModel)]="googleAnalytics.metrics"
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="Select metrics">
+                  </ng-select>
+                </div>
+              </form>
+            }
+            
+             @else {
             <form>
               <div class="mb-2">
                 <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
@@ -143,9 +244,25 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName )">Update</button>
       
-            } @else if(databaseType == 'shopify') {
+            } @else if(databaseType == 'ninja') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="ninjaRMMUpdate()"  [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName) ">Update</button>
+      
+            }
+             @else if(databaseType == 'shopify') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
+            }
+            @else if(databaseType == 'google_analytics') {
+              <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary"
+                      (click)="googleAnalyticsUpdate()"
+                      [disabled]="!googleAnalytics.displayname || googleAnalytics.dimensions.length === 0 || googleAnalytics.metrics.length === 0">
+                Update
+              </button>
+            } @else if(databaseType == 'immybot') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="ImmybotConnectionUpdate()" [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot ) ">Update</button>
             } @else {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
@@ -259,11 +376,21 @@
                       <td *ngIf="database.server_type === 'HALOPS'">
                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'IMMYBOT'">
+                        <img alt="product" src="./assets/images/icons/immybot.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                       <td *ngIf="database.server_type === 'SHOPIFY'">
                         <img alt="product" src="./assets/images/icons/shopify-large-1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'GOOGLE_SHEETS'">
                         <img alt="product" src="./assets/images/icons/google-sheets.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      <td *ngIf="database.server_type === 'NINJA'">
+                        <img alt="product" src="./assets/images/icons/ninjaRMMIcon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      
+                      <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
+                        <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
@@ -355,10 +482,16 @@
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
+                                                <span *ngIf="database.server_type === 'IMMYBOT'" class="avatar avatar rounded-circle">
+                                                  <img src="./assets/images/icons/immybot.png" alt="" class="rounded-circle"></span>
                                                 <span *ngIf="database.server_type === 'SHOPIFY'" class="avatar avatar rounded-circle">
                                                   <img src="./assets/images/icons/shopify-large-1.jpg" alt="" class="rounded-circle"></span>
                                                   <span *ngIf="database.server_type === 'GOOGLE_SHEETS'" class="avatar avatar rounded-circle">
                                                     <img src="./assets/images/icons/google-sheets.jpg" alt="" class="rounded-circle"></span>
+                                                    <span *ngIf="database.server_type === 'GOOGLE_ANALYTICS'" class="avatar avatar rounded-circle">
+                                                      <img src="./assets/images/icons/google-anaytics.jpg" alt="" class="rounded-circle"></span>
+                                                      <span *ngIf="database.server_type === 'NINJA'" class="avatar avatar rounded-circle">
+                                                        <img src="./assets/images/icons/ninjaRMMIcon.jpg" alt="" class="rounded-circle"></span>
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
@@ -565,8 +698,10 @@
                             }
                           <div class="modal-footer">
                             <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
-                              <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                              <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
+                              <button type="button" *ngIf="!datasourceSwitchUI" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                              <button type="button" *ngIf="datasourceSwitchUI" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">Connect & Switch</button>
+
                           </div>
                       </form>
                   </div>
@@ -641,7 +776,7 @@
                                     </div>                  
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                 <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                             </div>
                         </form>
@@ -673,6 +808,79 @@
         </div>
     </div>
       }
+      @if(openNinjaRMMForm){
+        <div class="main-container container-fluid px-4 TopHeader">
+          <div class="row">
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card Relational-database-height">
+                      <div class="card-header">
+                          <h4 class="card-title">Connect To NinjaOne</h4>
+                      </div>
+                      <div class="card-body">
+                          <form>
+                            <div class="form-group">
+                              <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                              <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                            </div>
+                                  <div class="form-group">
+                                      <label [ngClass]="{'error-label': ninjaRMMClientIdError}" for="recipient-name" class="col-form-label">Client Id<span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': ninjaRMMClientIdError}" type="text" class="form-control" [(ngModel)]="ninjaRMMClientid" [ngModelOptions]="{standalone: true}" placeholder="Client Id" (input)="ninjaRMMClient()">
+                                  </div>
+                                  <div class="form-group">
+                                      <label [ngClass]="{'error-label': ninjaRMMClientSecretError}" for="message-text" class="col-form-label">Client Secret<span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': ninjaRMMClientSecretError}" type="text" class="form-control" [(ngModel)]="ninjaRMMClientSecret" [ngModelOptions]="{standalone: true}" placeholder="e.g. " (input)="ninjaRMMClientSecretData()">
+                                  </div>
+                                  <div class="form-group">
+                                      <label [ngClass]="{'error-label': ninjaRMMScopeError}" class="col-form-label">Scopes<span class="text-danger ms-1" >*</span></label>
+                                      <ng-select
+                                      [items]="ninjaRMMScopes"
+                                      bindLabel=""
+                                      placeholder="Select Scopes"
+                                      [(ngModel)]="selectedNinjaRMMScopes"
+                                      [multiple]="true"
+                                      (change)="onNinjaRMMScopeChange($event)">
+                                    </ng-select>
+                                  </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
+                                  <button type="button" class="btn btn-primary" (click)="ninjaRMMSignIn()" [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card user-card border Relational-database-height">
+                  <div class="user-image">
+                      <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                        <img src="./assets/images/Db_server_images/ninjaRMM.png" alt="" class="rounded-circle bg-white user-image-border-color">
+                      </span>
+                  </div>
+                  <div class="card-body server-content-card">
+                    <ul class="">
+                      <li> <span class="mt-1">NinjaOne is a modern, cloud-native IT operations platform designed for MSPs and internal IT teams. It provides comprehensive capabilities for endpoint monitoring, management, automation, and remote support—all from a single, intuitive interface. With powerful APIs and secure integrations, NinjaOne enables seamless workflows and streamlined IT service delivery.
+                      </span></li>      
+                      <li><h6 class=" mt-3"><strong>Key Features:</strong></h6></li>
+                      <li><span class="mb-0"><strong>Endpoint Monitoring & Alerts:</strong> Real-time monitoring of system health, performance, and security with customizable alerting.</span></li>
+                      <li><span class="mb-0"><strong>Automated Remediation:</strong> Automatically trigger scripts and workflows based on thresholds or issues detected.</span></li>
+                      <li><span class="mb-0"><strong>Patch Management:</strong>  Schedule and deploy OS and third-party application updates across managed devices.</span></li>
+                      <li><span class="mb-0"><strong>Asset & Software Inventory:</strong> Maintain detailed records of hardware and software across all devices.</span></li>
+                      <li><span class="mb-0"><strong>Remote Access & Control:</strong> Securely connect to and troubleshoot endpoints without disrupting users.</span></li>              
+                      <li><h6 class=" mt-3"><strong>Inputs to connect</strong></h6></li>
+                      <li><span class="mb-0"><strong>Client ID:</strong> The unique identifier for your NinjaOne OAuth application.
+                      </span></li>
+                      <li><span class="mb-0"><strong>Client Secret:</strong> 
+                        The secure secret key used to authorize your application with the NinjaOne API.</span></li>
+                      <li><span class="mb-0"><strong>Display Name:</strong> A friendly label for this connection (e.g., "NinjaOne - HQ IT").</span></li>
+                      <li><span class="mb-0"><strong>Scopes:</strong>  Select one or more permission scopes to define what the integration can access:
+                        monitoring, management, control</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+        }
       @if(openConnectWiseForm){
         <div class="main-container container-fluid px-4 TopHeader">
           <div class="row">
@@ -704,7 +912,7 @@
                                       <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                                   </div>
                               <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                  <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                   <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
@@ -774,7 +982,7 @@
                           (input)="siteUrlPSAError()">
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="haloPSASignIn()"
                           [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
@@ -816,6 +1024,106 @@
             </div>
           </div>
           }
+          @if(openImmybot){
+            <div class="main-container container-fluid px-4 TopHeader" >
+              <div class="row">
+                <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card Relational-database-height">
+                    <div class="card-header">
+                      <h4 class="card-title">Connect To Immybot</h4>
+                    </div>
+                    <div class="card-body">
+                      <form>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': clientIDImmyBotError}" class="col-form-label">Client Id <span
+                              class="text-danger ms-1">*</span></label>
+                          <input [ngClass]="{'error-input': clientIDImmyBotError}" type="text" class="form-control"
+                            [(ngModel)]="clientIdImmybot" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+                            placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdErrorImmyBot()">
+                        </div>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                        </div>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': secretValueError}" for="recipient-name" class="col-form-label">
+                            Secret Value<span class="text-danger ms-1">*</span></label>
+                          <input [ngClass]="{'error-input': secretValueError}" type="text" class="form-control"
+                            [(ngModel)]="secretValue" [ngModelOptions]="{standalone: true}"
+                            placeholder="12fgbcbb-9876-2345-asdf-218541bcf2d1-d1f8a3f7-34gf-45hj-78jh-295142fas34e"
+                            (input)="secretValueImmybotError()">
+                        </div>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': tenantIdError}" for="message-text" class="col-form-label">Azure Domain
+                            <span class="text-danger ms-1">*</span></label>
+                          <input [ngClass]="{'error-input': tenantIdError}" type="text" class="form-control"
+                            [(ngModel)]="tenantId" [ngModelOptions]="{standalone: true}" placeholder="e.g. http://yourcompany.onmicrosoft.com/"
+                            (input)="tenantIdImmyBotError()">
+                        </div>
+                        <div class="form-group">
+                          <label [ngClass]="{'error-label': subDomainError}" for="message-text" class="col-form-label">Instance Subdomain
+                            <span class="text-danger ms-1">*</span></label>
+                          <input [ngClass]="{'error-input': subDomainError}" type="text" class="form-control"
+                            [(ngModel)]="subDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. analytify"
+                            (input)="subDomainImmyBotError()">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
+                          <button type="button" class="btn btn-primary" (click)="ImmybotSignIn()"
+                            [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card user-card border Relational-database-height">
+                    <div class="user-image">
+                      <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                        <img src="./assets/images/Db_server_images/immybot.png" alt="" class="rounded-circle bg-white user-image-border-color">
+                      </span>
+                    </div>
+                    <div class="card-body server-content-card">
+                      <ul class="">
+                        <li> <span class="mt-1">Immy.bot is an automation platform designed to streamline IT operations by executing workflows
+                            and scripts across multiple systems with precision and control. It empowers IT teams to manage devices, users, and
+                            applications through powerful, repeatable automation all from a centralized dashboard.
+                          </span></li>
+                      <li>
+                          <h6 class=" mt-3"><strong>Key Features:</strong></h6>
+                        </li>
+                        <li><span class="mb-0"><strong>Automated Workflows & Scripts: </strong> Execute PowerShell and other scripts across endpoints, users, and cloud services.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Policy-Based Task Scheduling: </strong> Automate recurring tasks based on conditions,
+                            time intervals, or triggers.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Device & User Management: </strong> Easily manage endpoints, user profiles, and system
+                            configurations remotely.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Audit & Reporting: </strong> Track execution history and generate reports for compliance
+                            and performance analysis.
+                          </span></li>
+                      <li>
+                          <h6 class=" mt-3"><strong>Inputs to connect</strong></h6>
+                        </li>
+                        <li><span class="mb-0"><strong>Client ID:</strong> OAuth application identifier.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Secret Value:</strong> Authentication credential for API access.
+                          </span></li>
+                        <li><span class="mb-0"><strong>Azure Domain:</strong> Your organization’s Azure Active Directory domain (e.g., yourcompany.onmicrosoft.com). 
+                          </span></li>
+                      
+                        <li><span class="mb-0"><strong>Instance Subdomain:</strong> Your Immy.bot instance name (e.g., acme for
+                            acme.immy.bot).</span></li>
+                        <li><span class="mb-0"><strong>Display Name:</strong>
+                            Friendly name for this connection (e.g., "Prod Immy.bot").</span></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
             @if(openShopifyForm){
           <div class="main-container container-fluid px-4 TopHeader">
             <div class="row">
@@ -846,7 +1154,7 @@
                       </div>
                     
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="shopifySignIn()"
                           [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
@@ -892,6 +1200,148 @@
             </div>
           </div>
           }
+          @if(openGoogleAnalyticsForm){
+            <div class="main-container container-fluid px-4 TopHeader">
+              <div class="row">
+                <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card Relational-database-height">
+                    <div class="card-header">
+                      <h4 class="card-title">Connect to Google Analytics</h4>
+                    </div>
+                    <div class="card-body">
+                      <form>
+                        <div class="form-group">
+                          <label class="col-form-label">Type <span class="text-danger ms-1">*</span></label>
+                          <input type="text" class="form-control" [(ngModel)]="googleAnalytics.type" [ngModelOptions]="{standalone: true}" placeholder="service_account">
+                        </div>
+                        <div class="form-group">
+                          <label class="col-form-label">Display Name <span class="text-danger ms-1">*</span></label>
+                          <input type="text" class="form-control" [(ngModel)]="googleAnalytics.displayname" [ngModelOptions]="{standalone: true}" placeholder="display name">
+                        </div>
+                        <div class="form-group">
+                          <label class="col-form-label">Project ID <span class="text-danger ms-1">*</span></label>
+                          <input type="text" class="form-control" [(ngModel)]="googleAnalytics.project_id" [ngModelOptions]="{standalone: true}" placeholder="analytify-access-data">
+                        </div>
+          
+                        <div class="form-group">
+                          <label class="col-form-label">Private Key ID <span class="text-danger ms-1">*</span></label>
+                          <input type="text" class="form-control" [(ngModel)]="googleAnalytics.private_key_id" [ngModelOptions]="{standalone: true}">
+                        </div>
+          
+                        <div class="form-group">
+                          <label class="col-form-label">Private Key <span class="text-danger ms-1">*</span></label>
+                          <textarea class="form-control" rows="5" [(ngModel)]="googleAnalytics.private_key" [ngModelOptions]="{standalone: true}" placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"></textarea>
+                        </div>
+          
+                        <div class="form-group">
+                          <label class="col-form-label">Client Email <span class="text-danger ms-1">*</span></label>
+                          <input type="email" class="form-control" [(ngModel)]="googleAnalytics.client_email" [ngModelOptions]="{standalone: true}">
+                        </div>
+          
+                        <div class="form-group">
+                          <label class="col-form-label">Client ID <span class="text-danger ms-1">*</span></label>
+                          <input type="text" class="form-control" [(ngModel)]="googleAnalytics.client_id" [ngModelOptions]="{standalone: true}">
+                        </div>
+          
+                        <div class="form-group">
+                          <label class="col-form-label">Client X.509 Cert URL <span class="text-danger ms-1">*</span></label>
+                          <input type="text" class="form-control" [(ngModel)]="googleAnalytics.client_x509_cert_url" [ngModelOptions]="{standalone: true}">
+                        </div>
+          
+                        <div class="form-group">
+                          <label class="col-form-label">Property ID <span class="text-danger ms-1">*</span></label>
+                          <input type="text" class="form-control" [(ngModel)]="googleAnalytics.property_id" [ngModelOptions]="{standalone: true}">
+                        </div>
+          
+                        <div class="form-group">
+                          <label class="col-form-label">Dimensions <span class="text-danger ms-1">*</span></label>
+                          <ng-select [items]="availableDimensions"
+                                     [multiple]="true"
+                                     bindLabel="label"
+                                     bindValue="value"
+                                     [(ngModel)]="googleAnalytics.dimensions"
+                                     [ngModelOptions]="{standalone: true}"
+                                     placeholder="Select dimensions">
+                          </ng-select>
+                        </div>
+          
+                        <div class="form-group">
+                          <label class="col-form-label">Metrics <span class="text-danger ms-1">*</span></label>
+                          <ng-select [items]="availableMetrics"
+                                     [multiple]="true"
+                                     bindLabel="label"
+                                     bindValue="value"
+                                     [(ngModel)]="googleAnalytics.metrics"
+                                     [ngModelOptions]="{standalone: true}"
+                                     placeholder="Select metrics">
+                          </ng-select>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
+                          <button type="button" class="btn btn-primary" (click)="connectToGoogleAnalytics()" 
+                                  [disabled]="!isGoogleAnalyticsFormValid()">Connect</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+          
+                <!-- Info Panel (optional) -->
+                <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card user-card border Relational-database-height">
+                    <div class="user-image">
+                      <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                        <img src="./assets/images/Db_server_images/googleAnalytics.png" alt="" class="rounded-circle bg-white user-image-border-color">
+                      </span>
+                    </div>
+                    <div class="card-body server-content-card">
+                      <ul class="">
+                        <li> <span class="mt-1"> <b>Google Analytics 4 (GA4)</b> is Google's next-generation analytics platform that tracks user interactions across websites and apps. It provides enhanced measurement, predictive analytics, and cross-platform data unification.
+                          </span></li>
+                          <li><h6 class=" mt-3"><strong>Features</strong></h6></li>
+                          <li><h6 class=" mt-3"><strong>Service Account Credentials</strong></h6></li>
+                          <li><span class="mb-0"><strong>Real-Time Data Tracking:</strong> Monitor active users and events with < 1 min latency.</span></li>
+                          <li><span class="mb-0"><strong>Cross-Platform Insights:</strong> Unified data streams for web, iOS, and Android apps.</span></li>
+                          <li><span class="mb-0"><strong>Predictive Metrics:</strong>  AI-generated churn probability and revenue forecasts (requires sufficient data).</span></li>
+                          <li><span class="mb-0"><strong>Custom Reporting:</strong> Create reports with up to 50 custom dimensions/metrics.</span></li>
+                          <li><span class="mb-0"><strong>Privacy Controls:</strong> Data deletion tools and IP anonymization .</span></li>
+
+                        <li>
+                          <h6 class=" mt-3"><strong>Inputs to connect</strong></h6>
+                        </li>
+                        <li><span class="mb-0"><strong>Account Type:</strong> service_account (automatically filled).
+                          </span></li>
+            
+                        <li><span class="mb-0"><strong>Google Cloud Project ID:</strong>Your unique project identifier.</span></li>
+                        <li><span class="mb-0"><strong>Private Key ID:</strong>
+                          Identifier for your private key.</span></li>
+                          <li><span class="mb-0"><strong>Private Key:</strong>
+                            Full RSA key from your JSON file (secured input).</span></li>
+                            <li><span class="mb-0"><strong>Client Email:</strong> Your service account email address.</span></li>
+                            <li><span class="mb-0"><strong>Client ID:</strong>  Your OAuth 2.0 client identifier.</span></li>
+                            <li><span class="mb-0"><strong>Client Certificate URL:</strong>  X509 certificate URL .</span></li>
+
+                            <li><h6 class=" mt-3"><strong>GA4 Configuration</strong></h6></li>
+                            <li><span class="mb-0"><strong>Property ID:</strong> Your GA4 property identifier (e.g., "properties/123456789").</span></li>
+                            <li><span class="mb-0"><strong>Display Name:</strong> A friendly name for this connection (e.g., "Main Website Analytics").</span></li>
+
+                            <li><h6 class=" mt-3"><strong>Data Selection</strong></h6></li>
+                            <li><span class="mb-0"><strong>Dimensions:</strong> Choose attributes like date, country, or device type.</span></li>
+                            <li><span class="mb-0"><strong>Metrics:</strong>Select measurements like active users or sessions.</span></li>
+
+                            <li><h6 class=" mt-3"><strong>Where to Find These</strong></h6></li>
+                            <li><span class="mb-0"> All service account details come from your Google Cloud Console.</span></li>
+                            <li><span class="mb-0"> Property ID is found in GA4 Admin settings.</span></li>
+                            <li><span class="mb-0"> Dimensions and metrics are available in your GA4 property.</span></li>
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+          
       @if(openOracleForm){
         <div class="main-container container-fluid px-4 TopHeader">
           <div class="row">
@@ -930,7 +1380,7 @@
                                       </div>                  
                               </div>
                               <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                  <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                   <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
@@ -1024,7 +1474,7 @@
                                 </div>
                               </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                    <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                     <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                 </div>
                             </form>
@@ -1100,7 +1550,7 @@
                                           </div>                 
                                   </div>
                                   <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                      <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                       <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                   </div>
                               </form>
@@ -1330,7 +1780,7 @@
                                         </div>
                                         
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()" >Close</button>
                                         <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()" [disabled]="pathError || displayNameError">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                     </div>
                                 </form>
@@ -1668,13 +2118,38 @@
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span>Google Sheets</span>
                         </div>
+                      </div>    
+                      <div class="database-logo">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectNinjaRMM()">
+                          <img src="/assets/images/Db_server_images/ninjaRMM.png"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600">
+                          <span>NinjaOne</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
+                        <div class="imgcard p-4" (click)="connectGoogleAnalytics()">
+                          <img src="/assets/images/Db_server_images/googleAnalytics-icon.jpg"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600">
+                          <span>Google Analytics</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectImmybot()">
+                          <img src="/assets/images/Db_server_images/immybot.png"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600">
+                          <span>Immybot</span>
                       </div>        
-                    </div>
+                    </div>    
+                      </div>
+                      </div> 
                   </div>
                 </div>
               </div>
           </div>
-        </div>
+        <!-- </div> -->
       </div>
         
     }
