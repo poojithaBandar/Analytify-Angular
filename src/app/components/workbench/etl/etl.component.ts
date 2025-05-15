@@ -10,11 +10,12 @@ import { LoaderService } from '../../../shared/services/loader.service';
 import { expression } from 'mathjs';
 import { EtlGraphService } from '../etl-graph.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EtlLoggerViewComponent } from '../etl-logger-view/etl-logger-view.component';
 
 @Component({
   selector: 'app-etl',
   standalone: true,
-  imports: [NgbModule, CommonModule, NgSelectModule, FormsModule],
+  imports: [NgbModule, CommonModule, NgSelectModule, FormsModule, EtlLoggerViewComponent],
   templateUrl: './etl.component.html',
   styleUrl: './etl.component.scss'
 })
@@ -51,11 +52,13 @@ export class ETLComponent {
   groupAttributesList: any[] = [];
   allChecked: boolean = false;
   isSourceClicked : boolean = false;
+  isRefrshEnable: boolean = false;
+  dataFlowRunStatus: string = ''
 
   constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, 
     private loaderService: LoaderService, private etlGraphService: EtlGraphService, private router: Router,private route: ActivatedRoute) {
       
-      if (this.router.url.includes('/analytify/analytify/etlList/etl')) {
+      if (this.router.url.startsWith('/analytify/etlList/etl')) {
         if (route.snapshot.params['id1']) {
           const id = +atob(route.snapshot.params['id1']);
           this.dataFlowId = id.toString();
@@ -73,6 +76,10 @@ export class ETLComponent {
       this.drawflow = new Drawflow(container);
       this.drawflow.reroute = true;
       this.drawflow.start();
+
+      if(this.dataFlowId){
+        this.getDataFlow();
+      }
 
       this.drawflow.on('connectionCreated', (connection: any) => {
 
@@ -197,7 +204,8 @@ export class ETLComponent {
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes: [], 
         groupAttributes: [],
-        sourceAttributes: []
+        sourceAttributes: [],
+        attributeMapper: []
       } 
     };
     let iconPath = '';
@@ -219,7 +227,8 @@ export class ETLComponent {
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
         groupAttributes:[],
-        sourceAttributes: []
+        sourceAttributes: [],
+        attributeMapper: []
       };
       inputNodeCount = 0;
       outputNodeCount = 1;
@@ -237,7 +246,8 @@ export class ETLComponent {
         properties: { truncate: false, create: this.objectType === 'select' ? false : true, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
         groupAttributes:[],
-        sourceAttributes: []
+        sourceAttributes: [],
+        attributeMapper: []
       };
       inputNodeCount = 1;
       outputNodeCount = 0;
@@ -254,7 +264,8 @@ export class ETLComponent {
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
         groupAttributes:[],
-        sourceAttributes: [] 
+        sourceAttributes: [],
+        attributeMapper: []
       }
     }
     else if (baseName === 'Joiner') {
@@ -269,7 +280,8 @@ export class ETLComponent {
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
         groupAttributes:[],
-        sourceAttributes: [] 
+        sourceAttributes: [],
+        attributeMapper: [] 
       }
     }
     else if (baseName === 'Rollup') {
@@ -284,7 +296,8 @@ export class ETLComponent {
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
         groupAttributes:[],
-        sourceAttributes: [] 
+        sourceAttributes: [],
+        attributeMapper: []
       }
     }
     else if (baseName === 'Filter') {
@@ -299,7 +312,8 @@ export class ETLComponent {
         properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
         attributes:[], 
         groupAttributes:[],
-        sourceAttributes: [] 
+        sourceAttributes: [],
+        attributeMapper: []
       }
     }
 
@@ -393,6 +407,10 @@ export class ETLComponent {
     this.selectedNode = node;
     this.nodeName = this.selectedNode.data.nodeData.general.name;
     console.log(this.selectedNode);
+    if(this.isRefrshEnable){
+      this.tableTypeTabId = 2;
+      this.getDataFlowLogs(this.nodeName);
+    }
     // this.getDataFlowLogs(this.nodeName);
   }
 
@@ -545,6 +563,7 @@ export class ETLComponent {
     this.workbechService.runEtl(this.etlName).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.isRefrshEnable = true;
         this.runId = data.run_id;
         // this.startPollingDataFlowStatus(data.run_id);
         Object.entries(this.drawflow.drawflow.drawflow[this.drawflow.module].data).forEach(([id, node]) => {
@@ -560,8 +579,10 @@ export class ETLComponent {
         });
         this.isLogShow = true;
         this.getDataFlowStatus(data.run_id);
+        this.toasterService.success('Run Successfully', 'success', { positionClass: 'toast-top-right' });
       },
       error: (error: any) => {
+        this.isRefrshEnable = false;
         this.isLogShow = false;
         if (error?.error?.message?.detail?.includes('not found')) {
           this.toasterService.info('Please Run After 5 seconds.', 'info', { positionClass: 'toast-top-right' });
@@ -581,6 +602,7 @@ export class ETLComponent {
       next: (data: any) => {
         console.log(data);
         this.dataFlowStatus = data.tasks;
+        this.dataFlowRunStatus = data.status;
         // if (data.status === 'success' || data.status === 'failed') {
         //   clearInterval(this.pollingInterval);
         // }
@@ -607,6 +629,8 @@ export class ETLComponent {
             }
           }
         });
+        this.tableTypeTabId = 2;
+        this.getDataFlowLogs(this.selectedNode.data.nodeData.general.name);
       },
       error: (error: any) => {
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
@@ -660,7 +684,7 @@ export class ETLComponent {
         task.format = 'database',
         task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
         task.path = '',
-        task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.Tables;
+        task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.tables;
         task.truncate = nodes[nodeId].data.nodeData.properties.truncate;
         task.create = nodes[nodeId].data.nodeData.properties.create;
       } else if(nodes[nodeId].data.type === 'Rollup'){
@@ -771,6 +795,7 @@ export class ETLComponent {
     const childAttributes: any[] = [];
     let childGrpAttributes: any = {};
     let childSourceAttributes: any = {};
+    let childAttributeMapper: any = {};
     const nodeNames: any[] = [];
     const nodeTypes: any[] = [];
 
@@ -1130,6 +1155,24 @@ export class ETLComponent {
     this.selectedColumn = {};
     this.selectedIndex = -1;
     this.isJoinerCondition = false;
+  }
+
+  getDataFlow(){
+    this.workbechService.getEtlDataFlow(this.dataFlowId).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.etlName = data.dag_id;
+        this.dataFlowId = data.id;
+        const drawFlowJson = JSON.parse(data.transformation_flow);
+        this.drawflow.import(drawFlowJson);
+        this.isRunEnable = true;
+      },
+      error: (error: any) => {
+        console.log(error);
+        this.isRunEnable = false;
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+      }
+    });
   }
   
 }

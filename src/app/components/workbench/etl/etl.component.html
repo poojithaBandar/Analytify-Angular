@@ -99,7 +99,7 @@
                                 <button *ngIf="dataFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">update</button>
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" (click)="getDataFlowLogs()">Export</button> -->
                                 <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRunEnable" (click)="runDataFlow()">Run</button>
-                                <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRunEnable" (click)="getDataFlowStatus(runId)">Refresh</button>
+                                <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRefrshEnable" (click)="getDataFlowStatus(runId)">Refresh</button>
                             </div>
                             <div [ngbNavOutlet]="nav"></div>
                             <div *ngIf="isNodeSelected" class="card mb-0 border customsql-result-preview-h mt-3">
@@ -143,7 +143,7 @@
                                                                         </div>
                                                                     </ng-template>
                                                                 </li>
-                                                                <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type)" [ngbNavItem]="2" className="nav-link text-start" id="properties-tab"><a ngbNavLink>Properties</a>
+                                                                <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type) && !selectedNode.data.nodeData.properties.create" [ngbNavItem]="2" className="nav-link text-start" id="properties-tab"><a ngbNavLink>Properties</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
@@ -175,7 +175,8 @@
                                                                                         (change)="updateNode('properties')" placeholder="Select a primary Object" [searchable]="true"
                                                                                         [(ngModel)]="selectedNode.data.nodeData.properties.primaryObject" [dropdownPosition]="'bottom'">
                                                                                     </ng-select>
-                                                                                    <table
+                                                                                    <div class="table-responsive">
+                                                                                        <table
                                                                                         class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 mt-2">
                                                                                         <thead class="Result-preview-table-sticky">
                                                                                             <tr>
@@ -216,7 +217,8 @@
                                                                                                 </tr>
                                                                                                 }
                                                                                         </tbody>
-                                                                                    </table><br>
+                                                                                    </table>
+                                                                                    </div><br>
                                                                                     <div>
                                                                                         <label for="whereClause" style="font-weight: bold;"> Where Clause </label><br>
                                                                                         <div class="d-flex">
@@ -316,7 +318,7 @@
                                                                                         </span>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div style="height: 240px;">
+                                                                                <div style="height: 240px;" class="table-responsive table-responsive-height">
                                                                                     <table
                                                                                         class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                                                                         <thead class="Result-preview-table-sticky">
@@ -375,7 +377,7 @@
                                                                                         </span>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div style="height: 240px;">
+                                                                                <div style="height: 240px;" class="table-responsive table-responsive-height">
                                                                                     <table
                                                                                         class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                                                                         <thead class="Result-preview-table-sticky">
@@ -442,43 +444,43 @@
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
                                                                                 @if(selectedNode.data.type === 'target_data_object'){
-                                                                                <table
-                                                                                    class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 mt-1"
-                                                                                    style="height: 270px;">
-                                                                                    <thead class="Result-preview-table-sticky">
-                                                                                        <tr>
-                                                                                            <th>#</th>
-                                                                                            <th>Attribute</th>
-                                                                                            <th>Data Type</th>
-                                                                                            <th>Not Null</th>
-                                                                                            <th>Key Type</th>
-                                                                                        </tr>
-                                                    
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td>1</td>
-                                                                                            <td>sdfb</td>
-                                                                                            <td>sdn</td>
-                                                                                            <td> <input type="checkbox" checked="true" disabled> </td>
-                                                                                            <td>primary key</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <td>2</td>
-                                                                                            <td>sdfb</td>
-                                                                                            <td>sdn</td>
-                                                                                            <td> <input type="checkbox" checked="false" disabled> </td>
-                                                                                            <td>Not a Key</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <td>3</td>
-                                                                                            <td>sdfb</td>
-                                                                                            <td>sdn</td>
-                                                                                            <td> <input type="checkbox" checked="false" disabled> </td>
-                                                                                            <td>Not a Key</td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
+                                                                                <div class="table-responsive table-responsive-height">
+                                                                                    <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 mt-1" style="height: 270px;">
+                                                                                        <thead class="Result-preview-table-sticky">
+                                                                                            <tr>
+                                                                                                <th>#</th>
+                                                                                                <th>Attribute</th>
+                                                                                                <th>Data Type</th>
+                                                                                                <th>Not Null</th>
+                                                                                                <th>Key Type</th>
+                                                                                            </tr>
+                                                                                    
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td>1</td>
+                                                                                                <td>sdfb</td>
+                                                                                                <td>sdn</td>
+                                                                                                <td> <input type="checkbox" checked="true" disabled> </td>
+                                                                                                <td>primary key</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>2</td>
+                                                                                                <td>sdfb</td>
+                                                                                                <td>sdn</td>
+                                                                                                <td> <input type="checkbox" checked="false" disabled> </td>
+                                                                                                <td>Not a Key</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>3</td>
+                                                                                                <td>sdfb</td>
+                                                                                                <td>sdn</td>
+                                                                                                <td> <input type="checkbox" checked="false" disabled> </td>
+                                                                                                <td>Not a Key</td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
                                                                                 } @else{
                                                                                 @if(selectedNode.data.nodeData.attributes.length > 0){
                                                                                 <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
@@ -500,7 +502,7 @@
                                                                                 </div>
                                                     
                                                     
-                                                                                <div style="height: 240px; overflow-y: auto;">
+                                                                                <div style="height: 240px; overflow-y: auto;" class="table-responsive table-responsive-height">
                                                                                     <table class="table table-bordered table-striped text-nowrap mb-0">
                                                                                         <thead class="Result-preview-table-sticky table-light sticky-top">
                                                                                             <tr>
@@ -537,6 +539,7 @@
                                                                                                         <option value="timestamp">timestamp</option>
                                                                                                         <option value="timestamp with time zone">timestamp with time zone</option>
                                                                                                         <option value="character varying">character varying</option>
+                                                                                                        <option value="numeric">numeric</option>
                                                                                                     </select>
                                                                                                 </td>
                                                                                                 <td>
@@ -576,12 +579,12 @@
                                                                         </div>
                                                                     </ng-template>
                                                                 </li>
-                                                                <!-- <li *ngIf="selectedNode.data.type === 'target_data_object'" [ngbNavItem]="6" className="nav-link text-start"
+                                                                <li *ngIf="selectedNode.data.type === 'target_data_object'" [ngbNavItem]="6" className="nav-link text-start"
                                                                     id="attribute-mapper-tab"><a ngbNavLink>Attribute Mapper</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
-                                                                                <div style="height: 30px; display: flex;">
+                                                                                <!-- <div style="height: 30px; display: flex;">
                                                                                     <label for="loadType" class="me-2">Load Type: </label>
                                                                                     <select name="loadType" id="loadType" class="me-2">
                                                                                         <option value="">Insert</option>
@@ -596,8 +599,8 @@
                                                                                         class="drawflow-image me-2">
                                                                                     <img src="./assets/images/etl/automap-etl.svg" alt="automap" ngbTooltip="automap"
                                                                                         class="drawflow-image">
-                                                                                </div>
-                                                                                <div style="height: 234px;" class="mt-3">
+                                                                                </div> -->
+                                                                                <div style="height: 234px;" class="mt-3 table-responsive table-responsive-height">
                                                                                     <table
                                                                                         class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                                                                         <thead class="Result-preview-table-sticky">
@@ -623,41 +626,13 @@
                                                                                                 </td>
                                                                                                 <td>integer</td>
                                                                                             </tr>
-                                                                                            <tr>
-                                                                                                <td>aaa</td>
-                                                                                                <td>integer</td>
-                                                                                                <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">aaa</option>
-                                                                                                        <option value="">bbb</option>
-                                                                                                        <option value="">ccc</option>
-                                                                                                        <option value="">ddd</option>
-                                                                                                        <option value="">eee</option>
-                                                                                                    </select>
-                                                                                                </td>
-                                                                                                <td>integer</td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td>aaa</td>
-                                                                                                <td>integer</td>
-                                                                                                <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">aaa</option>
-                                                                                                        <option value="">bbb</option>
-                                                                                                        <option value="">ccc</option>
-                                                                                                        <option value="">ddd</option>
-                                                                                                        <option value="">eee</option>
-                                                                                                    </select>
-                                                                                                </td>
-                                                                                                <td>integer</td>
-                                                                                            </tr>
                                                                                         </tbody>
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </ng-template>
-                                                                </li> -->
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                     
@@ -671,7 +646,7 @@
                                             </li>
                                             <li *ngIf="isLogShow" [ngbNavItem]="2" (click)="getDataFlowLogs(selectedNode.data.nodeData.general.name)"> <a ngbNavLink class="p-3 TabShadow"> Logs </a>
                                                 <ng-template ngbNavContent>
-                                                    {{ logs | json }}
+                                                    <app-etl-logger-view [logs]="logs"></app-etl-logger-view>
                                                 </ng-template>
                                             </li>
                                         </ul>

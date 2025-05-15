@@ -70,7 +70,7 @@
                                         </div>
                                         <div class="content">
                                             <span>DataFlow Name: </span>
-                                            <a class="cursor-pointer" [ngbTooltip]="dataFlow.data_flow_name"> {{dataFlow.data_flow_name}} </a>
+                                            <a class="cursor-pointer" [ngbTooltip]="dataFlow.data_flow_name" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name}} </a>
                                         </div>
                                     </div>
                                 </td>
@@ -78,7 +78,7 @@
                                 <td> {{dataFlow.updated_at | slice: 0: 10}} </td>
                                 <td>
                                     <div class="hstack gap-2 fs-1">
-                                        <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                                        <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" (click)="editDataFlow(dataFlow.id)">
                                             <i class="ri-edit-line"></i>
                                         </button>
                                         <button class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
@@ -107,7 +107,7 @@
                                     </div>
                                     <div class="ms-2 mt-sm-0 mt-2">
                                         <h6 class="mb-1">
-                                            <a [ngbTooltip]="dataFlow.data_flow_name" class="float-start"> {{dataFlow.data_flow_name}} </a>
+                                            <a [ngbTooltip]="dataFlow.data_flow_name" class="float-start" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name}} </a>
                                         </h6>
                     
                                     </div>
@@ -120,7 +120,7 @@
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
                                         <div class="dropdown-menu" ngbDropdownMenu>
-                                            <a class="dropdown-item"><i class="fe fe-edit me-2 d-inline-flex"></i>
+                                            <a class="dropdown-item"><i class="fe fe-edit me-2 d-inline-flex" (click)="editDataFlow(dataFlow.id)"></i>
                                                 edit</a>
                                             <a class="dropdown-item  btn btn-secondary-light"><i class="fe fe-trash me-2 d-inline-flex"></i>
                                                 delete</a>
