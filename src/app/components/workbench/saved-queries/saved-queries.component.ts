@@ -41,6 +41,14 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     this.pageNo=1;
     this.getSavedQueries()
   }
+   onPageSizeChange() {
+  // Reset to page 1 if you're on the last page and items may not fit
+  const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  if (this.pageNo > totalPages) {
+    this.pageNo = 1;
+  }
+  this.getSavedQueries();
+  }
   getSavedQueries(){
     const Obj ={
       search : this.searchName,

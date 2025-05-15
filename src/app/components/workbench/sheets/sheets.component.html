@@ -450,6 +450,8 @@
                             ><i class="fe fe-search "></i></button>
                     </div>
                     <div class="sheet-table-h mt-1">
+                        @defer (when tableColumnsData && tableColumnsData.length > 0) {
+                            @if(tableColumnsData.length > 0) {
                         @for(columns of tableColumnsData; track columns){
                             @if(!columns.calculated_fields){
                             <div  class="menu-item mb-1">
@@ -565,6 +567,18 @@
                                 </div>
                         }
                         }
+                        }@else {
+                        <p fs-16>No Data Found!</p>
+                        }
+                        }@placeholder {
+                            <div class="text-center my-4">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <div>Loading Tables...</div>
+                            </div>
+                        } @error {
+                            <div class="alert alert-danger">Failed to load data.</div>
+                        }
+                   
                       </div>
                       <ng-template #content let-modal>
                         <div class="modal-header">
@@ -2332,7 +2346,7 @@
                                         <!-- } -->
                                     </div>
                                 }
-                                @if(isApexCharts && !table && !kpi){
+                                @if(isApexCharts && !table && !kpi && !pivotTable){
               <!-- @if(bar && chartId){ -->
 
                 <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData" 
@@ -2623,8 +2637,9 @@
                                                 </div>
                                                 <div class="card-body p-1">
                                                     @for(dimen of dimetionMeasure;track dimen;let index = $index){
-                                                    <div class="example-box justify-content-between border-bottom cursor-pointer"> 
-                                                       {{dimen.col_name}}
+                                                    <div class="example-box justify-content-between border-bottom cursor-pointer"
+                                                     [ngbTooltip]="dimen.col_name.length > 15 ? dimen.col_name : null"> 
+                                                       {{ dimen.col_name.length > 15 ? (dimen.col_name | slice:0:15) + '...' : dimen.col_name }}
                                                        <div class="filter-icons">
                                                         <a aria-label="anchor" ngbTooltip="Edit" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
                                                             <i class="ri-edit-line"  (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
