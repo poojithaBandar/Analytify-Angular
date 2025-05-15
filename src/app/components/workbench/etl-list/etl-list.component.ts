@@ -20,6 +20,7 @@ export class EtlListComponent {
   gridView = true;
   page: any = 1;
   pageSize: any = 10;
+  totalItems: any;
   search: string = '';
   dataFlowList: any[] = [];
 
@@ -36,6 +37,9 @@ export class EtlListComponent {
       next: (data: any) => {
         console.log(data);
         this.dataFlowList = data.data;
+        this.totalItems = data?.total_items ?? 20;
+        this.pageSize = data?.page_size ?? 10;
+        // this.page = data?.page;
       },
       error: (error: any) => {
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
@@ -53,7 +57,12 @@ export class EtlListComponent {
     this.router.navigate(['/analytify/etlList/etl/'+encodedId]);
   }
 
-  pageChangegetUserSheetsList(page:any){
-    
+  onPageSizeChange() {
+    // Reset to page 1 if you're on the last page and items may not fit
+    const totalPages = Math.ceil(this.totalItems / this.pageSize);
+    if (this.page > totalPages) {
+      this.page = 1;
+    }
+    this.getDataFlowList();
   }
 }

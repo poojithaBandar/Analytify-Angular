@@ -60,8 +60,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for(dataFlow of dataFlowList; track dataFlow; let index = $index){
-                            <tr>
+                            <!-- @for(dataFlow of dataFlowList; track dataFlow; let index = $index){ -->
+                            <tr *ngFor="let dataFlow of dataFlowList | paginate : { itemsPerPage: pageSize, currentPage: page, totalItems: totalItems }; let index = index">
                                 <td>
                                     <div class="d-flex">
                                         <div class="imgdf">
@@ -87,15 +87,15 @@
                                     </div>
                                 </td>
                             </tr>
-                            }
+                            <!-- } -->
                         </tbody>
                     </table>
                 </div>
                 }
                 @if(gridView){
                 <div class="row">
-                    @for(dataFlow of dataFlowList; track dataFlow; let index = $index){
-                    <div class="col-md-12 col-xl-3">
+                    <!-- @for(dataFlow of dataFlowList; track dataFlow; let index = $index){ -->
+                    <div class="col-md-12 col-xl-3" *ngFor="let dataFlow of dataFlowList | paginate : { itemsPerPage: pageSize, currentPage: page, totalItems: totalItems }; let index = index">
                         <div class="card card-box-shadow ">
                             <div class="card-header tiled-header-bg bg-primary tiled-card-header-padding">
                                 <div class="d-sm-flex align-items-center">
@@ -153,17 +153,17 @@
                             </div>
                         </div>
                     </div>
-                    }
+                    <!-- } -->
                 </div>
                 }
                 <pagination-controls previousLabel="Prev" nextLabel="Next"
-                    (pageChange)="pageChangegetUserSheetsList((page = $event))"></pagination-controls>
+                    (pageChange)="page = $event; getDataFlowList()"></pagination-controls>
                 <div class="pagination-count">
-                    <select class="form-control cursor-pointer">
+                    <select [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()" class="form-control cursor"
+                        [disabled]="!pageSize">
                         <option value="10"> 10</option>
-                        <option value="20"> 20</option>
-                        <option value="30"> 30</option>
-
+                        <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
+                        <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
                     </select>
                 </div>
             </div>
