@@ -99,7 +99,7 @@
                                 <button *ngIf="dataFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">update</button>
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" (click)="getDataFlowLogs()">Export</button> -->
                                 <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRunEnable" (click)="runDataFlow()">Run</button>
-                                <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRefrshEnable" (click)="getDataFlowStatus(runId)">Refresh</button>
+                                <!-- <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRefrshEnable" (click)="getDataFlowStatus(runId)">Refresh</button> -->
                             </div>
                             <div [ngbNavOutlet]="nav"></div>
                             <div *ngIf="isNodeSelected" class="card mb-0 border customsql-result-preview-h mt-3">
@@ -123,7 +123,7 @@
                                                                                     <div class="d-flex">
                                                                                         <div class="col-4 p-0">
                                                                                             <input type="text" id="name" name="name" [(ngModel)]="nodeName"
-                                                                                                class="form-control shadow-sm" />
+                                                                                                class="form-control shadow-sm" (blur)="updateNode('general')" />
                                                                                         </div>
                                                                                         <span class="bg-primary d-flex align-items-center justify-content-center w-30"
                                                                                             (click)="updateNode('general')"><i

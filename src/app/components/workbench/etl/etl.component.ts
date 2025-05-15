@@ -364,16 +364,35 @@ export class ETLComponent {
     let data = {};
     let nodeId = this.selectedNode.id;
     if (type === 'general') {
-      const general = { name:  this.nodeName}
+      const general = { name: this.nodeName}
       nodeId = this.selectedNode.id;
-
-      data = {
-        ...this.selectedNode.data,
-        nodeData: {
-          ...this.selectedNode.data.nodeData,
-          general: general
+      if(['source_data_object', 'target_data_object'].includes(this.selectedNode.data.type)){
+        let currentDataObject;
+        if(!this.selectedNode.data.nodeData.properties.create){
+          currentDataObject = {
+            ...this.selectedNode.data.nodeData.dataObject,
+            tables: this.nodeName
+          };
+        } else{
+          currentDataObject = this.nodeName;
         }
-      };
+        data = {
+          ...this.selectedNode.data,
+          nodeData: {
+            ...this.selectedNode.data.nodeData,
+            general: general,
+            dataObject: currentDataObject
+          }
+        };
+      } else{
+        data = {
+          ...this.selectedNode.data,
+          nodeData: {
+            ...this.selectedNode.data.nodeData,
+            general: general
+          }
+        };
+      }
 
       let displayName = this.nodeName;
       if (displayName.length > 8) {
@@ -618,6 +637,7 @@ export class ETLComponent {
       dag_id: this.etlName,
       run_id: runId
     }
+    this.workbechService.disableLoaderForNextRequest();
     this.workbechService.getDataFlowStatus(object).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -650,7 +670,12 @@ export class ETLComponent {
           }
         });
         this.tableTypeTabId = 2;
-        this.getDataFlowLogs(this.selectedNode.data.nodeData.general.name);
+        // this.getDataFlowLogs(this.selectedNode.data.nodeData.general.name);
+        if(!['success', 'failed'].includes(data.status)){
+          setTimeout(() => {
+            this.getDataFlowStatus(runId);
+          }, 3000);
+        }
       },
       error: (error: any) => {
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
@@ -701,18 +726,20 @@ export class ETLComponent {
       task.source_attributes = sourceAttr;
     } else {
       if (nodes[nodeId].data.type === 'target_data_object') {
-        let attrMapper: any[] = [];
-        nodes[nodeId].data.nodeData.attributeMapper.forEach((atrr: any) => {
-          const array = [atrr.column, atrr.dataType, atrr.selectedColumn.label, atrr.selectedDataType];
-          attrMapper.push(array);
-        });
+        if(!nodes[nodeId].data.nodeData.properties.create){
+          let attrMapper: any[] = [];
+          nodes[nodeId].data.nodeData.attributeMapper.forEach((atrr: any) => {
+            const array = [atrr.column, atrr.dataType, atrr.selectedColumn.label, atrr.selectedDataType];
+            attrMapper.push(array);
+          });
+          task.attribute_mapper = attrMapper;
+        }
         task.format = 'database',
         task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
         task.path = '',
         task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.tables;
         task.truncate = nodes[nodeId].data.nodeData.properties.truncate;
         task.create = nodes[nodeId].data.nodeData.properties.create;
-        task.attribute_mapper = attrMapper;
       } else if(nodes[nodeId].data.type === 'Rollup'){
         let grp : any[] = [];
         nodes[nodeId].data.nodeData.groupAttributes.forEach((atrr:any)=>{
