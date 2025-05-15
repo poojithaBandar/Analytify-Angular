@@ -579,27 +579,24 @@
                                                                         </div>
                                                                     </ng-template>
                                                                 </li>
-                                                                <li *ngIf="selectedNode.data.type === 'target_data_object'" [ngbNavItem]="6" className="nav-link text-start"
+                                                                <li *ngIf="selectedNode.data.type === 'target_data_object' && !selectedNode.data.nodeData.properties.create" [ngbNavItem]="6" className="nav-link text-start"
                                                                     id="attribute-mapper-tab"><a ngbNavLink>Attribute Mapper</a>
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
-                                                                                <!-- <div style="height: 30px; display: flex;">
+                                                                                <div class="d-flex align-items-center gap-2 mb-3">
                                                                                     <label for="loadType" class="me-2">Load Type: </label>
-                                                                                    <select name="loadType" id="loadType" class="me-2">
-                                                                                        <option value="">Insert</option>
-                                                                                        <option value="">Update</option>
+                                                                                    <select name="loadType" id="loadType" class="form-select" style="width: 30%;">
+                                                                                        <option value="insert">Insert</option>
+                                                                                        <!-- <option value="">Update</option>
                                                                                         <option value="">Upsert</option>
                                                                                         <option value="">Delete</option>
-                                                                                        <option value="">SCD</option>
+                                                                                        <option value="">SCD</option> -->
                                                                                     </select>
-                                                                                    <img src="./assets/images/etl/unlink-etl.svg" alt="unlink" ngbTooltip="unlink"
-                                                                                        class="drawflow-image me-2">
-                                                                                    <img src="./assets/images/etl/unlinkall-etl.svg" alt="unlinkAll" ngbTooltip="unlinkAll"
-                                                                                        class="drawflow-image me-2">
-                                                                                    <img src="./assets/images/etl/automap-etl.svg" alt="automap" ngbTooltip="automap"
-                                                                                        class="drawflow-image">
-                                                                                </div> -->
+                                                                                    <!-- <img src="./assets/images/etl/unlink-etl.svg" alt="unlink" ngbTooltip="unlink" class="drawflow-image me-2">
+                                                                                    <img src="./assets/images/etl/unlinkall-etl.svg" alt="unlinkAll" ngbTooltip="unlinkAll" class="drawflow-image me-2"> -->
+                                                                                    <img src="./assets/images/etl/automap-etl.svg" alt="automap" ngbTooltip="automap" class="drawflow-image" (click)="setAttributeAutoMapper()">
+                                                                                </div>
                                                                                 <div style="height: 234px;" class="mt-3 table-responsive table-responsive-height">
                                                                                     <table
                                                                                         class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
@@ -612,20 +609,18 @@
                                                                                             </tr>
                                                                                         </thead>
                                                                                         <tbody>
+                                                                                            @for(mapper of selectedNode.data.nodeData.attributeMapper; track mapper; let i = $index){
                                                                                             <tr>
-                                                                                                <td>aaa</td>
-                                                                                                <td>integer</td>
+                                                                                                <td>{{mapper.column}}</td>
+                                                                                                <td>{{mapper.dataType}}</td>
                                                                                                 <td>
-                                                                                                    <select name="" id="">
-                                                                                                        <option value="">aaa</option>
-                                                                                                        <option value="">bbb</option>
-                                                                                                        <option value="">ccc</option>
-                                                                                                        <option value="">ddd</option>
-                                                                                                        <option value="">eee</option>
-                                                                                                    </select>
+                                                                                                    <ng-select [items]="selectedNode.data.nodeData.columnsDropdown" bindLabel="label" groupBy="group" (change)="updateNode(''); mapper.selectedDataType = mapper.selectedColumn.dataType"
+                                                                                                        placeholder="Select a Column" [searchable]="true" [(ngModel)]="mapper.selectedColumn" [dropdownPosition]="'bottom'">
+                                                                                                    </ng-select>
                                                                                                 </td>
-                                                                                                <td>integer</td>
+                                                                                                <td>{{mapper.selectedDataType}}</td>
                                                                                             </tr>
+                                                                                            }
                                                                                         </tbody>
                                                                                     </table>
                                                                                 </div>

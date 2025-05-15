@@ -33,6 +33,7 @@ ul.DropDownWidth.show {width: calc(100% + 66px);}
 ::ng-deep .drawflow .drawflow-node .node-icon { width: 28px; height: 28px; user-select: none; pointer-events: none; }
 ::ng-deep .drawflow .drawflow-node .node-label { font-size: 12px; margin-top: 8px; color: #333; }
 ::ng-deep .drawflow .drawflow-node:hover { cursor: pointer; } 
+::ng-deep .drawflow .drawflow-node.selected{background: var(--primary-color)}
 .drawflow .connection .main-path { stroke: #4ea9ff; stroke-width: 3px; }
 
 .node-table-left { height: 273px; width: 221px; }

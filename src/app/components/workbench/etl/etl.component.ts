@@ -53,7 +53,15 @@ export class ETLComponent {
   allChecked: boolean = false;
   isSourceClicked : boolean = false;
   isRefrshEnable: boolean = false;
-  dataFlowRunStatus: string = ''
+  dataFlowRunStatus: string = '';
+  expression: string = '';
+  searchText: string = '';
+  selectedField: any = {};
+  groupedColumns: any = {};
+  selectedGroup: any = '';
+  selectedColumn: any = {};
+  selectedIndex: number = -1;
+  isJoinerCondition: boolean = false;
 
   constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, 
     private loaderService: LoaderService, private etlGraphService: EtlGraphService, private router: Router,private route: ActivatedRoute) {
@@ -205,7 +213,7 @@ export class ETLComponent {
         attributes: [], 
         groupAttributes: [],
         sourceAttributes: [],
-        attributeMapper: []
+        attributeMapper: [] as any[]
       } 
     };
     let iconPath = '';
@@ -251,6 +259,18 @@ export class ETLComponent {
       };
       inputNodeCount = 1;
       outputNodeCount = 0;
+      if(!data.nodeData.properties.create){
+        let cols : any[] = [];
+        for (const col of this.selectedDataObject.columns) {
+          cols.push({
+            column: col.col,
+            dataType: col.dtype,
+            selectedColumn: null,
+            selectedDataType: ''
+          });
+        }
+        data.nodeData.attributeMapper = cols;
+      }
     }
     else if (baseName === 'Expression') {
       iconPath = './assets/images/etl/expression-etl.svg';
@@ -681,12 +701,18 @@ export class ETLComponent {
       task.source_attributes = sourceAttr;
     } else {
       if (nodes[nodeId].data.type === 'target_data_object') {
+        let attrMapper: any[] = [];
+        nodes[nodeId].data.nodeData.attributeMapper.forEach((atrr: any) => {
+          const array = [atrr.column, atrr.dataType, atrr.selectedColumn.label, atrr.selectedDataType];
+          attrMapper.push(array);
+        });
         task.format = 'database',
         task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
         task.path = '',
         task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.tables;
         task.truncate = nodes[nodeId].data.nodeData.properties.truncate;
         task.create = nodes[nodeId].data.nodeData.properties.create;
+        task.attribute_mapper = attrMapper;
       } else if(nodes[nodeId].data.type === 'Rollup'){
         let grp : any[] = [];
         nodes[nodeId].data.nodeData.groupAttributes.forEach((atrr:any)=>{
@@ -795,7 +821,6 @@ export class ETLComponent {
     const childAttributes: any[] = [];
     let childGrpAttributes: any = {};
     let childSourceAttributes: any = {};
-    let childAttributeMapper: any = {};
     const nodeNames: any[] = [];
     const nodeTypes: any[] = [];
 
@@ -887,6 +912,9 @@ export class ETLComponent {
     console.log('Children columns:', this.currentNodeColumns);
     if(!['source_data_object', 'target_data_object'].includes(node.data.type)){
       node.data.nodeData.dataObject = this.currentNodeColumns;
+      this.drawflow.updateNodeDataFromId(node.id, node.data);
+    } else if(node.data.type === 'target_data_object'){
+      node.data.nodeData.columnsDropdown = this.currentNodeColumns;
       this.drawflow.updateNodeDataFromId(node.id, node.data);
     }
 
@@ -1085,15 +1113,6 @@ export class ETLComponent {
     }
   }
 
-  expression: string = '';
-  searchText: string = '';
-  selectedField: any = {};
-  groupedColumns: any = {};
-  selectedGroup: any = '';
-  selectedColumn: any = {};
-  selectedIndex: number = -1;
-  isJoinerCondition: boolean = false;
-
   openExpressionEdit(modal:any, attribute:any, index:number){
     this.selectedIndex = index;
     const nodeData = JSON.parse(JSON.stringify(this.selectedNode.data.nodeData));
@@ -1175,4 +1194,13 @@ export class ETLComponent {
     });
   }
   
+  setAttributeAutoMapper(){
+    const mapper = this.selectedNode.data.nodeData.attributeMapper
+    if(mapper.length > 0){
+      mapper.forEach((attr:any)=>{
+        attr.selectedDataType = attr.dataType;
+      });
+      this.drawflow.updateNodeDataFromId(this.selectedNode.id, this.selectedNode.data);
+    }
+  }
 }
