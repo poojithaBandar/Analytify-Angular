@@ -304,7 +304,7 @@
         }
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetUserSheetsList((page = $event))"></pagination-controls>
             <div class="pagination-count" >
-              <select *ngIf="savedSheetsList.length > 9" [(ngModel)]="itemsPerPage" (ngModelChange)="getUserSheetsList()" class="form-control cursor-pointer">
+              <select *ngIf="savedSheetsList.length > 9" [(ngModel)]="itemsPerPage" (ngModelChange)="onPageSizeChange()" class="form-control cursor-pointer">
                     <option  value="10"> 10</option>
                     <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
                     <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
