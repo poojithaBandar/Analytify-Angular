@@ -832,13 +832,27 @@
                                  <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
                                </svg>
                                 </a>
-                                <a  href="javascript:void(0);" class="header-link" (click)="downloadPublicDashbaord()">
+                                <!-- <a  href="javascript:void(0);" class="header-link" (click)="downloadPublicDashbaord()">
                                     <svg xmlns="http://www.w3.org/2000/svg" 
                                     class="header-link-icon " viewBox="0 0 24 24">
                                  <path d="M0 0h24v24H0V0z" fill="none" />
                                  <path d="M5 20h14v-2H5v2zm7-18v10l-4-4H7l5 5 5-5h-2l-4 4V2z" />
                                </svg>
-                                </a>
+                                </a> -->
+
+                                <div class=" p-1" ngbDropdown>
+                                    <a  href="javascript:void(0);" class="header-link" ngbDropdownToggle>
+                                        <svg xmlns="http://www.w3.org/2000/svg" 
+                                        class="header-link-icon " viewBox="0 0 24 24">
+                                     <path d="M0 0h24v24H0V0z" fill="none" />
+                                     <path d="M5 20h14v-2H5v2zm7-18v10l-4-4H7l5 5 5-5h-2l-4 4V2z" />
+                                   </svg>
+                                    </a>
+                                    <div class="dropdown-menu mt-2" style="margin-left: -164px!important;" ngbDropdownMenu>
+                                      <a class="dropdown-item border-bottom" (click)="downloadPublicDashbaord()">Download as Image</a>
+                                      <a class="dropdown-item"  (click)="downloadPublicDashboardPdf();">Download as PDF</a>
+                                    </div>
+                                    </div>
                                 <!-- End::header-link -->
                             </div>
                             <!-- Start::header-element|main-profile-user -->
@@ -884,7 +898,7 @@
                                     <li><a ngbDropdownItem class="dropdown-item" (click)="routeToConfigurePage()"><i
                                                 class="ti ti-settings fs-18 me-2 op-7"></i>Configure</a></li>
                                                 <li><a ngbDropdownItem class="dropdown-item" (click)="routeToSDKPage()"><i
-                                                    class="ti ti-settings fs-18 me-2 op-7"></i>Embed SDK</a></li>
+                                                    class="fe fe-code fs-18 me-2 op-7"></i>Embed SDK</a></li>
                                     <li><a ngbDropdownItem class="dropdown-item" (click)="routeToUpdatePasswordPage()"><i
                                                 class="ti ti-lock fs-18 me-2 op-7"></i>Update password</a></li>        
                                     <li><a ngbDropdownItem class="dropdown-item" (click)="logOut()"><i

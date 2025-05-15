@@ -27,12 +27,13 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import _ from 'lodash';
 
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent],
+  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent,NgSelectModule],
   templateUrl: './workbench.component.html',
   styleUrl: './workbench.component.scss'
 })
@@ -56,6 +57,7 @@ export class WorkbenchComponent implements OnInit{
   openConnectWiseForm = false;
   openHaloPSAForm = false;
   openShopifyForm =false;
+  openGoogleAnalyticsForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -96,10 +98,31 @@ export class WorkbenchComponent implements OnInit{
   schemaList: any[] = [];
   selectedSchema : string = 'public';
   querysetIdFromDataSource :any;
-
+  datasourceSwitchUI=false;
+  databaseSwitchType:any;
+  selectedSourceSwithDbId:any;
+  dashbaordIdToSwitch:any;
   isCustomSql = false;
+  openNinjaRMMForm: boolean = false;
+  ninjaRMMClientIdError : boolean = false;
+  ninjaRMMClientid!: string;
+  ninjaRMMClientSecretError : boolean = false;
+  ninjaRMMClientSecret! : string;
+  ninjaRMMScopes = ['monitoring', 'management', 'control'];
+  selectedNinjaRMMScopes: string[] = [];
+  ninjaRMMScopeError: boolean = false;
+  openImmybot: boolean = false;
+  clientIDImmyBotError: boolean = false;
+  clientIdImmybot! : string ;
+  secretValue! : string;
+  secretValueError: boolean = false;
+  tenantIdError: boolean = false;
+  tenantId!: string
+  subDomain!: string;
+  subDomainError: boolean = false;
+
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService){ 
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService){ 
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
 
@@ -146,54 +169,56 @@ export class WorkbenchComponent implements OnInit{
         if (route.snapshot.paramMap.has('id2')) {
           this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
         }
-        
-      //   if (route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')) {
-      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }else if(route.snapshot.paramMap.has('id1')){
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }
-      //   this.iscrossDbSelect = true;
-      //   this.databaseconnectionsList = true;
-      //   this.viewNewDbs = false;
-      //   this.isGoogleSheetsPage = false;
-      // }else if(currentUrl.includes('crossdatabase/newconnection')){
-      //   if(route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')){
-      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }else if(route.snapshot.paramMap.has('id1')){
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }
-      //   this.iscrossDbSelect = true;
-      //   this.viewNewDbs = true;
-      //   this.databaseconnectionsList = false;
-      //   this.isGoogleSheetsPage = false;
-      // }
-      // else if(currentUrl.includes('crossdatabase/customsql/viewconnection')){
-      //   if (route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')) {
-      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }else if(route.snapshot.paramMap.has('id1')){
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }
-      //   this.iscrossDbSelect = true;
-      //   this.databaseconnectionsList = true;
-      //   this.viewNewDbs = false;
-      //   this.isGoogleSheetsPage = false;
-      // }else if(currentUrl.includes('crossdatabase/customsql/newconnection')){
-      //   if(route.snapshot.paramMap.has('id1') && route.snapshot.paramMap.has('id2')){
-      //     this.querysetIdFromDataSource = +atob(route.snapshot.params['id2']);
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }else if(route.snapshot.paramMap.has('id1')){
-      //     this.primaryHierachyId = +atob(route.snapshot.params['id1']);
-      //   }
-      //   this.iscrossDbSelect = true;
-      //   this.viewNewDbs = true;
-      //   this.databaseconnectionsList = false;
-      //   this.isGoogleSheetsPage = false;
+      }
+      else if(currentUrl.includes('datasource-switch/')){
+        this.databaseconnectionsList = false;
+        this.viewNewDbs = false;
+        this.isGoogleSheetsPage = false;
+        this.datasourceSwitchUI=true;
+        if (route.snapshot.paramMap.has('id1')) {
+          this.databaseSwitchType = route.snapshot.params['id1'];
+          this.selectedSourceSwithDbId = +atob(route.snapshot.params['id2']);
+          this.dashbaordIdToSwitch = +atob(route.snapshot.params['id3'])
+        }
+        this.openConnectionOnDatasourceSwitch();
       }
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
+  }
+  openConnectionOnDatasourceSwitch(){
+    if(this.databaseSwitchType === 'POSTGRESQL'){
+    this.openPostgreSql();
+    }
+    else if(this.databaseSwitchType === 'ORACLE'){
+    this.openOracle();
+    }
+    else if(this.databaseSwitchType === 'MYSQL'){
+    this.openMySql();
+    }
+    else if(this.databaseSwitchType === 'SQLITE'){
+    this.opensqlLite();
+    }
+    else if(this.databaseSwitchType === 'MICROSOFTSQLSERVER'){
+    this.openMicrosoftSqlServer();
+    }
+    else if(this.databaseSwitchType === 'SNOWFLAKE'){
+    this.openSnowflakeServer();
+    }
+    else if(this.databaseSwitchType === 'SHOPIFY'){
+    this.connectShopify();
+    }
+    else if(this.databaseSwitchType === 'CONNECTWISE'){
+    this.connectWise();
+    }
+    else if(this.databaseSwitchType === 'HALOPS'){
+    this.connectHaloPSA();
+    }
+    else if(this.databaseSwitchType === 'IMMYBOT'){
+    this.connectImmybot();
+    }
+    else if(this.databaseSwitchType === 'NINJA'){
+    this.connectNinjaRMM();
+    }
   }
   routeNewDatabase(){
     if (this.iscrossDbSelect) {
@@ -244,6 +269,248 @@ export class WorkbenchComponent implements OnInit{
     path='';
     shopifyToken = '';
     shopifyName = '';
+
+    googleAnalytics: {
+      type: string;
+      project_id: string;
+      private_key_id: string;
+      private_key: string;
+      client_email: string;
+      client_id: string;
+      client_x509_cert_url: string;
+      property_id: string;
+      dimensions: string[];  // <-- Explicitly typed
+      metrics: string[];     // <-- Explicitly typed
+      displayname: string;
+    } = {
+      type: 'service_account',
+      project_id: '',
+      private_key_id: '',
+      private_key: '',
+      client_email: '',
+      client_id: '',
+      client_x509_cert_url: '',
+      property_id: '',
+      dimensions: [],
+      metrics: [],
+      displayname: ''
+    };
+    availableDimensions =[
+      "date",
+      "country",
+      "firstUserDv360LineItemName",
+      "firstUserDv360Medium",
+      "firstUserDv360PartnerId",
+      "firstUserDv360PartnerName",
+      "firstUserDv360Source",
+      "firstUserDv360SourceMedium",
+      "firstUserGoogleAdsAccountName",
+      "firstUserGoogleAdsAdGroupId",
+      "firstUserGoogleAdsAdGroupName",
+      "firstUserGoogleAdsAdNetworkType",
+      "firstUserGoogleAdsCampaignId",
+      "firstUserGoogleAdsCampaignName",
+      "firstUserGoogleAdsCampaignType",
+      "firstUserGoogleAdsCreativeId",
+      "firstUserGoogleAdsCustomerId",
+      "firstUserGoogleAdsKeyword",
+      "firstUserGoogleAdsQuery",
+      "firstUserManualAdContent",
+      "firstUserManualCampaignId",
+      "firstUserManualCampaignName",
+      "firstUserManualCreativeFormat",
+      "firstUserManualMarketingTactic",
+      "firstUserManualMedium",
+      "firstUserManualSource",
+      "firstUserManualSourceMedium",
+      "firstUserManualSourcePlatform",
+      "firstUserManualTerm",
+      "firstUserSa360AdGroupId",
+      "firstUserSa360AdGroupName",
+      "firstUserSa360CampaignId",
+      "firstUserSa360CampaignName",
+      "firstUserSa360CreativeFormat",
+      "firstUserSa360EngineAccountId",
+      "firstUserSa360EngineAccountName",
+      "firstUserSa360EngineAccountType",
+      "firstUserSa360KeywordText",
+      "firstUserSa360ManagerAccountId",
+      "firstUserSa360ManagerAccountName",
+      "firstUserSa360Medium",
+      "firstUserSa360Query",
+      "firstUserSa360Source",
+      "firstUserSa360SourceMedium",
+      "firstUserMedium",
+      "firstUserPrimaryChannelGroup",
+      "firstUserSource",
+      "firstUserSourceMedium",
+      "firstUserSourcePlatform",
+      "googleAdsAccountName",
+      "googleAdsAdGroupId",
+      "googleAdsAdGroupName",
+      "googleAdsAdNetworkType",
+      "googleAdsCampaignId",
+      "googleAdsCampaignName",
+      "googleAdsCampaignType",
+      "googleAdsCreativeId",
+      "googleAdsCustomerId",
+      "googleAdsKeyword",
+      "googleAdsQuery",
+      "groupId",
+      "hostName",
+      "hour",
+      "isKeyEvent",
+      "isoWeek",
+      "isoYear",
+      "isoYearIsoWeek",
+      "fullPageUrl",
+      "platform",
+      "platformDeviceCategory",
+      "primaryChannelGroup",
+      "region",
+      "sa360AdGroupId",
+      "sa360AdGroupName",
+      "sa360CampaignId",
+      "sa360CampaignName",
+      "sa360CreativeFormat",
+      "sa360EngineAccountId",
+      "sa360EngineAccountName",
+      "sa360EngineAccountType",
+      "sa360KeywordText",
+      "sa360ManagerAccountId",
+      "sa360ManagerAccountName",
+      "sa360Medium",
+      "sa360Query",
+      "sa360Source",
+      "sa360SourceMedium",
+      "searchTerm",
+      "sessionCampaignId",
+      "sessionCampaignName",
+      "sessionDefaultChannelGroup",
+      "sessionGoogleAdsAdGroupId",
+      "sessionGoogleAdsAdGroupName",
+      "sessionGoogleAdsCampaignType",
+      "shippingTier",
+      "signedInWithUserId",
+      "source",
+      "sourceMedium",
+      "sourcePlatform",
+      "streamId",
+      "streamName",
+      "testDataFilterId",
+      "testDataFilterName",
+      "transactionId",
+      "unifiedPagePathScreen",
+      "unifiedPageScreen",
+      "unifiedScreenClass",
+      "unifiedScreenName",
+      "userAgeBracket",
+      "userGender",
+      "videoProvider",
+      "videoTitle",
+      "videoUrl",
+      "virtualCurrencyName",
+      "visible",
+      "week",
+      "year",
+      "yearMonth",
+      "yearWeek"
+  ]
+    
+    availableMetrics =[
+      "active1DayUsers",
+      "active28DayUsers",
+      "active7DayUsers",
+      "activeUsers",
+      "adUnitExposure",
+      "addToCarts",
+      "advertiserAdClicks",
+      "advertiserAdCost",
+      "advertiserAdCostPerClick",
+      "advertiserAdCostPerKeyEvent",
+      "advertiserAdImpressions",
+      "averagePurchaseRevenue",
+      "averagePurchaseRevenuePerPayingUser",
+      "averagePurchaseRevenuePerUser",
+      "averageRevenuePerUser",
+      "averageSessionDuration",
+      "bounceRate",
+      "cartToViewRate",
+      "checkouts",
+      "cohortActiveUsers",
+      "cohortTotalUsers",
+      "crashAffectedUsers",
+      "crashFreeUsersRate",
+      "dauPerMau",
+      "dauPerWau",
+      "ecommercePurchases",
+      "engagedSessions",
+      "engagementRate",
+      "eventCount",
+      "eventCountPerUser",
+      "eventValue",
+      "eventsPerSession",
+      "firstTimePurchaserRate",
+      "firstTimePurchasers",
+      "firstTimePurchasersPerNewUser",
+      "grossItemRevenue",
+      "grossPurchaseRevenue",
+      "itemDiscountAmount",
+      "itemListClickEvents",
+      "itemListClickThroughRate",
+      "itemListViewEvents",
+      "itemPromotionClickThroughRate",
+      "itemRefundAmount",
+      "itemRevenue",
+      "itemViewEvents",
+      "itemsAddedToCart",
+      "itemsCheckedOut",
+      "itemsClickedInList",
+      "itemsClickedInPromotion",
+      "itemsPurchased",
+      "itemsViewed",
+      "itemsViewedInList",
+      "itemsViewedInPromotion",
+      "keyEvents",
+      "newUsers",
+      "organicGoogleSearchAveragePosition",
+      "organicGoogleSearchClickThroughRate",
+      "organicGoogleSearchClicks",
+      "organicGoogleSearchImpressions",
+      "promotionClicks",
+      "promotionViews",
+      "publisherAdClicks",
+      "publisherAdImpressions",
+      "purchaseRevenue",
+      "purchaseToViewRate",
+      "purchaserRate",
+      "refundAmount",
+      "returnOnAdSpend",
+      "screenPageViews",
+      "screenPageViewsPerSession",
+      "screenPageViewsPerUser",
+      "scrolledUsers",
+      "sessionKeyEventRate",
+      "sessions",
+      "sessionsPerUser",
+      "shippingAmount",
+      "taxAmount",
+      "totalAdRevenue",
+      "totalPurchasers",
+      "totalRevenue",
+      "totalUsers",
+      "transactions",
+      "transactionsPerPurchaser",
+      "userEngagementDuration",
+      "userKeyEventRate"
+  ]
+    isGoogleAnalyticsFormValid(): boolean {
+      const g = this.googleAnalytics;
+      return !!g.type && !!g.project_id && !!g.private_key_id && !!g.private_key &&
+             !!g.client_email && !!g.client_id && !!g.client_x509_cert_url &&
+             !!g.property_id && !!g.dimensions.length && !!g.metrics.length && !!g.displayname;
+    }
+    
   emptyVariables(){
     this.postGrePortName = '';
     this.postGreDatabaseName = '';
@@ -262,6 +529,9 @@ export class WorkbenchComponent implements OnInit{
     this.siteURLPSA = '';
     this.clientIdPSA = '';
     this.clientSecret = '';
+    this.ninjaRMMClientid = '';
+    this.ninjaRMMClientSecret = '';
+    this.selectedNinjaRMMScopes = [];
     
   } 
   googleSheetsData = [] as any;
@@ -356,12 +626,17 @@ export class WorkbenchComponent implements OnInit{
                 this.databaseName = responce.database.display_name
                 this.databaseId = responce.database?.hierarchy_id
                 this.toasterservice.success('Connected', 'success', { positionClass: 'toast-top-right' });
+                if(!this.datasourceSwitchUI){
                 this.openPostgreSqlForm = false;
+                }
                 const encodedId = btoa(this.databaseId.toString());
                 if (this.iscrossDbSelect) {
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
-                } else {
+                }else if(this.datasourceSwitchUI){
+                  this.switchDatabase();
+                }
+                 else {
                   this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
                 }
               }
@@ -404,6 +679,31 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+
+    ninjaRMMUpdate(){
+      const obj = {
+        "client_id": this.ninjaRMMClientid,
+        "client_secret": this.ninjaRMMClientSecret,
+        "display_name": this.displayName,
+        "scopes": this.selectedNinjaRMMScopes,
+        "hierarchy_id":this.databaseId
+      }
+
+      this.workbechService.ninjaRMMConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+    }
     
     haloPSAUpdate(){
       const obj = {
@@ -430,6 +730,31 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+
+    ImmybotConnectionUpdate(){
+      const obj={
+        "client_id":this.clientIdImmybot,
+        "secret_value":this.secretValue,
+        "azure_domain":this.tenantId,
+        "instance_subdomain":this.subDomain,
+        "display_name":this.displayName,
+        "hierarchy_id": this.databaseId
+    }
+      this.workbechService.immyBotConnectionUpdate(obj).subscribe({next: (responce) => {
+        console.log(responce)
+        if(responce){
+          this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+        }
+        this.getDbConnectionList();
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
     shopifyConnectionUpdate(){
       const obj = {
         "api_token": this.shopifyToken,
@@ -453,6 +778,52 @@ export class WorkbenchComponent implements OnInit{
         }
       )
 
+    }
+    googleAnalyticsUpdate(){
+      const g = this.googleAnalytics;
+     const obj = { type: g.type,
+      project_id: g.project_id,
+      private_key_id: g.private_key_id,
+      private_key: g.private_key,
+      client_email: g.client_email,
+      client_id: g.client_id,
+      client_x509_cert_url: g.client_x509_cert_url,
+      property_id: g.property_id,
+      dimensions: g.dimensions, // Array of strings
+      metrics: g.metrics,
+      display_name:g.displayname
+     }
+
+     this.workbechService.googleAnalyticsUpdate(obj).subscribe({next: (responce) => {
+      console.log(responce);
+      this.modalService.dismissAll('close');
+      if(responce){
+        this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+      }
+      this.getDbConnectionList();
+    },
+    // error: (error) => {
+    //   console.log(error);
+    //   this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+    // }
+    error: (error) => {
+      console.log(error);
+      if(error.error.error){
+        this.modalService.dismissAll('close');
+      // this.toasterservice.error(error.error.error,'error',{ positionClass: 'toast-center-center'})
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.error,
+        width: '400px',
+      })
+      }else {
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+
+      }
+  }
+}
+)
     }
     DatabaseUpdate(){
       const obj={
@@ -519,7 +890,9 @@ export class WorkbenchComponent implements OnInit{
                 this.databaseId = responce.database?.hierarchy_id
                 this.toasterservice.success('Connected', 'success', { positionClass: 'toast-top-right' });
                 this.modalService.dismissAll();
+                if(!this.datasourceSwitchUI){
                 this.openOracleForm = false;
+                }
                 const encodedId = btoa(this.databaseId.toString());
                 if (this.iscrossDbSelect) {
                   this.selectedHirchyIdCrsDb = this.databaseId
@@ -552,9 +925,28 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+    connectImmybot(){
+      this.openImmybot = true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
+    connectNinjaRMM(){
+      this.openNinjaRMMForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
 
     connectHaloPSA(){
       this.openHaloPSAForm = true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+    connectGoogleAnalytics(){
+      this.openGoogleAnalyticsForm = true;
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
       this.emptyVariables();
@@ -569,6 +961,22 @@ export class WorkbenchComponent implements OnInit{
         this.companyIDError = false;
       }else{
         this.companyIDError = true;
+      }
+    }
+
+    ninjaRMMClient(){
+      if(this.ninjaRMMClientid){
+        this.ninjaRMMClientIdError = false;
+      }else{
+        this.ninjaRMMClientIdError = true;
+      }
+    }
+
+    ninjaRMMClientSecretData(){
+      if(this.ninjaRMMClientSecret){
+        this.ninjaRMMClientSecretError = false;
+      }else{
+        this.ninjaRMMClientSecretError = true;
       }
     }
 
@@ -600,6 +1008,39 @@ export class WorkbenchComponent implements OnInit{
         this.clientIDPSAError = true;
       }
     }
+
+    secretValueImmybotError(){
+      if(this.secretValue){
+        this.secretValueError = false;
+      }else{
+        this.secretValueError = true;
+      }
+    }
+
+    clientIdErrorImmyBot(){
+      if(this.clientIdImmybot){
+        this.clientIDImmyBotError = false;
+      }else{
+        this.clientIDImmyBotError = true;
+      }
+    }
+
+    tenantIdImmyBotError(){
+      if(this.tenantId){
+        this.tenantIdError = false;
+      }else{
+        this.tenantIdError = true;
+      }
+    }
+
+    subDomainImmyBotError(){
+      if(this.subDomain){
+        this.subDomainError = false;
+      }else{
+        this.subDomainError = true;
+      }
+    }
+
     privateConnectWiseError(){
       if(this.privateKey){
         this.privateKeyError = false;
@@ -641,7 +1082,9 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.databaseId=data?.hierarchy_id;
               this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
               this.openShopifyForm = false;
+              }
               const encodedId = btoa(this.databaseId.toString());
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
@@ -659,6 +1102,80 @@ export class WorkbenchComponent implements OnInit{
         }
       )
     }
+
+    ninjaRMMSignIn(){
+      const obj = {
+        "client_id": this.ninjaRMMClientid,
+        "client_secret": this.ninjaRMMClientSecret,
+        "display_name": this.displayName,
+        "scopes": this.selectedNinjaRMMScopes
+      }
+      this.workbechService.ninjaRMMConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
+              this.openNinjaRMMForm = false;
+              }
+              const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                  this.switchDatabase();
+              }else{
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
+    ImmybotSignIn(){
+      const obj={
+        "client_id":this.clientIdImmybot,
+        "secret_value":this.secretValue,
+        "azure_domain":this.tenantId,
+        "instance_subdomain":this.subDomain,
+        "display_name":this.displayName
+    }
+      this.workbechService.immyBotConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
+              this.openImmybot = false;
+              }
+              const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                  this.switchDatabase();
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+    
     connectWiseSignIn(){
       const obj={
         "company_id":this.companyId,
@@ -673,7 +1190,9 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
               this.openConnectWiseForm = false;
+              }
               const encodedId = btoa(this.databaseId.toString());
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
@@ -724,7 +1243,9 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
               this.openHaloPSAForm = false;
+              }
               const encodedId = btoa(this.databaseId.toString());
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
@@ -780,7 +1301,9 @@ export class WorkbenchComponent implements OnInit{
                  this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                  this.databaseId=responce.database?.hierarchy_id
                  this.modalService.dismissAll();
+                 if(!this.datasourceSwitchUI){
                  this.openMySqlForm = false;
+                 }
                  const encodedId = btoa(this.databaseId.toString());
                  if(this.iscrossDbSelect){
                    this.selectedHirchyIdCrsDb = this.databaseId
@@ -826,7 +1349,9 @@ export class WorkbenchComponent implements OnInit{
                   this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                   this.databaseId=responce.database?.hierarchy_id
                   this.modalService.dismissAll();
+                  if(!this.datasourceSwitchUI){
                   this.openMicrosoftSqlServerForm = false;
+                  }
                   const encodedId = btoa(this.databaseId.toString());
                   if(this.iscrossDbSelect){
                     this.selectedHirchyIdCrsDb = this.databaseId
@@ -871,7 +1396,9 @@ export class WorkbenchComponent implements OnInit{
                   this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                   this.databaseId=responce.database?.hierarchy_id
                   this.modalService.dismissAll();
+                  if(!this.datasourceSwitchUI){
                   this.openSnowflakeServerForm = false;
+                  }
                   const encodedId = btoa(this.databaseId.toString());
                   if(this.iscrossDbSelect){
                     this.selectedHirchyIdCrsDb = this.databaseId
@@ -1001,7 +1528,9 @@ export class WorkbenchComponent implements OnInit{
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.hierarchy_id
                 this.modalService.dismissAll();
+                if(!this.datasourceSwitchUI){
                 this.ibmDb2Form = false;
+                }
                 const encodedId = btoa(this.databaseId.toString());
                 if(this.iscrossDbSelect){
                   this.selectedHirchyIdCrsDb = this.databaseId
@@ -1022,7 +1551,67 @@ export class WorkbenchComponent implements OnInit{
       }
       });
     }
+    connectToGoogleAnalytics(){
 
+      if (!this.isGoogleAnalyticsFormValid()) {
+        this.toasterservice.error('Please fill in all required Google Analytics fields correctly.', 'Validation Error', {
+          positionClass: 'toast-top-center'
+        });
+        return;
+      }
+      const g = this.googleAnalytics;
+     const obj = { type: g.type,
+      project_id: g.project_id,
+      private_key_id: g.private_key_id,
+      private_key: g.private_key,
+      client_email: g.client_email,
+      client_id: g.client_id,
+      client_x509_cert_url: g.client_x509_cert_url,
+      property_id: g.property_id,
+      dimensions: g.dimensions, // Array of strings
+      metrics: g.metrics,
+      display_name:g.displayname
+     }
+    this.confirmPopupForDataTransformation().then((isSkip) => {
+      if (isSkip === true) {
+        this.workbechService.googleAnalyticsConnectionApi(obj).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                this.databaseId=responce.parent_id
+                this.modalService.dismissAll();
+                this.openGoogleAnalyticsForm = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            },
+            // error: (error) => {
+            //   console.log(error);
+            //   this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            // }
+            error: (error) => {
+              console.log(error);
+              if(error.error.error){
+              // this.toasterservice.error(error.error.error,'error',{ positionClass: 'toast-center-center'})
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.error,
+                width: '400px',
+              })
+              }else {
+                      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        
+              }
+          }
+          }
+        )
+      } else if(isSkip === false) {
+        this.checkDataSourceConnection(obj);
+      }
+    });
+    }
+        
     triggerFileUpload(value:any) {
       if(value === 'csv'){
       this.fileInput.nativeElement.click();
@@ -1240,6 +1829,7 @@ connectGoogleSheets(){
       )
     }}) 
 }
+
     deleteDbConnection(id:any){
       // const obj ={
       //   database_id:dbId
@@ -1348,15 +1938,41 @@ connectGoogleSheets(){
         this.publicKey = editData.public_key;
         this.privateKey = editData.private_key;
         this.displayName = editData.display_name;
-    } else if (this.databaseType == "halops") {
+    } else if (this.databaseType == "ninja") {
+       this.displayName = editData.display_name;
+       this.ninjaRMMClientid = editData.client_id;
+       this.ninjaRMMClientSecret = editData.client_secret;
+       this.selectedNinjaRMMScopes = editData.scopes;
+    }
+    else if (this.databaseType == "halops") {
       this.siteURLPSA = editData.site_url;
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
-    }else if(this.databaseType == "shopify"){
+    }  else if (this.databaseType == "immybot") {
+      this.clientIdImmybot = editData.client_id;
+      this.secretValue = editData.secret_value;
+      this.tenantId = editData.azure_domain;
+      this.subDomain = editData.instance_subdomain;
+      this.displayName = editData.display_name;
+    } else if(this.databaseType == "shopify"){
       this.displayName = editData.display_name;
       this.shopifyName = editData.shop_name;
       this.shopifyToken = editData.api_token;
+    }else if (this.databaseType === 'google_analytics') {
+      this.googleAnalytics = {
+        type: 'service_account',
+        project_id: editData.project_id || '',
+        private_key_id: editData.private_key_id || '',
+        private_key: editData.private_key || '',
+        client_email: editData.client_email || '',
+        client_id: editData.client_id || '',
+        client_x509_cert_url: editData.client_x509_cert_url || '',
+        property_id: editData.property_id || '',
+        dimensions: [...editData.dimensions],
+        metrics: [...editData.metrics],
+        displayname: editData.display_name || ''
+      };
     }
      else {
       this.postGreServerName = editData.hostname;
@@ -1468,6 +2084,8 @@ connectGoogleSheets(){
 
   gotoNewConnections(){
   this.openPostgreSqlForm=false;
+  this.openNinjaRMMForm = false;
+  this.openImmybot = false;
   this.viewNewDbs=true;
   this.openMySqlForm=false;
   this.openOracleForm = false;
@@ -1479,6 +2097,8 @@ connectGoogleSheets(){
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
   this.openShopifyForm = false;
+  this.openGoogleAnalyticsForm = false;
+  this.openGoogleAnalyticsForm = false;
   this.postGreServerName = '';
   this.schemaList = [];
   this.selectedSchema = 'public';
@@ -1494,6 +2114,9 @@ connectGoogleSheets(){
   this.siteURL = '';
   this.companyId = '';
   this.siteURLPSA = '';
+  this.ninjaRMMClientid = '';
+  this.ninjaRMMClientSecret = '';
+  this.selectedNinjaRMMScopes = [];
   }
 
   serverError:boolean = false;
@@ -1634,6 +2257,11 @@ connectGoogleSheets(){
     } else{
       this.disableConnectBtn = false;
     }
+  }
+
+  onNinjaRMMScopeChange(event: any) {
+    this.selectedNinjaRMMScopes = event;
+    this.ninjaRMMScopeError = this.selectedNinjaRMMScopes.length <= 0;
   }
   replaceExcelOrCsvFile(fileInput: any,database:any) {
     const formData: FormData = new FormData();
@@ -1845,5 +2473,28 @@ connectGoogleSheets(){
     const encodedId = btoa(hierarchyId.toString());
     this.router.navigate(['/analytify/transformationList/dataTransformation/' + encodedId]);
   }
-
+  switchDatabase(){
+    const obj ={
+      existing_h_id:this.selectedSourceSwithDbId,
+      switch_h_id:this.databaseId,
+      dashboard_id:this.dashbaordIdToSwitch
+    }
+    this.workbechService.datbaseSwitch(obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        if(data.message ==='Datasource switched successfully'){
+          const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
+          this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId],{state: {dbSwitched: true}})
+        }
+      },
+      error:(error)=>{
+        console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+      }
+    })
+  }
+  gotoDashboardWithoutSwitch(){
+    const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
+    this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId])
+  }
 }

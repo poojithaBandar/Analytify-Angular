@@ -55,7 +55,7 @@
                         <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
                             <div *ngIf="showAllDasboards && i < 4" class="card img-shadow mb-0">
                                 <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
-                                    src="{{dashboardList.dashboard_image}}" class="card-img-top-dashboard img-cursor" alt="img">
+                                    [src]="dashboardList.dashboard_image ? dashboardList.dashboard_image : '/assets/images/Db_server_images/smartdashboard.jpg'" class="card-img-top-dashboard img-cursor" alt="img">
                                 <div class="card-body p-2 d-flex align-items-center justify-content-between">
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{dashboardList.dashboard_name}}"
@@ -74,7 +74,7 @@
                                                     [isBtn]="false" [buttonName]="' View Dashboard'"
                                                     (btnClickEvent)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
                                                     [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
-                                                <app-insights-button [classesList]="'dropdown-item'" [tabIndex]="0"
+                                                <app-insights-button [classesList]="'dropdown-item'"
                                                     [previledgeId]="43" [isBtn]="false" [buttonName]="' Properties'"
                                                     (btnClickEvent)="viewPropertiesTab(dashboardList.dashboard_name,dashboardList.dashboard_id)"
                                                     [faIconList]="'fa fa-sliders me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>           
@@ -109,10 +109,10 @@
                                                     [isBtn]="false" [buttonName]="' View Dashboard'"
                                                     (btnClickEvent)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
                                                     [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
-                                                <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
-                                                    [previledgeId]="43" [isBtn]="false" [toolTip]="'Properties'"
+                                                <app-insights-button [classesList]="'dropdown-item'"
+                                                    [previledgeId]="43" [isBtn]="false"  [buttonName]="' Properties'"
                                                     (btnClickEvent)="viewPropertiesTab(dashboardList.dashboard_name,dashboardList.dashboard_id)"
-                                                    [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
+                                                    [faIconList]="'fa fa-sliders me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                                                 <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
                                                     [previledgeId]="35" [isBtn]="false" [buttonName]="' Delete'"
                                                     (btnClickEvent)="deleteDashboard(dashboardList.dashboard_id)"
@@ -527,6 +527,10 @@
                                         <img alt="product" src="./assets/images/icons/oracle-icon.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
+                                    <td *ngIf="database.server_type === 'NINJA'">
+                                        <img alt="product" src="./assets/images/icons/ninjaRMMIcon.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
                                     <td *ngIf="database.server_type === 'MYSQL'">
                                         <img alt="product" src="./assets/images/icons/MySql-icon1.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
@@ -571,12 +575,20 @@
                                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
+                                    <td *ngIf="database.server_type === 'IMMYBOT'">
+                                        <img alt="product" src="./assets/images/icons/immybot.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
                                     <td *ngIf="database.server_type === 'SHOPIFY'">
                                         <img alt="product" src="./assets/images/icons/shopify-large-1.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <td *ngIf="database.server_type === 'GOOGLE_SHEETS'">
                                         <img alt="product" src="./assets/images/icons/google-sheets.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
+                                        <img alt="product" src="./assets/images/icons/google-anaytics.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <!-- <td>{{database.server_type}}</td> -->

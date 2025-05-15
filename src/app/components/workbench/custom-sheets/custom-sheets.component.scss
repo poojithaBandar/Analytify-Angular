@@ -1,0 +1,26 @@
+ :host {
+   display: block;
+ }
+
+ table {
+   width: 100%;
+   border-collapse: collapse;
+ }
+
+ th,
+ td {
+   padding: 8px;
+   border: 1px solid #e0e0e0;
+ }
+
+ /* Zebra striping handled via inline styles */
+
+ .pagination {
+   display: flex;
+   justify-content: center;
+   margin-top: 1rem;
+ }
+
+ .even-row { background-color:  #ffffff;}
+.odd-row { background-color: #d4d3d2;}
+.big-number-container { text-align: center; margin-top: 20px;}

@@ -1037,7 +1037,7 @@
         
          <div *ngIf="!isPublicUrl" class="card mb-1 public-url-position">
             <div class="card-body p-1">
-                <div class="dashboard-title-card">
+                <div class="dashboard-title-card d-flex align-items-center">
                   <div class="flex-grow-1">                     
                     <div class="title-container" [ngClass]="{'border': dashboardId}" *ngIf="!editor">
                       <input *ngIf="!dashboardId && !editor" (click)="editor =true && !isPublicUrl" type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
@@ -1064,7 +1064,7 @@
                         <span [ngbTooltip]="dashboard.length === 0 ? 'Add sheet to save dashboard' : ''">
                             <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button></span>
                             <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
-                            (btnClickEvent)="updateDashboard(false);editor =false"></app-insights-button>
+                            (btnClickEvent)="updateDashboard(false,true);editor =false"></app-insights-button>
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button> -->
                             <div *ngIf="!isPublicUrl && !isSampleDashboard" class=" p-1" ngbDropdown>
@@ -1074,12 +1074,12 @@
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
                                 <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();">sync data</button> -->
                                 <!-- <button *ngIf="!isPublicUrl && dashboardId" type="button" [disabled]="canNavigateToAnotherPage" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button> -->
-                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="refreshDashboard()">Sync data</a>
-                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</a>
+                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard" [class.disabled]="dashboard.length === 0 || !updateDashbpardBoolen" (click)="(dashboard.length === 0 || !updateDashbpardBoolen) ? $event.preventDefault() : refreshDashboard(false)">Sync data</a>
+                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId" [class.disabled]="canNavigateToAnotherPage" (click)="canNavigateToAnotherPage ? $event.preventDefault() : autoRefreshInterval(autorefresh)">Set auto-refresh interval</a>
 
                               </div>
                               </div>
-                            <button *ngIf="!isPublicUrl" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
+                            <button *ngIf="!isPublicUrl && dashboardId" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
                             <div class=" p-1" ngbDropdown>
                               <button
                               [disabled]="dashboard.length === 0 || !updateDashbpardBoolen"
@@ -1091,8 +1091,8 @@
                               <i class="fa fa-download" aria-hidden="true"></i>
                               </button>
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
-                                <a class="dropdown-item border-bottom" *ngIf="!isPublicUrl && !isSampleDashboard"  (click)="downloadAsImage()">Download Image</a>
-                                <a class="dropdown-item" *ngIf="!isPublicUrl && dashboardId"  (click)="downloadAsPDF();">Download Pdf</a>
+                                <a class="dropdown-item border-bottom" (click)="downloadAsImage()">Download as Image</a>
+                                <a class="dropdown-item" (click)="downloadAsPDF();">Download as PDF</a>
                               </div>
                               </div>
                               
@@ -1109,14 +1109,9 @@
                                   </div>
                               </div>
                             </div>
+                            <button class="btn btn-primary mt-0" ngbTooltip="Switch Database" [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" style="padding:5px 6px !important"  *ngIf="!this.isPublicUrl && !isSampleDashboard && dashboardId" (click)="switchDatasourceModalOpen(switchDatabaseModal)"><img src="./assets/images/icons/Data Sources-switch.svg" alt="logo" class="db-switch"> </button>
+
                             </div>
-                    <!-- <div class="min-w-fit-content ms-3">
-                            <a href=""><i class="fa fa-filter p-2"></i> </a>
-                            <a href=""><i class="fa fa-edit p-2"></i> </a>
-                            <a href=""><i class="fa fa-share p-2"></i></a>
-                            <a href=""><i class="fa fa-list p-2"></i></a>
-                    </div> -->
-                
             </div>
         </div> 
        </div>
@@ -1196,7 +1191,7 @@
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
-                      <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu>
+                      <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
                         <app-insights-button *ngIf="item['type'] !== 'image'" [classesList]="'dropdown-item'"
                           [buttonName]="'Goto Sheet'" [previledgeIdsList]="[20,18]" [isBtn]="false"
                           (btnClickEvent)="viewSheet(item)" [isIcon]="false"></app-insights-button>
@@ -1210,7 +1205,7 @@
                           (btnClickEvent)="downloadSheet(item, 'pdf')" 
                           [isIcon]="false">
                         </app-insights-button> -->
-                        <app-insights-button [classesList]="'dropdown-item'" 
+                        <app-insights-button  *ngIf="item['type'] !== 'image'" [classesList]="'dropdown-item'" 
                           [buttonName]="'Download CSV'" 
                           [previledgeIdsList]="[20,18]" 
                           [isBtn]="false"
@@ -1224,9 +1219,9 @@
                           (btnClickEvent)="downloadSheet(item, 'html')" 
                           [isIcon]="false">
                         </app-insights-button> -->
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
+                        <!-- <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
-                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
+                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button> -->
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
                           [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
@@ -1506,9 +1501,9 @@
                   
                       </tbody>
                   </table>
-                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false)"></pagination-controls>
+                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false,false)"></pagination-controls>
                   <div class="pagination-count">
-                    <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage" (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
+                    <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage" (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false,false)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
                           <option  value="10"> 10</option>
                           <option  value="50"> 50</option>
                           <option  value="100"> 100</option>
@@ -1937,11 +1932,11 @@
                         </tbody>
                       </table>
                       <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'"
-                        (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false)">
+                        (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false,false)">
                       </pagination-controls>
                       <div class="pagination-count">
                         <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage"
-                          (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false)"
+                          (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false,false)"
                           (mousedown)="stopDragging($event)" class="form-control cursor form-control-pad">
                           <option value="10"> 10</option>
                           <option value="50"> 50</option>
@@ -2132,8 +2127,61 @@
     </div>
   
   </ng-template>
+  <input type="file" (change)="uploadfileCsv($event)" accept=".csv" #fileInput style="display: none;" />
+  <input type="file" (change)="uploadfileExcel($event)" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
+
+  <ng-template #switchDatabaseModal let-modal>
+    <div class="modal-header">
+      <h6 class="modal-title">Switch Datasource</h6>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+  
+    <div class="modal-body">
+      <!-- <div class="mb-3">
+        <p class="text-muted"> 
+          <i class="fa fa-filter"></i>
+           Switching is only allowed between environments with identical schemas.
+          Cross-data source switching isn't supported. All sheets using [Current Data Source] will refresh with [New Data Source]. </p>
+      </div> -->
+      <div class="alert alert-warning d-flex align-items-start gap-2 p-3" style="border-left: 4px solid #ffc107;">
+        <div class="icon-circle bg-warning text-white d-flex justify-content-center align-items-center rounded-circle" style="width: 29px; height: 18px;">
+          <i class="fa fa-info"></i>
+        </div>
+        <div>
+          <p class="mb-0 text-muted">
+            <strong>Note:</strong> Switching is only allowed between environments with identical schemas. 
+            Cross-data source switching isn't supported. All sheets using <strong>[Current Data Source]</strong> will refresh with <strong>[New Data Source]</strong>.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="form-label">Current Datasource</label>
+        <select class="form-select" [(ngModel)]="selectedCurrentDb" (change)="onCurrentDbChange()">
+          <option value="" disabled selected>Select Current Database</option>
+          <option *ngFor="let db of currentDbKeys" [value]="db">{{ db }}</option>
+        </select>
+      </div>
+  
+      <div class="form-group mb-3">
+        <label class="form-label">Target Datasource</label>
+        <select  class="form-select" (change)="onTargetDbChange($event)">
+          <option value="" disabled selected>Select Target Database</option>
+          <option *ngFor="let db of targetDbData;  let i = index" [value]="i">{{db.display_name }}</option>
+        </select>
+      </div>
+    </div>
+  
+    <div class="modal-footer">
+      <button type="button" [disabled]="!selectedCurrentDb || disableAddNew" class="btn btn-info" (click)="addNewDatabaseConnection()">Add New</button>
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Close</button>
+      <button type="button" [disabled]="!selectedCurrentDb || !targetSelectedDbHierarchyId" class="btn btn-primary" (click)="switchDatabase()" >Switch</button>
 
 
+      
+    </div>
+  </ng-template>
+  
 
 
 
