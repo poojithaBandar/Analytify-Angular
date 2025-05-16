@@ -155,6 +155,14 @@ toggleClass1 = "off-line";
     this.pageNo=pageNo;
     this.getUserList();
   }
+   onPageSizeChange() {
+  // Reset to page 1 if you're on the last page and items may not fit
+  const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  if (this.pageNo > totalPages) {
+    this.pageNo = 1;
+  }
+  this.getUserList();
+}
   getUserList(){
     const obj ={
       search : this.userName,

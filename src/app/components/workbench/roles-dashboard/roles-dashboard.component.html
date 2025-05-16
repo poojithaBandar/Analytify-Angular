@@ -156,7 +156,7 @@
         }
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetRolesList((page = $event))"></pagination-controls>
             <div class="pagination-count">
-              <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getSavedRolesList()" class="form-control cursor-pointer">
+              <select  [(ngModel)]="itemsPerPage" (ngModelChange)="onPageSizeChange()" class="form-control cursor-pointer">
                     <option  value="10"> 10</option>
                     <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
                     <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
