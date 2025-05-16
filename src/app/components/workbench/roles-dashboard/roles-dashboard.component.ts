@@ -87,6 +87,14 @@ pageChangegetRolesList(page:any){
 this.pageNo=page;
 this.getSavedRolesList();
 }
+ onPageSizeChange() {
+  // Reset to page 1 if you're on the last page and items may not fit
+  const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  if (this.pageNo > totalPages) {
+    this.pageNo = 1;
+  }
+  this.getSavedRolesList();
+}
 getSavedRolesList(){
   const obj ={
      search:this.roleName,
