@@ -1041,4 +1041,52 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/dashboard_switch/`+this.accessToken,obj);
     }
+    //etl
+    saveEtl(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/etl/`+this.accessToken,object);
+    }
+
+    updateEtl(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/etl_update/`+this.accessToken,object);
+    }
+
+    getEtlDataFlow(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/etl_data/`+this.accessToken+'/'+id);
+    }
+
+    getEtlDataFlowList(page:any, pageSize:any, search:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/dags_list/`+this.accessToken+`?page=${page}&page_size=${pageSize}`+(search ? `&search=${search}` : ``));
+    }
+
+    runEtl(dagId : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/trigger/`+dagId+'/'+this.accessToken,{});
+    }
+
+    getDataFlowStatus(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dataflow_status/`+this.accessToken,object);
+    }
+
+    getDataFlowLogs(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/Dataflow_Task_status/`+this.accessToken,object);
+    }
+    getConnectionsForEtl(){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/etl_source_objects/`+this.accessToken);
+    }
+
 }
