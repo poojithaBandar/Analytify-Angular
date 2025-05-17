@@ -4343,7 +4343,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             bar["type"]="bar";
                   });
         item1.echartOptions.xAxis.data = _.cloneDeep(categories);
-        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions.series.forEach((row:any, index:any)=>{
+          row.data = _.cloneDeep(this.filteredRowData)[index].data;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4371,7 +4374,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             bar["stack"]="total";
                   });
         item1.echartOptions.yAxis.data = _.cloneDeep(categories);
-        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions.series.forEach((row:any, index:any)=>{
+          row.data = _.cloneDeep(this.filteredRowData)[index].data;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4398,7 +4404,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             bar["stack"]="total";
                   });
         item1.echartOptions.xAxis.data = _.cloneDeep(categories);
-        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions.series.forEach((row:any, index:any)=>{
+          row.data = _.cloneDeep(this.filteredRowData)[index].data;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4450,7 +4459,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
               bar["type"]="bar";
                     });
           item1.echartOptions.yAxis.data = _.cloneDeep(categories);
-          item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+          // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+          item1.echartOptions.series.forEach((row:any, index:any)=>{
+            row.data = _.cloneDeep(this.filteredRowData)[index].data;
+          });
           item1.echartOptions = {
             ...item1.echartOptions,
           };
@@ -4477,7 +4489,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             bar["stack"]="total";
                   });
         item1.echartOptions.xAxis.data = _.cloneDeep(categories);
-        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions.series.forEach((row:any, index:any)=>{
+          row.data = _.cloneDeep(this.filteredRowData)[index].data;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4524,7 +4539,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           }
         item1.echartOptions.radar.indicator = radarArray;
         item1.echartOptions.legend = legendArray;
-        item1.echartOptions.series[0].data = transformedArray;
+        // item1.echartOptions.series[0].data = transformedArray;
+        item1.echartOptions.series[0].data.forEach((row:any, index:any)=>{
+          row.value = _.cloneDeep(transformedArray)[index].value;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
