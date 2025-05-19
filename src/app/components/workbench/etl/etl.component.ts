@@ -423,25 +423,25 @@ export class ETLComponent {
     if (type === 'general') {
       const general = { name: this.nodeName}
       nodeId = this.selectedNode.id;
-      // if(['source_data_object', 'target_data_object'].includes(this.selectedNode.data.type)){
-      //   let currentDataObject;
-      //   if(!this.selectedNode.data.nodeData.properties.create){
-      //     currentDataObject = {
-      //       ...this.selectedNode.data.nodeData.dataObject,
-      //       tables: this.nodeName
-      //     };
-      //   } else{
-      //     currentDataObject = this.nodeName;
-      //   }
-      //   data = {
-      //     ...this.selectedNode.data,
-      //     nodeData: {
-      //       ...this.selectedNode.data.nodeData,
-      //       general: general,
-      //       dataObject: currentDataObject
-      //     }
-      //   };
-      // } else{
+      if(['target_data_object'].includes(this.selectedNode.data.type) && this.selectedNode.data.nodeData.properties.create){
+        let currentDataObject;
+        // if(!this.selectedNode.data.nodeData.properties.create){
+        //   currentDataObject = {
+        //     ...this.selectedNode.data.nodeData.dataObject,
+        //     tables: this.nodeName
+        //   };
+        // } else{
+          currentDataObject = this.nodeName;
+        // }
+        data = {
+          ...this.selectedNode.data,
+          nodeData: {
+            ...this.selectedNode.data.nodeData,
+            general: general,
+            dataObject: currentDataObject
+          }
+        };
+      } else{
         data = {
           ...this.selectedNode.data,
           nodeData: {
@@ -449,7 +449,7 @@ export class ETLComponent {
             general: general
           }
         };
-      // }
+      }
 
       let displayName = this.nodeName;
       if (displayName.length > 8) {
