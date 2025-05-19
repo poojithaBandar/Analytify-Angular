@@ -517,7 +517,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       "dashbaord_id": this.dashboardId,
       }
     }
-    
+    this.loaderService.show();
     this.workbechService.getEmbedDashboardData(obj).subscribe({
       next:(data)=>{
         this.getDashboardFilterredList(false,data);
