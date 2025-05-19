@@ -62,6 +62,13 @@ export class ETLComponent {
   selectedColumn: any = {};
   selectedIndex: number = -1;
   isJoinerCondition: boolean = false;
+  isCanvasSelected: boolean = false;
+  canvasData: any = {parameters: [], sqlParameters: []};
+  isParameter: boolean = false;
+  isSQLParameter: boolean = false;
+  isHaving : boolean = false;
+  isWhere : boolean = false;
+  isFilter : boolean = false;
 
   constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, 
     private loaderService: LoaderService, private etlGraphService: EtlGraphService, private router: Router,private route: ActivatedRoute) {
@@ -84,10 +91,30 @@ export class ETLComponent {
       this.drawflow = new Drawflow(container);
       this.drawflow.reroute = true;
       this.drawflow.start();
+      this.drawflow.drawflow.drawflow[this.drawflow.module].canvasData = this.canvasData;
 
       if(this.dataFlowId){
         this.getDataFlow();
       }
+
+      const canvasElement = container.querySelector('.drawflow') as HTMLElement;
+
+      canvasElement?.addEventListener('click', (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+
+        // Ignore clicks on nodes, ports, and connections
+        const isOnNode = target.closest('.drawflow-node');
+        const isOnInput = target.closest('.input');
+        const isOnOutput = target.closest('.output');
+        const isOnConnection = target.closest('svg.connection, .main-path');
+
+        if (!isOnNode && !isOnInput && !isOnOutput && !isOnConnection) {
+          console.log('Canvas clicked at:', event.clientX, event.clientY);
+          this.isNodeSelected = true;
+          this.isCanvasSelected = true;
+          this.tableTabId = 7;
+        }
+      });
 
       this.drawflow.on('connectionCreated', (connection: any) => {
 
@@ -101,18 +128,14 @@ export class ETLComponent {
         if (nodeType !== 'Joiner' && inputPort.connections.length > 1) {
           const lastConnection = inputPort.connections[inputPort.connections.length - 1];
       
-          // Remove the newly created connection (block it)
           this.drawflow.removeSingleConnection(lastConnection.node, input_id, lastConnection.input, input_class);
       
-          // Optionally, show a message to inform the user
           console.log('Connection limit exceeded for this node type!');
         } else {
           this.getConnectionData(connection);
           this.getDropdownColumnsData(this.drawflow.getNodeFromId(input_id));
         }
 
-        // this.getConnectionData(connection);
-        // this.getDropdownColumnsData(this.drawflow.getNodeFromId(connection.input_id));
       });
       this.drawflow.on('connectionSelected', (connection: any) => {
         // this.getConnectionData(connection);
@@ -128,18 +151,38 @@ export class ETLComponent {
           const nodeNamesDropdown = targetNode.data.nodeData.properties.nodeNamesDropdown;
           const sourceNodeName = sourceNode.data.nodeData.general.name;
       
-          const index = nodeNamesDropdown.indexOf(sourceNodeName);
+          const index = nodeNamesDropdown.findIndex((item:any) => item.label === sourceNodeName);
           if (index !== -1) {
+            const sourceNodeValue = nodeNamesDropdown[index].value;
             nodeNamesDropdown.splice(index, 1);
-            targetNode.data.nodeData.properties.joinList.splice(index, 1);
+
+            const joinList = targetNode.data.nodeData.properties.joinList;
+            const joinIndex = joinList.findIndex((join:any) => join.sourceNodeId === sourceNodeValue);
+            if (joinIndex !== -1) {
+              joinList.splice(joinIndex, 1);
+            }
+
+            if (targetNode.data.nodeData.properties.primaryObject?.value === sourceNodeValue) {
+              targetNode.data.nodeData.properties.primaryObject = null;
+            }
+
+            if(nodeNamesDropdown.length <= 1){
+              targetNode.data.nodeData.properties.joinList = [];
+            }
             this.drawflow.updateNodeDataFromId(targetNode.id, targetNode.data);
           }
+        }
+        this.getDropdownColumnsData(this.drawflow.getNodeFromId(input_id));
+        if(this.selectedNode.hasOwnProperty('data')){
+          const node = this.drawflow.getNodeFromId(this.selectedNode.id);
+          this.getSelectedNodeData(node);
         }
       });
 
       this.drawflow.on('nodeSelected', (nodeId: number) => {
         const nodeEl = document.querySelector(`[id="node-${nodeId}"]`);
         this.tableTabId = 1;
+        this.isCanvasSelected = false;
         if (nodeEl) {
           nodeEl.addEventListener('click', () => {
             const node = this.drawflow.getNodeFromId(nodeId);
@@ -147,6 +190,11 @@ export class ETLComponent {
           });
         }
       });
+
+      // this.drawflow.on('nodeUnselected', () => {
+      //   this.selectedNode = {data: {type: '', nodeData: {general: {name: this.etlName}}}};
+      //   this.isNodeSelected = true;
+      // });
 
       const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
       Object.entries(allNodes).forEach(([id, node]) => {
@@ -162,9 +210,9 @@ export class ETLComponent {
     const targetNode = this.drawflow.getNodeFromId(input_id);
 
     if(targetNode.data.type === 'Joiner'){
-      targetNode.data.nodeData.properties.nodeNamesDropdown.push(sourceNode.data.nodeData.general.name);
+      targetNode.data.nodeData.properties.nodeNamesDropdown.push({label: sourceNode.data.nodeData.general.name, value: sourceNode.id});
       if(targetNode.data.nodeData.properties.nodeNamesDropdown.length > 1){
-        targetNode.data.nodeData.properties.joinList.push({joinType: '', secondaryObject: null, joinCondition: ''});
+        targetNode.data.nodeData.properties.joinList.push({joinType: '', secondaryObject: null, joinCondition: '', sourceNodeId: sourceNode.id, joinObject: null});
       }
       this.drawflow.updateNodeDataFromId(targetNode.id, targetNode.data);
     }
@@ -173,6 +221,12 @@ export class ETLComponent {
     console.log('Input Node ID:', input_id);
     console.log('Source Node:', sourceNode);
     console.log('Target Node:', targetNode);
+  }
+
+  joinListUpdate(event:any, index:any){
+    this.selectedNode.data.nodeData.properties.joinList[index].secondaryObject = event.label;
+    this.selectedNode.data.nodeData.properties.joinList[index].sourceNodeId = event.value;
+    this.updateNode('properties');
   }
 
 
@@ -362,29 +416,32 @@ export class ETLComponent {
 
   updateNode(type: any) {
     let data = {};
-    let nodeId = this.selectedNode.id;
+    let nodeId = '';
+    if(type !== 'parameter'){
+      nodeId = this.selectedNode.id;
+    }
     if (type === 'general') {
       const general = { name: this.nodeName}
       nodeId = this.selectedNode.id;
-      if(['source_data_object', 'target_data_object'].includes(this.selectedNode.data.type)){
-        let currentDataObject;
-        if(!this.selectedNode.data.nodeData.properties.create){
-          currentDataObject = {
-            ...this.selectedNode.data.nodeData.dataObject,
-            tables: this.nodeName
-          };
-        } else{
-          currentDataObject = this.nodeName;
-        }
-        data = {
-          ...this.selectedNode.data,
-          nodeData: {
-            ...this.selectedNode.data.nodeData,
-            general: general,
-            dataObject: currentDataObject
-          }
-        };
-      } else{
+      // if(['source_data_object', 'target_data_object'].includes(this.selectedNode.data.type)){
+      //   let currentDataObject;
+      //   if(!this.selectedNode.data.nodeData.properties.create){
+      //     currentDataObject = {
+      //       ...this.selectedNode.data.nodeData.dataObject,
+      //       tables: this.nodeName
+      //     };
+      //   } else{
+      //     currentDataObject = this.nodeName;
+      //   }
+      //   data = {
+      //     ...this.selectedNode.data,
+      //     nodeData: {
+      //       ...this.selectedNode.data.nodeData,
+      //       general: general,
+      //       dataObject: currentDataObject
+      //     }
+      //   };
+      // } else{
         data = {
           ...this.selectedNode.data,
           nodeData: {
@@ -392,7 +449,7 @@ export class ETLComponent {
             general: general
           }
         };
-      }
+      // }
 
       let displayName = this.nodeName;
       if (displayName.length > 8) {
@@ -425,6 +482,9 @@ export class ETLComponent {
       data = {
         ...this.selectedNode.data
       };
+    } else if(type === 'parameter'){
+      const module = this.drawflow.module || 'Home';
+      this.drawflow.drawflow.drawflow[module].canvasData = this.canvasData;
     } else{
       nodeId = this.selectedNode.id;
 
@@ -432,13 +492,14 @@ export class ETLComponent {
         ...this.selectedNode.data
       };
     }
-    this.drawflow.updateNodeDataFromId(nodeId, data);
-    const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
-    Object.entries(allNodes).forEach(([id, node]) => {
-      // if(nodeId)
-      this.getDropdownColumnsData(node);
-    });
-    console.log(allNodes);
+    if(type !== 'parameter'){
+      this.drawflow.updateNodeDataFromId(nodeId, data);
+      const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
+      Object.entries(allNodes).forEach(([id, node]) => {
+        this.getDropdownColumnsData(node);
+      });
+    }
+    console.log(this.drawflow.drawflow.drawflow[this.drawflow.module]);
   }
 
   getSelectedNodeData(node: any) {
@@ -743,7 +804,7 @@ export class ETLComponent {
       } else if(nodes[nodeId].data.type === 'Rollup'){
         let grp : any[] = [];
         nodes[nodeId].data.nodeData.groupAttributes.forEach((atrr:any)=>{
-          const array = [atrr.aliasName, atrr.selectedColumn.group+'.'+atrr.selectedColumn.label];
+          const array = [atrr.aliasName, '', atrr.selectedColumn.group+'.'+atrr.selectedColumn.label];
           grp.push(array);
         });
         let attr : any[] = [];
@@ -757,7 +818,7 @@ export class ETLComponent {
       } else if(nodes[nodeId].data.type === 'Filter'){
         task.filter_conditions = nodes[nodeId].data.nodeData.properties.filterCondition;
       } else if(nodes[nodeId].data.type === 'Joiner'){
-        task.primary_table = nodes[nodeId].data.nodeData.properties.primaryObject;
+        task.primary_table = nodes[nodeId].data.nodeData.properties.primaryObject.label;
         let joins : any[] = [];
         nodes[nodeId].data.nodeData.properties.joinList.forEach((join:any)=>{
           const array = [join.joinType, join.secondaryObject, join.joinCondition];
@@ -1140,27 +1201,37 @@ export class ETLComponent {
     }
   }
 
-  openExpressionEdit(modal:any, attribute:any, index:number){
-    this.selectedIndex = index;
-    const nodeData = JSON.parse(JSON.stringify(this.selectedNode.data.nodeData));
-
+  openExpressionEdit(modal:any, attribute:any, index:any){
+    if(index !== null || index !== undefined){
+      this.selectedIndex = index;
+    }
     let dataObject: any[] = [];
-
-    if (this.selectedNode.data.type === 'source_data_object') {
-      const columns = nodeData.dataObject.columns || [];
-      const group = this.selectedNode.data.nodeData.general.name;
-
-      dataObject = columns.map((col: any) => ({
-        label: col.col,
-        value: col.col,
-        dataType: col.dtype,
-        group: group
+    if(attribute.paramName){
+      dataObject = [''].map((col: any) => ({
+        label: '',
+        value: '',
+        dataType: '',
+        group: 'Project Parameters'
       }));
     } else {
-      dataObject = nodeData.dataObject || [];
+      const nodeData = JSON.parse(JSON.stringify(this.selectedNode.data.nodeData));
+
+      if (this.selectedNode.data.type === 'source_data_object') {
+        const columns = nodeData.dataObject.columns || [];
+        const group = this.selectedNode.data.nodeData.general.name;
+
+        dataObject = columns.map((col: any) => ({
+          label: col.col,
+          value: col.col,
+          dataType: col.dtype,
+          group: group
+        }));
+      } else {
+        dataObject = nodeData.dataObject || [];
+      }
     }
 
-    this.groupedColumns = dataObject.reduce((acc:any, attr:any) => {
+    this.groupedColumns = dataObject.reduce((acc: any, attr: any) => {
       if (!acc[attr.group]) {
         acc[attr.group] = [];
       }
@@ -1170,13 +1241,68 @@ export class ETLComponent {
 
     const groupKeys = Object.keys(this.groupedColumns);
     this.selectedGroup = groupKeys.length > 0 ? groupKeys[0] : null;
-    if(attribute.secondaryObject){
+
+    if(attribute.hasOwnProperty('secondaryObject')){
       this.isJoinerCondition = true;
+      this.isParameter = false;
+      this.isSQLParameter = false;
+      this.isHaving = false;
+      this.isWhere = false;
+      this.isFilter = false;
       this.selectedField = attribute.secondaryObject;
       this.selectedColumn = this.groupedColumns[this.selectedGroup][0];
       this.expression = attribute.joinCondition;
+    } else if(attribute.hasOwnProperty('paramName')){
+      this.isJoinerCondition = false;
+      this.isHaving = false;
+      this.isWhere = false;
+      this.isFilter = false;
+      this.selectedField = attribute;
+      this.selectedColumn = '';
+      if(attribute.hasOwnProperty('sql')){
+        this.isSQLParameter = true;
+        this.expression = attribute.sql;
+      } else{
+        this.isParameter = true;
+        this.expression = attribute.default;
+      }
+    } else if(attribute === 'having'){
+      this.isJoinerCondition = false;
+      this.isParameter = false;
+      this.isSQLParameter = false;
+      this.isWhere = false;
+      this.isFilter = false;
+      this.isHaving = true;
+      this.selectedField = 'Having Clause';
+      this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
+      this.expression = this.selectedNode.data.nodeData.properties.havingClause;
+    }  else if(attribute === 'where'){
+      this.isJoinerCondition = false;
+      this.isParameter = false;
+      this.isSQLParameter = false;
+      this.isHaving = false;
+      this.isFilter = false;
+      this.isWhere = true;
+      this.selectedField = 'Where Clause';
+      this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
+      this.expression = this.selectedNode.data.nodeData.properties.whereClause;
+    }  else if(attribute === 'filter'){
+      this.isJoinerCondition = false;
+      this.isParameter = false;
+      this.isSQLParameter = false;
+      this.isHaving = false;
+      this.isWhere = false;
+      this.isFilter = true;
+      this.selectedField = 'Filter Condition';
+      this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
+      this.expression = this.selectedNode.data.nodeData.properties.filterCondition;
     } else{
       this.isJoinerCondition = false;
+      this.isParameter = false;
+      this.isSQLParameter = false;
+      this.isHaving = false;
+      this.isWhere = false;
+      this.isFilter = false;
       this.selectedField = attribute;
       this.selectedColumn = attribute;
       this.expression = attribute.expression;
@@ -1191,16 +1317,33 @@ export class ETLComponent {
   updateExpressionToNode(){
     if(this.isJoinerCondition){
       this.selectedNode.data.nodeData.properties.joinList[this.selectedIndex].joinCondition = this.expression;
+    } else if(this.isParameter){
+      this.canvasData.parameters[this.selectedIndex].default = this.expression;
+    } else if(this.isSQLParameter){
+      this.canvasData.sqlParameters[this.selectedIndex].sql = this.expression;
+    } else if(this.isHaving){
+      this.selectedNode.data.nodeData.properties.havingClause = this.expression;
+    }  else if(this.isWhere){
+      this.selectedNode.data.nodeData.properties.whereClause = this.expression;
+    }  else if(this.isFilter){
+      this.selectedNode.data.nodeData.properties.filterCondition = this.expression;
     } else{
       this.selectedNode.data.nodeData.attributes[this.selectedIndex].expression = this.expression;
     }
 
-    this.updateNode('');
+    if(!this.isParameter && !this.isSQLParameter){
+      this.updateNode('');
+    } else{
+      this.updateNode('parameter');
+    }
     this.expression = '';
     this.selectedGroup = '';
     this.selectedColumn = {};
     this.selectedIndex = -1;
     this.isJoinerCondition = false;
+    this.isHaving = false;
+    this.isWhere = false;
+    this.isFilter = false;
   }
 
   getDataFlow(){
@@ -1212,6 +1355,8 @@ export class ETLComponent {
         const drawFlowJson = JSON.parse(data.transformation_flow);
         this.drawflow.import(drawFlowJson);
         this.isRunEnable = true;
+        this.canvasData = drawFlowJson.drawflow.Home.canvasData;
+        console.log(this.canvasData);
       },
       error: (error: any) => {
         console.log(error);
@@ -1229,5 +1374,59 @@ export class ETLComponent {
       });
       this.drawflow.updateNodeDataFromId(this.selectedNode.id, this.selectedNode.data);
     }
+  }
+
+  addNewParameter(){
+    const existingIndexes = this.canvasData.parameters
+      .map((p:any) => {
+        const match = p.paramName?.match(/PARAM_NAME_(\d+)/);
+        return match ? +match[1] : null;
+      })
+      .filter((index:any) => index !== null)
+      .sort((a:any, b:any) => a! - b!) as number[];
+
+    // Find the smallest unused index
+    let newIndex = 1;
+    for (let i = 0; i < existingIndexes.length; i++) {
+      if (existingIndexes[i] !== i + 1) {
+        newIndex = i + 1;
+        break;
+      }
+      newIndex = existingIndexes.length + 1;
+    }
+
+    let parameter = {paramName: `PARAM_NAME_${newIndex}`, dataType: 'varchar', default: ''}
+    this.canvasData.parameters.push(parameter);
+  }
+  deleteParameter(index:any){
+    this.canvasData.parameters.splice(index, 1);
+    this.updateNode('parameter');
+  }
+
+  addNewSQLParameter(){
+    const existingIndexes = this.canvasData.sqlParameters
+      .map((p:any) => {
+        const match = p.paramName?.match(/SQL_PARAM_NAME_(\d+)/);
+        return match ? +match[1] : null;
+      })
+      .filter((index:any) => index !== null)
+      .sort((a:any, b:any) => a! - b!) as number[];
+
+    // Find the smallest unused index
+    let newIndex = 1;
+    for (let i = 0; i < existingIndexes.length; i++) {
+      if (existingIndexes[i] !== i + 1) {
+        newIndex = i + 1;
+        break;
+      }
+      newIndex = existingIndexes.length + 1;
+    }
+
+    let parameter = {paramName: `SQL_PARAM_NAME_${newIndex}`, dataType: 'varchar', sql: '', default: 'null'}
+    this.canvasData.sqlParameters.push(parameter);
+  }
+  deleteSQLParameter(index:any){
+    this.canvasData.sqlParameters.splice(index, 1);
+    this.updateNode('parameter');
   }
 }
