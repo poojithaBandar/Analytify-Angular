@@ -46,6 +46,7 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
   const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
   if (this.pageNo > totalPages) {
     this.pageNo = 1;
+    this.page =1;
   }
   this.getSavedQueries();
   }
