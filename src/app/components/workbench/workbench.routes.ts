@@ -8,257 +8,383 @@ import { canDeactivateGuard } from '../../can-deactivate.guard';
 
 export const admin: Routes = [
 
-  {path:'analytify',children:[ 
-    {
-   path: 'datasources/new-connections',
-   canActivate:[authGuard],
-   loadComponent: () =>
-     import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
- },
- {
-  path: 'datasources/view-connections',
-  loadComponent: () =>
-    import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
-},
+  {
+    path: 'analytify', children: [
+      {
+        path: 'datasources/new-connections',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/view-connections',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/google-sheets/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/viewconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/viewconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/newconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/newconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
 
-//  {
-//   path: 'database-connection/tables/:id',
-//   canActivate:[authGuard],
-//   loadComponent: () =>
-//     import('./insights/workbench.component').then((m) => m.WorkbenchComponent),
-// },
+      {
+        path: 'datasources/crossdatabase/customsql/viewconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/viewconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/newconnection/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/customsql/newconnection/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
 
-{
-  path: 'database-connection/tables/:id',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./database/database.component').then((m)=> m.DatabaseComponent)
-},
-//quickbooks
-{
-  path: 'database-connection/tables/quickbooks/:id',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./database/database.component').then((m)=> m.DatabaseComponent)
-},
-//salesforce
-{
-  path: 'database-connection/tables/salesforce/:id',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./database/database.component').then((m)=> m.DatabaseComponent)
-},
-{
-  path: 'database-connection/files/tables/:id',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./database/database.component').then((m)=> m.DatabaseComponent)
-},
-{
-  path: 'database-connection/sheets/fileId/:id1/:id2/:id3',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./database/database.component').then((m)=> m.DatabaseComponent)
-},
-{
-  path: 'database-connection/sheets/dbId/:id1/:id2/:id3',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./database/database.component').then((m)=> m.DatabaseComponent)
-},
-{
-  path: 'database-connection/savedQuery/fileId/:id1/:id2',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./database/database.component').then((m)=> m.DatabaseComponent)
-},
-{
-  path: 'database-connection/savedQuery/dbId/:id1/:id2',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./database/database.component').then((m)=> m.DatabaseComponent)
-},
-{
-  path: 'sheets/fileId/:id1/:id2/:id3',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
-},
-{
-  path: 'sheets/dbId/:id1/:id2/:id3',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
-},
-{
-  path: 'sheets',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
-},
-{
-  path: 'sheetsdashboard',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent)
-},
-{
-  path: 'sheetscomponent/sheetsdashboard/fileId/:id1/:id2',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
-   pathMatch: 'full',
-},
-{
-  path: 'sheetscomponent/sheetsdashboard/dbId/:id1/:id2',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
-   pathMatch: 'full',
-},
-{
-  path: 'home/sheetsdashboard/:id1/:id2/:id3',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
-  pathMatch: 'full',
-},{
-  path: 'home/sheetsdashboard/:id1',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
-  pathMatch: 'full',
-},
-{
-  path: 'home/sheets/:id1/:id2/:id3',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
-},
+      {
+        path: 'datasources/google-sheets',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      //  {
+      //   path: 'database-connection/tables/:id',
+      //   canActivate:[authGuard],
+      //   loadComponent: () =>
+      //     import('./insights/workbench.component').then((m) => m.WorkbenchComponent),
+      // },
 
-{
-  path: 'home/dbId/sheets/:id1/:id2/:id3',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
-},
-{
-  path: 'home/fileId/sheets/:id1/:id2/:id3',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
-},
+      //quickbooks
+      {
+        path: 'database-connection/tables/quickbooks/:id',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/tables/googlesheets/:id',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      //salesforce
+      {
+        path: 'database-connection/tables/salesforce/:id',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/tables/:id1/:id2',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/tables/:id1',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
 
-{
-  path: 'home',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./landingpage/landingpage.component').then((m)=> m.LandingpageComponent)
-},
-{
-  path: 'dashboards',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./dashboard-page/dashboard-page.component').then((m)=> m.DashboardPageComponent)
-},
-{
-  path: 'sheets-dashboard',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./sheets-list-page/sheets-list-page.component').then((m)=>m.SheetsListPageComponent)
-},
-{
-  path: 'saved-queries',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./saved-queries/saved-queries.component').then((m)=>m.SavedQueriesComponent)
-},
-{
-  path: 'users/users-list',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
-},
-{
-  path: 'users/add-user',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
-},
-{
-  path: 'users/edit-user/:id',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
-},
-{
-  path: 'roles/roles-list',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
-},
-{
-  path: 'roles/add-role',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
-},
-{
-  path: 'dashboard/role-edit/:id1',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
-},
-{
-  path: 'sheetsdashboard/sheets/fileId/:id1/:id2/:id3/:id4',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
-},{
-  path: 'sheetsdashboard/sheets/dbId/:id1/:id2/:id3/:id4',
-  canActivate:[authGuard],
-  canDeactivate: [canDeactivateGuard],
-  loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
-},
-// {
-//   path: 'home/help-guide',
-//   canActivate:[authGuard],
-//   loadComponent: () =>
-//     import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent),
-// },
+      {
+        path: 'database-connection/customSql/:id',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+
+      {
+        path: 'database-connection/sheets/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/savedQuery/:id1/:id2',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/savedQuery/:id1',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'sheets/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheets/sheets.component').then((m) => m.SheetsComponent)
+      },
+      {
+        path: 'sheets',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheets/sheets.component').then((m) => m.SheetsComponent)
+      },
+      {
+        path: 'sheetsdashboard',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent)
+      },
+      {
+        path: 'sheetscomponent/sheetsdashboard/fileId/:id1/:id2',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+        pathMatch: 'full',
+      },
+      {
+        path: 'sheetscomponent/sheetsdashboard/:id1/:id2',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+        pathMatch: 'full',
+      },
+      {
+        path: 'home/sheetsdashboard/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+        pathMatch: 'full',
+      }, {
+        path: 'home/sheetsdashboard/:id1',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+        pathMatch: 'full',
+      },
+      {
+        path: 'home/sheets/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheets/sheets.component').then((m) => m.SheetsComponent)
+      },
+
+      {
+        path: 'home/sheets/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheets/sheets.component').then((m) => m.SheetsComponent)
+      },
+      {
+        path: 'home/fileId/sheets/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheets/sheets.component').then((m) => m.SheetsComponent)
+      },
+
+      {
+        path: 'home',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./landingpage/landingpage.component').then((m) => m.LandingpageComponent)
+      },
+      {
+        path: 'dashboards',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./dashboard-page/dashboard-page.component').then((m) => m.DashboardPageComponent)
+      },
+      {
+        path: 'sheets-dashboard',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./sheets-list-page/sheets-list-page.component').then((m) => m.SheetsListPageComponent)
+      },
+      {
+        path: 'saved-queries',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./saved-queries/saved-queries.component').then((m) => m.SavedQueriesComponent)
+      },
+      {
+        path: 'users/users-list',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./users-dashboard/users-dashboard.component').then((m) => m.UsersDashboardComponent)
+      },
+      {
+        path: 'users/add-user',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./users-dashboard/users-dashboard.component').then((m) => m.UsersDashboardComponent)
+      },
+      {
+        path: 'users/edit-user/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./users-dashboard/users-dashboard.component').then((m) => m.UsersDashboardComponent)
+      },
+      {
+        path: 'roles/roles-list',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./roles-dashboard/roles-dashboard.component').then((m) => m.RolesDashboardComponent)
+      },
+      {
+        path: 'roles/add-role',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./roles-dashboard/roles-dashboard.component').then((m) => m.RolesDashboardComponent)
+      },
+      {
+        path: 'dashboard/role-edit/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./roles-dashboard/roles-dashboard.component').then((m) => m.RolesDashboardComponent)
+      },
+      {
+        path: 'sheetsdashboard/sheets/fileId/:id1/:id2/:id3/:id4',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheets/sheets.component').then((m) => m.SheetsComponent)
+      }, {
+        path: 'sheetsdashboard/sheets/:id1/:id2/:id3/:id4',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./sheets/sheets.component').then((m) => m.SheetsComponent)
+      },
+      // {
+      //   path: 'home/help-guide',
+      //   canActivate:[authGuard],
+      //   loadComponent: () =>
+      //     import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent),
+      // },
 
 
 
 
-{
-  path: 'public/dashboard/:id1',
-  loadComponent: () =>
-    import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
-},
-{
-  path: 'configure-page/configure',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./configure/configure.component').then((m) => m.ConfigureComponent),
-},
+      {
+        path: 'public/dashboard/:id1',
+        loadComponent: () =>
+          import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+      },
+      {
+        path: 'configure-page/configure',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./configure/configure.component').then((m) => m.ConfigureComponent),
+      },
 
- ]}
+      {
+        path: 'databaseConnection/dataTransformation/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'transformationList/dataTransformation/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'transformationList',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./transformation-list/transformation-list.component').then((m) => m.TransformationListComponent),
+      },
+
+      {
+        path: 'crossDatabase/dataTransformation/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'crossDatabase/dataTransformation/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'crossDatabase/customSql/dataTransformation/:id1/:id2/:id3',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'crossDatabase/customSql/dataTransformation/:id1/:id2',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
+      },
+
+      {
+        path: 'update-password',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
+      },
+    ]
+  }
  ];
 
 @NgModule({

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { WorkbenchService } from '../workbench.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -23,12 +23,18 @@ import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LoaderService } from '../../../shared/services/loader.service';
 import _ from 'lodash';
-
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { TestPipe } from '../../../test.pipe';
+import { TemplateDashboardService } from '../../../services/template-dashboard.service';
+const EXCEL_TYPE =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 @Component({
   selector: 'app-database',
   standalone: true,
-  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent],
+  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent,ScrollingModule,TestPipe],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   animations:[
@@ -49,7 +55,10 @@ import _ from 'lodash';
     ])
   ]
 })
+
 export class DatabaseComponent {
+
+  @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   databaseName:any;
   tableName:any;
   tableJoiningList : any[] = [];
@@ -115,7 +124,9 @@ export class DatabaseComponent {
   titleMarkDirty: boolean = false;
   datasourceFilterIdArray:any[] =[];
   datasourceFilterIdArrayCustomQuery:any[]=[];
-  selectedRows = [];
+  // selectedRows = [] as any;
+  selectedRows: Set<number> = new Set();  
+
   datasourceQuerysetId :string | null =null;
   filteredList = [] as any;
   editFilterList = [] as any;
@@ -144,44 +155,70 @@ export class DatabaseComponent {
   filteredTablesT2: any[] = [];
   filterParamPass:any;
   itemCounters: any={};
-  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
+  sheetCustmSqlDisable = true;
+  saveQueryCheck = false;
+  isExclude = false;
+  crossDbId= '';
+  crossDbFilteredTablesT1: any[] = [];
+  originalCrossDbTablesT1: any;
+  dragTablestoSemanticLayer = false;
+  deleteTablesFromSemanticLayer = false;
+  canSearchTablesInSemanticLayer = false;
+  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService,private templateService:ViewTemplateDrivenService,private templateDashboardService: TemplateDashboardService){
     const currentUrl = this.router.url;
+    this.dragTablestoSemanticLayer = this.templateService.dragTablesToSemanticLayer();
+    this.deleteTablesFromSemanticLayer = this.templateService.canDeleteTablesFromSemanticLayer();
+    this.canSearchTablesInSemanticLayer = this.templateService.canSearchTablesInSemanticLayer();
     if(currentUrl.includes('/analytify/database-connection/tables/')){
-      this.fromDatabasId=true
-      this.databaseId = +atob(route.snapshot.params['id']);
-    }
-    else if(currentUrl.includes('/analytify/database-connection/files/tables/')){
-      this.fromFileId=true;
-      this.fileId = +atob(route.snapshot.params['id']);
-     }
-    else if(currentUrl.includes('/analytify/database-connection/savedQuery/')){
-      if(currentUrl.includes('/analytify/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
-        this.fileId = +atob(route.snapshot.params['id1']);
-        this.fromFileId = true;
-        this.custumQuerySetid = +atob(route.snapshot.params['id2']);
+      const id1 = route.snapshot.paramMap.get('id1');
+      const id2 = route.snapshot.paramMap.get('id2');
+      if (id1 && id2) {
+        this.fromDatabasId = true; 
+        this.databaseId = +atob(id1);
+        this.qurtySetId = +atob(id2);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-        this.getTablesFromFileId();
+      } else if (id1) {
+        this.fromDatabasId = true;
+        this.databaseId = +atob(id1);
       }
-      if (currentUrl.includes('/analytify/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      // this.fromDatabasId=true
+      // this.databaseId = +atob(route.snapshot.params['id']);
+    }
+    else if(currentUrl.includes('/analytify/database-connection/savedQuery/')){
+      if (route.snapshot.params['id1']) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
+        this.saveQueryCheck = true;
+      }
+    
+      if (route.snapshot.params['id2']) {
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
-        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-        this.getSchemaTablesFromConnectedDb();
-        }
+        localStorage.setItem('QuerySetId', JSON.stringify(this.custumQuerySetid));
+        this.getSavedQueryData();
+      }
+    
+      this.customSql = true;
+      this.tableJoiningUI = false;
+      this.updateQuery = true;
+      this.fromSavedQuery = true;
+      // this.getSchemaTablesFromConnectedDb();
+     }
+     else if(currentUrl.includes('/analytify/database-connection/customSql/')){
+      this.custumQuerySetid = localStorage.getItem('customQuerySetId') || 0;
+      this.fromDatabasId=true
+      this.databaseId = +atob(route.snapshot.params['id']);
       this.customSql=true;
       this.tableJoiningUI=false;
-      this.updateQuery=true;
-      this.fromSavedQuery = true;
-      this.getSavedQueryData();
      }
-     else if(currentUrl.includes('/analytify/database-connection/sheets/dbId')){
+     else if(currentUrl.includes('/analytify/database-connection/sheets/')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
       this.fromDatabasId = true;
       this.fromSheetEditDb = true;
+      this.sheetCustmSqlDisable = false;
+      this.saveQueryCheck = true;
       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
       if(this.datasourceQuerysetId==='null'){
         console.log('filterqrysetid',this.datasourceQuerysetId)
@@ -193,62 +230,85 @@ export class DatabaseComponent {
         }
       }
     }
-    else if(currentUrl.includes('/analytify/database-connection/sheets/fileId')){
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-       this.fileId = +atob(route.snapshot.params['id1']);
-       this.qurtySetId = +atob(route.snapshot.params['id2']);
-       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-       this.fromFileId = true;
-       this.fromSheetEditDb = true;
-       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
-       if(this.datasourceQuerysetId==='null'){
-         console.log('filterqrysetid',this.datasourceQuerysetId)
-         this.datasourceQuerysetId = null
-       }
-       else{
-           parseInt(this.datasourceQuerysetId)
-           console.log(this.datasourceQuerysetId)
-         }
-       }
-     }
      if(currentUrl.includes('/analytify/database-connection/tables/quickbooks/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
+      this.databaseId = +atob(route.snapshot.params['id']);
+      Swal.fire({
+        position: "center",
+        // icon: "question",
+        iconHtml: '<img src="./assets/images/copilot.gif">',
+        title: "Create smart dashboard from your data with just one click?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'Skip',
+        customClass: {
+          icon: 'no-icon-bg',
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, this.databaseId);
+        }
+      });
+    }
+    if(currentUrl.includes('/analytify/database-connection/tables/googlesheets/')){
+      this.fromDatabasId=true;
       this.databaseId = +atob(route.snapshot.params['id']);
     }
     if(currentUrl.includes('/analytify/database-connection/tables/salesforce/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
+      Swal.fire({
+        position: "center",
+        // icon: "question",
+        iconHtml: '<img src="./assets/images/copilot.gif">',
+        title: "Create smart dashboard from your data with just one click?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        customClass: {
+          icon: 'no-icon-bg',
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.templateDashboardService.buildSampleSalesforceDashboard(this.container, this.databaseId);
+        }
+      });
     }
-  }
+}
   ngOnInit(){
-    // {
-    //   document.querySelector('html')?.getAttribute('data-toggled') != null
-    //     ? document.querySelector('html')?.removeAttribute('data-toggled')
-    //     : document
-    //         .querySelector('html')
-    //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
-    // }
     this.loaderService.hide();
+    if(this.customSql){
+      this.getSavedQueryData();
+      this.getSchemaTablesFromConnectedDb();
+    }else{
     if(!this.updateQuery && !this.fromSheetEditDb){
       if(this.fromDatabasId){
     // this.getTablesFromConnectedDb();
     this.getSchemaTablesFromConnectedDb();
       }
-      if(this.fromFileId){
-        this.getTablesFromFileId();
-      }
     this.getTablesfromPrevious()
   }
   if(this.fromSheetEditDb){
     this.getTablesfromPrevious();
-    if(this.fromFileId){
-      this.getTablesFromFileId();
-    }else if(this.fromDatabasId){
+ if(this.fromDatabasId){
       this.getSchemaTablesFromConnectedDb();
     }
   }
+}
+  }
+  backToTableJoining(){
+    this.gotoSheetButtonDisable = true;
+    const encodedId = btoa(this.databaseId.toString());
+    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+  }
+  custmSqlUI(){
+    this.gotoSheetButtonDisable = true;
+    const encodedId = btoa(this.databaseId.toString());
+    this.router.navigate(['/analytify/database-connection/customSql/'+encodedId]);
   }
   toggleCard() {
     this.isOpen = !this.isOpen;
@@ -259,11 +319,7 @@ export class DatabaseComponent {
   getSavedQueryData(){
     const obj ={
       database_id:this.databaseId,
-      queryset_id:this.qurtySetId || this.custumQuerySetid
-    }as any
-    if(this.fromFileId){
-      delete obj.database_id
-      obj.file_id = this.fileId
+      queryset_id: this.custumQuerySetid
     }
     this.workbechService.getSavedQueryData(obj).subscribe({
       next:(data:any)=>{
@@ -275,6 +331,10 @@ export class DatabaseComponent {
         this.custmQryRows = data.no_of_rows;
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows;
+        this.datasourceQuerysetId = data.datasorce_queryset_id;
+        if(this.datasourceQuerysetId){
+          this.getfilteredCustomSqlData();
+        }
         // if(this.fromSavedQuery){
         //   if(data.file_id === null)
         //   this.getSchemaTablesFromConnectedDb();
@@ -291,7 +351,8 @@ export class DatabaseComponent {
     const querysetId = localStorage.getItem('QuerySetId') || 0;
     this.qurtySetId = querysetId
     if (querysetId !== 0) {
-      const IdToPass = this.fromFileId ? this.fileId : this.databaseId
+      const IdToPass = this.databaseId
+      // const querySetIdToPass = this.from
       this.workbechService.getTablesfromPrevious(IdToPass, querysetId).subscribe({
         next: (data) => {
           console.log(data);
@@ -301,6 +362,8 @@ export class DatabaseComponent {
           this.itemCounters = data.dragged_data.json_data.dragged_array_indexing;
           this.joinTypes = data.dragged_data.join_type;
           this.saveQueryName= data.dragged_data.queryset_name;
+          this.checkQerynameChange = data.dragged_data.queryset_name;
+          this.datasourceQuerysetId = data.dragged_data.dastasource_queryset_id;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
             this.joiningTables();
@@ -338,44 +401,29 @@ export class DatabaseComponent {
     console.log(dropdownOptions);
   return dropdownOptions;
   }
-  getTablesFromFileId() {
-    this.workbechService.getTablesFromFileId(this.fileId)
-      .subscribe({
-        next: (data) => {
-          this.schematableList = data?.data?.schemas;
-          // console.log('filteredscemas',this.filteredSchematableList)
-          this.databaseName = data.filename;
-          //  this.hostName = data.database.hostname;
-          console.log(data)
+  //need to remove after file id chage
+  // getTablesFromFileId() {
+  //   this.workbechService.getTablesFromFileId(this.fileId)
+  //     .subscribe({
+  //       next: (data) => {
+  //         this.schematableList = data?.data?.schemas;
+  //         // console.log('filteredscemas',this.filteredSchematableList)
+  //         this.databaseName = data.filename;
+  //         //  this.hostName = data.database.hostname;
+  //         console.log(data)
 
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      })
+  //       },
+  //       error: (error) => {
+  //         console.log(error);
+  //       }
+  //     })
 
-  }
-//   getTablesFromConnectedDb(){
-//      this.workbechService.getTablesFromConnectedDb(this.databaseId).subscribe({next: (responce) => {
-//     if(Array.isArray(responce.data)){
-//       this.tableList= responce.data
-//     }
-//     else{
-//     this.tableList = this.combineArrays(responce.data)
-//     }
-//     console.log('tablelist',this.tableList)
-//     // this.databaseName = responce.database.database_name
-//     this.databaseId = responce.database.database_id
-//   },
-//   error:(error)=>{
-//     console.log(error);
-//   }
-// })
-// }
+  // }
 getSchemaTablesFromConnectedDb(){
   const obj ={
     search:this.searchTables,
-    querySetId:this.qurtySetId || this.custumQuerySetid
+    querySetId:this.qurtySetId || this.custumQuerySetid,
+    hierarchy_ids:[this.databaseId]
   }
   if(obj.search == '' || obj.search == null){
     delete obj.search;
@@ -383,14 +431,29 @@ getSchemaTablesFromConnectedDb(){
   if(obj.querySetId === '0' || obj.querySetId === 0){
     delete obj.querySetId
   }
-  const IdToPass = this.fromFileId ? this.fileId : this.databaseId
+  const IdToPass = this.databaseId
+  this.schematableList =[];
   this.workbechService.getSchemaTablesFromConnectedDb(IdToPass,obj).subscribe({next: (data) => {
-   this.schematableList= data?.data?.schemas;
+    if(data[0].cross_db_id){
+      this.crossDbId = data[0].cross_db_id;
+      console.log(this.crossDbId.length)
+        console.log(this.crossDbId)
+      this.crossDbFilteredTablesT1 = data[0].data?.schemas[0].tables
+      this.filteredTablesT2 = data[1].data?.schemas[0].tables
+      this.originalCrossDbTablesT1 = data[0].data?.schemas[0].tables;
+
+    }
+    data.forEach((dataTest: any) => {                                   
+      if(dataTest?.data?.schemas && dataTest?.data?.schemas.length > 0){
+        this.schematableList.push(dataTest?.data?.schemas[0]);
+      }
+    });
+  //  this.schematableList= data?.data?.schemas;
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
    console.log('filteredscemas',this.filteredSchematableList)
-       this.databaseName = data.database.database;
-        this.hostName = data.database.hostname;
-        this.saveQueryName = data.queryset_name;
+   this.databaseName = data[0]?.display_name;
+        // this.hostName = data.database.hostname;
+        // this.saveQueryName = data.queryset_name;
     console.log(data)
 
 },
@@ -429,7 +492,7 @@ for (const obj of arraysOfObjects) {
 }
 return result;
 }
-drop(event: CdkDragDrop<string[]>) {
+drop(event: CdkDragDrop<string[]>) {4
   if (event.previousContainer === event.container) {
     // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     console.log('Internal swap is restricted.');
@@ -501,23 +564,6 @@ getTablerowclms(table:any,schema:any){
     }
   })
 }
-// getTableData(){
-//   const obj ={
-//     database_id:this.databaseId,
-//     tables:[[this.draggedtables[0].schema,this.draggedtables[0].table]]
-//   }
-//   this.workbechService.getTableData(obj).subscribe({
-//     next:(data:any)=>{
-//       console.log('single table data',data);
-//       this.cutmquryTable = data
-//       this.qryTime = data.query_exection_time;
-//       this.qryRows = data.no_of_rows;
-//     },
-//     error:(error:any)=>{
-//       console.log(error)
-//     }
-//   })
-// }
 
 onDeleteItem(index: number, tableName : string) {
   // if(index <= 0){
@@ -595,29 +641,45 @@ buildCustomRelation(){
         console.log(error)
       }
       })
-
 }
 clrQuery(){
   this.sqlQuery = ''
   this.cutmquryTable=[];
   this.custmQryTime='';
   this.custmQryRows='';
+  this.datasourceQuerysetId = null;
+  this.datasourceFilterIdArrayCustomQuery = [];
   // this.gotoSheetButtonDisable = true;
+  this.clearFiltersOnClearQuery();
+
 }
+clearFiltersOnClearQuery(){
+  if(this.custumQuerySetid !== 0 || this.custumQuerySetid !== null || this.custumQuerySetid !== '0' ){
+  this.workbechService.clearFiltersOnClearQuery(this.custumQuerySetid)
+  .subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+      },
+      error:(error:any)=>{
+      console.error(error);
+    }
+    })
+  }
+}
+checkQerynameChange:any;
 executeQuery(){
   const obj ={
     database_id: this.databaseId,
     custom_query: this.sqlQuery,
     row_limit:this.rowLimit,
     queryset_id:this.custumQuerySetid,
-    query_name:this.saveQueryName,
+    // query_name:this.saveQueryName,
   }as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
-  }
   if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
     delete obj.query_name
+  }if(this.custumQuerySetid === 0 || this.custumQuerySetid === '0'){
+    delete obj.queryset_id
   }
   this.workbechService.executeQuery(obj)
   .subscribe(
@@ -629,8 +691,14 @@ executeQuery(){
         this.cutmquryTable = data
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
+        if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
+          this.saveQueryName = data.query_name;
+          this.checkQerynameChange = data.query_name;
+          this.titleMarkDirty = true;
+        }
         // this.qurtySetId = data.query_set_id;
         this.custumQuerySetid = data.query_set_id
+        localStorage.setItem('customQuerySetId', JSON.stringify(this.custumQuerySetid));
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows
         console.log('custumQuery Data',this.cutmquryTable)
@@ -646,6 +714,49 @@ executeQuery(){
       })
       this.cutmquryTableError = error;
       this.gotoSheetButtonDisable = true;
+    }
+    })
+}
+downloadExcelFromCustomSql() {
+  const obj ={
+    database_id: this.databaseId,
+    custom_query: this.sqlQuery,
+    row_limit:this.totalRowsCustomQuery,
+    queryset_id:this.custumQuerySetid,
+    query_name:this.saveQueryName,
+  }as any
+  if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
+    delete obj.query_name
+  }
+  this.workbechService.executeQuery(obj)
+  .subscribe(
+    {
+      next:(data:any) =>{
+            //Convert JSON data to worksheet
+            // let cominedData =[data.column_data, data.row_data]
+            let combinedData: any[] = data.row_data.map((row: any) => {
+              let combined: { [key: string]: any } = {};
+              data.column_data.forEach((column: string | number, index: string | number) => {
+                combined[column] = row[index];
+              });
+              return combined;
+            });
+            // console.log(combinedData,'combined-data')
+          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(combinedData);
+
+          // Create a workbook and append the worksheet
+          const wb: XLSX.WorkBook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+          // Write the workbook and download it
+          const excelBuffer: any = XLSX.write(wb, {
+              bookType: 'xlsx',
+              type: 'array',
+          });
+           this.saveAsExcelFile(excelBuffer, 'ExportedData');
+      },
+      error:(error:any)=>{
+      console.error('Error fetching data for download:', error);
     }
     })
 }
@@ -668,10 +779,10 @@ filterColumnsT1() {
 }
 
 updateRemainingTables(item:any) {
-  this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
-  this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
-  this.filteredTablesT2 = this.remainingTables;
-  this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
+  // this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
+  // this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
+  // this.filteredTablesT2 = this.remainingTables;
+  // this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
 }
 filterColumnsT2(relation: any) {
   // If search term is empty, return all tables excluding the selected one
@@ -698,16 +809,12 @@ joiningTablesWithoutQuerySetId(){
   // console.log(schemaTablePairs)
   const obj ={
     query_set_id:null,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:[],
     joining_conditions:[],
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
   } as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
-  }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
     {
@@ -744,15 +851,11 @@ joiningTables(){
    this.relationOfTables = this.relationOfTables.slice(0,this.joinTypes.length + 1);
   const obj ={
     query_set_id:this.qurtySetId,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id;
-    obj.file_id=this.fileId
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -781,7 +884,7 @@ joiningTables(){
       this.tableCustomJoinError = true;
       if(error.error?.joining_condition && error.error?.joining_condition.length) {
         this.relationOfTables = error.error?.joining_condition;
-        // this.joinTypes.push("inner");
+        this.joinTypes.push("inner");
         // this.relationOfTables[this.relationOfTables.length - 1] = [{}];
         this.buildCustomJoin();
       }
@@ -799,37 +902,13 @@ joiningTables(){
       this.gotoSheetButtonDisable= true
     }
     })
-  
-  // else if(schemaTablePairs.length > 2){
-  //   const obj ={
-  //     query_set_id:this.qurtySetId,
-  //     database_id:this.databaseId,
-  //     joining_tables: schemaTablePairs,
-  //     join_type:[],
-  //     joining_conditions:[]
-  //   }
-  //   this.workbechService.joiningTables(obj)
-  //   .subscribe(
-  //     {
-  //       next:(data:any) =>{
-  //         console.log(data)
-  //         this.relationOfTables = data.table_columns_and_rows?.joining_condition;
-  //         this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
-  //         console.log('relation',this.relationOfTables);
-  //         this.getJoiningTableData();
-  //       },
-  //       error:(error:any)=>{
-  //       console.log(error)
-  //     }
-  //     })
-  // }
 }
 
 buildCustomJoin(){
   this.tableJoiningList =[];
   this.joinTypes.forEach((element : any,index : number) => {
     let object;
-    let remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias == this.draggedtables[index + 1].table);
+    let remainingTables = [this.draggedtables[index + 1]];
     if(this.relationOfTables[index] && this.relationOfTables[index].length){
     object = {
        join : element,
@@ -856,15 +935,11 @@ joiningTablesFromDelete(){
    this.relationOfTables = this.relationOfTables.slice(0,this.joinTypes.length);
   const obj ={
     query_set_id:this.qurtySetId,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id;
-    obj.file_id=this.fileId
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -877,6 +952,7 @@ joiningTablesFromDelete(){
         if(this.qurtySetId === 0){
           localStorage.setItem('QuerySetId','0');
           this.datasourceQuerysetId = null;
+          this.saveQueryName = '';
         }
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
@@ -942,16 +1018,11 @@ customTableJoin(){
   if(schemaTablePairs.length >= 2){
   const obj ={
     query_set_id:this.qurtySetId,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:joiningConditions,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
-
-  }as any;
-  if(this.fromFileId){
-   delete obj.database_id;
-   obj.file_id = this.fileId
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -1051,7 +1122,7 @@ clearJoinCondns(){
 
 getJoiningTableData(){
   const obj ={
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     query_id:this.qurtySetId,
     datasource_queryset_id:this.datasourceQuerysetId,
     row_limit:this.rowLimit
@@ -1059,11 +1130,6 @@ getJoiningTableData(){
 if(obj.row_limit === null || obj.row_limit === undefined){
  delete obj.row_limit;
 }
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id=this.fileId
-  }
-
   this.workbechService.getTableJoiningData(obj).subscribe(
     {
       next:(data:any) =>{
@@ -1074,7 +1140,11 @@ if(obj.row_limit === null || obj.row_limit === undefined){
         this.totalRows = data.total_rows;
         this.showingRows = data.no_of_rows;
         this.gotoSheetButtonDisable = false;
-        // this.saveQueryName = data.queryset_name;
+        if(this.saveQueryName ==='' || this.saveQueryName === null || this.saveQueryName === undefined){
+        this.saveQueryName = data.queryset_name;
+        this.checkQerynameChange = data.queryset_name;
+        this.titleMarkDirty = true;
+        }
         this.queryBuilt = data.custom_query;
         if(this.TabledataJoining?.column_data?.length === 0){
           this.gotoSheetButtonDisable = true;
@@ -1092,6 +1162,54 @@ if(obj.row_limit === null || obj.row_limit === undefined){
     }
     })
 }
+
+downloadExcel() {
+  const obj ={
+    hierarchy_id:this.databaseId,
+    query_id:this.qurtySetId,
+    datasource_queryset_id:this.datasourceQuerysetId,
+    row_limit:this.totalRows
+  } as any
+if(obj.row_limit === null || obj.row_limit === undefined){
+ delete obj.row_limit;
+} 
+  this.workbechService.getTableJoiningData(obj).subscribe(
+    {
+      next:(data:any) =>{
+            //Convert JSON data to worksheet
+            // let cominedData =[data.column_data, data.row_data]
+            let combinedData: any[] = data.row_data.map((row: any) => {
+              let combined: { [key: string]: any } = {};
+              data.column_data.forEach((column: string | number, index: string | number) => {
+                combined[column] = row[index];
+              });
+              return combined;
+            });
+            // console.log(combinedData,'combined-data')
+          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(combinedData);
+
+          // Create a workbook and append the worksheet
+          const wb: XLSX.WorkBook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+          // Write the workbook and download it
+          const excelBuffer: any = XLSX.write(wb, {
+              bookType: 'xlsx',
+              type: 'array',
+          });
+           this.saveAsExcelFile(excelBuffer, 'ExportedData');
+      },
+      error:(error:any)=>{
+      console.error('Error fetching data for download:', error);
+    }
+    })
+}
+
+private saveAsExcelFile(buffer: any, fileName: string): void {
+  const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
+  saveAs(data, `${fileName}_${new Date().getTime()}.xlsx`);
+}
+
 deleteJoiningRelation(conditionIndex:number,list : any,index: number){
   list.conditions.splice(conditionIndex, 1);
   this.relationOfTables[index] = list.conditions;
@@ -1125,14 +1243,10 @@ openRowsData(modal: any) {
 callColumnWithTable(){
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     query_set_id :querySetIdToPass,
     type_of_filter:'datasource',
     search : this.columnSearch
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.callColumnWithTable(obj).subscribe(
     {
@@ -1204,19 +1318,16 @@ seachColumnDataFilter() {
 selectedColumnGetRows(col:any,datatype:any){
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     query_set_id:querySetIdToPass,
     datasource_queryset_id:this.datasourceQuerysetId,
     type_of_filter:'datasource',
     col_name:col,
     data_type:datatype,
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.colName = col;
   this.dataType = datatype;
+  this.isExclude = false;
   this.workbechService.selectedColumnGetRows(obj).subscribe(
     {
       next:(data:any) =>{
@@ -1227,7 +1338,9 @@ selectedColumnGetRows(col:any,datatype:any){
         this.tableColumnFilter =false;
         this.columnRowFilter = true;
         console.log('colmnfilterrows',this.columnsInFilters)
+        setTimeout(() => {
         this.searchFiltereredData = this.columnsInFilters
+        },500);
       },
       error:(error:any)=>{
       console.log(error);
@@ -1241,21 +1354,42 @@ selectedColumnGetRows(col:any,datatype:any){
     })
 }
 updateSelectedRows() {
-  this.selectedRows = this.columnsInFilters
-    .filter((row: { selected: any; }) => row.selected)
-    .map((row: { label: any; }) => row.label);
+  // this.selectedRows = this.columnsInFilters
+  //   .filter((row: { selected: any; }) => row.selected)
+  //   .map((row: { label: any; }) => row.label);
+  this.selectedRows = new Set(
+    this.searchFiltereredData
+      .filter((row: { selected: any; }) => row.selected) // Now filtering based on actual selection
+      .map((row: { label: any; }) => row.label)
+  );
   console.log('selected rows', this.selectedRows);
-
   this.isAllSelected = this.columnsInFilters.every((row: { selected: any; }) => row.selected);
 }
 
 toggleAllRows(event: Event) {
   const isChecked = (event.target as HTMLInputElement).checked;
-  this.columnsInFilters.forEach((row: { selected: boolean; }) => row.selected = isChecked);
-  this.updateSelectedRows();
+  // this.columnsInFilters.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+  if (isChecked) {
+    // If "Select All" is checked, store all row labels in selectedRows
+    this.selectedRows = new Set(this.columnsInFilters.map((row: { label: any; }) => row.label));
+  } else {
+    // If deselected, clear the selectedRows Set
+    this.selectedRows.clear();
+  }
+  this.columnsInFilters.forEach((row: { selected: boolean; }) => (row.selected = isChecked));
+  console.log('All Selected:', isChecked, 'Selected Rows:', Array.from(this.selectedRows));
+  // this.updateSelectedRows();
 }
 isAnyRowSelected(): boolean {
-  return this.columnsInFilters.some((row: { selected: any; }) => row.selected);
+  // return this.columnsInFilters.some((row: { selected: any; }) => row.selected);
+  return this.selectedRows.size > 0;
+
+}
+trackByFn(index: number, item: any) {
+  return item.id;
+}
+isSelected(rowId: number): boolean {
+  return this.selectedRows.has(rowId);
 }
 getSelectedRows() {
   this.columnDataSearch = "";
@@ -1267,20 +1401,16 @@ getSelectedRows() {
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj = {
     filter_id:null,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     queryset_id:querySetIdToPass,
     type_of_filter:'datasource',
     datasource_querysetid:null,
     select_values:this.selectedRows,
     range_values:null,
     col_name:this.colName,
-    data_type:this.dataType
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
+    data_type:this.dataType,
+    is_exclude:this.isExclude
   }
-
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
     {
       next:(data:any) =>{
@@ -1312,11 +1442,7 @@ getDsQuerysetId(){
     datasource_queryset_id:this.datasourceQuerysetId,
     queryset_id:querySetIdToPass,
     filter_id:(this.filterParamPass === 'fromcustomsql') ? this.datasourceFilterIdArrayCustomQuery : this.datasourceFilterIdArray,
-    database_id:this.databaseId
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
+    hierarchy_id:this.databaseId
   }
   this.workbechService.getDsQuerysetId(obj).subscribe(
     {
@@ -1348,12 +1474,8 @@ getFilteredList(fromParam:any){
   this.filterParamPass = fromParam
   const obj ={
     query_set_id:querySetIdToPass,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     type_of_filter:'datasource'
-  }as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.getFilteredList(obj).subscribe(
     {
@@ -1389,13 +1511,9 @@ editFilter(id:any){
   this.editFilterId = id;
   const obj ={
     type_filter:'datasource',
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     filter_id:id,
     search : this.columnDataSearch
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.editFilter(obj).subscribe(
     {
@@ -1404,7 +1522,8 @@ editFilter(id:any){
         this.editFilterList = data.result;
         this.colName=data.column_name,
         this.dataType = data.data_type
-        this.searchEditFilterList = this.editFilterList
+        this.searchEditFilterList = this.editFilterList;
+        this.isExclude = data.is_exclude;
       },
       error:(error:any)=>{
       console.log(error);
@@ -1435,16 +1554,7 @@ deleteFilter(id:any){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          // Swal.fire({
-          //   icon: 'success',
-          //   title: 'Removed!',
-          //   text: ' Filter Removed Successfully',
-          //   width: '400px',
-          //   timer: 2000,
-          //   showConfirmButton: false 
-          // })
           this.toasterService.success('Filter Removed Successfully','success',{ positionClass: 'toast-top-right'});
-
         }
         console.log('filter ids',this.datasourceFilterIdArray)
         if(this.filterParamPass ==='fromcustomsql'){
@@ -1504,25 +1614,27 @@ getSelectedRowsFromEdit() {
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
 
   const obj = {
-    filter_id:this.datasourceFilterId || this.editFilterId,
-    database_id:this.databaseId,
+    filter_id: this.editFilterId,
+    hierarchy_id:this.databaseId,
     queryset_id:querySetIdToPass,
     type_of_filter:'datasource',
     datasource_querysetid:null,
     select_values:this.selectedRows,
     range_values:null,
     col_name:this.colName,
-    data_type:this.dataType
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
+    data_type:this.dataType,
+    is_exclude:this.isExclude
   }
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
     {
       next:(data:any) =>{
         console.log(data)
         this.datasourceFilterId = data.filter_id;
+        if(this.filterParamPass === 'fromcustomsql'){
+          this.datasourceFilterIdArrayCustomQuery.push(data.filter_id)
+        }else{
+         this.datasourceFilterIdArray.push(data.filter_id);
+        }
         this.getDsQuerysetId();
          this.modalService.dismissAll('close')
       },
@@ -1540,13 +1652,9 @@ getSelectedRowsFromEdit() {
 }
 getfilteredCustomSqlData(){
     const obj ={
-      database_id:this.databaseId,
+      hierarchy_id:this.databaseId,
       query_id:this.custumQuerySetid,
       datasource_queryset_id:this.datasourceQuerysetId
-    }as any;
-    if(this.fromFileId){
-      delete obj.database_id;
-      obj.file_id=this.fileId
     }
     this.workbechService.getTableJoiningData(obj).subscribe(
       {
@@ -1572,18 +1680,41 @@ getfilteredCustomSqlData(){
   
 }
 goToConnections(){
-  this.router.navigate(['/analytify/datasources/view-connections'])
+  // const hidToPass = btoa(this.databaseId.toString());
+  const hidToPass = this.crossDbId ? btoa(this.crossDbId.toString()) : btoa(this.databaseId.toString());
+  if(!this.customSql){
+  if(this.qurtySetId){
+    const qrysetIdToPass = btoa(this.qurtySetId.toString());
+    this.router.navigate(['/analytify/datasources/crossdatabase/viewconnection/'+hidToPass+'/'+qrysetIdToPass])
+  }
+  else{
+  this.router.navigate(['/analytify/datasources/crossdatabase/viewconnection/'+hidToPass])
+  }
+}else if(this.customSql){
+  if(this.custumQuerySetid){
+    const qrysetIdToPass = btoa(this.custumQuerySetid.toString());
+    this.router.navigate(['/analytify/datasources/crossdatabase/customsql/viewconnection/'+hidToPass+'/'+qrysetIdToPass])
+  }
+  else{
+  this.router.navigate(['/analytify/datasources/crossdatabase/customsql/viewconnection/'+hidToPass])
+  }
+}
 }
 
 markDirty(){
   this.titleMarkDirty = true;
 }
-
+checkNameChanged(){
+  if(this.saveQueryCheck){
+    if(this.checkQerynameChange !== this.saveQueryName){
+    this.titleMarkDirty = true;
+    }
+  }
+}
   goToSheet(fromParam: string) {
     this.goToSheetButtonClicked = true;
-
       let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
-
+      let querySetIdToDelete = (fromParam === 'fromcustomsql') ? this.qurtySetId : this.custumQuerySetid
     if (this.saveQueryName === '' || this.saveQueryName == null || this.saveQueryName == undefined) {
       Swal.fire({
         icon: 'error',
@@ -1592,65 +1723,17 @@ markDirty(){
         width: '400px',
       })
     } else {
-      if (this.fromFileId) {
-        const encodedFileId = btoa(this.fileId.toString());
-        const encodedQuerySetId = btoa(querySetIdToPass.toString());
-        if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
-          // Encode 'null' to represent a null value
-          const encodedDsQuerySetId = btoa('null');
-          if (this.titleMarkDirty) {
-            let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
-            this.workbechService.updateQuerySetTitle(payload).subscribe({
-              next: (data: any) => {
-                this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-              },
-              error: (error: any) => {
-                console.log(error);
-                Swal.fire({
-                  icon: 'error',
-                  title: 'oops!',
-                  text: error.error.message,
-                  width: '400px',
-                })
-              }
-            });
-          } else {
-            this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-          }
-        } else {
-          // Convert to string and encode
-          const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-          if (this.titleMarkDirty) {
-            let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
-            this.workbechService.updateQuerySetTitle(payload).subscribe({
-              next: (data: any) => {
-                this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-              },
-              error: (error: any) => {
-                console.log(error);
-                Swal.fire({
-                  icon: 'error',
-                  title: 'oops!',
-                  text: error.error.message,
-                  width: '400px',
-                })
-              }
-            });
-          } else {
-            this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-          }
-        }
-      } else if (this.fromDatabasId) {
         const encodedDatabaseId = btoa(this.databaseId.toString());
         const encodedQuerySetId = btoa(querySetIdToPass.toString());
+        this.checkNameChanged();
         if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
           // Encode 'null' to represent a null value
           const encodedDsQuerySetId = btoa('null');
           if (this.titleMarkDirty) {
-            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
+            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName,delete_query_id:querySetIdToDelete}
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1663,16 +1746,16 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         } else {
           // Convert to string and encode
           const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
           if (this.titleMarkDirty) {
-            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
+            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName,delete_query_id:querySetIdToDelete}
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1685,11 +1768,11 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         }
       }
-    }
+    // }
   }
 
 saveQuery(){
@@ -1701,10 +1784,10 @@ saveQuery(){
       width: '400px',
     })
   }else{
+    const queryIdToPass = this.customSql ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
-    
     database_id:this.databaseId,
-    query_set_id:this.qurtySetId,
+    query_set_id:queryIdToPass,
     query_name:this.saveQueryName,
     custom_query:this.sqlQuery
   }
@@ -1713,7 +1796,7 @@ saveQuery(){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+          this.toasterService.success('Saved Successfully','success',{ positionClass: 'toast-top-right'});
 
         }
       },
@@ -1743,10 +1826,6 @@ updateCustmQuery(){
     queryset_id:this.custumQuerySetid,
     query_name:this.saveQueryName,
     custom_query:this.sqlQuery
-  }as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.updateCustmQuery(obj).subscribe({
     next:(data:any)=>{
@@ -1757,7 +1836,8 @@ updateCustmQuery(){
       this.custmQryTime = data.query_exection_time;
       this.custmQryRows = data.no_of_rows;
       this.showingRowsCustomQuery=data.no_of_rows
-      this.totalRowsCustomQuery=data.total_rows
+      this.totalRowsCustomQuery=data.total_rows;
+      this.gotoSheetButtonDisable = false;
     },
     error:(error:any)=>{
       console.log(error);
@@ -1784,13 +1864,22 @@ dataNotSaveAlert(): Promise<boolean> {
     icon: "warning",
     title: "Your work has not been saved, Do you want to continue?",
     showConfirmButton: true,
-    showCancelButton: true, // Add a "No" button
-    confirmButtonText: 'Yes', // Text for "Yes" button
-    cancelButtonText: 'No',   // Text for "No" button
+    showCancelButton: true,
+    showDenyButton: true,  
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'No',
+    denyButtonText: 'Save & Proceed',
+    customClass: {
+      confirmButton: 'btn btn-primary',
+      denyButton: 'btn btn-success'
+    }
   }).then((result) => {
     if (result.isConfirmed) {
       // User clicked "Yes", allow navigation
       this.loaderService.show();
+      return true;
+    }  else if (result.isDenied) {
+      this.saveQuery();
       return true;
     } else {
       // User clicked "No", prevent navigation
@@ -1854,5 +1943,59 @@ addNewCondition(relation : any){
   relation.conditions.push({
    
   });
+}
+
+
+
+filterColumnsT1CrsDb() {
+  if (this.searchTermT1.trim() === '') {
+    // Restore the original data when search is cleared
+    this.crossDbFilteredTablesT1 = [...this.originalCrossDbTablesT1];  
+    return;
+  }
+
+  this.crossDbFilteredTablesT1 = this.originalCrossDbTablesT1
+    .map((table: { columns: any[] }) => {
+      const filteredColumns = table.columns.filter(column =>
+        column.column.toLowerCase().includes(this.searchTermT1.toLowerCase())
+      );
+
+      return filteredColumns.length > 0 
+        ? { ...table, columns: filteredColumns } 
+        : null;
+    })
+    .filter((table:any): table is { columns: any[] } => table !== null);
+}
+buildRelation(){
+  const relation = [{db1: this.selectedSchema1,
+    table1: this.getSelectedT1,
+    firstcolumn: this.selectedClmnT1,
+    operator: "=",
+    db2:this.selectedSchema2,
+    table2: this.getSelectedT2,
+    secondcolumn: this.selectedClmnT2}]
+  const obj ={
+   hierarchy_id:this.databaseId,
+   joining_conditions:relation
+  }
+  this.workbechService.buildRelation(obj).subscribe({
+    next:(data:any)=>{
+      console.log(data);
+    },
+    error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
+}
+clearRelationCondns(){
+  this.selectedCndn ='Operator';
+  this.selectedClmnT1=null
+  this.selectedClmnT2=null;
 }
 }

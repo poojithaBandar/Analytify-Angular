@@ -1,39 +1,41 @@
-<app-page-header title="Dashboard List" title1="Home" activeitem="dashboard"></app-page-header>
+<app-page-header title="Dashboard List" moduleId="dashboard" title1="Home" activeitem="dashboard"></app-page-header>
 
 
-<div class="main-container container-fluid">
-    <div class="row" class="card" style="padding-top: 15px;">
-    <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
+<div class="main-container container-fluid TopHeader">
+    <div class="row" class="card card-padding-top">
+    <div class="col-sm-12 col-lg-12 col-xl-12 p-0">
       <div class="d-flex justify-content-between px-5">
         <div class="connect-txt">
           <h4 class="card-title mt-2">Dashboards</h4>
         </div>
         <div class="new-data-btn d-flex text-align-center">
-          <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
-          <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="gridView" type="button" ngbTooltip="Grid View" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="gridView" type="button" ngbTooltip="Table View" (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
 
-          <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
-          <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="!gridView" type="button" ngbTooltip="Grid View" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="!gridView" type="button" ngbTooltip="Table View" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
 
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="dashboardName" (keyup.enter)="searchDashboarList()" aria-describedby="button-addon2" >
-            <button class="btn btn-primary border me-2" (click)="searchDashboarList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary" (click)="dashboardRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Dashboard</button>
+            <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchDashboarList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
+
+            <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary new-sheet-btn-radius'" [previledgeId]="34" [isBtn]="true"
+            (btnClickEvent)="dashboardRoute()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
 
           </div>
         </div>
     </div>
     <div *ngIf="viewDashboardList && savedDashboardList.length === 0">
-      No Dashboards, to display!
+      No Dashboards to display!
     </div>
     <div *ngIf="!viewDashboardList">
      You don't have permission to view 
     </div>
         <div *ngIf="viewDashboardList" class="card-body">
             @if(!gridView){
-            <div class="table-responsive" style="height: 26rem;">
+            <div class="table-responsive table-responsive-height">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
-                    <thead class="table-primary" style="position: sticky;top: -1px;background-color: #2392c1;">
+                    <thead class="table-primary bg-primary table-primary-position">
                         <tr>
                             <th>Title</th>
                             <th>Created</th>
@@ -53,7 +55,7 @@
                                   <img src="{{dashboard.dashboard_image}}" alt="" class="w-7 h-7 border rounded-3  me-4 img-cursor">
                                 </div>
                                 <div class="content">
-                                  <a style="color: #05aff8;cursor: pointer;" [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null"
+                                  <a class="cursor-pointer" [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null"
 
                                     (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">
                                     {{dashboard.dashboard_name.length > 13 ? (dashboard.dashboard_name | slice:0:15)+'...' : dashboard.dashboard_name }}</a>
@@ -74,11 +76,11 @@
                                   [previledgeId]="35" [isBtn]="false" [toolTip]="'Delete'"
                                   (btnClickEvent)="deleteDashboard(dashboard.dashboard_id)"
                                   [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
-                                  <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
-                                  [previledgeId]="35" [isBtn]="false" [toolTip]="'Properties'"
+                                  <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2'"
+                                  [previledgeId]="43" [isBtn]="false" [toolTip]="'Properties'"
                                   (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                                   [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
-                            
+                                  <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -96,11 +98,11 @@
                     totalItems: totalItems
                   }" class="col-md-12 col-xl-3">
                   <div class="card  ">
-                    <div class="user-image card-box-shadow">                        
-                          <img src="{{dashboard.dashboard_image}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" alt="" class="card-img-top img-cursor" style="height: 140px;">
+                    <div class="user-image card-box-shadow ">                        
+                          <img src="{{dashboard.dashboard_image}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" alt="" class="card-img-top img-cursor dashboard-user-img-h">
                     </div>
                     <div class="card-body p-1 mt-1 text-center">
-                        <a  class="fs-18 fw-bold d-block"  [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name.length > 13 ? (dashboard.dashboard_name | slice:0:15)+'...' : dashboard.dashboard_name }}</a>
+                        <a  class="card-title fw-bold d-block"  [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name.length > 13 ? (dashboard.dashboard_name | slice:0:15)+'...' : dashboard.dashboard_name }}</a>
                     </div>
                     <div class=" p-1 text-center">
                       <div class="row">
@@ -129,10 +131,11 @@
                             [previledgeId]="35" [isBtn]="false" [toolTip]="'Delete'"
                             (btnClickEvent)="deleteDashboard(dashboard.dashboard_id)"
                             [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
-                            <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
-                            [previledgeId]="35" [isBtn]="false" [toolTip]="'Properties'"
+                            <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2'"
+                            [previledgeId]="43" [isBtn]="false" [toolTip]="'Properties'"
                             (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                             [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
+                            <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
                         </div>
                   </div>
                     </div>
@@ -141,7 +144,7 @@
 
 
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeUserDashboardsList((page = $event))"></pagination-controls>
-            <div  style="float: right;font-size: 15px; margin-top: -41px;">
+            <div class="pagination-count" >
                 <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getuserDashboardsListput()" class="form-control">
                       <option  value="10"> 10</option>
                       <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
@@ -161,7 +164,7 @@
         </button>
       </div>
     
-      <div class="modal-body" style="height: 500px; overflow: scroll;">
+      <div class="modal-body Dashboard-properties-modalpopup">
           <div class="">
               <label for="input-label" class="form-label">Title</label>
               <p class="fw-semibold mb-2 mt-3 border p-1">{{dashboardPropertyTitle}}</p>
@@ -179,15 +182,15 @@
             
                <p class="fw-semibold mb-2 mt-3">Roles</p>
                <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="onRolesChange($event)"  [closeOnSelect]="false" [(ngModel)]="selectedRoleIds" [multiple]="true" placeholder="Select Roles">
-                   <ng-option *ngFor="let role of roleDetails" value="{{role.id}}" selected>{{role.role}}</ng-option>
+                   <ng-option *ngFor="let role of roleDetails" [value]="role.id" selected>{{role.role}}</ng-option>
                    
                </ng-select>
           </div>
           <div *ngIf="shareAsPrivate" class="">
             
             <p class="fw-semibold mb-2 mt-3">Users</p>
-            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(click)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
-                <ng-option *ngFor="let user of usersOnSelectedRole" value="{{user.user_id}}">{{user.username}}</ng-option>
+            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(open)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [disabled]="selectedRoleIds.length === 0" [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
+                <ng-option *ngFor="let user of usersOnSelectedRole" [value]="user.user_id">{{user.username}}</ng-option>
               
             </ng-select>
        </div>
@@ -214,8 +217,8 @@
         </button>
       </div> -->
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
-        <button type="button" *ngIf="createUrl" (click)="publishDashboard()" class="btn ripple btn-primary">Publish</button>
+        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
 
         <button
           type="button"
@@ -225,4 +228,50 @@
           Close
         </button>
       </div>
+</ng-template>
+ 
+<ng-template #autorefresh let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Refresh Interval</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow= false;">
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row text-wrap">
+      <div>
+      <label class="form-label">Frequency <span class="text-red">*</span><i
+          ngbTooltip="Periodical automatted time interval to refresh/sync dashboard."
+          class="icon icon-info ms-1 cursor-pointer"></i></label>
+        <select [(ngModel)]="frequency" class="form-control cursor-pointer">
+          <option value="-1"> Don't refresh </option>
+          <option value="1"> 1 hour</option>
+          <option value="2"> 2 hours</option>
+          <option value="5"> 5 hours</option>
+          <option value="10"> 10 hours</option>
+          <option value="15"> 15 hours</option>
+          <option value="24"> 24 hours</option>
+        </select>
+        @if(frequency > 0){
+          <label class="form-label">Refresh Now <i
+            ngbTooltip="Enable to refresh dashbaord now." class="icon icon-info ms-1 cursor-pointer"></i></label>
+          <input type="checkbox" [(ngModel)]="refreshNow" />
+        }
+          @if(lastRefresh){
+          <label class="form-label">Last Refresh<i
+            ngbTooltip="last refreshed date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
+        <input type="text" readonly="true" [(ngModel)]="lastRefresh" />
+          }
+          @if(nextRefresh){
+            <label class="form-label">Next Refresh will happen in 
+              <span class="fw-bold">{{nextRefresh}}</span> minutes.</label>
+          }
+        </div>
+    </div>
+  </div>
+  <div class="modal-footer p-2">
+    <button type="button" (click)="modal.dismiss('Cross click');frequency = 0;refreshNow=false;" class="btn ripple btn-secondary">
+      Cancel </button>
+    <button (click)="autoFrequencyRefresh()" [disabled]="!frequency" class="btn btn-primary">Apply</button>
+  </div>
+
 </ng-template>

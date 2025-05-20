@@ -45,10 +45,15 @@ export class DashboardPageComponent implements OnInit{
   port:any;
   host:any; 
   @ViewChild('propertiesModal') propertiesModal : any;
-
+  frequency! : number;
+  refreshNow: boolean = false;
+  lastRefresh: any;
+  nextRefresh: any;
+  
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
   private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
   this.viewDashboardList=this.templateViewService.viewDashboard()
+
 }
 ngOnInit(){
   this.loaderService.hide();
@@ -167,6 +172,7 @@ viewPropertiesTab(name:any,dashboardId:any){
   this.dashboardPropertyId = dashboardId;
    this.publishedDashboard = false;
    this.shareAsPrivate = false;
+   this.applyButtonEnableOnEditUser = false;
   this.getAddedDashboardProperties();
 
 }
@@ -174,9 +180,41 @@ onRolesChange(selected: string[]) {
   this.selectedRoleIds = selected
   this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
   console.log('selectedRoles',this.selectedRoleIdsToNumbers)
+  if (this.selectedRoleIds.length === 0) {
+    this.selectedUserIds = [];
+    this.selectedUserIdsToNumbers = [];
+    return;
+  } 
+ const obj = { role_ids: this.selectedRoleIdsToNumbers };
 
-  // You can store or process the selected values here
-}
+    this.workbechService.getUsersOnRole(obj).subscribe({
+      next: (data) => {
+        console.log('Updated users for selected roles:', data);
+        this.usersOnSelectedRole = data;
+        const validUserIds = new Set(data.map((user: { user_id: any; }) => String(user.user_id)));  
+  
+        const prevSelectedUsers = [...this.selectedUserIds]; // Backup for debugging
+        this.selectedUserIds = this.selectedUserIds.filter((userId: any) =>
+          validUserIds.has(String(userId)) // Convert to string for safe comparison
+        );
+  
+        this.selectedUserIdsToNumbers = this.selectedUserIds.map((value: any) => Number(value));
+        
+        // Debugging logs
+        console.log('Previous selected users:', prevSelectedUsers);
+        console.log('Valid user IDs after role change:', [...validUserIds]);
+        console.log('Filtered selected users:', this.selectedUserIds);
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: error.error.message,
+          width: '400px',
+        });
+      }
+    });}
 getRoleDetailsDshboard(){
 this.workbechService.getRoleDetailsDshboard().subscribe({
   next:(data)=>{
@@ -251,28 +289,35 @@ this.workbechService.saveDashboardProperties(obj).subscribe({
   }
 })
 }
+applyButtonEnableOnEditUser = false;
 getAddedDashboardProperties(){
   this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
     next:(data)=>{
-      this.selectedRoleIds = data.roles.map((role: any) => role.role);
-      this.selectedUserIds = data.users.map((user:any)=>user.username);
+      this.selectedRoleIds = Array.isArray(data?.roles) ? data.roles.map((role: any) => role.id): [];
+      this.selectedUserIds = data?.users?.map((user:any)=>user.user_id);
       console.log('savedrolesandUsers',data);
-      this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
-      this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
-
+      // this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
+      // this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
+      this.selectedRoleIdsToNumbers =  (this.selectedRoleIds || []).map((id: string) => Number(id));;
+        this.selectedUserIdsToNumbers = (this.selectedUserIds || []).map((id: string) => Number(id));
+      console.log('Loaded selected roles:', this.selectedRoleIds);
+      console.log('Loaded selected users:', this.selectedUserIds);
+      if(this.selectedRoleIds.length > 0){
+        this.getUsersforRole();
+      }
+      if(this.selectedUserIds.length > 0){
+        this.applyButtonEnableOnEditUser = true;
+      }
+   
      },
     error:(error)=>{
       console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
+      this.selectedUserIds = [];
+      this.selectedRoleIds = [];
     }
   }) 
 }
-
 
 sharePublish(value:any){
   console.log(value);
@@ -280,7 +325,8 @@ sharePublish(value:any){
     this.createUrl = true;
     this.shareAsPrivate = false
     const publicDashboardId = btoa(this.dashboardId.toString());
-    this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
+    this.publicUrl = 'https://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId;
+    this.publishDashboard();
   } else if(value === 'private'){
     this.createUrl = false;
     this.shareAsPrivate = true;
@@ -335,5 +381,55 @@ publishDashboard(){
 
     }
   })
+}
+autoFrequencyRefresh(){
+  let object;
+  if(this.frequency > 0){
+    object = {
+      "dashboard_id": this.dashboardId,
+      "is_scheduled": true,
+      "frequency": this.frequency,
+      "refresh_now": this.refreshNow
+  }
+  } else {
+    object = {
+      "dashboard_id": this.dashboardId,
+      "is_scheduled": false,
+      "refresh_now": this.refreshNow
+  }
+  }
+  this.workbechService.autoRefreshFrequency(object).subscribe({
+    next:(data)=>{
+      this.toasterservice.success('Dashboard refresh scheduled','success',{ positionClass: 'toast-center-center'})
+      },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  });
+}
+
+viewSchedular(dashboardId:any,modal: any){
+  this.dashboardId = dashboardId;
+  this.workbechService.fetchSchedularData(this.dashboardId).subscribe({
+    next:(data)=>{
+      this.frequency = data.frequency;
+      this.lastRefresh = data.last_refresh;
+      this.nextRefresh = data.next_refresh_in_minutes;
+      this.modalService.open(modal);
+      },
+    error:(error)=>{
+      this.lastRefresh = null;
+      this.nextRefresh = null;
+      this.modalService.open(modal);
+    }
+  });
+
+
 }
 }

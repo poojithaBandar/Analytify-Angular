@@ -11,11 +11,17 @@ const routes: Routes = [
       canActivate:[authGuard],
       loadComponent: () => import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent)
     },
-    // { 
-    //   path: 'help-guide/:slug', 
-    //   canActivate:[authGuard],
-    //   loadComponent: () => import('./help-guide-questionaries/help-guide-questionaries.component').then((m) => m.HelpGuideQuestionariesComponent)
-    // },
+    { 
+      path: 'help-guide/:slug', 
+      canActivate:[authGuard],
+      loadComponent: () => import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent)
+    },
+    { 
+      path: 'protocol-conversion/guide', 
+      canActivate:[authGuard],
+      loadComponent: () => import('./http-protocal-userguide/http-protocal-userguide.component').then((m) => m.HttpProtocalUserguideComponent)
+    },
+
     //   { path: 'search', component: GuideLeftMenuComponent},
     //   { path: 'search/:moduleName', component:GuideLeftMenuComponent},
     //   { path: 'help-guide/:moduleName', component: HelpGuideComponent },

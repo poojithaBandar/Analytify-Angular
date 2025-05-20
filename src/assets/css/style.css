@@ -209,7 +209,7 @@ License                         :   Licensed under ThemeForest License
   --body-bg-rgb2:	26, 28, 30;
   --menu-bg:	rgb(var(--body-bg-rgb));
   --menu-border-color:	rgba(255,255,255,0.1);
-  --menu-prime-color:	rgba(255,255,255,0.6);
+  --menu-prime-color:	rgba(255,255,255);
   --header-bg:	rgb(var(--body-bg-rgb));
   --header-prime-color:	rgba(255,255,255,0.6);
   --header-border-color:	rgba(255,255,255,0.1);
@@ -648,7 +648,7 @@ html[data-menu-styles=dark] .app-sidebar .slide-menu.child3 .side-menu__item.act
 }
 html[data-menu-styles=dark][data-theme-mode=light] {
   --menu-bg: rgb(4 44 72 / 98%);
-  --menu-prime-color: rgba(255, 255, 255, 0.6);
+  --menu-prime-color: rgba(255, 255, 255);
 }
 html[data-menu-styles=dark][data-theme-mode=light][data-bg-img=bgimg1] {
   --menu-bg: url(../images/menu-bg-images/bg-img1.jpg);
@@ -695,7 +695,7 @@ html[data-menu-styles=dark][data-theme-mode=light] .side-menu__icon.active .side
 
 html[data-menu-styles=color] {
   --menu-bg: var(--primary-color);
-  --menu-prime-color: rgba(255, 255, 255, 0.8);
+  --menu-prime-color: rgba(255, 255, 255);
   --menu-border-color: rgba(255, 255, 255, 0.1);
 }
 html[data-menu-styles=color][data-nav-layout=vertical] .app-sidebar .main-sidebar-header .header-logo .desktop-dark {
@@ -7387,7 +7387,7 @@ fieldset:disabled .button-slide-out__above {
   border-start-end-radius: var(--bs-modal-inner-border-radius);
   
   /* rajesh */
-  background-color: #2392c1;
+  background-color: var(--primary-color);
   color: #fff;
   border-radius: 20px 20px 0px 0px !important;
   border: none;
@@ -33234,7 +33234,7 @@ img {
 .landing-top-header::before {
   position: absolute;
   content: "";
-  background-color: rgba(21, 58, 84, 0.8);
+  background: var(--menu-bg);
   width: 100%;
   height: 100%;
   left: 0;
@@ -42531,7 +42531,7 @@ a.text-primary:hover, a.text-primary:focus {
 
 .login-img::before {
   content: "";
-  background: linear-gradient(to right, var(--primary07) 0%, var(--primary07) 100%);
+  background: linear-gradient(to right, #2392c1b0 0%, #2392c1b0 100%);
   height: 100%;
   width: 100%;
   position: absolute;
@@ -52782,7 +52782,8 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .tx-fixed-white {
-  color: var(--fixed-white) !important;
+  /* color: var(--fixed-white) !important; */
+  color: var(--menu-prime-color);
 }
 
 .text-gray {
@@ -55390,7 +55391,7 @@ input[type=range]::-webkit-slider-runnable-track {
   }
   .ngx-pagination .current {
     padding: .1875rem .625rem;
-    background: #2392c1 !important;
+    background: var(--primary-color) !important;
     color: #fefefe;
     cursor: default;
     
@@ -55420,3 +55421,51 @@ p {
 button.btn {
   font-size: 13px;
 }
+
+.app-header { padding-inline-start: 13rem ;}
+.app-content { margin-inline-start: 13rem ; }
+.sheets-footer-card .mat-mdc-tab:not(.mdc-tab--stacked) { height: auto !important; padding: 5px 10px; }
+
+ /* for 90% Resolution */
+ @media ( 1420px <= width <= 1560px) {
+  .app-header { padding-inline-start: 11rem; }
+  .app-content { margin-inline-start: 11rem;  }
+  .sheets-footer-card .mat-mdc-tab:not(.mdc-tab--stacked) { font-size: 12px; }
+}
+
+ /* for 100% Resolution */
+ @media ( 1280px <= width <= 1420px) {
+  .app-header { padding-inline-start: 10rem;}
+  .app-content { margin-inline-start: 10rem;  }
+  .sheets-footer-card .mat-mdc-tab:not(.mdc-tab--stacked) { font-size: 11px; }
+}
+
+    /* for 110% Resolution  */
+    @media ( 1163px <= width <= 1279px) {
+      .app-header {
+          padding-inline-start: 11rem;
+      }
+      .app-content {
+          margin-inline-start: 11rem;
+          padding: 0 0.5rem;
+      }
+    }
+
+    /* for 125% Resolution */
+    @media ( 1024px <= width <= 1163px) {
+      .app-header {
+          padding-inline-start: 10rem;
+      }
+      .app-content {
+          margin-inline-start: 10rem;
+          padding: 0 0.5rem;
+      }
+    }
+
+    .TopHeader {
+      /* position: relative;
+      top: 135px; */
+    }
+    #htmlContent p {
+      margin: 0px !important;
+    }

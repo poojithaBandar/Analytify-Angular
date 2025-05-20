@@ -34,6 +34,7 @@
 @import "../node_modules/filepond/dist/filepond.css";
 // @import "../node_modules/ngx-easy-table/style.css";
 @import "../node_modules/ngx-easy-table/style.css";
+@import "../src/assets/scss/variables";
 
 .ng-select .ng-select-container .ng-value-container .ng-input>input {
     color: var(--default-text-color);
@@ -135,48 +136,13 @@ input#globalSearch {
   .joining-T-H{
     height: 350px;
   }
-  // for 90% Resolution //
-  @media ( 1420px <= width <= 1560px) {
-   
-   
-    .app-header {
-        padding-inline-start: 13rem;
-    }
-    .app-content {
-        margin-inline-start: 13rem;
-        padding: 0 0.5rem;
-    }
+ 
+  .no-icon-bg{
+    border: 0;
   }
 
-   // for 100% Resolution //
-   @media ( 1280px <= width <= 1420px) {
-    .app-header {
-        padding-inline-start: 12rem;
-    }
-    .app-content {
-        margin-inline-start: 12rem;
-        padding: 0 0.5rem;
-    }
+  .SearchBarCu p {
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
-
-      // for 110% Resolution //
-      @media ( 1163px <= width <= 1279px) {
-        .app-header {
-            padding-inline-start: 11rem;
-        }
-        .app-content {
-            margin-inline-start: 11rem;
-            padding: 0 0.5rem;
-        }
-      }
-
-      // for 125% Resolution //
-      @media ( 1024px <= width <= 1163px) {
-        .app-header {
-            padding-inline-start: 10rem;
-        }
-        .app-content {
-            margin-inline-start: 10rem;
-            padding: 0 0.5rem;
-        }
-      }

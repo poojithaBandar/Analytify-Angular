@@ -57,6 +57,7 @@ testVariableToChange! : string ;
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService){
   localStorage.setItem('QuerySetId', '0');
+  localStorage.setItem('customQuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
   this.viewSheets = this.templateService.viewSheets();
   this.viewDashboardList = this.templateService.viewDashboard();
@@ -177,7 +178,7 @@ getSavedQueries(){
   this.workbechService.getSavedQueryList(Obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.savedQueryList = data.sheets
+      this.savedQueryList = data?.sheets
      },
     error:(error)=>{
       console.log(error);
@@ -198,21 +199,21 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
 
   this.router.navigate(['/analytify/home/sheetsdashboard/'+encodedDashboardId])
 }
-viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
+viewSheet(serverId:any,querysetId:any,sheetId:any){
   this.loaderService.show();
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
 
-  if (serverId === null || serverId ==='') {
-    const encodedFileId = btoa(fileId.toString());
-    this.router.navigate(['/analytify/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+  // if (serverId === null || serverId ==='') {
+  //   const encodedFileId = btoa(fileId.toString());
+  //   this.router.navigate(['/insights/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
-  }
-  else if(fileId === null || fileId === ''){
+  // }
+  //  if(fileId === null || fileId === ''){
     const encodedServerId = btoa(serverId.toString());
-    this.router.navigate(['/analytify/home/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+    this.router.navigate(['/analytify/home/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
-  }
+  // }
  
 }
 
@@ -228,18 +229,18 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     this.router.navigate(['analytify/datasources/view-connections']) 
 
   }
-  getTablesFromConnectedDb(dbId:any,fileId:any){
+  getTablesFromConnectedDb(dbId:any){
     // const encodedId = btoa(id.toString());
     // this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
     this.loaderService.show();
-    if(dbId === null){
-      const encodedId = btoa(fileId.toString());
-      this.router.navigate(['/analytify/database-connection/files/tables/'+encodedId]);
-      }
-      if(fileId === null){
+    // if(dbId === null){
+    //   const encodedId = btoa(fileId.toString());
+    //   this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
+    //   }
+      // if(fileId === null){
         const encodedId = btoa(dbId.toString());
         this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-        }
+        // }
   }
   deleteDashboard(dashboardId:any){
     Swal.fire({
@@ -280,7 +281,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
         )
       }})
   }
-  deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
+  deleteSheet(serverId:any,qurysetId:any,sheetId:any){
     const obj ={
       sheet_id:sheetId,
     }
@@ -300,7 +301,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
               confirmButtonText: 'Yes, delete it!'
             }).then((result)=>{
               if(result.isConfirmed){
-                const idToPass = fileId == null ? serverId : fileId;
+                const idToPass =serverId 
                 this.workbechService.deleteSheet(idToPass,qurysetId,sheetId)
                 .subscribe(
                   {
@@ -418,35 +419,35 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     this.router.navigate(['/analytify/saved-queries']) 
 
   }
-  gotoSavedQuery(dbId:any,qrySetId:any,fileId:any,isCustomSql:boolean,dsQrySetId:any){
+  gotoSavedQuery(dbId:any,qrySetId:any,isCustomSql:boolean,dsQrySetId:any){
     if(isCustomSql){ 
-    if(fileId === null){
+    // if(fileId === null){
     const encodedServerId = btoa(dbId.toString());
     const encodedQuerySetId = btoa(qrySetId.toString());
 
-    this.router.navigate(['analytify/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
-    }
-    if(dbId === null){
-      const encodedFileId = btoa(fileId.toString());
-      const encodedQuerySetId = btoa(qrySetId.toString());
+    this.router.navigate(['analytify/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    // }
+    // if(dbId === null){
+    //   const encodedFileId = btoa(fileId.toString());
+    //   const encodedQuerySetId = btoa(qrySetId.toString());
   
-      this.router.navigate(['analytify/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
-    }
+    //   this.router.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+    // }
 
   }
   else{
     const encodeddbId = btoa(dbId?.toString());
     const encodedqurysetId = btoa(qrySetId.toString());
-    const encodedFileId = btoa(fileId?.toString());
+    // const encodedFileId = btoa(fileId?.toString());
     // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
-    const idToPass = fileId ? encodedFileId : encodeddbId;
-    const fromSource = fileId ? 'fileId' : 'dbId';
+    const idToPass = encodeddbId;
+    const fromSource = 'dbId';
 
     const encodedDsQuerySetId = dsQrySetId === null || dsQrySetId === undefined 
   ? btoa('null') 
   : btoa(dsQrySetId.toString()); 
-   this.router.navigate(['/analytify/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+   this.router.navigate(['/analytify/database-connection/sheets/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   }
   }
   // gotoSavedQuery(dbId:any,qrySetId:any,fileId:any){
@@ -487,25 +488,36 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   this.dashboardId = dashboardId;
   this.publishedDashboard = false;
   this.shareAsPrivate = false;
+  this.applyButtonEnableOnEditUser = false;
   this.getAddedDashboardProperties();
   }
+
+  applyButtonEnableOnEditUser = false;
+
   getAddedDashboardProperties(){
     this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
       next:(data)=>{
-        this.selectedRoleIds = data.roles.map((role: any) => role.role);
-        this.selectedUserIds = data.users.map((user:any)=>user.username);
+        this.selectedRoleIds = Array.isArray(data?.roles) ? data.roles.map((role: any) => role.id): [];
+        this.selectedUserIds = data?.users?.map((user:any)=>user.user_id);
         console.log('savedrolesandusers',data);
-        this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
-        this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
+        // this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
+        // this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
+        this.selectedRoleIdsToNumbers =  (this.selectedRoleIds || []).map((id: string) => Number(id));;
+        this.selectedUserIdsToNumbers = (this.selectedUserIds || []).map((id: string) => Number(id));
+        console.log('Loaded selected roles:', this.selectedRoleIds);
+        console.log('Loaded selected users:', this.selectedUserIds);
+        if(this.selectedRoleIds.length > 0){
+          this.getUsersforRole();
+        }
+        if(this.selectedUserIds.length > 0){
+          this.applyButtonEnableOnEditUser = true;
+        }
        },
       error:(error)=>{
         console.log(error);
-        Swal.fire({
-          icon: 'error',
-          title: 'oops!',
-          text: error.error.message,
-          width: '400px',
-        })
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
+        this.selectedUserIds = [];
+        this.selectedRoleIds = [];
       }
     }) 
   }
@@ -556,7 +568,8 @@ if(value === 'public'){
   this.createUrl = true;
   this.shareAsPrivate = false
   const publicDashboardId = btoa(this.dashboardId.toString());
-  this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
+  this.publicUrl = 'https://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
+  this.publishDashboard();
 } else if(value === 'private'){
   this.createUrl = false;
   this.shareAsPrivate = true;
@@ -609,13 +622,46 @@ fallbackCopyTextToClipboard(text: string): void {
   }
   document.body.removeChild(textArea);
 }
-onRolesChange(selected: number[]) {
-  this.selectedRoleIds = selected
-   this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
-  console.log(this.selectedRoleIds);
+  onRolesChange(selected: number[]) {
+    this.selectedRoleIds = selected
+    this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
+    console.log(this.selectedRoleIds);
+    if (this.selectedRoleIds.length === 0) {
+      this.selectedUserIds = [];
+      this.selectedUserIdsToNumbers = [];
+      return;
+    } 
+    const obj = { role_ids: this.selectedRoleIdsToNumbers };
 
-  // You can store or process the selected values here
-}
+    this.workbechService.getUsersOnRole(obj).subscribe({
+      next: (data) => {
+        console.log('Updated users for selected roles:', data);
+        this.usersOnSelectedRole = data;
+        const validUserIds = new Set(data.map((user: { user_id: any; }) => String(user.user_id)));  
+  
+        const prevSelectedUsers = [...this.selectedUserIds]; // Backup for debugging
+        this.selectedUserIds = this.selectedUserIds.filter((userId: any) =>
+          validUserIds.has(String(userId)) // Convert to string for safe comparison
+        );
+  
+        this.selectedUserIdsToNumbers = this.selectedUserIds.map((value: any) => Number(value));
+        
+        // Debugging logs
+        console.log('Previous selected users:', prevSelectedUsers);
+        console.log('Valid user IDs after role change:', [...validUserIds]);
+        console.log('Filtered selected users:', this.selectedUserIds);
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: error.error.message,
+          width: '400px',
+        });
+      }
+    });
+  }
 getSelectedUsers(selected: number[]){
   this.selectedUserIds = selected;
   this.selectedUserIdsToNumbers = this.selectedUserIds.map((value: any) => Number(value));
