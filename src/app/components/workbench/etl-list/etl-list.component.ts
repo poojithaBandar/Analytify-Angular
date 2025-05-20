@@ -37,9 +37,14 @@ export class EtlListComponent {
       next: (data: any) => {
         console.log(data);
         this.dataFlowList = data.data;
-        this.totalItems = data?.total_items ?? 20;
-        this.pageSize = data?.page_size ?? 10;
-        // this.page = data?.page;
+        this.totalItems = data?.total_records;
+        this.pageSize = data?.page_size;
+        this.page = data?.page_number;
+        if(this.dataFlowList.length === 0){
+          this.pageSize = '';
+          this.page = '';
+          this.totalItems = 0;
+        }
       },
       error: (error: any) => {
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
@@ -55,6 +60,10 @@ export class EtlListComponent {
   editDataFlow(id:any){
     const encodedId = btoa(id.toString());
     this.router.navigate(['/analytify/etlList/etl/'+encodedId]);
+  }
+
+  goToJobFlow(){
+    this.router.navigate(['/analytify/etlList/jobFlow']);
   }
 
   onPageSizeChange() {
