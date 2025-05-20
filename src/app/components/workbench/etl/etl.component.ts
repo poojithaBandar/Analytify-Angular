@@ -465,7 +465,7 @@ export class ETLComponent {
     const node = this.drawflow.getNodeFromId(nodeId);
     this.selectedNode = node;
 
-    if(this.selectedNode.data.type = 'source_data_object'){
+    if(this.selectedNode.data.type === 'source_data_object'){
       this.openAttributesSelection(null);
       this.groupAttributesList.forEach((group:any)=>{
         group.isChecked = true;
