@@ -5,7 +5,7 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between  align-items-center m-2">
                         <div>
-                            <h5 class="card-title mb-0">ETL</h5>
+                            <h5 class="card-title mb-0">ETL Data Flow</h5>
                         </div>
                     </div>
                 </div>
@@ -410,20 +410,8 @@
                                                                                                 <td>
                                                                                                     <select class="form-select form-select" [(ngModel)]="sourceAttribute.dataType"
                                                                                                         (change)="updateNode('')">
-                                                                                                        <option value="">Select</option>
-                                                                                                        <option value="integer">integer</option>
-                                                                                                        <option value="float">float</option>
-                                                                                                        <option value="varchar">varchar</option>
-                                                                                                        <option value="boolean">boolean</option>
-                                                                                                        <option value="date">date</option>
-                                                                                                        <option value="bigint">bigint</option>
-                                                                                                        <option value="char">char</option>
-                                                                                                        <option value="decimal">decimal</option>
-                                                                                                        <option value="time">time</option>
-                                                                                                        <option value="time with time zone">time with time zone</option>
-                                                                                                        <option value="timestamp">timestamp</option>
-                                                                                                        <option value="timestamp with time zone">timestamp with time zone</option>
-                                                                                                        <option value="character varying">character varying</option>
+                                                                                                        <option value="" selected disabled>Select</option>
+                                                                                                        <option *ngFor="let type of dataTypes" [value]="type">{{ type }}</option>
                                                                                                     </select>
                                                                                                 </td>
                                                                                                 <td>
@@ -537,21 +525,8 @@
                                                                                                 <td>
                                                                                                     <select class="form-select form-select" [(ngModel)]="attribute.dataType"
                                                                                                         (change)="updateNode('attribute')">
-                                                                                                        <option value="">Select</option>
-                                                                                                        <option value="integer">integer</option>
-                                                                                                        <option value="float">float</option>
-                                                                                                        <option value="varchar">varchar</option>
-                                                                                                        <option value="boolean">boolean</option>
-                                                                                                        <option value="date">date</option>
-                                                                                                        <option value="bigint">bigint</option>
-                                                                                                        <option value="char">char</option>
-                                                                                                        <option value="decimal">decimal</option>
-                                                                                                        <option value="time">time</option>
-                                                                                                        <option value="time with time zone">time with time zone</option>
-                                                                                                        <option value="timestamp">timestamp</option>
-                                                                                                        <option value="timestamp with time zone">timestamp with time zone</option>
-                                                                                                        <option value="character varying">character varying</option>
-                                                                                                        <option value="numeric">numeric</option>
+                                                                                                        <option value="" selected disabled>Select</option>
+                                                                                                        <option *ngFor="let type of dataTypes" [value]="type">{{ type }}</option>
                                                                                                     </select>
                                                                                                 </td>
                                                                                                 <td>
@@ -652,7 +627,7 @@
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
-                                                                                @if(canvasData.parameters.length > 0){
+                                                                                @if(canvasData?.parameters?.length > 0){
                                                                                 <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
                                                                                     <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add"
                                                                                         [triggers]="'hover'" (click)="addNewParameter()">
@@ -678,7 +653,7 @@
                                                                 
                                                                                         </thead>
                                                                                         <tbody>
-                                                                                            @for(parameter of canvasData.parameters; track parameter; let i = $index){
+                                                                                            @for(parameter of canvasData?.parameters; track parameter; let i = $index){
                                                                                             <tr>
                                                                                                 <td>{{ i + 1 }}</td>
                                                                                                 <td><input type="text" class="form-control"
@@ -686,21 +661,8 @@
                                                                                                 <td>
                                                                                                     <select class="form-select" [(ngModel)]="parameter.dataType"
                                                                                                         (change)="updateNode('parameter')">
-                                                                                                        <option value="">Select</option>
-                                                                                                        <option value="integer">integer</option>
-                                                                                                        <option value="float">float</option>
-                                                                                                        <option value="varchar">varchar</option>
-                                                                                                        <option value="boolean">boolean</option>
-                                                                                                        <option value="date">date</option>
-                                                                                                        <option value="bigint">bigint</option>
-                                                                                                        <option value="char">char</option>
-                                                                                                        <option value="decimal">decimal</option>
-                                                                                                        <option value="time">time</option>
-                                                                                                        <option value="time with time zone">time with time zone</option>
-                                                                                                        <option value="timestamp">timestamp</option>
-                                                                                                        <option value="timestamp with time zone">timestamp with time zone</option>
-                                                                                                        <option value="character varying">character varying</option>
-                                                                                                        <option value="numeric">numeric</option>
+                                                                                                        <option value="" selected disabled>Select</option>
+                                                                                                        <option *ngFor="let type of dataTypes" [value]="type">{{ type }}</option>
                                                                                                     </select>
                                                                                                 </td>
                                                                                                 <td>
@@ -742,7 +704,7 @@
                                                                     <ng-template ngbNavContent>
                                                                         <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                             <div class="col-xl-12 col-lg-12 col-md-12">
-                                                                                @if(canvasData.sqlParameters.length > 0){
+                                                                                @if(canvasData?.sqlParameters?.length > 0){
                                                                                 <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
                                                                                     <button class="btn btn-sm btn-primary d-flex align-items-center" ngbTooltip="Add"
                                                                                         [triggers]="'hover'" (click)="addNewSQLParameter()">
@@ -769,7 +731,7 @@
                                                                 
                                                                                         </thead>
                                                                                         <tbody>
-                                                                                            @for(parameter of canvasData.sqlParameters; track parameter; let i = $index){
+                                                                                            @for(parameter of canvasData?.sqlParameters; track parameter; let i = $index){
                                                                                             <tr>
                                                                                                 <td>{{ i + 1 }}</td>
                                                                                                 <td><input type="text" class="form-control"
@@ -777,21 +739,8 @@
                                                                                                 <td>
                                                                                                     <select class="form-select" [(ngModel)]="parameter.dataType"
                                                                                                         (change)="updateNode('parameter')">
-                                                                                                        <option value="">Select</option>
-                                                                                                        <option value="integer">integer</option>
-                                                                                                        <option value="float">float</option>
-                                                                                                        <option value="varchar">varchar</option>
-                                                                                                        <option value="boolean">boolean</option>
-                                                                                                        <option value="date">date</option>
-                                                                                                        <option value="bigint">bigint</option>
-                                                                                                        <option value="char">char</option>
-                                                                                                        <option value="decimal">decimal</option>
-                                                                                                        <option value="time">time</option>
-                                                                                                        <option value="time with time zone">time with time zone</option>
-                                                                                                        <option value="timestamp">timestamp</option>
-                                                                                                        <option value="timestamp with time zone">timestamp with time zone</option>
-                                                                                                        <option value="character varying">character varying</option>
-                                                                                                        <option value="numeric">numeric</option>
+                                                                                                        <option value="" selected disabled>Select</option>
+                                                                                                        <option *ngFor="let type of dataTypes" [value]="type">{{ type }}</option>
                                                                                                     </select>
                                                                                                 </td>
                                                                                                 <td>
@@ -944,7 +893,7 @@
         </div>
 
         <div class="mb-3">
-            <textarea class="form-control" rows="6" placeholder="Enter expression..." [(ngModel)]="expression"
+            <textarea #expressionTextarea class="form-control" rows="6" placeholder="Enter expression..." [(ngModel)]="expression"
                 style="width: 100%;">
             </textarea>
         </div>
@@ -977,7 +926,7 @@
                             <input type="text" class="form-control form-control-sm mb-2" placeholder="Search fields..." [(ngModel)]="searchText" />
                             <div style="max-height: 200px; overflow-y: auto;">
                                 <div *ngFor="let column of (groupedColumns[selectedGroup] || [])" class="text-break py-1 px-2 hover-bg" style="cursor: pointer;"
-                                    (click)="selectedColumn = column; expression = expression + (expression ? (' ' + selectedGroup + '.' + column.label) : (selectedGroup + '.'  + column.label))">
+                                    (click)="selectedColumn = column; insertOrReplace(selectedGroup + '.' + column.label, expressionTextarea);">
                                     {{ column.label }}
                                 </div>
                             </div>

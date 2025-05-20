@@ -69,6 +69,55 @@ export class ETLComponent {
   isHaving : boolean = false;
   isWhere : boolean = false;
   isFilter : boolean = false;
+  dataTypes: string[] = [
+    // Numeric types
+    'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'serial', 'bigserial', 'money',
+
+    // Character types
+    'char', 'character', 'varchar', 'character varying', 'text',
+  
+    // Boolean
+    'boolean',
+  
+    // Date/Time types
+    'date', 'time', 'time without time zone', 'time with time zone', 'timestamp', 'timestamp without time zone', 'timestamp with time zone', 'interval',
+  
+    // UUID
+    'uuid',
+  
+    // Binary data
+    'bytea',
+  
+    // Network types
+    'cidr', 'inet', 'macaddr', 'macaddr8',
+  
+    // JSON types
+    'json', 'jsonb',
+  
+    // Arrays
+    'array',
+  
+    // Range types
+    'int4range', 'int8range', 'numrange', 'tsrange', 'tstzrange', 'daterange',
+  
+    // Geometric types
+    'point', 'line', 'lseg', 'box', 'path', 'polygon', 'circle',
+  
+    // XML
+    'xml',
+  
+    // Full Text Search
+    'tsvector', 'tsquery',
+  
+    // Bit string types
+    'bit', 'bit varying',
+  
+    // Object identifiers
+    'oid', 'regproc', 'regprocedure', 'regoper', 'regoperator', 'regclass', 'regtype', 'regrole', 'regnamespace',
+  
+    // Other
+    'name', 'enum', 'composite', 'pg_lsn', 'txid_snapshot', 'unknown'
+  ];
 
   constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, 
     private loaderService: LoaderService, private etlGraphService: EtlGraphService, private router: Router,private route: ActivatedRoute) {
@@ -403,7 +452,7 @@ export class ETLComponent {
       </div>`;
 
     // this.drawflow.registerNode(name, html);
-    this.drawflow.addNode(name, inputNodeCount, outputNodeCount, posX, posY, name, data, html.innerHTML);
+    const nodeId = this.drawflow.addNode(name, inputNodeCount, outputNodeCount, posX, posY, name, data, html.innerHTML);
 
     this.selectedConnection = null;
     this.selectedDataObject = null;
@@ -412,6 +461,19 @@ export class ETLComponent {
     Object.entries(allNodes).forEach(([id, node]) => {
       console.log('Node ID:', id, 'Node Data:', node);
     });
+
+    const node = this.drawflow.getNodeFromId(nodeId);
+    this.selectedNode = node;
+
+    if(this.selectedNode.data.type = 'source_data_object'){
+      this.openAttributesSelection(null);
+      this.groupAttributesList.forEach((group:any)=>{
+        group.isChecked = true;
+        this.toggleGroup(group);
+      });
+      this.isSourceClicked = true;
+      this.applySelectedAttributes();
+    }
   }
 
   updateNode(type: any) {
@@ -961,7 +1023,7 @@ export class ETLComponent {
           }
         }
       } 
-      else if(!['Rollup', 'Expression'].includes(nodeType)){
+      else if(!['Rollup', 'Expression', 'Joiner'].includes(nodeType)){
         let dataObjects = JSON.parse(JSON.stringify(childDataObjects[i]));
         dataObjects.forEach((object:any)=>{
           object.group = nodeName;
@@ -1075,11 +1137,13 @@ export class ETLComponent {
   
     this.groupAttributesList = grouped;
   
-    this.modalService.open(modal, {
-      centered: true,
-      windowClass: 'animate__animated animate__zoomIn',
-      modalDialogClass: 'modal-lg modal-dialog-scrollable'
-    });
+    if(modal !== null){
+      this.modalService.open(modal, {
+        centered: true,
+        windowClass: 'animate__animated animate__zoomIn',
+        modalDialogClass: 'modal-lg modal-dialog-scrollable'
+      });
+    }
   }
   
   toggleGroup(group: any) {
@@ -1346,6 +1410,20 @@ export class ETLComponent {
     this.isFilter = false;
   }
 
+  insertOrReplace(text: string, textarea: HTMLTextAreaElement): void {
+    const { selectionStart: start, selectionEnd: end } = textarea;
+    const value = this.expression || '';
+  
+    const prefix = (value && start === end && value[start - 1] !== ' ') ? ' ' : '';
+    this.expression = value.slice(0, start) + prefix + text + value.slice(end);
+  
+    const newPos = start + prefix.length + text.length;
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(newPos, newPos);
+    });
+  }  
+  
   getDataFlow(){
     this.workbechService.getEtlDataFlow(this.dataFlowId).subscribe({
       next: (data) => {
@@ -1355,7 +1433,7 @@ export class ETLComponent {
         const drawFlowJson = JSON.parse(data.transformation_flow);
         this.drawflow.import(drawFlowJson);
         this.isRunEnable = true;
-        this.canvasData = drawFlowJson.drawflow.Home.canvasData;
+        this.canvasData = drawFlowJson.drawflow.Home.canvasData ? drawFlowJson.drawflow.Home.canvasData : {parameters: [], sqlParameters: []};
         console.log(this.canvasData);
       },
       error: (error: any) => {
@@ -1377,7 +1455,7 @@ export class ETLComponent {
   }
 
   addNewParameter(){
-    const existingIndexes = this.canvasData.parameters
+    const existingIndexes = this.canvasData?.parameters
       .map((p:any) => {
         const match = p.paramName?.match(/PARAM_NAME_(\d+)/);
         return match ? +match[1] : null;
@@ -1387,7 +1465,7 @@ export class ETLComponent {
 
     // Find the smallest unused index
     let newIndex = 1;
-    for (let i = 0; i < existingIndexes.length; i++) {
+    for (let i = 0; i < existingIndexes?.length; i++) {
       if (existingIndexes[i] !== i + 1) {
         newIndex = i + 1;
         break;
@@ -1396,7 +1474,7 @@ export class ETLComponent {
     }
 
     let parameter = {paramName: `PARAM_NAME_${newIndex}`, dataType: 'varchar', default: ''}
-    this.canvasData.parameters.push(parameter);
+    this.canvasData?.parameters.push(parameter);
   }
   deleteParameter(index:any){
     this.canvasData.parameters.splice(index, 1);
@@ -1404,7 +1482,7 @@ export class ETLComponent {
   }
 
   addNewSQLParameter(){
-    const existingIndexes = this.canvasData.sqlParameters
+    const existingIndexes = this.canvasData?.sqlParameters
       .map((p:any) => {
         const match = p.paramName?.match(/SQL_PARAM_NAME_(\d+)/);
         return match ? +match[1] : null;
@@ -1414,7 +1492,7 @@ export class ETLComponent {
 
     // Find the smallest unused index
     let newIndex = 1;
-    for (let i = 0; i < existingIndexes.length; i++) {
+    for (let i = 0; i < existingIndexes?.length; i++) {
       if (existingIndexes[i] !== i + 1) {
         newIndex = i + 1;
         break;
@@ -1423,7 +1501,7 @@ export class ETLComponent {
     }
 
     let parameter = {paramName: `SQL_PARAM_NAME_${newIndex}`, dataType: 'varchar', sql: '', default: 'null'}
-    this.canvasData.sqlParameters.push(parameter);
+    this.canvasData?.sqlParameters.push(parameter);
   }
   deleteSQLParameter(index:any){
     this.canvasData.sqlParameters.splice(index, 1);
