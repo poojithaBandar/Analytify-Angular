@@ -5418,7 +5418,7 @@ customizechangeChartPlugin() {
         case 'now': break; 
         case 'today': break; 
         case 'parse': 
-        this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '", "dd-mm-yyyy")';
+        this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '",\'dd-mm-yyyy\')';
         break; 
         case 'average':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
@@ -6276,7 +6276,7 @@ customizechangeChartPlugin() {
         break; 
 
         case 'now': 
-        this.calculatedFieldLogic = 'current_timestamp()';
+        this.calculatedFieldLogic = 'NOW()';
         break; 
         case 'today': 
         this.calculatedFieldLogic = 'CURRENT_DATE()';
