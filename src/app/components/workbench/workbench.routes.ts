@@ -416,6 +416,13 @@ export const admin: Routes = [
       },
 
       {
+        path: 'etlList/jobFlow',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl-job-flow/etl-job-flow.component').then((m) => m.EtlJobFlowComponent),
+      },
+
+      {
         path: 'etlList',
         canActivate: [authGuard],
         loadComponent: () =>
