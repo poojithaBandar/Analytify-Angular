@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { WorkbenchService } from '../workbench.service';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-etl-list',
@@ -51,6 +52,33 @@ export class EtlListComponent {
         console.log(error);
       }
     });
+  }
+
+  deleteDataFlow(dataFlow:any){
+    Swal.fire({
+      position: "center",
+      icon: "question",
+      title: `Delete "${dataFlow.data_flow_name}" Data Flow?`,
+      text: "This action cannot be undone. Are you sure you want to proceed?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.workbechService.deleteDataFlow(dataFlow.id).subscribe({
+          next: (response) => {
+            console.log(response);
+            this.getDataFlowList();
+            this.toasterService.info(response.message, 'info', { positionClass: 'toast-top-right' });
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          }
+        })
+      }
+    })
   }
 
   goToDataFlow(){

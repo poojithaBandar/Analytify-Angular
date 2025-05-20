@@ -81,7 +81,7 @@
                                         <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" (click)="editDataFlow(dataFlow.id)">
                                             <i class="ri-edit-line"></i>
                                         </button>
-                                        <button class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                        <button class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light" (click)="deleteDataFlow(dataFlow)">
                                             <i class="ri-delete-bin-7-line"></i>
                                         </button>
                                     </div>
@@ -122,7 +122,7 @@
                                         <div class="dropdown-menu" ngbDropdownMenu>
                                             <a class="dropdown-item"><i class="fe fe-edit me-2 d-inline-flex" (click)="editDataFlow(dataFlow.id)"></i>
                                                 edit</a>
-                                            <a class="dropdown-item  btn btn-secondary-light"><i class="fe fe-trash me-2 d-inline-flex"></i>
+                                            <a class="dropdown-item  btn btn-secondary-light" (click)="deleteDataFlow(dataFlow)"><i class="fe fe-trash me-2 d-inline-flex"></i>
                                                 delete</a>
                                         </div>
                                     </div>

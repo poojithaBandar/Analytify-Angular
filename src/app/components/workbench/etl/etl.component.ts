@@ -1062,6 +1062,19 @@ export class ETLComponent {
     console.log('Children columns:', this.currentNodeColumns);
     if(!['source_data_object', 'target_data_object'].includes(node.data.type)){
       node.data.nodeData.dataObject = this.currentNodeColumns;
+      if(node.data.type === 'Rollup'){
+        node.data.nodeData.groupAttributes.forEach((grp:any)=>{
+          grp.selectColumnDropdown = this.currentNodeColumns;
+          const match = this.currentNodeColumns.find((col: any) => 
+            col.group === grp.selectedColumn?.group && 
+            col.label === grp.selectedColumn?.label
+          );
+      
+          if (!match) {
+            grp.selectedColumn = '';
+          }
+        });
+      }
       this.drawflow.updateNodeDataFromId(node.id, node.data);
     } else if(node.data.type === 'target_data_object'){
       node.data.nodeData.columnsDropdown = this.currentNodeColumns;
