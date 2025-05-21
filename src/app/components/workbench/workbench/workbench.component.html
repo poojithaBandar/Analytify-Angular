@@ -569,7 +569,7 @@
           }
           <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetconnectionList((page = $event))"></pagination-controls>
           <div class="pagination-count">
-            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getDbConnectionList()" class="form-control cursor">
+            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="onPageSizeChange()" class="form-control cursor">
                   <option  value="10"> 10</option>
                   <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
                   <option [disabled]="!(totalItems > 20)" value="30"> 30</option>

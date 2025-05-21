@@ -2029,6 +2029,15 @@ connectGoogleSheets(){
     this.pageNo=1;
     this.getDbConnectionList();
   }
+   onPageSizeChange() {
+  // Reset to page 1 if you're on the last page and items may not fit
+  const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  if (this.pageNo > totalPages) {
+    this.pageNo = 1;
+    this.page=1;
+  }
+  this.getDbConnectionList();
+  }
   getDbConnectionList(){
     const Obj: { search?: any; page_no: number; page_count?: any; remove_hierarchy_id?: boolean } ={
       search : this.searchDbName,

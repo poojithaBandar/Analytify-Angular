@@ -266,7 +266,7 @@
                 <pagination-controls previousLabel="Prev" nextLabel="Next"
                     (pageChange)="page = $event; getTransformationList()"></pagination-controls>
                 <div class="pagination-count">
-                    <select [(ngModel)]="itemsPerPage" (ngModelChange)="page = 1; getTransformationList()" class="form-control cursor" [disabled]="!itemsPerPage">
+                    <select [(ngModel)]="itemsPerPage" (ngModelChange)="onPageSizeChange()" class="form-control cursor" [disabled]="!itemsPerPage">
                         <option value="10"> 10</option>
                         <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
                         <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
