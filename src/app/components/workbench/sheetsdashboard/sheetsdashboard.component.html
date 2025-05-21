@@ -1064,7 +1064,7 @@
                         <span [ngbTooltip]="dashboard.length === 0 ? 'Add sheet to save dashboard' : ''">
                             <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button></span>
                             <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
-                            (btnClickEvent)="updateDashboard(false,true);editor =false"></app-insights-button>
+                            (btnClickEvent)="updateDashboard(false,true,false);editor =false"></app-insights-button>
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button> -->
                             <div *ngIf="!isPublicUrl && !isSampleDashboard" class=" p-1" ngbDropdown>

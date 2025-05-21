@@ -6,6 +6,8 @@ import { WorkbenchService } from '../components/workbench/workbench.service';
 import { uuidv4 } from '@firebase/util';
 import { ToastrService } from 'ngx-toastr';
 import _ from 'lodash';
+import { SheetsComponent } from '../components/workbench/sheets/sheets.component';
+import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboard/sheetsdashboard.component';
 
 interface TableRow {
   [key: string]: any;
@@ -286,6 +288,8 @@ export class TemplateDashboardService {
     : 
     400}
   echartInstance!: InsightEchartComponent;
+  sheetsInstance!: SheetsComponent;
+  dashboardInstance! : SheetsdashboardComponent;
   xConnectWiseArray = [0,5,10,15,0,10,0,10,0];
   yConnectWiseArray = [0,0,0,0,4,4,12,12,20];
   rowsConnectWiseArray = [4,4,4,4,8,8,8,8,8];
@@ -307,6 +311,93 @@ export class TemplateDashboardService {
   dashboardQuerySetIds: number[]=[];
   sheetsData: any;
   constructor(private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService) { }
+
+  buildDashboardTransfer(container: ViewContainerRef,responesData : any){
+    const componentRef =container.createComponent(SheetsComponent);
+    this.sheetsInstance = componentRef.instance;
+    const dashboardComponentRef =container.createComponent(SheetsdashboardComponent);
+    this.dashboardInstance = dashboardComponentRef.instance;
+    const obj ={
+      query_set_id:responesData.datasource_query.queryset_id,
+      hierarchy_id:responesData.datasource_query.hierarchy_id,
+      joining_tables: responesData.datasource_query.joining_tables,
+      join_type:responesData.datasource_query.join_type,
+      joining_conditions:responesData.datasource_query.joining_conditions,
+      dragged_array: {dragged_array:responesData.datasource_query.dragged_array,dragged_array_indexing:{}},
+    } as any
+    let responseData = _.cloneDeep(this.mergeSheetData(responesData));
+    this.dashboardInstance.dashboardTransfer(responseData,false);
+    // this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
+    //   responesData.sheets.forEach(({ sheet_col, sheet_row, sheet_data,sheet_query_data, ...rest }: any) => {
+    //     const transformedColumns = sheet_query_data.columns_data.map(({ data, ...colRest }:any) => ({
+    //       ...colRest,
+    //       result_data: data
+    //     }));
+      
+    //     const transformedRows = sheet_query_data.rows_data.map(({ data, ...rowRest }: any) => ({
+    //       ...rowRest,
+    //       result_data: data
+    //     }));
+    //     const transformed = {
+    //       ...rest,
+    //       col_data: sheet_col,
+    //       row_data: sheet_row,
+    //       sheet_data: {
+    //         ...sheet_data,
+    //         col: transformedColumns,
+    //         row: transformedRows
+    //       }
+    //     };
+    //     this.sheetsInstance.setSheetData(transformed,false,null , true);
+    //     // this.dashboardInstance.setDashboardSheetData()
+    //   });
+    //   // responesData.sheets.forEach((sheetData:any)=>{
+    //     let responseData = _.cloneDeep(this.mergeSheetData(responesData));
+    //     this.dashboardInstance.dashboardTransfer(responseData,false);
+    //   // })
+    //   // this.buildDashboardResponseData(responce,"connectWise");
+    //     },
+    //     error: (error) => {
+    //       this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+    //       console.log(error);
+    //     }
+    //   }
+    // )
+    // this.buildDashboardResponseData(responesData,"connectWise");
+  }
+
+  mergeSheetData(data: any) {
+    const sheetMap = new Map<number, any>();
+
+    // Map sheetId to sheetQuery_Data for faster lookup
+    data.sheets.forEach((sheet:any) => {
+      sheetMap.set(sheet.sheet_id, sheet.sheet_query_data);
+    });
+
+    // Function to merge sheetQuery_Data into dashboardData
+    const mergeDashboardData = (dashboardData: any[]) => {
+      return dashboardData.map(item => {
+        const matchingData = sheetMap.get(item.sheetId);
+        if (matchingData) {
+          return {
+            ...item,
+            ...matchingData
+          };
+        }
+        return item;
+      });
+    };
+
+    // Merge for main dashboard
+    data.dashboard.dashboard_data = mergeDashboardData(data.dashboard.dashboard_data);
+
+    // Merge for each tab's dashboard
+    data.dashboard.tab_data?.forEach((tab: any) => {
+      tab.dashboard = mergeDashboardData(tab.dashboard);
+    });
+
+    return data;
+  }
 
   buildSampleConnectWiseDashboard(container: ViewContainerRef, databaseId : any){
     const componentRef =container.createComponent(InsightEchartComponent);
@@ -385,9 +476,6 @@ export class TemplateDashboardService {
       });
       this.generateLayout(this.sheetsData);
       const updateRequests = responce.sheets.map((data:any,index:number) => {
-        // if(data.chart_id == 1){
-        //   data.chart_id = 8 
-        // }
         let tableDataStore = [];
         let transformData : any ;
          let tablePreviewColumn = _.cloneDeep(data.sheet_query_data.columns_data)
@@ -398,10 +486,6 @@ export class TemplateDashboardService {
         let chartsRowData:any = [];
           if (tablePreviewColumn && tablePreviewRow) {
             tablePreviewColumn.forEach((res: any) => {
-              // let obj = {
-              //   data: res.result_data
-              // }
-              // sidebysideBarColumnData.push(res.result_data);
               let obj1 = {
                 name: res.column,
                 values: res.data
