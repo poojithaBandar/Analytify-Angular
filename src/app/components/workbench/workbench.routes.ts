@@ -399,7 +399,35 @@ export const admin: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
-      }
+      },
+
+      {
+        path: 'etlList/etl',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl/etl.component').then((m) => m.ETLComponent),
+      },
+
+      {
+        path: 'etlList/etl/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl/etl.component').then((m) => m.ETLComponent),
+      },
+
+      {
+        path: 'etlList/jobFlow',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl-job-flow/etl-job-flow.component').then((m) => m.EtlJobFlowComponent),
+      },
+
+      {
+        path: 'etlList',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl-list/etl-list.component').then((m) => m.EtlListComponent),
+      },
     ]
   }
  ];
