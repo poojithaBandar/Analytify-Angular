@@ -70,7 +70,7 @@
                                         </div>
                                         <div class="content">
                                             <span>DataFlow Name: </span>
-                                            <a class="cursor-pointer" [ngbTooltip]="dataFlow.data_flow_name" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name}} </a>
+                                            <a class="cursor-pointer" [ngbTooltip]="dataFlow.data_flow_name" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name | slice: 0: 15}} </a>
                                         </div>
                                     </div>
                                 </td>
@@ -107,7 +107,7 @@
                                     </div>
                                     <div class="ms-2 mt-sm-0 mt-2">
                                         <h6 class="mb-1">
-                                            <a [ngbTooltip]="dataFlow.data_flow_name" class="float-start" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name}} </a>
+                                            <a [ngbTooltip]="dataFlow.data_flow_name" class="float-start" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name | slice: 0: 15}} </a>
                                         </h6>
                     
                                     </div>

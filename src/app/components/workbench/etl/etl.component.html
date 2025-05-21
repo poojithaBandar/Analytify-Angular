@@ -73,8 +73,13 @@
                                             </div>
                                         </div>
                                         <ng-template ngbNavContent>
-                                            <div id="drawflow" #drawflow [ngClass]="isOpen ? 'drawflow-width-half' : 'drawflow-width-full'" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
-                                            </div>
+                                                <div id="drawflow" #drawflow [ngClass]="isOpen ? 'drawflow-width-half' : 'drawflow-width-full'" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+                                                    <div class="bar-zoom">
+                                                        <i class="fas fa-search-minus" (click)="canvasZoomOut()"></i>
+                                                        <i class="fas fa-search" (click)="canvasZoomReset()"></i>
+                                                        <i class="fas fa-search-plus" (click)="canvasZoomIn()"></i>
+                                                    </div>
+                                                </div>
                                         </ng-template>
                                     </li>
                                     <!-- <li [ngbNavItem]="2">
@@ -103,11 +108,11 @@
                             </div>
                             <div [ngbNavOutlet]="nav"></div>
                             <div *ngIf="isNodeSelected" class="card mb-0 border customsql-result-preview-h mt-3">
-                                <div class="card-body p-0 border rounded-3">
-                                    <div class="card-header bg-light d-flex align-items-center justify-content-between">
+                                <div class="card-body p-0 border rounded-3 tab-menu-heading tab-menu-heading-boxed">
+                                    <div class="card-header bg-light d-flex align-items-center justify-content-between tabs-menu-boxed">
                                         <ul ngbNav #tableTypes="ngbNav" [(activeId)]="tableTypeTabId" class="nav panel-tabs fs-14 pb-1">
                                             <li [ngbNavItem]="1"> 
-                                                <a ngbNavLink class="p-3 TabShadow"><h6 class="mb-0 me-2"> {{isCanvasSelected ? etlName : selectedNode.data.nodeData.general.name}} </h6></a>
+                                                <a ngbNavLink class="p-3 TabShadow"> {{isCanvasSelected ? etlName : selectedNode.data.nodeData.general.name}} </a>
                                                 <ng-template ngbNavContent>
                                                     <div class="d-lg-flex d-block">
                                                         <div class="border-end node-table-left">
@@ -127,7 +132,7 @@
                                                                                             <input type="text" id="name" name="name" [(ngModel)]="nodeName"
                                                                                                 class="form-control shadow-sm" (blur)="updateNode('general')" />
                                                                                         </div>
-                                                                                        <span class="bg-primary d-flex align-items-center justify-content-center w-30"
+                                                                                        <span class="bg-primary d-flex align-items-center justify-content-center" style="width: 30px;"
                                                                                             (click)="updateNode('general')"><i class="fa fa-chevron-right text-light fs-5"></i></span>
                                                                                     </div>
                                                                                 </div>
@@ -316,7 +321,7 @@
                                                                                     </button>
                                                                 
                                                                                     <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
-                                                                                        <input type="text" class="form-control" placeholder="Search" />
+                                                                                        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="groupSearchTerm" />
                                                                                         <span class="input-group-text bg-primary" ngbTooltip="Search" [triggers]="'hover'">
                                                                                             <i class="fa fa-search text-light"></i>
                                                                                         </span>
@@ -335,7 +340,7 @@
                                                                 
                                                                                         </thead>
                                                                                         <tbody>
-                                                                                            @for(grpAttribute of selectedNode.data.nodeData.groupAttributes; track grpAttribute; let i =
+                                                                                            @for(grpAttribute of selectedNode.data.nodeData.groupAttributes | dataFlowSearchFilter:groupSearchTerm:'aliasName' ; track grpAttribute; let i =
                                                                                             $index){
                                                                                             <tr>
                                                                                                 <td>{{ i + 1 }}</td>
@@ -377,9 +382,16 @@
                                                                                         (click)="isSourceClicked = true; openAttributesSelection(attributesSelection)">
                                                                                         <i class="fa fa-plus me-1"></i> Select Attribute To Add
                                                                                     </button>
-                                                                
+
+                                                                                    <!-- <button class="btn btn-sm btn-primary" ngbTooltip="Up" [disabled]="selectedSourceAttributeIndex === 0 || selectedSourceAttributeIndex === null" (click)="moveUp()">
+                                                                                        <i class="fa fa-arrow-up"></i>
+                                                                                    </button>
+                                                                                    <button class="btn btn-sm btn-primary" ngbTooltip="Down" [disabled]="selectedSourceAttributeIndex === selectedNode.data.nodeData.sourceAttributes.length - 1 || selectedSourceAttributeIndex === null" (click)="moveDown()">
+                                                                                        <i class="fa fa-arrow-down"></i>
+                                                                                    </button> -->
+
                                                                                     <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
-                                                                                        <input type="text" class="form-control" placeholder="Search" />
+                                                                                        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="sourceSearchTerm" />
                                                                                         <span class="input-group-text bg-primary" ngbTooltip="Search" [triggers]="'hover'">
                                                                                             <i class="fa fa-search text-light"></i>
                                                                                         </span>
@@ -399,8 +411,9 @@
                                                                 
                                                                                         </thead>
                                                                                         <tbody>
-                                                                                            @for(sourceAttribute of selectedNode.data.nodeData.sourceAttributes; track sourceAttribute;
+                                                                                            @for(sourceAttribute of selectedNode.data.nodeData.sourceAttributes | dataFlowSearchFilter:sourceSearchTerm:'attributeName' ; track sourceAttribute;
                                                                                             let i = $index){
+                                                                                                <!-- (click)="selectedSourceAttributeIndex = i" [ngClass]="{ 'selected-row': selectedSourceAttributeIndex === i }" -->
                                                                                             <tr>
                                                                                                 <td>{{ i + 1 }}</td>
                                                                                                 <td>
@@ -421,6 +434,7 @@
                                                                                                         [(ngModel)]="sourceAttribute.selectedColumn" [dropdownPosition]="'bottom'">
                                                                                                     </ng-select>
                                                                                                 </td>
+                                                                                                <!-- [ngClass]="{ 'selected-row-data': selectedSourceAttributeIndex === i }" -->
                                                                                                 <td> {{sourceAttribute?.selectedColumn?.dataType}} </td>
                                                                                                 <td style="display: flex; align-items: center; justify-content: center;">
                                                                                                     <button class="btn btn-outline-danger" ngbTooltip="Delete" [triggers]="'hover'"
@@ -495,7 +509,7 @@
                                                                                     </button>
                                                                 
                                                                                     <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
-                                                                                        <input type="text" class="form-control" placeholder="Search" />
+                                                                                        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="attributeSearchTerm" />
                                                                                         <span class="input-group-text bg-primary" ngbTooltip="Search" [triggers]="'hover'">
                                                                                             <i class="fa fa-search text-light"></i>
                                                                                         </span>
@@ -516,7 +530,7 @@
                                                                 
                                                                                         </thead>
                                                                                         <tbody>
-                                                                                            @for(attribute of selectedNode.data.nodeData.attributes; track attribute; let i
+                                                                                            @for(attribute of selectedNode.data.nodeData.attributes | dataFlowSearchFilter:attributeSearchTerm:'attributeName' ; track attribute; let i
                                                                                             = $index){
                                                                                             <tr>
                                                                                                 <td>{{ i + 1 }}</td>
@@ -634,7 +648,7 @@
                                                                                         <i class="fa fa-plus me-1"></i> Add
                                                                                     </button>
                                                                                     <div class="input-group input-group-sm" style="max-width: 200px; height: 29px;">
-                                                                                        <input type="text" class="form-control" placeholder="Search" />
+                                                                                        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="parameterSearchTerm"/>
                                                                                         <span class="input-group-text bg-primary" ngbTooltip="Search" [triggers]="'hover'">
                                                                                             <i class="fa fa-search text-light"></i>
                                                                                         </span>
@@ -653,7 +667,7 @@
                                                                 
                                                                                         </thead>
                                                                                         <tbody>
-                                                                                            @for(parameter of canvasData?.parameters; track parameter; let i = $index){
+                                                                                            @for(parameter of canvasData?.parameters | dataFlowSearchFilter:parameterSearchTerm:'paramName' ; track parameter; let i = $index){
                                                                                             <tr>
                                                                                                 <td>{{ i + 1 }}</td>
                                                                                                 <td><input type="text" class="form-control"
@@ -923,9 +937,9 @@
 
                         <!-- Selected Transform -->
                         <td class="align-top" style="width: 33%;">
-                            <input type="text" class="form-control form-control-sm mb-2" placeholder="Search fields..." [(ngModel)]="searchText" />
+                            <input type="text" class="form-control form-control-sm mb-2" placeholder="Search fields..." [(ngModel)]="expEditorSearchTerm" />
                             <div style="max-height: 200px; overflow-y: auto;">
-                                <div *ngFor="let column of (groupedColumns[selectedGroup] || [])" class="text-break py-1 px-2 hover-bg" style="cursor: pointer;"
+                                <div *ngFor="let column of (groupedColumns[selectedGroup] || []) | dataFlowSearchFilter:expEditorSearchTerm:'label'" class="text-break py-1 px-2 hover-bg" style="cursor: pointer;"
                                     (click)="selectedColumn = column; insertOrReplace(selectedGroup + '.' + column.label, expressionTextarea);">
                                     {{ column.label }}
                                 </div>
@@ -962,7 +976,7 @@
 
     <div class="modal-body">
 
-        <input type="text" [(ngModel)]="searchText" class="form-control mb-3" placeholder="Search..." />
+        <input type="text" [(ngModel)]="attrSelectionSearchTerm" class="form-control mb-3" placeholder="Search..." />
 
 
 
@@ -977,7 +991,7 @@
             </div>
 
             <!-- Attributes -->
-            <div class="form-check mb-1" *ngFor="let attr of group.attributes">
+            <div class="form-check mb-1" *ngFor="let attr of group.attributes | dataFlowSearchFilter:attrSelectionSearchTerm:'label' ">
                 <input class="form-check-input border border-dark" type="checkbox" [(ngModel)]="attr.isChecked"
                     [id]="group.group + '.' +attr.label" />
                 <label class="form-check-label" [for]="group.group + '.' +attr.label">
