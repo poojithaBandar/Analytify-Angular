@@ -292,6 +292,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.updateDashbpardBoolen = true;
       this.isEmbedDashboard = true;
       this.active = 2;
+      this.issheetListPaneOpen = false;
      this.dashboardToken = this.route.snapshot.params['dashboardToken'];
      this.clientId = this.route.snapshot.params['clientId'];
      let accessToken = this.route.snapshot.params['token'];
@@ -3082,6 +3083,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     };
   }
   ngAfterViewInit() {
+    if(this.isEmbedDashboard){
+      this.toggleSidebar();
+    }
     this.dashboard.forEach(item => {
       this.initializeChart(item);
     });
@@ -3716,7 +3720,8 @@ if(this.filterName === ''){
 
 getDashboardFilterredList(onSheetRemove? : boolean,embedFilterData?: any){
   const Obj ={
-    dashboard_id:this.dashboardId
+    dashboard_id:this.dashboardId,
+    is_SDKDashboard: this.isEmbedDashboard
   }
   this.workbechService.getDashboardFilterredList(Obj).subscribe({
     next:(data)=>{
