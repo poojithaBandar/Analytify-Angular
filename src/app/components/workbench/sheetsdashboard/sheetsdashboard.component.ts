@@ -6367,18 +6367,16 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.targetSheetList = [];
     this.isAllTargetSheetsSelected = false;
     const sourceCategory = Object.keys(this.sourceSheetList);
-    sourceCategory.forEach((category: any) => {
-      this.sourceSheetList[category].forEach((sheet: any) => {
-        if (sheet.sheet_id == this.sourceSheetId) {
-          this.targetSheetList = this.sourceSheetList[category].filter((sheet: any) => sheet.sheet_id != this.sourceSheetId)
-            .map((sheet: any) => ({
-              ...sheet,
-              selected: false,
-            }));
-        }
-      })
-    })
-
+    Object.keys(this.sourceSheetList).forEach((category: any) => {
+      this.targetSheetList.push(
+        ...this.sourceSheetList[category]
+          .filter((sheet: any) => sheet.sheet_id !== this.sourceSheetId && sheet.chart_id !== 25)
+          .map((sheet: any) => ({
+            ...sheet,
+            selected: false,
+          }))
+      );
+    });
     console.log("Target Sheets:", this.targetSheetList);
   }
   
