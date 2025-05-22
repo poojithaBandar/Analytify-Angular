@@ -63,6 +63,14 @@ import jsPDF from 'jspdf';
 interface TableRow {
   [key: string]: any;
 }
+interface DrillConfig {
+  drill_id: number;
+  dashboard_id: number;
+  action_name: string;
+  source_sheet_id: number;
+  is_kpi: boolean;
+  is_drill: boolean;
+}
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   annotations: ApexAnnotations;
@@ -6623,10 +6631,43 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.actionId = '';
     this.drillThroughDatabaseName = '';
   }
-  setDrillThrough(selectedValue : any, item : any){
+  
+  findDrillConfig(drillId: number, configs: DrillConfig[]): { is_kpi: boolean; is_drill: boolean,drill_id :number } {
+    // Find the drill configuration with the matching drill_id
+    const config = configs.find(c => c.source_sheet_id === drillId);
+
+    // Return the found configuration or the default values
+    return config ? { is_kpi: config.is_kpi, is_drill: config.is_drill , drill_id : config.drill_id} : { is_kpi: false, is_drill: false ,drill_id: 0};
+  }
+  setDrillThrough(selectedValue : any, item : any, isKPIDrill? :boolean){
     let selectedXValue;
     let columnNames : any[] = [];
     let dataTypes: any[] = [];
+    let callDrillAPI : boolean = true;
+    let object;
+    if(isKPIDrill){
+      let data = this.findDrillConfig(item.sheetId,this.drillThroughActionList);
+      if(!data.is_kpi || (data.is_kpi && !data.is_drill)){
+        callDrillAPI = false;
+      } else {
+        this.actionId = data.drill_id;
+      this.sourceSheetId = item.sheetId;
+      object = {
+        drill_id: data.drill_id,
+        dashboard_id: this.dashboardId,
+        is_kpi: data.is_kpi
+      }
+    }
+    } else if(item.chartType =='KPI'){
+      let data = this.findDrillConfig(item.sheetId,this.drillThroughActionList);
+      this.sourceSheetId = item.sheetId;
+      object = {
+        drill_id: data.drill_id,
+        dashboard_id: this.dashboardId,
+        is_kpi: false
+      }
+    }
+    else {
     if(selectedValue == ''){
       selectedXValue = selectedValue.trim() ? selectedValue.split(',').map((item: string) => [item.trim()]) : [];
     }
@@ -6636,18 +6677,17 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         columnNames.push(col[0]);
         dataTypes.push(col[1]);
       });
+       object = {
+        drill_id: this.actionId,
+        dashboard_id: this.dashboardId,
+        column_name: columnNames,
+        column_data: selectedXValue,
+        datatype: dataTypes,
+      }
     }
-
-    let object = {
-      drill_id: this.actionId,
-      dashboard_id: this.dashboardId,
-      column_name: columnNames,
-      column_data: selectedXValue,
-      datatype: dataTypes
-    }
-    console.log(item);
-    console.log('payload',object);
-
+  }
+    if(callDrillAPI){
+    
     this.workbechService.getDrillThroughData(object, this.isPublicUrl).subscribe({
       next: (data) => {
         console.log(data);
@@ -6703,6 +6743,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         })
       }
     });
+  }
   }
   actionUpdateOnSheetRemove(sheetId : any){
     let object = {
