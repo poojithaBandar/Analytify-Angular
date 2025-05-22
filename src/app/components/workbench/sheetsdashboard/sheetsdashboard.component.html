@@ -1586,7 +1586,7 @@
           <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="tabHeightGrid"
             [style.width.px]="tabWidthGrid">
             <!-- <div style="height: inherit;" > -->
-              <gridster [options]="options" #gridsterTab id="capture-image-pdf-2">
+              <gridster [options]="options" #gridsterTab id="capture-image-pdf-2" style="margin: 0;">
                 <gridster-item [item]="item" *ngFor="let item of dashboardTest;let i = index"
                   [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                   <div class="card mb-0 grid-item-border card-panel" style="height: 100%;" [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
