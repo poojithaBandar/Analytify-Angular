@@ -105,11 +105,18 @@ export class SheetDataTransformerService {
       chartOptions.series?.forEach((row: any, index: number) => {
         row.data = multiSeriesChartData[index]?.data || [];
       });
-    } else if (chartType === 'heatmap') {
-      chartOptions.series?.forEach((row: any, index: number) => {
-        row.data?.forEach((value: any, i: number) => {
-          value[2] = multiSeriesChartData[index]?.data[i];
+    }  else if(chartType === 'heatmap'){
+      const heatmapData: any[][] = [];
+     multiSeriesChartData.forEach((row, rowIndex: any) => {
+        row.data.forEach((value, colIndex: any) => { // Assuming each row has a data array
+          if (value !== null && value !== undefined) { // Ensure value is valid
+            heatmapData.push([colIndex, rowIndex, value]); // [xIndex, yIndex, value]
+          }
         });
+      });
+
+      chartOptions.series.forEach((row: any, index: any) => {
+        row.data = heatmapData;
       });
     }
 
@@ -121,12 +128,19 @@ export class SheetDataTransformerService {
       chartOptions.yAxis?.forEach((column: any) => {
         column.data = xAxisCategories;
       });
-    } else if (chartType === 'radar') {
-      chartOptions.series[0]?.data?.forEach((row: any, index: number) => {
-        row.value = multiSeriesChartData[index]?.data || [];
+    }  else if(chartType === 'radar'){
+      let radarArray = xAxisCategories.map((value: any, index: number) => ({
+        name:xAxisCategories[index]
+      }));
+      const transformedArray = multiSeriesChartData.map((obj: any) => ({
+        name: obj.name,
+        value: obj.data
+      }));
+      chartOptions.radar.indicator = radarArray;
+      // this.chartOptions.series[0].data = transformedArray;
+      chartOptions.series[0].data.forEach((row: any, index: any) => {
+        row.value = multiSeriesChartData[index].data;
       });
-      chartOptions.radar = chartOptions.radar || {};
-      chartOptions.radar.indicator = xAxisCategories;
     } else if (chartType === 'calendar') {
       let calendarData: any[] = [];
       let years: Set<any> = new Set();

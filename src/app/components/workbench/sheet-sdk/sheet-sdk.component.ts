@@ -201,7 +201,7 @@ export class SheetSdkComponent {
         this.setChartType(data.sheet_retrieve_data.chart_id);
         this.chartOptions = sheet.savedChartOptions;
         // If it's not a chart, render table via CustomSheetsComponent
-
+        if(data.sheet_filter_data?.data){
         const dataToChange =  data.sheet_filter_data?.data
              const {
           xAxisCategories,
@@ -222,7 +222,7 @@ export class SheetSdkComponent {
           this.xAxisCategories,
           this.multiSeriesChartData
         );
-
+      }
 
         if (!this.isApexChart) {
           // columns and rows arrays from API

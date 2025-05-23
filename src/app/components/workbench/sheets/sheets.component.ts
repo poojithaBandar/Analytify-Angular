@@ -3571,7 +3571,7 @@ trackByFn(index: number, item: any): number {
   )
   this.hasUnSavedChanges = true;
   }
-  filterEditGet(){
+   filterEditGet(){
     this.filterData = [];
     const obj={
       "type_filter":"chartfilter",
