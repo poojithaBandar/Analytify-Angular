@@ -6,6 +6,7 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import { WorkbenchService } from '../workbench.service';
 import { CustomSheetsComponent } from '../custom-sheets/custom-sheets.component';
 import { SheetsComponent } from '../sheets/sheets.component';
+import { SheetDataTransformerService } from '../../../services/sheet-data-transformer.service';
 
 @Component({
   selector: 'app-sheet-sdk',
@@ -55,9 +56,15 @@ export class SheetSdkComponent {
   displayUnits = '';
   sdkQuerySetID!: number;
   sdkDatabaseID!: number;
+
+    xAxisCategories: string[] = [];
+  multiSeriesChartData: { name: string; data: number[] }[] = [];
+  combinedTableData: any[] = [];
+  columnNames: string[] = [];
       constructor(                                                                                                        
         private route: ActivatedRoute,                                                                                    
-        private workbenchService: WorkbenchService                                                                               
+        private workbenchService: WorkbenchService,
+         private transformer: SheetDataTransformerService                                                                             
       ) {}                                                                                                                
                                                                                                                           
     ngOnInit(): void {                                                                                                 
@@ -194,6 +201,29 @@ export class SheetSdkComponent {
         this.setChartType(data.sheet_retrieve_data.chart_id);
         this.chartOptions = sheet.savedChartOptions;
         // If it's not a chart, render table via CustomSheetsComponent
+        if(data.sheet_filter_data?.data){
+        const dataToChange =  data.sheet_filter_data?.data
+             const {
+          xAxisCategories,
+          multiSeriesChartData,
+          combinedTableData,
+          columnNames
+        } = this.transformer.transformTableAndChartData(dataToChange);
+
+        this.xAxisCategories = xAxisCategories;
+        this.multiSeriesChartData = multiSeriesChartData;
+        this.combinedTableData = combinedTableData;
+        this.columnNames = columnNames;
+
+        this.chartOptions = this.transformer.updateChartOptions(
+          this.chartOptions,
+          this.chartType,
+          this.isApexChart,
+          this.xAxisCategories,
+          this.multiSeriesChartData
+        );
+      }
+
         if (!this.isApexChart) {
           // columns and rows arrays from API
           const cols: string[] = sheet.columns || sheet.table?.columns || [];
@@ -246,4 +276,82 @@ export class SheetSdkComponent {
   pageChangeTable(newPage: number) {
     this.page = newPage;
   }
+
+
+//   private buildTableAndChartData(data: any): void {
+//   const colArray = data?.col || [];
+//   const rowArray = data?.row || [];
+
+//   this.xAxisCategories = [];
+//   this.multiSeriesChartData = [];
+//   this.combinedTableData = [];
+//   this.columnNames = [];
+
+//   // Combine column and row names for table headers
+//   this.columnNames = [
+//     ...colArray.map((col: { column: any; }) => col.column),
+//     ...rowArray.map((row: { col: any; }) => row.col)
+//   ];
+
+//   // Determine row count from the first column or row
+//   const rowCount = Math.max(
+//     colArray[0]?.result_data?.length || 0,
+//     rowArray[0]?.result_data?.length || 0
+//   );
+
+//   // Combine data row-wise
+//   for (let i = 0; i < rowCount; i++) {
+//     const rowObj: any = {};
+
+//     colArray.forEach((col: { column: string | number; result_data: any[]; }) => {
+//       rowObj[col.column] = col.result_data?.[i];
+//     });
+
+//     rowArray.forEach((row: { col: string | number; result_data: any[]; }) => {
+//       rowObj[row.col] = row.result_data?.[i];
+//     });
+
+//     this.combinedTableData.push(rowObj);
+//   }
+
+//   // Use first column's result_data for xAxis categories
+//   this.xAxisCategories = colArray[0]?.result_data?.map((v: any) => v ?? 'null') || [];
+
+//   // Build chart series
+//   this.multiSeriesChartData = rowArray.map((row: { col: any; result_data: any; }) => ({
+//     name: row.col,
+//     data: row.result_data || []
+//   }));
+
+//   console.log(this.xAxisCategories);
+//   console.log(this.multiSeriesChartData);
+
+//   // this.cdr.detectChanges();
+// }
+
+
+//   private injectMultiSeriesChartOptions(): void {
+//   if (!this.chartOptions) this.chartOptions = {};
+   
+//   if(this.isApexChart){
+//     if(['pie', 'donut', 'guage'].includes(this.chartType)){
+//       this.chartOptions.series = this.multiSeriesChartData[0].data;
+//       this.chartOptions.labels = this.xAxisCategories;
+//     } else {
+//       this.chartOptions.series.forEach((row: any, index: any) => {
+//         row.data = this.multiSeriesChartData[index].data
+//       });
+//       this.chartOptions.xaxis.categories = this.xAxisCategories;
+//     }
+//   } else {
+//     this.chartOptions.series.forEach((row: any, index: any) => {
+//       row.data = this.multiSeriesChartData[index].data
+//     });
+//     this.chartOptions.xAxis.data = this.xAxisCategories;
+//   }
+//   // Trigger chart update
+//   this.chartOptions = { ...this.chartOptions };
+// }
+
+
 }

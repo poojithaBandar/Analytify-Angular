@@ -1,10 +1,12 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { noAuthGuard } from '../../no-auth.guard';
 
 export const admin: Routes = [
  {path:'authentication',children:[ {
   path: 'login',
+        canActivate: [noAuthGuard],
   loadComponent: () =>
     import('./login/login.component').then((m) => m.LoginComponent),
 },
