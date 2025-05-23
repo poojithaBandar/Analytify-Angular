@@ -4752,9 +4752,12 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     
   }
 })
-if (switchDb && isLastIndex) {
-  this.updateDashboard(false, false);
-} else if (!switchDb && isLiveReloadData && isLastIndex) {
+// if (switchDb && isLastIndex) {
+//   this.updateDashboard(false, false);
+// } else if (!switchDb &&) {
+// }
+
+if( isLiveReloadData && isLastIndex){
   this.updateDashboard(isLiveReloadData, false);
 }
 }
@@ -6066,43 +6069,65 @@ tableSearchDashboard(item:any,value:any){
   this.tableSearch = value;
   this.pageChangeTableDisplay(item,1,false,false,false);
 }
-pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,isLastIndex:boolean,switchDb:boolean){
-  if(item.tableData){
-  item.tableData.tablePage = page;
-  }
-  const obj={
-    sheet_id:item.sheetId ?? item.sheet_id,
-    id:this.keysArray,
-    input_list:this.dataArray,
-    hierarchy_id: item.databaseId,
-    // file_id: item.fileId,
-    page_no: page,
-    page_count: this.tableItemsPerPage,
-    dashboard_id:this.dashboardId,
-    search:this.tableSearch,
-    is_exclude:this.excludeFilterIdArray
-  }
-  if(obj.search === '' || obj.search === null){
-    delete obj.search;
-  }
-  this.workbechService.paginationTableDashboard(obj).subscribe({
-    next:(data)=>{
-      data.data['chart_id']=1,
-      data.data['sheet_id']=item.sheetId ?? item.sheet_id,
-      data.data['databaseId']=item.databaseId ?? item.databaseId,
-      this.tableItemsPerPage = data.items_per_page;
-      this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,isLastIndex,this.dashboard,switchDb);
-      if (this.displayTabs) {
-        this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard,switchDb);
-        })
-      }
-    },error:(error)=>{
-      console.log(error.error.message);
+pageChangeTableDisplay(
+  item: any,
+  page: any,
+  isLiveReloadData: boolean,
+  isLastIndex: boolean,
+  switchDb: boolean
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (item.tableData) {
+      item.tableData.tablePage = page;
     }
-  })  
+
+    const obj = {
+      sheet_id: item.sheetId ?? item.sheet_id,
+      id: this.keysArray,
+      input_list: this.dataArray,
+      hierarchy_id: item.databaseId,
+      page_no: page,
+      page_count: this.tableItemsPerPage,
+      dashboard_id: this.dashboardId,
+      search: this.tableSearch,
+      is_exclude: this.excludeFilterIdArray
+    };
+
+    if (!obj.search) {
+      delete obj.search;
+    }
+
+    this.workbechService.paginationTableDashboard(obj).subscribe({
+      next: (data) => {
+        data.data['chart_id'] = 1;
+        data.data['sheet_id'] = item.sheetId ?? item.sheet_id;
+        data.data['databaseId'] = item.databaseId ?? item.databaseId;
+
+        this.tableItemsPerPage = data.items_per_page;
+        this.tableTotalItems = data.total_items;
+
+        this.setDashboardSheetData(
+          data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, this.dashboard, switchDb
+        );
+
+        if (this.displayTabs) {
+          this.sheetTabs.forEach((tabData: any) => {
+            this.setDashboardSheetData(
+              data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard, switchDb
+            );
+          });
+        }
+
+        resolve(); // 🟢 Resolve when done
+      },
+      error: (error) => {
+        console.error(error.error.message);
+        reject(error); // 🔴 Reject on error
+      }
+    });
+  });
 }
+
 tableSearchDashboardPublic(item:any,value:any){
   this.tablePageNo=1;
   this.tableSearch = value;
@@ -7217,53 +7242,55 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     sheetFilters : any[] = [];
     // [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
 
-    refreshDashboardSheetsData(data: any,value : boolean){
-      let isLastIndex = false;
-      data.forEach((item: any,index:any) => {
-      this.filteredRowData = [];
-      this.filteredColumnData = [];
-      this.tablePreviewColumn.push(item.columns);
-      this.tablePreviewRow.push(item.rows);
-      item.columns.forEach((res:any) => {      
-        let obj1={
-          name:res.column,
-          values: res.result
-        }
-        this.filteredColumnData.push(obj1);
-        console.log('filtercolumn',this.filteredColumnData)
-      });
-      item.rows.forEach((res:any) => {
-        let obj={
-          name: res.column,
-          data: res.result
-        }
-        this.filteredRowData.push(obj);
-        console.log('filterowData',this.filteredRowData)
-      });
-      if(index == data.length - 1){
-        isLastIndex = true;
-      } else {
-        isLastIndex = false;
-      }
-      if(item.chart_id === 1){
-        this.pageChangeTableDisplay(item,1,true,isLastIndex,value);
-        this.tablePage=1
-      }else{
-      this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard,value);
-      // if (this.displayTabs) {
-      //   this.sheetTabs.forEach((tabData: any) => {
-      //     this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard,value);
-      //   })
-      // }
-      if (this.displayTabs) {
-        this.sheetTabs.forEach(tabData => {
-          const isLastInThisTab = this.isLastSheetInData(item.sheet_id, tabData.dashboard, data);
-          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastInThisTab, tabData.dashboard, value);
-        });
-      }
-      }
+  async refreshDashboardSheetsData(data: any, value: boolean) {
+  const promises: Promise<void>[] = [];
+
+  data.forEach((item: any, index: any) => {
+    this.filteredRowData = [];
+    this.filteredColumnData = [];
+    this.tablePreviewColumn.push(item.columns);
+    this.tablePreviewRow.push(item.rows);
+
+    item.columns.forEach((res: any) => {
+      let obj1 = {
+        name: res.column,
+        values: res.result,
+      };
+      this.filteredColumnData.push(obj1);
     });
+
+    item.rows.forEach((res: any) => {
+      let obj = {
+        name: res.column,
+        data: res.result,
+      };
+      this.filteredRowData.push(obj);
+    });
+
+    const isLastIndex = index === data.length - 1;
+
+    if (item.chart_id === 1) {
+      promises.push(this.pageChangeTableDisplay(item, 1, true, isLastIndex, value));
+
+    } else {
+      promises.push(
+        new Promise<void>((resolve) => {
+          if(value){
+          this.setDashboardSheetData(item, true, true, false, false, '', false, isLastIndex, this.dashboard, value);
+          }else{
+          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, this.dashboard, value);
+          }
+          resolve();
+        })
+      );
     }
+  });
+
+  await Promise.all(promises);
+  if(value){
+  this.updateDashboard(false, false);
+  }
+  }
     isLastSheetInData(sheetId: number, dashboard: any[], apiData: any[]): boolean {
       if (!dashboard || dashboard.length === 0) return false;
     
