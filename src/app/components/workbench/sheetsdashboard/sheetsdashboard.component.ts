@@ -7242,55 +7242,51 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     sheetFilters : any[] = [];
     // [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
 
-  async refreshDashboardSheetsData(data: any, value: boolean) {
-  const promises: Promise<void>[] = [];
+ async refreshDashboardSheetsData(data: any, value: boolean) {
+  for (let index = 0; index < data.length; index++) {
+    const item = data[index];
+    const isLastIndex = index === data.length - 1;
 
-  data.forEach((item: any, index: any) => {
     this.filteredRowData = [];
     this.filteredColumnData = [];
+
     this.tablePreviewColumn.push(item.columns);
     this.tablePreviewRow.push(item.rows);
 
     item.columns.forEach((res: any) => {
-      let obj1 = {
+      this.filteredColumnData.push({
         name: res.column,
-        values: res.result,
-      };
-      this.filteredColumnData.push(obj1);
+        values: res.result
+      });
     });
 
     item.rows.forEach((res: any) => {
-      let obj = {
+      this.filteredRowData.push({
         name: res.column,
-        data: res.result,
-      };
-      this.filteredRowData.push(obj);
+        data: res.result
+      });
     });
 
-    const isLastIndex = index === data.length - 1;
-
     if (item.chart_id === 1) {
-      promises.push(this.pageChangeTableDisplay(item, 1, true, isLastIndex, value));
-
+      this.tablePage = 1;
+      try {
+        await this.pageChangeTableDisplay(item, 1, true, isLastIndex, value);
+      } catch (err) {
+        console.error('Error during pagination:', err);
+      }
     } else {
-      promises.push(
-        new Promise<void>((resolve) => {
-          if(value){
-          this.setDashboardSheetData(item, true, true, false, false, '', false, isLastIndex, this.dashboard, value);
-          }else{
-          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, this.dashboard, value);
-          }
-          resolve();
-        })
-      );
-    }
-  });
+      this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, this.dashboard, value);
 
-  await Promise.all(promises);
-  if(value){
-  this.updateDashboard(false, false);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach(tabData => {
+          const isLastInThisTab = this.isLastSheetInData(item.sheet_id, tabData.dashboard, data);
+          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastInThisTab, tabData.dashboard, value);
+        });
+      }
+    }
   }
-  }
+}
+
     isLastSheetInData(sheetId: number, dashboard: any[], apiData: any[]): boolean {
       if (!dashboard || dashboard.length === 0) return false;
     
