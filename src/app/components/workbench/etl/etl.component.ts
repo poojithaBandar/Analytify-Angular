@@ -12,11 +12,12 @@ import { EtlGraphService } from '../etl-graph.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EtlLoggerViewComponent } from '../etl-logger-view/etl-logger-view.component';
 import { DataFlowSearchFilterPipe } from '../../../shared/pipes/data-flow-search-filter.pipe';
+import { ResizableTopDirective } from '../../../shared/directives/resizable-top.directive';
 
 @Component({
   selector: 'app-etl',
   standalone: true,
-  imports: [NgbModule, CommonModule, NgSelectModule, FormsModule, EtlLoggerViewComponent, DataFlowSearchFilterPipe],
+  imports: [NgbModule, CommonModule, NgSelectModule, FormsModule, EtlLoggerViewComponent, DataFlowSearchFilterPipe, ResizableTopDirective],
   templateUrl: './etl.component.html',
   styleUrl: './etl.component.scss'
 })
@@ -76,6 +77,11 @@ export class ETLComponent {
   expEditorSearchTerm: string = '';
   attrSelectionSearchTerm: string = '';
   selectedSourceAttributeIndex: number | null = null;
+  isCollapsed = false;
+
+toggleCollapse() {
+  this.isCollapsed = !this.isCollapsed;
+}
   dataTypes: string[] = [
     // Numeric types
     'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'serial', 'bigserial', 'money',
@@ -147,6 +153,8 @@ export class ETLComponent {
       this.drawflow = new Drawflow(container);
       this.drawflow.reroute = true;
       this.drawflow.start();
+      this.drawflow.zoom = 0.8;
+      this.drawflow.zoom_refresh();
       this.drawflow.drawflow.drawflow[this.drawflow.module].canvasData = this.canvasData;
 
       if(this.dataFlowId){
@@ -576,11 +584,10 @@ export class ETLComponent {
     this.selectedNode = node;
     this.nodeName = this.selectedNode.data.nodeData.general.name;
     console.log(this.selectedNode);
-    if(this.isRefrshEnable){
+    if(this.isRefrshEnable && !['success', 'failed'].includes(this.dataFlowRunStatus)){
       this.tableTypeTabId = 2;
       this.getDataFlowLogs(this.nodeName);
     }
-    // this.getDataFlowLogs(this.nodeName);
   }
 
   getConnections() {
@@ -800,11 +807,12 @@ export class ETLComponent {
           }
         });
         this.tableTypeTabId = 2;
-        // this.getDataFlowLogs(this.selectedNode.data.nodeData.general.name);
         if(!['success', 'failed'].includes(data.status)){
           setTimeout(() => {
             this.getDataFlowStatus(runId);
           }, 3000);
+        } else {
+          this.isRefrshEnable = false;
         }
       },
       error: (error: any) => {
@@ -1014,19 +1022,11 @@ export class ETLComponent {
       let items = [];
 
       if(nodeType === 'source_data_object'){
-        // for (const col of columns) {
-        //   items.push({
-        //     label: col.col,
-        //     value: col.col,
-        //     dataType: col.dtype,
-        //     group: nodeName
-        //   });
-        // }
-        
         const attr = childSourceAttributes[nodeName] || [];
         if(attr.length > 0){
           for (const atr of attr) {
-            items.push({...atr.selectedColumn, group: nodeName});
+            attr
+            items.push({...atr.selectedColumn, group: nodeName, label: atr.attributeName, value: atr.attributeName, dataType: atr.dataType});
           }
         }
       } 
@@ -1456,6 +1456,9 @@ export class ETLComponent {
         this.isRunEnable = true;
         this.canvasData = drawFlowJson.drawflow.Home.canvasData ? drawFlowJson.drawflow.Home.canvasData : {parameters: [], sqlParameters: []};
         console.log(this.canvasData);
+        this.isNodeSelected = true;
+        this.isCanvasSelected = true;
+        this.tableTabId = 7;
 
         setTimeout(() => {
           const allNodes = this.drawflow.drawflow.drawflow['Home'].data;

@@ -42,8 +42,8 @@ export class EtlListComponent {
         this.pageSize = data?.page_size;
         this.page = data?.page_number;
         if(this.dataFlowList.length === 0){
-          this.pageSize = '';
-          this.page = '';
+          this.pageSize = 10;
+          this.page = 1;
           this.totalItems = 0;
         }
       },
