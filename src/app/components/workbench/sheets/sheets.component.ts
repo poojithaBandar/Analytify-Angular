@@ -3598,7 +3598,10 @@ trackByFn(index: number, item: any): number {
           this.topAggregate = responce?.top_bottom[1];
           this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
         }
-        if(this.formatExtractType){
+        if(responce.is_embedded){
+          this.activeTabId = 7;
+        }
+        else if(this.formatExtractType){
           this.activeTabId = 3;
         }
         else if(responce?.range_values && responce?.range_values.length > 0 && !responce?.relative_date){
