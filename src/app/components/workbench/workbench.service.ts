@@ -1041,4 +1041,19 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/dashboard_switch/`+this.accessToken,obj);
     }
+    getMailAletsDashboardData(id:any){
+       const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/mail_alerts/`+this.accessToken+'/'+id+'/');
+    }
+    updateEmailAlerts(obj:any){
+       const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/mail_alerts/`+ this.accessToken,obj);
+    }
+    saveEmailAlerts(obj:any){
+       const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/mail_alerts/`+ this.accessToken,obj);
+    }
 }

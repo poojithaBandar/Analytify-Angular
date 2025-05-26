@@ -3,7 +3,10 @@ button:disabled {
     cursor: not-allowed;
 }
 
-
+.toggle.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 
 
