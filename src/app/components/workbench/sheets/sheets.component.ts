@@ -2164,7 +2164,7 @@ try {
   donutOptions : any = undefined;
   eMapChartOptions : any;
 
-sheetSave(){
+sheetSave(isDashboardTransfer?: boolean){
   let savedChartOptions ;
   let kpiData;
   let kpiColor;
@@ -2505,18 +2505,11 @@ console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
   console.log("Sheet Update")
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
-   this.tabs[this.SheetIndex].sheet_name = this.sheetTitle;
-    if(responce){
-      // Swal.fire({
-      //   icon: 'success',
-      //   text: responce.message,
-      //   width: '200px',
-      // })
-      this.toasterService.success(responce.message,'success',{ positionClass: 'toast-top-right'});
-
-    //   this.getSheetNames();
-    //  this.sheetRetrive();
+    if(this.tabs[this.SheetIndex]){
+      this.tabs[this.SheetIndex].sheet_name = this.sheetTitle;
     }
+    if(responce && !isDashboardTransfer){
+      this.toasterService.success(responce.message,'success',{ positionClass: 'toast-top-right'});
       let obj : object= {
         "sheet_id":this.retriveDataSheet_id
       }
@@ -2525,6 +2518,7 @@ if(this.retriveDataSheet_id){
         console.log(responce);
       }
     })
+  }
   
   },
   error: (error) => {
@@ -2620,6 +2614,7 @@ setSheetData(responce :any, isDuplicate : boolean,duplicateFilterData?:any,isDas
     if (isDashboardTransfer) {
       this.qrySetId = responce?.queryset_id;
       this.databaseId = responce?.hierarchy_id;
+      this.chartOptionsSet = responce.sheet_data.savedChartOptions;
     }
     this.retriveDataSheet_id = responce?.sheet_id;
     this.sheetName = responce?.sheet_name;
@@ -3242,7 +3237,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   //   // this.updateNumberFormat();
   // }, 1000);
   if(isDashboardTransfer){
-    this.sheetSave();
+    this.sheetSave(isDashboardTransfer);
   }
 
 }

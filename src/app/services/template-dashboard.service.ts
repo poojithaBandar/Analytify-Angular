@@ -326,44 +326,73 @@ export class TemplateDashboardService {
       dragged_array: {dragged_array:responesData.datasource_query.dragged_array,dragged_array_indexing:{}},
     } as any
     let responseData = _.cloneDeep(this.mergeSheetData(responesData));
-    this.dashboardInstance.dashboardTransfer(responseData,false);
-    // this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-    //   responesData.sheets.forEach(({ sheet_col, sheet_row, sheet_data,sheet_query_data, ...rest }: any) => {
-    //     const transformedColumns = sheet_query_data.columns_data.map(({ data, ...colRest }:any) => ({
-    //       ...colRest,
-    //       result_data: data
-    //     }));
+    this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
+      responesData.sheets.forEach((sheet: any)=> {
+        const {
+          chart_id,
+          sheet_col,
+          sheet_row,
+          sheet_data,
+          sheet_query_data,
+          ...rest
+        } = sheet;
+        const transformedColumns = sheet_query_data.columns_data.map(({ data, ...colRest }:any) => ({
+          ...colRest,
+          result_data: data
+        }));
       
-    //     const transformedRows = sheet_query_data.rows_data.map(({ data, ...rowRest }: any) => ({
-    //       ...rowRest,
-    //       result_data: data
-    //     }));
-    //     const transformed = {
-    //       ...rest,
-    //       col_data: sheet_col,
-    //       row_data: sheet_row,
-    //       sheet_data: {
-    //         ...sheet_data,
-    //         col: transformedColumns,
-    //         row: transformedRows
-    //       }
-    //     };
-    //     this.sheetsInstance.setSheetData(transformed,false,null , true);
-    //     // this.dashboardInstance.setDashboardSheetData()
-    //   });
-    //   // responesData.sheets.forEach((sheetData:any)=>{
-    //     let responseData = _.cloneDeep(this.mergeSheetData(responesData));
-    //     this.dashboardInstance.dashboardTransfer(responseData,false);
-    //   // })
-    //   // this.buildDashboardResponseData(responce,"connectWise");
-    //     },
-    //     error: (error) => {
-    //       this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-    //       console.log(error);
-    //     }
-    //   }
-    // )
-    // this.buildDashboardResponseData(responesData,"connectWise");
+        const transformedRows = sheet_query_data.rows_data.map(({ data, ...rowRest }: any) => ({
+          ...rowRest,
+          result_data: data
+        }));
+        const KPIRows = sheet_query_data.rows_data.map(({ data, ...rowRest }: any) => ({
+          ...rowRest,
+          result: data
+        }));
+        const dashboardKPIRows = sheet_query_data.rows_data.map((row: any) => ({
+          col: row.column,
+          result_data: row.data
+        }));
+        let transformData = this.transformDashboardTransferData(sheet.sheet_query_data)
+        let chartTransformaedData = this.transformTableAndChartData(transformData);
+        let chartOptions = sheet.sheet_data.savedChartOptions;
+        chartOptions = this.updateChartOptions(chartOptions,sheet.chart_type,sheet.sheet_data.isApexChart,chartTransformaedData.xAxisCategories,chartTransformaedData.multiSeriesChartData);
+        const transformed = {
+          chart_id,
+          ...rest,
+          col_data: sheet_col,
+          row_data: sheet_row,
+          sheet_data: {
+          savedChartOptions : chartOptions,
+            ...sheet_data,
+            col: transformedColumns,
+            row: transformedRows,
+          }
+        };
+        if(chart_id == 25 ){
+          transformed.sheet_data.results.kpiNumber = sheet_query_data.rows_data[0]?.data[0];
+          sheet['rows'] = KPIRows;
+          sheet['dashboardKPIRows'] = dashboardKPIRows;
+        } else if(chart_id != 1 && chart_id != 9){
+          sheet.sheet_data.savedChartOptions = chartOptions;
+        }
+        this.sheetsInstance.setSheetData(transformed,false,null , true);
+      });
+        let responseData = _.cloneDeep(this.mergeSheetData(responesData));
+        this.updateDashboardData(responseData.dashboard, responseData.sheets).then(() => {
+          this.dashboardInstance.dashboardId = responesData.dashboard.dashboard_id;
+          this.dashboardInstance.assignDashboardParams(responseData.dashboard,true);
+          // this.dashboardInstance.updateDashboard(false,false,true);
+        }).catch(error => {
+          console.error('Error updating dashboard data:', error);
+        });
+        },
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      }
+    )
   }
 
   mergeSheetData(data: any) {
@@ -961,7 +990,307 @@ export class TemplateDashboardService {
       this.colsHALOPSAArray = colsArray;
       this.rowsHALOPSAArray = rowsArray;  
     }
+
+    transformDashboardTransferData(inputData: any): any {
+      const transformedData = {
+        col: [],
+        row: []
+      };
+
+      // Transform columns_data to col
+      if (inputData.columns_data) {
+        transformedData.col = inputData.columns_data.map((item: any) => ({
+          column: item.column,
+          result_data: item.data
+        }));
+      }
+
+      // Transform rows_data to row
+      if (inputData.rows_data) {
+        transformedData.row = inputData.rows_data.map((item: any) => ({
+          col: item.column,
+          result_data: item.data
+        }));
+      }
+
+      return transformedData;
+    }
+
+    updateDashboardData(dashboard: any, sheets: any[]):  Promise<void> { 
+      return new Promise((resolve) => {
+      sheets.forEach(sheet => {
+        const sheetId = sheet.sheet_id;
+
+        dashboard.dashboard_data.forEach((dashboardItem:any) => {
+          if (dashboardItem.sheetId === sheetId) {
+            if(dashboardItem.chartId == 25 || sheet.chart_id == 25){
+              dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
+              dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
+            } else if(dashboardItem.chartId == 1 || sheet.chart_id == 1){
+
+            } else {
+            if (sheet.sheet_data.isEChart) {
+              dashboardItem.echartOptions = sheet.sheet_data.savedChartOptions;
+            } else {
+              dashboardItem.chartOptions = sheet.sheet_data.savedChartOptions;
+            }
+          }
+          }
+        });
+        dashboard.tab_data?.forEach((tabData : any)=>{
+          tabData.dashboard?.forEach((dashboardItem:any) => {
+            if (dashboardItem.sheetId === sheetId) {
+              if(dashboardItem.chartId == 25 || sheet.chart_id == 25){
+                dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
+              } else if(dashboardItem.chartId == 1 || sheet.chart_id == 1){
   
-          
-}
+              } else {
+                if (sheet.sheet_data.isEChart) {
+                  dashboardItem.echartOptions = sheet.sheet_data.savedChartOptions;
+                } else {
+                  dashboardItem.chartOptions = sheet.sheet_data.savedChartOptions;
+                }
+            }
+            }
+          });
+        })
+        
+      });
+      resolve(); // Resolve the promise once updates are done
+    });
+    }
+
+    transformTableAndChartData(data: any): {
+      xAxisCategories: string[],
+      multiSeriesChartData: { name: string; data: number[] }[],
+      combinedTableData: any[],
+      columnNames: string[]
+    } {
+      const colArray = data?.col || [];
+      const rowArray = data?.row || [];
+  
+      const xAxisCategories: string[] = [];
+      const multiSeriesChartData: { name: string; data: number[] }[] = [];
+      const combinedTableData: any[] = [];
+      const columnNames: string[] = [
+        ...colArray.map((col: { column: any }) => col.column),
+        ...rowArray.map((row: { col: any }) => row.col)
+      ];
+  
+      const rowCount = Math.max(
+        colArray[0]?.result_data?.length || 0,
+        rowArray[0]?.result_data?.length || 0
+      );
+  
+      for (let i = 0; i < rowCount; i++) {
+        const rowObj: any = {};
+        colArray.forEach((col: { column: string; result_data: any[] }) => {
+          rowObj[col.column] = col.result_data?.[i];
+        });
+        rowArray.forEach((row: { col: string; result_data: any[] }) => {
+          rowObj[row.col] = row.result_data?.[i];
+        });
+        combinedTableData.push(rowObj);
+      }
+  
+      if (colArray.length > 0) {
+        xAxisCategories.push(...(colArray[0].result_data?.map((v: any) => v ?? 'null') || []));
+      }
+  
+      multiSeriesChartData.push(
+        ...rowArray.map((row: { col: any; result_data: any }) => ({
+          name: row.col,
+          data: row.result_data || []
+        }))
+      );
+  
+      return {
+        xAxisCategories,
+        multiSeriesChartData,
+        combinedTableData,
+        columnNames
+      };
+    }
+  
+    updateChartOptions(chartOptions: any, chartType: string, isApexChart: boolean,
+      xAxisCategories: string[], multiSeriesChartData: { name: string; data: number[] }[]): any {
+        chartType = chartType?.toLowerCase();
+      // if (!chartOptions) chartOptions = {};
+  
+      // if (isApexChart) {
+      //   if (['pie', 'donut', 'guage'].includes(chartType)) {
+      //     chartOptions.series = multiSeriesChartData[0]?.data || [];
+      //     chartOptions.labels = xAxisCategories;
+      //   } else {
+      //     chartOptions.series?.forEach((row: any, index: number) => {
+      //       row.data = multiSeriesChartData[index]?.data || [];
+      //     });
+      //     chartOptions.xaxis = {
+      //       ...chartOptions.xaxis,
+      //       categories: xAxisCategories
+      //     };
+      //   }
+      // } else {
+      //   chartOptions.series?.forEach((row: any, index: number) => {
+      //     row.data = multiSeriesChartData[index]?.data || [];
+      //   });
+      //   chartOptions.xAxis = {
+      //     ...chartOptions.xAxis,
+      //     data: xAxisCategories
+      //   };
+      // }
+  
+  
+       if (!chartOptions) chartOptions = {};
+  
+    if (isApexChart) {
+      if (['pie', 'donut', 'guage','GAUGE','gauge'].includes(chartType)) {
+        chartOptions.series = multiSeriesChartData[0]?.data || [];
+        chartOptions.labels = xAxisCategories;
+      } else {
+        chartOptions.series?.forEach((row: any, index: number) => {
+          row.data = multiSeriesChartData[index]?.data || [];
+        });
+        chartOptions.xaxis = chartOptions.xaxis || {};
+        chartOptions.xaxis.categories = xAxisCategories;
+      }
+    } else {
+      if (!['radar', 'heatmap', 'calendar', 'map','RADAR'].includes(chartType)) {
+        chartOptions.series?.forEach((row: any, index: number) => {
+          row.data = multiSeriesChartData[index]?.data || [];
+        });
+      } else if (chartType === 'heatmap') {
+        chartOptions.series?.forEach((row: any, index: number) => {
+          row.data?.forEach((value: any, i: number) => {
+            value[2] = multiSeriesChartData[index]?.data[i];
+          });
+        });
+      }
+  
+      if (chartType === 'barline') {
+        chartOptions.xAxis?.forEach((column: any) => {
+          column.data = xAxisCategories;
+        });
+      } else if (['hstocked', 'hgrouped'].includes(chartType)) {
+        chartOptions.yAxis?.forEach((column: any) => {
+          column.data = xAxisCategories;
+        });
+      } else if (chartType === 'radar' || chartType == 'RADAR') {
+        chartOptions.series[0]?.data?.forEach((row: any, index: number) => {
+          row.value = multiSeriesChartData[index]?.data || [];
+        });
+        chartOptions.radar = chartOptions.radar || {};
+        chartOptions.radar.indicator = xAxisCategories;
+      } else if (chartType === 'calendar') {
+        let calendarData: any[] = [];
+        let years: Set<any> = new Set();
+  
+        if (multiSeriesChartData[0]?.data?.length > 0 || xAxisCategories?.length > 0) {
+          multiSeriesChartData.forEach((series: any) => {
+            series.data.forEach((value: any, index: number) => {
+              const formattedDate = xAxisCategories[index]?.split(" ")[0];
+              calendarData.push([formattedDate, value]);
+              years.add(new Date(xAxisCategories[index]).getFullYear());
+            });
+          });
+  
+          const yearArray = Array.from(years).sort((a: any, b: any) => a - b);
+          const series = yearArray.map((year: any, idx: number) => ({
+            type: 'heatmap',
+            coordinateSystem: 'calendar',
+            calendarIndex: idx,
+            data: calendarData.filter(d => new Date(d[0]).getFullYear() === year)
+          }));
+  
+          const calendarHeight = 120;
+          const yearGap = 30;
+          const calendars = yearArray.map((year: any, idx: number) => ({
+            top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+            range: year.toString(),
+            cellSize: ['auto', 12],
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: '#000',
+                width: 1
+              }
+            },
+            yearLabel: {
+              show: true,
+              margin: 25,
+              fontSize: 14,
+              fontWeight: 'bold'
+            }
+          }));
+  
+          const allValues = multiSeriesChartData[0].data;
+          const minValue = Math.min(...allValues);
+          const maxValue = Math.max(...allValues);
+  
+          chartOptions.series = series;
+          chartOptions.calendar = calendars;
+          chartOptions.visualMap = {
+            ...(chartOptions.visualMap || {}),
+            min: minValue,
+            max: maxValue
+          };
+        } else {
+          chartOptions = {};
+        }
+      } else if (chartType === 'map') {
+        const result: any[] = [];
+        let minData = 0;
+        const maxData = Math.max(...multiSeriesChartData[0].data);
+  
+        xAxisCategories.forEach((country: string, index: number) => {
+          const countryData: any = {
+            name: country,
+            value: multiSeriesChartData[0].data[index]
+          };
+          multiSeriesChartData.forEach((measure: any) => {
+            countryData[measure.name] = measure.data[index];
+          });
+          result.push(countryData);
+        });
+  
+        if (multiSeriesChartData.length > 1) {
+          minData = Math.min(...multiSeriesChartData[0].data);
+        }
+  
+        chartOptions.tooltip = {
+          formatter: (params: any) => {
+            const { name, data } = params;
+            if (data) {
+              return Object.entries(data)
+                .map(([key, val]) => `${key}: ${val}`)
+                .join('<br/>');
+            } else {
+              return `${name}: No Data`;
+            }
+          },
+          trigger: 'item',
+          showDelay: 0,
+          transitionDuration: 0.2
+        };
+  
+        chartOptions.visualMap = {
+          ...(chartOptions.visualMap || {}),
+          min: minData,
+          max: maxData
+        };
+  
+        chartOptions.series[0].data = result;
+      } else {
+        chartOptions.xAxis = {
+          ...(chartOptions.xAxis || {}),
+          data: xAxisCategories
+        };
+      }
+    }
+  
+      return { ...chartOptions }; // ensure immutability
+    }
+  }
+  
+        
 

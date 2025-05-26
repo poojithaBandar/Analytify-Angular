@@ -59,6 +59,7 @@ import { TestPipe } from '../../../test.pipe';
 import { saveAs } from 'file-saver';
 import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
+import { i } from 'mathjs';
 
 interface TableRow {
   [key: string]: any;
@@ -905,13 +906,13 @@ export class SheetsdashboardComponent implements OnDestroy {
     })
   }
 
-  assignDashboardParams(data: any){
+  assignDashboardParams(data: any,isDashboardTransfer?: boolean){
     this.dashboardName=data.dashboard_name;
         this.isSampleDashboard = data.is_sample;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
         this.gridType = data.grid_type;
-        this.changeGridType(this.gridType);
+        this.changeGridType(this.gridType ? this.gridType : 'fixed');
         this.qrySetId = data.queryset_id;
         this.isdashboardSDKGenerated = data.is_embedded;
         // if(data.file_id && data.file_id.length){
@@ -928,7 +929,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         let self = this;
         let obj = {sheet_ids: this.sheetIdsDataSet};
         if(!this.isPublicUrl){
-        // this.fetchSheetsDataBasedOnSheetIds(obj);
+        this.fetchSheetsDataBasedOnSheetIds(obj);
         }
         if(!data.dashboard_tag_name){
           this.dashboardTagName = data.dashboard_name;
@@ -959,6 +960,9 @@ export class SheetsdashboardComponent implements OnDestroy {
               this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, false);
             }
           });
+        }
+        if(isDashboardTransfer){
+          this.updateDashboard(false,false,true);
         }
   }
 
@@ -1622,9 +1626,11 @@ export class SheetsdashboardComponent implements OnDestroy {
         let sheetIds;
         if(this.sheetTabs && this.sheetTabs.length > 0){
           tabNames = this.sheetTabs.map(tab => tab.name?.trim());
+          if(!isDashboardTransfer){
           tabIds = this.sheetTabs
   .filter(tab => tab.id)
   .map(tab => tab.id);
+          }
           sheetIds = this.sheetTabs.map(tab => tab.dashboard.map((sheet:any) => sheet.sheetId));
         }
         if(this.validateTabs()){
@@ -6328,7 +6334,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               return `${formattedValue}%`;
             };
           }
-          if (sheet.chartOptions?.yaxis?.labels) {
+          else if (sheet.chartOptions?.yaxis?.labels) {
             sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
               return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
             };
