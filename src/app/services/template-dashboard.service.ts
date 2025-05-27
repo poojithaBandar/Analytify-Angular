@@ -377,6 +377,15 @@ export class TemplateDashboardService {
           sheet.sheet_data.savedChartOptions = chartOptions;
         }
         this.sheetsInstance.setSheetData(transformed,false,null , true);
+        if(chart_id == 1){
+          sheet.sheet_data.results = {"tableData":this.sheetsInstance.saveTableData,
+          "tableColumns":this.sheetsInstance.savedisplayedColumns,
+          "banding":this.sheetsInstance.banding,
+          "color1":this.sheetsInstance.color1,
+          "color2":this.sheetsInstance.color2,
+          "items_per_page":this.sheetsInstance.itemsPerPage,
+          "total_items":this.sheetsInstance.totalItems}
+        }
       });
         let responseData = _.cloneDeep(this.mergeSheetData(responesData));
         this.updateDashboardData(responseData.dashboard, responseData.sheets).then(() => {
@@ -1027,7 +1036,8 @@ export class TemplateDashboardService {
               dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
               dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
             } else if(dashboardItem.chartId == 1 || sheet.chart_id == 1){
-
+              let tableData = this.dashboardInstance.getTableData(sheet.sheet_data)
+              dashboardItem.tableData = tableData;
             } else {
             if (sheet.sheet_data.isEChart) {
               dashboardItem.echartOptions = sheet.sheet_data.savedChartOptions;
@@ -1042,8 +1052,10 @@ export class TemplateDashboardService {
             if (dashboardItem.sheetId === sheetId) {
               if(dashboardItem.chartId == 25 || sheet.chart_id == 25){
                 dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
+                dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
               } else if(dashboardItem.chartId == 1 || sheet.chart_id == 1){
-  
+                let tableData = this.dashboardInstance.getTableData(sheet.sheet_data)
+                dashboardItem.tableData = tableData;
               } else {
                 if (sheet.sheet_data.isEChart) {
                   dashboardItem.echartOptions = sheet.sheet_data.savedChartOptions;
