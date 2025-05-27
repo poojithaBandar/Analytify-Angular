@@ -24,13 +24,14 @@ export class EtlListComponent {
   totalItems: any;
   search: string = '';
   dataFlowList: any[] = [];
+  listType: string = 'dataFlow';
 
   constructor(private toasterService: ToastrService, private workbechService: WorkbenchService, private loaderService: LoaderService, private router: Router,private route: ActivatedRoute) {
   }
 
   ngOnInit() {
     this.loaderService.hide();
-    this.getDataFlowList();
+    this.getEtlList();
   }
 
   getDataFlowList(){
@@ -101,5 +102,12 @@ export class EtlListComponent {
       this.page = 1;
     }
     this.getDataFlowList();
+  }
+  getEtlList(){
+    if(this.listType === 'dataFlow'){
+      this.getDataFlowList();
+    } else{
+      this.getDataFlowList();
+    }
   }
 }

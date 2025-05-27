@@ -77,6 +77,8 @@ export class ETLComponent {
   expEditorSearchTerm: string = '';
   attrSelectionSearchTerm: string = '';
   selectedSourceAttributeIndex: number | null = null;
+  selectedGroupAttributeIndex: number | null = null;
+  selectedAttributeIndex: number | null = null;
   isCollapsed = false;
 
 toggleCollapse() {
@@ -344,6 +346,9 @@ toggleCollapse() {
       if (this.selectedConnection?.server_type === 'POSTGRESQL') {
         iconPath = './assets/images/etl/PostgreSQL-etl.svg';
         altText = 'PostgreSQL';
+      } else if(this.selectedConnection?.server_type === 'CSV'){
+        iconPath = './assets/images/etl/PostgreSQL-etl.svg';
+        altText = 'CSV';
       }
       data.type = name;
       data.nodeData = { 
@@ -584,6 +589,9 @@ toggleCollapse() {
     this.selectedNode = node;
     this.nodeName = this.selectedNode.data.nodeData.general.name;
     console.log(this.selectedNode);
+    this.selectedAttributeIndex = null;
+    this.selectedGroupAttributeIndex = null;
+    this.selectedSourceAttributeIndex = null;
     if(this.isRefrshEnable && !['success', 'failed'].includes(this.dataFlowRunStatus)){
       this.tableTypeTabId = 2;
       this.getDataFlowLogs(this.nodeName);
@@ -1547,22 +1555,68 @@ toggleCollapse() {
     this.updateNode('parameter');
   }
 
-  moveUp() {
-    if (this.selectedSourceAttributeIndex !== null && this.selectedSourceAttributeIndex > 0) {
-      const index = this.selectedSourceAttributeIndex;
-      const attrs = this.selectedNode.data.nodeData.sourceAttributes;
-      [attrs[index - 1], attrs[index]] = [attrs[index], attrs[index - 1]];
-      this.selectedSourceAttributeIndex--;
+  moveUp(type:string) {
+    let isChanged: boolean = false;
+    if(type === 'sourceAttributes'){
+      if (this.selectedSourceAttributeIndex !== null && this.selectedSourceAttributeIndex > 0) {
+        const index = this.selectedSourceAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.sourceAttributes;
+        [attrs[index - 1], attrs[index]] = [attrs[index], attrs[index - 1]];
+        this.selectedSourceAttributeIndex--;
+        isChanged = true;
+      }
+    } else if(type === 'groupAttributes'){
+      if (this.selectedGroupAttributeIndex !== null && this.selectedGroupAttributeIndex > 0) {
+        const index = this.selectedGroupAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.groupAttributes;
+        [attrs[index - 1], attrs[index]] = [attrs[index], attrs[index - 1]];
+        this.selectedGroupAttributeIndex--;
+        isChanged = true;
+      }
+    } else if(type === 'attributes'){
+      if (this.selectedAttributeIndex !== null && this.selectedAttributeIndex > 0) {
+        const index = this.selectedAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.attributes;
+        [attrs[index - 1], attrs[index]] = [attrs[index], attrs[index - 1]];
+        this.selectedAttributeIndex--;
+        isChanged = true;
+      }
+    }
+
+    if(isChanged){
       this.updateNode('');
     }
   }
   
-  moveDown() {
-    if (this.selectedSourceAttributeIndex !== null && this.selectedSourceAttributeIndex < this.selectedNode.data.nodeData.sourceAttributes.length - 1) {
-      const index = this.selectedSourceAttributeIndex;
-      const attrs = this.selectedNode.data.nodeData.sourceAttributes;
-      [attrs[index + 1], attrs[index]] = [attrs[index], attrs[index + 1]];
-      this.selectedSourceAttributeIndex++;
+  moveDown(type:string) {
+    let isChanged: boolean = false;
+    if(type === 'sourceAttributes'){
+      if (this.selectedSourceAttributeIndex !== null && this.selectedSourceAttributeIndex < this.selectedNode.data.nodeData.sourceAttributes.length - 1) {
+        const index = this.selectedSourceAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.sourceAttributes;
+        [attrs[index + 1], attrs[index]] = [attrs[index], attrs[index + 1]];
+        this.selectedSourceAttributeIndex++;
+        isChanged = true;
+      }
+    } else if(type === 'groupAttributes'){
+      if (this.selectedGroupAttributeIndex !== null && this.selectedGroupAttributeIndex < this.selectedNode.data.nodeData.groupAttributes.length - 1) {
+        const index = this.selectedGroupAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.groupAttributes;
+        [attrs[index + 1], attrs[index]] = [attrs[index], attrs[index + 1]];
+        this.selectedGroupAttributeIndex++;
+        isChanged = true;
+      }
+    } else if(type === 'attributes'){
+      if (this.selectedAttributeIndex !== null && this.selectedAttributeIndex < this.selectedNode.data.nodeData.attributes.length - 1) {
+        const index = this.selectedAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.attributes;
+        [attrs[index + 1], attrs[index]] = [attrs[index], attrs[index + 1]];
+        this.selectedAttributeIndex++;
+        isChanged = true;
+      }
+    }
+
+    if(isChanged){
       this.updateNode('');
     }
   }

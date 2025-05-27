@@ -22,8 +22,7 @@
 
 
                     <div class="input-group">
-                        <select class="form-select form-select select2 fs-14 form-control border-end me-3">
-                            <option value="all">All</option>
+                        <select class="form-select form-select select2 fs-14 form-control border-end me-3" [(ngModel)]="listType" (change)="getEtlList()">
                             <option value="dataFlow">Data Flow</option>
                             <option value="jobFlow">Job Flow</option>
                         </select>
