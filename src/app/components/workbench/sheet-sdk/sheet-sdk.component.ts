@@ -93,7 +93,7 @@ export class SheetSdkComponent {
                 this.sheetId = data.dashboard_id;     
                 this.sdkQuerySetID = data.queryset_id;
                 this.sdkDatabaseID = data.server_id;
-                this.fetchDataProxy();                                                                       
+                this.fetchData(1);                                                   
               },                                                                                                              
               error: (err : any) => {                                                                                                 
                 console.error(err);                                                                                           
@@ -176,36 +176,36 @@ export class SheetSdkComponent {
 
         }
       }
-  fetchDataProxy(){
-        this.loading = true;
-    let filterKeys;
-    let filterValues;
-    let payload;
-    if (this.embedFilters) {
-      filterKeys = Object.keys(this.embedFilters);
-      filterValues = Object.values(this.embedFilters);
-      payload = {
-        "filter_name": filterKeys,
-        "sheet_id": this.sheetId,
-        "input_list": filterValues
-      }
-    } else {
-       payload = { "sheet_id": this.sheetId };
-    }
-    this.workbenchService.getSheetSdkData(payload).subscribe({
-      next: (data: any) => {
-      if(data){
-        this.fetchData();
-      }
-      },
-       error: (err: any) => {
-        console.error(err);
-        this.error = 'Failed to load chart data';
-        this.loading = false;
-      }
-    })
-  }                                                                                                                        
-  fetchData(): void {
+  // fetchDataProxy(){
+  //       this.loading = true;
+  //   let filterKeys;
+  //   let filterValues;
+  //   let payload;
+  //   if (this.embedFilters) {
+  //     filterKeys = Object.keys(this.embedFilters);
+  //     filterValues = Object.values(this.embedFilters);
+  //     payload = {
+  //       "filter_name": filterKeys,
+  //       "sheet_id": this.sheetId,
+  //       "input_list": filterValues
+  //     }
+  //   } else {
+  //      payload = { "sheet_id": this.sheetId };
+  //   }
+  //   this.workbenchService.getSheetSdkData(payload).subscribe({
+  //     next: (data: any) => {
+  //     if(data){
+  //       this.fetchData();
+  //     }
+  //     },
+  //      error: (err: any) => {
+  //       console.error(err);
+  //       this.error = 'Failed to load chart data';
+  //       this.loading = false;
+  //     }
+  //   })
+  // }                                                                                                                        
+  fetchData(attempt: number): void {
     this.loading = true;
     let filterKeys;
     let filterValues;
@@ -224,72 +224,76 @@ export class SheetSdkComponent {
     this.workbenchService.getSheetSdkData(payload).subscribe({
       next: (data: any) => {
         console.log(data);
-        const sheet = data.sheet_retrieve_data.sheet_data;
-        this.isApexChart = sheet.isApexChart;
-        this.setChartType(data.sheet_retrieve_data.chart_id);
-        this.chartOptions = sheet.savedChartOptions;
-        // If it's not a chart, render table via CustomSheetsComponent
-        if(data.sheet_filter_data?.data){
-        const dataToChange =  data.sheet_filter_data?.data
-             const {
-          xAxisCategories,
-          multiSeriesChartData,
-          combinedTableData,
-          columnNames
-        } = this.transformer.transformTableAndChartData(dataToChange);
+        if(data === '<Response [404]>' && attempt <= 2){
+          this.fetchData(attempt + 1);
+        } else {
+          const sheet = data.sheet_retrieve_data.sheet_data;
+          this.isApexChart = sheet.isApexChart;
+          this.setChartType(data.sheet_retrieve_data.chart_id);
+          this.chartOptions = sheet.savedChartOptions;
+          // If it's not a chart, render table via CustomSheetsComponent
+          if (data.sheet_filter_data?.data) {
+            const dataToChange = data.sheet_filter_data?.data
+            const {
+              xAxisCategories,
+              multiSeriesChartData,
+              combinedTableData,
+              columnNames
+            } = this.transformer.transformTableAndChartData(dataToChange);
 
-        this.xAxisCategories = xAxisCategories;
-        this.multiSeriesChartData = multiSeriesChartData;
-        this.combinedTableData = combinedTableData;
-        this.columnNames = columnNames;
+            this.xAxisCategories = xAxisCategories;
+            this.multiSeriesChartData = multiSeriesChartData;
+            this.combinedTableData = combinedTableData;
+            this.columnNames = columnNames;
 
-        this.chartOptions = this.transformer.updateChartOptions(
-          this.chartOptions,
-          this.chartType,
-          this.isApexChart,
-          this.xAxisCategories,
-          this.multiSeriesChartData
-        );
-      }
+            this.chartOptions = this.transformer.updateChartOptions(
+              this.chartOptions,
+              this.chartType,
+              this.isApexChart,
+              this.xAxisCategories,
+              this.multiSeriesChartData
+            );
+          }
 
-        if (!this.isApexChart) {
-          // columns and rows arrays from API
-          const cols: string[] = sheet.columns || sheet.table?.columns || [];
-          const rows: any[][] = sheet.rows || sheet.table?.rows || [];
-          this.tableColumnsDisplay = cols;
-          // Map row arrays to objects
-          this.tableDataDisplay = rows.map(r => {
-            const obj: any = {};
-            cols.forEach((c, i) => obj[c] = r[i]);
-            return obj;
-          });
-          this.totalItems = this.tableDataDisplay.length;
-          this.itemsPerPage = sheet.itemsPerPage ?? this.itemsPerPage;
-          this.page = 1;
-          this.bandingSwitch = sheet.bandingSwitch ?? this.bandingSwitch;
-          this.color1 = sheet.color1 ?? this.color1;
-          this.color2 = sheet.color2 ?? this.color2;
-          this.headerFontFamily = sheet.headerFontFamily ?? this.headerFontFamily;
-          this.headerFontStyle = sheet.headerFontStyle ?? this.headerFontStyle;
-          this.headerFontDecoration = sheet.headerFontDecoration ?? this.headerFontDecoration;
-          this.headerFontColor = sheet.headerFontColor ?? this.headerFontColor;
-          this.headerFontAlignment = sheet.headerFontAlignment ?? this.headerFontAlignment;
-          this.headerFontWeight = sheet.headerFontWeight ?? this.headerFontWeight;
-          this.headerFontSize = sheet.headerFontSize ?? this.headerFontSize;
-          this.tableDataFontFamily = sheet.tableDataFontFamily ?? this.tableDataFontFamily;
-          this.tableDataFontWeight = sheet.tableDataFontWeight ?? this.tableDataFontWeight;
-          this.tableDataFontStyle = sheet.tableDataFontStyle ?? this.tableDataFontStyle;
-          this.tableDataFontDecoration = sheet.tableDataFontDecoration ?? this.tableDataFontDecoration;
-          this.tableDataFontColor = sheet.tableDataFontColor ?? this.tableDataFontColor;
-          this.tableDataFontAlignment = sheet.tableDataFontAlignment ?? this.tableDataFontAlignment;
-          this.tableDataFontSize = sheet.tableDataFontSize ?? this.tableDataFontSize;
-          this.decimalPlaces = sheet.decimalPlaces ?? this.decimalPlaces;
-          this.prefix = sheet.prefix ?? this.prefix;
-          this.suffix = sheet.suffix ?? this.suffix;
-          this.displayUnits = sheet.displayUnits ?? this.displayUnits;
+          if (!this.isApexChart) {
+            // columns and rows arrays from API
+            const cols: string[] = sheet.columns || sheet.table?.columns || [];
+            const rows: any[][] = sheet.rows || sheet.table?.rows || [];
+            this.tableColumnsDisplay = cols;
+            // Map row arrays to objects
+            this.tableDataDisplay = rows.map(r => {
+              const obj: any = {};
+              cols.forEach((c, i) => obj[c] = r[i]);
+              return obj;
+            });
+            this.totalItems = this.tableDataDisplay.length;
+            this.itemsPerPage = sheet.itemsPerPage ?? this.itemsPerPage;
+            this.page = 1;
+            this.bandingSwitch = sheet.bandingSwitch ?? this.bandingSwitch;
+            this.color1 = sheet.color1 ?? this.color1;
+            this.color2 = sheet.color2 ?? this.color2;
+            this.headerFontFamily = sheet.headerFontFamily ?? this.headerFontFamily;
+            this.headerFontStyle = sheet.headerFontStyle ?? this.headerFontStyle;
+            this.headerFontDecoration = sheet.headerFontDecoration ?? this.headerFontDecoration;
+            this.headerFontColor = sheet.headerFontColor ?? this.headerFontColor;
+            this.headerFontAlignment = sheet.headerFontAlignment ?? this.headerFontAlignment;
+            this.headerFontWeight = sheet.headerFontWeight ?? this.headerFontWeight;
+            this.headerFontSize = sheet.headerFontSize ?? this.headerFontSize;
+            this.tableDataFontFamily = sheet.tableDataFontFamily ?? this.tableDataFontFamily;
+            this.tableDataFontWeight = sheet.tableDataFontWeight ?? this.tableDataFontWeight;
+            this.tableDataFontStyle = sheet.tableDataFontStyle ?? this.tableDataFontStyle;
+            this.tableDataFontDecoration = sheet.tableDataFontDecoration ?? this.tableDataFontDecoration;
+            this.tableDataFontColor = sheet.tableDataFontColor ?? this.tableDataFontColor;
+            this.tableDataFontAlignment = sheet.tableDataFontAlignment ?? this.tableDataFontAlignment;
+            this.tableDataFontSize = sheet.tableDataFontSize ?? this.tableDataFontSize;
+            this.decimalPlaces = sheet.decimalPlaces ?? this.decimalPlaces;
+            this.prefix = sheet.prefix ?? this.prefix;
+            this.suffix = sheet.suffix ?? this.suffix;
+            this.displayUnits = sheet.displayUnits ?? this.displayUnits;
+          }
+          // done loading
+          this.loading = false;
         }
-        // done loading
-        this.loading = false;
       },
       error: (err: any) => {
         console.error(err);
