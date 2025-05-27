@@ -1066,6 +1066,12 @@ deleteUser(id:any){
       return this.http.get<any>(`${environment.apiUrl}/dags_list/`+this.accessToken+`?page=${page}&page_size=${pageSize}`+(search ? `&search=${search}` : ``));
     }
 
+    deleteDataFlow(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/dag_delete/`+this.accessToken+'/'+id);
+    }
+
     runEtl(dagId : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
