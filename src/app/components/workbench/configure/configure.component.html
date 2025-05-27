@@ -3,7 +3,7 @@
 
 <div class="main-container container-fluid TopHeader">
         <div class="row">
-            <div class="col-xxl-3 col-xl-4 col-lg-5 col-md-5">
+            <div class="col-xxl-3 col-xl-4 col-lg-5 col-md-5 px-1">
                <div class="card">
                     <div class="card-body profile-card">
                          <!-- <div class="nav-container p-0">
@@ -78,7 +78,7 @@
                 </div>
             </ng-template>
               </li>
-              <li [ngbNavItem]="'email'">
+              <li [ngbNavItem]="'email'" id="Side_tab_UI">
                 <a ngbNavLink (click)="getDashbaordList()"><i class="fe fe-mail me-1"></i> Email Configuration</a>
                  <ng-template ngbNavContent id="email">
                 <div class="card profile-card">
@@ -169,7 +169,7 @@
                </div>
             </div>
 
-              <div class="col-xxl-9 col-xl-8 col-lg-7 col-md-7">
+              <div class="col-xxl-9 col-xl-8 col-lg-7 col-md-7 px-1">
       <div [ngbNavOutlet]="nav">                  </div>
       
 

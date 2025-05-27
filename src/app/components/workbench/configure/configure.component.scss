@@ -1,32 +1,9 @@
-button:disabled {
-    background-color: #d3d3d3;
-    cursor: not-allowed;
-}
-
-.toggle.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-
-
-.profile-cover__img .profile-img-1 img {
-    border: 2px solid #017e90;
-    border-radius: 50% !important;
-    width: 7rem;
-    height: 7rem;
-}
-
-  body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f2f5;
-      color: #333;
-    }
-
-    .container {
-      width: 100%;
-    //   margin: 50px auto;
+button:disabled { background-color: #d3d3d3; cursor: not-allowed; }
+.toggle.disabled { opacity: 0.5; cursor: not-allowed; }
+.profile-cover__img .profile-img-1 img { border: 2px solid #017e90; border-radius: 50% !important;  width: 7rem; height: 7rem; }
+body {  margin: 0;  font-family: 'Segoe UI', sans-serif;  background-color: #f0f2f5;  color: #333;}
+.container {  width: 100%;
+  //   margin: 50px auto;//
       padding: 30px;
       background-color: #fff;
       border-radius: 10px;
@@ -167,7 +144,7 @@ button:disabled {
     }
 
     .nav-item:hover {
-      background-color: #e6f2ff;
+      background-color: #e9f4f9;
     }
     .profile-card {
     height: 100vh;
@@ -190,6 +167,20 @@ button:disabled {
     .update-password-card{
         width: 400px;
     }
+
+  li#general-tab {
+      padding: 0px;
+      margin: 0px;
+      border-radius: 7px !important;
+  }
+  li#general-tab a {margin: 0px !important;}
+
+  li#Side_tab_UI {
+      padding: 0px;
+      border-radius: 7px !important;
+  }
+  li#Side_tab_UI a {margin: 0px !important;}
+
 
     @media (max-width: 500px) {
       .nav-container {
