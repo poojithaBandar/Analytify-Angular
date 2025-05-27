@@ -1670,6 +1670,7 @@ try {
           this.KPIPrefix = '';
           this.KPISuffix = '';
           this.KPIPercentageDivisor = 100;
+          this.is_sheet_Embed = false;
           if(this.sheetName != ''){
              this.tabs.push(this.sheetName);
           }else{
@@ -3530,6 +3531,7 @@ trackByFn(index: number, item: any): number {
     }
     const obj={
     //"filter_id": this.filter_id,
+    "sheet_id":this.retriveDataSheet_id,
     "hierarchy_id": this.databaseId,
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
