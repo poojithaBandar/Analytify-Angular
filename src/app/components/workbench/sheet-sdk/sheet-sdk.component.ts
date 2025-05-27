@@ -93,7 +93,7 @@ export class SheetSdkComponent {
                 this.sheetId = data.dashboard_id;     
                 this.sdkQuerySetID = data.queryset_id;
                 this.sdkDatabaseID = data.server_id;
-                this.fetchData();                                                                       
+                this.fetchDataProxy();                                                                       
               },                                                                                                              
               error: (err : any) => {                                                                                                 
                 console.error(err);                                                                                           
@@ -176,7 +176,35 @@ export class SheetSdkComponent {
 
         }
       }
-                                                                                                                          
+  fetchDataProxy(){
+        this.loading = true;
+    let filterKeys;
+    let filterValues;
+    let payload;
+    if (this.embedFilters) {
+      filterKeys = Object.keys(this.embedFilters);
+      filterValues = Object.values(this.embedFilters);
+      payload = {
+        "filter_name": filterKeys,
+        "sheet_id": this.sheetId,
+        "input_list": filterValues
+      }
+    } else {
+       payload = { "sheet_id": this.sheetId };
+    }
+    this.workbenchService.getSheetSdkData(payload).subscribe({
+      next: (data: any) => {
+      if(data){
+        this.fetchData();
+      }
+      },
+       error: (err: any) => {
+        console.error(err);
+        this.error = 'Failed to load chart data';
+        this.loading = false;
+      }
+    })
+  }                                                                                                                        
   fetchData(): void {
     this.loading = true;
     let filterKeys;
