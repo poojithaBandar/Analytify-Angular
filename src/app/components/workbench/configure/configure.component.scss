@@ -95,7 +95,11 @@ body {  margin: 0;  font-family: 'Segoe UI', sans-serif;  background-color: #f0f
       background-color: #007bff;
       color: #fff;
     }
-
+    .disabled-toggle {
+      pointer-events: none;
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
     @media (max-width: 600px) {
       .form-row {
         flex-direction: column;

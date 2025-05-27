@@ -16,7 +16,7 @@
 
                          <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-pills flex-column">
               <li [ngbNavItem]="'configure'" className="nav-link text-start" id="general-tab">
-                <a ngbNavLink><i class="fe fe-settings me-1"></i> Configure</a>
+                <a ngbNavLink><i class="fe fe-settings me-1"></i>OpenAI Key Configuration</a>
                 <ng-template ngbNavContent id="configure">
                 <div class="card profile-card">
                     <div class="card-body">
@@ -121,7 +121,7 @@
                            <div class="col-xl-2">
                             <div 
                                 class="toggle toggle-primary"
-                                [ngClass]="{ 'on': emailToggles.update }"
+                                [ngClass]="{ 'on': emailToggles.update,'disabled-toggle': !(selectedDashboard || activateEmailTab) }"
                                 (click)="emailToggles.update = !emailToggles.update;checkSaveorUpdate()">
                                 <span></span>
                             </div>
@@ -137,7 +137,7 @@
                             <div class="col-xl-2">
                             <div 
                                 class="toggle toggle-primary"
-                                [ngClass]="{ 'on': emailToggles.sync }"
+                                [ngClass]="{ 'on': emailToggles.sync,'disabled-toggle': !(selectedDashboard || activateEmailTab)  }"
                                 (click)="emailToggles.sync = !emailToggles.sync;checkSaveorUpdate()">
                                 <span></span>
                             </div>
@@ -154,7 +154,7 @@
                             <div class="col-xl-2">
                             <div 
                                 class="toggle toggle-primary"
-                                [ngClass]="{ 'on': emailToggles.autosync }"
+                                [ngClass]="{ 'on': emailToggles.autosync,'disabled-toggle': !(selectedDashboard || activateEmailTab) }"
                                 (click)="emailToggles.autosync = !emailToggles.autosync;checkSaveorUpdate()">
                                 <span></span>
                             </div>
