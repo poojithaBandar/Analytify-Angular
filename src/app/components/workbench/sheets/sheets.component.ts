@@ -1702,6 +1702,7 @@ try {
     this.KPIPrefix = '';
     this.KPISuffix = '';
     this.KPIPercentageDivisor = 100;
+    this.is_sheet_Embed = false;
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
