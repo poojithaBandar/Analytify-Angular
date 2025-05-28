@@ -1673,7 +1673,7 @@
                                                     </ng-template>
                                                 </li>
                                                 @if(is_sheet_Embed){
-                                                    <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                    <li [ngbNavItem]="7" [class.disabled]="activeTabId !== 7"  (click)="SDKFilterName= '';">
                                                         <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
                                                         <ng-template ngbNavContent>
                                                             <div class="tab-pane active" id="activetabs">
@@ -1821,7 +1821,7 @@
                                                     </li>
                                                 }
                                                 @if(is_sheet_Embed){
-                                                    <li [ngbNavItem]="7">
+                                                    <li [ngbNavItem]="7" [class.disabled]="activeTabId !== 7" >
                                                         <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
                                                         <ng-template ngbNavContent>
                                                             <div class="tab-pane active" id="activetabs">
@@ -3202,7 +3202,7 @@
                                                                                 </ng-template>
                                                                             </li>
                                                                             @if(is_sheet_Embed){
-                                                                                <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                                                <li [ngbNavItem]="7" [class.disabled]="activeTabId !== 7"  (click)="SDKFilterName= '';">
                                                                                     <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
                                                                                     <ng-template ngbNavContent>
                                                                                         <div class="tab-pane active" id="activetabs">
@@ -3346,7 +3346,7 @@
                                                                                 </li>
                                                                             }
                                                                             @if(is_sheet_Embed){
-                                                                                <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                                                <li [ngbNavItem]="7" [class.disabled]="activeTabId !== 7"  (click)="SDKFilterName= '';">
                                                                                     <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
                                                                                     <ng-template ngbNavContent>
                                                                                         <div class="tab-pane active" id="activetabs">
@@ -4375,6 +4375,17 @@
                                                                     (ngModelChange)="applyDynamicStylesToPivot()"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
+
+                                                                      <ngx-colors *ngIf="bandingSwitch && table"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="color1"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                     <ngx-colors *ngIf="bandingSwitch && table"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="color2"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
                                                     </div>
                                                     <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
@@ -4535,7 +4546,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((table && bandingSwitch && (draggedColumns?.length !== 0 || draggedRows?.length !==0)) || (((kpi || guage) && draggedRows?.length === 1) || !(calendar || map || table)))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="( ((kpi || guage) && draggedRows?.length === 1) || !(calendar || map || table))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -4712,27 +4723,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
-                                                                    <div class=""> 
-                                                                        <p >Banding color </p>
-                                                                    </div>
-                                                                    <div *ngIf="bandingColorSwitch" class="toggle toggle-sm on mb-0" (click)="bandingColorSwitch = !bandingColorSwitch; resetBandingColor()">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <div *ngIf="!bandingColorSwitch" class="toggle toggle-sm off mb-0" (click)="bandingColorSwitch = !bandingColorSwitch;">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <ngx-colors *ngIf="bandingColorSwitch"
-                                                                    ngx-colors-trigger 
-                                                                    [(ngModel)]="color1"
-                                                                    [format] = "'hex'"
-                                                                     ></ngx-colors>
-                                                                     <ngx-colors *ngIf="bandingColorSwitch"
-                                                                    ngx-colors-trigger 
-                                                                    [(ngModel)]="color2"
-                                                                    [format] = "'hex'"
-                                                                     ></ngx-colors>
-                                                                </div>
+                                                                
                                                                 <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <label for="color">Color</label>
                                                                     <div *ngIf="kpiColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiColorSwitch = !kpiColorSwitch; resetKpiColor()">
