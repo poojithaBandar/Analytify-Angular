@@ -11,11 +11,13 @@ import { expression } from 'mathjs';
 import { EtlGraphService } from '../etl-graph.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EtlLoggerViewComponent } from '../etl-logger-view/etl-logger-view.component';
+import { DataFlowSearchFilterPipe } from '../../../shared/pipes/data-flow-search-filter.pipe';
+import { ResizableTopDirective } from '../../../shared/directives/resizable-top.directive';
 
 @Component({
   selector: 'app-etl',
   standalone: true,
-  imports: [NgbModule, CommonModule, NgSelectModule, FormsModule, EtlLoggerViewComponent],
+  imports: [NgbModule, CommonModule, NgSelectModule, FormsModule, EtlLoggerViewComponent, DataFlowSearchFilterPipe, ResizableTopDirective],
   templateUrl: './etl.component.html',
   styleUrl: './etl.component.scss'
 })
@@ -55,7 +57,6 @@ export class ETLComponent {
   isRefrshEnable: boolean = false;
   dataFlowRunStatus: string = '';
   expression: string = '';
-  searchText: string = '';
   selectedField: any = {};
   groupedColumns: any = {};
   selectedGroup: any = '';
@@ -69,6 +70,20 @@ export class ETLComponent {
   isHaving : boolean = false;
   isWhere : boolean = false;
   isFilter : boolean = false;
+  sourceSearchTerm: string = '';
+  groupSearchTerm: string = '';
+  attributeSearchTerm: string = '';
+  parameterSearchTerm: string = '';
+  expEditorSearchTerm: string = '';
+  attrSelectionSearchTerm: string = '';
+  selectedSourceAttributeIndex: number | null = null;
+  selectedGroupAttributeIndex: number | null = null;
+  selectedAttributeIndex: number | null = null;
+  isCollapsed = false;
+
+toggleCollapse() {
+  this.isCollapsed = !this.isCollapsed;
+}
   dataTypes: string[] = [
     // Numeric types
     'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'serial', 'bigserial', 'money',
@@ -140,6 +155,8 @@ export class ETLComponent {
       this.drawflow = new Drawflow(container);
       this.drawflow.reroute = true;
       this.drawflow.start();
+      this.drawflow.zoom = 0.8;
+      this.drawflow.zoom_refresh();
       this.drawflow.drawflow.drawflow[this.drawflow.module].canvasData = this.canvasData;
 
       if(this.dataFlowId){
@@ -329,6 +346,9 @@ export class ETLComponent {
       if (this.selectedConnection?.server_type === 'POSTGRESQL') {
         iconPath = './assets/images/etl/PostgreSQL-etl.svg';
         altText = 'PostgreSQL';
+      } else if(this.selectedConnection?.server_type === 'CSV'){
+        iconPath = './assets/images/etl/PostgreSQL-etl.svg';
+        altText = 'CSV';
       }
       data.type = name;
       data.nodeData = { 
@@ -569,11 +589,13 @@ export class ETLComponent {
     this.selectedNode = node;
     this.nodeName = this.selectedNode.data.nodeData.general.name;
     console.log(this.selectedNode);
-    if(this.isRefrshEnable){
+    this.selectedAttributeIndex = null;
+    this.selectedGroupAttributeIndex = null;
+    this.selectedSourceAttributeIndex = null;
+    if(this.isRefrshEnable && !['success', 'failed'].includes(this.dataFlowRunStatus)){
       this.tableTypeTabId = 2;
       this.getDataFlowLogs(this.nodeName);
     }
-    // this.getDataFlowLogs(this.nodeName);
   }
 
   getConnections() {
@@ -793,11 +815,12 @@ export class ETLComponent {
           }
         });
         this.tableTypeTabId = 2;
-        // this.getDataFlowLogs(this.selectedNode.data.nodeData.general.name);
         if(!['success', 'failed'].includes(data.status)){
           setTimeout(() => {
             this.getDataFlowStatus(runId);
           }, 3000);
+        } else {
+          this.isRefrshEnable = false;
         }
       },
       error: (error: any) => {
@@ -1007,19 +1030,11 @@ export class ETLComponent {
       let items = [];
 
       if(nodeType === 'source_data_object'){
-        // for (const col of columns) {
-        //   items.push({
-        //     label: col.col,
-        //     value: col.col,
-        //     dataType: col.dtype,
-        //     group: nodeName
-        //   });
-        // }
-        
         const attr = childSourceAttributes[nodeName] || [];
         if(attr.length > 0){
           for (const atr of attr) {
-            items.push({...atr.selectedColumn, group: nodeName});
+            attr
+            items.push({...atr.selectedColumn, group: nodeName, label: atr.attributeName, value: atr.attributeName, dataType: atr.dataType});
           }
         }
       } 
@@ -1062,6 +1077,19 @@ export class ETLComponent {
     console.log('Children columns:', this.currentNodeColumns);
     if(!['source_data_object', 'target_data_object'].includes(node.data.type)){
       node.data.nodeData.dataObject = this.currentNodeColumns;
+      if(node.data.type === 'Rollup'){
+        node.data.nodeData.groupAttributes.forEach((grp:any)=>{
+          grp.selectColumnDropdown = this.currentNodeColumns;
+          const match = this.currentNodeColumns.find((col: any) => 
+            col.group === grp.selectedColumn?.group && 
+            col.label === grp.selectedColumn?.label
+          );
+      
+          if (!match) {
+            grp.selectedColumn = '';
+          }
+        });
+      }
       this.drawflow.updateNodeDataFromId(node.id, node.data);
     } else if(node.data.type === 'target_data_object'){
       node.data.nodeData.columnsDropdown = this.currentNodeColumns;
@@ -1432,9 +1460,28 @@ export class ETLComponent {
         this.dataFlowId = data.id;
         const drawFlowJson = JSON.parse(data.transformation_flow);
         this.drawflow.import(drawFlowJson);
+        console.log(drawFlowJson);
         this.isRunEnable = true;
         this.canvasData = drawFlowJson.drawflow.Home.canvasData ? drawFlowJson.drawflow.Home.canvasData : {parameters: [], sqlParameters: []};
         console.log(this.canvasData);
+        this.isNodeSelected = true;
+        this.isCanvasSelected = true;
+        this.tableTabId = 7;
+
+        setTimeout(() => {
+          const allNodes = this.drawflow.drawflow.drawflow['Home'].data;
+          Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+            const displayName = (node.data?.nodeData?.general?.name || '').substring(0, 8) + '..';
+            const nodeElement = document.querySelector(`#node-${id}`);
+            if (nodeElement) {
+              const labelElement = nodeElement.querySelector('.node-label') as HTMLElement;
+              if (labelElement) {
+                labelElement.innerText = displayName;
+                labelElement.setAttribute('title', node.data?.nodeData?.general?.name);
+              }
+            }
+          });
+        }, 100);
       },
       error: (error: any) => {
         console.log(error);
@@ -1506,5 +1553,81 @@ export class ETLComponent {
   deleteSQLParameter(index:any){
     this.canvasData.sqlParameters.splice(index, 1);
     this.updateNode('parameter');
+  }
+
+  moveUp(type:string) {
+    let isChanged: boolean = false;
+    if(type === 'sourceAttributes'){
+      if (this.selectedSourceAttributeIndex !== null && this.selectedSourceAttributeIndex > 0) {
+        const index = this.selectedSourceAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.sourceAttributes;
+        [attrs[index - 1], attrs[index]] = [attrs[index], attrs[index - 1]];
+        this.selectedSourceAttributeIndex--;
+        isChanged = true;
+      }
+    } else if(type === 'groupAttributes'){
+      if (this.selectedGroupAttributeIndex !== null && this.selectedGroupAttributeIndex > 0) {
+        const index = this.selectedGroupAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.groupAttributes;
+        [attrs[index - 1], attrs[index]] = [attrs[index], attrs[index - 1]];
+        this.selectedGroupAttributeIndex--;
+        isChanged = true;
+      }
+    } else if(type === 'attributes'){
+      if (this.selectedAttributeIndex !== null && this.selectedAttributeIndex > 0) {
+        const index = this.selectedAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.attributes;
+        [attrs[index - 1], attrs[index]] = [attrs[index], attrs[index - 1]];
+        this.selectedAttributeIndex--;
+        isChanged = true;
+      }
+    }
+
+    if(isChanged){
+      this.updateNode('');
+    }
+  }
+  
+  moveDown(type:string) {
+    let isChanged: boolean = false;
+    if(type === 'sourceAttributes'){
+      if (this.selectedSourceAttributeIndex !== null && this.selectedSourceAttributeIndex < this.selectedNode.data.nodeData.sourceAttributes.length - 1) {
+        const index = this.selectedSourceAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.sourceAttributes;
+        [attrs[index + 1], attrs[index]] = [attrs[index], attrs[index + 1]];
+        this.selectedSourceAttributeIndex++;
+        isChanged = true;
+      }
+    } else if(type === 'groupAttributes'){
+      if (this.selectedGroupAttributeIndex !== null && this.selectedGroupAttributeIndex < this.selectedNode.data.nodeData.groupAttributes.length - 1) {
+        const index = this.selectedGroupAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.groupAttributes;
+        [attrs[index + 1], attrs[index]] = [attrs[index], attrs[index + 1]];
+        this.selectedGroupAttributeIndex++;
+        isChanged = true;
+      }
+    } else if(type === 'attributes'){
+      if (this.selectedAttributeIndex !== null && this.selectedAttributeIndex < this.selectedNode.data.nodeData.attributes.length - 1) {
+        const index = this.selectedAttributeIndex;
+        const attrs = this.selectedNode.data.nodeData.attributes;
+        [attrs[index + 1], attrs[index]] = [attrs[index], attrs[index + 1]];
+        this.selectedAttributeIndex++;
+        isChanged = true;
+      }
+    }
+
+    if(isChanged){
+      this.updateNode('');
+    }
+  }
+
+  canvasZoomOut(){
+    this.drawflow.zoom_out();
+  }
+  canvasZoomReset(){
+    this.drawflow.zoom_reset()
+  }
+  canvasZoomIn(){
+    this.drawflow.zoom_in();
   }
 }
