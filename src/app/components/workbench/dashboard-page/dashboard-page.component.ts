@@ -438,7 +438,12 @@ viewSchedular(dashboardId:any,modal: any){
       this.modalService.open(modal);
     }
   });
-
-
 }
+gotoConfigureEmailAlerts(id:any){
+    const encodedDatabaseId = btoa(id.toString());
+
+this.router.navigate(['/analytify/configure-page/email/'+encodedDatabaseId])
+}
+
+
 }

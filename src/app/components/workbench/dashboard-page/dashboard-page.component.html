@@ -81,6 +81,8 @@
                                   (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                                   [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
                                   <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
+                                  <button class="btn btn-icon btn-sm btn-orange-light btn-wave waves-effect waves-light" ngbTooltip="Set Alerts" (click)="gotoConfigureEmailAlerts(dashboard.dashboard_id)"><i class="fa fa-bell" ></i></button>
+
                                 </div>
                             </td>
                         </tr>
@@ -135,8 +137,10 @@
                             [previledgeId]="43" [isBtn]="false" [toolTip]="'Properties'"
                             (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                             [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
-                            <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
-                        </div>
+                            <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
+                            <button class="btn btn-icon btn-sm btn-orange-light btn-wave waves-effect waves-light" ngbTooltip="Set Alerts" (click)="gotoConfigureEmailAlerts(dashboard.dashboard_id)"><i class="fa fa-bell" ></i></button>
+
+                          </div>
                   </div>
                     </div>
           </div>

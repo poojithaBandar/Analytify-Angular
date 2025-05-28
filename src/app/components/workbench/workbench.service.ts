@@ -1066,6 +1066,12 @@ deleteUser(id:any){
       return this.http.get<any>(`${environment.apiUrl}/dags_list/`+this.accessToken+`?page=${page}&page_size=${pageSize}`+(search ? `&search=${search}` : ``));
     }
 
+    deleteDataFlow(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/dag_delete/`+this.accessToken+'/'+id);
+    }
+
     runEtl(dagId : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -1089,4 +1095,19 @@ deleteUser(id:any){
       return this.http.get<any>(`${environment.apiUrl}/etl_source_objects/`+this.accessToken);
     }
 
+    getMailAletsDashboardData(id:any){
+       const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/mail_alerts/`+this.accessToken+'/'+id+'/');
+    }
+    updateEmailAlerts(obj:any){
+       const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/mail_alerts/`+ this.accessToken,obj);
+    }
+    saveEmailAlerts(obj:any){
+       const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/mail_alerts/`+ this.accessToken,obj);
+    }
 }
