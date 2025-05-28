@@ -3741,6 +3741,7 @@ trackByFn(index: number, item: any): number {
       this.next = this.next === 0 ? 3 : this.next;
     }
     const obj={
+      "sheet_id":this.retriveDataSheet_id,
       "filter_id": this.filter_id,
       "hierarchy_id": this.databaseId,
       "queryset_id": this.qrySetId,
