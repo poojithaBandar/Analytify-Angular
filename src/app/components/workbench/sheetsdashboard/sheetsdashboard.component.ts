@@ -6732,6 +6732,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         columnNames.push(col[0]);
         dataTypes.push(col[1]);
       });
+      }
        object = {
         drill_id: this.actionId,
         dashboard_id: this.dashboardId,
@@ -6739,7 +6740,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         column_data: selectedXValue,
         datatype: dataTypes,
       }
-    }
+    
   }
     if(callDrillAPI){
     

@@ -2154,7 +2154,7 @@
                                 (cdkDropListDropped)="rowdrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1  example-box1-bg cursor-pointer" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
+                                    <div class="example-box1  example-box1-bg cursor-pointer" [ngbTooltip]="rows.alias ? rows.column : null"  (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.alias){
                                             {{ rows.alias }}
                                         } @else if(rows.field_name){

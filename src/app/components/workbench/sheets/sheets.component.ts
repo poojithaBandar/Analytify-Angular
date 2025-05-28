@@ -1,5 +1,5 @@
 import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit } from '@angular/core';
-import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModal, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -103,7 +103,7 @@ declare var $:any;
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent,NgbTooltipModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
