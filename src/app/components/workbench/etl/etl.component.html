@@ -2,7 +2,7 @@
     <div class="row ">
         <div class="col-md-12 mt-4">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header p-1">
                     <div class="d-flex justify-content-between  align-items-center m-2">
                         <div>
                             <h5 class="card-title mb-0">ETL Data Flow</h5>
@@ -11,12 +11,12 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="d-lg-flex d-block">
-                        <div class="col-2 p-1 border-end" [ngStyle]="{ 'display': isOpen ? 'block' : 'none' }">
+                        <div class="col-2 p-1 border-end mt-1" [ngStyle]="{ 'display': isOpen ? 'block' : 'none' }">
                             <div class="card mb-0 connections-layer-h">
                                 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav flex-column nav-pills" id="vertical-tab" role="tablist" aria-orientation="vertical">
                                     <li [ngbNavItem]="1">
                                         <!-- <a ngbNavLink class="p-3 TabShadow">Data Flow</a> -->
-                                        <div ngbAccordion [closeOthers]="true" class="accordion border-0" id="accordionExample">
+                                        <div ngbAccordion [closeOthers]="true" class="accordion border-0 mb-2" id="accordionExample">
                                             <div ngbAccordionItem [collapsed]="false" class="accordion-item">
                                                 <h2 ngbAccordionHeader class="accordion-header" id="headingOne">
                                                     <button ngbAccordionButton class="accordion-button py-3 px-3" type="button" data-bs-toggle="collapse"
@@ -28,8 +28,8 @@
                                                     data-bs-parent="#accordionExample">
                                                     <div class="accordion-body p-0" ngbAccordionBody>
                                                         <ng-template>
-                                                            <div class="data-cdk-tables px-3 mt-2">
-                                                                <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'source_data_object', connectionList)" data-node="Source Data Object">
+                                                            <div class="data-cdk-tables p-0">
+                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'source_data_object', connectionList)" data-node="Source Data Object">
                                                                     <img src="./assets/images/etl/dataobject-etl.svg" alt="Source Data Object" class="drawflow-image"><span> Source Data Object</span>
                                                                 </div>
                                                                 <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'target_data_object', connectionList)" data-node="data object">
@@ -41,7 +41,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div ngbAccordion [closeOthers]="true" class="accordion border-0" id="accordionExample">
+                                        <div ngbAccordion [closeOthers]="true" class="accordion border-0 mb-2" id="accordionExample">
                                             <div ngbAccordionItem [collapsed]="true" class="accordion-item">
                                                 <h2 ngbAccordionHeader class="accordion-header" id="headingOne">
                                                     <button ngbAccordionButton class="accordion-button py-3 px-3" type="button" data-bs-toggle="collapse"
@@ -53,14 +53,14 @@
                                                     data-bs-parent="#accordionExample">
                                                     <div class="accordion-body p-0" ngbAccordionBody>
                                                         <ng-template>
-                                                            <div class="data-cdk-tables px-3 mt-2">
-                                                                <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'Expression', null)" data-node="Expression">
+                                                            <div class="data-cdk-tables p-0">
+                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'Expression', null)" data-node="Expression">
                                                                     <img src="./assets/images/etl/expression-etl.svg" alt="Expression" class="drawflow-image"><span> Expression</span>
                                                                 </div>
-                                                                <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'Joiner', null)" data-node="Joiner">
+                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'Joiner', null)" data-node="Joiner">
                                                                     <img src="./assets/images/etl/mjoiner-etl.svg" alt="Joiner" class="drawflow-image"><span> Joiner</span>
                                                                 </div>
-                                                                <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'Rollup', null)" data-node="Rollup">
+                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'Rollup', null)" data-node="Rollup">
                                                                     <img src="./assets/images/etl/rollup-etl.svg" alt="Rollup" class="drawflow-image"><span> Rollup</span>
                                                                 </div>
                                                                 <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'Filter', null)" data-node="Filter">
@@ -93,7 +93,7 @@
                             </div>
                            
                         </div>
-                        <div class="col-10 py-0">
+                        <div class="col-10 p-1 mt-1">
                             <!-- <div type="button" class="card mb-0 hide-show-btn btn-primary" (click)="isOpen = !isOpen">
                                 <i *ngIf="isOpen" class="fa fa-angle-left fs-18"></i>
                                 <i *ngIf="!isOpen" class="fa fa-angle-right fs-18"></i>
@@ -107,11 +107,11 @@
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" [disabled]="!isRefrshEnable" (click)="getDataFlowStatus(runId)">Refresh</button> -->
                             </div>
                             <div class="container-vertical">
-                                <div class="top-pane" [ngbNavOutlet]="nav"></div>
+                                <div class="top-pane border" [ngbNavOutlet]="nav"></div>
                                 <div *ngIf="isNodeSelected" class="card mb-0 border customsql-result-preview-h mt-3 resizable-bottom" [ngClass]="isCollapsed ? 'table-collapse':''" resizableTop>
                                     <div class="resize-handle"></div>
-                                    <div class="card-body p-0 border rounded-3 tab-menu-heading tab-menu-heading-boxed">
-                                        <div class="card-header bg-light d-flex align-items-center justify-content-between tabs-menu-boxed">
+                                    <div class="card-body p-0 rounded-3 tab-menu-heading tab-menu-heading-boxed">
+                                        <div class="card-header  d-flex align-items-center justify-content-between tabs-menu-boxed border-bottom p-1 mb-1 mt-1">
                                             <ul ngbNav #tableTypes="ngbNav" [(activeId)]="tableTypeTabId" class="nav panel-tabs fs-14 pb-1">
                                                 <li [ngbNavItem]="1"> 
                                                     <a ngbNavLink class="p-3 TabShadow"> {{isCanvasSelected ? etlName : selectedNode.data.nodeData.general.name}} </a>
@@ -836,7 +836,7 @@
                                                 </button>
                                             </div> -->
                                         </div>
-                                        <div class="d-flex">
+                                        <div class="d-flex p-1">
                                             <div class="tab-content tab-content-width" id="vertical-tabContent">
                                                 <div [ngbNavOutlet]="tableTypes"></div>
                                             </div>
@@ -845,7 +845,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                 </div>
                 <div class="card-footer p-3">
                     
