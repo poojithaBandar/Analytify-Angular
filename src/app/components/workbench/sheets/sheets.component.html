@@ -418,18 +418,18 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'regexp_extract'){
                                                                                 <span > <p class="fw-600 mb-0">REGEXP_EXTRACT(STRING, PATTERN) :<br> </p> Returns a substring of a given string that matches the capturing group within the regular expression pattern and requires exactly one capturing group.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REGEXP_EXTRACT('xyz 2134', '[a-z]+\s+(\d+)')</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REGEXP_EXTRACT(STRING, PATTERN)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> REGEXP_EXTRACT('xyz 2134', '[a-z]+\s+(\d+)') =2134</span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'regexp_matches'){
                                                                                 <span > <p class="fw-600 mb-0">REGEX_MATCHES(STRING, PATTERN):<br> </p> Returns true if a substring of the provided string matches the regular expression pattern.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p>  </span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p>REGEX_MATCHES(STRING, PATTERN)  </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p><pre>{{ 'REGEXP_MATCH("(123) 456-7890", "^\\d{3}-\\d{3}-\\d{4}$")' }}</pre></span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'regexp_replace'){
                                                                                 <span > <p class="fw-600 mb-0">REGEX_REPLACE(STRING, PATTERN,REPLACE) :<br> </p> Returns a copy of the given string where the matching pattern is substituted with the replacement string.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REGEXP_REPLACE(xyz 23456', '\S' ,'-')</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p>REGEX_REPLACE(STRING, PATTERN,REPLACE) </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>REGEXP_REPLACE("Product_A", "Product_", "Item_") </span>
                                                                             }
 
 
@@ -462,7 +462,7 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'day'){
                                                                                 <span > <p class="fw-600 mb-0">DAY :<br> </p>Extracts the day of the month from a date.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DAY("tablename"."column_name" ) =Start date of the year.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DAY("tablename"."column_name" ) =Extracts the day of the month from a date.</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p> day("2023-04-01") = 1</span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'datemax'){
@@ -487,12 +487,12 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'week'){
                                                                                 <span > <p class="fw-600 mb-0">WEEK :<br> </p>Extracts the week number (1-52/53) from a date.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> WEEK("tablename"."column_name") : highest date will be the output from the records.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> WEEK("tablename"."column_name") : Extracts the week number (1-52/53) from a date.</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  WEEK("2023-04-01") = 13 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'year'){
                                                                                 <span > <p class="fw-600 mb-0">YEAR :<br> </p>Extracts the year from a date.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> YEAR("tablename"."column_name") : highest date will be the output from the records.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> YEAR("tablename"."column_name") :Extracts the year from a date.</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  year("2023-04-01") = 2023 </span>
                                                                             }
 
