@@ -4788,9 +4788,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 // } else if (!switchDb &&) {
 // }
 
-if( isLiveReloadData && isLastIndex){
-  this.updateDashboard(isLiveReloadData, false);
-}
+// Dashboard update will be triggered after all sheets finish processing
 }
 
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
@@ -7342,33 +7340,22 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     if (item.chart_id === 1) {
       this.tablePage = 1;
       try {
-        await this.pageChangeTableDisplay(item, 1, true, isLastIndex, value);
+        await this.pageChangeTableDisplay(item, 1, true, false, value);
       } catch (err) {
         console.error('Error during pagination:', err);
       }
     } else {
-      this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, this.dashboard, value);
+      this.setDashboardSheetData(item, true, true, false, false, '', true, false, this.dashboard, value);
 
       if (this.displayTabs) {
         this.sheetTabs.forEach(tabData => {
-          const isLastInThisTab = this.isLastSheetInData(item.sheet_id, tabData.dashboard, data);
-          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastInThisTab, tabData.dashboard, value);
+          this.setDashboardSheetData(item, true, true, false, false, '', true, false, tabData.dashboard, value);
         });
       }
     }
   }
+  this.updateDashboard(true, false);
 }
-
-    isLastSheetInData(sheetId: number, dashboard: any[], apiData: any[]): boolean {
-      if (!dashboard || dashboard.length === 0) return false;
-    
-      const dashboardSheetIds = dashboard.map(d => d.sheet_id);
-      const matchingData = apiData.filter(d => dashboardSheetIds.includes(d.sheet_id));
-      
-      if (matchingData.length === 0) return false;
-    
-      return matchingData[matchingData.length - 1].sheet_id === sheetId;
-    }
 
     refreshDashboard(value:any){
       let object ={
