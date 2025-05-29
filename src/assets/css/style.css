@@ -27805,14 +27805,14 @@ a.icon:hover {
 .scrollToTop {
   color: #fff;
   position: fixed;
-  inset-block-end: 50px;
-  inset-inline-end: 20px;
+  inset-block-end: 5px;
+  inset-inline-end: 15px;
   z-index: 99;
   display: none;
   text-align: center;
   z-index: 10000;
-  height: 50px;
-  width: 50px;
+  height: 36px;
+  width: 36px;
   background-repeat: no-repeat;
   background-position: center;
   transition: background-color 0.1s linear;
@@ -27822,7 +27822,7 @@ a.icon:hover {
   border-radius: 7px;
 }
 .scrollToTop i {
-  padding: 12px 17px;
+  padding: 5px 8px;
   font-size: 16px;
 }
 .scrollToTop:hover {

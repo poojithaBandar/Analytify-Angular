@@ -63,6 +63,14 @@ import jsPDF from 'jspdf';
 interface TableRow {
   [key: string]: any;
 }
+interface DrillConfig {
+  drill_id: number;
+  dashboard_id: number;
+  action_name: string;
+  source_sheet_id: number;
+  is_kpi: boolean;
+  is_drill: boolean;
+}
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   annotations: ApexAnnotations;
@@ -292,6 +300,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.updateDashbpardBoolen = true;
       this.isEmbedDashboard = true;
       this.active = 2;
+      this.issheetListPaneOpen = false;
      this.dashboardToken = this.route.snapshot.params['dashboardToken'];
      this.clientId = this.route.snapshot.params['clientId'];
      let accessToken = this.route.snapshot.params['token'];
@@ -517,7 +526,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       "dashbaord_id": this.dashboardId,
       }
     }
-    
+    this.loaderService.show();
     this.workbechService.getEmbedDashboardData(obj).subscribe({
       next:(data)=>{
         this.getDashboardFilterredList(false,data);
@@ -3082,6 +3091,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     };
   }
   ngAfterViewInit() {
+    if(this.isEmbedDashboard){
+      this.toggleSidebar();
+    }
     this.dashboard.forEach(item => {
       this.initializeChart(item);
     });
@@ -3716,7 +3728,8 @@ if(this.filterName === ''){
 
 getDashboardFilterredList(onSheetRemove? : boolean,embedFilterData?: any){
   const Obj ={
-    dashboard_id:this.dashboardId
+    dashboard_id:this.dashboardId,
+    is_SDKDashboard: this.isEmbedDashboard
   }
   this.workbechService.getDashboardFilterredList(Obj).subscribe({
     next:(data)=>{
@@ -4343,7 +4356,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             bar["type"]="bar";
                   });
         item1.echartOptions.xAxis.data = _.cloneDeep(categories);
-        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions.series.forEach((row:any, index:any)=>{
+          row.data = _.cloneDeep(this.filteredRowData)[index].data;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4371,7 +4387,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             bar["stack"]="total";
                   });
         item1.echartOptions.yAxis.data = _.cloneDeep(categories);
-        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions.series.forEach((row:any, index:any)=>{
+          row.data = _.cloneDeep(this.filteredRowData)[index].data;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4398,7 +4417,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             bar["stack"]="total";
                   });
         item1.echartOptions.xAxis.data = _.cloneDeep(categories);
-        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions.series.forEach((row:any, index:any)=>{
+          row.data = _.cloneDeep(this.filteredRowData)[index].data;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4450,7 +4472,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
               bar["type"]="bar";
                     });
           item1.echartOptions.yAxis.data = _.cloneDeep(categories);
-          item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+          // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+          item1.echartOptions.series.forEach((row:any, index:any)=>{
+            row.data = _.cloneDeep(this.filteredRowData)[index].data;
+          });
           item1.echartOptions = {
             ...item1.echartOptions,
           };
@@ -4477,7 +4502,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             bar["stack"]="total";
                   });
         item1.echartOptions.xAxis.data = _.cloneDeep(categories);
-        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        // item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions.series.forEach((row:any, index:any)=>{
+          row.data = _.cloneDeep(this.filteredRowData)[index].data;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4524,7 +4552,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           }
         item1.echartOptions.radar.indicator = radarArray;
         item1.echartOptions.legend = legendArray;
-        item1.echartOptions.series[0].data = transformedArray;
+        // item1.echartOptions.series[0].data = transformedArray;
+        item1.echartOptions.series[0].data.forEach((row:any, index:any)=>{
+          row.value = _.cloneDeep(transformedArray)[index].value;
+        });
         item1.echartOptions = {
           ...item1.echartOptions,
         };
@@ -4752,9 +4783,12 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     
   }
 })
-if (switchDb && isLastIndex) {
-  this.updateDashboard(false, false);
-} else if (!switchDb && isLiveReloadData && isLastIndex) {
+// if (switchDb && isLastIndex) {
+//   this.updateDashboard(false, false);
+// } else if (!switchDb &&) {
+// }
+
+if( isLiveReloadData && isLastIndex){
   this.updateDashboard(isLiveReloadData, false);
 }
 }
@@ -5573,6 +5607,15 @@ kpiData?: KpiData;
     this.pageNo = 1;
     this.fetchSheetsList();
   }
+  onPageSizeChange() {
+  // Reset to page 1 if you're on the last page and items may not fit
+  const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  if (this.pageNo > totalPages) {
+    this.pageNo = 1;
+    this.page = 1;
+  }
+  this.fetchSheetsList();
+}
   fetchSheetsList(){
     let obj;
     if( this.searchSheets && this.searchSheets.trim() != '' && this.searchSheets.length > 0){
@@ -6066,43 +6109,65 @@ tableSearchDashboard(item:any,value:any){
   this.tableSearch = value;
   this.pageChangeTableDisplay(item,1,false,false,false);
 }
-pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,isLastIndex:boolean,switchDb:boolean){
-  if(item.tableData){
-  item.tableData.tablePage = page;
-  }
-  const obj={
-    sheet_id:item.sheetId ?? item.sheet_id,
-    id:this.keysArray,
-    input_list:this.dataArray,
-    hierarchy_id: item.databaseId,
-    // file_id: item.fileId,
-    page_no: page,
-    page_count: this.tableItemsPerPage,
-    dashboard_id:this.dashboardId,
-    search:this.tableSearch,
-    is_exclude:this.excludeFilterIdArray
-  }
-  if(obj.search === '' || obj.search === null){
-    delete obj.search;
-  }
-  this.workbechService.paginationTableDashboard(obj).subscribe({
-    next:(data)=>{
-      data.data['chart_id']=1,
-      data.data['sheet_id']=item.sheetId ?? item.sheet_id,
-      data.data['databaseId']=item.databaseId ?? item.databaseId,
-      this.tableItemsPerPage = data.items_per_page;
-      this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,isLastIndex,this.dashboard,switchDb);
-      if (this.displayTabs) {
-        this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard,switchDb);
-        })
-      }
-    },error:(error)=>{
-      console.log(error.error.message);
+pageChangeTableDisplay(
+  item: any,
+  page: any,
+  isLiveReloadData: boolean,
+  isLastIndex: boolean,
+  switchDb: boolean
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (item.tableData) {
+      item.tableData.tablePage = page;
     }
-  })  
+
+    const obj = {
+      sheet_id: item.sheetId ?? item.sheet_id,
+      id: this.keysArray,
+      input_list: this.dataArray,
+      hierarchy_id: item.databaseId,
+      page_no: page,
+      page_count: this.tableItemsPerPage,
+      dashboard_id: this.dashboardId,
+      search: this.tableSearch,
+      is_exclude: this.excludeFilterIdArray
+    };
+
+    if (!obj.search) {
+      delete obj.search;
+    }
+
+    this.workbechService.paginationTableDashboard(obj).subscribe({
+      next: (data) => {
+        data.data['chart_id'] = 1;
+        data.data['sheet_id'] = item.sheetId ?? item.sheet_id;
+        data.data['databaseId'] = item.databaseId ?? item.databaseId;
+
+        this.tableItemsPerPage = data.items_per_page;
+        this.tableTotalItems = data.total_items;
+
+        this.setDashboardSheetData(
+          data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, this.dashboard, switchDb
+        );
+
+        if (this.displayTabs) {
+          this.sheetTabs.forEach((tabData: any) => {
+            this.setDashboardSheetData(
+              data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard, switchDb
+            );
+          });
+        }
+
+        resolve(); // 🟢 Resolve when done
+      },
+      error: (error) => {
+        console.error(error.error.message);
+        reject(error); // 🔴 Reject on error
+      }
+    });
+  });
 }
+
 tableSearchDashboardPublic(item:any,value:any){
   this.tablePageNo=1;
   this.tableSearch = value;
@@ -6359,18 +6424,16 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.targetSheetList = [];
     this.isAllTargetSheetsSelected = false;
     const sourceCategory = Object.keys(this.sourceSheetList);
-    sourceCategory.forEach((category: any) => {
-      this.sourceSheetList[category].forEach((sheet: any) => {
-        if (sheet.sheet_id == this.sourceSheetId) {
-          this.targetSheetList = this.sourceSheetList[category].filter((sheet: any) => sheet.sheet_id != this.sourceSheetId)
-            .map((sheet: any) => ({
-              ...sheet,
-              selected: false,
-            }));
-        }
-      })
-    })
-
+    Object.keys(this.sourceSheetList).forEach((category: any) => {
+      this.targetSheetList.push(
+        ...this.sourceSheetList[category]
+          .filter((sheet: any) => sheet.sheet_id !== this.sourceSheetId && sheet.chart_id !== 25)
+          .map((sheet: any) => ({
+            ...sheet,
+            selected: false,
+          }))
+      );
+    });
     console.log("Target Sheets:", this.targetSheetList);
   }
   
@@ -6623,10 +6686,43 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.actionId = '';
     this.drillThroughDatabaseName = '';
   }
-  setDrillThrough(selectedValue : any, item : any){
+  
+  findDrillConfig(drillId: number, configs: DrillConfig[]): { is_kpi: boolean; is_drill: boolean,drill_id :number } {
+    // Find the drill configuration with the matching drill_id
+    const config = configs.find(c => c.source_sheet_id === drillId);
+
+    // Return the found configuration or the default values
+    return config ? { is_kpi: config.is_kpi, is_drill: config.is_drill , drill_id : config.drill_id} : { is_kpi: false, is_drill: false ,drill_id: 0};
+  }
+  setDrillThrough(selectedValue : any, item : any, isKPIDrill? :boolean){
     let selectedXValue;
     let columnNames : any[] = [];
     let dataTypes: any[] = [];
+    let callDrillAPI : boolean = true;
+    let object;
+    if(isKPIDrill){
+      let data = this.findDrillConfig(item.sheetId,this.drillThroughActionList);
+      if(!data.is_kpi || (data.is_kpi && !data.is_drill)){
+        callDrillAPI = false;
+      } else {
+        this.actionId = data.drill_id;
+      this.sourceSheetId = item.sheetId;
+      object = {
+        drill_id: data.drill_id,
+        dashboard_id: this.dashboardId,
+        is_kpi: data.is_kpi
+      }
+    }
+    } else if(item.chartType =='KPI'){
+      let data = this.findDrillConfig(item.sheetId,this.drillThroughActionList);
+      this.sourceSheetId = item.sheetId;
+      object = {
+        drill_id: data.drill_id,
+        dashboard_id: this.dashboardId,
+        is_kpi: false
+      }
+    }
+    else {
     if(selectedValue == ''){
       selectedXValue = selectedValue.trim() ? selectedValue.split(',').map((item: string) => [item.trim()]) : [];
     }
@@ -6636,18 +6732,18 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         columnNames.push(col[0]);
         dataTypes.push(col[1]);
       });
-    }
-
-    let object = {
-      drill_id: this.actionId,
-      dashboard_id: this.dashboardId,
-      column_name: columnNames,
-      column_data: selectedXValue,
-      datatype: dataTypes
-    }
-    console.log(item);
-    console.log('payload',object);
-
+      }
+       object = {
+        drill_id: this.actionId,
+        dashboard_id: this.dashboardId,
+        column_name: columnNames,
+        column_data: selectedXValue,
+        datatype: dataTypes,
+      }
+    
+  }
+    if(callDrillAPI){
+    
     this.workbechService.getDrillThroughData(object, this.isPublicUrl).subscribe({
       next: (data) => {
         console.log(data);
@@ -6703,6 +6799,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         })
       }
     });
+  }
   }
   actionUpdateOnSheetRemove(sheetId : any){
     let object = {
@@ -7217,53 +7314,51 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     sheetFilters : any[] = [];
     // [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
 
-    refreshDashboardSheetsData(data: any,value : boolean){
-      let isLastIndex = false;
-      data.forEach((item: any,index:any) => {
-      this.filteredRowData = [];
-      this.filteredColumnData = [];
-      this.tablePreviewColumn.push(item.columns);
-      this.tablePreviewRow.push(item.rows);
-      item.columns.forEach((res:any) => {      
-        let obj1={
-          name:res.column,
-          values: res.result
-        }
-        this.filteredColumnData.push(obj1);
-        console.log('filtercolumn',this.filteredColumnData)
+ async refreshDashboardSheetsData(data: any, value: boolean) {
+  for (let index = 0; index < data.length; index++) {
+    const item = data[index];
+    const isLastIndex = index === data.length - 1;
+
+    this.filteredRowData = [];
+    this.filteredColumnData = [];
+
+    this.tablePreviewColumn.push(item.columns);
+    this.tablePreviewRow.push(item.rows);
+
+    item.columns.forEach((res: any) => {
+      this.filteredColumnData.push({
+        name: res.column,
+        values: res.result
       });
-      item.rows.forEach((res:any) => {
-        let obj={
-          name: res.column,
-          data: res.result
-        }
-        this.filteredRowData.push(obj);
-        console.log('filterowData',this.filteredRowData)
+    });
+
+    item.rows.forEach((res: any) => {
+      this.filteredRowData.push({
+        name: res.column,
+        data: res.result
       });
-      if(index == data.length - 1){
-        isLastIndex = true;
-      } else {
-        isLastIndex = false;
+    });
+
+    if (item.chart_id === 1) {
+      this.tablePage = 1;
+      try {
+        await this.pageChangeTableDisplay(item, 1, true, isLastIndex, value);
+      } catch (err) {
+        console.error('Error during pagination:', err);
       }
-      if(item.chart_id === 1){
-        this.pageChangeTableDisplay(item,1,true,isLastIndex,value);
-        this.tablePage=1
-      }else{
-      this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard,value);
-      // if (this.displayTabs) {
-      //   this.sheetTabs.forEach((tabData: any) => {
-      //     this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard,value);
-      //   })
-      // }
+    } else {
+      this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, this.dashboard, value);
+
       if (this.displayTabs) {
         this.sheetTabs.forEach(tabData => {
           const isLastInThisTab = this.isLastSheetInData(item.sheet_id, tabData.dashboard, data);
           this.setDashboardSheetData(item, true, true, false, false, '', true, isLastInThisTab, tabData.dashboard, value);
         });
       }
-      }
-    });
     }
+  }
+}
+
     isLastSheetInData(sheetId: number, dashboard: any[], apiData: any[]): boolean {
       if (!dashboard || dashboard.length === 0) return false;
     

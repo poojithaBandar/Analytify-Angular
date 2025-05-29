@@ -163,10 +163,11 @@
                                                                         <option value="date">Date</option>
                                                                         <option value="logical">Logical</option>
                                                                         <option value="aggregation">Aggregate</option>
+                                                                        <option value="typeconversions">Type Conversions</option>
                                                                         <option value="Custom">Custom</option>
                                                                     </select>
                                                                 </div>
-                                                                <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
+                                                                <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation' || calculatedFieldFunction === 'typeconversions'" class="col-lg-6 col-md-6 p-0">
                                                                     <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
                                                                         (change)="nestedCalculatedFieldFunction()">
                                                                         <option [disabled]="true" value="">select function</option>
@@ -198,10 +199,40 @@
                                                                         <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'string'" value="split">SPLIT</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="concat">CONCAT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="contains">CONTAINS</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="proper">PROPER</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="startswith">STARTSWITH</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="endswith">ENDSWITH</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="regexp_extract">REGEXP_EXTRACT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="regexp_matches">REGEXP_MATCHES</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="regexp_replace">REGEXP_REPLACE</option>
+
                                             
                                                                         <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
+
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datename">DATENAME</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datetrunc">DATETRUNC</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="day">DAY</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datemax">MAX</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datemin">MIN</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="month">MONTH</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="quarter">QUARTER</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="week">WEEK</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="year">YEAR</option>
+
+
+                                                                        <option *ngIf="calculatedFieldFunction === 'typeconversions'" value="date">DATE</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'typeconversions'" value="datetime">DATETIME</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'typeconversions'" value="float">FLOAT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'typeconversions'" value="int">INT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'typeconversions'" value="makedate">MAKEDATE</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'typeconversions'" value="str">STR</option>
+
+
+
                                                                         <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
                                                                         <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
@@ -359,6 +390,49 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> POSITION([string] in "tablename"."column_name")</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p> POSITION('ctr' IN 'electronics') = 4 </span>
                                                                             }
+
+                                                                            @if(nestedCalculatedFieldData == 'concat'){
+                                                                                <span > <p class="fw-600 mb-0">CONCAT(Concatenate strings) :<br> </p> Concatenates First Name and Last Name with a space in between.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CONCAT("tablename"."column_name1",'_',"tablename"."column_name2")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> CONCAT('Test','_',123) = Test_123 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'contains'){
+                                                                                <span > <p class="fw-600 mb-0">CONTAINS (Check if substring exists) :<br> </p> Returns true if the sub string exists.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CONTAINS("tablename"."column_name",substring)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> CONTAINS('electronics', 'tronic') = true </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'proper'){
+                                                                                <span > <p class="fw-600 mb-0">PROPER(Capitalize first letter of each word):<br> </p> Capitalizes first letter of each word.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> PROPER("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> PROPER(TEST) = Test </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'startswith'){
+                                                                                <span > <p class="fw-600 mb-0">STARTSWITH (Checks if substring starts with) :<br> </p> Returns true if the string starts with the substring(BOOLEAN) .</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> STARTSWITH("tablename"."column_name",substring)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> STARTSWITH('electronics','ele') = true </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'endswith'){
+                                                                                <span > <p class="fw-600 mb-0">ENDSWITH(Concatenate strings) :<br> </p> Concatenates First Name and Last Name with a space in between.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ENDSWITH("tablename"."column_name",substring)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> ENDSWITH('electronics','nics') = true</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'regexp_extract'){
+                                                                                <span > <p class="fw-600 mb-0">REGEXP_EXTRACT(STRING, PATTERN) :<br> </p> Returns a substring of a given string that matches the capturing group within the regular expression pattern and requires exactly one capturing group.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REGEXP_EXTRACT(STRING, PATTERN)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> REGEXP_EXTRACT('xyz 2134', '[a-z]+\s+(\d+)') =2134</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'regexp_matches'){
+                                                                                <span > <p class="fw-600 mb-0">REGEX_MATCHES(STRING, PATTERN):<br> </p> Returns true if a substring of the provided string matches the regular expression pattern.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p>REGEX_MATCHES(STRING, PATTERN)  </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p><pre>{{ 'REGEXP_MATCH("(123) 456-7890", "^\\d{3}-\\d{3}-\\d{4}$")' }}</pre></span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'regexp_replace'){
+                                                                                <span > <p class="fw-600 mb-0">REGEX_REPLACE(STRING, PATTERN,REPLACE) :<br> </p> Returns a copy of the given string where the matching pattern is substituted with the replacement string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p>REGEX_REPLACE(STRING, PATTERN,REPLACE) </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>REGEXP_REPLACE("Product_A", "Product_", "Item_") </span>
+                                                                            }
+
+
                                                                             @if(nestedCalculatedFieldData == 'dateadd'){
                                                                                 <span > <p class="fw-600 mb-0">DATEADD (date_field + interval date) :<br> </p> Adds a time interval to a date.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."columnname" + INTERVAL '[int] days' (days/months/years) </span><br><br>
@@ -376,10 +450,92 @@
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  DATE_PART('year', current_timestamp)/DATE_PART('month', current_timestamp)/DATE_PART('date', current_timestamp)
                                                                                 </span>
                                                                             }
+                                                                            @if(nestedCalculatedFieldData == 'datename'){
+                                                                                <span > <p class="fw-600 mb-0">DATENAME :<br> </p> Returns a specific part of a date as a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATENAME('month',"tablename"."column_name" ) </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  DATENAME('month', "08-04-2025") = April </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'datetrunc'){
+                                                                                <span > <p class="fw-600 mb-0">DATETRUNC :<br> </p> Truncates a date to a specified date part (e.g., truncating to the first day of the month).</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATETRUNC('year',"tablename"."column_name" ) =Start date of the year</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> DATETRUNC('year', "2023-03-15") = 01-01-2023 00:00:00</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'day'){
+                                                                                <span > <p class="fw-600 mb-0">DAY :<br> </p>Extracts the day of the month from a date.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DAY("tablename"."column_name" ) =Extracts the day of the month from a date.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> day("2023-04-01") = 1</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'datemax'){
+                                                                                <span > <p class="fw-600 mb-0">MAX :<br> </p>Returns the maximum value from a set of values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> MAX("tablename"."column_name") : highest date will be the output from the records.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  max("2023-04-01","2023-04-05") =  2023-04-05</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'datemin'){
+                                                                                <span > <p class="fw-600 mb-0">MIN :<br> </p>Returns the minimum value from a set of values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> MIN("tablename"."column_name") : least date will be the output from the records.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> min("2023-04-01","2023-04-05") =  2023-04-01</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'month'){
+                                                                                <span > <p class="fw-600 mb-0">MONTH :<br> </p>Extracts the month (1-12) from a date.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> MONTH("tablename"."column_name") : highest date will be the output from the records.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  MONTH("2023-04-01") = 4</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'quarter'){
+                                                                                <span > <p class="fw-600 mb-0">QUARTER :<br> </p>Returns the quarter (1-4) of the year for a given date.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> QUARTER("tablename"."column_name") : highest date will be the output from the records.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  max("2023-04-01","2023-04-05") =  2023-04-05</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'week'){
+                                                                                <span > <p class="fw-600 mb-0">WEEK :<br> </p>Extracts the week number (1-52/53) from a date.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> WEEK("tablename"."column_name") : Extracts the week number (1-52/53) from a date.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  WEEK("2023-04-01") = 13 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'year'){
+                                                                                <span > <p class="fw-600 mb-0">YEAR :<br> </p>Extracts the year from a date.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> YEAR("tablename"."column_name") :Extracts the year from a date.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  year("2023-04-01") = 2023 </span>
+                                                                            }
+
+
+                                                                           
+                                                                            @if(nestedCalculatedFieldData == 'date'){
+                                                                                <span > <p class="fw-600 mb-0">DATE :<br> </p>Converts a string or a number into a date.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATE("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  DATE("2023-04-01") = 01-04-2023 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'datetime'){
+                                                                                <span > <p class="fw-600 mb-0">DATE :<br> </p>Converts a string or a date into a datetime (includes both date and time).</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATETIME("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  DATETIME(‘2023-04-01 10:30:00’)  =01-04-2023 10:30:00 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'float'){
+                                                                                <span > <p class="fw-600 mb-0">DATE :<br> </p>Converts a string or integer into a floating-point number.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> FLOAT("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  FLOAT("123.45") =123.5</span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'int'){
+                                                                                <span > <p class="fw-600 mb-0">INT :<br> </p>Converts a string or a floating-point number to an integer.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> INT("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  INT(123.45) = 123 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'makedate'){
+                                                                                <span > <p class="fw-600 mb-0">MAKEDATE :<br> </p>Creates a date from year, month, and day values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATE("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  MAKEDATE(2023, 4, 1) = 1 April 2023, MAKEDATE([Year],[Month],[Day]) </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'str'){
+                                                                                <span > <p class="fw-600 mb-0">STR :<br> </p>The value (number, date, etc.) to convert into a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> STR("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  STR(123)  =’123’ </span>
+                                                                            }
+
+
+                                                                           
+
                                                                             @if(nestedCalculatedFieldData == 'now'){
-                                                                                <span > <p class="fw-600 mb-0">Current_timestamp :<br> </p> Returns the current date and time.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> now()</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> now() </span>
+                                                                                <span > <p class="fw-600 mb-0">NOW :<br> </p> Returns the current date and time.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> NOW()</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> NOW() </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'today'){
                                                                                 <span > <p class="fw-600 mb-0">Current_date :<br> </p> Returns the current date without the time.</span> <br><br>
@@ -406,7 +562,7 @@
                                                                         <i class="fa fa-angle-left"></i>
                                                                     </div> -->
                                                                 </div>
-                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'Custom') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
+                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'Custom' || calculatedFieldFunction == 'typeconversions') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
                                                                     <i *ngIf="calculationfieldid.hidden" class="fa fa-angle-left cursor-pointer"></i>
                                                                     <i *ngIf="!calculationfieldid.hidden" class="fa fa-angle-right cursor-pointer"></i>
                                                                 </div>
@@ -450,6 +606,8 @@
                             ><i class="fe fe-search "></i></button>
                     </div>
                     <div class="sheet-table-h mt-1">
+                        @defer (when tableColumnsData && tableColumnsData.length > 0) {
+                            @if(tableColumnsData.length > 0) {
                         @for(columns of tableColumnsData; track columns){
                             @if(!columns.calculated_fields){
                             <div  class="menu-item mb-1">
@@ -565,6 +723,18 @@
                                 </div>
                         }
                         }
+                        }@else {
+                        <p fs-16>No Data Found!</p>
+                        }
+                        }@placeholder {
+                            <div class="text-center my-4">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <div>Loading Tables...</div>
+                            </div>
+                        } @error {
+                            <div class="alert alert-danger">Failed to load data.</div>
+                        }
+                   
                       </div>
                       <ng-template #content let-modal>
                         <div class="modal-header">
@@ -1503,7 +1673,7 @@
                                                     </ng-template>
                                                 </li>
                                                 @if(is_sheet_Embed){
-                                                    <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                    <li [ngbNavItem]="7" [class.disabled]="activeTabId !== 7"  (click)="SDKFilterName= '';">
                                                         <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
                                                         <ng-template ngbNavContent>
                                                             <div class="tab-pane active" id="activetabs">
@@ -1651,7 +1821,7 @@
                                                     </li>
                                                 }
                                                 @if(is_sheet_Embed){
-                                                    <li [ngbNavItem]="7">
+                                                    <li [ngbNavItem]="7" [class.disabled]="activeTabId !== 7" >
                                                         <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
                                                         <ng-template ngbNavContent>
                                                             <div class="tab-pane active" id="activetabs">
@@ -1721,7 +1891,7 @@
                     <div class="card-body title-padding">
                         <div class="row align-items-center">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12 maind-flex" >
-                            <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
+                            <div class="col-lg-8 col-md-8 col-sm-8 p-1" >
                                 <div class="title-container border-0 rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
                                     <span class="card mb-0 SearchBarCu" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;height: 33px;"></span>
@@ -1732,7 +1902,7 @@
                                 </div> 
                                 <ckeditor *ngIf="editor" placeholder="Sheet Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName" (ngModelChange)="updateSheetName()"></ckeditor>
                             </div>
-                            <div class="col-lg-3 col-md-3 col-sm-3 p-1 d-flex" >
+                            <div class="col-lg-4 col-md-4 col-sm-4 p-1 d-flex" >
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
                                     <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false"></app-insights-button>
@@ -1984,7 +2154,7 @@
                                 (cdkDropListDropped)="rowdrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1  example-box1-bg cursor-pointer" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
+                                    <div class="example-box1  example-box1-bg cursor-pointer" [ngbTooltip]="rows.alias ? rows.column : null"  (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.alias){
                                             {{ rows.alias }}
                                         } @else if(rows.field_name){
@@ -2332,7 +2502,7 @@
                                         <!-- } -->
                                     </div>
                                 }
-                                @if(isApexCharts && !table && !kpi){
+                                @if(isApexCharts && !table && !kpi && !pivotTable){
               <!-- @if(bar && chartId){ -->
 
                 <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData" 
@@ -2623,8 +2793,9 @@
                                                 </div>
                                                 <div class="card-body p-1">
                                                     @for(dimen of dimetionMeasure;track dimen;let index = $index){
-                                                    <div class="example-box justify-content-between border-bottom cursor-pointer"> 
-                                                       {{dimen.col_name}}
+                                                    <div class="example-box justify-content-between border-bottom cursor-pointer"
+                                                     [ngbTooltip]="dimen.col_name.length > 15 ? dimen.col_name : null"> 
+                                                       {{ dimen.col_name.length > 15 ? (dimen.col_name | slice:0:15) + '...' : dimen.col_name }}
                                                        <div class="filter-icons">
                                                         <a aria-label="anchor" ngbTooltip="Edit" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
                                                             <i class="ri-edit-line"  (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
@@ -3030,6 +3201,29 @@
                                                                                     </div>
                                                                                 </ng-template>
                                                                             </li>
+                                                                            @if(is_sheet_Embed){
+                                                                                <li [ngbNavItem]="7" [class.disabled]="activeTabId !== 7"  (click)="SDKFilterName= '';">
+                                                                                    <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
+                                                                                    <ng-template ngbNavContent>
+                                                                                        <div class="tab-pane active" id="activetabs">
+                                                                                                <div class="form-group p-1 mb-0">
+                                                                                                <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                                                                                </label>
+                                                                                                <input type="text" placeholder="" [(ngModel)]="SDKFilterName" class="form-control border">
+                                                                                                </div>
+                                                                                                <div class="form-group p-1 mb-0">
+                                                                                                <label for="embed" class="form-check-label">Embed SDK</label>
+                                                                                                <div *ngIf="isEmbed" class="toggle toggle-sm on mb-0" (click)="isEmbed = !isEmbed">
+                                                                                                    <span></span>
+                                                                                                </div>
+                                                                                                <div *ngIf="!isEmbed" class="toggle toggle-sm off mb-0" (click)="isEmbed = !isEmbed">
+                                                                                                    <span></span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            </div>
+                                                                                  </ng-template>
+                                                                                </li>
+                                                                            }
                                                                         </ul>
                                                                         <div class="panel-body tabs-menu-body p-1" >
                                                                             <div class="tab-content">
@@ -3152,7 +3346,7 @@
                                                                                 </li>
                                                                             }
                                                                             @if(is_sheet_Embed){
-                                                                                <li [ngbNavItem]="7" (click)="SDKFilterName= '';">
+                                                                                <li [ngbNavItem]="7" [class.disabled]="activeTabId !== 7"  (click)="SDKFilterName= '';">
                                                                                     <a ngbNavLink class="p-3 TabShadow">Embed SDK</a>
                                                                                     <ng-template ngbNavContent>
                                                                                         <div class="tab-pane active" id="activetabs">
@@ -4181,6 +4375,17 @@
                                                                     (ngModelChange)="applyDynamicStylesToPivot()"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
+
+                                                                      <ngx-colors *ngIf="bandingSwitch && table"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="color1"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                     <ngx-colors *ngIf="bandingSwitch && table"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="color2"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
                                                     </div>
                                                     <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
@@ -4341,7 +4546,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((table && bandingSwitch && (draggedColumns?.length !== 0 || draggedRows?.length !==0)) || (((kpi || guage) && draggedRows?.length === 1) || !(calendar || map || table)))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="( ((kpi || guage) && draggedRows?.length === 1) || !(calendar || map || table))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -4518,27 +4723,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
-                                                                    <div class=""> 
-                                                                        <p >Banding color </p>
-                                                                    </div>
-                                                                    <div *ngIf="bandingColorSwitch" class="toggle toggle-sm on mb-0" (click)="bandingColorSwitch = !bandingColorSwitch; resetBandingColor()">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <div *ngIf="!bandingColorSwitch" class="toggle toggle-sm off mb-0" (click)="bandingColorSwitch = !bandingColorSwitch;">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <ngx-colors *ngIf="bandingColorSwitch"
-                                                                    ngx-colors-trigger 
-                                                                    [(ngModel)]="color1"
-                                                                    [format] = "'hex'"
-                                                                     ></ngx-colors>
-                                                                     <ngx-colors *ngIf="bandingColorSwitch"
-                                                                    ngx-colors-trigger 
-                                                                    [(ngModel)]="color2"
-                                                                    [format] = "'hex'"
-                                                                     ></ngx-colors>
-                                                                </div>
+                                                                
                                                                 <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <label for="color">Color</label>
                                                                     <div *ngIf="kpiColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiColorSwitch = !kpiColorSwitch; resetKpiColor()">

@@ -21,6 +21,7 @@ export class SidebarComponent{
   viewDashboard = false;
   viewDataSource = false;
   viewTransformations = false;
+  viewEtl = false;
   @HostListener('window:scroll', [])
   onWindowScroll() {
 
@@ -91,6 +92,7 @@ export class SidebarComponent{
     this.viewDataSource = this.viewTemplateService.viewDtabase();
     this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
     this.viewTransformations = viewTemplateService.viewTransformations();
+    this.viewEtl = viewTemplateService.viewEtl();
   }
   clickAction(item:any){
     console.log('kjrvgug',item)
@@ -133,6 +135,9 @@ export class SidebarComponent{
           return true;
         }
         if (item.title === 'Transformations' && this.viewTransformations) { 
+          return true;
+        }
+        if (item.title === 'ETL' && this.viewEtl) { 
           return true;
         }
       })
