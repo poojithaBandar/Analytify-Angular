@@ -101,7 +101,7 @@
                                     #destinationList="cdkDropList" [cdkDropListData]="draggedtables"
                                     (cdkDropListDropped)="tableCustomJoinError ? '' : drop($event)">
                                     @for(item of draggedtables;track $index){
-                                        <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto">{{item.alias | slice:0:16}}({{item.schema | slice:0:12}})
+                                        <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto" [attr.title]="(item.alias?.length > 12 || item.schema?.length > 12) ? (item.alias + ' (' + item.schema + ')') : null" >{{item.alias | slice:0:16}}({{item.schema | slice:0:12}})
                                         <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
 
                                         <a aria-label="anchor" (click)="onDeleteItem($index,item.alias)" [style.pointer-events]="deleteTablesFromSemanticLayer ? 'auto' : 'none'"
@@ -220,7 +220,7 @@
                                                         </div>
                                                         <div class="col border p-1 text-center">
                                                             <div ngbDropdown class="btn-group dropdown">
-                                                                <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false"
+                                                                <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false" [ngbTooltip]="condition.firstcolumn + condition.operator + condition.secondcolumn "
                                                                     class="dropdown-toggle btn btn-primary-light">{{ condition.operator ?
                                                                     condition.operator : 'Operator' }}</button>
                                                                 <ul ngbDropdownMenu class="dropdown-menu" style="background-color: #ffffff;">

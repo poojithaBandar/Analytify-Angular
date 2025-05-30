@@ -251,7 +251,9 @@ export class SheetsComponent{
   createdBy : any;
   calculatedFieldFunction : string = '';
   nestedCalculatedFieldData : string = '';
-
+  isHorizontalBar:boolean=false;
+  toggleTableSearch:boolean=true;
+  toggleTablePagination:boolean=true;
   radar: boolean = false;
   radarRowData: any = [];
   xlabelAlignment  = 'left';
@@ -868,6 +870,11 @@ try {
         this.tableDisplayPagination(false);
       }
       tableDisplayPaginationSearch(){
+        this.pageNo = 1;
+        this.page = 1;
+        this.tableDisplayPagination(false);
+      }
+      tableDisplayPageLength(){
         this.pageNo = 1;
         this.page = 1;
         this.tableDisplayPagination(false);
@@ -2387,6 +2394,9 @@ sheetSave(){
     pivotColumnTotals : this.pivotColumnTotals,
     bandingOddColor :this.bandingOddColor,
     bandingEvenColor:this.bandingEvenColor,
+    isHorizontalBar:this.isHorizontalBar,
+    toggleTableSearch:this.toggleTableSearch,
+    toggleTablePagination:this.toggleTablePagination
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2770,6 +2780,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.calendar = false;
+          this.itemsPerPage = this.sheetResponce?.results?.items_per_page;
           this.tableDisplayPagination(false);
         }
         if(responce.chart_id == 9){
@@ -4277,7 +4288,10 @@ customizechangeChartPlugin() {
     this.pivotRowTotals = data.pivotRowTotals ?? true,
     this.pivotColumnTotals = data.pivotColumnTotals ?? true,
     this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff' 
-    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa' 
+    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa',
+    this.isHorizontalBar = data.isHorizontalBar ?? false,
+    this.toggleTableSearch = data.toggleTableSearch ?? true,
+    this.toggleTablePagination = data.toggleTablePagination ?? true
   }
 
   resetCustomizations(){
@@ -4373,7 +4387,10 @@ customizechangeChartPlugin() {
     this.pivotColumnTotals = true;
     this.pivotRowTotals = true;
     this.bandingEvenColor= '#ffffff' 
-    this.bandingOddColor= '#f5f7fa' 
+    this.bandingOddColor= '#f5f7fa'
+    this.isHorizontalBar = false,
+    this.toggleTableSearch = true;
+    this.toggleTablePagination = true;
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
     // this.KPIPrefix = '',

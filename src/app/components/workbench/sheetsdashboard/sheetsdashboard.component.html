@@ -1174,7 +1174,7 @@
                   <div *ngIf="item['chartType'] === 'Table'" class="sheet-search">
                     <div class="">
                     </div>
-                    <div class="input-group mt-1 p-1 sheet-table-search">
+                    <div *ngIf="item['customizeOptions']?.toggleTableSearch"  class="input-group mt-1 p-1 sheet-table-search">
                       <input #searchInput type="text" placeholder="Search" aria-describedby="button-addon2"
                         (mousedown)="disableDragging($event)" (mouseup)="enableDragging($event)"
                         (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item,searchInput.value) : tableSearchDashboard(item,searchInput.value)"
@@ -1504,9 +1504,9 @@
                   
                       </tbody>
                   </table>
-                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false,false)"></pagination-controls>
+                  <pagination-controls *ngIf="item['customizeOptions']?.toggleTablePagination" previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false,false)"></pagination-controls>
                   <div class="pagination-count">
-                    <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage" (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false,false)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
+                    <select *ngIf="item['customizeOptions']?.toggleTablePagination && item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage" (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false,false)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
                           <option  value="10"> 10</option>
                           <option  value="50"> 50</option>
                           <option  value="100"> 100</option>
@@ -1623,7 +1623,7 @@
                   <div *ngIf="item['chartType'] === 'Table'" class="sheet-search">
                     <div class="">
                     </div>
-                    <div class="input-group mt-1 p-1 sheet-table-search">
+                    <div *ngIf="item['customizeOptions']?.toggleTableSearch"  class="input-group mt-1 p-1 sheet-table-search">
                       <input #searchInput type="text" placeholder="Search" aria-describedby="button-addon2"
                         (mousedown)="disableDragging($event)" (mouseup)="enableDragging($event)"
                         (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item,searchInput.value) : tableSearchDashboard(item,searchInput.value)"
@@ -1934,11 +1934,11 @@
             
                         </tbody>
                       </table>
-                      <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'"
+                      <pagination-controls *ngIf="item['customizeOptions']?.toggleTablePagination" previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'"
                         (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,false,false)">
                       </pagination-controls>
                       <div class="pagination-count">
-                        <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage"
+                        <select *ngIf="item['customizeOptions']?.toggleTablePagination && item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage"
                           (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,false,false)"
                           (mousedown)="stopDragging($event)" class="form-control cursor form-control-pad">
                           <option value="10"> 10</option>
