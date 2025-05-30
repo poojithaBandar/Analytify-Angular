@@ -1255,7 +1255,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     }
       if(chartId == 1){
         if(sheet?.tableData?.tableItemsPerPage){
-          sheet.tableData.tableItemsPerPage = 10;
+          // sheet.tableData.tableItemsPerPage = 10;
         }
         if(sheet?.tableData?.tablePage){
           sheet.tableData.tablePage = 1;
@@ -2673,7 +2673,7 @@ allowDrop(ev : any): void {
         }
         if (chartId == 1) {
           if (sheet?.tableData?.tableItemsPerPage) {
-            sheet.tableData.tableItemsPerPage = 10;
+            // sheet.tableData.tableItemsPerPage = 10;
           }
           if (sheet?.tableData?.tablePage) {
             sheet.tableData.tablePage = 1;
