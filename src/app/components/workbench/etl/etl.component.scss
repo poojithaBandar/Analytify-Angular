@@ -50,7 +50,7 @@ ul.DropDownWidth.show {width: calc(100% + 66px);}
   overflow: auto;
 }
 .resizable-bottom {
-  min-height: 75px;
+  min-height: 48px;
   height: 349px; /* starting height */
   max-height: 90%; /* or calculate dynamically in TS if needed */
   position: relative;
@@ -120,7 +120,7 @@ textarea { width: 330px; overflow: auto; resize: none; border: 1px solid #d8d8d8
   }
 
   .table-collapse {
-    height: 75px !important;
+    height: 48px !important;
     overflow: hidden !important;
   }
   
@@ -133,13 +133,13 @@ textarea { width: 330px; overflow: auto; resize: none; border: 1px solid #d8d8d8
   
   .top-pane {
     flex-grow: 1;
-    min-height: 75px;
+    min-height: 48px;
     overflow: auto;
   }
   
   .resizable-bottom {
     position: relative;
-    min-height: 75px;
+    min-height: 48px;
     height: 200px;
     flex-shrink: 0;
     overflow: auto;

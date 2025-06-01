@@ -24,7 +24,9 @@ export class EtlListComponent {
   totalItems: any;
   search: string = '';
   dataFlowList: any[] = [];
-  listType: string = 'dataFlow';
+  listType: string = 'Saved Data Flow';
+  jobFlowList: any[] = [];
+  monitorsList: any[] = [];
 
   constructor(private toasterService: ToastrService, private workbechService: WorkbenchService, private loaderService: LoaderService, private router: Router,private route: ActivatedRoute) {
   }
@@ -55,6 +57,24 @@ export class EtlListComponent {
     });
   }
 
+  getJobFlowList() {
+    this.jobFlowList = [
+      {job_flow_name: 'test_23', created_at: '2025-05-15T06:42:53.218831Z', updated_at: '2025-05-20T06:42:53.218831Z'}
+    ];
+    this.pageSize = 10;
+    this.page = 1;
+    this.totalItems = 1;
+  }
+
+  getMonitorList() {
+    this.monitorsList = [
+      {name: 'test_12', schedule: '2025-05-30T06:42:53.218831Z', latest_run: '2025-05-28T06:42:53.218831Z', next_run: '2025-05-29T06:42:53.218831Z'}
+    ];
+    this.pageSize = 10;
+    this.page = 1;
+    this.totalItems = 1;
+  }
+
   deleteDataFlow(dataFlow:any){
     Swal.fire({
       position: "center",
@@ -82,6 +102,10 @@ export class EtlListComponent {
     })
   }
 
+  deleteJobFlow(jobFlow:any){
+
+  }
+
   goToDataFlow(){
     this.router.navigate(['/analytify/etlList/etl']);
   }
@@ -95,6 +119,14 @@ export class EtlListComponent {
     this.router.navigate(['/analytify/etlList/jobFlow']);
   }
 
+  editJobFlow(id:any){
+
+  }
+
+  goToMonitor(){
+    this.router.navigate(['/analytify/etlList/monitor']);
+  }
+
   onPageSizeChange() {
     // Reset to page 1 if you're on the last page and items may not fit
     const totalPages = Math.ceil(this.totalItems / this.pageSize);
@@ -104,10 +136,12 @@ export class EtlListComponent {
     this.getDataFlowList();
   }
   getEtlList(){
-    if(this.listType === 'dataFlow'){
+    if(this.listType === 'Saved Data Flow'){
       this.getDataFlowList();
-    } else{
-      this.getDataFlowList();
+    } else if(this.listType === 'Saved Job Flow'){
+      this.getJobFlowList();
+    } else if(this.listType === 'Monitor List'){
+      this.getMonitorList();
     }
   }
 }

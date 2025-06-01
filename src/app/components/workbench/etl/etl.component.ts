@@ -80,13 +80,14 @@ export class ETLComponent {
   selectedGroupAttributeIndex: number | null = null;
   selectedAttributeIndex: number | null = null;
   isCollapsed = false;
-
-toggleCollapse() {
-  this.isCollapsed = !this.isCollapsed;
-}
+  type: string = '';
+  fileSelectType: string = 'dataSource';
+  sourcePath: string = '';
+  selectedFolder: any = '';
+  Folders: any[] = [{name: 'abc'}, {name: 'def'}, {name: 'ghi'}];
   dataTypes: string[] = [
     // Numeric types
-    'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'serial', 'bigserial', 'money',
+    'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'serial', 'bigserial', 'money', 'double', 'float', 'int',
 
     // Character types
     'char', 'character', 'varchar', 'character varying', 'text',
@@ -296,9 +297,10 @@ toggleCollapse() {
   }
 
 
-  onDragStart(event: DragEvent, nodeType: string, modal: any) {
+  onDragStart(event: DragEvent, nodeType: string, modal: any, sourceOrTargetType:string) {
     this.nodeToAdd = nodeType;
     this.modal = modal;
+    this.type = sourceOrTargetType;
   }
 
   onDragOver(event: DragEvent) {
@@ -343,12 +345,12 @@ toggleCollapse() {
     let outputNodeCount = 1;
 
     if (baseName === 'source_data_object') {
-      if (this.selectedConnection?.server_type === 'POSTGRESQL') {
+      if (this.type === 'postgres') {
         iconPath = './assets/images/etl/PostgreSQL-etl.svg';
         altText = 'PostgreSQL';
-      } else if(this.selectedConnection?.server_type === 'CSV'){
-        iconPath = './assets/images/etl/PostgreSQL-etl.svg';
-        altText = 'CSV';
+      } else if(this.type === 'file'){
+        iconPath = './assets/images/etl/File-etl.svg';
+        altText = 'file';
       }
       data.type = name;
       data.nodeData = { 
@@ -365,9 +367,12 @@ toggleCollapse() {
       outputNodeCount = 1;
     }
     else if (baseName === 'target_data_object') {
-      if (this.selectedConnection?.server_type === 'POSTGRESQL') {
+      if (this.type === 'postgres') {
         iconPath = './assets/images/etl/PostgreSQL-etl.svg';
         altText = 'PostgreSQL';
+      } else if(this.type === 'file'){
+        iconPath = './assets/images/etl/File-etl.svg';
+        altText = 'file';
       }
       data.type = name;
       data.nodeData = { 
@@ -1619,6 +1624,10 @@ toggleCollapse() {
     if(isChanged){
       this.updateNode('');
     }
+  }
+
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
   }
 
   canvasZoomOut(){

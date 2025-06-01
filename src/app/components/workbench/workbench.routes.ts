@@ -411,6 +411,13 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./etl-list/etl-list.component').then((m) => m.EtlListComponent),
       },
+
+      {
+        path: 'etlList/monitor',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl-monitor/etl-monitor.component').then((m) => m.EtlMonitorComponent),
+      },
     ]
   }
  ];

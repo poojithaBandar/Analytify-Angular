@@ -1,0 +1,64 @@
+.table td { font-size: 14px;}
+.table thead th {color: #fff;font-size: 14px;background-color: var(--primary-color);}
+.echart {
+  width: 100%;
+  height: 300px;
+}
+.echart1 {
+    width: 100%;
+    height: 215px;
+}
+
+ #resize-container {
+      display: flex;
+      width: 100%;
+      position: relative;
+    }
+
+    /* 2) Sidebar constraints */
+    #sidebar {
+      border-right: 1px solid #dee2e6;
+      min-width: 200px;
+      max-width: 50%;
+      flex: 0 0 auto;
+      position: relative;
+    }
+
+    /* 3) Divider styling */
+    #divider {
+      width: 5px;
+      cursor: col-resize;
+      background-color: #ccc;
+      align-self: stretch;
+      z-index: 10;
+    }
+
+    /* 4) Main content flex fills remaining space */
+    #main {
+      flex: 1 1 auto;
+    }
+
+    
+    /* Prevent the two resizable columns from wrapping */
+    .row {
+      flex-wrap: nowrap !important;
+    }
+
+    /* Left column minimum width & no shrink */
+    .resizable-left {
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    /* Right column minimum width & no shrink */
+    .resizable-right {
+      min-width: 200px;
+      flex-shrink: 0;
+    }
+
+    /* On extra‑small screens, allow wrap again for responsiveness */
+    @media (max-width: 576px) {
+      .row {
+        flex-wrap: wrap !important;
+      }
+    }
