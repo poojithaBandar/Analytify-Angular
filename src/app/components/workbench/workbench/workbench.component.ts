@@ -56,6 +56,7 @@ export class WorkbenchComponent implements OnInit{
   openMySqlForm = false;
   openConnectWiseForm = false;
   openHaloPSAForm = false;
+  openHubspotForm = false;
   openShopifyForm =false;
   openGoogleAnalyticsForm = false;
   openOracleForm = false;
@@ -111,6 +112,13 @@ export class WorkbenchComponent implements OnInit{
   ninjaRMMScopes = ['monitoring', 'management', 'control'];
   selectedNinjaRMMScopes: string[] = [];
   ninjaRMMScopeError: boolean = false;
+  hubspotClientId!: string;
+  hubspotClientSecret!: string;
+  hubspotScopes: string[] = ['crm.objects.contacts.read'];
+  selectedHubspotScopes: string[] = [];
+  hubspotClientIdError = false;
+  hubspotClientSecretError = false;
+  hubspotScopeError = false;
   openImmybot: boolean = false;
   clientIDImmyBotError: boolean = false;
   clientIdImmybot! : string ;
@@ -218,6 +226,9 @@ export class WorkbenchComponent implements OnInit{
     }
     else if(this.databaseSwitchType === 'NINJA'){
     this.connectNinjaRMM();
+    }
+    else if(this.databaseSwitchType === 'HUBSPOT'){
+    this.connectHubspot();
     }
   }
   routeNewDatabase(){
@@ -532,6 +543,9 @@ export class WorkbenchComponent implements OnInit{
     this.ninjaRMMClientid = '';
     this.ninjaRMMClientSecret = '';
     this.selectedNinjaRMMScopes = [];
+    this.hubspotClientId = '';
+    this.hubspotClientSecret = '';
+    this.selectedHubspotScopes = [];
     
   } 
   googleSheetsData = [] as any;
@@ -956,6 +970,12 @@ export class WorkbenchComponent implements OnInit{
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
     }
+    connectHubspot(){
+      this.openHubspotForm = true;
+      this.databaseconnectionsList = false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
     companyIdError(){
       if(this.companyId){
         this.companyIDError = false;
@@ -1069,6 +1089,19 @@ export class WorkbenchComponent implements OnInit{
       }else{
         this.shopifyNameError = true;
       }
+    }
+
+    hubspotClientIdInput(){
+      this.hubspotClientIdError = !this.hubspotClientId;
+    }
+
+    hubspotClientSecretInput(){
+      this.hubspotClientSecretError = !this.hubspotClientSecret;
+    }
+
+    onHubspotScopeChange(event:any){
+      this.selectedHubspotScopes = event;
+      this.hubspotScopeError = this.selectedHubspotScopes.length <= 0;
     }
     shopifySignIn(){
       const obj={
@@ -1280,6 +1313,26 @@ export class WorkbenchComponent implements OnInit{
           }
         }
       )
+    }
+
+    hubspotSignIn(){
+      const obj = {
+        "client_id": this.hubspotClientId,
+        "client_secret": this.hubspotClientSecret,
+        "redirect_uri": "http://13.57.231.251:50/v1",
+        "display_name": this.displayName,
+        "scopes": this.selectedHubspotScopes
+      }
+      this.workbechService.hubspotConnection(obj).subscribe({next:(data)=>{
+          if(data){
+            localStorage.setItem('hubspotHierarchyId', data.hierarchyId);
+            this.modalService.dismissAll();
+            this.document.location.href = data.authorizationURL;
+          }
+        },
+        error:(error)=>{
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        }});
     }
 
     mySqlSignIn(){
@@ -2106,6 +2159,7 @@ connectGoogleSheets(){
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
   this.openShopifyForm = false;
+  this.openHubspotForm = false;
   this.openGoogleAnalyticsForm = false;
   this.openGoogleAnalyticsForm = false;
   this.postGreServerName = '';
@@ -2126,6 +2180,9 @@ connectGoogleSheets(){
   this.ninjaRMMClientid = '';
   this.ninjaRMMClientSecret = '';
   this.selectedNinjaRMMScopes = [];
+  this.hubspotClientId = '';
+  this.hubspotClientSecret = '';
+  this.selectedHubspotScopes = [];
   }
 
   serverError:boolean = false;
