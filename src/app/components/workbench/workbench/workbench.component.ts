@@ -1389,7 +1389,7 @@ export class WorkbenchComponent implements OnInit{
       const obj = {
         "client_id": this.hubspotClientId,
         "client_secret": this.hubspotClientSecret,
-        "redirect_uri": "http://13.57.231.251:50/v1",
+        "redirect_uri": this.hubspotRedirectURL,
         "display_name": this.displayName,
         "scopes": this.selectedHubspotScopes
       }
