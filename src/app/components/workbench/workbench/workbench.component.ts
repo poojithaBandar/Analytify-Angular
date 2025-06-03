@@ -114,39 +114,12 @@ export class WorkbenchComponent implements OnInit{
   ninjaRMMScopeError: boolean = false;
   hubspotClientId!: string;
   hubspotClientSecret!: string;
-  hubspotScopes: string[] = ["crm.schemas.contacts.read",
-  "crm.objects.deals.read",
-  "crm.objects.custom.read",
-  "crm.objects.courses.read",
-  "crm.schemas.companies.read",
-  "crm.schemas.quotes.read",
-  "crm.objects.owners.read",
-  "crm.objects.marketing_events.read",
-  "conversations.read",
-  "cms.functions.read",
-  "crm.objects.users.read",
-  "settings.users.read",
-  "crm.lists.read",
-  "content",
-  "hubdb",
-  "tickets",
-  "crm.import",
-  "account-info.security.read",
-  "settings.currencies.read",
-  "communication_preferences.read",
-  "crm.objects.companies.read",
-  "crm.objects.contacts.read",
-  "crm.objects.goals.read",
-  "crm.objects.leads.read",
-  "crm.objects.line_items.read",
-  "crm.objects.orders.read",
-  "crm.objects.products.read",
-  "crm.objects.subscriptions.read",
-  "crm.schemas.custom.read",
-  "marketing.campaigns.read"];
+  hubspotRedirectURL!: string;
+  hubspotScopes: string[] = ['crm.objects.contacts.read'];
   selectedHubspotScopes: string[] = [];
   hubspotClientIdError = false;
   hubspotClientSecretError = false;
+  hubspotRedirectURLError = false;
   hubspotScopeError = false;
   openImmybot: boolean = false;
   clientIDImmyBotError: boolean = false;
@@ -1124,9 +1097,13 @@ export class WorkbenchComponent implements OnInit{
       this.hubspotClientIdError = !this.hubspotClientId;
     }
 
-    hubspotClientSecretInput(){
-      this.hubspotClientSecretError = !this.hubspotClientSecret;
-    }
+  hubspotClientSecretInput(){
+    this.hubspotClientSecretError = !this.hubspotClientSecret;
+  }
+
+  hubspotRedirectURLInput(){
+    this.hubspotRedirectURLError = !this.hubspotRedirectURL;
+  }
 
     onHubspotScopeChange(event:any){
       this.selectedHubspotScopes = event;
@@ -2212,6 +2189,8 @@ connectGoogleSheets(){
   this.hubspotClientId = '';
   this.hubspotClientSecret = '';
   this.selectedHubspotScopes = [];
+  this.hubspotRedirectURL = '';
+  this.hubspotRedirectURLError = false;
   }
 
   serverError:boolean = false;
