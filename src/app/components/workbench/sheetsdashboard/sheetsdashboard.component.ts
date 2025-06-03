@@ -4648,7 +4648,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
-        if(isDrillThrough){
+        // if(isDrillThrough){
           item1.chartOptions = {
             ...item1.chartOptions,
             xaxis: {
@@ -4657,11 +4657,11 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             },
             series: this.filteredRowData,
           };
-        }
-        else{
-          item1.chartOptions.xaxis.categories = categories;
-          item1.chartOptions.series = this.filteredRowData;
-        }
+        // }
+        // else{
+          // item1.chartOptions.xaxis.categories = categories;
+          // item1.chartOptions.series = this.filteredRowData;
+        // }
       }
       }
       if(item.chart_id == '26'){//heatmap
