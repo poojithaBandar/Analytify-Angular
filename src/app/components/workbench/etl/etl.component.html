@@ -127,7 +127,10 @@
                                 <button *ngIf="!dataFlowId" type="button" class="btn btn-primary me-1 iconProperties" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">Save</button>
                                 <button *ngIf="dataFlowId" type="button" class="btn btn-primary me-1 iconProperties" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">update</button>
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" (click)="getDataFlowLogs()">Export</button> -->
-                                <button type="button" class="btn btn-primary me-1 iconProperties" [disabled]="!isRunEnable" (click)="runDataFlow()">Run</button>
+                                <span [ngbTooltip]="!isRunEnable ? 'Drag and connect the target data object to nodes to enable' : null" container="body" class="d-inline-block me-1">
+                                    <button type="button" class="btn btn-primary iconProperties" style="height: 100%;" [disabled]="!isRunEnable" (click)="runDataFlow()">Run</button>
+                                </span>
+
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" [disabled]="!isRefrshEnable" (click)="getDataFlowStatus(runId)">Refresh</button> -->
                             </div>
                             <div class="container-vertical">
@@ -151,14 +154,17 @@
                                                                             <div class="tab-pane tab-content-height" id="years" role="tabpanel" aria-labelledby="years-tab" tabindex="0">
                                                                                 <div class="col-xl-12 col-lg-12 col-md-12 row g-0">
                                                                                     <div class="form-group w-100">
-                                                                                        <label for="name" class="fw-bold">Name</label>
+                                                                                        <label for="name" class="fw-bold">Name </label>
+                                                                                        <div *ngIf="nameInput.invalid && nameInput.touched" class="text-danger small">
+                                                                                            Name can only contain letters, numbers, and underscores.
+                                                                                        </div>
                                                                                         <div class="d-flex">
                                                                                             <div class="col-4 p-0">
-                                                                                                <input type="text" id="name" name="name" [(ngModel)]="nodeName"
-                                                                                                    class="form-control shadow-sm" (blur)="updateNode('general')" />
+                                                                                                <input type="text" id="name" name="name" [(ngModel)]="nodeName"  pattern="^[a-zA-Z0-9_]+$"
+                                                                                                    class="form-control shadow-sm" #nameInput="ngModel" (blur)="updateNode('general', nameInput)" />
                                                                                             </div>
                                                                                             <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width"
-                                                                                                (click)="updateNode('general')"><i class="fa fa-chevron-right text-light fs-5"></i></span>
+                                                                                                (click)="updateNode('general', nameInput)"><i class="fa fa-chevron-right text-light fs-5"></i></span>
                                                                                         </div>
                                                                                     </div>
                                                                                     <!-- <div class="form-group w-100">
@@ -174,7 +180,7 @@
                                                                             </div>
                                                                         </ng-template>
                                                                     </li>
-                                                                    <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type) && !selectedNode.data.nodeData.properties.create"
+                                                                    <li *ngIf="!['Expression','source_data_object'].includes(selectedNode.data.type)"
                                                                         [ngbNavItem]="2" className="nav-link text-start" id="properties-tab"><a ngbNavLink>Properties</a>
                                                                         <ng-template ngbNavContent>
                                                                             <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
@@ -201,7 +207,7 @@
                                                                                     </div>
                                                                                     <div *ngIf="selectedNode.data.type === 'Joiner'">
                                                                                         <label class="label-font-weight" for="primaryObject">Primary Object</label><br>
-                                                                                        <ng-select class="ng-select-width" [items]="selectedNode.data.nodeData.properties.nodeNamesDropdown"
+                                                                                        <ng-select class="ng-select-width" style="z-index: 9999;" [items]="selectedNode.data.nodeData.properties.nodeNamesDropdown"
                                                                                             (change)="updateNode('properties')" placeholder="Select a primary Object" [searchable]="true"
                                                                                             [(ngModel)]="selectedNode.data.nodeData.properties.primaryObject" [dropdownPosition]="'bottom'">
                                                                                         </ng-select>
@@ -308,7 +314,7 @@
                                                                                         </table>
                                                                                     </div>
                                                                                     <div *ngIf="selectedNode.data.type === 'target_data_object'">
-                                                                                        <div *ngIf="!selectedNode.data.nodeData.properties.create">
+                                                                                        <div>
                                                                                             <input type="checkbox" id="truncate" name="truncate"
                                                                                                 [(ngModel)]="selectedNode.data.nodeData.properties.truncate"
                                                                                                 (change)="updateNode('properties')" />
@@ -655,7 +661,7 @@
                                                                                                     <td>
                                                                                                         <ng-select [items]="selectedNode.data.nodeData.columnsDropdown" bindLabel="label"
                                                                                                             groupBy="group"
-                                                                                                            (change)="updateNode(''); mapper.selectedDataType = mapper.selectedColumn.dataType"
+                                                                                                            (change)="mapper.selectedDataType = mapper.selectedColumn.dataType; updateNode('');"
                                                                                                             placeholder="Select a Column" [searchable]="true"
                                                                                                             [(ngModel)]="mapper.selectedColumn" [dropdownPosition]="'bottom'">
                                                                                                         </ng-select>

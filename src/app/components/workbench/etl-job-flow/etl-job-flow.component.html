@@ -28,7 +28,7 @@
                                                     <div class="accordion-body p-0" ngbAccordionBody>
                                                         <ng-template>
                                                             <div class="data-cdk-tables p-0">
-                                                                <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'dataFlow', connectionList)" data-node="postgresSQL">
+                                                                <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'dataFlow', dataFlowList)" data-node="postgresSQL">
                                                                     <img src="./assets/images/etl/PostgreSQL-etl.svg" alt="postgresSQL" class="drawflow-image"><span> postgresSQL</span>
                                                                 </div>
                                                             </div>
@@ -53,7 +53,7 @@
                                                                 <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'taskCommand', null)" data-node="Task Command">
                                                                     <img src="./assets/images/etl/task_command-etl.svg" alt="Task Command" class="drawflow-image"><span> Task Command</span>
                                                                 </div>
-                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'dbCommand', null)" data-node="DB Command">
+                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="isDataPointChange = false; onDragStart($event, 'dbCommand', dataPointList)" data-node="DB Command">
                                                                     <img src="./assets/images/etl/db_command-etl.svg" alt="DB Command" class="drawflow-image"><span> DB Command</span>
                                                                 </div>
                                                                 <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'loop', null)" data-node="Loop">
@@ -262,7 +262,7 @@
                                                                                         <select class="form-select" style="width: 40%;" [(ngModel)]="selectedNode.data.nodeData.command.commandType" (change)="updateNode('')">
                                                                                             <option value="external">External</option>
                                                                                             <option value="fileWatcher">File Watcher</option>
-                                                                                            <option value="jsonFileSpilt">JSON File Split</option>
+                                                                                            <!-- <option value="jsonFileSpilt">JSON File Split</option> -->
                                                                                         </select><br>
 
                                                                                         <label for="command" class="label-font-weight"> Command </label><br>
@@ -272,13 +272,32 @@
                                                                                                 <i class="fa fa-chevron-right text-light icon-font-size"></i>
                                                                                             </span>
                                                                                         </div>
+
+                                                                                        <label for="timeOut" class="fw-bold">Time Out</label>
+                                                                                        <div class="d-flex">
+                                                                                            <div class="col-4 p-0">
+                                                                                                <input type="number" id="timeOut" name="timeOut" [(ngModel)]="selectedNode.data.nodeData.command.timeOut"
+                                                                                                    class="form-control shadow-sm" (blur)="updateNode('')" />
+                                                                                            </div>
+                                                                                            <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width"
+                                                                                                (click)="updateNode('')"><i class="fa fa-chevron-right text-light fs-5"></i></span>
+                                                                                        </div><br>
+                                                                                        <label for="sleepInterval" class="fw-bold">Sleep Interval</label>
+                                                                                        <div class="d-flex">
+                                                                                            <div class="col-4 p-0">
+                                                                                                <input type="number" id="sleepInterval" name="sleepInterval" [(ngModel)]="selectedNode.data.nodeData.command.sleepInterval"
+                                                                                                    class="form-control shadow-sm" (blur)="updateNode('')" />
+                                                                                            </div>
+                                                                                            <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width"
+                                                                                                (click)="updateNode('')"><i class="fa fa-chevron-right text-light fs-5"></i></span>
+                                                                                        </div><br>
                                                                                     </div>
                                                                                     <div *ngIf="selectedNode.data.type === 'dbCommand'">
-                                                                                        <input type="checkbox" id="runDBCommand" name="runDBCommand" [(ngModel)]="selectedNode.data.nodeData.command.runDBCommandFile" (change)="updateNode('')">
-                                                                                        <label for="runDBCommand"> Run DB Command From File</label><br>
+                                                                                        <!-- <input type="checkbox" id="runDBCommand" name="runDBCommand" [(ngModel)]="selectedNode.data.nodeData.command.runDBCommandFile" (change)="updateNode('')">
+                                                                                        <label for="runDBCommand"> Run DB Command From File</label><br> -->
 
-                                                                                        <input type="checkbox" id="continueExecution" name="continueExecution" [(ngModel)]="selectedNode.data.nodeData.command.continueExecutionFailure" (change)="updateNode('')">
-                                                                                        <label for="continueExecution"> Continue execution on failure</label><br>
+                                                                                        <!-- <input type="checkbox" id="continueExecution" name="continueExecution" [(ngModel)]="selectedNode.data.nodeData.command.continueExecutionFailure" (change)="updateNode('')">
+                                                                                        <label for="continueExecution"> Continue execution on failure</label><br> -->
 
                                                                                         <label for="dbCommand" class="label-font-weight"> DB Command </label><br>
                                                                                         <div class="d-flex">
@@ -288,11 +307,11 @@
                                                                                             </span>
                                                                                         </div><br>
 
-                                                                                        <label class="label-font-weight"> DB Command Output File </label><br>
+                                                                                        <!-- <label class="label-font-weight"> DB Command Output File </label><br>
                                                                                         <select class="form-select" style="width: 40%;" [(ngModel)]="selectedNode.data.nodeData.command.dbCommandOutputFile" (change)="updateNode('')">
                                                                                             <option value="$$SrcFileDir">$$SrcFileDir</option>
                                                                                             <option value="$$TgtFileDir">$$TgtFileDir</option>
-                                                                                        </select><br>
+                                                                                        </select><br> -->
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -303,8 +322,8 @@
                                                                             <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                                 <div class="col-xl-12 col-lg-12 col-md-12">
                                                                                     <div>
-                                                                                        <label> Data Point: {{selectedNode.data.nodeData.dataPoints.dataPoint}} </label><br>
-                                                                                        <label> Data Point Schema: {{selectedNode.data.nodeData.dataPoints.dataPointSchema}} </label>
+                                                                                        <label> Data Point: {{selectedNode.data.nodeData.dataPoints.dataPoint}} <a class="link-primary text-decoration-underline" (click)="isDataPointChange = true; changeDataPointPopup(dataPointList)">( change )</a> </label><br>
+                                                                                        <!-- <label> Data Point Schema: {{selectedNode.data.nodeData.dataPoints.dataPointSchema}} </label> -->
                                                                                     </div>
                                                                                 </div> 
                                                                             </div>
@@ -552,7 +571,7 @@
     </div>
 </div>
 
-<ng-template #connectionList let-modal>
+<ng-template #dataFlowList let-modal>
     <div class="modal-header">
         <h6 class="modal-title">Data Flow Instace</h6>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -653,6 +672,31 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel'); isParameter = false; isSQLParameter = false; isJoinerCondition = false; isHaving = false; isWhere = false; isFilter = false;">Cancel</button>
         <button type="button" class="btn btn-primary" (click)="updateExpressionToNode(); modal.dismiss('Save click'); isParameter = false; isSQLParameter = false;">OK</button>
+    </div>
+</ng-template>
+
+<ng-template #dataPointList let-modal>
+    <div class="modal-header">
+        <h6 class="modal-title">Create DBCommand</h6>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="panel panel-primary">
+            <div class="tables-modal">
+                    <label for="dataPoint">Select DataPoint <span class="text-danger">*</span></label>
+                    <ng-select [items]="dataPointOptions" bindLabel="display_name" placeholder="Select a connection"
+                        [searchable]="true" [(ngModel)]="selectedDataPoint" name="dataPoint" id="dataPoint">
+                    </ng-select><br>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="text-right">
+            <button type="button" class="btn ripple btn-secondary me-2"
+                (click)="modal.close('Cross click'); selectedDataPoint = null;">Cancel</button>
+            <button type="button" [disabled]="!selectedDataPoint" class="btn ripple btn-primary" (click)="isDataPointChange ? updateDataPointToNode() : addNode(nodeToAdd, posX, posY); modal.dismiss('Save click')">Ok</button>
+        </div>
     </div>
 </ng-template>
   

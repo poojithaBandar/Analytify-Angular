@@ -239,7 +239,29 @@ export class ETLComponent {
             this.drawflow.updateNodeDataFromId(targetNode.id, targetNode.data);
           }
         }
-        this.getDropdownColumnsData(this.drawflow.getNodeFromId(input_id));
+        this.selectedNode = this.drawflow.getNodeFromId(input_id);
+        if (this.selectedNode.data.type === 'target_data_object' && !this.selectedNode.data.nodeData.properties.create) {
+          const mapper = this.selectedNode.data.nodeData.attributeMapper
+          if (mapper.length > 0) {
+            mapper.forEach((attr: any) => {
+              attr.selectedColumn = null;
+              attr.selectedDataType = '';
+            });
+          }
+          this.selectedNode.data.nodeData.properties.truncate = false;
+        } else if(this.selectedNode.data.type === 'Expression'){
+          this.selectedNode.data.nodeData.attributes = [];
+        } else if(this.selectedNode.data.type === 'Rollup'){
+          this.selectedNode.data.nodeData.attributes = [];
+          this.selectedNode.data.nodeData.properties.havingClause = '';
+          this.selectedNode.data.nodeData.groupAttributes = [];
+        } else if(this.selectedNode.data.type === 'Joiner'){
+          this.selectedNode.data.nodeData.attributes = [];
+          this.selectedNode.data.nodeData.properties.whereClause = '';
+        } else if(this.selectedNode.data.type === 'filter'){
+          this.selectedNode.data.nodeData.properties.filterCondition = '';
+        }
+        this.getDropdownColumnsData(this.selectedNode);
         if(this.selectedNode.hasOwnProperty('data')){
           const node = this.drawflow.getNodeFromId(this.selectedNode.id);
           this.getSelectedNodeData(node);
@@ -464,7 +486,7 @@ export class ETLComponent {
         attributeMapper: []
       }
     }
-
+    data.nodeData.general.name = data.nodeData.general.name.replace(/ /g, '_');
     let displayName = data.nodeData.general.name;
     if (displayName.length > 8) {
       displayName = displayName.substring(0, 8) + '..';
@@ -501,14 +523,19 @@ export class ETLComponent {
     }
   }
 
-  updateNode(type: any) {
+  updateNode(type: any, nameInput?: any) {
     let data = {};
     let nodeId = '';
     if(type !== 'parameter'){
       nodeId = this.selectedNode.id;
     }
     if (type === 'general') {
-      const general = { name: this.nodeName}
+      let general;
+      if(nameInput && nameInput?.invalid && nameInput?.touched){
+        general = { name: this.selectedNode.data.nodeData.general.name}
+      } else{
+        general = { name: this.nodeName}
+      }
       nodeId = this.selectedNode.id;
       if(['target_data_object'].includes(this.selectedNode.data.type) && this.selectedNode.data.nodeData.properties.create){
         let currentDataObject;
@@ -518,7 +545,7 @@ export class ETLComponent {
         //     tables: this.nodeName
         //   };
         // } else{
-          currentDataObject = this.nodeName;
+          currentDataObject = general.name;
         // }
         data = {
           ...this.selectedNode.data,
@@ -538,17 +565,17 @@ export class ETLComponent {
         };
       }
 
-      let displayName = this.nodeName;
+      let displayName = general.name;
       if (displayName.length > 8) {
         displayName = displayName.substring(0, 8) + '..';
       }
-      this.selectedNode.data.nodeData.general.name = this.nodeName;
+      this.selectedNode.data.nodeData.general.name = general.name;
       const nodeElement = document.querySelector(`#node-${nodeId}`);
       if (nodeElement) {
         const labelElement = nodeElement.querySelector('.node-label') as HTMLElement;
         if (labelElement) {
           labelElement.innerText = displayName;
-          labelElement.setAttribute('title', this.nodeName);
+          labelElement.setAttribute('title', general.name);
         }
       }
     } else if (type === 'properties') {
@@ -634,79 +661,197 @@ export class ETLComponent {
       });
     }
   }
-  saveOrUpdateEtlDataFlow() {
+  // saveOrUpdateEtlDataFlow() {
+  //   const exportedData = this.drawflow.export();
+  //   const nodes = exportedData.drawflow.Home.data;
+  //   console.log(exportedData);
+  //   console.log(nodes);
+
+  //   const tasks: any[] = [];
+  //   const flows: string[][] = [];
+
+  //   const result: number[][] = [];
+  //   const queue: number[] = [];
+
+  //   // Step 1: Add all nodes with empty inputs (sources) to queue
+  //   for (const key in nodes) {
+  //     const node = nodes[key];
+  //     if (!node.inputs || Object.keys(node.inputs).length === 0) {
+  //       queue.push(Number(key)); // Use key directly here
+  //     }
+  //   }
+
+  //   const visited = new Set<string>();
+
+  //   // Step 2: Process the queue
+  //   while (queue.length > 0) {
+  //     const current = queue.shift();
+  //     if (current === undefined) continue; // type guard
+
+  //     const node = nodes[current];
+  //     if (!node || !node.outputs) continue;
+
+  //     for (const outputKey in node.outputs) {
+  //       const connections = node.outputs[outputKey]?.connections || [];
+  //       for (const conn of connections) {
+  //         const to = Number(conn.node);
+  //         const key = `${current}-${to}`;
+  //         if (!visited.has(key)) {
+  //           visited.add(key);
+  //           result.push([current, to]);
+  //           flows.push([this.drawflow.getNodeFromId(current).data.nodeData.general.name, this.drawflow.getNodeFromId(to).data.nodeData.general.name]);
+  //           queue.push(to);
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   result.forEach((connection, index) => {
+  //     const [prevNode, currentNode] = connection;
+
+  //     const task = this.generateTasks(prevNode, nodes);
+  //     if (!tasks.some((t: any) => t.id === task.id)) {
+  //       tasks.push(task);
+  //     }
+  //   });
+
+  //   result.forEach((connection, index) => {
+  //     const [prevNode, currentNode] = connection;
+
+  //     const task = this.generateTasks(currentNode, nodes);
+  //     if (!tasks.some((t: any) => t.id === task.id)) {
+  //       tasks.push(task);
+  //     }
+  //   });
+
+  //   console.log(result);
+  //   console.log(flows);
+  //   console.log(tasks);
+
+  //   if(tasks.length > 0){
+  //     this.isRunEnable = tasks.some((task: any) => task.type === 'target_data_object');
+  //   }
+
+  //   const etlFlow = {
+  //     dag_id: this.etlName,
+  //     tasks: tasks,
+  //     flow: flows
+  //   };
+
+  //   console.log(etlFlow);
+
+  //   const jsonString = JSON.stringify(exportedData);
+  //   const blob = new Blob([jsonString], { type: 'application/json' });
+  //   const file = new File([blob], 'etl-drawflow.json', { type: 'application/json' });
+
+  //   const formData = new FormData();
+  //   formData.append('transformation_flow', file);
+  //   formData.append('ETL_flow', JSON.stringify(etlFlow));
+
+  //   if(this.dataFlowId){
+  //     formData.append('id', this.dataFlowId);
+  //     this.workbechService.updateEtl(formData).subscribe({
+  //       next: (data: any) => {
+  //         console.log(data);
+  //         this.isRunEnable = true;
+  //         this.dataFlowId = data.dataflow_id;
+  //         this.toasterService.success(data.message, 'success', { positionClass: 'toast-top-right' });
+  //       },
+  //       error: (error: any) => {
+  //         this.isRunEnable = false;
+  //         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+  //         console.log(error);
+  //       }
+  //     });
+  //   } else{
+  //     this.workbechService.saveEtl(formData).subscribe({
+  //       next: (data: any) => {
+  //         console.log(data);
+  //         this.isRunEnable = true;
+  //         this.dataFlowId = data.dataflow_id;
+  //         this.toasterService.success(data.message, 'success', { positionClass: 'toast-top-right' });
+  //       },
+  //       error: (error: any) => {
+  //         this.isRunEnable = false;
+  //         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+  //         console.log(error);
+  //       }
+  //     });
+  //   }
+  // }
+
+  saveOrUpdateEtlDataFlow(): void {
     const exportedData = this.drawflow.export();
     const nodes = exportedData.drawflow.Home.data;
-    console.log(exportedData);
-    console.log(nodes);
 
     const tasks: any[] = [];
     const flows: string[][] = [];
+    const visitedEdges = new Set<string>();
+    const allTo = new Set<number>();
+    const adjacency = new Map<number, number[]>();
 
-    const result: number[][] = [];
-    const queue: number[] = [];
-
-    // Step 1: Add all nodes with empty inputs (sources) to queue
     for (const key in nodes) {
-      const node = nodes[key];
-      if (!node.inputs || Object.keys(node.inputs).length === 0) {
-        queue.push(Number(key)); // Use key directly here
+      const from = Number(key);
+      const outputs = nodes[key].outputs;
+      if (!outputs) {
+        continue;
       }
-    }
-
-    const visited = new Set<string>();
-
-    // Step 2: Process the queue
-    while (queue.length > 0) {
-      const current = queue.shift();
-      if (current === undefined) continue; // type guard
-
-      const node = nodes[current];
-      if (!node || !node.outputs) continue;
-
-      for (const outputKey in node.outputs) {
-        const connections = node.outputs[outputKey]?.connections || [];
-        for (const conn of connections) {
+      for (const outKey in outputs) {
+        for (const conn of outputs[outKey]?.connections ?? []) {
           const to = Number(conn.node);
-          const key = `${current}-${to}`;
-          if (!visited.has(key)) {
-            visited.add(key);
-            result.push([current, to]);
-            flows.push([this.drawflow.getNodeFromId(current).data.nodeData.general.name, this.drawflow.getNodeFromId(to).data.nodeData.general.name]);
-            queue.push(to);
+          allTo.add(to);
+          if (!adjacency.has(from)) {
+            adjacency.set(from, []);
           }
+          adjacency.get(from)!.push(to);
         }
       }
     }
 
-    result.forEach((connection, index) => {
-      const [prevNode, currentNode] = connection;
+    const sources = Object.keys(nodes)
+      .map(id => Number(id))
+      .filter(id => !allTo.has(id));
 
-      const task = this.generateTasks(prevNode, nodes);
-      if (!tasks.some((t: any) => t.id === task.id)) {
-        tasks.push(task);
+    const queue = [...sources];
+    while (queue.length) {
+      const current = queue.shift()!;
+      const neighbors = adjacency.get(current) || [];
+      for (const target of neighbors) {
+        const edgeKey = `${current}-${target}`;
+        if (visitedEdges.has(edgeKey)) {
+          continue;
+        }
+        visitedEdges.add(edgeKey);
+
+        const sourceName = this.drawflow.getNodeFromId(current).data.nodeData.general.name;
+        const targetName = this.drawflow.getNodeFromId(target).data.nodeData.general.name;
+        flows.push([sourceName, targetName]);
+
+        const taskA = this.generateTasks(current, nodes);
+        if (!tasks.some(t => t.id === taskA.id)) {
+          tasks.push(taskA);
+        }
+        const taskB = this.generateTasks(target, nodes);
+        if (!tasks.some(t => t.id === taskB.id)) {
+          tasks.push(taskB);
+        }
+
+        queue.push(target);
       }
-    });
+    }
 
-    result.forEach((connection, index) => {
-      const [prevNode, currentNode] = connection;
-
-      const task = this.generateTasks(currentNode, nodes);
-      if (!tasks.some((t: any) => t.id === task.id)) {
-        tasks.push(task);
-      }
-    });
-
-    console.log(result);
-    console.log(flows);
     console.log(tasks);
+    console.log(flows);
+
+    if(tasks.length > 0){
+      this.isRunEnable = tasks.some((task: any) => task.type === 'target_data_object');
+    }
 
     const etlFlow = {
       dag_id: this.etlName,
-      tasks: tasks,
+      tasks,
       flow: flows
     };
-
     console.log(etlFlow);
 
     const jsonString = JSON.stringify(exportedData);
@@ -1466,7 +1611,10 @@ export class ETLComponent {
         const drawFlowJson = JSON.parse(data.transformation_flow);
         this.drawflow.import(drawFlowJson);
         console.log(drawFlowJson);
-        this.isRunEnable = true;
+        if (data?.etl_json?.tasks.length > 0) {
+          this.isRunEnable = data?.etl_json?.tasks.some((task: any) => task.type === 'target_data_object');
+        }
+        // this.isRunEnable = true;
         this.canvasData = drawFlowJson.drawflow.Home.canvasData ? drawFlowJson.drawflow.Home.canvasData : {parameters: [], sqlParameters: []};
         console.log(this.canvasData);
         this.isNodeSelected = true;
@@ -1499,8 +1647,22 @@ export class ETLComponent {
   setAttributeAutoMapper(){
     const mapper = this.selectedNode.data.nodeData.attributeMapper
     if(mapper.length > 0){
-      mapper.forEach((attr:any)=>{
-        attr.selectedDataType = attr.dataType;
+      // mapper.forEach((attr:any)=>{
+      //   this.selectedNode.data.nodeData.columnsDropdown
+      //   if(attr.column === attr.selectedColumn){
+      //     attr.selectedDataType = attr.dataType;
+      //   }
+      // });
+
+      mapper.forEach((attr: any) => {
+        const match = this.selectedNode.data.nodeData.columnsDropdown.find((col: any) =>
+          col.label === attr.column // exact case-sensitive match
+        );
+
+        if (match) {
+          attr.selectedColumn = match; // assign the matched column
+          attr.selectedDataType = attr.dataType;
+        }
       });
       this.drawflow.updateNodeDataFromId(this.selectedNode.id, this.selectedNode.data);
     }

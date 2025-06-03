@@ -77,6 +77,9 @@ export class EtlJobFlowComponent {
   selectedGroupAttributeIndex: number | null = null;
   selectedAttributeIndex: number | null = null;
   isCollapsed = false;
+  dataPointOptions: any[] = [];
+  selectedDataPoint: any = null;
+  isDataPointChange: boolean = false;
   returnTypes: string[] = ['varchar', 'char', 'byteint', 'bigint', 'smallint', 'integer', 'numeric', 'boolean', 'date', 'time with time zone',
     'interval', 'time', 'timestamp', 'decimal', 'real', 'double', 'float', 'nvarchar', 'nchar', 'array[string]', 'array[int]', 'param', 'string', 'datetime'
   ];
@@ -306,6 +309,12 @@ export class EtlJobFlowComponent {
         windowClass: 'animate__animated animate__zoomIn',
       });
       this.getDataFlowList();
+    } else if(this.nodeToAdd === 'dbCommand') {
+      this.modalService.open(this.modal, {
+        centered: true,
+        windowClass: 'animate__animated animate__zoomIn',
+      });
+      this.getDataPointList();
     } else {
       this.addNode(this.nodeToAdd, this.posX, this.posY);
     }
@@ -325,10 +334,10 @@ export class EtlJobFlowComponent {
         to: '', cc: '', subject: '', attachment: '', message: ''
       },
       command: {
-        commandType: 'external', commandDesc: '', 
+        commandType: 'external', commandDesc: '', timeOut: -1, sleepInterval: 5,
         runDBCommandFile: false, continueExecutionFailure: false, dbCommand: '', dbCommandOutputFile: '$$SrcFileDir'
       },
-      dataPoints: {dataPoint: 'sample_35', dataPointSchema: 'demo_456'},
+      dataPoints: {dataPoint: this.selectedDataPoint?.display_name ?? '', dataPointSchema: '', selectedDataPoint: this.selectedDataPoint},
       dataFlowParameters: {}
     };
 
@@ -410,6 +419,7 @@ export class EtlJobFlowComponent {
 
     // === unchanged post‑add housekeeping ===
     this.selectedDataFlow = null;
+    this.selectedDataPoint = null;
     const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
     Object.entries(allNodes).forEach(([id, node]) =>
       console.log('Node ID:', id, 'Node Data:', node)
@@ -491,79 +501,88 @@ export class EtlJobFlowComponent {
       }
     });
   }
-  saveOrUpdateEtlDataFlow() {
+
+  getDataPointList(){
+    this.workbechService.getConnectionsForEtl().subscribe({
+      next: (data) => {
+        console.log(data);
+        this.dataPointOptions = data.data;
+      },
+      error: (error: any) => {
+        console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+      }
+    });
+  }
+
+  saveOrUpdateEtlDataFlow(): void {
     const exportedData = this.drawflow.export();
     const nodes = exportedData.drawflow.Home.data;
-    console.log(exportedData);
-    console.log(nodes);
 
     const tasks: any[] = [];
     const flows: string[][] = [];
+    const visitedEdges = new Set<string>();
+    const allTo = new Set<number>();
+    const adjacency = new Map<number, number[]>();
 
-    const result: number[][] = [];
-    const queue: number[] = [];
-
-    // Step 1: Add all nodes with empty inputs (sources) to queue
     for (const key in nodes) {
-      const node = nodes[key];
-      if (!node.inputs || Object.keys(node.inputs).length === 0) {
-        queue.push(Number(key)); // Use key directly here
+      const from = Number(key);
+      const outputs = nodes[key].outputs;
+      if (!outputs) {
+        continue;
       }
-    }
-
-    const visited = new Set<string>();
-
-    // Step 2: Process the queue
-    while (queue.length > 0) {
-      const current = queue.shift();
-      if (current === undefined) continue; // type guard
-
-      const node = nodes[current];
-      if (!node || !node.outputs) continue;
-
-      for (const outputKey in node.outputs) {
-        const connections = node.outputs[outputKey]?.connections || [];
-        for (const conn of connections) {
+      for (const outKey in outputs) {
+        for (const conn of outputs[outKey]?.connections ?? []) {
           const to = Number(conn.node);
-          const key = `${current}-${to}`;
-          if (!visited.has(key)) {
-            visited.add(key);
-            result.push([current, to]);
-            flows.push([this.drawflow.getNodeFromId(current).data.nodeData.general.name, this.drawflow.getNodeFromId(to).data.nodeData.general.name]);
-            queue.push(to);
+          allTo.add(to);
+          if (!adjacency.has(from)) {
+            adjacency.set(from, []);
           }
+          adjacency.get(from)!.push(to);
         }
       }
     }
 
-    result.forEach((connection, index) => {
-      const [prevNode, currentNode] = connection;
+    const sources = Object.keys(nodes)
+      .map(id => Number(id))
+      .filter(id => !allTo.has(id));
 
-      const task = this.generateTasks(prevNode, nodes);
-      if (!tasks.some((t: any) => t.id === task.id)) {
-        tasks.push(task);
+    const queue = [...sources];
+    while (queue.length) {
+      const current = queue.shift()!;
+      const neighbors = adjacency.get(current) || [];
+      for (const target of neighbors) {
+        const edgeKey = `${current}-${target}`;
+        if (visitedEdges.has(edgeKey)) {
+          continue;
+        }
+        visitedEdges.add(edgeKey);
+
+        const sourceName = this.drawflow.getNodeFromId(current).data.nodeData.general.name;
+        const targetName = this.drawflow.getNodeFromId(target).data.nodeData.general.name;
+        flows.push([sourceName, targetName]);
+
+        const taskA = this.generateTasks(current, nodes);
+        if (!tasks.some(t => t.id === taskA.id)) {
+          tasks.push(taskA);
+        }
+        const taskB = this.generateTasks(target, nodes);
+        if (!tasks.some(t => t.id === taskB.id)) {
+          tasks.push(taskB);
+        }
+
+        queue.push(target);
       }
-    });
+    }
 
-    result.forEach((connection, index) => {
-      const [prevNode, currentNode] = connection;
-
-      const task = this.generateTasks(currentNode, nodes);
-      if (!tasks.some((t: any) => t.id === task.id)) {
-        tasks.push(task);
-      }
-    });
-
-    console.log(result);
-    console.log(flows);
     console.log(tasks);
+    console.log(flows);
 
     const etlFlow = {
       dag_id: this.etlName,
-      tasks: tasks,
+      tasks,
       flow: flows
     };
-
     console.log(etlFlow);
 
     const jsonString = JSON.stringify(exportedData);
@@ -573,12 +592,8 @@ export class EtlJobFlowComponent {
     const formData = new FormData();
     formData.append('transformation_flow', file);
     formData.append('ETL_flow', JSON.stringify(etlFlow));
-
-    if (this.dataFlowId) {
-      formData.append('id', this.dataFlowId);
-    } else {
-    }
   }
+
   runDataFlow() {
     this.workbechService.runEtl(this.etlName).subscribe({
       next: (data: any) => {
@@ -692,16 +707,17 @@ export class EtlJobFlowComponent {
     if (nodes[nodeId].data.type === 'taskCommand') {
       task.command_type = nodes[nodeId].data.nodeData.command.commandType;
       task.commands = nodes[nodeId].data.nodeData.command.commandDesc;
-      task.time_out = -1;
-      task.sleep_interval = 5;
+      task.time_out = nodes[nodeId].data.nodeData.command.timeOut;
+      task.sleep_interval = nodes[nodeId].data.nodeData.command.sleepInterval;
     } else if(nodes[nodeId].data.type === 'dbCommand'){
-      
+      task.queries = nodes[nodeId].data.nodeData.command.dbCommand;
+      task.hierarchy_id = nodes[nodeId].data.nodeData.dataPoints.selectedDataPoint.hierarchy_id;
     } else if(nodes[nodeId].data.type === 'loop'){
       
     } else if(nodes[nodeId].data.type === 'emailNotification'){
       
     } else if(nodes[nodeId].data.type === 'dataFlow'){
-      
+      task.trigger_dag = nodes[nodeId].data.nodeData.dataFlow.data_flow_name;
     }
 
 
@@ -1060,5 +1076,20 @@ export class EtlJobFlowComponent {
   }
   canvasZoomIn() {
     this.drawflow.zoom_in();
+  }
+
+  changeDataPointPopup(modal:any){
+    this.modalService.open(this.modal, {
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn',
+    });
+    this.selectedDataPoint = this.selectedNode.data.nodeData.dataPoints.selectedDataPoint
+    this.getDataPointList();
+  }
+
+  updateDataPointToNode(){
+    this.selectedNode.data.nodeData.dataPoints.selectedDataPoint = this.selectedDataPoint;
+    this.selectedNode.data.nodeData.dataPoints.dataPoint = this.selectedDataPoint?.display_name;
+    this.updateNode('');
   }
 }
