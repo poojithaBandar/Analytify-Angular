@@ -19,12 +19,13 @@ export class HubspotComponent implements OnInit {
     if (hierarchyId) {
       let payload = {
         "hierarchy_id":hierarchyId,
-        "redirect_uri": `${environment.apiUrl}` + this.router.url
+        "redirect_uri": window.location.href
       };
       this.authService.hubspotCallBack(payload)
         .subscribe(
           {
             next: (data: any) => {
+              localStorage.removeItem('hubspotHierarchyId');
               const encoded = btoa(hierarchyId.toString());
               this.router.navigate(['/analytify/database-connection/hubspot/' + encoded]);
             },
