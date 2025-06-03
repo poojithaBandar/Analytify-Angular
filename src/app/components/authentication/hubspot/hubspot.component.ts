@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../shared/services/auth.service';
 
 @Component({
@@ -18,7 +19,7 @@ export class HubspotComponent implements OnInit {
     if (hierarchyId) {
       let payload = {
         "hierarchy_id":hierarchyId,
-        "redirect_uri": this.router.url
+        "redirect_uri": `${environment.apiUrl}` + this.router.url
       };
       this.authService.hubspotCallBack(payload)
         .subscribe(
