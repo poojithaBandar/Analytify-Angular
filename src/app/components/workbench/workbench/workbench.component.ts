@@ -1354,9 +1354,9 @@ export class WorkbenchComponent implements OnInit{
       }
       this.workbechService.hubspotConnection(obj).subscribe({next:(data)=>{
           if(data){
-            localStorage.setItem('hubspotHierarchyId', data.hierarchyId);
+            localStorage.setItem('hubspotHierarchyId', data.hierarchy_id);
             this.modalService.dismissAll();
-            this.document.location.href = data.authorizationURL;
+            this.document.location.href = data.authorisation_url;
           }
         },
         error:(error)=>{
