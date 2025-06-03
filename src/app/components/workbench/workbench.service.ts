@@ -870,9 +870,7 @@ deleteUser(id:any){
     }
 
     fetchRefreshedData(id : any){
-      const currentUser = localStorage.getItem( 'currentUser' );
-      this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/data/`+ id + '/' +this.accessToken);
+      return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/data/`+ id+'/');
     }
 
     fetchSchedularData(dashboardId : number){

@@ -418,18 +418,18 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'regexp_extract'){
                                                                                 <span > <p class="fw-600 mb-0">REGEXP_EXTRACT(STRING, PATTERN) :<br> </p> Returns a substring of a given string that matches the capturing group within the regular expression pattern and requires exactly one capturing group.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REGEXP_EXTRACT('xyz 2134', '[a-z]+\s+(\d+)')</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REGEXP_EXTRACT(STRING, PATTERN)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> REGEXP_EXTRACT('xyz 2134', '[a-z]+\s+(\d+)') =2134</span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'regexp_matches'){
                                                                                 <span > <p class="fw-600 mb-0">REGEX_MATCHES(STRING, PATTERN):<br> </p> Returns true if a substring of the provided string matches the regular expression pattern.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p>  </span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p>REGEX_MATCHES(STRING, PATTERN)  </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p><pre>{{ 'REGEXP_MATCH("(123) 456-7890", "^\\d{3}-\\d{3}-\\d{4}$")' }}</pre></span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'regexp_replace'){
                                                                                 <span > <p class="fw-600 mb-0">REGEX_REPLACE(STRING, PATTERN,REPLACE) :<br> </p> Returns a copy of the given string where the matching pattern is substituted with the replacement string.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REGEXP_REPLACE(xyz 23456', '\S' ,'-')</span><br><br>
-                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> </span>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p>REGEX_REPLACE(STRING, PATTERN,REPLACE) </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>REGEXP_REPLACE("Product_A", "Product_", "Item_") </span>
                                                                             }
 
 
@@ -462,7 +462,7 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'day'){
                                                                                 <span > <p class="fw-600 mb-0">DAY :<br> </p>Extracts the day of the month from a date.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DAY("tablename"."column_name" ) =Start date of the year.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DAY("tablename"."column_name" ) =Extracts the day of the month from a date.</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p> day("2023-04-01") = 1</span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'datemax'){
@@ -487,12 +487,12 @@
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'week'){
                                                                                 <span > <p class="fw-600 mb-0">WEEK :<br> </p>Extracts the week number (1-52/53) from a date.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> WEEK("tablename"."column_name") : highest date will be the output from the records.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> WEEK("tablename"."column_name") : Extracts the week number (1-52/53) from a date.</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  WEEK("2023-04-01") = 13 </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'year'){
                                                                                 <span > <p class="fw-600 mb-0">YEAR :<br> </p>Extracts the year from a date.</span> <br><br>
-                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> YEAR("tablename"."column_name") : highest date will be the output from the records.</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> YEAR("tablename"."column_name") :Extracts the year from a date.</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  year("2023-04-01") = 2023 </span>
                                                                             }
 
@@ -752,7 +752,7 @@
                                                     <a ngbNavLink class="p-3 TabShadow">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
-                                                            <div class="d-flex">
+                                                            <div *ngIf="toggleTableSearch" class="d-flex">
                                                                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch"  aria-describedby="button-addon2" >
                                                                 <button class="btn btn-primary border me-2 search-icon-border-radius"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
@@ -2441,7 +2441,7 @@
                 <div class="sheet-search">
                     <div class="">
                     </div>
-                    <div *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 )" class="input-group mt-1 p-1 sheet-table-search">
+                    <div *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 ) && toggleTableSearch" class="input-group mt-1 p-1 sheet-table-search">
                         <input type="text" placeholder="Search" aria-describedby="button-addon2" [(ngModel)]="tableChartSearch" (keyup.enter)="tableDisplayPaginationSearch()" class="form-control border-end-0 ">
                         <button type="button" id="button-addon2" class="btn btn-primary border me-2 search-icon-border-radius" (click)="tableDisplayPaginationSearch()" >
                         <i class="fe fe-search"></i></button>
@@ -2491,7 +2491,7 @@
                                     
                                     </tbody>
                                   </table>
-                                  <pagination-controls *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 )" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
+                                  <pagination-controls *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 ) && toggleTablePagination" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(pivotTable && chartId){
                                     <div id="pivotTableContainer" #pivotTableContainer></div>                                }
@@ -2505,7 +2505,7 @@
                                 @if(isApexCharts && !table && !kpi && !pivotTable){
               <!-- @if(bar && chartId){ -->
 
-                <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData" 
+                <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData" [isHorizontalBar]="isHorizontalBar"
                 [dualAxisRowData]="dualAxisRowData" [tablePreviewRow]="tablePreviewRow" [chartType]="chartType" [xGridSwitch]="xGridSwitch"
                 [xLabelSwitch]="xLabelSwitch" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [xLabelFontFamily]="xLabelFontFamily"
                 [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [backgroundColor]="backgroundColor" [color]="color"
@@ -2528,7 +2528,7 @@
                     <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
                 </div> -->
 
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isHorizontalBar]="isHorizontalBar"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor"
                 [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
                 [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
@@ -4387,6 +4387,17 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                     </div>
+                                                    <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                         <div class=""> 
+                                                            <label class="mb-0">Search </label>
+                                                        </div>
+                                                        <div *ngIf="toggleTableSearch" class="toggle toggle-sm on mb-0" (click)="toggleTableSearch=!toggleTableSearch">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!toggleTableSearch" class="toggle toggle-sm off mb-0" (click)="toggleTableSearch=!toggleTableSearch">
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
                                                     <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Column Totals </label>
@@ -4409,10 +4420,19 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class=" mb-2 p-2 border rounded-2">
-                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
+                                                    <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                             <div class=""> 
+                                                            <label class="mb-0">Table Pagination </label>
+                                                        </div>
+                                                        <div *ngIf="toggleTablePagination" class="toggle toggle-sm on mb-0" (click)="toggleTablePagination=!toggleTablePagination">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!toggleTablePagination" class="toggle toggle-sm off mb-0" (click)="toggleTablePagination=!toggleTablePagination">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="toggleTablePagination" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2">
                                                             <label class="mb-0">Page Length</label>
-                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination(false)" class="form-control cursor w-40 p-1">
+                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPageLength()" class="form-control cursor w-40 p-1">
                                                                 <option  [ngValue]="''" disabled> select page length</option>
                                                                   <option  [ngValue]="10"> 10</option>
                                                                   <option  value="50"> 50</option>
@@ -4421,7 +4441,12 @@
                                                                   <option  value="1000"> 1000</option>
                                                             </select>
                                                          </div>
+                                                         <div *ngIf="!toggleTablePagination" class="w-100 text-muted small mt-1">
+                                                            <i class="bi bi-info-circle-fill me-1"></i>
+                                                            Pagination is turned off. The data shown in the sheet will reflect only the currently visible set, not the entire dataset.
+                                                        </div>
                                                     </div>
+                                                    
                                                     <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Zoom </label>
@@ -5028,7 +5053,17 @@
                                                             <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue"  />
                                                         </div>
                                                     </div>
-                                                    <!-- <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                        <div class=""> 
+                                                            <label class="mb-0">Horizantal </label>
+                                                        </div>
+                                                        <div *ngIf="isHorizontalBar" class="toggle toggle-sm on mb-0" (click)="isHorizontalBar=!isHorizontalBar">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!isHorizontalBar" class="toggle toggle-sm off mb-0" (click)="isHorizontalBar=!isHorizontalBar">
+                                                        <span></span>
+                                                        </div>
+                                                    </div>                                                    <!-- <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="sorting">Sort by: </label>
                                                         <select id="sorting" [(ngModel)]="sortType">
                                                             <option value="0" selected disabled>select</option>
