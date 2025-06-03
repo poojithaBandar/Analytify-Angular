@@ -114,7 +114,36 @@ export class WorkbenchComponent implements OnInit{
   ninjaRMMScopeError: boolean = false;
   hubspotClientId!: string;
   hubspotClientSecret!: string;
-  hubspotScopes: string[] = ['crm.objects.contacts.read'];
+  hubspotScopes: string[] = ["crm.schemas.contacts.read",
+  "crm.objects.deals.read",
+  "crm.objects.custom.read",
+  "crm.objects.courses.read",
+  "crm.schemas.companies.read",
+  "crm.schemas.quotes.read",
+  "crm.objects.owners.read",
+  "crm.objects.marketing_events.read",
+  "conversations.read",
+  "cms.functions.read",
+  "crm.objects.users.read",
+  "settings.users.read",
+  "crm.lists.read",
+  "content",
+  "hubdb",
+  "tickets",
+  "crm.import",
+  "account-info.security.read",
+  "settings.currencies.read",
+  "communication_preferences.read",
+  "crm.objects.companies.read",
+  "crm.objects.contacts.read",
+  "crm.objects.goals.read",
+  "crm.objects.leads.read",
+  "crm.objects.line_items.read",
+  "crm.objects.orders.read",
+  "crm.objects.products.read",
+  "crm.objects.subscriptions.read",
+  "crm.schemas.custom.read",
+  "marketing.campaigns.read"];
   selectedHubspotScopes: string[] = [];
   hubspotClientIdError = false;
   hubspotClientSecretError = false;
