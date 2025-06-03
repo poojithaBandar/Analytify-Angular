@@ -114,10 +114,12 @@ export class WorkbenchComponent implements OnInit{
   ninjaRMMScopeError: boolean = false;
   hubspotClientId!: string;
   hubspotClientSecret!: string;
+  hubspotRedirectURL!: string;
   hubspotScopes: string[] = ['crm.objects.contacts.read'];
   selectedHubspotScopes: string[] = [];
   hubspotClientIdError = false;
   hubspotClientSecretError = false;
+  hubspotRedirectURLError = false;
   hubspotScopeError = false;
   openImmybot: boolean = false;
   clientIDImmyBotError: boolean = false;
@@ -1095,9 +1097,13 @@ export class WorkbenchComponent implements OnInit{
       this.hubspotClientIdError = !this.hubspotClientId;
     }
 
-    hubspotClientSecretInput(){
-      this.hubspotClientSecretError = !this.hubspotClientSecret;
-    }
+  hubspotClientSecretInput(){
+    this.hubspotClientSecretError = !this.hubspotClientSecret;
+  }
+
+  hubspotRedirectURLInput(){
+    this.hubspotRedirectURLError = !this.hubspotRedirectURL;
+  }
 
     onHubspotScopeChange(event:any){
       this.selectedHubspotScopes = event;
@@ -2183,6 +2189,8 @@ connectGoogleSheets(){
   this.hubspotClientId = '';
   this.hubspotClientSecret = '';
   this.selectedHubspotScopes = [];
+  this.hubspotRedirectURL = '';
+  this.hubspotRedirectURLError = false;
   }
 
   serverError:boolean = false;
