@@ -167,7 +167,7 @@ export class SheetsdashboardComponent implements OnDestroy {
  filterName = '';
  dashboardFilterId:any;
  DahboardListFilters = [] as any;
- storeSelectedColData = [] as any
+ storeSelectedColData = {} as any
  colData = [] as any;
  heightGrid : number = 800;
  widthGrid : number = 800;
@@ -6694,53 +6694,82 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     // Return the found configuration or the default values
     return config ? { is_kpi: config.is_kpi, is_drill: config.is_drill , drill_id : config.drill_id} : { is_kpi: false, is_drill: false ,drill_id: 0};
   }
+  getFilterNamesMapping() {
+    const result: { [key: string]: string[] } = {};
+
+    for (const filterId in this.storeSelectedColData.test) {
+      const dashboardFilter = this.DahboardListFilters.find(
+        (filter:any) => filter.dashboard_filter_id === parseInt(filterId, 10)
+      );
+      if (dashboardFilter) {
+        result[dashboardFilter.filter_name] = this.storeSelectedColData.test[filterId];
+      }
+    }
+
+    return result;
+  }
+
   setDrillThrough(selectedValue : any, item : any, isKPIDrill? :boolean){
     let selectedXValue;
     let columnNames : any[] = [];
     let dataTypes: any[] = [];
     let callDrillAPI : boolean = true;
     let object;
+    let filterData = {};
+    if(this.storeSelectedColData && this.storeSelectedColData.test){
+      filterData = this.getFilterNamesMapping();
+    }
     if(isKPIDrill){
       let data = this.findDrillConfig(item.sheetId,this.drillThroughActionList);
       if(!data.is_kpi || (data.is_kpi && !data.is_drill)){
         callDrillAPI = false;
       } else {
         this.actionId = data.drill_id;
-      this.sourceSheetId = item.sheetId;
-      object = {
-        drill_id: data.drill_id,
-        dashboard_id: this.dashboardId,
-        is_kpi: data.is_kpi
+        this.sourceSheetId = item.sheetId;
+          let filterKeys = Object.keys(filterData);
+          let filterValues = Object.values(filterData);
+          object = {
+            drill_id: data.drill_id,
+            dashboard_id: this.dashboardId,
+            is_kpi: data.is_kpi,
+            filter_name: filterKeys,
+            filter_values: filterValues
+          }
       }
-    }
     } else if(item.chartType =='KPI'){
       let data = this.findDrillConfig(item.sheetId,this.drillThroughActionList);
       this.sourceSheetId = item.sheetId;
-      object = {
-        drill_id: data.drill_id,
-        dashboard_id: this.dashboardId,
-        is_kpi: false
-      }
-    }
-    else {
-    if(selectedValue == ''){
+        let filterKeys = Object.keys(filterData);
+        let filterValues = Object.values(filterData);
+        object = {
+          drill_id: data.drill_id,
+          dashboard_id: this.dashboardId,
+          is_kpi: false,
+          filter_name: filterKeys,
+          filter_values: filterValues
+        }
+    } else {
+      if(selectedValue == ''){
       selectedXValue = selectedValue.trim() ? selectedValue.split(',').map((item: string) => [item.trim()]) : [];
-    }
-    else{
+      }
+      else{
       selectedXValue = selectedValue.split(',').map((item : any) => [item]);
       item.column_Data.forEach((col: any) => {
         columnNames.push(col[0]);
         dataTypes.push(col[1]);
       });
       }
-       object = {
-        drill_id: this.actionId,
-        dashboard_id: this.dashboardId,
-        column_name: columnNames,
-        column_data: selectedXValue,
-        datatype: dataTypes,
-      }
-    
+        let filterKeys = Object.keys(filterData);
+        let filterValues = Object.values(filterData);
+        object = {
+          drill_id: this.actionId,
+          dashboard_id: this.dashboardId,
+          column_name: columnNames,
+          column_data: selectedXValue,
+          datatype: dataTypes,
+          filter_name: filterKeys,
+          filter_values: filterValues
+        }    
   }
     if(callDrillAPI){
     
@@ -6799,7 +6828,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         })
       }
     });
-  }
+    }
   }
   actionUpdateOnSheetRemove(sheetId : any){
     let object = {
