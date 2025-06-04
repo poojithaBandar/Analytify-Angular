@@ -89,6 +89,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/shopify_authentication/`+this.accessToken,obj);
   }
+  hubspotConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/hubspot_authentication/`+this.accessToken,obj);
+  }
   connectWiseConnectionUpdate(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -276,6 +281,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/database_delete_stmt/`+this.accessToken,obj);
+  }
+
+  crossDbDeletion(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/crossdb_deletion/`+this.accessToken,obj);
   }
   sheetSave(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -865,9 +876,7 @@ deleteUser(id:any){
     }
 
     fetchRefreshedData(id : any){
-      const currentUser = localStorage.getItem( 'currentUser' );
-      this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/data/`+ id + '/' +this.accessToken);
+      return this.http.get<any>(`${environment.apiUrl}/dashboard/refresh/data/`+ id+'/');
     }
 
     fetchSchedularData(dashboardId : number){
