@@ -16,11 +16,12 @@
                                 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav flex-column nav-pills" id="vertical-tab" role="tablist" aria-orientation="vertical">
                                     <li [ngbNavItem]="1">
                                         <div ngbAccordion [closeOthers]="true" class="accordion border-0 mb-2" id="accordionExample">
-                                            <div ngbAccordionItem [collapsed]="false" class="accordion-item">
+                                            <div ngbAccordionItem #accItemDataFlow="ngbAccordionItem" [collapsed]="false" class="accordion-item">
                                                 <h2 ngbAccordionHeader class="accordion-header" id="headingOne">
                                                     <button ngbAccordionButton class="accordion-button py-3 px-3" type="button" data-bs-toggle="collapse"
                                                         data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                        <img src="./assets/images/etl/dataFlow_Instance-etl.svg" alt="Data Flow Instance" class="drawflow-image me-2">Data Flow Instance
+                                                        <img [src]="accItemDataFlow.collapsed ? './assets/images/etl/dataFlow_Instance-etl.svg' : './assets/images/etl/dataFlow_Instance-etl-1.svg'"
+                                                            alt="Data Flow Instance" class="drawflow-image me-2">Data Flow Instance
                                                     </button>
                                                 </h2>
                                                 <div ngbAccordionCollapse id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
@@ -38,11 +39,12 @@
                                             </div>
                                         </div>
                                         <div ngbAccordion [closeOthers]="true" class="accordion border-0 mb-2" id="accordionExample">
-                                            <div ngbAccordionItem [collapsed]="true" class="accordion-item">
+                                            <div ngbAccordionItem #accItemJobs="ngbAccordionItem" [collapsed]="true" class="accordion-item">
                                                 <h2 ngbAccordionHeader class="accordion-header" id="headingOne">
                                                     <button ngbAccordionButton class="accordion-button py-3 px-3" type="button" data-bs-toggle="collapse"
                                                         data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                        <img src="./assets/images/etl/jobs-etl.svg" alt="Jobs" class="drawflow-image me-2">Jobs
+                                                        <img [src]="accItemJobs.collapsed ? './assets/images/etl/jobs-etl.svg' : './assets/images/etl/jobs-etl-1.svg'"  
+                                                            alt="Jobs" class="drawflow-image me-2">Jobs
                                                     </button>
                                                 </h2>
                                                 <div ngbAccordionCollapse id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
