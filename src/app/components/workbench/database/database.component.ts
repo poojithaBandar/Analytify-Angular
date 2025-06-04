@@ -2027,8 +2027,8 @@ deleteConnectedDb(db:any){
       }
       this.toasterService.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
     },
-    error: () => {
-      this.toasterService.error('Unable to delete database. Please try again.','error',{ positionClass: 'toast-top-right'});
+    error: (data:any) => {
+      this.toasterService.error('Unable to delete database.'+ data?.error?.message,'error',{ positionClass: 'toast-top-right'});
     }
   });
 }
