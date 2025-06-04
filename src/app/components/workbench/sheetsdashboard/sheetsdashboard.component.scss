@@ -314,3 +314,74 @@ p { font-size: 12px;}
 ::ng-deep .pvtTable tr.odd-row td {
   background-color: #f5f7fa; // or your odd row color
 }
+.analyze-dashboard-modal {
+  background: #f9f9fb;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 24px 32px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.analyze-dashboard-modal .modal-header {
+  border-bottom: 1px solid #e5e5e5;
+  background: #f4f6fa;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding-bottom: 12px;
+}
+.analyze-dashboard-modal .modal-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #2a2a2a;
+}
+.analyze-dashboard-modal .modal-body {
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+  padding: 20px 18px 18px 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.analyze-dashboard-modal h6 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #1a237e;
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+.analyze-dashboard-modal ul {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+}
+.analyze-dashboard-modal li {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.35rem;
+  line-height: 1.6;
+  list-style-type: disc;
+}
+.analyze-dashboard-modal .btn-outline-primary {
+  margin-top: 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.scrollable-modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-bottom: 4rem; /* Give space so the scroll doesn't go behind footer */
+}
+
+.fixed-modal-footer {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 10;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+@media (max-width: 600px) {
+  .analyze-dashboard-modal {
+    padding: 10px 4px;
+  }
+  .analyze-dashboard-modal .modal-body {
+    padding: 10px 4px 8px 4px;
+  }
+}

@@ -1119,4 +1119,7 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/mail_alerts/`+ this.accessToken,obj);
     }
+    analyzeAndDownloadDashboard(obj:any){
+      return this.http.post<any>(`${environment.apiUrl}/analyze-dashboard/`,obj);
+    }
 }

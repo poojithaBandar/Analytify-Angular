@@ -1095,7 +1095,8 @@
                               </button>
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
                                 <a class="dropdown-item border-bottom" (click)="downloadAsImage()">Download as Image</a>
-                                <a class="dropdown-item" (click)="downloadAsPDF();">Download as PDF</a>
+                                <a class="dropdown-item border-bottom" (click)="downloadAsPDF();">Download as PDF</a>
+                                <a class="dropdown-item" (click)="analyzeAndDownload();">Analyze & Download</a>
                               </div>
                               </div>
                               
@@ -2185,7 +2186,28 @@
     </div>
   </ng-template>
   
+ <ng-template #analyzeDashbaordModal let-modal>
+ <div class="modal-header analyze-dashboard-modal">
+    <h5 class="modal-title">Dashboard Analysis Report</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body analyze-dashboard-modal" style="max-height: 60vh; overflow-y: auto;">
+    <div id="analyze-dashboard-capture">
+    <ng-container *ngFor="let key of getSummaryKeys()">
+      <h6 class="mt-3 mb-2">{{ key }}</h6>
+      <ul class="ps-3">
+        <ng-container *ngFor="let line of getSummaryLines(summary[key])">
+          <li *ngIf="line.trim()">{{ line }}</li>
+        </ng-container>
+      </ul>
+    </ng-container>
+    </div>
+    <div class="modal-footer">
+      <a (click)="downloadAnalyzeReport()" target="_blank" class="btn btn-outline-primary">Download Full Report (PDF)</a>
+    </div>
+  </div>
 
+  </ng-template>
 
 
 
