@@ -28,7 +28,7 @@
                                                     <div class="accordion-body p-0" ngbAccordionBody>
                                                         <ng-template>
                                                             <div class="data-cdk-tables p-0">
-                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'source_data_object', connectionList, 'postgres')" data-node="Source Data Object">
+                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'source_data_object', connectionList, 'POSTGRESQL')" data-node="Source Data Object">
                                                                     <img src="./assets/images/etl/PostgreSQL-etl.svg" alt="postgres" class="drawflow-image"><span> Source Data Object</span>
                                                                 </div>
                                                                 <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'source_data_object', connectionList, 'file')" data-node="Source Data Object">
@@ -53,12 +53,12 @@
                                                     <div class="accordion-body p-0" ngbAccordionBody>
                                                         <ng-template>
                                                             <div class="data-cdk-tables p-0">
-                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'target_data_object', connectionList, 'postgres')" data-node="Target Data Object">
+                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'target_data_object', connectionList, 'POSTGRESQL')" data-node="Target Data Object">
                                                                     <img src="./assets/images/etl/PostgreSQL-etl.svg" alt="postgres" class="drawflow-image"><span> PostgresSQL</span>
                                                                 </div>
-                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'target_data_object', connectionList, 'file')" data-node="Target Data Object">
+                                                                <!-- <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'target_data_object', connectionList, 'file')" data-node="Target Data Object">
                                                                     <img src="./assets/images/etl/File-etl.svg" alt="file" class="drawflow-image"><span> File</span>
-                                                                </div>
+                                                                </div> -->
                                                             </div>
                                                         </ng-template>
                                                     </div>
@@ -905,7 +905,7 @@
                       <label class="form-check-label" for="server">Server</label>
                     </div>
                 </div>
-                <ng-container *ngIf="type !== 'file' || (type === 'file' && fileSelectType === 'dataSource')">
+                <ng-container *ngIf="type !== 'file'">
                     <label for="connection">Select connection <span class="text-danger">*</span></label>
                     <ng-select [items]="connectionOptions" bindLabel="display_name" placeholder="Select a connection"
                         [searchable]="true" [(ngModel)]="selectedConnection" (change)="getDataObjects()" name="connection"
@@ -937,18 +937,25 @@
                 </ng-container>
                 <ng-container *ngIf="type === 'file' && fileSelectType === 'server'">
                     <label for="connection">Select Path <span class="text-danger">*</span></label><br>
-                    <select class="form-select" [(ngModel)]="sourcePath">
+                    <select class="form-select" [(ngModel)]="sourcePath" (change)="getFilesforServer()">
                         <option value="" selected disabled>Select Path</option>
-                        <option value="source">Source</option>
+                        <option value="Source_folder">Source</option>
                         <option value="archive">Archive</option>
                         <option value="target">Target</option>
                     </select><br>
 
                     <label for="connection">Select File <span class="text-danger">*</span></label><br>
-                    <select class="form-select" [(ngModel)]="selectedFolder">
+                    <select class="form-select" [(ngModel)]="selectedFolder" (change)="getDataObjectsFromServer()">
                         <option value="" selected disabled>Select a File</option>
-                        <option *ngFor="let file of Folders; track file;" [value]="file">{{file.name}}</option>
+                        <option *ngFor="let file of Folders; track file;" [value]="file">{{file}}</option>
                     </select>
+                </ng-container>
+                <ng-container *ngIf="type === 'file' && fileSelectType === 'dataSource'">
+                    <label for="connection">Select connection <span class="text-danger">*</span></label>
+                    <ng-select [items]="connectionOptions" bindLabel="display_name" placeholder="Select a connection"
+                        [searchable]="true" [(ngModel)]="selectedConnection" (change)="getDataObjectsforFile()" name="connection"
+                        id="connection">
+                    </ng-select><br>
                 </ng-container>
             </div>
         </div>
@@ -957,7 +964,7 @@
         <div class="text-right">
             <button type="button" class="btn ripple btn-secondary me-2"
                 (click)="modal.close('Cross click'); objectType = 'select'; selectedConnection = null; selectedDataObject = null;">Cancel</button>
-            <button type="button" [disabled]="!selectedConnection || !selectedDataObject" class="btn ripple btn-primary" (click)="addNode(nodeToAdd, posX, posY); modal.dismiss('Save click')">Ok</button>
+            <button type="button" [disabled]="(type !== 'file' && (!selectedConnection || !selectedDataObject)) || (type === 'file' && (fileSelectType === 'dataSource' && !selectedConnection) || (fileSelectType === 'server' && !sourcePath && !selectedFolder))" class="btn ripple btn-primary" (click)="addNode(nodeToAdd, posX, posY); modal.dismiss('Save click'); modal.close('save click');">Ok</button>
         </div>
     </div>
 </ng-template>

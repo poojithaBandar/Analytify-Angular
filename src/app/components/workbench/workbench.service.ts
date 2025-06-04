@@ -961,16 +961,16 @@ deleteUser(id:any){
       return this.http.put<any>(`${environment.apiUrl}/etl_update/`+this.accessToken,object);
     }
 
-    getEtlDataFlow(id : any){
+    getEtlDataFlow(id : any, type : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/etl_data/`+this.accessToken+'/'+id);
+      return this.http.get<any>(`${environment.apiUrl}/etl_data/`+this.accessToken+'/'+id+`?flow=${type}`);
     }
 
-    getEtlDataFlowList(page:any, pageSize:any, search:any){
+    getEtlDataFlowList(page:any, pageSize:any, search:any, type:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/dags_list/`+this.accessToken+`?page=${page}&page_size=${pageSize}`+(search ? `&search=${search}` : ``));
+      return this.http.get<any>(`${environment.apiUrl}/dags_list/`+this.accessToken+`?page=${page}&page_size=${pageSize}`+(search ? `&search=${search}` : ``)+`&flow=${type}`);
     }
 
     deleteDataFlow(id : any){
@@ -996,10 +996,24 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/Dataflow_Task_status/`+this.accessToken,object);
     }
-    getConnectionsForEtl(){
+    getConnectionsForEtl(type:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/etl_source_objects/`+this.accessToken);
+      return this.http.get<any>(`${environment.apiUrl}/etl_source_objects/`+this.accessToken+`?connection_type=${type}`);
     }
-
+    getDataObjectsForFile(id:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/get_file_detials/`+this.accessToken+'/'+id);
+    }
+    getFilesForServer(from:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/list-files/`+this.accessToken+`?path=${from}`);
+    }
+    getDataObjectsFromServer(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/server_files/`+this.accessToken, object);
+    }
 }

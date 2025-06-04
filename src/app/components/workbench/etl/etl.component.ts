@@ -84,13 +84,13 @@ export class ETLComponent {
   fileSelectType: string = 'dataSource';
   sourcePath: string = '';
   selectedFolder: any = '';
-  Folders: any[] = [{name: 'abc'}, {name: 'def'}, {name: 'ghi'}];
+  Folders: any[] = [];
   dataTypes: string[] = [
     // Numeric types
     'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'serial', 'bigserial', 'money', 'double', 'float', 'int',
 
     // Character types
-    'char', 'character', 'varchar', 'character varying', 'text',
+    'char', 'character', 'varchar', 'character varying', 'text', 'string', 'any',
   
     // Boolean
     'boolean',
@@ -367,7 +367,7 @@ export class ETLComponent {
     let outputNodeCount = 1;
 
     if (baseName === 'source_data_object') {
-      if (this.type === 'postgres') {
+      if (this.type === 'POSTGRESQL') {
         iconPath = './assets/images/etl/PostgreSQL-etl.svg';
         altText = 'PostgreSQL';
       } else if(this.type === 'file'){
@@ -389,7 +389,7 @@ export class ETLComponent {
       outputNodeCount = 1;
     }
     else if (baseName === 'target_data_object') {
-      if (this.type === 'postgres') {
+      if (this.type === 'POSTGRESQL') {
         iconPath = './assets/images/etl/PostgreSQL-etl.svg';
         altText = 'PostgreSQL';
       } else if(this.type === 'file'){
@@ -632,7 +632,7 @@ export class ETLComponent {
 
   getConnections() {
     // let object = {};
-    this.workbechService.getConnectionsForEtl().subscribe({
+    this.workbechService.getConnectionsForEtl(this.type).subscribe({
       next: (data) => {
         console.log(data);
         this.connectionOptions = data.data;
@@ -661,6 +661,50 @@ export class ETLComponent {
       });
     }
   }
+  getDataObjectsforFile(){
+     let server_id = this.selectedConnection?.server_id
+    if (server_id) {
+      this.workbechService.getDataObjectsForFile(this.selectedConnection.server_id).subscribe({
+        next: (data) => {
+          console.log(data);
+          this.selectedDataObject = data?.tables[0];
+        },
+        error: (error) => {
+          console.log(error);
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+        }
+      });
+    }
+  }
+  getFilesforServer() {
+    this.workbechService.getFilesForServer(this.sourcePath).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.Folders = data?.files || [];
+      },
+      error: (error) => {
+        console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+      }
+    });
+  }
+  getDataObjectsFromServer() {
+    let object = {
+      source_type: this.sourcePath,
+      file_name: this.selectedFolder,
+    }
+    this.workbechService.getDataObjectsFromServer(object).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.selectedDataObject = data?.tables[0];
+      },
+      error: (error) => {
+        console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+      }
+    });
+  }
+
   // saveOrUpdateEtlDataFlow() {
   //   const exportedData = this.drawflow.export();
   //   const nodes = exportedData.drawflow.Home.data;
@@ -857,10 +901,12 @@ export class ETLComponent {
     const jsonString = JSON.stringify(exportedData);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const file = new File([blob], 'etl-drawflow.json', { type: 'application/json' });
+    const flow_type = 'dataflow';
 
     const formData = new FormData();
     formData.append('transformation_flow', file);
     formData.append('ETL_flow', JSON.stringify(etlFlow));
+    formData.append('flow_type', flow_type);
 
     if(this.dataFlowId){
       formData.append('id', this.dataFlowId);
@@ -1603,7 +1649,7 @@ export class ETLComponent {
   }  
   
   getDataFlow(){
-    this.workbechService.getEtlDataFlow(this.dataFlowId).subscribe({
+    this.workbechService.getEtlDataFlow(this.dataFlowId, 'dataflow').subscribe({
       next: (data) => {
         console.log(data);
         this.etlName = data.dag_id;

@@ -98,8 +98,8 @@
                             </div> -->
                             <div class="d-flex justify-content-end mb-2">
                                 <input type="text" placeholder="Job Flow Name" class="form-control me-1" [(ngModel)]="etlName">
-                                <button *ngIf="!dataFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">Save</button>
-                                <button *ngIf="dataFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">update</button>
+                                <button *ngIf="!jobFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">Save</button>
+                                <button *ngIf="jobFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">update</button>
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" (click)="getDataFlowLogs()">Export</button> -->
                                 <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRunEnable" (click)="runDataFlow()">Run</button>
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRefrshEnable" (click)="getDataFlowStatus(runId)">Refresh</button> -->

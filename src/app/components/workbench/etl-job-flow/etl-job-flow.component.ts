@@ -36,7 +36,7 @@ export class EtlJobFlowComponent {
   tableTypeTabId: number = 1;
   nodeTypeCounts: { [key: string]: number } = {};
   etlName: string = '';
-  dataFlowId!: string;
+  jobFlowId!: string;
   nodeName: string = '';
   isRunEnable: boolean = false;
   objectType: string = 'select';
@@ -136,10 +136,10 @@ export class EtlJobFlowComponent {
   constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService,
     private loaderService: LoaderService, private router: Router, private route: ActivatedRoute) {
 
-    if (this.router.url.startsWith('/analytify/etlList/etl')) {
+    if (this.router.url.startsWith('/analytify/etlList/jobFlow')) {
       if (route.snapshot.params['id1']) {
         const id = +atob(route.snapshot.params['id1']);
-        this.dataFlowId = id.toString();
+        this.jobFlowId = id.toString();
       }
     }
   }
@@ -158,8 +158,8 @@ export class EtlJobFlowComponent {
       this.drawflow.zoom_refresh();
       this.drawflow.drawflow.drawflow[this.drawflow.module].canvasData = this.canvasData;
 
-      if (this.dataFlowId) {
-        this.getDataFlow();
+      if (this.jobFlowId) {
+        this.getJobFlow();
       }
 
       const canvasElement = container.querySelector('.drawflow') as HTMLElement;
@@ -490,7 +490,7 @@ export class EtlJobFlowComponent {
   }
 
   getDataFlowList() {
-    this.workbechService.getEtlDataFlowList(1, 100, '').subscribe({
+    this.workbechService.getEtlDataFlowList(1, 100, '','dataflow').subscribe({
       next: (data: any) => {
         console.log(data);
         this.dataFlowOptions = data.data;
@@ -503,7 +503,7 @@ export class EtlJobFlowComponent {
   }
 
   getDataPointList(){
-    this.workbechService.getConnectionsForEtl().subscribe({
+    this.workbechService.getConnectionsForEtl('POSTGRESQL').subscribe({
       next: (data) => {
         console.log(data);
         this.dataPointOptions = data.data;
@@ -581,17 +581,51 @@ export class EtlJobFlowComponent {
     const etlFlow = {
       dag_id: this.etlName,
       tasks,
-      flow: flows
+      flow: flows,
+      flow_type: 'jobflow'
     };
     console.log(etlFlow);
 
     const jsonString = JSON.stringify(exportedData);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const file = new File([blob], 'etl-drawflow.json', { type: 'application/json' });
+    const flow_type = 'jobflow';
 
     const formData = new FormData();
     formData.append('transformation_flow', file);
     formData.append('ETL_flow', JSON.stringify(etlFlow));
+    formData.append('flow_type', flow_type);
+
+    if(this.jobFlowId){
+      formData.append('id', this.jobFlowId);
+      this.workbechService.updateEtl(formData).subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.isRunEnable = true;
+          this.jobFlowId = data.dataflow_id;
+          this.toasterService.success(data.message, 'success', { positionClass: 'toast-top-right' });
+        },
+        error: (error: any) => {
+          this.isRunEnable = false;
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          console.log(error);
+        }
+      });
+    } else{
+      this.workbechService.saveEtl(formData).subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.isRunEnable = true;
+          this.jobFlowId = data.dataflow_id;
+          this.toasterService.success(data.message, 'success', { positionClass: 'toast-top-right' });
+        },
+        error: (error: any) => {
+          this.isRunEnable = false;
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+          console.log(error);
+        }
+      });
+    }
   }
 
   runDataFlow() {
@@ -971,12 +1005,12 @@ export class EtlJobFlowComponent {
     });
   }
 
-  getDataFlow() {
-    this.workbechService.getEtlDataFlow(this.dataFlowId).subscribe({
+  getJobFlow() {
+    this.workbechService.getEtlDataFlow(this.jobFlowId, 'jobflow').subscribe({
       next: (data) => {
         console.log(data);
         this.etlName = data.dag_id;
-        this.dataFlowId = data.id;
+        this.jobFlowId = data.id;
         const drawFlowJson = JSON.parse(data.transformation_flow);
         this.drawflow.import(drawFlowJson);
         console.log(drawFlowJson);
