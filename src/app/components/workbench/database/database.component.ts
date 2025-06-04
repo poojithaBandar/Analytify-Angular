@@ -278,6 +278,10 @@ export class DatabaseComponent {
         }
       });
     }
+    if(currentUrl.includes('/analytify/database-connection/hubspot/')){
+      this.fromDatabasId = true;
+      this.databaseId = +atob(route.snapshot.params['id']);
+    }
 }
   ngOnInit(){
     this.loaderService.hide();
