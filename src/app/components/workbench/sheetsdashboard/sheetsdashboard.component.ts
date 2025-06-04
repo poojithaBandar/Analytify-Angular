@@ -227,6 +227,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
   @ViewChild('fileInput') fileInput:any;
   @ViewChild('fileInput1') fileInput1:any;
+  @ViewChild('analyzeDashbaordModal') analyzeDashbaordModal:any;
+
   lastRefresh: any;
   nextRefresh: any;
   tabData: any;
@@ -8217,6 +8219,100 @@ excelUpload(fileInput: any){
       }
     )
   }
+  summary:any;
+  report_url:any;
+  analyzeAndDownload(){
+      const obj ={
+    dashboard_id:this.dashboardId,
+    }
+     this.workbechService.analyzeAndDownloadDashboard(obj).subscribe({
+        next:(data)=>{
+          if(data){
+          this.modalService.open(this.analyzeDashbaordModal, {
+              centered: true,
+              size: 'lg',
+              windowClass: 'animate__animated animate__zoomIn',
+            });
+          }
+
+          this.summary=data.summary
+          this.report_url = data.report_url;
+        },
+        error:(error)=>{
+          console.log(error);
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.error,
+                width: '400px',
+              })        
+            }
+      }) 
+  }
+  getSummaryKeys(): string[] {
+  return this.summary ? Object.keys(this.summary) : [];
+}
+
+getSummaryLines(text: string): string[] {
+  if (!text) return [];
+  // Split by \n, remove empty lines, trim, and remove leading bullets/arrows
+  return text.split('\n')
+    .map(line => line.replace(/^(\s*[-*>]+\s*)/, '').trim())
+    .filter(line => line.length > 0);
+}
+downloadAnalyzeReport() {
+ if (!this.summary) {
+    this.toasterService.error('No summary available to download.', 'Error');
+    return;
+  }
+  const doc = new jsPDF('p', 'mm', 'a4');
+  const margin = 15;
+  let y = margin;
+  const lineHeight = 8;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const maxWidth = pageWidth - margin * 2;
+
+  // Title
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Dashboard Analysis Report', margin, y);
+  y += lineHeight * 2;
+
+  doc.setFontSize(12);
+
+  const summaryKeys = this.getSummaryKeys();
+  summaryKeys.forEach((key) => {
+    if (y > pageHeight - margin - lineHeight * 2) {
+      doc.addPage();
+      y = margin;
+    }
+    // Section title
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(40, 40, 40);
+    doc.text(key, margin, y);
+    y += lineHeight;
+
+    // Section content
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+    const lines = this.getSummaryLines(this.summary[key]);
+    lines.forEach((line) => {
+      const wrapped = doc.splitTextToSize(line, maxWidth - 8);
+      wrapped.forEach((wline: string) => {
+        if (y > pageHeight - margin - lineHeight) {
+          doc.addPage();
+          y = margin;
+        }
+        doc.text('\u2022 ' + wline, margin + 5, y); // Bullet point
+        y += lineHeight;
+      });
+    });
+    y += 2;
+  });
+  doc.save((this.dashboardName || 'dashboard') + '-analysis-report.pdf');
+}
+
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
