@@ -334,6 +334,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   }>;
   testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
 }>;
+  dashboardTabs: {id?: any, name: string, widgets: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any }> , tabWidth?: number, tabHeight?: number, x?: number, y?: number, cols?: number, rows?: number, isTab?: boolean}[] = [];
   pushNewSheet =[] as any;
   sheetData = [] as any;
   tableHeader:any;
@@ -931,6 +932,10 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
+        this.buildDashboardTabs(data);
+        if(this.dashboardTabs.length){
+          this.dashboard = this.dashboardTabs[0].widgets;
+        }
         this.sheetIdsDataSet = data.selected_sheet_ids;
         this.usersForUpdateDashboard = data.user_ids;
         this.rolesForUpdateDashboard = data.role_ids;
@@ -969,6 +974,36 @@ export class SheetsdashboardComponent implements OnDestroy {
             }
           });
         }
+  }
+
+  buildDashboardTabs(data: any){
+    this.dashboardTabs = [];
+    const mainWidgets = data.dashboard_data ? [...data.dashboard_data] : [];
+    if(data.tab_data && Array.isArray(data.tab_data)){
+      data.tab_data.forEach((tab: any) => {
+        const tabContainer: any = {
+          id: tab.id,
+          name: tab.name,
+          widgets: tab.dashboard || [],
+          tabWidth: tab.tabWidth,
+          tabHeight: tab.tabHeight,
+          x: tab.x || 0,
+          y: tab.y || 0,
+          cols: tab.cols || 1,
+          rows: tab.rows || 1,
+          isTab: true
+        };
+        mainWidgets.push(tabContainer);
+        this.dashboardTabs.push({
+          id: tab.id,
+          name: tab.name,
+          widgets: tab.dashboard || [],
+          tabWidth: tab.tabWidth,
+          tabHeight: tab.tabHeight
+        });
+      });
+    }
+    this.dashboardTabs.unshift({name: 'Dashboard', widgets: mainWidgets});
   }
 
   dynamicOptionsUpdateinDashboard(dashboard: any, isPublic: boolean){
@@ -5185,9 +5220,11 @@ const obj ={
 
   selectedSheetTab(event: any) {
     this.selectedTabIndex = event.index;
-    this.dashboardTest = this.sheetTabs[this.selectedTabIndex].dashboard;
-    if(this.sheetTabs[this.selectedTabIndex].dashboard && this.sheetTabs[this.selectedTabIndex].dashboard.length > 0){
-      this.sheetTabs[this.selectedTabIndex].dashboard.some((tabData: any) => {
+    if(this.dashboardTabs[this.selectedTabIndex + 1]){
+      this.dashboardTest = this.dashboardTabs[this.selectedTabIndex + 1].widgets;
+    }
+    if(this.dashboardTest && this.dashboardTest.length > 0){
+      this.dashboardTest.some((tabData: any) => {
         if (tabData.chartId == 9) {
           this.pivotReinitialize(true, false);
           return true;
@@ -5739,6 +5776,10 @@ kpiData?: KpiData;
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
         this.sheetTabs = data.tab_data ? data.tab_data : [];
+        this.buildDashboardTabs(data);
+        if(this.dashboardTabs.length){
+          this.dashboard = this.dashboardTabs[0].widgets;
+        }
         if(this.sheetTabs && this.sheetTabs.length > 0) {
           this.tabData = data.tab_id;
           this.displayTabs = true;
