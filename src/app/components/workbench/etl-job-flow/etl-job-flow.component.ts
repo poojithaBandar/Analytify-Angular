@@ -7,21 +7,19 @@ import { ToastrService } from 'ngx-toastr';
 import { WorkbenchService } from '../workbench.service';
 import { FormsModule } from '@angular/forms';
 import { LoaderService } from '../../../shared/services/loader.service';
-import { expression } from 'mathjs';
-import { EtlGraphService } from '../etl-graph.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EtlLoggerViewComponent } from '../etl-logger-view/etl-logger-view.component';
 import { DataFlowSearchFilterPipe } from '../../../shared/pipes/data-flow-search-filter.pipe';
 import { ResizableTopDirective } from '../../../shared/directives/resizable-top.directive';
 
 @Component({
-  selector: 'app-etl',
+  selector: 'app-etl-job-flow',
   standalone: true,
   imports: [NgbModule, CommonModule, NgSelectModule, FormsModule, EtlLoggerViewComponent, DataFlowSearchFilterPipe, ResizableTopDirective],
-  templateUrl: './etl.component.html',
-  styleUrl: './etl.component.scss'
+  templateUrl: './etl-job-flow.component.html',
+  styleUrl: './etl-job-flow.component.scss'
 })
-export class ETLComponent {
+export class EtlJobFlowComponent {
   drawflow: any;
   nodeToAdd: string = '';
   isOpen: boolean = true;
@@ -29,10 +27,9 @@ export class ETLComponent {
   isNodeSelected: boolean = false;
   selectedNode: any;
   modal: any;
-  connectionOptions: any[] = [];
-  selectedConnection: any = null;
+  dataFlowOptions: any[] = [];
+  selectedDataFlow: any = null;
   dataObjectOptions: [] = [];
-  selectedDataObject: any = null;
   posX: any;
   posY: any;
   tableTabId: number = 1;
@@ -41,19 +38,19 @@ export class ETLComponent {
   etlName: string = '';
   dataFlowId!: string;
   nodeName: string = '';
-  isRunEnable : boolean = false;
-  objectType : string = 'select';
-  dataFlowStatus : any[] = [];
+  isRunEnable: boolean = false;
+  objectType: string = 'select';
+  dataFlowStatus: any[] = [];
   runId: string = '';
   nodeLogs: any[] = [];
   pollingInterval: any;
-  currentNodeColumns : any[] = [];
-  logs : any = '';
-  isLogShow : boolean = false;
+  currentNodeColumns: any[] = [];
+  logs: any = '';
+  isLogShow: boolean = false;
   selectedGroupAttrs: any[] = [];
   groupAttributesList: any[] = [];
   allChecked: boolean = false;
-  isSourceClicked : boolean = false;
+  isSourceClicked: boolean = false;
   isRefrshEnable: boolean = false;
   dataFlowRunStatus: string = '';
   expression: string = '';
@@ -64,12 +61,12 @@ export class ETLComponent {
   selectedIndex: number = -1;
   isJoinerCondition: boolean = false;
   isCanvasSelected: boolean = false;
-  canvasData: any = {parameters: [], sqlParameters: []};
+  canvasData: any = { parameters: [], sqlParameters: [] };
   isParameter: boolean = false;
   isSQLParameter: boolean = false;
-  isHaving : boolean = false;
-  isWhere : boolean = false;
-  isFilter : boolean = false;
+  isHaving: boolean = false;
+  isWhere: boolean = false;
+  isFilter: boolean = false;
   sourceSearchTerm: string = '';
   groupSearchTerm: string = '';
   attributeSearchTerm: string = '';
@@ -81,9 +78,12 @@ export class ETLComponent {
   selectedAttributeIndex: number | null = null;
   isCollapsed = false;
 
-toggleCollapse() {
-  this.isCollapsed = !this.isCollapsed;
-}
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+  }
+  returnTypes: string[] = ['varchar', 'char', 'byteint', 'bigint', 'smallint', 'integer', 'numeric', 'boolean', 'date', 'time with time zone',
+    'interval', 'time', 'timestamp', 'decimal', 'real', 'double', 'float', 'nvarchar', 'nchar', 'array[string]', 'array[int]', 'param', 'string', 'datetime'
+  ];
   dataTypes: string[] = [
     // Numeric types
     'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'serial', 'bigserial', 'money',
@@ -134,15 +134,15 @@ toggleCollapse() {
     'name', 'enum', 'composite', 'pg_lsn', 'txid_snapshot', 'unknown'
   ];
 
-  constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, 
-    private loaderService: LoaderService, private etlGraphService: EtlGraphService, private router: Router,private route: ActivatedRoute) {
-      
-      if (this.router.url.startsWith('/analytify/etlList/etl')) {
-        if (route.snapshot.params['id1']) {
-          const id = +atob(route.snapshot.params['id1']);
-          this.dataFlowId = id.toString();
-        }
+  constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService,
+    private loaderService: LoaderService, private router: Router, private route: ActivatedRoute) {
+
+    if (this.router.url.startsWith('/analytify/etlList/etl')) {
+      if (route.snapshot.params['id1']) {
+        const id = +atob(route.snapshot.params['id1']);
+        this.dataFlowId = id.toString();
       }
+    }
   }
 
   ngOnInit() {
@@ -159,7 +159,7 @@ toggleCollapse() {
       this.drawflow.zoom_refresh();
       this.drawflow.drawflow.drawflow[this.drawflow.module].canvasData = this.canvasData;
 
-      if(this.dataFlowId){
+      if (this.dataFlowId) {
         this.getDataFlow();
       }
 
@@ -178,7 +178,7 @@ toggleCollapse() {
           console.log('Canvas clicked at:', event.clientX, event.clientY);
           this.isNodeSelected = true;
           this.isCanvasSelected = true;
-          this.tableTabId = 7;
+          this.tableTabId = 8;
         }
       });
 
@@ -193,18 +193,16 @@ toggleCollapse() {
         const nodeType = inputNode.data.type;
         if (nodeType !== 'Joiner' && inputPort.connections.length > 1) {
           const lastConnection = inputPort.connections[inputPort.connections.length - 1];
-      
+
           this.drawflow.removeSingleConnection(lastConnection.node, input_id, lastConnection.input, input_class);
-      
+
           console.log('Connection limit exceeded for this node type!');
         } else {
           this.getConnectionData(connection);
-          this.getDropdownColumnsData(this.drawflow.getNodeFromId(input_id));
         }
 
       });
       this.drawflow.on('connectionSelected', (connection: any) => {
-        // this.getConnectionData(connection);
       });
 
       this.drawflow.on('connectionRemoved', (connection: any) => {
@@ -216,14 +214,14 @@ toggleCollapse() {
         if (targetNode.data.type === 'Joiner') {
           const nodeNamesDropdown = targetNode.data.nodeData.properties.nodeNamesDropdown;
           const sourceNodeName = sourceNode.data.nodeData.general.name;
-      
-          const index = nodeNamesDropdown.findIndex((item:any) => item.label === sourceNodeName);
+
+          const index = nodeNamesDropdown.findIndex((item: any) => item.label === sourceNodeName);
           if (index !== -1) {
             const sourceNodeValue = nodeNamesDropdown[index].value;
             nodeNamesDropdown.splice(index, 1);
 
             const joinList = targetNode.data.nodeData.properties.joinList;
-            const joinIndex = joinList.findIndex((join:any) => join.sourceNodeId === sourceNodeValue);
+            const joinIndex = joinList.findIndex((join: any) => join.sourceNodeId === sourceNodeValue);
             if (joinIndex !== -1) {
               joinList.splice(joinIndex, 1);
             }
@@ -232,14 +230,13 @@ toggleCollapse() {
               targetNode.data.nodeData.properties.primaryObject = null;
             }
 
-            if(nodeNamesDropdown.length <= 1){
+            if (nodeNamesDropdown.length <= 1) {
               targetNode.data.nodeData.properties.joinList = [];
             }
             this.drawflow.updateNodeDataFromId(targetNode.id, targetNode.data);
           }
         }
-        this.getDropdownColumnsData(this.drawflow.getNodeFromId(input_id));
-        if(this.selectedNode.hasOwnProperty('data')){
+        if (this.selectedNode.hasOwnProperty('data')) {
           const node = this.drawflow.getNodeFromId(this.selectedNode.id);
           this.getSelectedNodeData(node);
         }
@@ -257,11 +254,6 @@ toggleCollapse() {
         }
       });
 
-      // this.drawflow.on('nodeUnselected', () => {
-      //   this.selectedNode = {data: {type: '', nodeData: {general: {name: this.etlName}}}};
-      //   this.isNodeSelected = true;
-      // });
-
       const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
       Object.entries(allNodes).forEach(([id, node]) => {
         console.log('Node ID:', id, 'Node Data:', node);
@@ -275,10 +267,10 @@ toggleCollapse() {
     const sourceNode = this.drawflow.getNodeFromId(output_id);
     const targetNode = this.drawflow.getNodeFromId(input_id);
 
-    if(targetNode.data.type === 'Joiner'){
-      targetNode.data.nodeData.properties.nodeNamesDropdown.push({label: sourceNode.data.nodeData.general.name, value: sourceNode.id});
-      if(targetNode.data.nodeData.properties.nodeNamesDropdown.length > 1){
-        targetNode.data.nodeData.properties.joinList.push({joinType: '', secondaryObject: null, joinCondition: '', sourceNodeId: sourceNode.id, joinObject: null});
+    if (targetNode.data.type === 'Joiner') {
+      targetNode.data.nodeData.properties.nodeNamesDropdown.push({ label: sourceNode.data.nodeData.general.name, value: sourceNode.id });
+      if (targetNode.data.nodeData.properties.nodeNamesDropdown.length > 1) {
+        targetNode.data.nodeData.properties.joinList.push({ joinType: '', secondaryObject: null, joinCondition: '', sourceNodeId: sourceNode.id, joinObject: null });
       }
       this.drawflow.updateNodeDataFromId(targetNode.id, targetNode.data);
     }
@@ -289,7 +281,7 @@ toggleCollapse() {
     console.log('Target Node:', targetNode);
   }
 
-  joinListUpdate(event:any, index:any){
+  joinListUpdate(event: any, index: any) {
     this.selectedNode.data.nodeData.properties.joinList[index].secondaryObject = event.label;
     this.selectedNode.data.nodeData.properties.joinList[index].sourceNodeId = event.value;
     this.updateNode('properties');
@@ -312,226 +304,131 @@ toggleCollapse() {
     this.posX = event.clientX - rect.left;
     this.posY = event.clientY - rect.top;
 
-    if (['source_data_object', 'target_data_object'].includes(this.nodeToAdd)) {
+    if (['dataFlow'].includes(this.nodeToAdd)) {
       this.modalService.open(this.modal, {
         centered: true,
         windowClass: 'animate__animated animate__zoomIn',
       });
-      this.getConnections();
+      this.getDataFlowList();
     } else {
       this.addNode(this.nodeToAdd, this.posX, this.posY);
     }
   }
 
   addNode(name: string, posX: number, posY: number) {
-    let data = { 
-      type: '', 
-      nodeData: { 
-        general: { name: '' }, 
-        connection: {}, dataObject: {}, 
-        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
-        attributes: [], 
-        groupAttributes: [],
-        sourceAttributes: [],
-        attributeMapper: [] as any[]
-      } 
+    // bump per‑type counter
+    const count = (this.nodeTypeCounts[name] = (this.nodeTypeCounts[name] || 0) + 1);
+
+    // the common shape of nodeData.nodeData
+    const defaults = {
+      dataFlow: {},
+      general: { name: '' },
+      properties: {
+        truncate: false, create: false,
+        havingClause: '', filterCondition: '', whereClause: '',
+        nodeNamesDropdown: [], primaryObject: null, joinList: []
+      },
+      attributes: [],
+      groupAttributes: [],
+      sourceAttributes: [],
+      attributeMapper: [] as any[],
     };
-    let iconPath = '';
-    let altText = '';
-    let baseName = name;
-    let inputNodeCount = 1;
-    let outputNodeCount = 1;
 
-    if (baseName === 'source_data_object') {
-      if (this.selectedConnection?.server_type === 'POSTGRESQL') {
-        iconPath = './assets/images/etl/PostgreSQL-etl.svg';
-        altText = 'PostgreSQL';
-      } else if(this.selectedConnection?.server_type === 'CSV'){
-        iconPath = './assets/images/etl/PostgreSQL-etl.svg';
-        altText = 'CSV';
-      }
-      data.type = name;
-      data.nodeData = { 
-        connection: this.selectedConnection, 
-        dataObject: this.selectedDataObject, 
-        general: { name: 'SRC_' + this.selectedDataObject?.tables }, 
-        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
-        attributes:[], 
-        groupAttributes:[],
-        sourceAttributes: [],
-        attributeMapper: []
+    /** per‑type config for icon/alt text, port counts, initial name, etc. */
+    interface NodeConfig {
+      iconPath: string;
+      altText: string;
+      inputCount: number;
+      outputCount: number;
+      name: string;
+      extraNodeData?: Partial<typeof defaults>;
+    }
+
+    const configs: Record<string, NodeConfig> = {
+      dataFlow: {
+        iconPath: this.selectedDataFlow?.type === 'POSTGRESQL'
+          ? './assets/images/etl/PostgreSQL-etl.svg'
+          : './assets/images/etl/PostgreSQL-etl.svg',
+        altText: this.selectedDataFlow?.type === 'POSTGRESQL'
+          ? 'PostgreSQL'
+          : '',
+        inputCount: 1,
+        outputCount: 1,
+        name: this.selectedDataFlow?.data_flow_name,
+        extraNodeData: {
+          dataFlow: this.selectedDataFlow,
+        },
+      },
+      taskCommand: {
+        iconPath: './assets/images/etl/task_command-etl.svg', altText: 'Task Command', inputCount: 1, outputCount: 1, name:
+          `Task_Command_Name_${count}`
+      },
+      dbCommand: {
+        iconPath: './assets/images/etl/db_command-etl.svg', altText: 'DB Command', inputCount: 1, outputCount: 1, name:
+          `DB_Command_Name_${count}`
+      },
+      emailNotification: {
+        iconPath: './assets/images/etl/email-etl.svg', altText: 'Email', inputCount: 1, outputCount: 1, name:
+          `Email_Name_${count}`
+      },
+      loop: {
+        iconPath: './assets/images/etl/loop_start-etl.svg', altText: 'Loop', inputCount: 1, outputCount: 1, name:
+          `Loop_Name_${count}`
+      },
+    };
+
+    const config = configs[name];
+    if (!config) {
+      return;
+    }
+
+    const buildAndAdd = (nodeType: string, nodeName: string, x: number, iconPath: string, altText: string, extraData: Partial<typeof defaults> = {} ): number => {
+      const nodeData = {
+        type: nodeType,
+        nodeData: { ...defaults, general: { name: nodeName }, ...extraData }
       };
-      inputNodeCount = 0;
-      outputNodeCount = 1;
-    }
-    else if (baseName === 'target_data_object') {
-      if (this.selectedConnection?.server_type === 'POSTGRESQL') {
-        iconPath = './assets/images/etl/PostgreSQL-etl.svg';
-        altText = 'PostgreSQL';
+      let label = nodeName;
+      if (label.length > 8) {
+        label = label.substring(0, 8) + '..';
       }
-      data.type = name;
-      data.nodeData = { 
-        connection: this.selectedConnection, 
-        dataObject: this.selectedDataObject, 
-        general: { name: 'TGT_' + (this.objectType === 'select' ? this.selectedDataObject?.tables : this.selectedDataObject) }, 
-        properties: { truncate: false, create: this.objectType === 'select' ? false : true, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
-        attributes:[], 
-        groupAttributes:[],
-        sourceAttributes: [],
-        attributeMapper: []
-      };
-      inputNodeCount = 1;
-      outputNodeCount = 0;
-      if(!data.nodeData.properties.create){
-        let cols : any[] = [];
-        for (const col of this.selectedDataObject.columns) {
-          cols.push({
-            column: col.col,
-            dataType: col.dtype,
-            selectedColumn: null,
-            selectedDataType: ''
-          });
-        }
-        data.nodeData.attributeMapper = cols;
-      }
-    }
-    else if (baseName === 'Expression') {
-      iconPath = './assets/images/etl/expression-etl.svg';
-      altText = 'Expression';
-      data.type = baseName;
-      this.nodeTypeCounts[baseName] = (this.nodeTypeCounts[baseName] || 0) + 1;
-      data.nodeData = { 
-        connection: {}, 
-        dataObject: {}, 
-        general: { name: `expression_${this.nodeTypeCounts[baseName]}` }, 
-        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
-        attributes:[], 
-        groupAttributes:[],
-        sourceAttributes: [],
-        attributeMapper: []
-      }
-    }
-    else if (baseName === 'Joiner') {
-      iconPath = './assets/images/etl/mjoiner-etl.svg';
-      altText = 'Joiner';
-      data.type = baseName;
-      this.nodeTypeCounts[baseName] = (this.nodeTypeCounts[baseName] || 0) + 1;
-      data.nodeData = { 
-        connection: {}, 
-        dataObject: {}, 
-        general: { name: `joiner_${this.nodeTypeCounts[baseName]}` }, 
-        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
-        attributes:[], 
-        groupAttributes:[],
-        sourceAttributes: [],
-        attributeMapper: [] 
-      }
-    }
-    else if (baseName === 'Rollup') {
-      iconPath = './assets/images/etl/rollup-etl.svg';
-      altText = 'Rollup';
-      data.type = baseName;
-      this.nodeTypeCounts[baseName] = (this.nodeTypeCounts[baseName] || 0) + 1;
-      data.nodeData = { 
-        connection: {}, 
-        dataObject: {}, 
-        general: { name: `rollup_${this.nodeTypeCounts[baseName]}` }, 
-        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
-        attributes:[], 
-        groupAttributes:[],
-        sourceAttributes: [],
-        attributeMapper: []
-      }
-    }
-    else if (baseName === 'Filter') {
-      iconPath = './assets/images/etl/filter-etl.svg';
-      altText = 'Filter';
-      data.type = baseName;
-      this.nodeTypeCounts[baseName] = (this.nodeTypeCounts[baseName] || 0) + 1;
-      data.nodeData = { 
-        connection: {}, 
-        dataObject: {}, 
-        general: { name: `filter_${this.nodeTypeCounts[baseName]}` }, 
-        properties: { truncate: false, create: false, havingClause: '', filterCondition: '', whereClause: '', nodeNamesDropdown: [], primaryObject: null, joinList: [] }, 
-        attributes:[], 
-        groupAttributes:[],
-        sourceAttributes: [],
-        attributeMapper: []
-      }
+      const container = document.createElement('div');
+      container.innerHTML = `<div><img src=\"${iconPath}\" class=\"node-icon\" alt=\"${altText}\" /><div class=\"node-label\"
+        title=\"${nodeName}\">${label}</div><div class=\"node-status\" style=\"display:none;\"></div></div>`;
+      return this.drawflow.addNode(nodeType, config.inputCount, config.outputCount, x, posY, nodeType, nodeData, container.innerHTML);
+    };
+
+    // add the primary node
+    let nodeId = buildAndAdd(name, config.name, posX, config.iconPath, config.altText, config.extraNodeData || {});
+
+    // special ‑ for loop we also add a Loop_End node offset in X
+    if (name === 'loop') {
+      nodeId = buildAndAdd('loop_end', `Loop_End_Name_${count}`, posX + 300, './assets/images/etl/loop_end-etl.svg', 'Loop End');
     }
 
-    let displayName = data.nodeData.general.name;
-    if (displayName.length > 8) {
-      displayName = displayName.substring(0, 8) + '..';
-    }
-    var html = document.createElement('div');
-    html.innerHTML = `<div>
-      <img src="${iconPath}" class="node-icon" alt="${altText}" />
-      <div class="node-label" title="${data.nodeData.general.name}">${displayName}</div>
-      <div class="node-status" style="display: none;"></div>
-      </div>`;
-
-    // this.drawflow.registerNode(name, html);
-    const nodeId = this.drawflow.addNode(name, inputNodeCount, outputNodeCount, posX, posY, name, data, html.innerHTML);
-
-    this.selectedConnection = null;
-    this.selectedDataObject = null;
-    this.objectType = 'select';
+    // === unchanged post‑add housekeeping ===
+    this.selectedDataFlow = null;
     const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
-    Object.entries(allNodes).forEach(([id, node]) => {
-      console.log('Node ID:', id, 'Node Data:', node);
-    });
-
-    const node = this.drawflow.getNodeFromId(nodeId);
-    this.selectedNode = node;
-
-    if(this.selectedNode.data.type === 'source_data_object'){
-      this.openAttributesSelection(null);
-      this.groupAttributesList.forEach((group:any)=>{
-        group.isChecked = true;
-        this.toggleGroup(group);
-      });
-      this.isSourceClicked = true;
-      this.applySelectedAttributes();
-    }
+    Object.entries(allNodes).forEach(([id, node]) =>
+      console.log('Node ID:', id, 'Node Data:', node)
+    );
   }
 
   updateNode(type: any) {
     let data = {};
     let nodeId = '';
-    if(type !== 'parameter'){
+    if (type !== 'parameter') {
       nodeId = this.selectedNode.id;
     }
     if (type === 'general') {
-      const general = { name: this.nodeName}
+      const general = { name: this.nodeName }
       nodeId = this.selectedNode.id;
-      if(['target_data_object'].includes(this.selectedNode.data.type) && this.selectedNode.data.nodeData.properties.create){
-        let currentDataObject;
-        // if(!this.selectedNode.data.nodeData.properties.create){
-        //   currentDataObject = {
-        //     ...this.selectedNode.data.nodeData.dataObject,
-        //     tables: this.nodeName
-        //   };
-        // } else{
-          currentDataObject = this.nodeName;
-        // }
-        data = {
-          ...this.selectedNode.data,
-          nodeData: {
-            ...this.selectedNode.data.nodeData,
-            general: general,
-            dataObject: currentDataObject
-          }
-        };
-      } else{
-        data = {
-          ...this.selectedNode.data,
-          nodeData: {
-            ...this.selectedNode.data.nodeData,
-            general: general
-          }
-        };
-      }
+      data = {
+        ...this.selectedNode.data,
+        nodeData: {
+          ...this.selectedNode.data.nodeData,
+          general: general
+        }
+      };
 
       let displayName = this.nodeName;
       if (displayName.length > 8) {
@@ -546,40 +443,18 @@ toggleCollapse() {
           labelElement.setAttribute('title', this.nodeName);
         }
       }
-    } else if (type === 'properties') {
-      nodeId = this.selectedNode.id;
-
-      data = {
-        ...this.selectedNode.data
-      };
-    } else if (type === 'attribute') {
-      nodeId = this.selectedNode.id;
-
-      data = {
-        ...this.selectedNode.data
-      };
-    } else if (type === 'groupAttribute'){
-      nodeId = this.selectedNode.id;
-
-      data = {
-        ...this.selectedNode.data
-      };
-    } else if(type === 'parameter'){
+    } else if (type === 'parameter') {
       const module = this.drawflow.module || 'Home';
       this.drawflow.drawflow.drawflow[module].canvasData = this.canvasData;
-    } else{
+    } else {
       nodeId = this.selectedNode.id;
 
       data = {
         ...this.selectedNode.data
       };
     }
-    if(type !== 'parameter'){
+    if (type !== 'parameter') {
       this.drawflow.updateNodeDataFromId(nodeId, data);
-      const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
-      Object.entries(allNodes).forEach(([id, node]) => {
-        this.getDropdownColumnsData(node);
-      });
     }
     console.log(this.drawflow.drawflow.drawflow[this.drawflow.module]);
   }
@@ -592,42 +467,26 @@ toggleCollapse() {
     this.selectedAttributeIndex = null;
     this.selectedGroupAttributeIndex = null;
     this.selectedSourceAttributeIndex = null;
-    if(this.isRefrshEnable && !['success', 'failed'].includes(this.dataFlowRunStatus)){
+    if(this.selectedNode.data.type === 'loop_end'){
+      this.tableTabId = 2;
+    }
+    if (this.isRefrshEnable && !['success', 'failed'].includes(this.dataFlowRunStatus)) {
       this.tableTypeTabId = 2;
       this.getDataFlowLogs(this.nodeName);
     }
   }
 
-  getConnections() {
-    // let object = {};
-    this.workbechService.getConnectionsForEtl().subscribe({
-      next: (data) => {
+  getDataFlowList() {
+    this.workbechService.getEtlDataFlowList(1, 100, '').subscribe({
+      next: (data: any) => {
         console.log(data);
-        this.connectionOptions = data.data;
+        this.dataFlowOptions = data.data;
       },
       error: (error: any) => {
-        console.log(error);
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+        console.log(error);
       }
     });
-  }
-  getDataObjects() {
-    let server_id = this.selectedConnection?.server_id
-    const object = {
-      hierarchy_ids: [server_id]
-    }
-    if (server_id) {
-      this.workbechService.getTablesForDataTransformation(this.selectedConnection.server_id).subscribe({
-        next: (data) => {
-          console.log(data);
-          this.dataObjectOptions = data?.tables;
-        },
-        error: (error) => {
-          console.log(error);
-          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
-        }
-      });
-    }
   }
   saveOrUpdateEtlDataFlow() {
     const exportedData = this.drawflow.export();
@@ -712,7 +571,7 @@ toggleCollapse() {
     formData.append('transformation_flow', file);
     formData.append('ETL_flow', JSON.stringify(etlFlow));
 
-    if(this.dataFlowId){
+    if (this.dataFlowId) {
       formData.append('id', this.dataFlowId);
       this.workbechService.updateEtl(formData).subscribe({
         next: (data: any) => {
@@ -727,7 +586,7 @@ toggleCollapse() {
           console.log(error);
         }
       });
-    } else{
+    } else {
       this.workbechService.saveEtl(formData).subscribe({
         next: (data: any) => {
           console.log(data);
@@ -777,7 +636,7 @@ toggleCollapse() {
       }
     });
   }
-  getDataFlowStatus(runId : any){
+  getDataFlowStatus(runId: any) {
     let object = {
       dag_id: this.etlName,
       run_id: runId
@@ -804,7 +663,7 @@ toggleCollapse() {
             if (node1) {
               const nodeElement = document.querySelector(`#node-${id}`);
               if (nodeElement) {
-                const statusDiv = nodeElement.querySelector('.node-status')  as HTMLElement;
+                const statusDiv = nodeElement.querySelector('.node-status') as HTMLElement;
                 if (statusDiv && status) {
                   statusDiv.textContent = status.charAt(0).toUpperCase() + status.slice(1);
                   statusDiv.style.display = 'block';
@@ -815,7 +674,7 @@ toggleCollapse() {
           }
         });
         this.tableTypeTabId = 2;
-        if(!['success', 'failed'].includes(data.status)){
+        if (!['success', 'failed'].includes(data.status)) {
           setTimeout(() => {
             this.getDataFlowStatus(runId);
           }, 3000);
@@ -829,7 +688,7 @@ toggleCollapse() {
       }
     });
   }
-  getDataFlowLogs(taskId:any){
+  getDataFlowLogs(taskId: any) {
     let object = {
       dag_id: this.etlName,
       run_id: this.runId,
@@ -865,14 +724,14 @@ toggleCollapse() {
         attr.push(array);
       });
       task.format = 'database',
-      task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
-      task.path = '',
-      task.source_table_name = nodes[nodeId].data.nodeData.dataObject.tables;
+        task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
+        task.path = '',
+        task.source_table_name = nodes[nodeId].data.nodeData.dataObject.tables;
       task.attributes = attr;
       task.source_attributes = sourceAttr;
     } else {
       if (nodes[nodeId].data.type === 'target_data_object') {
-        if(!nodes[nodeId].data.nodeData.properties.create){
+        if (!nodes[nodeId].data.nodeData.properties.create) {
           let attrMapper: any[] = [];
           nodes[nodeId].data.nodeData.attributeMapper.forEach((atrr: any) => {
             const array = [atrr.column, atrr.dataType, atrr.selectedColumn.label, atrr.selectedDataType];
@@ -881,45 +740,45 @@ toggleCollapse() {
           task.attribute_mapper = attrMapper;
         }
         task.format = 'database',
-        task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
-        task.path = '',
-        task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.tables;
+          task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
+          task.path = '',
+          task.target_table_name = nodes[nodeId].data.nodeData.properties.create ? nodes[nodeId].data.nodeData.dataObject : nodes[nodeId].data.nodeData.dataObject.tables;
         task.truncate = nodes[nodeId].data.nodeData.properties.truncate;
         task.create = nodes[nodeId].data.nodeData.properties.create;
-      } else if(nodes[nodeId].data.type === 'Rollup'){
-        let grp : any[] = [];
-        nodes[nodeId].data.nodeData.groupAttributes.forEach((atrr:any)=>{
-          const array = [atrr.aliasName, '', atrr.selectedColumn.group+'.'+atrr.selectedColumn.label];
+      } else if (nodes[nodeId].data.type === 'Rollup') {
+        let grp: any[] = [];
+        nodes[nodeId].data.nodeData.groupAttributes.forEach((atrr: any) => {
+          const array = [atrr.aliasName, '', atrr.selectedColumn.group + '.' + atrr.selectedColumn.label];
           grp.push(array);
         });
-        let attr : any[] = [];
-        nodes[nodeId].data.nodeData.attributes.forEach((atrr:any)=>{
+        let attr: any[] = [];
+        nodes[nodeId].data.nodeData.attributes.forEach((atrr: any) => {
           const array = [atrr.attributeName, atrr.dataType, atrr.expression];
           attr.push(array);
         });
         task.group_attributes = grp;
         task.having_clause = nodes[nodeId].data.nodeData.properties.havingClause;
         task.attributes = attr;
-      } else if(nodes[nodeId].data.type === 'Filter'){
+      } else if (nodes[nodeId].data.type === 'Filter') {
         task.filter_conditions = nodes[nodeId].data.nodeData.properties.filterCondition;
-      } else if(nodes[nodeId].data.type === 'Joiner'){
+      } else if (nodes[nodeId].data.type === 'Joiner') {
         task.primary_table = nodes[nodeId].data.nodeData.properties.primaryObject.label;
-        let joins : any[] = [];
-        nodes[nodeId].data.nodeData.properties.joinList.forEach((join:any)=>{
+        let joins: any[] = [];
+        nodes[nodeId].data.nodeData.properties.joinList.forEach((join: any) => {
           const array = [join.joinType, join.secondaryObject, join.joinCondition];
           joins.push(array);
         });
-        let attr : any[] = [];
-        nodes[nodeId].data.nodeData.attributes.forEach((atrr:any)=>{
+        let attr: any[] = [];
+        nodes[nodeId].data.nodeData.attributes.forEach((atrr: any) => {
           const array = [atrr.attributeName, atrr.dataType, atrr.expression];
           attr.push(array);
         });
         task.joining_list = joins;
         task.where_clause = nodes[nodeId].data.nodeData.properties.whereClause;
         task.attributes = attr;
-      } else if(nodes[nodeId].data.type === 'Expression'){
-        let exps : any[] = [];
-        nodes[nodeId].data.nodeData.attributes.forEach((atrr:any)=>{
+      } else if (nodes[nodeId].data.type === 'Expression') {
+        let exps: any[] = [];
+        nodes[nodeId].data.nodeData.attributes.forEach((atrr: any) => {
           const array = [atrr.attributeName, atrr.dataType, atrr.expression];
           exps.push(array);
         });
@@ -929,9 +788,9 @@ toggleCollapse() {
       const inputConnections = nodes[nodeId].inputs?.input_1?.connections || [];
       if (inputConnections.length > 0) {
         const prevTaskIds = inputConnections.map((conn: any) => nodes[conn.node].data.nodeData.general.name);
-        if(nodes[nodeId].data.type === 'Joiner'){
+        if (nodes[nodeId].data.type === 'Joiner') {
           task.previous_task_id = prevTaskIds;
-        } else{
+        } else {
           task.previous_task_id = prevTaskIds[0];
         }
       }
@@ -939,24 +798,24 @@ toggleCollapse() {
 
     return task;
   }
-  addNewAttribute(){
-    let count = this.selectedNode.data.nodeData.attributes.length+1;
-    let attribute = {attributeName: 'ATTR_NAME_'+count, dataType: 'varchar', expression: ''}
+  addNewAttribute() {
+    let count = this.selectedNode.data.nodeData.attributes.length + 1;
+    let attribute = { attributeName: 'ATTR_NAME_' + count, dataType: 'varchar', expression: '' }
     this.selectedNode.data.nodeData.attributes.push(attribute);
   }
-  deleteAttribute(index:number){
+  deleteAttribute(index: number) {
     this.selectedNode.data.nodeData.attributes.splice(index, 1);
     this.updateNode('attribute');
   }
-  addNewGroupAttribute(){
-    let attribute = {aliasName: '', selectColumnDropdown: this.selectedNode.data.nodeData.dataObject, selectedColumn: null, dataType: '',}
+  addNewGroupAttribute() {
+    let attribute = { aliasName: '', selectColumnDropdown: this.selectedNode.data.nodeData.dataObject, selectedColumn: null, dataType: '', }
     this.selectedNode.data.nodeData.groupAttributes.push(attribute);
   }
-  deleteGroupAttribute(index:number){
+  deleteGroupAttribute(index: number) {
     this.selectedNode.data.nodeData.groupAttributes.splice(index, 1);
     this.updateNode('groupattribute');
   }
-  deleteSourceAttribute(index:number){
+  deleteSourceAttribute(index: number) {
     this.selectedNode.data.nodeData.sourceAttributes.splice(index, 1);
     this.updateNode('');
   }
@@ -965,148 +824,17 @@ toggleCollapse() {
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval);
     }
-  
+
     this.pollingInterval = setInterval(() => {
       this.getDataFlowStatus(runId);
     }, 2000); // Poll every 3 seconds
   }
 
-  getDropdownColumnsData(node:any){
-    const tree = this.etlGraphService.buildUpstreamTree(this.drawflow, node.id);
-    console.log('nested upstream tree:', tree);
-
-    const list = this.etlGraphService.flattenUpstream(tree);
-    console.log('flattened topo list:', list);
-    
-    let childrenList = list.slice(1); // Exclude the selected node at index 0
-
-    const inputIds: number[] = [];
-
-    Object.values(node.inputs).forEach((input:any) => {
-      input.connections.forEach((connection:any) => {
-        inputIds.push(connection.node);
-      });
-    });
-
-    childrenList = inputIds;
-
-    const childDataObjects: any[] = [];
-    const childAttributes: any[] = [];
-    let childGrpAttributes: any = {};
-    let childSourceAttributes: any = {};
-    const nodeNames: any[] = [];
-    const nodeTypes: any[] = [];
-
-
-    childrenList.forEach(childId => {
-      const childNode = this.drawflow.getNodeFromId(childId);
-      if (childNode?.data?.nodeData) {
-        childDataObjects.push(childNode.data.nodeData.dataObject);
-        childAttributes.push(childNode.data.nodeData.attributes);
-        const nodeName = childNode.data.nodeData.general.name;
-        if(childNode.data.type === 'source_data_object'){
-          childSourceAttributes[nodeName] = childNode.data.nodeData.sourceAttributes;
-        }
-        if(childNode.data.type === 'Rollup'){
-          childGrpAttributes[nodeName] = childNode.data.nodeData.groupAttributes;
-        }
-        nodeNames.push(nodeName);
-        nodeTypes.push(childNode.data.type);
-      }
-    });
-
-    console.log('Children DataObjects:', childDataObjects);
-    console.log('Children Attributes:', childAttributes);
-
-    this.currentNodeColumns = [];
-
-    for (let i = 0; i < childDataObjects.length; i++) {
-      const nodeName = nodeNames[i];
-      const nodeType = nodeTypes[i];
-      const columns = childDataObjects[i]?.columns || [];
-      const attributes = childAttributes[i] || [];
-      const sourceAttributes = childSourceAttributes[i] || [];
-
-      let items = [];
-
-      if(nodeType === 'source_data_object'){
-        const attr = childSourceAttributes[nodeName] || [];
-        if(attr.length > 0){
-          for (const atr of attr) {
-            attr
-            items.push({...atr.selectedColumn, group: nodeName, label: atr.attributeName, value: atr.attributeName, dataType: atr.dataType});
-          }
-        }
-      } 
-      else if(!['Rollup', 'Expression', 'Joiner'].includes(nodeType)){
-        let dataObjects = JSON.parse(JSON.stringify(childDataObjects[i]));
-        dataObjects.forEach((object:any)=>{
-          object.group = nodeName;
-        });
-        items = dataObjects;
-      }
-       if(nodeType === 'Rollup'){
-        const attr = childGrpAttributes[nodeName] || [];
-        if(attr.length > 0){
-          for (const atr of attr) {
-            items.push({
-              label: atr.aliasName,
-              value: atr.aliasName,
-              column: atr.selectedColumn,
-              group: nodeName
-            });
-          }
-        }
-      }
-
-      for (const attr of attributes) {
-        items.push({
-          label: attr.attributeName,
-          value: attr.attributeName,
-          dataType: attr.dataType,
-          group: nodeName
-        });
-      }
-
-      this.currentNodeColumns.push(...items);
-    }
-
-    this.currentNodeColumns = this.currentNodeColumns.filter((item, index, self) => {
-      return index === self.findIndex(t => t.label === item.label && t.group === item.group);
-    });
-    console.log('Children columns:', this.currentNodeColumns);
-    if(!['source_data_object', 'target_data_object'].includes(node.data.type)){
-      node.data.nodeData.dataObject = this.currentNodeColumns;
-      if(node.data.type === 'Rollup'){
-        node.data.nodeData.groupAttributes.forEach((grp:any)=>{
-          grp.selectColumnDropdown = this.currentNodeColumns;
-          const match = this.currentNodeColumns.find((col: any) => 
-            col.group === grp.selectedColumn?.group && 
-            col.label === grp.selectedColumn?.label
-          );
-      
-          if (!match) {
-            grp.selectedColumn = '';
-          }
-        });
-      }
-      this.drawflow.updateNodeDataFromId(node.id, node.data);
-    } else if(node.data.type === 'target_data_object'){
-      node.data.nodeData.columnsDropdown = this.currentNodeColumns;
-      this.drawflow.updateNodeDataFromId(node.id, node.data);
-    }
-
-    const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
-      Object.entries(allNodes).forEach(([id, node]) => {
-        console.log('Node ID:', id, 'Node Data:', node);
-    });
-  }
-
   openAttributesSelection(modal: any) {
     const dataObject = this.selectedNode.data.nodeData.dataObject || [];
-  
+
     let flatList = [];
-  
+
     if (this.selectedNode.data.type === 'Rollup') {
       const selectedGroups = this.selectedNode.data.nodeData.groupAttributes || [];
       flatList = dataObject.map((attr: any) => {
@@ -1146,7 +874,7 @@ toggleCollapse() {
         }
       });
     }
-  
+
     // Group the flat list by `group`
     const grouped = flatList.reduce((acc: any[], attr: any) => {
       let groupObj = acc.find(g => g.group === attr.group);
@@ -1157,15 +885,15 @@ toggleCollapse() {
       groupObj.attributes.push({ ...attr });
       return acc;
     }, []);
-  
+
     // Set group-level isChecked
-    grouped.forEach((group:any) => {
+    grouped.forEach((group: any) => {
       group.isChecked = group.attributes.every((attr: any) => attr.isChecked);
     });
-  
+
     this.groupAttributesList = grouped;
-  
-    if(modal !== null){
+
+    if (modal !== null) {
       this.modalService.open(modal, {
         centered: true,
         windowClass: 'animate__animated animate__zoomIn',
@@ -1173,7 +901,7 @@ toggleCollapse() {
       });
     }
   }
-  
+
   toggleGroup(group: any) {
     group.attributes.forEach((attr: any) => attr.isChecked = group.isChecked);
   }
@@ -1184,121 +912,12 @@ toggleCollapse() {
     });
   }
 
-  applySelectedAttributes() {
-    const flatSelected = this.groupAttributesList
-      .flatMap(g => g.attributes)
-      .filter(attr => attr.isChecked);
-  
-    const dataObject = this.selectedNode.data.nodeData.dataObject;
-  
-    if (this.selectedNode.data.type === 'Rollup') {
-      this.selectedNode.data.nodeData.groupAttributes = flatSelected.map(attr => ({
-        aliasName: attr.label,
-        selectColumnDropdown: dataObject,
-        selectedColumn: attr,
-        dataType: attr.dataType || attr.column.dataType
-      }));
-      this.updateNode('groupAttribute');
-  
-    } else if (['Expression', 'Joiner'].includes(this.selectedNode.data.type)) {
-      const existingAttributes = this.selectedNode.data.nodeData.attributes || [];
-
-      const usedNames: { [key: string]: number } = {};
-      // Pre-fill usedNames with existing attribute names
-      existingAttributes.forEach((attr:any) => {
-        const baseName = attr.attributeName.split('_')[0];
-        usedNames[baseName] = Math.max(usedNames[baseName] || 0,
-          parseInt(attr.attributeName.split('_')[1] || '0'));
-      });
-
-      const newAttributes = flatSelected.map(attr => {
-        let name = attr.label;
-        if (usedNames[name] !== undefined) {
-          usedNames[name]++;
-          name = `${name}_${usedNames[name]}`;
-        } else {
-          usedNames[name] = 0;
-        }
-
-        return {
-          attributeName: name,
-          dataType: attr.dataType || attr.column?.dataType,
-          expression: `${attr.group}.${attr.label}`
-        };
-      });
-
-      this.selectedNode.data.nodeData.attributes = [...existingAttributes, ...newAttributes];
-      this.updateNode('');
-    } else if(this.selectedNode.data.type === 'source_data_object'){
-      if(this.isSourceClicked){
-        let items : any[] = [];
-        for (const col of dataObject.columns) {
-          items.push({
-            label: col.col,
-            value: col.col,
-            dataType: col.dtype,
-            group: this.selectedNode.data.nodeData.general.name
-          });
-        }
-        this.selectedNode.data.nodeData.sourceAttributes = flatSelected.map(attr => ({
-          attributeName: attr.label,
-          selectColumnDropdown: items,
-          selectedColumn: attr,
-          dataType: attr.dataType || attr.column.dataType
-        }));
-      } else{
-        const usedNames: { [key: string]: number } = {};
-        const existingNames = new Set<string>();
-
-        // Include existing attribute names from both lists
-        const existingAttributes = this.selectedNode.data.nodeData.attributes || [];
-        const existingSourceAttributes = this.selectedNode.data.nodeData.sourceAttributes || [];
-
-        [...existingAttributes, ...existingSourceAttributes].forEach(attr => {
-          existingNames.add(attr.attributeName);
-
-          const match = attr.attributeName.match(/^(.+?)(?:_(\d+))?$/);
-          if (match) {
-            const base = match[1];
-            const suffix = match[2] ? parseInt(match[2]) : 0;
-            usedNames[base] = Math.max(usedNames[base] || 0, suffix);
-          }
-        });
-
-        flatSelected.forEach(attr => {
-          let baseName = attr.label;
-          let name = baseName;
-
-          if (existingNames.has(name)) {
-            let count = (usedNames[baseName] || 0) + 1;
-            do {
-              name = `${baseName}_${count}`;
-              count++;
-            } while (existingNames.has(name));
-            usedNames[baseName] = count - 1;
-          }
-
-          existingNames.add(name);
-
-          this.selectedNode.data.nodeData.attributes.push({
-            attributeName: name,
-            dataType: attr.dataType || attr.column?.dataType,
-            expression: `${attr.group}.${attr.label}`
-          });
-        });
-
-
-      }
-      this.updateNode('');
-    }
-  }
-
-  openExpressionEdit(modal:any, attribute:any, index:any){
-    if(index !== null || index !== undefined){
+  openExpressionEdit(modal: any, attribute: any, index: any) {
+    if (index !== null || index !== undefined) {
       this.selectedIndex = index;
     }
     let dataObject: any[] = [];
-    if(attribute.paramName){
+    if (attribute.paramName) {
       dataObject = [''].map((col: any) => ({
         label: '',
         value: '',
@@ -1334,7 +953,7 @@ toggleCollapse() {
     const groupKeys = Object.keys(this.groupedColumns);
     this.selectedGroup = groupKeys.length > 0 ? groupKeys[0] : null;
 
-    if(attribute.hasOwnProperty('secondaryObject')){
+    if (attribute.hasOwnProperty('secondaryObject')) {
       this.isJoinerCondition = true;
       this.isParameter = false;
       this.isSQLParameter = false;
@@ -1344,21 +963,21 @@ toggleCollapse() {
       this.selectedField = attribute.secondaryObject;
       this.selectedColumn = this.groupedColumns[this.selectedGroup][0];
       this.expression = attribute.joinCondition;
-    } else if(attribute.hasOwnProperty('paramName')){
+    } else if (attribute.hasOwnProperty('paramName')) {
       this.isJoinerCondition = false;
       this.isHaving = false;
       this.isWhere = false;
       this.isFilter = false;
       this.selectedField = attribute;
       this.selectedColumn = '';
-      if(attribute.hasOwnProperty('sql')){
+      if (attribute.hasOwnProperty('sql')) {
         this.isSQLParameter = true;
         this.expression = attribute.sql;
-      } else{
+      } else {
         this.isParameter = true;
         this.expression = attribute.default;
       }
-    } else if(attribute === 'having'){
+    } else if (attribute === 'having') {
       this.isJoinerCondition = false;
       this.isParameter = false;
       this.isSQLParameter = false;
@@ -1368,7 +987,7 @@ toggleCollapse() {
       this.selectedField = 'Having Clause';
       this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
       this.expression = this.selectedNode.data.nodeData.properties.havingClause;
-    }  else if(attribute === 'where'){
+    } else if (attribute === 'where') {
       this.isJoinerCondition = false;
       this.isParameter = false;
       this.isSQLParameter = false;
@@ -1378,7 +997,7 @@ toggleCollapse() {
       this.selectedField = 'Where Clause';
       this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
       this.expression = this.selectedNode.data.nodeData.properties.whereClause;
-    }  else if(attribute === 'filter'){
+    } else if (attribute === 'filter') {
       this.isJoinerCondition = false;
       this.isParameter = false;
       this.isSQLParameter = false;
@@ -1388,7 +1007,7 @@ toggleCollapse() {
       this.selectedField = 'Filter Condition';
       this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
       this.expression = this.selectedNode.data.nodeData.properties.filterCondition;
-    } else{
+    } else {
       this.isJoinerCondition = false;
       this.isParameter = false;
       this.isSQLParameter = false;
@@ -1406,26 +1025,26 @@ toggleCollapse() {
     });
   }
 
-  updateExpressionToNode(){
-    if(this.isJoinerCondition){
+  updateExpressionToNode() {
+    if (this.isJoinerCondition) {
       this.selectedNode.data.nodeData.properties.joinList[this.selectedIndex].joinCondition = this.expression;
-    } else if(this.isParameter){
+    } else if (this.isParameter) {
       this.canvasData.parameters[this.selectedIndex].default = this.expression;
-    } else if(this.isSQLParameter){
+    } else if (this.isSQLParameter) {
       this.canvasData.sqlParameters[this.selectedIndex].sql = this.expression;
-    } else if(this.isHaving){
+    } else if (this.isHaving) {
       this.selectedNode.data.nodeData.properties.havingClause = this.expression;
-    }  else if(this.isWhere){
+    } else if (this.isWhere) {
       this.selectedNode.data.nodeData.properties.whereClause = this.expression;
-    }  else if(this.isFilter){
+    } else if (this.isFilter) {
       this.selectedNode.data.nodeData.properties.filterCondition = this.expression;
-    } else{
+    } else {
       this.selectedNode.data.nodeData.attributes[this.selectedIndex].expression = this.expression;
     }
 
-    if(!this.isParameter && !this.isSQLParameter){
+    if (!this.isParameter && !this.isSQLParameter) {
       this.updateNode('');
-    } else{
+    } else {
       this.updateNode('parameter');
     }
     this.expression = '';
@@ -1441,18 +1060,18 @@ toggleCollapse() {
   insertOrReplace(text: string, textarea: HTMLTextAreaElement): void {
     const { selectionStart: start, selectionEnd: end } = textarea;
     const value = this.expression || '';
-  
+
     const prefix = (value && start === end && value[start - 1] !== ' ') ? ' ' : '';
     this.expression = value.slice(0, start) + prefix + text + value.slice(end);
-  
+
     const newPos = start + prefix.length + text.length;
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(newPos, newPos);
     });
-  }  
-  
-  getDataFlow(){
+  }
+
+  getDataFlow() {
     this.workbechService.getEtlDataFlow(this.dataFlowId).subscribe({
       next: (data) => {
         console.log(data);
@@ -1462,11 +1081,11 @@ toggleCollapse() {
         this.drawflow.import(drawFlowJson);
         console.log(drawFlowJson);
         this.isRunEnable = true;
-        this.canvasData = drawFlowJson.drawflow.Home.canvasData ? drawFlowJson.drawflow.Home.canvasData : {parameters: [], sqlParameters: []};
+        this.canvasData = drawFlowJson.drawflow.Home.canvasData ? drawFlowJson.drawflow.Home.canvasData : { parameters: [], sqlParameters: [] };
         console.log(this.canvasData);
         this.isNodeSelected = true;
         this.isCanvasSelected = true;
-        this.tableTabId = 7;
+        this.tableTabId = 8;
 
         setTimeout(() => {
           const allNodes = this.drawflow.drawflow.drawflow['Home'].data;
@@ -1490,25 +1109,25 @@ toggleCollapse() {
       }
     });
   }
-  
-  setAttributeAutoMapper(){
+
+  setAttributeAutoMapper() {
     const mapper = this.selectedNode.data.nodeData.attributeMapper
-    if(mapper.length > 0){
-      mapper.forEach((attr:any)=>{
+    if (mapper.length > 0) {
+      mapper.forEach((attr: any) => {
         attr.selectedDataType = attr.dataType;
       });
       this.drawflow.updateNodeDataFromId(this.selectedNode.id, this.selectedNode.data);
     }
   }
 
-  addNewParameter(){
+  addNewParameter() {
     const existingIndexes = this.canvasData?.parameters
-      .map((p:any) => {
+      .map((p: any) => {
         const match = p.paramName?.match(/PARAM_NAME_(\d+)/);
         return match ? +match[1] : null;
       })
-      .filter((index:any) => index !== null)
-      .sort((a:any, b:any) => a! - b!) as number[];
+      .filter((index: any) => index !== null)
+      .sort((a: any, b: any) => a! - b!) as number[];
 
     // Find the smallest unused index
     let newIndex = 1;
@@ -1520,22 +1139,22 @@ toggleCollapse() {
       newIndex = existingIndexes.length + 1;
     }
 
-    let parameter = {paramName: `PARAM_NAME_${newIndex}`, dataType: 'varchar', default: ''}
+    let parameter = { paramName: `PARAM_NAME_${newIndex}`, dataType: 'varchar', default: '' }
     this.canvasData?.parameters.push(parameter);
   }
-  deleteParameter(index:any){
+  deleteParameter(index: any) {
     this.canvasData.parameters.splice(index, 1);
     this.updateNode('parameter');
   }
 
-  addNewSQLParameter(){
+  addNewSQLParameter() {
     const existingIndexes = this.canvasData?.sqlParameters
-      .map((p:any) => {
+      .map((p: any) => {
         const match = p.paramName?.match(/SQL_PARAM_NAME_(\d+)/);
         return match ? +match[1] : null;
       })
-      .filter((index:any) => index !== null)
-      .sort((a:any, b:any) => a! - b!) as number[];
+      .filter((index: any) => index !== null)
+      .sort((a: any, b: any) => a! - b!) as number[];
 
     // Find the smallest unused index
     let newIndex = 1;
@@ -1547,17 +1166,17 @@ toggleCollapse() {
       newIndex = existingIndexes.length + 1;
     }
 
-    let parameter = {paramName: `SQL_PARAM_NAME_${newIndex}`, dataType: 'varchar', sql: '', default: 'null'}
+    let parameter = { paramName: `SQL_PARAM_NAME_${newIndex}`, dataType: 'varchar', sql: '', default: 'null' }
     this.canvasData?.sqlParameters.push(parameter);
   }
-  deleteSQLParameter(index:any){
+  deleteSQLParameter(index: any) {
     this.canvasData.sqlParameters.splice(index, 1);
     this.updateNode('parameter');
   }
 
-  moveUp(type:string) {
+  moveUp(type: string) {
     let isChanged: boolean = false;
-    if(type === 'sourceAttributes'){
+    if (type === 'sourceAttributes') {
       if (this.selectedSourceAttributeIndex !== null && this.selectedSourceAttributeIndex > 0) {
         const index = this.selectedSourceAttributeIndex;
         const attrs = this.selectedNode.data.nodeData.sourceAttributes;
@@ -1565,7 +1184,7 @@ toggleCollapse() {
         this.selectedSourceAttributeIndex--;
         isChanged = true;
       }
-    } else if(type === 'groupAttributes'){
+    } else if (type === 'groupAttributes') {
       if (this.selectedGroupAttributeIndex !== null && this.selectedGroupAttributeIndex > 0) {
         const index = this.selectedGroupAttributeIndex;
         const attrs = this.selectedNode.data.nodeData.groupAttributes;
@@ -1573,7 +1192,7 @@ toggleCollapse() {
         this.selectedGroupAttributeIndex--;
         isChanged = true;
       }
-    } else if(type === 'attributes'){
+    } else if (type === 'attributes') {
       if (this.selectedAttributeIndex !== null && this.selectedAttributeIndex > 0) {
         const index = this.selectedAttributeIndex;
         const attrs = this.selectedNode.data.nodeData.attributes;
@@ -1583,14 +1202,14 @@ toggleCollapse() {
       }
     }
 
-    if(isChanged){
+    if (isChanged) {
       this.updateNode('');
     }
   }
-  
-  moveDown(type:string) {
+
+  moveDown(type: string) {
     let isChanged: boolean = false;
-    if(type === 'sourceAttributes'){
+    if (type === 'sourceAttributes') {
       if (this.selectedSourceAttributeIndex !== null && this.selectedSourceAttributeIndex < this.selectedNode.data.nodeData.sourceAttributes.length - 1) {
         const index = this.selectedSourceAttributeIndex;
         const attrs = this.selectedNode.data.nodeData.sourceAttributes;
@@ -1598,7 +1217,7 @@ toggleCollapse() {
         this.selectedSourceAttributeIndex++;
         isChanged = true;
       }
-    } else if(type === 'groupAttributes'){
+    } else if (type === 'groupAttributes') {
       if (this.selectedGroupAttributeIndex !== null && this.selectedGroupAttributeIndex < this.selectedNode.data.nodeData.groupAttributes.length - 1) {
         const index = this.selectedGroupAttributeIndex;
         const attrs = this.selectedNode.data.nodeData.groupAttributes;
@@ -1606,7 +1225,7 @@ toggleCollapse() {
         this.selectedGroupAttributeIndex++;
         isChanged = true;
       }
-    } else if(type === 'attributes'){
+    } else if (type === 'attributes') {
       if (this.selectedAttributeIndex !== null && this.selectedAttributeIndex < this.selectedNode.data.nodeData.attributes.length - 1) {
         const index = this.selectedAttributeIndex;
         const attrs = this.selectedNode.data.nodeData.attributes;
@@ -1616,18 +1235,18 @@ toggleCollapse() {
       }
     }
 
-    if(isChanged){
+    if (isChanged) {
       this.updateNode('');
     }
   }
 
-  canvasZoomOut(){
+  canvasZoomOut() {
     this.drawflow.zoom_out();
   }
-  canvasZoomReset(){
+  canvasZoomReset() {
     this.drawflow.zoom_reset()
   }
-  canvasZoomIn(){
+  canvasZoomIn() {
     this.drawflow.zoom_in();
   }
 }

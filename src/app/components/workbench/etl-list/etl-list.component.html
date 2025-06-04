@@ -22,8 +22,7 @@
 
 
                     <div class="input-group">
-                        <select class="form-select form-select select2 fs-14 form-control border-end me-3">
-                            <option value="all">All</option>
+                        <select class="form-select form-select select2 fs-14 form-control border-end me-3" [(ngModel)]="listType" (change)="getEtlList()">
                             <option value="dataFlow">Data Flow</option>
                             <option value="jobFlow">Job Flow</option>
                         </select>
@@ -35,7 +34,7 @@
                         <button class="btn btn-primary new-sheet-btn-radius me-2" (click)="goToDataFlow()">
                             <i class="fe fe-plus me-1"></i>New Data Flow
                         </button>
-                        <button class="btn btn-primary new-sheet-btn-radius">
+                        <button class="btn btn-primary new-sheet-btn-radius" (click)="goToJobFlow()">
                             <i class="fe fe-plus me-1"></i>New Job Flow
                         </button>
                     </div>
@@ -70,7 +69,7 @@
                                         </div>
                                         <div class="content">
                                             <span>DataFlow Name: </span>
-                                            <a class="cursor-pointer" [ngbTooltip]="dataFlow.data_flow_name" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name}} </a>
+                                            <a class="cursor-pointer" [ngbTooltip]="dataFlow.data_flow_name" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name | slice: 0: 15}} </a>
                                         </div>
                                     </div>
                                 </td>
@@ -81,7 +80,7 @@
                                         <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" (click)="editDataFlow(dataFlow.id)">
                                             <i class="ri-edit-line"></i>
                                         </button>
-                                        <button class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                        <button class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light" (click)="deleteDataFlow(dataFlow)">
                                             <i class="ri-delete-bin-7-line"></i>
                                         </button>
                                     </div>
@@ -107,7 +106,7 @@
                                     </div>
                                     <div class="ms-2 mt-sm-0 mt-2">
                                         <h6 class="mb-1">
-                                            <a [ngbTooltip]="dataFlow.data_flow_name" class="float-start" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name}} </a>
+                                            <a [ngbTooltip]="dataFlow.data_flow_name" class="float-start" (click)="editDataFlow(dataFlow.id)"> {{dataFlow.data_flow_name | slice: 0: 15}} </a>
                                         </h6>
                     
                                     </div>
@@ -122,7 +121,7 @@
                                         <div class="dropdown-menu" ngbDropdownMenu>
                                             <a class="dropdown-item"><i class="fe fe-edit me-2 d-inline-flex" (click)="editDataFlow(dataFlow.id)"></i>
                                                 edit</a>
-                                            <a class="dropdown-item  btn btn-secondary-light"><i class="fe fe-trash me-2 d-inline-flex"></i>
+                                            <a class="dropdown-item  btn btn-secondary-light" (click)="deleteDataFlow(dataFlow)"><i class="fe fe-trash me-2 d-inline-flex"></i>
                                                 delete</a>
                                         </div>
                                     </div>

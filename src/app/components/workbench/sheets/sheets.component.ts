@@ -1,5 +1,5 @@
 import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit } from '@angular/core';
-import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModal, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -103,7 +103,7 @@ declare var $:any;
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent,NgbTooltipModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -1670,6 +1670,7 @@ try {
           this.KPIPrefix = '';
           this.KPISuffix = '';
           this.KPIPercentageDivisor = 100;
+          this.is_sheet_Embed = false;
           if(this.sheetName != ''){
              this.tabs.push(this.sheetName);
           }else{
@@ -1703,6 +1704,7 @@ try {
     this.KPIPrefix = '';
     this.KPISuffix = '';
     this.KPIPercentageDivisor = 100;
+    this.is_sheet_Embed = false;
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
@@ -3537,6 +3539,7 @@ trackByFn(index: number, item: any): number {
     }
     const obj={
     //"filter_id": this.filter_id,
+    "sheet_id":this.retriveDataSheet_id,
     "hierarchy_id": this.databaseId,
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
@@ -3580,7 +3583,7 @@ trackByFn(index: number, item: any): number {
   )
   this.hasUnSavedChanges = true;
   }
-  filterEditGet(){
+   filterEditGet(){
     this.filterData = [];
     const obj={
       "type_filter":"chartfilter",
@@ -3605,7 +3608,10 @@ trackByFn(index: number, item: any): number {
           this.topAggregate = responce?.top_bottom[1];
           this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
         }
-        if(this.formatExtractType){
+        if(responce.is_embedded){
+          this.activeTabId = 7;
+        }
+        else if(this.formatExtractType){
           this.activeTabId = 3;
         }
         else if(responce?.range_values && responce?.range_values.length > 0 && !responce?.relative_date){
@@ -3744,6 +3750,7 @@ trackByFn(index: number, item: any): number {
       this.next = this.next === 0 ? 3 : this.next;
     }
     const obj={
+      "sheet_id":this.retriveDataSheet_id,
       "filter_id": this.filter_id,
       "hierarchy_id": this.databaseId,
       "queryset_id": this.qrySetId,
@@ -5425,7 +5432,7 @@ customizechangeChartPlugin() {
         case 'now': break; 
         case 'today': break; 
         case 'parse': 
-        this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '", "dd-mm-yyyy")';
+        this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '",\'dd-mm-yyyy\')';
         break; 
         case 'average':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
@@ -6283,7 +6290,7 @@ customizechangeChartPlugin() {
         break; 
 
         case 'now': 
-        this.calculatedFieldLogic = 'current_timestamp()';
+        this.calculatedFieldLogic = 'NOW()';
         break; 
         case 'today': 
         this.calculatedFieldLogic = 'CURRENT_DATE()';

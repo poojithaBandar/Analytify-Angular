@@ -993,10 +993,13 @@
                                                         </button>
                                                         <div >
                                                           <ng-container *ngIf="drillThroughActionList.length > 0; else noData">
-                                                            <div *ngFor="let action of drillThroughActionList" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2" (click)="getActionData(action.drill_id);"
+                                                            @for(action of drillThroughActionList;track $index){
+
+                                                            <div *ngIf="!action.is_kpi"  class="sub-category-card p-1 mt-2 border  rounded-3 mb-2" (click)="getActionData(action.drill_id);"
                                                               [ngStyle]="{'background-color': actionId === action.drill_id ? 'var(--primary-color)' : 'white','color': actionId === action.drill_id ? 'white' : 'black'}">
                                                               <p class="p-1 mb-0 category-text">{{action.action_name}}</p>
                                                             </div>
+                                                          }
                                                           </ng-container>
                                                           <ng-template #noData>
                                                             <p>No Actions Available</p>
@@ -1155,7 +1158,7 @@
                       class="fa fa-arrow-left "></i> </button>
                   <!-- </div> -->
                   }
-                  @if(actionId && item['sheetId'] == sourceSheetId){
+                  @if((actionId && item['sheetId'] == sourceSheetId)){
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="setDrillThrough('',item)"><i
                       class="fa fa-undo "></i> </button>
                   }
@@ -1452,7 +1455,7 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1 overflow-auto">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                  <div class="big-number-container">
+                  <div (click)="setDrillThrough('',item,true)" class="big-number-container">
                     @for(row of item['kpiData'].rows;track row){
                     <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'"
                       [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
@@ -1586,7 +1589,7 @@
           <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="tabHeightGrid"
             [style.width.px]="tabWidthGrid">
             <!-- <div style="height: inherit;" > -->
-              <gridster [options]="options" #gridsterTab id="capture-image-pdf-2">
+              <gridster [options]="options" #gridsterTab id="capture-image-pdf-2" style="margin: 0;">
                 <gridster-item [item]="item" *ngFor="let item of dashboardTest;let i = index"
                   [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                   <div class="card mb-0 grid-item-border card-panel" style="height: 100%;" [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
@@ -1877,7 +1880,7 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1 overflow-auto">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                  <div class="big-number-container">
+                  <div (click)="setDrillThrough('',item,true)" class="big-number-container">
                     @for(row of item['kpiData'].rows;track row){
                     <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'"
                       [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>

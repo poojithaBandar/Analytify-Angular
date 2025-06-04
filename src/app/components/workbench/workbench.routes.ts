@@ -339,6 +339,12 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./configure/configure.component').then((m) => m.ConfigureComponent),
       },
+       {
+        path: 'configure-page/email/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./configure/configure.component').then((m) => m.ConfigureComponent),
+      },
       {
         path: 'configure-page/sdk',
         canActivate: [authGuard],
@@ -419,6 +425,13 @@ export const admin: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('./etl/etl.component').then((m) => m.ETLComponent),
+      },
+
+      {
+        path: 'etlList/jobFlow',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl-job-flow/etl-job-flow.component').then((m) => m.EtlJobFlowComponent),
       },
 
       {

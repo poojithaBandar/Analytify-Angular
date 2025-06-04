@@ -41,6 +41,7 @@ export class TransformationListComponent {
   const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
   if (this.page > totalPages) {
     this.page = 1;
+    this.page=1;
   }
   this.getTransformationList();
 }
