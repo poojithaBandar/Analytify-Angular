@@ -1017,6 +1017,18 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/sheet_token/`+this.accessToken,object);
     }
 
+    exportDashboard(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/export_dashboard/`+this.accessToken,object);
+    }
+
+    importDashboard(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/import_dashboard/`+this.accessToken,object);
+    }
+
     getSheetSdkData(object:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
