@@ -239,6 +239,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   embedFilters: any;
   isdashboardSDKGenerated: boolean = false;
   isEmbeddedFilter : boolean = false;
+  genieHover = false;
+  showGenieTooltip = false;
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -8371,7 +8373,30 @@ downloadAnalyzeReport() {
   });
   doc.save((this.dashboardName || 'dashboard') + '-analysis-report.pdf');
 }
+playAnalyzeModalAnimation() {
+  const watermark = document.querySelector('.sticky-watermark');
+  if (watermark) {
+    watermark.classList.remove('animate');
+    // Force reflow to restart animation
+    void (watermark as HTMLElement).offsetWidth;
+    watermark.classList.add('animate');
+  }
+}
+playGenieAnimation() {
+  const el = document.querySelector('.genie-animate');
+  if (el) {
+    el.classList.remove('bounce');
+    void (el as HTMLElement).offsetWidth; // force reflow
+    el.classList.add('bounce');
+  }
+}
 
+resetGenieAnimation() {
+  const el = document.querySelector('.genie-animate');
+  if (el) {
+    el.classList.remove('bounce');
+  }
+}
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
