@@ -259,6 +259,12 @@ export const admin: Routes = [
           import('./dashboard-page/dashboard-page.component').then((m) => m.DashboardPageComponent)
       },
       {
+        path: 'dashboard/transfer',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./dashboard-transfer/dashboard-transfer.component').then(m => m.DashboardTransferComponent)
+      },
+      {
         path: 'sheets-dashboard',
         canActivate: [authGuard],
         loadComponent: () =>
@@ -440,7 +446,7 @@ export const admin: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('./etl-list/etl-list.component').then((m) => m.EtlListComponent),
-      },
+      }
     ]
   }
  ];
