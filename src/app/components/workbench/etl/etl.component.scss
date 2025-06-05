@@ -88,10 +88,12 @@ a.TabShadow.nav-link.active {
 .iconProperties { padding: 4px 4px; width: 60px; }
 textarea { width: 330px; overflow: auto; resize: none; border: 1px solid #d8d8d8;}
 ::ng-deep .drawflow .drawflow-node .node-status { font-size: 10px; text-align: center; border-radius: 4px; }
-::ng-deep .drawflow .drawflow-node .node-status-running { background-color: blue; color: white; }
-::ng-deep .drawflow .drawflow-node .node-status-success { background-color: green; color: white; }
-::ng-deep .drawflow .drawflow-node .node-status-failed { background-color: red; color: white; }
-::ng-deep .drawflow .drawflow-node .node-status-upstream_failed { background-color: rgb(255, 157, 0); color: white; }
+::ng-deep .drawflow .drawflow-node .node-status-queued { background-color: #5BC0DE; color: white; }
+::ng-deep .drawflow .drawflow-node .node-status-running { background-color: #F0AD4E; color: white; }
+::ng-deep .drawflow .drawflow-node .node-status-success { background-color: #5CB85C; color: white; }
+::ng-deep .drawflow .drawflow-node .node-status-failed { background-color: #D9534F; color: white; }
+::ng-deep .drawflow .drawflow-node .node-status-upstream_failed { background-color: #999999; color: white; font-size: 9px !important; }
+::ng-deep .drawflow .drawflow-node .node-status-removed { background-color: #4E5D6C; color: white; }
 .selected-row {background-color: var(--primary-color) !important;}
 .selected-row-data {color: #fff !important;}
 

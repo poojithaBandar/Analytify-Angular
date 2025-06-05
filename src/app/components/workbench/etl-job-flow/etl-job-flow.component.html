@@ -98,10 +98,10 @@
                             </div> -->
                             <div class="d-flex justify-content-end mb-2">
                                 <input type="text" placeholder="Job Flow Name" class="form-control me-1" [(ngModel)]="etlName">
-                                <button *ngIf="!jobFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">Save</button>
-                                <button *ngIf="jobFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlDataFlow()">update</button>
+                                <button *ngIf="!jobFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlJobFlow()">Save</button>
+                                <button *ngIf="jobFlowId" type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!etlName" (click)="saveOrUpdateEtlJobFlow()">update</button>
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" (click)="getDataFlowLogs()">Export</button> -->
-                                <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRunEnable" (click)="runDataFlow()">Run</button>
+                                <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRunEnable" (click)="runJobFlow()">Run</button>
                                 <!-- <button type="button" class="btn btn-primary me-1 iconProperties" style="width: 60px;" [disabled]="!isRefrshEnable" (click)="getDataFlowStatus(runId)">Refresh</button> -->
                             </div>
                             <div class="container-vertical">
@@ -112,7 +112,7 @@
                                         <div class="card-header d-flex align-items-center justify-content-between tabs-menu-boxed border-bottom p-1 mb-1 mt-1">
                                             <ul ngbNav #tableTypes="ngbNav" [(activeId)]="tableTypeTabId" class="nav panel-tabs fs-14 pb-1">
                                                 <li [ngbNavItem]="1"> 
-                                                    <a ngbNavLink class="p-3 TabShadow"> {{isCanvasSelected ? etlName : selectedNode.data.nodeData.general.name}} </a>
+                                                    <a ngbNavLink class="p-3 TabShadow"> {{isCanvasSelected ? etlName : selectedNode.data?.nodeData?.general?.name}} </a>
                                                     <ng-template ngbNavContent>
                                                         <div class="d-flex">
                                                             <div class="border-end node-table-left">
@@ -143,7 +143,7 @@
                                                                             </div>
                                                                         </ng-template>
                                                                     </li>
-                                                                    <li [ngbNavItem]="2" className="nav-link text-start" id="properties-tab"><a ngbNavLink>Properties</a>
+                                                                    <li *ngIf="selectedNode.data.type !== 'dataFlow'" [ngbNavItem]="2" className="nav-link text-start" id="properties-tab"><a ngbNavLink>Properties</a>
                                                                         <ng-template ngbNavContent>
                                                                             <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                                 <div class="col-xl-12 col-lg-12 col-md-12">
@@ -159,7 +159,7 @@
                                                                                         <label for="command" class="label-font-weight"> Command </label><br>
                                                                                         <div class="d-flex">
                                                                                             <textarea id="command" name="command" rows="3" [(ngModel)]="selectedNode.data.nodeData.properties.command" (blur)="updateNode('')"></textarea>
-                                                                                            <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width" (click)="openExpressionEdit(expressionEdit, 'command', null)">
+                                                                                            <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width" (click)="openExpressionEdit(expressionEdit, 'loopCommand', null)">
                                                                                                 <i class="fa fa-chevron-right text-light icon-font-size"></i>
                                                                                             </span>
                                                                                         </div><br>
@@ -211,7 +211,7 @@
                                                                                         <label for="Message" class="label-font-weight"> Message </label><br>
                                                                                         <div class="d-flex">
                                                                                             <textarea id="Message" name="Message" rows="3" [(ngModel)]="selectedNode.data.nodeData.properties.message" (blur)="updateNode('')"></textarea>
-                                                                                            <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width" (click)="openExpressionEdit(expressionEdit, 'Message', null)">
+                                                                                            <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width" (click)="openExpressionEdit(expressionEdit, 'message', null)">
                                                                                                 <i class="fa fa-chevron-right text-light icon-font-size"></i>
                                                                                             </span>
                                                                                         </div><br>
@@ -263,7 +263,7 @@
                                                                                         <label class="label-font-weight"> Command Type </label><br>
                                                                                         <select class="form-select" style="width: 40%;" [(ngModel)]="selectedNode.data.nodeData.command.commandType" (change)="updateNode('')">
                                                                                             <option value="external">External</option>
-                                                                                            <option value="fileWatcher">File Watcher</option>
+                                                                                            <option value="file_watcher">File Watcher</option>
                                                                                             <!-- <option value="jsonFileSpilt">JSON File Split</option> -->
                                                                                         </select><br>
 
@@ -335,10 +335,27 @@
                                                                         <ng-template ngbNavContent>
                                                                             <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                                 <div class="col-xl-12 col-lg-12 col-md-12">
-                                                                                    <div>
-                                                                                        
+                                                                                    <div class="mt-3 table-responsive table-responsive-height">
+                                                                                        <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                                                                                            <thead class="Result-preview-table-sticky">
+                                                                                                <tr>
+                                                                                                    <th>Data Object</th>
+                                                                                                    <th>Type</th>
+                                                                                                    <th>Database</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @for(connection of selectedNode.data.nodeData.connections; track connection; let i = $index){
+                                                                                                <tr>
+                                                                                                    <td>{{connection.data.nodeData.general.name}}</td>
+                                                                                                    <td>{{connection.data.type === 'source_data_object' ? 'Source' : 'Target' }}</td>
+                                                                                                    <td>{{connection.data.nodeData.connection.display_name}}</td>
+                                                                                                </tr>
+                                                                                                }
+                                                                                            </tbody>
+                                                                                        </table>
                                                                                     </div>
-                                                                                </div> 
+                                                                                </div>
                                                                             </div>
                                                                         </ng-template>
                                                                     </li>
@@ -346,8 +363,21 @@
                                                                         <ng-template ngbNavContent>
                                                                             <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab" tabindex="0">
                                                                                 <div class="col-xl-12 col-lg-12 col-md-12">
-                                                                                    <div>
-                                                                                        
+                                                                                    <div class="mt-3 table-responsive table-responsive-height">
+                                                                                        <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                                                                                            <thead class="Result-preview-table-sticky">
+                                                                                                <tr>
+                                                                                                    <th>Transform Name</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @for(transform of selectedNode.data.nodeData.transformations; track transform; let i = $index){
+                                                                                                <tr>
+                                                                                                    <td>{{transform.data.nodeData.general.name}}</td>
+                                                                                                </tr>
+                                                                                                }
+                                                                                            </tbody>
+                                                                                        </table>
                                                                                     </div>
                                                                                 </div> 
                                                                             </div>
@@ -538,7 +568,7 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
-                                                <li *ngIf="isLogShow" [ngbNavItem]="2" (click)="getDataFlowLogs(selectedNode.data.nodeData.general.name)"> <a ngbNavLink class="p-3 TabShadow"> Logs </a>
+                                                <li *ngIf="isLogShow" [ngbNavItem]="2" (click)="getJobFlowLogs(selectedNode.data.nodeData.general.name)"> <a ngbNavLink class="p-3 TabShadow"> Logs </a>
                                                     <ng-template ngbNavContent>
                                                         <app-etl-logger-view [logs]="logs"></app-etl-logger-view>
                                                     </ng-template>
@@ -584,7 +614,7 @@
             <div class="tables-modal">
                 <label for="connection">Select DataFlow <span class="text-danger">*</span></label>
                 <ng-select [items]="dataFlowOptions" bindLabel="data_flow_name" placeholder="Select a dataFlow" [searchable]="true" 
-                    [(ngModel)]="selectedDataFlow" name="dataFlow" id="dataFlow">
+                    [(ngModel)]="selectedDataFlow" name="dataFlow" id="dataFlow" (change)="getDataFlow(selectedDataFlow.id)">
                 </ng-select>
             </div>
         </div>
@@ -600,19 +630,17 @@
 
 <ng-template #expressionEdit let-modal>
     <div class="modal-header">
-        <h5 class="modal-title">Expression Editor - {{(isParameter || isSQLParameter) ? etlName : selectedNode?.data?.nodeData?.general?.name}} ({{(isParameter || isSQLParameter) ? 'Data Flow' : selectedNode?.data?.type}}) </h5>
-        <button type="button" class="btn-close text-light" aria-label="Close" (click)="modal.dismiss('Cross click'); isParameter = false; isSQLParameter = false; isJoinerCondition = false; isHaving = false; isWhere = false; isFilter = false;"></button>
+        <h5 class="modal-title">Expression Editor - {{(isParameter || isSQLParameter) ? etlName : selectedNode?.data?.nodeData?.general?.name}} ({{(isParameter || isSQLParameter) ? 'Job Flow' : selectedNode?.data?.type}}) </h5>
+        <button type="button" class="btn-close text-light" aria-label="Close" (click)="modal.dismiss('Cross click'); isParameter = false; isSQLParameter = false; isTaskCommand = false; isDbCommand = false; isLoopCommand = false; isTo = false; isCC = false; isSubject = false; isMessage = false;"></button>
     </div>
 
     <div class="modal-body p-3">
 
         <div class="mb-2 d-flex justify-content-between align-items-center">
-            @if(isJoinerCondition || isHaving || isFilter || isWhere){
-            <label class="form-label mb-0"><b>*{{selectedField}} (boolean)</b></label>
-            } @else if(isParameter || isSQLParameter){
-                <label class="form-label mb-0"><b>*{{selectedField?.paramName}} ({{selectedField?.dataType}})</b></label>
+            @if(isParameter || isSQLParameter){
+            <label class="form-label mb-0"><b>*{{selectedField?.paramName}} ({{selectedField?.dataType}})</b></label>
             } @else{
-            <label class="form-label mb-0"><b>*{{selectedField?.attributeName}} ({{selectedField?.dataType}})</b></label>
+            <label class="form-label mb-0"><b>*{{selectedField}} (boolean)</b></label>
             }
         </div>
 
@@ -626,7 +654,7 @@
             <table class="table table-bordered w-100">
                 <thead>
                     <tr>
-                        <th class="fw-bold bg-primary text-white">Transforms</th>
+                        <th class="fw-bold bg-primary text-white">Parameters</th>
                         <th class="fw-bold bg-primary text-white"> {{selectedGroup}} </th>
                         <th class="fw-bold bg-primary text-white"> {{selectedColumn.attributeName || selectedColumn.label}} </th>
                     </tr>
@@ -672,7 +700,7 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel'); isParameter = false; isSQLParameter = false; isJoinerCondition = false; isHaving = false; isWhere = false; isFilter = false;">Cancel</button>
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel'); isParameter = false; isSQLParameter = false;  isTaskCommand = false; isDbCommand = false; isLoopCommand = false; isTo = false; isCC = false; isSubject = false; isMessage = false;">Cancel</button>
         <button type="button" class="btn btn-primary" (click)="updateExpressionToNode(); modal.dismiss('Save click'); isParameter = false; isSQLParameter = false;">OK</button>
     </div>
 </ng-template>

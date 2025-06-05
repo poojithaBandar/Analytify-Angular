@@ -94,11 +94,11 @@ export class EtlListComponent {
     this.totalItems = 1;
   }
 
-  deleteDataFlow(dataFlow:any){
+  deleteFlow(flow:any){
     Swal.fire({
       position: "center",
       icon: "question",
-      title: `Delete "${dataFlow.data_flow_name}" Data Flow?`,
+      title: `Delete ${flow.data_flow_name} ${this.listType === 'Saved Data Flow' ? 'DataFlow': 'JobFlow'} ?`,
       text: "This action cannot be undone. Are you sure you want to proceed?",
       showConfirmButton: true,
       showCancelButton: true,
@@ -106,11 +106,15 @@ export class EtlListComponent {
       cancelButtonText: 'No',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.workbechService.deleteDataFlow(dataFlow.id).subscribe({
+        this.workbechService.deleteDataFlow(flow.id).subscribe({
           next: (response) => {
             console.log(response);
-            this.getDataFlowList();
-            this.toasterService.info(response.message, 'info', { positionClass: 'toast-top-right' });
+            if(this.listType === 'Saved Data Flow'){
+              this.getDataFlowList();
+            } else if(this.listType === 'Saved Job Flow'){
+              this.getJobFlowList();
+            }
+            this.toasterService.success(response.message, 'success', { positionClass: 'toast-top-right' });
           },
           error: (error) => {
             console.log(error);
@@ -121,17 +125,13 @@ export class EtlListComponent {
     })
   }
 
-  deleteJobFlow(jobFlow:any){
-
-  }
-
   goToDataFlow(){
-    this.router.navigate(['/analytify/etlList/etl']);
+    this.router.navigate(['/analytify/etlList/dataFlow']);
   }
 
   editDataFlow(id:any){
     const encodedId = btoa(id.toString());
-    this.router.navigate(['/analytify/etlList/etl/'+encodedId]);
+    this.router.navigate(['/analytify/etlList/dataFlow/'+encodedId]);
   }
 
   goToJobFlow(){

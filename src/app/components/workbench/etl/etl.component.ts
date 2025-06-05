@@ -1017,7 +1017,7 @@ export class ETLComponent {
             }
           }
         });
-        this.tableTypeTabId = 2;
+        // this.tableTypeTabId = 2;
         if(!['success', 'failed'].includes(data.status)){
           setTimeout(() => {
             this.getDataFlowStatus(runId);
@@ -1067,11 +1067,11 @@ export class ETLComponent {
         const array = [atrr.attributeName, atrr.dataType, atrr.expression];
         attr.push(array);
       });
-      if (nodes[nodeId].data.source.type === 'POSTGRESQL') {
+      if (nodes[nodeId].data?.source?.type === 'POSTGRESQL') {
         task.format = 'database',
         task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id;
         task.path = '';
-      } else if(nodes[nodeId].data.source.type === 'file') {
+      } else if(nodes[nodeId].data?.source?.type === 'file') {
         task.format = 'file';
         if(nodes[nodeId].data.source.fileSelectFrom === 'server'){
           task.path = `${nodes[nodeId].data.source.path}/${nodes[nodeId].data.source.file}`;
@@ -1080,6 +1080,10 @@ export class ETLComponent {
           task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id;
           task.path = '';
         }
+      } else{
+        task.format = 'database';
+        task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id;
+        task.path = '';
       }
       task.source_table_name = nodes[nodeId].data.nodeData.dataObject.tables;
       task.attributes = attr;
@@ -1688,6 +1692,10 @@ export class ETLComponent {
         setTimeout(() => {
           const allNodes = this.drawflow.drawflow.drawflow['Home'].data;
           Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+            const type = node.data?.type;
+            if (type && !['source_data_object', 'target_data_object'].includes(type)) {
+              this.nodeTypeCounts[type] = (this.nodeTypeCounts[type] || 0) + 1;
+            }
             const displayName = (node.data?.nodeData?.general?.name || '').substring(0, 8) + '..';
             const nodeElement = document.querySelector(`#node-${id}`);
             if (nodeElement) {

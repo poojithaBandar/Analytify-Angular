@@ -978,7 +978,7 @@ deleteUser(id:any){
     deleteDataFlow(id : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/dag_delete/`+this.accessToken+'/'+id);
+      return this.http.delete<any>(`${environment.apiUrl}/dag_delete/`+this.accessToken+'/'+id);
     }
 
     runEtl(dagId : any){

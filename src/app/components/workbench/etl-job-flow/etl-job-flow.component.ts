@@ -40,7 +40,7 @@ export class EtlJobFlowComponent {
   nodeName: string = '';
   isRunEnable: boolean = false;
   objectType: string = 'select';
-  dataFlowStatus: any[] = [];
+  jobFlowStatus: any[] = [];
   runId: string = '';
   nodeLogs: any[] = [];
   pollingInterval: any;
@@ -52,21 +52,17 @@ export class EtlJobFlowComponent {
   allChecked: boolean = false;
   isSourceClicked: boolean = false;
   isRefrshEnable: boolean = false;
-  dataFlowRunStatus: string = '';
+  jobFlowRunStatus: string = '';
   expression: string = '';
   selectedField: any = {};
   groupedColumns: any = {};
   selectedGroup: any = '';
   selectedColumn: any = {};
   selectedIndex: number = -1;
-  isJoinerCondition: boolean = false;
   isCanvasSelected: boolean = false;
   canvasData: any = { parameters: [], sqlParameters: [] };
   isParameter: boolean = false;
   isSQLParameter: boolean = false;
-  isHaving: boolean = false;
-  isWhere: boolean = false;
-  isFilter: boolean = false;
   sourceSearchTerm: string = '';
   groupSearchTerm: string = '';
   attributeSearchTerm: string = '';
@@ -80,6 +76,15 @@ export class EtlJobFlowComponent {
   dataPointOptions: any[] = [];
   selectedDataPoint: any = null;
   isDataPointChange: boolean = false;
+  srcConnections: any[] = [];
+  transformations: any[] = [];
+  isTaskCommand: boolean = false;
+  isDbCommand: boolean = false;
+  isLoopCommand: boolean = false;
+  isTo: boolean = false;
+  isCC: boolean = false;
+  isSubject: boolean = false;
+  isMessage: boolean = false;
   returnTypes: string[] = ['varchar', 'char', 'byteint', 'bigint', 'smallint', 'integer', 'numeric', 'boolean', 'date', 'time with time zone',
     'interval', 'time', 'timestamp', 'decimal', 'real', 'double', 'float', 'nvarchar', 'nchar', 'array[string]', 'array[int]', 'param', 'string', 'datetime'
   ];
@@ -338,6 +343,8 @@ export class EtlJobFlowComponent {
         runDBCommandFile: false, continueExecutionFailure: false, dbCommand: '', dbCommandOutputFile: '$$SrcFileDir'
       },
       dataPoints: {dataPoint: this.selectedDataPoint?.display_name ?? '', dataPointSchema: '', selectedDataPoint: this.selectedDataPoint},
+      connections: [] as any[],
+      transformations: [] as any[],
       dataFlowParameters: {}
     };
 
@@ -364,6 +371,8 @@ export class EtlJobFlowComponent {
         name: this.selectedDataFlow?.data_flow_name,
         extraNodeData: {
           dataFlow: this.selectedDataFlow,
+          connections: this.srcConnections,
+          transformations: this.transformations
         },
       },
       taskCommand: {
@@ -483,9 +492,9 @@ export class EtlJobFlowComponent {
     if(this.selectedNode.data.type === 'loop_end'){
       this.tableTabId = 2;
     }
-    if (this.isRefrshEnable && !['success', 'failed'].includes(this.dataFlowRunStatus)) {
+    if (this.isRefrshEnable && !['success', 'failed'].includes(this.jobFlowRunStatus)) {
       this.tableTypeTabId = 2;
-      this.getDataFlowLogs(this.nodeName);
+      this.getJobFlowLogs(this.nodeName);
     }
   }
 
@@ -515,7 +524,7 @@ export class EtlJobFlowComponent {
     });
   }
 
-  saveOrUpdateEtlDataFlow(): void {
+  saveOrUpdateEtlJobFlow(): void {
     const exportedData = this.drawflow.export();
     const nodes = exportedData.drawflow.Home.data;
 
@@ -630,7 +639,7 @@ export class EtlJobFlowComponent {
     }
   }
 
-  runDataFlow() {
+  runJobFlow() {
     this.workbechService.runEtl(this.etlName).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -649,7 +658,7 @@ export class EtlJobFlowComponent {
           }
         });
         this.isLogShow = true;
-        this.getDataFlowStatus(data.run_id);
+        this.getJobFlowStatus(data.run_id);
         this.toasterService.success('Run Successfully', 'success', { positionClass: 'toast-top-right' });
       },
       error: (error: any) => {
@@ -664,7 +673,7 @@ export class EtlJobFlowComponent {
       }
     });
   }
-  getDataFlowStatus(runId: any) {
+  getJobFlowStatus(runId: any) {
     let object = {
       dag_id: this.etlName,
       run_id: runId
@@ -673,18 +682,15 @@ export class EtlJobFlowComponent {
     this.workbechService.getDataFlowStatus(object).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.dataFlowStatus = data.tasks;
-        this.dataFlowRunStatus = data.status;
-        // if (data.status === 'success' || data.status === 'failed') {
-        //   clearInterval(this.pollingInterval);
-        // }
+        this.jobFlowStatus = data.tasks;
+        this.jobFlowRunStatus = data.status;
 
         Object.entries(this.drawflow.drawflow.drawflow[this.drawflow.module].data).forEach(([id, node]) => {
           const node1 = this.drawflow.getNodeFromId(id);
           const nodeName = node1.data.nodeData.general.name;
 
           // Find matching task status from dataFlowStatus
-          const matchedTask = this.dataFlowStatus.find(task => task.task === nodeName);
+          const matchedTask = this.jobFlowStatus.find(task => task.task === nodeName);
 
           if (matchedTask) {
             let status = matchedTask.state;
@@ -701,10 +707,10 @@ export class EtlJobFlowComponent {
             }
           }
         });
-        this.tableTypeTabId = 2;
+        // this.tableTypeTabId = 2;
         if (!['success', 'failed'].includes(data.status)) {
           setTimeout(() => {
-            this.getDataFlowStatus(runId);
+            this.getJobFlowStatus(runId);
           }, 3000);
         } else {
           this.isRefrshEnable = false;
@@ -716,7 +722,7 @@ export class EtlJobFlowComponent {
       }
     });
   }
-  getDataFlowLogs(taskId: any) {
+  getJobFlowLogs(taskId: any) {
     let object = {
       dag_id: this.etlName,
       run_id: this.runId,
@@ -862,20 +868,7 @@ export class EtlJobFlowComponent {
       }));
     } else {
       const nodeData = JSON.parse(JSON.stringify(this.selectedNode.data.nodeData));
-
-      if (this.selectedNode.data.type === 'source_data_object') {
-        const columns = nodeData.dataObject.columns || [];
-        const group = this.selectedNode.data.nodeData.general.name;
-
-        dataObject = columns.map((col: any) => ({
-          label: col.col,
-          value: col.col,
-          dataType: col.dtype,
-          group: group
-        }));
-      } else {
-        dataObject = nodeData.dataObject || [];
-      }
+      dataObject = nodeData.dataObject || [];
     }
 
     this.groupedColumns = dataObject.reduce((acc: any, attr: any) => {
@@ -889,21 +882,7 @@ export class EtlJobFlowComponent {
     const groupKeys = Object.keys(this.groupedColumns);
     this.selectedGroup = groupKeys.length > 0 ? groupKeys[0] : null;
 
-    if (attribute.hasOwnProperty('secondaryObject')) {
-      this.isJoinerCondition = true;
-      this.isParameter = false;
-      this.isSQLParameter = false;
-      this.isHaving = false;
-      this.isWhere = false;
-      this.isFilter = false;
-      this.selectedField = attribute.secondaryObject;
-      this.selectedColumn = this.groupedColumns[this.selectedGroup][0];
-      this.expression = attribute.joinCondition;
-    } else if (attribute.hasOwnProperty('paramName')) {
-      this.isJoinerCondition = false;
-      this.isHaving = false;
-      this.isWhere = false;
-      this.isFilter = false;
+    if (attribute.hasOwnProperty('paramName')) {
       this.selectedField = attribute;
       this.selectedColumn = '';
       if (attribute.hasOwnProperty('sql')) {
@@ -913,46 +892,82 @@ export class EtlJobFlowComponent {
         this.isParameter = true;
         this.expression = attribute.default;
       }
-    } else if (attribute === 'having') {
-      this.isJoinerCondition = false;
-      this.isParameter = false;
-      this.isSQLParameter = false;
-      this.isWhere = false;
-      this.isFilter = false;
-      this.isHaving = true;
-      this.selectedField = 'Having Clause';
-      this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
-      this.expression = this.selectedNode.data.nodeData.properties.havingClause;
-    } else if (attribute === 'where') {
-      this.isJoinerCondition = false;
-      this.isParameter = false;
-      this.isSQLParameter = false;
-      this.isHaving = false;
-      this.isFilter = false;
-      this.isWhere = true;
-      this.selectedField = 'Where Clause';
-      this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
-      this.expression = this.selectedNode.data.nodeData.properties.whereClause;
-    } else if (attribute === 'filter') {
-      this.isJoinerCondition = false;
-      this.isParameter = false;
-      this.isSQLParameter = false;
-      this.isHaving = false;
-      this.isWhere = false;
-      this.isFilter = true;
-      this.selectedField = 'Filter Condition';
-      this.selectedColumn = this.groupedColumns[this.selectedGroup][0];;
-      this.expression = this.selectedNode.data.nodeData.properties.filterCondition;
+      this.isTaskCommand = false;
+      this.isDbCommand = false;
+      this.isLoopCommand = false;
+      this.isTo = false;
+      this.isCC = false;
+      this.isSubject = false;
+      this.isMessage = false;
     } else {
-      this.isJoinerCondition = false;
       this.isParameter = false;
       this.isSQLParameter = false;
-      this.isHaving = false;
-      this.isWhere = false;
-      this.isFilter = false;
       this.selectedField = attribute;
-      this.selectedColumn = attribute;
-      this.expression = attribute.expression;
+      this.selectedColumn = '';
+      if(attribute === 'command') {
+        this.isTaskCommand = true;
+        this.isDbCommand = false;
+        this.isLoopCommand = false;
+        this.isTo = false;
+        this.isCC = false;
+        this.isSubject = false;
+        this.isMessage = false;
+        this.expression = this.selectedNode.data.nodeData.command.commandDesc;
+      } else if(attribute === 'dbCommand') {
+        this.isTaskCommand = false;
+        this.isDbCommand = true;
+        this.isLoopCommand = false;
+        this.isTo = false;
+        this.isCC = false;
+        this.isSubject = false;
+        this.isMessage = false;
+        this.expression = this.selectedNode.data.nodeData.command.dbCommand;
+      } else if(attribute === 'loopCommand') {
+        this.isTaskCommand = false;
+        this.isDbCommand = false;
+        this.isLoopCommand = true;
+        this.isTo = false;
+        this.isCC = false;
+        this.isSubject = false;
+        this.isMessage = false;
+        this.expression = this.selectedNode.data.nodeData.properties.command;
+      } else if(attribute === 'to') {
+        this.isTaskCommand = false;
+        this.isDbCommand = false;
+        this.isLoopCommand = false;
+        this.isTo = true;
+        this.isCC = false;
+        this.isSubject = false;
+        this.isMessage = false;
+        this.expression = this.selectedNode.data.nodeData.properties.to;
+      } else if(attribute === 'cc') {
+        this.isTaskCommand = false;
+        this.isDbCommand = false;
+        this.isLoopCommand = false;
+        this.isTo = false;
+        this.isCC = true;
+        this.isSubject = false;
+        this.isMessage = false;
+        this.expression = this.selectedNode.data.nodeData.properties.cc;
+      } else if(attribute === 'subject') {
+        this.isTaskCommand = false;
+        this.isDbCommand = false;
+        this.isLoopCommand = false;
+        this.isTo = false;
+        this.isCC = false;
+        this.isSubject = true;
+        this.isMessage = false;
+        this.expression = this.selectedNode.data.nodeData.properties.subject;
+      } else if(attribute === 'message') {
+        this.isTaskCommand = false;
+        this.isDbCommand = false;
+        this.isLoopCommand = false;
+        this.isTo = false;
+        this.isCC = false;
+        this.isSubject = false;
+        this.isMessage = true;
+        this.expression = this.selectedNode.data.nodeData.properties.message;
+      } 
     }
     this.modalService.open(modal, {
       centered: true,
@@ -962,20 +977,24 @@ export class EtlJobFlowComponent {
   }
 
   updateExpressionToNode() {
-    if (this.isJoinerCondition) {
-      this.selectedNode.data.nodeData.properties.joinList[this.selectedIndex].joinCondition = this.expression;
-    } else if (this.isParameter) {
+    if (this.isParameter) {
       this.canvasData.parameters[this.selectedIndex].default = this.expression;
     } else if (this.isSQLParameter) {
       this.canvasData.sqlParameters[this.selectedIndex].sql = this.expression;
-    } else if (this.isHaving) {
-      this.selectedNode.data.nodeData.properties.havingClause = this.expression;
-    } else if (this.isWhere) {
-      this.selectedNode.data.nodeData.properties.whereClause = this.expression;
-    } else if (this.isFilter) {
-      this.selectedNode.data.nodeData.properties.filterCondition = this.expression;
-    } else {
-      this.selectedNode.data.nodeData.attributes[this.selectedIndex].expression = this.expression;
+    } else if( this.isTaskCommand) {
+      this.selectedNode.data.nodeData.command.commandDesc = this.expression;
+    } else if(this.isDbCommand) {
+      this.selectedNode.data.nodeData.command.dbCommand = this.expression;
+    } else if(this.isLoopCommand) { 
+      this.selectedNode.data.nodeData.properties.command = this.expression;
+    } else if(this.isTo) {
+      this.selectedNode.data.nodeData.properties.to = this.expression;
+    } else if(this.isCC) {
+      this.selectedNode.data.nodeData.properties.cc = this.expression;
+    } else if(this.isSubject) {
+      this.selectedNode.data.nodeData.properties.subject = this.expression;
+    }  else if(this.isMessage) {
+      this.selectedNode.data.nodeData.properties.message = this.expression;
     }
 
     if (!this.isParameter && !this.isSQLParameter) {
@@ -987,10 +1006,15 @@ export class EtlJobFlowComponent {
     this.selectedGroup = '';
     this.selectedColumn = {};
     this.selectedIndex = -1;
-    this.isJoinerCondition = false;
-    this.isHaving = false;
-    this.isWhere = false;
-    this.isFilter = false;
+    this.isTaskCommand = false;
+    this.isDbCommand = false;
+    this.isLoopCommand = false;
+    this.isTo = false;
+    this.isCC = false;
+    this.isSubject = false;
+    this.isMessage = false;
+    this.isParameter = false;
+    this.isSQLParameter = false;
   }
 
   insertOrReplace(text: string, textarea: HTMLTextAreaElement): void {
@@ -1026,6 +1050,10 @@ export class EtlJobFlowComponent {
         setTimeout(() => {
           const allNodes = this.drawflow.drawflow.drawflow['Home'].data;
           Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+            const type = node.data?.type;
+            if (type && type !== 'dataFlow') {
+              this.nodeTypeCounts[type] = (this.nodeTypeCounts[type] || 0) + 1;
+            }
             const displayName = (node.data?.nodeData?.general?.name || '').substring(0, 8) + '..';
             const nodeElement = document.querySelector(`#node-${id}`);
             if (nodeElement) {
@@ -1129,45 +1157,20 @@ export class EtlJobFlowComponent {
     this.updateNode('');
   }
 
-  // getDataFlow(){
-  //   this.workbechService.getEtlDataFlow(this., 'dataflow').subscribe({
-  //     next: (data) => {
-  //       console.log(data);
-  //       this.etlName = data.dag_id;
-  //       this.dataFlowId = data.id;
-  //       const drawFlowJson = JSON.parse(data.transformation_flow);
-  //       this.drawflow.import(drawFlowJson);
-  //       console.log(drawFlowJson);
-  //       if (data?.etl_json?.tasks.length > 0) {
-  //         this.isRunEnable = data?.etl_json?.tasks.some((task: any) => task.type === 'target_data_object');
-  //       }
-  //       // this.isRunEnable = true;
-  //       this.canvasData = drawFlowJson.drawflow.Home.canvasData ? drawFlowJson.drawflow.Home.canvasData : {parameters: [], sqlParameters: []};
-  //       console.log(this.canvasData);
-  //       this.isNodeSelected = true;
-  //       this.isCanvasSelected = true;
-  //       this.tableTabId = 7;
-
-  //       setTimeout(() => {
-  //         const allNodes = this.drawflow.drawflow.drawflow['Home'].data;
-  //         Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
-  //           const displayName = (node.data?.nodeData?.general?.name || '').substring(0, 8) + '..';
-  //           const nodeElement = document.querySelector(`#node-${id}`);
-  //           if (nodeElement) {
-  //             const labelElement = nodeElement.querySelector('.node-label') as HTMLElement;
-  //             if (labelElement) {
-  //               labelElement.innerText = displayName;
-  //               labelElement.setAttribute('title', node.data?.nodeData?.general?.name);
-  //             }
-  //           }
-  //         });
-  //       }, 100);
-  //     },
-  //     error: (error: any) => {
-  //       console.log(error);
-  //       this.isRunEnable = false;
-  //       this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
-  //     }
-  //   });
-  // }
+  getDataFlow(id: any) {
+    this.workbechService.getEtlDataFlow(id, 'dataflow').subscribe({
+      next: (data) => {
+        console.log(data);
+        const drawFlowJson = JSON.parse(data.transformation_flow);
+        console.log(drawFlowJson);
+        const allNodes = Object.values(drawFlowJson.drawflow.Home.data);
+        this.srcConnections = allNodes.filter((node: any) => node.data.type === 'source_data_object' || node.data.type === 'target_data_object');
+        this.transformations = allNodes.filter((node: any) => node.data.type !== 'source_data_object' && node.data.type !== 'target_data_object');
+      },
+      error: (error: any) => {
+        console.log(error);
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+      }
+    });
+  }
 }

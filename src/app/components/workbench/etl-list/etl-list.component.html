@@ -83,7 +83,7 @@
                                             <i class="ri-edit-line"></i>
                                         </button>
                                         <button class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light"
-                                            (click)="deleteDataFlow(dataFlow)">
+                                            (click)="deleteFlow(dataFlow)">
                                             <i class="ri-delete-bin-7-line"></i>
                                         </button>
                                     </div>
@@ -110,7 +110,7 @@
                                                 class="w-7 h-7 border rounded-3  me-4">
                                         </div>
                                         <div class="content">
-                                            <a class="cursor-pointer" [ngbTooltip]="jobFlow.job_flow_name"
+                                            <a class="cursor-pointer" [ngbTooltip]="jobFlow.data_flow_name"
                                                 (click)="editJobFlow(jobFlow.id)"> {{jobFlow.data_flow_name | slice: 0: 15}} </a>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@
                                             <i class="ri-edit-line"></i>
                                         </button>
                                         <button class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light"
-                                            (click)="deleteJobFlow(jobFlow)">
+                                            (click)="deleteFlow(jobFlow)">
                                             <i class="ri-delete-bin-7-line"></i>
                                         </button>
                                     </div>
@@ -196,7 +196,7 @@
                                             <a class="dropdown-item"><i class="fe fe-edit me-2 d-inline-flex"
                                                     (click)="editDataFlow(dataFlow.id)"></i>
                                                 edit</a>
-                                            <a class="dropdown-item  btn btn-secondary-light" (click)="deleteDataFlow(dataFlow)"><i
+                                            <a class="dropdown-item  btn btn-secondary-light" (click)="deleteFlow(dataFlow)"><i
                                                     class="fe fe-trash me-2 d-inline-flex"></i>
                                                 delete</a>
                                         </div>
@@ -241,7 +241,7 @@
                                     </div>
                                     <div class="ms-2 mt-sm-0 mt-2">
                                         <h6 class="mb-1">
-                                            <a [ngbTooltip]="jobFlow.job_flow_name" class="float-start"
+                                            <a [ngbTooltip]="jobFlow.data_flow_name" class="float-start"
                                                 (click)="editJobFlow(jobFlow.id)"> {{jobFlow.data_flow_name | slice: 0: 15}} </a>
                                         </h6>
                     
@@ -258,7 +258,7 @@
                                             <a class="dropdown-item"><i class="fe fe-edit me-2 d-inline-flex"
                                                     (click)="editJobFlow(jobFlow.id)"></i>
                                                 edit</a>
-                                            <a class="dropdown-item  btn btn-secondary-light" (click)="deleteJobFlow(jobFlow)"><i
+                                            <a class="dropdown-item  btn btn-secondary-light" (click)="deleteFlow(jobFlow)"><i
                                                     class="fe fe-trash me-2 d-inline-flex"></i>
                                                 delete</a>
                                         </div>

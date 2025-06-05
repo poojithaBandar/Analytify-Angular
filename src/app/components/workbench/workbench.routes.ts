@@ -385,14 +385,14 @@ export const admin: Routes = [
       },
 
       {
-        path: 'etlList/etl',
+        path: 'etlList/dataFlow',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./etl/etl.component').then((m) => m.ETLComponent),
       },
 
       {
-        path: 'etlList/etl/:id1',
+        path: 'etlList/dataFlow/:id1',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./etl/etl.component').then((m) => m.ETLComponent),
