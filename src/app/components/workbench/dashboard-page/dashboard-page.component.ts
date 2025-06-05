@@ -445,5 +445,20 @@ gotoConfigureEmailAlerts(id:any){
 this.router.navigate(['/analytify/configure-page/email/'+encodedDatabaseId])
 }
 
+copyDashboard(dashboardId:any){
+  const payload = { dashboard_id: [dashboardId] };
+  this.workbechService.copyDashboard(payload).subscribe({
+    next:(data)=>{
+      const newDashboardId = data.dashboard_id;
+      this.loaderService.show();
+      const encodedDashboardId = btoa(newDashboardId.toString());
+      this.router.navigate(['/analytify/home/sheetsdashboard/'+encodedDashboardId]);
+    },
+    error:()=>{
+      this.toasterservice.error('Dashboard copy failed. Please try again.','error',{ positionClass: 'toast-top-right'});
+    }
+  });
+}
+
 
 }
