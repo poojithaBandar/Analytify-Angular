@@ -455,6 +455,12 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.delete<any>(`${environment.apiUrl}/dashboarddelete/`+dashboardId+'/'+this.accessToken);
   }
+
+  copyDashboard(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/dashboard_copy/`+this.accessToken,obj);
+  }
   getFilteredList(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
