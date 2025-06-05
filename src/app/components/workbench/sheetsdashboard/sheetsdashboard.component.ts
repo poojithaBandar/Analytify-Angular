@@ -6570,7 +6570,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.sourceSheetList = updatedSourceSheetList;
 
         data.target_sheet_data[selectedSourceCategory].forEach((sheet:any)=>{
-          if(sheet.sheet_id != this.sourceSheetId){
+          if(sheet.sheet_id != this.sourceSheetId && sheet.sheet_name?.toLowerCase() !== "kpi"){
             this.targetSheetList.push(sheet);
           }
         })
