@@ -934,7 +934,9 @@ export class ETLComponent {
           console.log(data);
           this.isRunEnable = true;
           this.dataFlowId = data.dataflow_id;
-          this.toasterService.success(data.message, 'success', { positionClass: 'toast-top-right' });
+          const encodedId = btoa(this.dataFlowId.toString());
+          this.router.navigate(['/analytify/etlList/etl/'+encodedId]);
+          this.toasterService.success('DataFlow Saved Successfully', 'success', { positionClass: 'toast-top-right' });
         },
         error: (error: any) => {
           this.isRunEnable = false;
@@ -1073,7 +1075,8 @@ export class ETLComponent {
         task.format = 'file';
         if(nodes[nodeId].data.source.fileSelectFrom === 'server'){
           task.path = `${nodes[nodeId].data.source.path}/${nodes[nodeId].data.source.file}`;
-        } else if(nodes[nodeId].data.source.type === 'dataSource'){
+          task.hierarchy_id = '';
+        } else if(nodes[nodeId].data.source.fileSelectFrom === 'dataSource'){
           task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id;
           task.path = '';
         }

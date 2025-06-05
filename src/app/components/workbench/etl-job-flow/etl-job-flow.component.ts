@@ -617,7 +617,9 @@ export class EtlJobFlowComponent {
           console.log(data);
           this.isRunEnable = true;
           this.jobFlowId = data.dataflow_id;
-          this.toasterService.success(data.message, 'success', { positionClass: 'toast-top-right' });
+          const encodedId = btoa(this.jobFlowId.toString());
+          this.router.navigate(['/analytify/etlList/jobFlow/'+encodedId]);
+          this.toasterService.success('JobFlow Saved Successfully', 'success', { positionClass: 'toast-top-right' });
         },
         error: (error: any) => {
           this.isRunEnable = false;
@@ -1126,4 +1128,46 @@ export class EtlJobFlowComponent {
     this.selectedNode.data.nodeData.dataPoints.dataPoint = this.selectedDataPoint?.display_name;
     this.updateNode('');
   }
+
+  // getDataFlow(){
+  //   this.workbechService.getEtlDataFlow(this., 'dataflow').subscribe({
+  //     next: (data) => {
+  //       console.log(data);
+  //       this.etlName = data.dag_id;
+  //       this.dataFlowId = data.id;
+  //       const drawFlowJson = JSON.parse(data.transformation_flow);
+  //       this.drawflow.import(drawFlowJson);
+  //       console.log(drawFlowJson);
+  //       if (data?.etl_json?.tasks.length > 0) {
+  //         this.isRunEnable = data?.etl_json?.tasks.some((task: any) => task.type === 'target_data_object');
+  //       }
+  //       // this.isRunEnable = true;
+  //       this.canvasData = drawFlowJson.drawflow.Home.canvasData ? drawFlowJson.drawflow.Home.canvasData : {parameters: [], sqlParameters: []};
+  //       console.log(this.canvasData);
+  //       this.isNodeSelected = true;
+  //       this.isCanvasSelected = true;
+  //       this.tableTabId = 7;
+
+  //       setTimeout(() => {
+  //         const allNodes = this.drawflow.drawflow.drawflow['Home'].data;
+  //         Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+  //           const displayName = (node.data?.nodeData?.general?.name || '').substring(0, 8) + '..';
+  //           const nodeElement = document.querySelector(`#node-${id}`);
+  //           if (nodeElement) {
+  //             const labelElement = nodeElement.querySelector('.node-label') as HTMLElement;
+  //             if (labelElement) {
+  //               labelElement.innerText = displayName;
+  //               labelElement.setAttribute('title', node.data?.nodeData?.general?.name);
+  //             }
+  //           }
+  //         });
+  //       }, 100);
+  //     },
+  //     error: (error: any) => {
+  //       console.log(error);
+  //       this.isRunEnable = false;
+  //       this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+  //     }
+  //   });
+  // }
 }
