@@ -388,6 +388,9 @@
                       <td *ngIf="database.server_type === 'NINJA'">
                         <img alt="product" src="./assets/images/icons/ninjaRMMIcon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'HUBSPOT'">
+                        <img alt="product" src="./assets/images/icons/hubspotlogo.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                       
                       <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
@@ -492,6 +495,8 @@
                                                       <img src="./assets/images/icons/google-anaytics.jpg" alt="" class="rounded-circle"></span>
                                                       <span *ngIf="database.server_type === 'NINJA'" class="avatar avatar rounded-circle">
                                                         <img src="./assets/images/icons/ninjaRMMIcon.jpg" alt="" class="rounded-circle"></span>
+                                                        <span *ngIf="database.server_type === 'HUBSPOT'" class="avatar avatar rounded-circle">
+                                                          <img src="./assets/images/icons/hubspotlogo.png" alt="" class="rounded-circle"></span>
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
