@@ -2016,7 +2016,7 @@ deleteConnectedDb(db:any){
     delete_db_id: db.hierarchy_id
   };
   this.workbechService.crossDbDeletion(obj).subscribe({
-    next: () => {
+    next: (data: any) => {
       this.crossDbConnections = this.crossDbConnections.filter((item: any) => item.hierarchy_id !== db.hierarchy_id);
       this.isCrossDb = this.crossDbConnections.length > 1;
       if(this.crossDbConnections.length){
@@ -2025,6 +2025,8 @@ deleteConnectedDb(db:any){
       if(this.crossDbConnections.length <= 1){
         this.modalService.dismissAll('close');
       }
+      this.databaseId = data.hierarchy_id;
+      this.getSchemaTablesFromConnectedDb();
       this.toasterService.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
     },
     error: (data:any) => {
