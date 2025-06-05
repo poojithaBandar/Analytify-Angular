@@ -430,9 +430,11 @@ export class TemplateDashboardService {
     data.dashboard.dashboard_data = mergeDashboardData(data.dashboard.dashboard_data);
 
     // Merge for each tab's dashboard
-    data.dashboard.tab_data?.forEach((tab: any) => {
-      tab.dashboard = mergeDashboardData(tab.dashboard);
-    });
+    if (data.dashboard.tab_data && data.dashboard.tab_data.length > 0) {
+      data.dashboard.tab_data?.forEach((tab: any) => {
+        tab.dashboard = mergeDashboardData(tab.dashboard);
+      });
+    }
 
     return data;
   }
@@ -1047,25 +1049,27 @@ export class TemplateDashboardService {
           }
           }
         });
-        dashboard.tab_data?.forEach((tabData : any)=>{
-          tabData.dashboard?.forEach((dashboardItem:any) => {
-            if (dashboardItem.sheetId === sheetId) {
-              if(dashboardItem.chartId == 25 || sheet.chart_id == 25){
-                dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
-                dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
-              } else if(dashboardItem.chartId == 1 || sheet.chart_id == 1){
-                let tableData = this.dashboardInstance.getTableData(sheet.sheet_data)
-                dashboardItem.tableData = tableData;
-              } else {
-                if (sheet.sheet_data.isEChart) {
-                  dashboardItem.echartOptions = sheet.sheet_data.savedChartOptions;
+        if (dashboard.tab_data && dashboard.tab_data.length > 0) {
+          dashboard.tab_data?.forEach((tabData: any) => {
+            tabData.dashboard?.forEach((dashboardItem: any) => {
+              if (dashboardItem.sheetId === sheetId) {
+                if (dashboardItem.chartId == 25 || sheet.chart_id == 25) {
+                  dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
+                  dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
+                } else if (dashboardItem.chartId == 1 || sheet.chart_id == 1) {
+                  let tableData = this.dashboardInstance.getTableData(sheet.sheet_data)
+                  dashboardItem.tableData = tableData;
                 } else {
-                  dashboardItem.chartOptions = sheet.sheet_data.savedChartOptions;
+                  if (sheet.sheet_data.isEChart) {
+                    dashboardItem.echartOptions = sheet.sheet_data.savedChartOptions;
+                  } else {
+                    dashboardItem.chartOptions = sheet.sheet_data.savedChartOptions;
+                  }
                 }
-            }
-            }
-          });
-        })
+              }
+            });
+          })
+        }
         
       });
       resolve(); // Resolve the promise once updates are done
