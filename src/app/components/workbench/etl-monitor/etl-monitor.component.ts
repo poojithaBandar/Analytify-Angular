@@ -1,4 +1,4 @@
-import { Component, ElementRef, NgModule, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, NgModule, Renderer2, ViewChild, OnInit } from '@angular/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { NGX_ECHARTS_CONFIG, NgxEchartsModule } from 'ngx-echarts';
 import type { EChartsOption } from 'echarts';
 import * as echarts from 'echarts';
+import { WorkbenchService } from '../workbench.service';
+import { finalize } from 'rxjs/operators';
 
 interface Run {
   runAfter: string;
@@ -40,146 +42,146 @@ interface EventRecord {
   styleUrl: './etl-monitor.component.scss'
 })
 export class EtlMonitorComponent {
-   activeTabId = 1;
+  activeTabId = 1;
 
-   // ─── Top “Last 24 hours” dropdown & date‐range display ───────────────────────
-      selectedRangeLabel = 'Last 24 hours';
-      dateRangeDisplay = '2025-05-28, 09:56:52 - 2025-05-29, 09:56:52';
+  // ─── Top “Last 24 hours” dropdown & date‐range display ───────────────────────
+  selectedRangeLabel = 'Last 24 hours';
+  dateRangeDisplay = '2025-05-28, 09:56:52 - 2025-05-29, 09:56:52';
 
-      // ─── ECharts bar‑chart options ────────────────────────────────────────────────
-      chartOptions:EChartsOption = {
-        title: {
-          text: 'Last 2 Dag Runs',
-          left: 'center'
-        },
-        tooltip: {
-          trigger: 'item'
-        },
-        grid: {
-          top: 60,
-          left: 40,
-          right: 20,
-          bottom: 50
-        },
-        xAxis: {
-          type: 'category',
-          data: ['2025-05-27, 11:48:44', '2025-05-27, 12:02:43'],
-          name: 'Run After',
-          nameLocation: 'middle',
-          nameGap: 30
-        },
-        yAxis: {
-          type: 'value',
-          name: 'Duration (seconds)',
-          nameLocation: 'middle',
-          nameGap: 33,
-          nameTextStyle: {
-            align: 'center',
-            verticalAlign: 'middle'
-          },
-          min: 0
-        },
-        series: [
-          {
-            type: 'bar',
-            data: [
-              { name: '2025-05-27, 11:48:44', value: 0.98, itemStyle: { color: 'red' } },
-              { name: '2025-05-27, 12:02:43', value: 54.69, itemStyle: { color: 'green' } }
-            ],
-            barWidth: '40%',
-            label: { show: false }
-          }
-        ]
-      };
-
-      option:EChartsOption = {
-      tooltip: {
-        trigger: 'item'
+  // ─── ECharts bar‑chart options ────────────────────────────────────────────────
+  chartOptions: EChartsOption = {
+    title: {
+      text: 'Last 2 Dag Runs',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'item'
+    },
+    grid: {
+      top: 60,
+      left: 40,
+      right: 20,
+      bottom: 50
+    },
+    xAxis: {
+      type: 'category',
+      data: ['2025-05-27, 11:48:44', '2025-05-27, 12:02:43'],
+      name: 'Run After',
+      nameLocation: 'middle',
+      nameGap: 30
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Duration (seconds)',
+      nameLocation: 'middle',
+      nameGap: 33,
+      nameTextStyle: {
+        align: 'center',
+        verticalAlign: 'middle'
       },
-      xAxis: {
-        type: 'category',
-        data: ['2025-05-27, 11:48:44', '2025-05-27, 12:02:43', '2025-05-29, 03:48:44', '2025-05-30, 22:02:43'],
-        axisLabel: { show: false },
-        axisLine: { show: false },
-        axisTick: { show: false },
-        splitLine: {
-          show: false
-        },
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Seconds',
-        nameLocation: 'middle',
-        nameGap: 25,
-        nameTextStyle: {
-          align: 'center',
-          verticalAlign: 'middle'
-        },
-        min: 0,
-        splitLine: {
-          show: false
-        },
-      },
-      series: [
-        {
-          type: 'bar',
-          barWidth: '30%',
-          data: [
-            { name: '2025-05-27, 11:48:44', value: 0.98, itemStyle: { color: 'red' } },
-            { name: '2025-05-27, 12:02:43', value: 54.69, itemStyle: { color: 'green' } },
-            { name: '2025-05-29, 03:48:44', value: 0.98, itemStyle: { color: 'red' } },
-            { name: '2025-05-30, 22:02:43', value: 54.69, itemStyle: { color: 'green' } }
-          ]
-        }
-      ],
-    };
-
-    runs: Run[] = [
-        {
-          runAfter: 'Pipeline A',
-          state: 'Completed',
-          runType: 'Automatic',
-          startDate: '2023-08-01 08:15',
-          endDate:   '2023-08-01 10:15',
-          duration:  '2h 0m'
-        },
-        {
-          runAfter: 'Pipeline B',
-          state: 'Failed',
-          runType: 'Manual',
-          startDate: '2023-08-02 14:00',
-          endDate:   '2023-08-02 14:45',
-          duration:  '45m'
-        },
-      ];
-
-      // sample data in your component.ts
-    tasks = [
+      min: 0
+    },
+    series: [
       {
-        name: 'extract_data_task',
-        operator: 'PythonOperator',
-        triggerRule: 'all_success',
-        lastRun: '2025-05-27, 11:48:44',
-        status: 'success',
-        miniChartData: [20, 40, 15, 60, 30]
-      },
-      {
-        name: 'transform_records',
-        operator: 'BashOperator',
-        triggerRule: 'one_failed',
-        lastRun: '2025-05-27, 12:02:43',
-        status: 'failed',
-        miniChartData: [5, 10, 0, 8, 3]
-      },
-      {
-        name: 'load_to_warehouse',
-        operator: 'PythonOperator',
-        triggerRule: 'all_done',
-        lastRun: '2025-05-27, 12:30:10',
-        status: 'running',
-        miniChartData: [50, 60, 70, 80, 90]
+        type: 'bar',
+        data: [
+          { name: '2025-05-27, 11:48:44', value: 0.98, itemStyle: { color: 'red' } },
+          { name: '2025-05-27, 12:02:43', value: 54.69, itemStyle: { color: 'green' } }
+        ],
+        barWidth: '40%',
+        label: { show: false }
       }
-    ];
+    ]
+  };
+
+  option: EChartsOption = {
+    tooltip: {
+      trigger: 'item'
+    },
+    xAxis: {
+      type: 'category',
+      data: ['2025-05-27, 11:48:44', '2025-05-27, 12:02:43', '2025-05-29, 03:48:44', '2025-05-30, 22:02:43'],
+      axisLabel: { show: false },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitLine: {
+        show: false
+      },
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Seconds',
+      nameLocation: 'middle',
+      nameGap: 25,
+      nameTextStyle: {
+        align: 'center',
+        verticalAlign: 'middle'
+      },
+      min: 0,
+      splitLine: {
+        show: false
+      },
+    },
+    series: [
+      {
+        type: 'bar',
+        barWidth: '30%',
+        data: [
+          { name: '2025-05-27, 11:48:44', value: 0.98, itemStyle: { color: 'red' } },
+          { name: '2025-05-27, 12:02:43', value: 54.69, itemStyle: { color: 'green' } },
+          { name: '2025-05-29, 03:48:44', value: 0.98, itemStyle: { color: 'red' } },
+          { name: '2025-05-30, 22:02:43', value: 54.69, itemStyle: { color: 'green' } }
+        ]
+      }
+    ],
+  };
+
+  runs: Run[] = [
+    {
+      runAfter: 'Pipeline A',
+      state: 'Completed',
+      runType: 'Automatic',
+      startDate: '2023-08-01 08:15',
+      endDate: '2023-08-01 10:15',
+      duration: '2h 0m'
+    },
+    {
+      runAfter: 'Pipeline B',
+      state: 'Failed',
+      runType: 'Manual',
+      startDate: '2023-08-02 14:00',
+      endDate: '2023-08-02 14:45',
+      duration: '45m'
+    },
+  ];
+
+  // sample data in your component.ts
+  tasks = [
+    {
+      name: 'extract_data_task',
+      operator: 'PythonOperator',
+      triggerRule: 'all_success',
+      lastRun: '2025-05-27, 11:48:44',
+      status: 'success',
+      miniChartData: [20, 40, 15, 60, 30]
+    },
+    {
+      name: 'transform_records',
+      operator: 'BashOperator',
+      triggerRule: 'one_failed',
+      lastRun: '2025-05-27, 12:02:43',
+      status: 'failed',
+      miniChartData: [5, 10, 0, 8, 3]
+    },
+    {
+      name: 'load_to_warehouse',
+      operator: 'PythonOperator',
+      triggerRule: 'all_done',
+      lastRun: '2025-05-27, 12:30:10',
+      status: 'running',
+      miniChartData: [50, 60, 70, 80, 90]
+    }
+  ];
 
   tasksRunStatuses = [
     {
@@ -196,138 +198,138 @@ export class EtlMonitorComponent {
     }
   ];
 
-     events: EventRecord[] = [
-        {
-          when: '2025-05-29T09:00:00Z',
-          runId: 'run_001',
-          taskId: 'task_a',
-          mapIndex: '0',
-          event: 'TASK_STARTED',
-          user: 'alice',
-        },
-        {
-          when: '2025-05-29T09:05:00Z',
-          runId: 'run_002',
-          taskId: 'task_b',
-          mapIndex: '1',
-          event: 'TASK_FAILED',
-          user: 'bob',
-        },
-        {
-          when: '2025-05-29T09:10:00Z',
-          runId: 'run_003',
-          taskId: 'task_c',
-          mapIndex: '0',
-          event: 'TASK_SUCCESS',
-          user: 'carol',
-        },
-        // …more sample rows…
-      ];
+  events: EventRecord[] = [
+    {
+      when: '2025-05-29T09:00:00Z',
+      runId: 'run_001',
+      taskId: 'task_a',
+      mapIndex: '0',
+      event: 'TASK_STARTED',
+      user: 'alice',
+    },
+    {
+      when: '2025-05-29T09:05:00Z',
+      runId: 'run_002',
+      taskId: 'task_b',
+      mapIndex: '1',
+      event: 'TASK_FAILED',
+      user: 'bob',
+    },
+    {
+      when: '2025-05-29T09:10:00Z',
+      runId: 'run_003',
+      taskId: 'task_c',
+      mapIndex: '0',
+      event: 'TASK_SUCCESS',
+      user: 'carol',
+    },
+    // …more sample rows…
+  ];
 
-    sortColumnEvent: keyof EventRecord = 'when';
-    sortColumnRun: keyof Run = 'runAfter';
-    sortDirection: 'asc'|'desc' = 'asc';
+  sortColumnEvent: keyof EventRecord = 'when';
+  sortColumnRun: keyof Run = 'runAfter';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
-    sort(column: keyof EventRecord | keyof Run, type:'event' | 'run') {
-      if ( (type === 'event' && this.sortColumnEvent === column) || (type === 'run' && this.sortColumnRun === column)) {
-        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-      } else {
-        if(type === 'event'){
-          this.sortColumnEvent = column as keyof EventRecord;
-        } else if(type == 'run'){
-          this.sortColumnRun = column as keyof Run;
-        }
-        this.sortDirection = 'asc';
-      }
+  sort(column: keyof EventRecord | keyof Run, type: 'event' | 'run') {
+    if ((type === 'event' && this.sortColumnEvent === column) || (type === 'run' && this.sortColumnRun === column)) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
       if (type === 'event') {
-        this.events = this.sortedEvents;
+        this.sortColumnEvent = column as keyof EventRecord;
       } else if (type == 'run') {
-        this.runs = this.sortedRuns;
+        this.sortColumnRun = column as keyof Run;
       }
+      this.sortDirection = 'asc';
+    }
+    if (type === 'event') {
+      this.events = this.sortedEvents;
+    } else if (type == 'run') {
+      this.runs = this.sortedRuns;
+    }
+  }
+
+  get sortedEvents(): EventRecord[] {
+    // if no data yet, guard
+    if (!this.events) {
+      return [];
     }
 
-     get sortedEvents(): EventRecord[] {
-      // if no data yet, guard
-      if (!this.events) {
-        return [];
+    return [...this.events].sort((a, b) => {
+      const col = this.sortColumnEvent;
+
+      // special‐case date sorting on the ISO‐string 'when'
+      if (col === 'when') {
+        const tA = Date.parse(a.when);
+        const tB = Date.parse(b.when);
+        return this.sortDirection === 'asc' ? tA - tB : tB - tA;
       }
 
-      return [...this.events].sort((a, b) => {
-        const col = this.sortColumnEvent;
-
-        // special‐case date sorting on the ISO‐string 'when'
-        if (col === 'when') {
-          const tA = Date.parse(a.when);
-          const tB = Date.parse(b.when);
-          return this.sortDirection === 'asc' ? tA - tB : tB - tA;
-        }
-
-        // special‐case numeric sort on the string‑encoded 'mapIndex'
-        if (col === 'mapIndex') {
-          const nA = Number(a.mapIndex);
-          const nB = Number(b.mapIndex);
-          return this.sortDirection === 'asc' ? nA - nB : nB - nA;
-        }
-
-        // fallback: string‐compare all other fields
-        const sA = String(a[col] ?? '').toLowerCase();
-        const sB = String(b[col] ?? '').toLowerCase();
-        if (sA < sB) {
-          return this.sortDirection === 'asc' ? -1 : 1;
-        }
-        if (sA > sB) {
-          return this.sortDirection === 'asc' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    get sortedRuns(): Run[] {
-      if (!this.runs) {
-        return [];
+      // special‐case numeric sort on the string‑encoded 'mapIndex'
+      if (col === 'mapIndex') {
+        const nA = Number(a.mapIndex);
+        const nB = Number(b.mapIndex);
+        return this.sortDirection === 'asc' ? nA - nB : nB - nA;
       }
 
-      return [...this.runs].sort((a, b) => {
-        const col = this.sortColumnRun;
+      // fallback: string‐compare all other fields
+      const sA = String(a[col] ?? '').toLowerCase();
+      const sB = String(b[col] ?? '').toLowerCase();
+      if (sA < sB) {
+        return this.sortDirection === 'asc' ? -1 : 1;
+      }
+      if (sA > sB) {
+        return this.sortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
 
-        // special‑case ISO‑string dates for proper chronological sort
-        if (col === 'startDate' || col === 'endDate') {
-          const tA = Date.parse(a[col]);
-          const tB = Date.parse(b[col]);
-          return this.sortDirection === 'asc' ? tA - tB : tB - tA;
-        }
-
-        // special‑case duration strings like "2h 0m" or "45m"
-        if (col === 'duration') {
-          // parse hours/minutes into total minutes
-          const toMinutes = (d: string) => {
-            const match = d.match(/(?:(\d+)h)?\s*(?:(\d+)m)?/);
-            if (!match) return 0;
-            const hrs = parseInt(match[1] ?? '0', 10);
-            const mins = parseInt(match[2] ?? '0', 10);
-            return hrs * 60 + mins;
-          };
-          const mA = toMinutes(a.duration);
-          const mB = toMinutes(b.duration);
-          return this.sortDirection === 'asc' ? mA - mB : mB - mA;
-        }
-
-        // fallback: string‑compare all other fields (runAfter, state, runType)
-        const sA = String(a[col] ?? '').toLowerCase();
-        const sB = String(b[col] ?? '').toLowerCase();
-        if (sA < sB) {
-          return this.sortDirection === 'asc' ? -1 : 1;
-        }
-        if (sA > sB) {
-          return this.sortDirection === 'asc' ? 1 : -1;
-        }
-        return 0;
-      });
+  get sortedRuns(): Run[] {
+    if (!this.runs) {
+      return [];
     }
 
+    return [...this.runs].sort((a, b) => {
+      const col = this.sortColumnRun;
+
+      // special‑case ISO‑string dates for proper chronological sort
+      if (col === 'startDate' || col === 'endDate') {
+        const tA = Date.parse(a[col]);
+        const tB = Date.parse(b[col]);
+        return this.sortDirection === 'asc' ? tA - tB : tB - tA;
+      }
+
+      // special‑case duration strings like "2h 0m" or "45m"
+      if (col === 'duration') {
+        // parse hours/minutes into total minutes
+        const toMinutes = (d: string) => {
+          const match = d.match(/(?:(\d+)h)?\s*(?:(\d+)m)?/);
+          if (!match) return 0;
+          const hrs = parseInt(match[1] ?? '0', 10);
+          const mins = parseInt(match[2] ?? '0', 10);
+          return hrs * 60 + mins;
+        };
+        const mA = toMinutes(a.duration);
+        const mB = toMinutes(b.duration);
+        return this.sortDirection === 'asc' ? mA - mB : mB - mA;
+      }
+
+      // fallback: string‑compare all other fields (runAfter, state, runType)
+      const sA = String(a[col] ?? '').toLowerCase();
+      const sB = String(b[col] ?? '').toLowerCase();
+      if (sA < sB) {
+        return this.sortDirection === 'asc' ? -1 : 1;
+      }
+      if (sA > sB) {
+        return this.sortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
 
 
-     @ViewChild('resizeContainer', { static: true })
+
+  @ViewChild('resizeContainer', { static: true })
   resizeContainer!: ElementRef<HTMLDivElement>;
 
   @ViewChild('sidebar', { static: true })
@@ -345,7 +347,7 @@ export class EtlMonitorComponent {
   private unlistenMouseMove!: () => void;
   private unlistenMouseUp!: () => void;
 
-  constructor(private renderer: Renderer2) {}
+ constructor(private renderer: Renderer2, private service: WorkbenchService) {}
 
   ngAfterViewInit(): void {
     // wire up the mousedown on the divider
@@ -407,4 +409,98 @@ export class EtlMonitorComponent {
     // restore user-select
     this.renderer.setStyle(document.body, 'user-select', '');
   }
+
+  dags: any[] = [];
+  isLoadingDags = false;
+  isLoadingRuns = false;
+  isLoadingTasks = false;
+  error: string | null = null;
+
+  ngOnInit(): void {
+    this.fetchDags();
+  }
+
+  private fetchDags() {
+    this.isLoadingDags = true;
+    this.service
+      .getDags()
+      // .pipe(finalize(() => (this.isLoadingDags = false)))
+      .subscribe({
+        next: (res: any) => {
+          this.dags = res.dags || res || [];
+          const first = this.dags[0];
+          if (first) {
+            this.fetchDagRuns(first.dag_id);
+          }
+        },
+        error: () => (this.error = 'Failed to load DAGs'),
+      });
+  }
+
+  private fetchDagRuns(dagId: string) {
+    this.isLoadingRuns = true;
+    this.service
+      .getDagRuns(dagId)
+      .pipe(finalize(() => (this.isLoadingRuns = false)))
+      .subscribe({
+        next: (res: any) => {
+          const runsData = res.dag_runs || res || [];
+          this.runs = runsData.map((r: any) => ({
+            runAfter: r.dag_run_id,
+            state: r.state,
+            runType: r.run_type,
+            startDate: r.start_date,
+            endDate: r.end_date,
+            duration: r.duration || this.calcDuration(r.start_date, r.end_date),
+          }));
+          const first = runsData[0];
+          if (first) {
+            this.fetchTaskInstances(dagId, first.dag_run_id);
+          }
+        },
+        error: () => (this.error = 'Failed to load DAG runs'),
+      });
+  }
+
+  private fetchTaskInstances(dagId: string, runId: string) {
+    this.isLoadingTasks = true;
+    this.service
+      .getTaskInstances(dagId, runId)
+      .pipe(finalize(() => (this.isLoadingTasks = false)))
+      .subscribe({
+        next: (res: any) => {
+          const tasksData = res.task_instances || res || [];
+          this.tasks = tasksData.map((t: any) => ({
+            name: t.task_id,
+            operator: t.operator,
+            triggerRule: t.trigger_rule,
+            lastRun: t.start_date,
+            status: t.state,
+            miniChartData: [],
+          }));
+          this.tasksRunStatuses = tasksData.map((t: any) => ({
+            name: t.task_id,
+            statuses: [t.state],
+          }));
+        },
+        error: () => (this.error = 'Failed to load task instances'),
+      });
+  }
+
+  private calcDuration(start: string, end: string): string {
+    if (!start || !end) {
+      return '';
+    }
+
+    const diff = Date.parse(end) - Date.parse(start);
+    if (isNaN(diff)) {
+      return '';
+    }
+
+    const totalMins = Math.floor(diff / 60000);
+    const hrs = Math.floor(totalMins / 60);
+    const mins = totalMins % 60;
+    return hrs ? `${hrs}h ${mins}m` : `${mins}m`;
+  }
+
 }

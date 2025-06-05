@@ -888,7 +888,7 @@
 <ng-template #connectionList let-modal>
     <div class="modal-header">
         <h6 class="modal-title">Data Objects</h6>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click'); objectType = 'select'; selectedConnection = null; selectedDataObject = null; fileSelectType = 'dataSource'; sourcePath = ''; selectedFile = ''">
         </button>
     </div>
     <div class="modal-body">
@@ -897,11 +897,11 @@
                 <div *ngIf="type === 'file'" class="d-flex gap-3 align-items-center mb-2">
                     <label class="form-check-label">From : </label>
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="fileSelect" id="dataSource" [value]="'dataSource'" [(ngModel)]="fileSelectType">
+                      <input class="form-check-input" type="radio" name="fileSelect" id="dataSource" [value]="'dataSource'" [(ngModel)]="fileSelectType" (click)="objectType = 'select'; selectedConnection = null; selectedDataObject = null; fileSelectType = 'dataSource'; sourcePath = ''; selectedFile = ''">
                       <label class="form-check-label" for="dataSource">Data Source</label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="fileSelect" id="server" [value]="'server'" [(ngModel)]="fileSelectType">
+                      <input class="form-check-input" type="radio" name="fileSelect" id="server" [value]="'server'" [(ngModel)]="fileSelectType" (click)="objectType = 'select'; selectedConnection = null; selectedDataObject = null; fileSelectType = 'server'; sourcePath = ''; selectedFile = ''">
                       <label class="form-check-label" for="server">Server</label>
                     </div>
                 </div>
@@ -945,7 +945,7 @@
                     </select><br>
 
                     <label for="connection">Select File <span class="text-danger">*</span></label><br>
-                    <select class="form-select" [(ngModel)]="selectedFolder" (change)="getDataObjectsFromServer()">
+                    <select class="form-select" [(ngModel)]="selectedFile" (change)="getDataObjectsFromServer()">
                         <option value="" selected disabled>Select a File</option>
                         <option *ngFor="let file of Folders; track file;" [value]="file">{{file}}</option>
                     </select>
@@ -963,8 +963,14 @@
     <div class="modal-footer">
         <div class="text-right">
             <button type="button" class="btn ripple btn-secondary me-2"
-                (click)="modal.close('Cross click'); objectType = 'select'; selectedConnection = null; selectedDataObject = null;">Cancel</button>
-            <button type="button" [disabled]="(type !== 'file' && (!selectedConnection || !selectedDataObject)) || (type === 'file' && (fileSelectType === 'dataSource' && !selectedConnection) || (fileSelectType === 'server' && !sourcePath && !selectedFolder))" class="btn ripple btn-primary" (click)="addNode(nodeToAdd, posX, posY); modal.dismiss('Save click'); modal.close('save click');">Ok</button>
+                (click)="modal.close('Cross click'); objectType = 'select'; selectedConnection = null; selectedDataObject = null; fileSelectType = 'dataSource'; sourcePath = ''; selectedFile = ''">Cancel</button>
+            <button type="button" [disabled]="
+              (type !== 'file' && (!selectedConnection || !selectedDataObject)) ||
+              (type === 'file' && (
+                (fileSelectType === 'dataSource' && !selectedConnection) ||
+                (fileSelectType === 'server' && (!sourcePath || !selectedFile))
+              ))" 
+              class="btn ripple btn-primary" (click)="addNode(nodeToAdd, posX, posY); modal.dismiss('Save click'); modal.close('save click');">Ok</button>
         </div>
     </div>
 </ng-template>

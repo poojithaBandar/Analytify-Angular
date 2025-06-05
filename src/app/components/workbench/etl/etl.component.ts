@@ -83,7 +83,7 @@ export class ETLComponent {
   type: string = '';
   fileSelectType: string = 'dataSource';
   sourcePath: string = '';
-  selectedFolder: any = '';
+  selectedFile: any = '';
   Folders: any[] = [];
   dataTypes: string[] = [
     // Numeric types
@@ -350,6 +350,7 @@ export class ETLComponent {
   addNode(name: string, posX: number, posY: number) {
     let data = { 
       type: '', 
+      source: { type: '',  fileSelectFrom: '', path: '', file: '' },
       nodeData: { 
         general: { name: '' }, 
         connection: {}, dataObject: {}, 
@@ -375,6 +376,7 @@ export class ETLComponent {
         altText = 'file';
       }
       data.type = name;
+      data.source = {type: this.type, fileSelectFrom: this.fileSelectType, path: this.sourcePath, file: this.selectedFile};
       data.nodeData = { 
         connection: this.selectedConnection, 
         dataObject: this.selectedDataObject, 
@@ -504,6 +506,9 @@ export class ETLComponent {
     this.selectedConnection = null;
     this.selectedDataObject = null;
     this.objectType = 'select';
+    this.fileSelectType = 'dataSource'; 
+    this.sourcePath = ''; 
+    this.selectedFile = '';
     const allNodes = this.drawflow.drawflow.drawflow[this.drawflow.module].data;
     Object.entries(allNodes).forEach(([id, node]) => {
       console.log('Node ID:', id, 'Node Data:', node);
@@ -691,7 +696,7 @@ export class ETLComponent {
   getDataObjectsFromServer() {
     let object = {
       source_type: this.sourcePath,
-      file_name: this.selectedFolder,
+      file_name: this.selectedFile,
     }
     this.workbechService.getDataObjectsFromServer(object).subscribe({
       next: (data) => {
@@ -1060,9 +1065,19 @@ export class ETLComponent {
         const array = [atrr.attributeName, atrr.dataType, atrr.expression];
         attr.push(array);
       });
-      task.format = 'database',
-      task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id,
-      task.path = '',
+      if (nodes[nodeId].data.source.type === 'POSTGRESQL') {
+        task.format = 'database',
+        task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id;
+        task.path = '';
+      } else if(nodes[nodeId].data.source.type === 'file') {
+        task.format = 'file';
+        if(nodes[nodeId].data.source.fileSelectFrom === 'server'){
+          task.path = `${nodes[nodeId].data.source.path}/${nodes[nodeId].data.source.file}`;
+        } else if(nodes[nodeId].data.source.type === 'dataSource'){
+          task.hierarchy_id = nodes[nodeId].data.nodeData.connection.hierarchy_id;
+          task.path = '';
+        }
+      }
       task.source_table_name = nodes[nodeId].data.nodeData.dataObject.tables;
       task.attributes = attr;
       task.source_attributes = sourceAttr;
