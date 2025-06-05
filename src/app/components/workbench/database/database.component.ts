@@ -2025,7 +2025,7 @@ deleteConnectedDb(db:any){
       if(this.crossDbConnections.length <= 1){
         this.modalService.dismissAll('close');
       }
-      this.databaseId = data.hierarchy_id;
+      this.databaseId = data.id;
       this.getSchemaTablesFromConnectedDb();
       this.toasterService.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
     },
