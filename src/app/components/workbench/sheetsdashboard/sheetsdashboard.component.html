@@ -1096,7 +1096,6 @@
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
                                 <a class="dropdown-item border-bottom" (click)="downloadAsImage()">Download as Image</a>
                                 <a class="dropdown-item border-bottom" (click)="downloadAsPDF();">Download as PDF</a>
-                                <a class="dropdown-item" (click)="analyzeAndDownload();">Analyze & Download</a>
                               </div>
                               </div>
                               
@@ -2209,5 +2208,14 @@
 
   </ng-template>
 
-
+  <!-- Overlay Genie AIQ Icon -->
+<div *ngIf="!isPublicUrl && dashboardId && dashboard.length > 0 && !canNavigateToAnotherPage"  class="overlay-div genie-animate" 
+     (mouseenter)="genieHover=true;playGenieAnimation();showGenieTooltip = true" (mouseleave)="genieHover=false;resetGenieAnimation();showGenieTooltip = false" 
+     (click)="analyzeAndDownload()"
+     [ngStyle]="{ boxShadow: genieHover ? '0 8px 24px rgba(0,0,0,0.28)' : '0 4px 16px rgba(0,0,0,0.18)' }">
+  <img src="assets/images/analyze-genieaiq1.webp" alt="Genie AIQ" class="overlay-img"/>
+<div class="genie-tooltip" *ngIf="showGenieTooltip">
+    Analyze Dashboard
+  </div>
+</div>
 
