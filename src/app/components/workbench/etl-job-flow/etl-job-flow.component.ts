@@ -339,7 +339,7 @@ export class EtlJobFlowComponent {
         to: '', cc: '', subject: '', attachment: '', message: ''
       },
       command: {
-        commandType: 'external', commandDesc: '', timeOut: -1, sleepInterval: 5,
+        commandType: 'external', commandDesc: '', timeOut: 0, sleepInterval: 0,
         runDBCommandFile: false, continueExecutionFailure: false, dbCommand: '', dbCommandOutputFile: '$$SrcFileDir'
       },
       dataPoints: {dataPoint: this.selectedDataPoint?.display_name ?? '', dataPointSchema: '', selectedDataPoint: this.selectedDataPoint},
