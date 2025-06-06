@@ -538,6 +538,11 @@ selectedDatafromFilter(obj:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/dashboard_filter_save/`+this.accessToken,obj);  
 }
+copyDashboard(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_copy/`+this.accessToken,obj);
+}
 updatesDashboardFilters(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
   this.accessToken = JSON.parse( currentUser! )['Token'];
