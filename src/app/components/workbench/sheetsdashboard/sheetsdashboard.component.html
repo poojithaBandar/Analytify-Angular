@@ -1114,6 +1114,24 @@
                             </div>
                             <button class="btn btn-primary mt-0" ngbTooltip="Switch Database" [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" style="padding:5px 6px !important"  *ngIf="!this.isPublicUrl && !isSampleDashboard && dashboardId" (click)="switchDatasourceModalOpen(switchDatabaseModal)"><img src="./assets/images/icons/Data Sources-switch.svg" alt="logo" class="db-switch"> </button>
 
+                                 <div class=" p-1" ngbDropdown>
+                              <button
+                              [disabled]="dashboard.length === 0 || !updateDashbpardBoolen"
+                              class="btn btn-primary mt-0 ps-2 pe-2"
+                              type="button"
+                              container="body"
+                              ngbDropdownToggle
+                              >
+                              <i class="fe fe-more-vertical" aria-hidden="true"></i>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-width mt-2" ngbDropdownMenu>
+                                <a class="dropdown-item border-bottom"><img src="./assets/images/icons/erase-black.png" alt="logo" class="w-4 h-4"> Clear Dashboard</a>
+                                <a class="dropdown-item border-bottom"><i class="fa fa-refresh"></i> Sync Data</a>
+                                <a class="dropdown-item border-bottom"><i class="fa fa-rotate-right"></i> Set auto-refresh interval</a>
+                                <a class="dropdown-item border-bottom"><i class="fa fa-plus-square"></i> Add Tab</a>
+                                <a class="dropdown-item " ><img src="./assets/images/icons/Data-Sources-switch-black.png" alt="logo" class="w-4 h-4"> Switch DataSource</a>
+                              </div>
+                              </div>
                             </div>
             </div>
         </div> 
