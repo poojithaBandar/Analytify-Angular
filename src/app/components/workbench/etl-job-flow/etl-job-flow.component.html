@@ -275,24 +275,27 @@
                                                                                             </span>
                                                                                         </div>
 
-                                                                                        <label for="timeOut" class="fw-bold">Time Out</label>
-                                                                                        <div class="d-flex">
-                                                                                            <div class="col-4 p-0">
-                                                                                                <input type="number" id="timeOut" name="timeOut" [(ngModel)]="selectedNode.data.nodeData.command.timeOut"
-                                                                                                    class="form-control shadow-sm" (blur)="updateNode('')" />
-                                                                                            </div>
-                                                                                            <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width"
-                                                                                                (click)="updateNode('')"><i class="fa fa-chevron-right text-light fs-5"></i></span>
-                                                                                        </div><br>
-                                                                                        <label for="sleepInterval" class="fw-bold">Sleep Interval</label>
-                                                                                        <div class="d-flex">
-                                                                                            <div class="col-4 p-0">
-                                                                                                <input type="number" id="sleepInterval" name="sleepInterval" [(ngModel)]="selectedNode.data.nodeData.command.sleepInterval"
-                                                                                                    class="form-control shadow-sm" (blur)="updateNode('')" />
-                                                                                            </div>
-                                                                                            <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width"
-                                                                                                (click)="updateNode('')"><i class="fa fa-chevron-right text-light fs-5"></i></span>
-                                                                                        </div><br>
+                                                                                        <ng-container *ngIf="selectedNode.data.nodeData.command.commandType === 'file_watcher'">
+                                                                                            <label for="timeOut" class="fw-bold">Time Out</label>
+                                                                                            <div class="d-flex">
+                                                                                                <div class="col-4 p-0">
+                                                                                                    <input type="number" id="timeOut" name="timeOut" min="0" [(ngModel)]="selectedNode.data.nodeData.command.timeOut"
+                                                                                                        class="form-control shadow-sm" (blur)="updateNode('')" />
+                                                                                                </div>
+                                                                                                <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width"
+                                                                                                    (click)="updateNode('')"><i class="fa fa-chevron-right text-light fs-5"></i></span>
+                                                                                            </div><br>
+                                                                                            <label for="sleepInterval" class="fw-bold">Sleep Interval</label>
+                                                                                            <div class="d-flex">
+                                                                                                <div class="col-4 p-0">
+                                                                                                    <input type="number" id="sleepInterval" name="sleepInterval" min="0"
+                                                                                                        [(ngModel)]="selectedNode.data.nodeData.command.sleepInterval" class="form-control shadow-sm"
+                                                                                                        (blur)="updateNode('')" />
+                                                                                                </div>
+                                                                                                <span class="bg-primary d-flex align-items-center justify-content-center right-chevron-width"
+                                                                                                    (click)="updateNode('')"><i class="fa fa-chevron-right text-light fs-5"></i></span>
+                                                                                            </div><br>
+                                                                                        </ng-container>
                                                                                     </div>
                                                                                     <div *ngIf="selectedNode.data.type === 'dbCommand'">
                                                                                         <!-- <input type="checkbox" id="runDBCommand" name="runDBCommand" [(ngModel)]="selectedNode.data.nodeData.command.runDBCommandFile" (change)="updateNode('')">
