@@ -1156,123 +1156,38 @@ deleteUser(id:any){
     analyzeAndDownloadDashboard(obj:any){
       return this.http.post<any>(`${environment.apiUrl}/analyze-dashboard/`,obj);
     }
+    // Airflow API
+    airflowToken: string | null = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlzcyI6W10sImF1ZCI6ImFwYWNoZS1haXJmbG93IiwibmJmIjoxNzQ5MDQyOTI5LCJleHAiOjE3NDkxMjkzMjksImlhdCI6MTc0OTA0MjkyOX0.OPipRIhG-me15qyyGXRlt2xLuNWKOr2RexHtU7xc8kyXqP3dHfcNAq2t6Zf6sNiKbnb437AyKsagA9rgbKK6wg';
 
-//     // ===== Airflow Monitoring API =====
+    private getHeaders(): HttpHeaders {
+      const headers = new HttpHeaders({
+        'Accept': 'application/json',
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Authorization': `Bearer ${this.airflowToken}`,
+        'Connection': 'keep-alive',
+        'Referer': 'http://3.101.147.3:8080', // or current airflow UI URL
+        'User-Agent': navigator.userAgent
+      });
+      return headers;
+    }
 
+    getDags() {
+      return this.http.get(`${environment.airflowApiUrl}/dags`, {
+        headers: this.getHeaders(),
+      });
+    }
 
-//   private airflowToken: string | null = null;
+    getDagRuns(dagId: string) {
+      return this.http.get(`${environment.airflowApiUrl}/dags/${dagId}/dagRuns`, {
+        headers: this.getHeaders(),
+      });
+    }
 
-//   private airflowBase = `${ environment.apiUrl } /api/airflow`;
-
-//  private fetchAirflowToken() {
-
-//   return this.http.get<{ token: string }>(`${ environment.apiUrl } / api / airflow / token`).pipe(
-//     map((r) => r.token),
-//     tap((t) => (this.airflowToken = t))
-
-//   );
-
-// }
-
-// private getAirflowToken() {
-//   return this.airflowToken ? of(this.airflowToken) : this.fetchAirflowToken();
-
-// }
-
-
-// private airflowGet<T>(path: string) {
-
-//   return this.getAirflowToken().pipe(
-//     switchMap((token) =>
-
-//       this.http.get<T>(`${ this.airflowBase }${ path }`, { headers: new HttpHeaders({ Authorization: Bearer ${ token } }),
-
-// })
-
-
-// ),
-
-// catchError((err) => {
-
-//   if (err.status === 401) {
-
-//     return this.fetchAirflowToken().pipe(
-
-//       switchMap((token) =>
-
-//         this.http.get<T>(${ this.airflowBase }${ path }, {
-
-//           headers: new HttpHeaders({ Authorization: Bearer ${ token } }),
-
-// })
-
-// )
-
-// );
-
-
-// }
-
-// return throwError(() => err);
-
-// })
-// );
-
-// }
-
-
-// getDags() {
-
-
-//   return this.airflowGet<any>(/dags);
-// }
-
-// getDagRuns(dagId: string) {
-
-//   return this.airflowGet<any>(/dags/${ dagId } / dagRuns);
-
-// }
-
-// getTaskInstances(dagId: string, dagRunId: string) {
-
-//   return this.airflowGet<any>(/dags/${ dagId } / dagRuns / ${ dagRunId } / taskInstances);
-
-// }
-
-// ===== Airflow Monitoring API =====
-
-
-  airflowToken: string | null = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlzcyI6W10sImF1ZCI6ImFwYWNoZS1haXJmbG93IiwibmJmIjoxNzQ5MDQyOTI5LCJleHAiOjE3NDkxMjkzMjksImlhdCI6MTc0OTA0MjkyOX0.OPipRIhG-me15qyyGXRlt2xLuNWKOr2RexHtU7xc8kyXqP3dHfcNAq2t6Zf6sNiKbnb437AyKsagA9rgbKK6wg';
-
-  private getHeaders(): HttpHeaders {
-    const headers = new HttpHeaders({
-      'Accept': 'application/json',
-      'Accept-Encoding': 'gzip, deflate',
-      'Accept-Language': 'en-US,en;q=0.9',
-      'Authorization': `Bearer ${this.airflowToken}`,
-      'Connection': 'keep-alive',
-      'Referer': 'http://3.101.147.3:8080', // or current airflow UI URL
-      'User-Agent': navigator.userAgent
-    });
-    return headers;
-  }
-
-  getDags(){
-    return this.http.get(`${environment.airflowApiUrl}/dags`, {
-      headers: this.getHeaders(),
-    });
-  }
-
-  getDagRuns(dagId: string) {
-    return this.http.get(`${environment.airflowApiUrl}/dags/${dagId}/dagRuns`, {
-      headers: this.getHeaders(),
-    });
-  }
-
-  getTaskInstances(dagId: string, runId: string) {
-    return this.http.get(
-      `${environment.airflowApiUrl}/dags/${dagId}/dagRuns/${runId}/taskInstances`,
-      { headers: this.getHeaders() }
-    );
-  }
+    getTaskInstances(dagId: string, runId: string) {
+      return this.http.get(
+        `${environment.airflowApiUrl}/dags/${dagId}/dagRuns/${runId}/taskInstances`,
+        { headers: this.getHeaders() }
+      );
+    }
 }
