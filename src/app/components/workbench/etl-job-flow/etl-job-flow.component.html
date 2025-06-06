@@ -52,13 +52,13 @@
                                                     <div class="accordion-body p-0" ngbAccordionBody>
                                                         <ng-template>
                                                             <div class="data-cdk-tables p-0">
-                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'taskCommand', null)" data-node="Task Command">
+                                                                <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'taskCommand', null)" data-node="Task Command">
                                                                     <img src="./assets/images/etl/task_command-etl.svg" alt="Task Command" class="drawflow-image"><span> Task Command</span>
                                                                 </div>
-                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="isDataPointChange = false; onDragStart($event, 'dbCommand', dataPointList)" data-node="DB Command">
+                                                                <div class="drag-drawflow" draggable="true" (dragstart)="isDataPointChange = false; onDragStart($event, 'dbCommand', dataPointList)" data-node="DB Command">
                                                                     <img src="./assets/images/etl/db_command-etl.svg" alt="DB Command" class="drawflow-image"><span> DB Command</span>
                                                                 </div>
-                                                                <div class="drag-drawflow border-bottom" draggable="true" (dragstart)="onDragStart($event, 'loop', null)" data-node="Loop">
+                                                                <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'loop', null)" data-node="Loop">
                                                                     <img src="./assets/images/etl/loop-etl.svg" alt="Loop" class="drawflow-image"><span> Loop</span>
                                                                 </div>
                                                                 <div class="drag-drawflow" draggable="true" (dragstart)="onDragStart($event, 'emailNotification', null)" data-node="Email Notification">

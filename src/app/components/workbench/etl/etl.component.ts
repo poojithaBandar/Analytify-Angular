@@ -138,7 +138,7 @@ export class ETLComponent {
   constructor(private modalService: NgbModal, private toasterService: ToastrService, private workbechService: WorkbenchService, 
     private loaderService: LoaderService, private etlGraphService: EtlGraphService, private router: Router,private route: ActivatedRoute) {
       
-      if (this.router.url.startsWith('/analytify/etlList/etl')) {
+      if (this.router.url.startsWith('/analytify/etlList/dataFlow')) {
         if (route.snapshot.params['id1']) {
           const id = +atob(route.snapshot.params['id1']);
           this.dataFlowId = id.toString();
