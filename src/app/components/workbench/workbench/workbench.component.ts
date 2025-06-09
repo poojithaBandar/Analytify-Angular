@@ -149,7 +149,6 @@ export class WorkbenchComponent implements OnInit{
     "crm.objects.leads.read",
     "crm.objects.line_items.read",
     "crm.objects.listings.read",
-    "crm.objects.marketing_events.read",
     "crm.objects.orders.read",
     "crm.objects.partner-clients.read",
     "crm.objects.products.read",
