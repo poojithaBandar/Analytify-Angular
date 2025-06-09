@@ -876,6 +876,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
       this.setSelectedSheetData();
+      this.updateDashboardMetadata();
        this.isSheetsView = false;
       },
       error:(error)=>{
@@ -941,15 +942,6 @@ export class SheetsdashboardComponent implements OnDestroy {
         this.rolesForUpdateDashboard = data.role_ids;
         let self = this;
         let obj = {sheet_ids: this.sheetIdsDataSet};
-        if(!this.isPublicUrl){
-        this.fetchSheetsDataBasedOnSheetIds(obj);
-        }
-        if(!data.dashboard_tag_name){
-          this.dashboardTagName = data.dashboard_name;
-        }
-        else{
-          this.dashboardTagName = data.dashboard_tag_name;
-        }
         this.sheetTabs = data.tab_data ? data.tab_data : [];
         if(this.sheetTabs && this.sheetTabs.length > 0) {
           this.tabData = data.tab_id;
@@ -960,6 +952,15 @@ export class SheetsdashboardComponent implements OnDestroy {
             this.tabHeightGrid = this.sheetTabs[0].tabHeight;
             this.tabWidthGrid =  this.sheetTabs[0].tabWidth;
           }
+        }
+        if(!this.isPublicUrl){
+        this.fetchSheetsDataBasedOnSheetIds(obj);
+        }
+        if(!data.dashboard_tag_name){
+          this.dashboardTagName = data.dashboard_name;
+        }
+        else{
+          this.dashboardTagName = data.dashboard_tag_name;
         }
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.dynamicOptionsUpdateinDashboard(this.dashboard, false);
@@ -1289,6 +1290,26 @@ export class SheetsdashboardComponent implements OnDestroy {
       }
       return target;
     });
+  }
+
+  updateDashboardMetadata() {
+    const applyUpdates = (arr: any[]) => {
+      if (!arr) return;
+      arr.forEach(item => {
+        if (!item || !item.sheetId) return;
+        const fresh = this.dashboardNew.find(d => d['sheetId'] === item.sheetId);
+        if (fresh) {
+          item.qrySetId = fresh['qrySetId'];
+          item.databaseId = fresh['databaseId'];
+        }
+      });
+    };
+
+    applyUpdates(this.dashboard);
+    if (this.sheetTabs && this.sheetTabs.length > 0) {
+      applyUpdates(this.dashboardTest);
+      this.sheetTabs.forEach(tab => applyUpdates(tab.dashboard));
+    }
   }
 
   // saveDashboard(){
