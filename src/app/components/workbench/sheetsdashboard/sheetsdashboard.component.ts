@@ -870,6 +870,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         },
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
+      this.updateDashboardMetadata();
       this.setSelectedSheetData();
        this.isSheetsView = false;
       },
@@ -1268,7 +1269,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     this.dashboardNew = this.dashboardNew.map(target => {
       if(this.displayTabs){
         const source1 = this.sheetTabs
-    .flatMap(sheetData => sheetData?.dashboard) 
+    .flatMap(sheetData => sheetData?.dashboard)
     .find((source1: any) => source1['sheetId'] === target['sheetId']);
     if (source1) {
       target['selectedSheet'] = source1['selectedSheet']; 
@@ -1281,6 +1282,26 @@ export class SheetsdashboardComponent implements OnDestroy {
       }
       return target;
     });
+  }
+
+  updateDashboardMetadata() {
+    const applyUpdates = (arr: any[]) => {
+      if (!arr) return;
+      arr.forEach(item => {
+        if (!item || !item.sheetId) return;
+        const fresh = this.dashboardNew.find(d => d.sheetId === item.sheetId);
+        if (fresh) {
+          item.qrySetId = fresh.qrySetId;
+          item.databaseId = fresh.databaseId;
+        }
+      });
+    };
+
+    applyUpdates(this.dashboard);
+    applyUpdates(this.dashboardTest);
+    if (this.sheetTabs && this.sheetTabs.length > 0) {
+      this.sheetTabs.forEach(tab => applyUpdates(tab.dashboard));
+    }
   }
 
   // saveDashboard(){
@@ -1952,6 +1973,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       : undefined,
       customizeOptions: sheet?.sheet_data?.customizeOptions
     }));
+    this.updateDashboardMetadata();
     this.sheetIdsDataSet = this.dashboardNew.map(item => item['sheetId']);
     console.log('dashboardNew',this.dashboardNew)
       },
@@ -2019,6 +2041,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       },
       customizeOptions: sheet?.sheet_data?.customizeOptions
     }));
+    this.updateDashboardMetadata();
       if (this.dashboardView) {
         this.getSavedDashboardData();
       }
@@ -2709,6 +2732,8 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 
 
   viewSheet(sheetdata: any) {
+    // Ensure latest hierarchyId and qrySetId from API are used
+    this.updateDashboardMetadata();
     if (this.dashboardId) {
       this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
       // if (this.sheetsIdArray && this.dashboardsheetsIdArray && !this.arraysHaveSameData(this.sheetsIdArray , this.dashboardsheetsIdArray)) {
@@ -5318,6 +5343,7 @@ kpiData?: KpiData;
         : undefined,
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
+      this.updateDashboardMetadata();
       this.setSelectedSheetData();
       this.removeUnSelectedSheetsFromCanvas();
        this.isSheetsView = false;
