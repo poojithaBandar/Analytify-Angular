@@ -4782,12 +4782,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     
   }
 })
-// if (switchDb && isLastIndex) {
-//   this.updateDashboard(false, false);
-// } else if (!switchDb &&) {
-// }
-
-if( isLiveReloadData && isLastIndex){
+if (switchDb && isLastIndex) {
+  this.updateDashboard(false, false);
+} else if( isLiveReloadData && isLastIndex){
   this.updateDashboard(isLiveReloadData, false);
 }
 }
@@ -8085,6 +8082,9 @@ switchDatabase(isDuplicate: boolean = false) {
     next:(data)=>{
       console.log(data);
       if(data.message ==='Datasource switched successfully'){
+        if(!isDuplicate){
+        this.refreshDashboard(true);
+        }
         Swal.fire({
           icon: 'success',
           title: data.message,
@@ -8094,7 +8094,6 @@ switchDatabase(isDuplicate: boolean = false) {
           if(isDuplicate){
             const encodedId = btoa(data.dashboard_id.toString());
             this.router.navigate(['/analytify/home/sheetsdashboard/' + encodedId],{state: {dbSwitched: true}}).then(() => window.location.reload());;
-        
           }
         });
       }
