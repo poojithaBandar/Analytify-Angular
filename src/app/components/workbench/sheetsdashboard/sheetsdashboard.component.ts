@@ -8080,16 +8080,12 @@ switchDatabase(isDuplicate: boolean = false) {
     existing_h_id:existingIds,
     switch_h_id:targetIds,
     dashboard_id:this.dashboardId,
-    is_duplicate:isDuplicate ? 'true' : 'false'
+    is_duplicate:isDuplicate ? true : false
   }
   this.workbechService.datbaseSwitch(obj).subscribe({
     next:(data)=>{
       console.log(data);
       if(data.message ==='Datasource switched successfully'){
-        if(isDuplicate){
-          this.dashboardId = data.dashboard_id;
-        }
-        this.refreshDashboard(true);
         Swal.fire({
           icon: 'success',
           title: data.message,
@@ -8098,7 +8094,8 @@ switchDatabase(isDuplicate: boolean = false) {
         }).then(()=>{
           if(isDuplicate){
             const encodedId = btoa(data.dashboard_id.toString());
-            this.router.navigate(['/analytify/home/sheetsdashboard/' + encodedId]);
+            this.router.navigate(['/analytify/home/sheetsdashboard/' + encodedId],{state: {dbSwitched: true}});
+            
           }
         });
       }

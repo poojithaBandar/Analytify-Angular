@@ -2160,28 +2160,25 @@
 
         <div *ngFor="let cond of switchConditions; let i = index" class="p-2 mb-2">
           <div class="row align-items-end">
-            <div class="col">
-              <label class="form-label">Current Datasource</label>
+            <div class="col-5">
+              <label class="form-label">From</label>
               <select class="form-select" [(ngModel)]="cond.sourceKey" (change)="onCurrentDbChange(i)">
                 <option value="" disabled>Select Current Database</option>
                 <option *ngFor="let db of getAvailableSources(i)" [value]="db">{{ db }}</option>
               </select>
             </div>
-            <div class="col">
-              <label class="form-label">Target Datasource</label>
+            <div class="col-5">
+              <label class="form-label">To</label>
               <select  class="form-select" [(ngModel)]="cond.targetHierarchyId" (change)="onTargetDbChange($event,i)">
                 <option value="" disabled>Select Target Database</option>
                 <option *ngFor="let db of cond.targetDbData" [value]="db.hierarchy_id">{{ db.display_name }}</option>
               </select>
             </div>
-            <div class="col-auto" *ngIf="switchConditions.length > 1">
-              <button type="button" class="btn btn-link text-danger" (click)="removeCondition(i)"><i class="fa fa-trash"></i></button>
+            <div class="col-2">
+              <button type="button" class="btn btn-outline-primary fa fa-plus m-1" (click)="addCondition()" [disabled]="!canAddCondition()"></button>
+              <button *ngIf="switchConditions.length > 1" type="button" class="btn text-danger" (click)="removeCondition(i)"><i class="fa fa-trash"></i></button>
             </div>
           </div>
-        </div>
-
-        <div class="text-start mb-2">
-          <button type="button" class="btn btn-outline-primary" (click)="addCondition()" [disabled]="!canAddCondition()">Add New Condition</button>
         </div>
     </div>
   
