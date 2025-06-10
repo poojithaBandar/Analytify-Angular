@@ -283,7 +283,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
 
         const navigation = this.router.getCurrentNavigation();
-        const dbSwitched = navigation?.extras?.state?.['dbSwitched'];
+        const dbSwitched = navigation?.extras?.state?.['dbSwitched'] ?? history.state?.['dbSwitched'];
       
         if (dbSwitched) {
           this.getSavedDashboardData();
@@ -600,6 +600,19 @@ export class SheetsdashboardComponent implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.getSavedDashboardDataPublic();
+      });
+
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const navigation = this.router.getCurrentNavigation();
+        const dbSwitched = navigation?.extras?.state?.['dbSwitched'] ?? history.state?.['dbSwitched'];
+        if (dbSwitched) {
+          this.getSavedDashboardData();
+          setTimeout(() => {
+            this.refreshDashboard(true);
+          }, 1000);
+        }
       });
 
   }
