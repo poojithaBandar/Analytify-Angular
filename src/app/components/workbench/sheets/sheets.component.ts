@@ -45,7 +45,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom, Subscription, timer } from 'rxjs';
-import { evaluate, i, parse } from 'mathjs';
+import { evaluate, i, parse, re } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
@@ -878,6 +878,14 @@ try {
         this.pageNo = 1;
         this.page = 1;
         this.tableDisplayPagination(false);
+      }
+      toggleTableSearchBarOff(){
+        if(this.tableChartSearch.length > 0){
+        this.tableChartSearch = '';
+        this.pageNo = 1;
+        this.page = 1;
+        this.tableDisplayPagination(false);
+        }else return;
       }
       tableDisplayPagination(isSyncData : boolean) {
         if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {

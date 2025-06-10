@@ -4391,7 +4391,7 @@
                                                          <div class=""> 
                                                             <label class="mb-0">Search </label>
                                                         </div>
-                                                        <div *ngIf="toggleTableSearch" class="toggle toggle-sm on mb-0" (click)="toggleTableSearch=!toggleTableSearch">
+                                                        <div *ngIf="toggleTableSearch" class="toggle toggle-sm on mb-0" (click)="toggleTableSearch=!toggleTableSearch;toggleTableSearchBarOff()">
                                                             <span></span>
                                                         </div>
                                                         <div *ngIf="!toggleTableSearch" class="toggle toggle-sm off mb-0" (click)="toggleTableSearch=!toggleTableSearch">
