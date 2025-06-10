@@ -7370,9 +7370,9 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       return matchingData[matchingData.length - 1].sheet_id === sheetId;
     }
 
-    refreshDashboard(value:any){
+    refreshDashboard(value:any, dashId?:any){
       let object ={
-        "dashboard_id": this.dashboardId,
+        "dashboard_id": dashId ? dashId : this.dashboardId,
         "is_datasource_switched":value
       }
       this.workbechService.refreshDashboardData(object).subscribe({
@@ -8002,7 +8002,15 @@ switchDatasourceModalOpen(modal:any){
     centered: true,size:'lg',
     windowClass: 'animate__animated animate__zoomIn',
   });
+  this.switchConditions = [{sourceKey:'', sourceDetails:null, targetOptions:[], targetHierarchyId:null}];
+  this.selectedCurrentDb='';
+  this.targetSelectedDbHierarchyId='';
+  this.currentSelectedDbHierarchyId='';
 this.getCurrentDbs();
+}
+
+addCondition(){
+  this.switchConditions.push({sourceKey:'', sourceDetails:null, targetOptions:[], targetHierarchyId:null});
 }
 
 currentDbKeys: string[] = [];
@@ -8014,6 +8022,20 @@ currentSelectedDbHierarchyId:any;
 targetSelectedDbHierarchyId:any = '';
 disableAddNew=false;
 fileData:any;
+switchConditions: Array<{sourceKey:string; sourceDetails:any; targetOptions:any[]; targetHierarchyId:any}> = [
+  {sourceKey:'', sourceDetails:null, targetOptions:[], targetHierarchyId:null}
+];
+
+getAvailableCurrentDbKeys(index:number){
+  const selected = this.switchConditions
+    .map((c,i)=> i!==index ? c.sourceKey : null)
+    .filter((v):v is string=>!!v);
+  return this.currentDbKeys.filter(key=>!selected.includes(key));
+}
+
+isAllConditionsValid(){
+  return this.switchConditions.every(c=>c.sourceKey && c.targetHierarchyId);
+}
 getCurrentDbs(){
   const obj ={
     dashboard_id:this.dashboardId
@@ -8039,18 +8061,21 @@ getCurrentDbs(){
     }
   })
 }
-loadTargetDbs(){
+loadTargetDbs(index:number){
+  const cond = this.switchConditions[index];
   const obj ={
     dashboard_id:this.dashboardId,
-    server_type:this.selectedCurrentDbDetails.server_type
+    server_type:cond.sourceDetails.server_type
   }
      this.workbechService.getTargetdbsForSwitch(obj).subscribe({
         next:(data)=>{
-          const currentHierarchyId = this.selectedCurrentDbDetails.hierarchy_id;
-          this.targetDbData = data.user_connections.filter(
+          const currentHierarchyId = cond.sourceDetails.hierarchy_id;
+          cond.targetOptions = data.user_connections.filter(
             (db: any) => db.hierarchy_id !== currentHierarchyId
           );
-          console.log('Filtered Target DBs:', this.targetDbData);
+          if(index === 0){
+            this.targetDbData = cond.targetOptions;
+          }
         },
         error:(error)=>{
           console.log(error);
@@ -8058,54 +8083,66 @@ loadTargetDbs(){
         }
       })
 }
-onCurrentDbChange() {
-  const selectedList = this.sourceDbData[this.selectedCurrentDb];
-  this.selectedCurrentDbDetails = selectedList ? selectedList[0] : null;
-  if(this.selectedCurrentDbDetails){
-    this.currentSelectedDbHierarchyId = this.selectedCurrentDbDetails.hierarchy_id;
-    const restrictedTypes = ['GOOGLE_SHEETS', 'GOOGLE_ANALYTICS', 'SALESFORCE', 'QUICKBOOKS','CROSS_DATABASE'];
-    this.disableAddNew = restrictedTypes.includes(this.selectedCurrentDbDetails.server_type);
-      }
-  this.loadTargetDbs();
+onCurrentDbChange(index:number) {
+  const cond = this.switchConditions[index];
+  const selectedList = this.sourceDbData[cond.sourceKey];
+  cond.sourceDetails = selectedList ? selectedList[0] : null;
+  cond.targetHierarchyId = null;
+  if(index === 0){
+    this.selectedCurrentDb = cond.sourceKey;
+    this.selectedCurrentDbDetails = cond.sourceDetails;
+    if(cond.sourceDetails){
+      this.currentSelectedDbHierarchyId = cond.sourceDetails.hierarchy_id;
+      const restrictedTypes = ['GOOGLE_SHEETS', 'GOOGLE_ANALYTICS', 'SALESFORCE','QUICKBOOKS','CROSS_DATABASE'];
+      this.disableAddNew = restrictedTypes.includes(cond.sourceDetails.server_type);
+    }
+  }
+  if(cond.sourceDetails){
+    this.loadTargetDbs(index);
+  }
 }
-onTargetDbChange(event: Event){
-  const selectedIndex = (event.target as HTMLSelectElement).value;
-  const selectedDatabase = this.targetDbData[+selectedIndex];
-  console.log('Selected Object:', selectedDatabase);
-  this.targetSelectedDbHierarchyId = selectedDatabase.hierarchy_id;
+onTargetDbChange(index:number, event:any){
+  const cond = this.switchConditions[index];
+  const id = event.target ? event.target.value : event;
+  cond.targetHierarchyId = id;
+  if(index === 0){
+    this.targetSelectedDbHierarchyId = id;
+  }
 }
-switchDatabase() {
+switchDatabase(isDuplicate: boolean = false) {
+  const existingIds = this.switchConditions.map(c => c.sourceDetails?.hierarchy_id);
+  const switchIds = this.switchConditions.map(c => c.targetHierarchyId);
   const obj ={
-    existing_h_id:this.currentSelectedDbHierarchyId,
-    switch_h_id:this.targetSelectedDbHierarchyId,
-    dashboard_id:this.dashboardId
+    existing_h_id: existingIds,
+    switch_h_id: switchIds,
+    dashboard_id:this.dashboardId,
+    is_duplicate: isDuplicate ? 'true' : 'false'
   }
   this.workbechService.datbaseSwitch(obj).subscribe({
     next:(data)=>{
       console.log(data);
       if(data.message ==='Datasource switched successfully'){
-        this.refreshDashboard(true);
-        Swal.fire({
-          icon: 'success',
-          title: data.message,
-          text: 'Data updated with new datasource',
-          width: '400px',
-        })
+        if(isDuplicate){
+          const newId = data.dashboard_id;
+          this.refreshDashboard(true,newId);
+          const encodedId = btoa(newId.toString());
+          this.router.navigate(['/analytify/home/sheetsdashboard/' + encodedId]);
+        }else{
+          this.refreshDashboard(true);
+          Swal.fire({
+            icon: 'success',
+            title: data.message,
+            text: 'Data updated with new datasource',
+            width: '400px',
+          })
+        }
       }
       this.modalService.dismissAll();
-      this.currentSelectedDbHierarchyId='';
-      this.targetSelectedDbHierarchyId=null;
-      this.selectedCurrentDb = '';  
+      this.switchConditions = [{sourceKey:'', sourceDetails:null, targetOptions:[], targetHierarchyId:null}];
     },
     error:(error)=>{
       console.log(error);
       this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
-      // Swal.fire({
-      //   icon: 'error',
-      //   title: 'oops!',
-      //   text: error.error.message,
-      //   width: '400px',
-      // })
     }
   })
 }
