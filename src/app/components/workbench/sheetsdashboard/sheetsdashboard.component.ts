@@ -8234,7 +8234,7 @@ getSummaryLines(text: string): string[] {
     .filter(line => line.length > 0);
 }
 downloadAnalyzeReport() {
- if (!this.summary) {
+  if (!this.summary) {
     this.toasterService.error('No summary available to download.', 'Error');
     return;
   }
@@ -8254,22 +8254,20 @@ downloadAnalyzeReport() {
 
   doc.setFontSize(12);
 
-  const summaryKeys = this.getSummaryKeys();
-  summaryKeys.forEach((key) => {
+  // GenieAIQ Analysis Section
+  if (this.summary['GenieAIQ Analysis']) {
     if (y > pageHeight - margin - lineHeight * 2) {
       doc.addPage();
       y = margin;
     }
-    // Section title
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(40, 40, 40);
-    doc.text(key, margin, y);
+    doc.text('GenieAIQ Analysis', margin, y);
     y += lineHeight;
 
-    // Section content
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);
-    const lines = this.getSummaryLines(this.summary[key]);
+    const lines = this.getSummaryLines(this.summary['GenieAIQ Analysis']);
     lines.forEach((line) => {
       const wrapped = doc.splitTextToSize(line, maxWidth - 8);
       wrapped.forEach((wline: string) => {
@@ -8277,12 +8275,91 @@ downloadAnalyzeReport() {
           doc.addPage();
           y = margin;
         }
-        doc.text('\u2022 ' + wline, margin + 5, y); // Bullet point
+        doc.text('\u2022 ' + wline, margin + 5, y);
         y += lineHeight;
       });
     });
-    y += 2;
-  });
+    y += lineHeight;
+  }
+
+  // Widgets Analysis Section
+  if (this.summary.Widgets && Array.isArray(this.summary.Widgets)) {
+    this.summary.Widgets.forEach((widget: any, index: number) => {
+      if (y > pageHeight - margin - lineHeight * 4) {
+        doc.addPage();
+        y = margin;
+      }
+
+      // Widget Title
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(40, 40, 40);
+      doc.text(widget['Widget Title'] || 'Unnamed Widget', margin, y);
+      y += lineHeight;
+
+      // Description
+      if (widget.Description) {
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(60, 60, 60);
+        const descWrapped = doc.splitTextToSize(widget.Description, maxWidth - 8);
+        descWrapped.forEach((line: string) => {
+          if (y > pageHeight - margin - lineHeight) {
+            doc.addPage();
+            y = margin;
+          }
+          doc.text(line, margin + 5, y);
+          y += lineHeight;
+        });
+        y += lineHeight / 2;
+      }
+
+      // Observations
+      if (widget.Observations) {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Observations:', margin + 5, y);
+        y += lineHeight;
+        
+        doc.setFont('helvetica', 'normal');
+        const obsLines = this.getSummaryLines(widget.Observations);
+        obsLines.forEach((line) => {
+          const wrapped = doc.splitTextToSize(line, maxWidth - 13);
+          wrapped.forEach((wline: string) => {
+            if (y > pageHeight - margin - lineHeight) {
+              doc.addPage();
+              y = margin;
+            }
+            doc.text('\u2022 ' + wline, margin + 10, y);
+            y += lineHeight;
+          });
+        });
+        y += lineHeight / 2;
+      }
+
+      // Insights
+      if (widget.Insights) {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Insights:', margin + 5, y);
+        y += lineHeight;
+        
+        doc.setFont('helvetica', 'normal');
+        const insightLines = this.getSummaryLines(widget.Insights);
+        insightLines.forEach((line) => {
+          const wrapped = doc.splitTextToSize(line, maxWidth - 13);
+          wrapped.forEach((wline: string) => {
+            if (y > pageHeight - margin - lineHeight) {
+              doc.addPage();
+              y = margin;
+            }
+            doc.text('\u2022 ' + wline, margin + 10, y);
+            y += lineHeight;
+          });
+        });
+      }
+
+      // Add space between widgets
+      y += lineHeight * 2;
+    });
+  }
+
   doc.save((this.dashboardName || 'dashboard') + '-analysis-report.pdf');
 }
 playAnalyzeModalAnimation() {
