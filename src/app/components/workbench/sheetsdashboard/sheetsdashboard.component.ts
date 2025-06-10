@@ -239,6 +239,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   embedFilters: any;
   isdashboardSDKGenerated: boolean = false;
   isEmbeddedFilter : boolean = false;
+  genieHover = false;
+  showGenieTooltip = false;
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -873,6 +875,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
       this.setSelectedSheetData();
+      this.updateDashboardMetadata();
        this.isSheetsView = false;
       },
       error:(error)=>{
@@ -938,15 +941,6 @@ export class SheetsdashboardComponent implements OnDestroy {
         this.rolesForUpdateDashboard = data.role_ids;
         let self = this;
         let obj = {sheet_ids: this.sheetIdsDataSet};
-        if(!this.isPublicUrl){
-        this.fetchSheetsDataBasedOnSheetIds(obj);
-        }
-        if(!data.dashboard_tag_name){
-          this.dashboardTagName = data.dashboard_name;
-        }
-        else{
-          this.dashboardTagName = data.dashboard_tag_name;
-        }
         this.sheetTabs = data.tab_data ? data.tab_data : [];
         if(this.sheetTabs && this.sheetTabs.length > 0) {
           this.tabData = data.tab_id;
@@ -957,6 +951,15 @@ export class SheetsdashboardComponent implements OnDestroy {
             this.tabHeightGrid = this.sheetTabs[0].tabHeight;
             this.tabWidthGrid =  this.sheetTabs[0].tabWidth;
           }
+        }
+        if(!this.isPublicUrl){
+        this.fetchSheetsDataBasedOnSheetIds(obj);
+        }
+        if(!data.dashboard_tag_name){
+          this.dashboardTagName = data.dashboard_name;
+        }
+        else{
+          this.dashboardTagName = data.dashboard_tag_name;
         }
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.dynamicOptionsUpdateinDashboard(this.dashboard, false);
@@ -1286,6 +1289,26 @@ export class SheetsdashboardComponent implements OnDestroy {
       }
       return target;
     });
+  }
+
+  updateDashboardMetadata() {
+    const applyUpdates = (arr: any[]) => {
+      if (!arr) return;
+      arr.forEach(item => {
+        if (!item || !item.sheetId) return;
+        const fresh = this.dashboardNew.find(d => d['sheetId'] === item.sheetId);
+        if (fresh) {
+          item.qrySetId = fresh['qrySetId'];
+          item.databaseId = fresh['databaseId'];
+        }
+      });
+    };
+
+    applyUpdates(this.dashboard);
+    if (this.sheetTabs && this.sheetTabs.length > 0) {
+      applyUpdates(this.dashboardTest);
+      this.sheetTabs.forEach(tab => applyUpdates(tab.dashboard));
+    }
   }
 
   // saveDashboard(){
@@ -6565,7 +6588,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.sourceSheetList = updatedSourceSheetList;
 
         data.target_sheet_data[selectedSourceCategory].forEach((sheet:any)=>{
-          if(sheet.sheet_id != this.sourceSheetId){
+          if(sheet.sheet_id != this.sourceSheetId && sheet.sheet_name?.toLowerCase() !== "kpi"){
             this.targetSheetList.push(sheet);
           }
         })
@@ -8333,7 +8356,7 @@ getSummaryLines(text: string): string[] {
     .filter(line => line.length > 0);
 }
 downloadAnalyzeReport() {
- if (!this.summary) {
+  if (!this.summary) {
     this.toasterService.error('No summary available to download.', 'Error');
     return;
   }
@@ -8353,22 +8376,20 @@ downloadAnalyzeReport() {
 
   doc.setFontSize(12);
 
-  const summaryKeys = this.getSummaryKeys();
-  summaryKeys.forEach((key) => {
+  // GenieAIQ Analysis Section
+  if (this.summary['GenieAIQ Analysis']) {
     if (y > pageHeight - margin - lineHeight * 2) {
       doc.addPage();
       y = margin;
     }
-    // Section title
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(40, 40, 40);
-    doc.text(key, margin, y);
+    doc.text('GenieAIQ Analysis', margin, y);
     y += lineHeight;
 
-    // Section content
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);
-    const lines = this.getSummaryLines(this.summary[key]);
+    const lines = this.getSummaryLines(this.summary['GenieAIQ Analysis']);
     lines.forEach((line) => {
       const wrapped = doc.splitTextToSize(line, maxWidth - 8);
       wrapped.forEach((wline: string) => {
@@ -8376,15 +8397,117 @@ downloadAnalyzeReport() {
           doc.addPage();
           y = margin;
         }
-        doc.text('\u2022 ' + wline, margin + 5, y); // Bullet point
+        doc.text('\u2022 ' + wline, margin + 5, y);
         y += lineHeight;
       });
     });
-    y += 2;
-  });
+    y += lineHeight;
+  }
+
+  // Widgets Analysis Section
+  if (this.summary.Widgets && Array.isArray(this.summary.Widgets)) {
+    this.summary.Widgets.forEach((widget: any, index: number) => {
+      if (y > pageHeight - margin - lineHeight * 4) {
+        doc.addPage();
+        y = margin;
+      }
+
+      // Widget Title
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(40, 40, 40);
+      doc.text(widget['Widget Title'] || 'Unnamed Widget', margin, y);
+      y += lineHeight;
+
+      // Description
+      if (widget.Description) {
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(60, 60, 60);
+        const descWrapped = doc.splitTextToSize(widget.Description, maxWidth - 8);
+        descWrapped.forEach((line: string) => {
+          if (y > pageHeight - margin - lineHeight) {
+            doc.addPage();
+            y = margin;
+          }
+          doc.text(line, margin + 5, y);
+          y += lineHeight;
+        });
+        y += lineHeight / 2;
+      }
+
+      // Observations
+      if (widget.Observations) {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Observations:', margin + 5, y);
+        y += lineHeight;
+        
+        doc.setFont('helvetica', 'normal');
+        const obsLines = this.getSummaryLines(widget.Observations);
+        obsLines.forEach((line) => {
+          const wrapped = doc.splitTextToSize(line, maxWidth - 13);
+          wrapped.forEach((wline: string) => {
+            if (y > pageHeight - margin - lineHeight) {
+              doc.addPage();
+              y = margin;
+            }
+            doc.text('\u2022 ' + wline, margin + 10, y);
+            y += lineHeight;
+          });
+        });
+        y += lineHeight / 2;
+      }
+
+      // Insights
+      if (widget.Insights) {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Insights:', margin + 5, y);
+        y += lineHeight;
+        
+        doc.setFont('helvetica', 'normal');
+        const insightLines = this.getSummaryLines(widget.Insights);
+        insightLines.forEach((line) => {
+          const wrapped = doc.splitTextToSize(line, maxWidth - 13);
+          wrapped.forEach((wline: string) => {
+            if (y > pageHeight - margin - lineHeight) {
+              doc.addPage();
+              y = margin;
+            }
+            doc.text('\u2022 ' + wline, margin + 10, y);
+            y += lineHeight;
+          });
+        });
+      }
+
+      // Add space between widgets
+      y += lineHeight * 2;
+    });
+  }
+
   doc.save((this.dashboardName || 'dashboard') + '-analysis-report.pdf');
 }
+playAnalyzeModalAnimation() {
+  const watermark = document.querySelector('.sticky-watermark');
+  if (watermark) {
+    watermark.classList.remove('animate');
+    // Force reflow to restart animation
+    void (watermark as HTMLElement).offsetWidth;
+    watermark.classList.add('animate');
+  }
+}
+playGenieAnimation() {
+  const el = document.querySelector('.genie-animate');
+  if (el) {
+    el.classList.remove('bounce');
+    void (el as HTMLElement).offsetWidth; // force reflow
+    el.classList.add('bounce');
+  }
+}
 
+resetGenieAnimation() {
+  const el = document.querySelector('.genie-animate');
+  if (el) {
+    el.classList.remove('bounce');
+  }
+}
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

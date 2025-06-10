@@ -88,6 +88,7 @@ export class InsightEchartComponent {
   @Input() actionId:any;
   @Input() SDKChartOptions: any;
   @Input() isHorizontalBar:any
+  @Input() isRadarDistribution:any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() drillThrough = new EventEmitter<object>();
@@ -2199,6 +2200,9 @@ chartInitialize(){
     if(changes['isBold']){
       this.setDatalabelsFontWeight();
     }
+    if(changes['isRadarDistribution']){
+      this.radarDistributionSetOptions();
+    }
     // if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
     //   this.sortSeries(this.sortType);
     // }
@@ -2666,6 +2670,81 @@ chartInitialize(){
        this.chartOptions.series[0].label.color = this.dataLabelsColor
      }
   }
+ radarDistributionSetOptions() {
+  if (this.chartType === 'radar') {
+    // Generate dynamic colors based on the number of data points
+    const numberOfColors = this.radarRowData?.length || 0;
+    const generatedColors: any[] = [];
+    
+    for (let i = 0; i < numberOfColors; i++) {
+      // Generate HSL colors with good spacing for better distinction
+      // Hue: 0-360, Saturation: 70%, Lightness: 50%
+      const hue = (i * (360 / numberOfColors)) % 360;
+      const color = `hsl(${hue}, 70%, 50%)`;
+      generatedColors.push(color);
+    }
+
+    if (this.isRadarDistribution) {
+      // Update the chart options with distributed colors
+      this.chartOptions.series[0].data = this.radarRowData.map((dataItem: any, index: number) => ({
+        ...dataItem,
+        itemStyle: {
+          color: generatedColors[index]
+        },
+        lineStyle: {
+          color: generatedColors[index]
+        },
+        areaStyle: {
+          color: generatedColors[index],
+          opacity: 0.3
+        },
+        label: {
+          show: this.dataLabels,
+          fontFamily: this.dataLabelsFontFamily,
+          fontSize: this.dataLabelsFontSize,
+          fontWeight: this.isBold ? 700 : 400,
+          color: generatedColors[index],
+          position: this.dataLabelsFontPosition,
+          formatter: (params: any) => this.formatNumber(params.value)
+        }
+      }));
+
+      // Update the color array for the series
+      this.chartOptions.color = generatedColors;
+    } else {
+      // Use a single color when distribution is false
+      const defaultColor = 'hsl(200, 70%, 50%)';
+      this.chartOptions.series[0].data = this.radarRowData.map((dataItem: any) => ({
+        ...dataItem,
+        itemStyle: {
+          color: defaultColor
+        },
+        lineStyle: {
+          color: defaultColor
+        },
+        areaStyle: {
+          color: defaultColor,
+          opacity: 0.3
+        },
+        label: {
+          show: this.dataLabels,
+          fontFamily: this.dataLabelsFontFamily,
+          fontSize: this.dataLabelsFontSize,
+          fontWeight: this.isBold ? 700 : 400,
+          color: defaultColor,
+          position: this.dataLabelsFontPosition,
+          formatter: (params: any) => this.formatNumber(params.value)
+        }
+      }));
+
+      // Set single color for the series
+      this.chartOptions.color = [defaultColor];
+    }
+
+    // Update the chart with new options
+    this.chartInstance?.setOption(this.chartOptions, true);
+  }
+}
   dataLabelsFontPositionSetOptions(){
       if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { position: any; }; }) => {

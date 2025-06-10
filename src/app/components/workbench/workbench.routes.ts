@@ -421,14 +421,14 @@ export const admin: Routes = [
       },
 
       {
-        path: 'etlList/etl',
+        path: 'etlList/dataFlow',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./etl/etl.component').then((m) => m.ETLComponent),
       },
 
       {
-        path: 'etlList/etl/:id1',
+        path: 'etlList/dataFlow/:id1',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./etl/etl.component').then((m) => m.ETLComponent),
@@ -442,11 +442,25 @@ export const admin: Routes = [
       },
 
       {
+        path: 'etlList/jobFlow/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl-job-flow/etl-job-flow.component').then((m) => m.EtlJobFlowComponent),
+      },
+
+      {
         path: 'etlList',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./etl-list/etl-list.component').then((m) => m.EtlListComponent),
-      }
+      },
+
+      {
+        path: 'etlList/monitor',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./etl-monitor/etl-monitor.component').then((m) => m.EtlMonitorComponent),
+      },
     ]
   }
  ];

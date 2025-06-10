@@ -45,7 +45,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom, Subscription, timer } from 'rxjs';
-import { evaluate, i, parse } from 'mathjs';
+import { evaluate, i, parse, re } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
@@ -389,6 +389,7 @@ export class SheetsComponent{
   locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
+  isRadarDistribution: boolean = false;
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
@@ -878,6 +879,14 @@ try {
         this.pageNo = 1;
         this.page = 1;
         this.tableDisplayPagination(false);
+      }
+      toggleTableSearchBarOff(){
+        if(this.tableChartSearch.length > 0){
+        this.tableChartSearch = '';
+        this.pageNo = 1;
+        this.page = 1;
+        this.tableDisplayPagination(false);
+        }else return;
       }
       tableDisplayPagination(isSyncData : boolean) {
         if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
@@ -2396,7 +2405,8 @@ sheetSave(isDashboardTransfer?: boolean){
     bandingEvenColor:this.bandingEvenColor,
     isHorizontalBar:this.isHorizontalBar,
     toggleTableSearch:this.toggleTableSearch,
-    toggleTablePagination:this.toggleTablePagination
+    toggleTablePagination:this.toggleTablePagination,
+    isRadarDistribution:this.isRadarDistribution
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -4299,6 +4309,8 @@ customizechangeChartPlugin() {
     this.isHorizontalBar = data.isHorizontalBar ?? false,
     this.toggleTableSearch = data.toggleTableSearch ?? true,
     this.toggleTablePagination = data.toggleTablePagination ?? true
+    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa'
+    this.isRadarDistribution = data.isRadarDistribution ?? false; 
   }
 
   resetCustomizations(){
