@@ -2158,30 +2158,37 @@
         </div>
       </div>
 
-      <div class="form-group mb-3">
-        <label class="form-label">Current Datasource</label>
-        <select class="form-select" [(ngModel)]="selectedCurrentDb" (change)="onCurrentDbChange()">
-          <option value="" disabled selected>Select Current Database</option>
-          <option *ngFor="let db of currentDbKeys" [value]="db">{{ db }}</option>
-        </select>
-      </div>
-  
-      <div class="form-group mb-3">
-        <label class="form-label">Target Datasource</label>
-        <select  class="form-select" (change)="onTargetDbChange($event)">
-          <option value="" disabled selected>Select Target Database</option>
-          <option *ngFor="let db of targetDbData;  let i = index" [value]="i">{{db.display_name }}</option>
-        </select>
-      </div>
+        <div *ngFor="let cond of switchConditions; let i = index" class="border rounded p-2 mb-2">
+          <div class="row align-items-end">
+            <div class="col">
+              <label class="form-label">Current Datasource</label>
+              <select class="form-select" [(ngModel)]="cond.sourceKey" (change)="onCurrentDbChange(i)">
+                <option value="" disabled>Select Current Database</option>
+                <option *ngFor="let db of getAvailableSources(i)" [value]="db">{{ db }}</option>
+              </select>
+            </div>
+            <div class="col">
+              <label class="form-label">Target Datasource</label>
+              <select  class="form-select" [(ngModel)]="cond.targetHierarchyId" (change)="onTargetDbChange($event,i)">
+                <option value="" disabled>Select Target Database</option>
+                <option *ngFor="let db of cond.targetDbData" [value]="db.hierarchy_id">{{ db.display_name }}</option>
+              </select>
+            </div>
+            <div class="col-auto" *ngIf="switchConditions.length > 1">
+              <button type="button" class="btn btn-link text-danger" (click)="removeCondition(i)"><i class="fa fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-start mb-2">
+          <button type="button" class="btn btn-outline-primary" (click)="addCondition()" [disabled]="!canAddCondition()">Add New Condition</button>
+        </div>
     </div>
   
     <div class="modal-footer">
-      <button type="button" [disabled]="!selectedCurrentDb || disableAddNew" class="btn btn-info" (click)="addNewDatabaseConnection()">Add New</button>
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Close</button>
-      <button type="button" [disabled]="!selectedCurrentDb || !targetSelectedDbHierarchyId" class="btn btn-primary" (click)="switchDatabase()" >Switch</button>
-
-
-      
+      <button type="button" class="btn btn-primary" [disabled]="!isConditionsValid()" (click)="switchDatabase(false)">Switch</button>
+      <button type="button" class="btn btn-info" [disabled]="!isConditionsValid()" (click)="switchDatabase(true)">Copy & Switch</button>
     </div>
   </ng-template>
   
