@@ -601,20 +601,6 @@ export class SheetsdashboardComponent implements OnDestroy {
       .subscribe(() => {
         this.getSavedDashboardDataPublic();
       });
-
-    this.route.paramMap
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        const navigation = this.router.getCurrentNavigation();
-        const dbSwitched = navigation?.extras?.state?.['dbSwitched'] ?? history.state?.['dbSwitched'];
-        if (dbSwitched) {
-          this.getSavedDashboardData();
-          setTimeout(() => {
-            this.refreshDashboard(true);
-          }, 1000);
-        }
-      });
-
   }
 
   fetchDashboardIdFromToken(){
@@ -8107,8 +8093,8 @@ switchDatabase(isDuplicate: boolean = false) {
         }).then(()=>{
           if(isDuplicate){
             const encodedId = btoa(data.dashboard_id.toString());
-            this.router.navigate(['/analytify/home/sheetsdashboard/' + encodedId],{state: {dbSwitched: true}});
-            
+            this.router.navigate(['/analytify/home/sheetsdashboard/' + encodedId],{state: {dbSwitched: true}}).then(() => window.location.reload());;
+        
           }
         });
       }
