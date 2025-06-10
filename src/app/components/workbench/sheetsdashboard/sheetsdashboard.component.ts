@@ -8071,7 +8071,7 @@ onCurrentDbChange(index:number) {
 }
 onTargetDbChange(event: Event,index:number){
   const selectedId = (event.target as HTMLSelectElement).value;
-  this.switchConditions[index].targetHierarchyId = selectedId;
+  this.switchConditions[index].targetHierarchyId = Number(selectedId);
 }
 switchDatabase(isDuplicate: boolean = false) {
   const existingIds = this.switchConditions.map(c => c.sourceDetails?.hierarchy_id).filter(id => id);
