@@ -1068,12 +1068,12 @@
                             <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button></span>
                             <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
                             (btnClickEvent)="updateDashboard(false,true);editor =false"></app-insights-button>
-                            <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
+                            <!-- <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button> -->
                             <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button> -->
-                            <div *ngIf="!isPublicUrl && !isSampleDashboard" class=" p-1" ngbDropdown>
-                            <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" class="btn btn-primary mt-0 ps-2 pe-2" type="button" ngbTooltip="Sync Options" container="body" ngbDropdownToggle>
+                            <div *ngIf="!isPublicUrl && !isSampleDashboard" class=" ms-1" ngbDropdown>
+                            <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" class="btn btn-primary mt-0 ps-2 pe-2" type="button" ngbTooltip="Sync Options" container="body" ngbDropdownToggle>
                               <i class="fa fa-refresh" aria-hidden="true"></i>
-                            </button>
+                            </button> -->
                               <div class="dropdown-menu mt-2" ngbDropdownMenu>
                                 <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();">sync data</button> -->
                                 <!-- <button *ngIf="!isPublicUrl && dashboardId" type="button" [disabled]="canNavigateToAnotherPage" class="btn btn-primary mt-0 w-100" (click)="autoRefreshInterval(autorefresh);">Set auto-refresh interval</button> -->
@@ -1082,8 +1082,8 @@
 
                               </div>
                               </div>
-                            <button *ngIf="!isPublicUrl && dashboardId" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
-                            <div class=" p-1" ngbDropdown>
+                            <!-- <button *ngIf="!isPublicUrl && dashboardId" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button> -->
+                            <div class=" " ngbDropdown>
                               <button
                               [disabled]="dashboard.length === 0 || !updateDashbpardBoolen"
                               class="btn btn-primary mt-0 ps-2 pe-2"
@@ -1112,27 +1112,26 @@
                                   </div>
                               </div>
                             </div>
-                            <button class="btn btn-primary mt-0" ngbTooltip="Switch Database" [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" style="padding:5px 6px !important"  *ngIf="!this.isPublicUrl && !isSampleDashboard && dashboardId" (click)="switchDatasourceModalOpen(switchDatabaseModal)"><img src="./assets/images/icons/Data Sources-switch.svg" alt="logo" class="db-switch"> </button>
+                            <!-- <button class="btn btn-primary mt-0" ngbTooltip="Switch Database" [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" style="padding:5px 6px !important"  *ngIf="!this.isPublicUrl && !isSampleDashboard && dashboardId" (click)="switchDatasourceModalOpen(switchDatabaseModal)"><img src="./assets/images/icons/Data Sources-switch.svg" alt="logo" class="db-switch"> </button> -->
 
-                                 <div class=" p-1" ngbDropdown>
-                              <button
-                              [disabled]="dashboard.length === 0 || !updateDashbpardBoolen"
-                              class="btn btn-primary mt-0 ps-2 pe-2"
-                              type="button"
-                              container="body"
-                              ngbDropdownToggle
-                              >
-                              <i class="fe fe-more-vertical" aria-hidden="true"></i>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-width mt-2" ngbDropdownMenu>
-                                <a class="dropdown-item border-bottom"><img src="./assets/images/icons/erase-black.png" alt="logo" class="w-4 h-4"> Clear Dashboard</a>
-                                <a class="dropdown-item border-bottom"><i class="fa fa-refresh"></i> Sync Data</a>
-                                <a class="dropdown-item border-bottom"><i class="fa fa-rotate-right"></i> Set auto-refresh interval</a>
-                                <a class="dropdown-item border-bottom"><i class="fa fa-plus-square"></i> Add Tab</a>
-                                <a class="dropdown-item " ><img src="./assets/images/icons/Data-Sources-switch-black.png" alt="logo" class="w-4 h-4"> Switch DataSource</a>
+                            <div class=" p-1" ngbDropdown>
+                                <button
+                               class="btn btn-primary mt-0 ps-2 pe-2"
+                                type="button"
+                                container="body"
+                                ngbDropdownToggle
+                                >
+                                <i class="fe fe-more-vertical" aria-hidden="true"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-width mt-2 p-1" ngbDropdownMenu>
+                                  <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" type="button" class="btn btn-primary mt-0 mb-1 dropdown-item border-bottom" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"> Clear Dashbaord</button>
+                                  <button class="btn btn-primary mt-0 mb-1 dropdown-item" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" [class.disabled]="dashboard.length === 0 || !updateDashbpardBoolen" (click)="(dashboard.length === 0 || !updateDashbpardBoolen) ? $event.preventDefault() : refreshDashboard(false)"><i class="fa fa-refresh"></i> Sync data</button>
+                                  <button class="btn btn-primary mt-0 mb-1 dropdown-item" ngbTooltip="Set auto-refresh interval" *ngIf="!isPublicUrl && dashboardId" [class.disabled]="canNavigateToAnotherPage" (click)="canNavigateToAnotherPage ? $event.preventDefault() : autoRefreshInterval(autorefresh)"><i class="fa fa-rotate-right"></i> Set auto-refresh interval</button>
+                                  <button class="btn btn-primary mt-0 mb-1 dropdown-item" ngbTooltip="Add Tab" *ngIf="!isPublicUrl && dashboardId" type="button" (click)="addTabs();"><i class="fa fa-plus-square"></i> Add Tab</button>
+                                  <button class="btn btn-primary mt-0 dropdown-item" ngbTooltip="Switch Database" [disabled]="dashboard.length === 0 || !updateDashbpardBoolen"  *ngIf="!this.isPublicUrl && !isSampleDashboard && dashboardId" (click)="switchDatasourceModalOpen(switchDatabaseModal)"><img src="./assets/images/icons/Data Sources-switch.svg" alt="logo" class="db-switch"> Switch DataSource </button>
+                                 </div>
                               </div>
-                              </div>
-                            </div>
+                          </div>
             </div>
         </div> 
        </div>
