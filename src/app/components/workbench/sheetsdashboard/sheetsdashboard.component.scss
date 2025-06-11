@@ -250,6 +250,7 @@ p { margin-bottom: 0px !important;}
   backdrop-filter: blur(6px);
   border: 1.5px solid #e3e6f3;
 }
+.dropdown-menu.dropdown-menu-width { min-width: 15rem; }
 
 .genie-tooltip::after {
   content: '';
