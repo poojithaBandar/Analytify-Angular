@@ -6204,7 +6204,7 @@ tableSearchDashboardPublic(item:any,value:any){
   this.pageChangeTableDisplayPublic(item,1);
 }
 pageChangeTableDisplayPublic(item:any,page:any){
-  if(item?.tableData?.tablePage ){
+  if(item?.tableData){
     item.tableData.tablePage = page;
   }
   const obj={
