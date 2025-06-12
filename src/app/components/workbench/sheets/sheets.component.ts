@@ -388,6 +388,7 @@ export class SheetsComponent{
   locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
+  isRadarDistribution: boolean = false;
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
@@ -2394,7 +2395,8 @@ sheetSave(){
     bandingOddColor :this.bandingOddColor,
     bandingEvenColor:this.bandingEvenColor,
     toggleTableSearch:this.toggleTableSearch,
-    toggleTablePagination:this.toggleTablePagination
+    toggleTablePagination:this.toggleTablePagination,
+    isRadarDistribution:this.isRadarDistribution
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -4289,6 +4291,8 @@ customizechangeChartPlugin() {
     this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa',
     this.toggleTableSearch = data.toggleTableSearch ?? true,
     this.toggleTablePagination = data.toggleTablePagination ?? true
+    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa'
+    this.isRadarDistribution = data.isRadarDistribution ?? false; 
   }
 
   resetCustomizations(){

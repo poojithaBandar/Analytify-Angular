@@ -2655,7 +2655,7 @@
             @else if(radar && chartId){
                 <div class="card-body">
                     <app-insight-echart  [chartType]="chartType" [color]="color"  [isBold]="isBold" [radarRowData]="radarRowData" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                    [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
+                    [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily"  [isRadarDistribution]="isRadarDistribution" [selectedColorScheme]="selectedColorScheme"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
@@ -4613,7 +4613,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && (bar || funnel)) || area || line || radar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && (bar || funnel)) || area || line || (radar && !isRadarDistribution))" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
@@ -4629,7 +4629,18 @@
                                                                     (ngModelChange)="marksColor2($event)"
                                                                     [format]="'hex'"></ngx-colors>
                                                                 </div>
-
+                                                                <div *ngIf="radar && chartColorSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                    <div class=""> 
+                                                                        <p>Color Distribution</p>
+                                                                    </div>
+                                                                    <div *ngIf="isRadarDistribution" class="toggle toggle-sm on mb-0" (click)="isRadarDistribution = !isRadarDistribution;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!isRadarDistribution" class="toggle toggle-sm off mb-0" (click)="isRadarDistribution = !isRadarDistribution;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                 
+                                                                </div>
                                                                 <!-- <div 
                                                                 class="dropdown" 
                                                                 *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || calendar || (funnel && isDistributed)"> -->
@@ -4783,7 +4794,7 @@
                                                                     <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'">
                                                                     </ngx-colors>
                                                                 </div> -->
-                                                                <div *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || ((funnel || bar) && isDistributed)" class="p-2">
+                                                                <div *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || ((funnel || bar) && isDistributed || (radar && isRadarDistribution ))" class="p-2">
                                                                     <div class="d-flex justify-content-between p-1 border rounded-3">
                                                                         <div class="colors-card">
                                                                             <ul class="d-flex flex-wrap">
