@@ -6450,7 +6450,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   //   })).filter(sheet => sheet.id != this.sourceSheetId);
   //   console.log('source:',this.sourceSheetList, 'target: ',this.targetSheetList);
   // }
-  getTargetSheetsList() {
+  getTargetSheetsList(event? : any) {
     this.targetSheetList = [];
     this.isAllTargetSheetsSelected = false;
     const sourceCategory = Object.keys(this.sourceSheetList);
@@ -6588,7 +6588,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.sourceSheetList = updatedSourceSheetList;
 
         data.target_sheet_data[selectedSourceCategory].forEach((sheet:any)=>{
-          if(sheet.sheet_id != this.sourceSheetId && sheet.sheet_name?.toLowerCase() !== "kpi"){
+          if(sheet.sheet_id != this.sourceSheetId && (sheet.chart_id !== 25)){
             this.targetSheetList.push(sheet);
           }
         })
