@@ -251,7 +251,6 @@ export class SheetsComponent{
   createdBy : any;
   calculatedFieldFunction : string = '';
   nestedCalculatedFieldData : string = '';
-  isHorizontalBar:boolean=false;
   toggleTableSearch:boolean=true;
   toggleTablePagination:boolean=true;
   radar: boolean = false;
@@ -2403,7 +2402,6 @@ sheetSave(isDashboardTransfer?: boolean){
     pivotColumnTotals : this.pivotColumnTotals,
     bandingOddColor :this.bandingOddColor,
     bandingEvenColor:this.bandingEvenColor,
-    isHorizontalBar:this.isHorizontalBar,
     toggleTableSearch:this.toggleTableSearch,
     toggleTablePagination:this.toggleTablePagination,
     isRadarDistribution:this.isRadarDistribution
@@ -4306,7 +4304,6 @@ customizechangeChartPlugin() {
     this.pivotColumnTotals = data.pivotColumnTotals ?? true,
     this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff' 
     this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa',
-    this.isHorizontalBar = data.isHorizontalBar ?? false,
     this.toggleTableSearch = data.toggleTableSearch ?? true,
     this.toggleTablePagination = data.toggleTablePagination ?? true
     this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa'
@@ -4407,7 +4404,6 @@ customizechangeChartPlugin() {
     this.pivotRowTotals = true;
     this.bandingEvenColor= '#ffffff' 
     this.bandingOddColor= '#f5f7fa'
-    this.isHorizontalBar = false,
     this.toggleTableSearch = true;
     this.toggleTablePagination = true;
     // this.KPIDecimalPlaces = 0,
