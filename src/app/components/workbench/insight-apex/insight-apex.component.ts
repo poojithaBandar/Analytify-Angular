@@ -72,7 +72,6 @@ export class InsightApexComponent {
   @Input() dataLabelsLineFontPosition:any;
   @Input() selectedColorScheme:any;
   @Input() SDKChartOptions: any;
-  @Input() isHorizontalBar:any;
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   
@@ -107,9 +106,6 @@ export class InsightApexComponent {
       this.chartType = this.chartType;
     } else {
       this.generateChart();
-    }
-     if(changes['isHorizontalBar']){
-      this.updateBarchart();
     }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       // if(changes['chartsColumnData'].currentValue.length>0 || changes['dualAxisColumnData'].currentValue.length>0){
@@ -326,12 +322,6 @@ export class InsightApexComponent {
       this.sideBySideCharts.updateOptions(this.chartOptions);
     }
   }
-updateBarchart(){
-   if (this.chartType === 'bar') {
-      this.chartOptions.plotOptions.bar.horizontal = this.isHorizontalBar;
-      this.barCharts?.updateOptions({ plotOptions: this.chartOptions.plotOptions});
-    }
-}
   ngOnDestroy(): void {
     if(this.barCharts){
       this.barCharts.destroy();
@@ -527,7 +517,6 @@ updateBarchart(){
       },
       plotOptions: {
         bar: {
-          horizontal: true,
           distributed : this.isDistributed,
           dataLabels: {
             position:this.dataLabelsFontPosition,
