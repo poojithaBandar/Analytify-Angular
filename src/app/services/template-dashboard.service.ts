@@ -6,7 +6,6 @@ import { WorkbenchService } from '../components/workbench/workbench.service';
 import { uuidv4 } from '@firebase/util';
 import { ToastrService } from 'ngx-toastr';
 import _ from 'lodash';
-import { ChartSaveModel } from '../models/chart-save-model';
 import { SheetsComponent } from '../components/workbench/sheets/sheets.component';
 import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboard/sheetsdashboard.component';
 
@@ -708,18 +707,6 @@ export class TemplateDashboardService {
         // "col": tablePreviewCol,
         // "row": tablePreviewRow,
         "results": {
-          // legacy table and styling options omitted for brevity
-          "axisConfig": {
-            xAxis: data.chart_id == 7 || data.chart_id == 5 || data.chart_id == 4 || data.chart_id == 2 || data.chart_id == 3 || data.chart_id == 8 || data.chart_id == 27 || data.chart_id == 29
-              ? dualAxisColumnData
-              : chartsColumnData,
-            yAxis: data.chart_id == 7 || data.chart_id == 5 || data.chart_id == 4 || data.chart_id == 2 || data.chart_id == 3 || data.chart_id == 8 || data.chart_id == 27 || data.chart_id == 29
-              ? dualAxisRowData
-              : chartsRowData,
-            type: data.chart_id == 7 || data.chart_id == 5 || data.chart_id == 4 || data.chart_id == 2 || data.chart_id == 3 || data.chart_id == 8 || data.chart_id == 27 || data.chart_id == 29
-              ? 'dual'
-              : 'single'
-          },
           "kpiData": tranformedData.rows_data,
           "kpiFontSize": 16,
           "kpiNumber": tranformedData.rows_data[0]?.result_data[0],
