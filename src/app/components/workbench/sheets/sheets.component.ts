@@ -2031,12 +2031,6 @@ try {
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
-      this.saveBar = [];
-      this.savePie = [];
-      this.lineYaxis = [];
-      this.lineXaxis = [];
-      this.areaYaxis = [];
-      this.areaXaxis = [];
       this.draggedColumns = [];
       this.draggedRows = [];
       this.tablePreviewColumn = [];
@@ -2052,20 +2046,6 @@ try {
       this.chartsColumnData = [];
       this.draggedColumnsData = [];
       this.draggedRowsData = [];
-      this.sidebysideBarYaxis = [];
-      this.sidebysideBarXaxis = [];
-      this.stokedBarYaxis = [];
-      this.stokedBarXaxis = [];
-      this.barLineYaxis = [];
-      this.barLineXaxis = [];
-      this.hStockedYaxis = [];
-      this.hStockedXaxis = [];
-      this.hgroupedYaxis = [];
-      this.hgroupedXaxis = [];
-      this.multiLineYaxis = [];
-      this.multiLineXaxis = [];
-      this.donutYaxis = [];
-      this.donutXaxis = [];
       this.sortedData = [];
       this.table = true;
       this.pivotTable = false;
@@ -2131,40 +2111,7 @@ try {
   saveTableData = [] as any;
   savedisplayedColumns = [] as any;
   banding : boolean = false;
-  saveBar = [] as any;
-  savePie = [] as any;
-  lineYaxis = [] as any;
-  lineXaxis = [] as any;
-  lineOptions : any = undefined;
-  areaYaxis = [] as any;
-  areaXaxis = [] as any;
-  areaOptions : any = undefined;
-  barXaxis = [] as any;
-  barOptions : any = undefined;
-  pieXaxis = [] as any;
-  pieOptions : any = undefined;
-  sidebysideBarYaxis = [] as any;
-  sidebysideBarXaxis = [] as any;
-  sidebysideBarOptions : any = undefined;
-  stokedBarYaxis = [] as any;
-  stokedBarXaxis = [] as any;
-  stokedOptions : any = undefined;
-  barLineYaxis = [] as any;
-  barLineXaxis = [] as any;
-  barLineOptions : any = undefined;
-  hStockedYaxis = [] as any;
-  hStockedXaxis = [] as any;
-  hStockedOptions : any = undefined;
-  hgroupedYaxis = [] as any;
-  hgroupedXaxis = [] as any;
-  hgroupedOptions : any = undefined;
-  multiLineYaxis = [] as any;
-  multiLineXaxis = [] as any;
-  multiLineOptions : any = undefined;
-  donutYaxis = [] as any;
-  donutXaxis = [] as any;
-  donutOptions : any = undefined;
-  eMapChartOptions : any;
+
 
 sheetSave(){
   let savedChartOptions ;
@@ -2191,11 +2138,7 @@ sheetSave(){
     //  bandColor2 = this.color2;
     }
   if(this.bar && this.chartId == 6){
-    this.saveBar = this.chartsRowData;
-    this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
-      this.saveBar = this.originalData.data;
-      this.barXaxis = this.originalData.categories;
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
       tablePreviewRow[0].result_data = this.originalData.data;
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
@@ -2204,13 +2147,7 @@ sheetSave(){
     }
   }
   if(this.pie && this.chartId == 24){
-    this.savePie = this.chartsRowData;
-    this.pieXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
-      this.savePie = this.originalData.data;
-      this.pieXaxis = this.originalData.categories;
-      // savedChartOptions.labels = this.originalData.categories;
-      // savedChartOptions.series = this.originalData.data;
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
       tablePreviewRow[0].result_data = this.originalData.data;
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
@@ -2219,47 +2156,31 @@ sheetSave(){
     }
   }
   if(this.line && this.chartId == 13){
-    this.lineYaxis = this.chartsRowData;
-    this.lineXaxis = this.chartsColumnData;
+    // axis handled via axisConfig
   }
   if(this.area && this.chartId == 17){
-    this.areaYaxis = this.chartsRowData;
-    this.areaXaxis = this.chartsColumnData;
+    // axis handled via axisConfig
   }
   if(this.sidebyside && this.chartId == 7){
-    this.sidebysideBarYaxis = this.dualAxisRowData;
-    this.sidebysideBarXaxis = this.dualAxisColumnData;
+    // axis handled via axisConfig
   }
   if(this.stocked && this.chartId == 5){
-    this.stokedBarYaxis = this.dualAxisRowData;
-    this.stokedBarXaxis = this.dualAxisColumnData;
+    // axis handled via axisConfig
   }
   if(this.barLine && this.chartId == 4){
-    this.barLineYaxis = this.dualAxisRowData;
-    this.barLineXaxis = this.dualAxisColumnData;
+    // axis handled via axisConfig
   }
   if(this.horizentalStocked && this.chartId == 2){
-    this.hStockedYaxis = this.dualAxisRowData;
-    this.hStockedXaxis = this.dualAxisColumnData;
+    // axis handled via axisConfig
   }
   if(this.grouped && this.chartId == 3){
-    this.hgroupedYaxis = this.dualAxisRowData;
-    this.hgroupedXaxis = this.dualAxisColumnData;    
+    // axis handled via axisConfig
   }
   if(this.multiLine && this.chartId == 8){
-    this.multiLineYaxis = this.dualAxisRowData;
-    this.multiLineXaxis = this.dualAxisColumnData;    
+    // axis handled via axisConfig
   }
   if(this.donut && this.chartId == 10){
-    
-    this.donutYaxis = this.chartsRowData;
-    this.donutXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
-    
     if (this.originalData) {
-      this.donutYaxis = this.originalData.data;
-      this.donutXaxis = this.originalData.categories;
-      // savedChartOptions.labels = this.originalData.categories;
-      // savedChartOptions.series = this.originalData.data;
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
       tablePreviewRow[0].result_data = this.originalData.data;
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
@@ -2437,50 +2358,11 @@ const obj={
     "items_per_page":this.itemsPerPage,
     "total_items":this.totalItems,
 
-    "barYaxis":this.saveBar,
-    "barXaxis":this.barXaxis,
-  //  "barOptions":this.barOptions,
-
-    "pieYaxis":this.savePie,
-    "pieXaxis":this.pieXaxis,
-  //   "pieOptions":this.pieOptions,
-
-    "lineYaxis":this.lineYaxis,
-    "lineXaxis": this.lineXaxis,
-  //   "lineOptions":this.lineOptions,
-
-    "areaYaxis":this.areaYaxis,
-    "areaXaxis":this.areaXaxis,
-  //   "areaOptions":this.areaOptions,
-
-      "sidebysideBarYaxis": this.sidebysideBarYaxis,
-      "sidebysideBarXaxis": this.sidebysideBarXaxis,
-  //     "sidebysideBarOptions":this.sidebysideBarOptions,
-   
-      "stokedBarYaxis": this.stokedBarYaxis,
-      "stokedBarXaxis": this.stokedBarXaxis,
-  //     "stokedOptions":this.stokedOptions,
-  
-      "barLineYaxis":this.barLineYaxis,
-      "barLineXaxis":this.barLineXaxis,
-  //     "barLineOptions":this.barLineOptions,
-
-      "hStockedYaxis": this.hStockedYaxis,
-      "hStockedXaxis": this.hStockedXaxis,
-  //     "hStockedOptions":this.hStockedOptions,
-
-      "hgroupedYaxis": this.hgroupedYaxis,
-      "hgroupedXaxis": this.hgroupedXaxis,
-  //     "hgroupedOptions":this.hgroupedOptions,
-
-      "multiLineYaxis":this.multiLineYaxis,
-      "multiLineXaxis": this.multiLineXaxis,
-  //     "multiLineOptions":this.multiLineOptions,
-
-      "donutYaxis": this.donutYaxis,
-      "donutXaxis": this.donutXaxis,
-      "decimalplaces": this.donutDecimalPlaces,
-  //     "donutOptions":this.donutOptions,
+    "axisConfig": {
+      xAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisColumnData : this.chartsColumnData,
+      yAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisRowData : this.chartsRowData,
+      type: [7,5,4,2,3,8,27,29].includes(this.chartId) ? 'dual' : 'single'
+    },
 
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
@@ -2559,28 +2441,6 @@ if(this.retriveDataSheet_id){
     }
     this.saveTableData= [];
     this.savedisplayedColumns = [];
-    this.saveBar =[];
-    this.barXaxis = [];
-    this.savePie = [];
-    this.pieXaxis =[];
-    this.lineYaxis = [];
-    this.lineXaxis =[];
-    this.areaYaxis =[];
-    this.areaXaxis =[];
-    this.sidebysideBarYaxis =[];
-    this.sidebysideBarXaxis =[];
-    this.stokedBarYaxis =[];
-    this.stokedBarXaxis =[];
-    this.barLineYaxis =[];
-    this.barLineXaxis =[];
-    this.hStockedYaxis =[];
-    this.hStockedXaxis =[];
-    this.hgroupedYaxis =[];
-    this.hgroupedXaxis =[];
-    this.multiLineYaxis =[];
-    this.multiLineXaxis =[];
-    this.donutYaxis =[];
-    this.donutXaxis =[];
     this.measureValues = [];
   //  this.draggedRowsData = [];
    // this.draggedColumnsData = [];
