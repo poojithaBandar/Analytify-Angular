@@ -27,7 +27,8 @@ interface Dimension {
   styleUrl: './insight-echart.component.scss'
 })
 export class InsightEchartComponent {
-  @Input() chartsRowData: any; 
+  @Input() chartsRowData: any;
+  @Input() axisConfig: any;
   @Input() isZoom: any;
   @Input() chartsColumnData: any;
   @Input() chartType!:string;
@@ -1909,6 +1910,16 @@ chartInitialize(){
     }
   }
   ngOnChanges(changes: SimpleChanges) {
+    if(changes['axisConfig'] && this.axisConfig){
+      if(this.axisConfig.type === 'dual'){
+        this.dualAxisColumnData = this.axisConfig.xAxis;
+        this.dualAxisRowData = this.axisConfig.yAxis;
+      } else {
+        this.chartsColumnData = this.axisConfig.xAxis;
+        this.chartsRowData = this.axisConfig.yAxis;
+      }
+      this.resetchartoptions();
+    }
     
      if(changes['SDKChartOptions']){
       if(this.chartType === 'map'){

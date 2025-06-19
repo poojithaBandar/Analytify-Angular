@@ -6,6 +6,7 @@ import { WorkbenchService } from '../components/workbench/workbench.service';
 import { uuidv4 } from '@firebase/util';
 import { ToastrService } from 'ngx-toastr';
 import _ from 'lodash';
+import { ChartSaveModel } from '../models/chart-save-model';
 import { SheetsComponent } from '../components/workbench/sheets/sheets.component';
 import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboard/sheetsdashboard.component';
 
@@ -707,68 +708,24 @@ export class TemplateDashboardService {
         // "col": tablePreviewCol,
         // "row": tablePreviewRow,
         "results": {
-          // "tableData": this.saveTableData,
-          // "tableColumns": this.savedisplayedColumns,
-          // "banding": this.banding,
-          // "color1": bandColor1,
-          // "color2": bandColor2,
-          // "items_per_page": this.itemsPerPage,
-          // "total_items": this.totalItems,
-
-          "barYaxis": chartsRowData,
-          "barXaxis": chartsColumnData,
-          //  "barOptions":this.barOptions,
-
-          "pieYaxis": chartsRowData,
-          "pieXaxis": chartsColumnData,
-          //   "pieOptions":this.pieOptions,
-
-          "lineYaxis": chartsRowData,
-          "lineXaxis": chartsColumnData,
-          //   "lineOptions":this.lineOptions,
-
-          "areaYaxis": chartsRowData,
-          "areaXaxis": chartsColumnData,
-          //   "areaOptions":this.areaOptions,
-
-          "sidebysideBarYaxis": dualAxisRowData,
-          "sidebysideBarXaxis": dualAxisColumnData,
-          //     "sidebysideBarOptions":this.sidebysideBarOptions,
-
-          "stokedBarYaxis": dualAxisRowData,
-          "stokedBarXaxis": dualAxisColumnData,
-          //     "stokedOptions":this.stokedOptions,
-
-          "barLineYaxis": dualAxisRowData,
-          "barLineXaxis": dualAxisColumnData,
-          //     "barLineOptions":this.barLineOptions,
-
-          "hStockedYaxis": dualAxisRowData,
-          "hStockedXaxis": dualAxisColumnData,
-          //     "hStockedOptions":this.hStockedOptions,
-
-          "hgroupedYaxis": dualAxisRowData,
-          "hgroupedXaxis": dualAxisColumnData,
-          //     "hgroupedOptions":this.hgroupedOptions,
-
-          "multiLineYaxis": dualAxisRowData,
-          "multiLineXaxis": dualAxisColumnData,
-          //     "multiLineOptions":this.multiLineOptions,
-
-          "donutYaxis": chartsRowData,
-          "donutXaxis": chartsColumnData,
-          // "decimalplaces": this.donutDecimalPlaces,
-          //     "donutOptions":this.donutOptions,
-
+          // legacy table and styling options omitted for brevity
+          "axisConfig": {
+            xAxis: data.chart_id == 7 || data.chart_id == 5 || data.chart_id == 4 || data.chart_id == 2 || data.chart_id == 3 || data.chart_id == 8 || data.chart_id == 27 || data.chart_id == 29
+              ? dualAxisColumnData
+              : chartsColumnData,
+            yAxis: data.chart_id == 7 || data.chart_id == 5 || data.chart_id == 4 || data.chart_id == 2 || data.chart_id == 3 || data.chart_id == 8 || data.chart_id == 27 || data.chart_id == 29
+              ? dualAxisRowData
+              : chartsRowData,
+            type: data.chart_id == 7 || data.chart_id == 5 || data.chart_id == 4 || data.chart_id == 2 || data.chart_id == 3 || data.chart_id == 8 || data.chart_id == 27 || data.chart_id == 29
+              ? 'dual'
+              : 'single'
+          },
           "kpiData": tranformedData.rows_data,
           "kpiFontSize": 16,
-          // "kpicolor": kpiColor,
           "kpiNumber": tranformedData.rows_data[0]?.result_data[0],
           "kpiPrefix": "",
           "kpiSuffix": "",
           kpiDecimalUnit: "none"
-          // "kpiDecimalUnit": this.KPIDisplayUnits,
-          // "kpiDecimalPlaces": this.KPIDecimalPlaces
         },
         "isApexChart": false,
         "isEChart": true,
