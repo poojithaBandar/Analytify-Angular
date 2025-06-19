@@ -24,7 +24,6 @@ interface Dimension {
 export class InsightApexComponent {
   @Input() chartsRowData: any;
   @Input() chartsColumnData: any;
-  @Input() axisConfig: any;
   @Input() dualAxisColumnData : any;
   @Input() dualAxisRowData : any;
   @Input() chartType : any;
@@ -101,15 +100,6 @@ export class InsightApexComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes['axisConfig'] && this.axisConfig){
-      if(this.axisConfig.type === 'dual'){
-        this.dualAxisColumnData = this.axisConfig.xAxis;
-        this.dualAxisRowData = this.axisConfig.yAxis;
-      } else {
-        this.chartsColumnData = this.axisConfig.xAxis;
-        this.chartsRowData = this.axisConfig.yAxis;
-      }
-    }
 
     if(changes['SDKChartOptions']){
       this.chartOptions = this.SDKChartOptions;

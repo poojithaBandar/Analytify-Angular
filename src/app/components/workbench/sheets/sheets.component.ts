@@ -2170,30 +2170,6 @@ sheetSave(isDashboardTransfer?: boolean){
       delete this.originalData;
     }
   }
-  if(this.line && this.chartId == 13){
-    // axis handled via axisConfig
-  }
-  if(this.area && this.chartId == 17){
-    // axis handled via axisConfig
-  }
-  if(this.sidebyside && this.chartId == 7){
-    // axis handled via axisConfig
-  }
-  if(this.stocked && this.chartId == 5){
-    // axis handled via axisConfig
-  }
-  if(this.barLine && this.chartId == 4){
-    // axis handled via axisConfig
-  }
-  if(this.horizentalStocked && this.chartId == 2){
-    // axis handled via axisConfig
-  }
-  if(this.grouped && this.chartId == 3){
-    // axis handled via axisConfig
-  }
-  if(this.multiLine && this.chartId == 8){
-    // axis handled via axisConfig
-  }
   if(this.donut && this.chartId == 10){
     if (this.originalData) {
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
@@ -2376,11 +2352,6 @@ const obj={
     "items_per_page":this.itemsPerPage,
     "total_items":this.totalItems,
 
-    "axisConfig": {
-      xAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisColumnData : this.chartsColumnData,
-      yAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisRowData : this.chartsRowData,
-      type: [7,5,4,2,3,8,27,29].includes(this.chartId) ? 'dual' : 'single'
-    },
 
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
