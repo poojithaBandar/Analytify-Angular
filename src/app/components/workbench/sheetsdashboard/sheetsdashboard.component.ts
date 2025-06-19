@@ -2181,19 +2181,6 @@ export class SheetsdashboardComponent implements OnDestroy {
     }
   }
 
-  getChartData(results: any, chartType: string): any[] | undefined{
-    switch (chartType) {
-      case 'bar':
-         return results.bar.map((item: any) => ({ name: item.col, value: item.row }));
-         //return results.bar.forEach((item: { col: any; row: any; }) => chartOptions.series[0].data.push(item.col));
-      case 'line':
-        return [{xAis:results.lineXaxis,yAxis:results.lineYaxis}]
-      case 'area':
-        return results.areaXaxis+results.areaYaxis
-      default:
-        return undefined;        
-    }
-  }
 getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1: any, color2: any ,tableItemsPerPage : any,tableTotalItems : any, tablePage : number } {
     // Example implementation for table data extraction
     // this.tableItemsPerPage=tableData.results.items_per_page
