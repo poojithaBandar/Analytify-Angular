@@ -2081,78 +2081,53 @@ export class SheetsdashboardComponent implements OnDestroy {
     });
   }
   getChartOptionsBasedOnType(sheet:any){
-    if(sheet.chart_id === 9){
-      let xaxis = sheet.sheet_data?.results?.barXaxis;
-      let yaxis = sheet.sheet_data?.results?.barYaxis;
+    const axisConfig = sheet.sheet_data?.results?.axisConfig;
+    const xaxis = axisConfig?.xAxis;
+    const yaxis = axisConfig?.yAxis;
+    if(sheet.chart_id === 9 || sheet.chart_id === 6){
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
-    }
-    if(sheet.chart_id === 6){
-      let xaxis = sheet.sheet_data?.results?.barXaxis;
-      let yaxis = sheet.sheet_data?.results?.barYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
+      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 29){
-      let xaxis = sheet.sheet_data?.results?.mapChartXaxis;
-      let yaxis = sheet.sheet_data?.results?.mapChartYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return sheet.sheet_data.savedChartOptions;
-      // return this.mapChartOptions(xaxis,yaxis,savedOptions) 
+      return savedOptions;
     }
     if(sheet.chart_id === 17){
-      let xaxis = sheet.sheet_data?.results?.areaXaxis;
-      let yaxis = sheet.sheet_data?.results?.areaYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return this.areaChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 13){
-      let xaxis = sheet.sheet_data?.results?.lineXaxis;
-      let yaxis = sheet.sheet_data?.results?.lineYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return this.lineChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 24){
-      let xaxis = sheet.sheet_data?.results?.pieXaxis;
-      let yaxis = sheet.sheet_data?.results?.pieYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return this.pieChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     //sidebyside
     if(sheet.chart_id === 7){
-      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] =xaxis
-      const categories = this.flattenDimensions(dimensions)
-      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart);
 
     }
     if(sheet.chart_id === 12){//radar
       return sheet.sheet_data.savedChartOptions;
-      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
       let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] =xaxis
-      const categories = this.flattenDimensions(dimensions)
       return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
 
     }
     if(sheet.chart_id === 5){
-      let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.stokedBarYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
       return this.stockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 4){
-      let xaxis = sheet.sheet_data?.results?.barLineXaxis;
-      let yaxis = sheet.sheet_data?.results?.barLineYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
       console.log('barlinexaxis',xaxis)
       const dimensions: Dimension[] = xaxis;
@@ -2162,8 +2137,6 @@ export class SheetsdashboardComponent implements OnDestroy {
       return this.barLineChartOptions(categories,yaxis,savedOptions)
     }
     if(sheet.chart_id === 2){
-      let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
-      let yaxis = sheet.sheet_data?.results?.hStockedYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
 
       const dimensions: Dimension[] = xaxis;
@@ -2171,8 +2144,6 @@ export class SheetsdashboardComponent implements OnDestroy {
       return this.hStockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart);
     }
     if(sheet.chart_id === 3){
-      let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
-      let yaxis = sheet.sheet_data?.results?.hgroupedYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
 
       const dimensions: Dimension[] = xaxis;
@@ -2181,18 +2152,13 @@ export class SheetsdashboardComponent implements OnDestroy {
       return this.hGroupedChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 8){
-      let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
-      let yaxis = sheet.sheet_data?.results?.multiLineYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
       return this.multiLineChartOptions(categories,yaxis,savedOptions)
     }
     if(sheet.chart_id === 10){
-      let xaxis = sheet.sheet_data?.results?.donutXaxis;
-      let yaxis = sheet.sheet_data?.results?.donutYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
       this.donutDecimalPlaces = sheet.sheet_data?.results?.decimalplaces;
       return this.donutChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)

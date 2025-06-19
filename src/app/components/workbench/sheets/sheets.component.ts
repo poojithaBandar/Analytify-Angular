@@ -2437,50 +2437,11 @@ const obj={
     "items_per_page":this.itemsPerPage,
     "total_items":this.totalItems,
 
-    "barYaxis":this.saveBar,
-    "barXaxis":this.barXaxis,
-  //  "barOptions":this.barOptions,
-
-    "pieYaxis":this.savePie,
-    "pieXaxis":this.pieXaxis,
-  //   "pieOptions":this.pieOptions,
-
-    "lineYaxis":this.lineYaxis,
-    "lineXaxis": this.lineXaxis,
-  //   "lineOptions":this.lineOptions,
-
-    "areaYaxis":this.areaYaxis,
-    "areaXaxis":this.areaXaxis,
-  //   "areaOptions":this.areaOptions,
-
-      "sidebysideBarYaxis": this.sidebysideBarYaxis,
-      "sidebysideBarXaxis": this.sidebysideBarXaxis,
-  //     "sidebysideBarOptions":this.sidebysideBarOptions,
-   
-      "stokedBarYaxis": this.stokedBarYaxis,
-      "stokedBarXaxis": this.stokedBarXaxis,
-  //     "stokedOptions":this.stokedOptions,
-  
-      "barLineYaxis":this.barLineYaxis,
-      "barLineXaxis":this.barLineXaxis,
-  //     "barLineOptions":this.barLineOptions,
-
-      "hStockedYaxis": this.hStockedYaxis,
-      "hStockedXaxis": this.hStockedXaxis,
-  //     "hStockedOptions":this.hStockedOptions,
-
-      "hgroupedYaxis": this.hgroupedYaxis,
-      "hgroupedXaxis": this.hgroupedXaxis,
-  //     "hgroupedOptions":this.hgroupedOptions,
-
-      "multiLineYaxis":this.multiLineYaxis,
-      "multiLineXaxis": this.multiLineXaxis,
-  //     "multiLineOptions":this.multiLineOptions,
-
-      "donutYaxis": this.donutYaxis,
-      "donutXaxis": this.donutXaxis,
-      "decimalplaces": this.donutDecimalPlaces,
-  //     "donutOptions":this.donutOptions,
+    "axisConfig": {
+      xAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisColumnData : this.chartsColumnData,
+      yAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisRowData : this.chartsRowData,
+      type: [7,5,4,2,3,8,27,29].includes(this.chartId) ? 'dual' : 'single'
+    },
 
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
