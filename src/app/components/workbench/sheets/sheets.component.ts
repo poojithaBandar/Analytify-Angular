@@ -50,6 +50,7 @@ import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
+import { ChartRenderService } from '../../../services/chart-render.service';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 // import $ from 'jquery';
 import { saveAs } from 'file-saver';
@@ -183,7 +184,9 @@ export class SheetsComponent{
   // The radius of the pie chart is half the smallest side
   public radius = Math.min(this.width, this.height) / 2 - this.margin;
   public colors:any;
+  /** @deprecated chartsColumnData is deprecated. Use savedChartOptions instead */
   chartsColumnData = [] as any;
+  /** @deprecated chartsRowData is deprecated. Use savedChartOptions instead */
   chartsRowData = [] as any;
   public lineChartOptions!: Partial<EChartsOption>;
   chartOptions:any;
@@ -446,7 +449,7 @@ export class SheetsComponent{
   is_sheet_Embed : boolean = false;
   isEmbedSDK: boolean = false;;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
-    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService, private chartRenderService: ChartRenderService){
 
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
@@ -1137,50 +1140,23 @@ try {
       }
       chartType : string ='';
       chartsOptionsSet(){
-        if (this.bar) {
-          this.chartType = 'bar';
-        }
-        else if(this.pivotTable){
-          this.chartType = 'pivotTable'
-        } else if (this.area) {
-          this.chartType = 'area';
-        } else if (this.line) {
-          this.chartType = 'line';
-        } else if (this.pie) {
-          this.chartType = 'pie';
-        } else if (this.sidebyside) {
-          this.chartType = 'sidebyside';
-        } else if (this.stocked) {
-          this.chartType = 'stocked';
-        } else if (this.barLine) {
-          this.chartType = 'barline';
-        } else if (this.horizentalStocked) {
-          this.chartType = 'hstocked';
-        } else if (this.grouped) {
-          this.chartType = 'hgrouped';
-        } else if (this.multiLine) {
-          this.chartType = 'multiline';
-        } else if (this.donut) {
-          this.chartType = 'donut';
-        } else if (this.radar) {
-          this.chartType = 'radar';
-        } else if (this.heatMap) {
-          this.chartType = 'heatmap';
-        } else if (this.kpi){
+        if(this.kpi){
           this.KPIChart();
-        } else if (this.funnel){
-          this.chartType = 'funnel';
-        }else if(this.guage){
-          this.chartType = 'guage';
-        } else if(this.map){
-          this.chartType = 'map';
-          this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
-            echarts.registerMap('world', geoJson);  // Register the map data
-          });
-        } else if(this.calendar){
-          this.chartType = 'calendar';
+          return;
         }
-
+        if(this.pivotTable){
+          this.chartType = 'pivotTable';
+          return;
+        }
+        const cfg = this.chartRenderService.getChartConfig(this.chartId);
+        if(cfg){
+          this.chartType = cfg.chartType;
+          if(cfg.chartType === 'map'){
+            this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+              echarts.registerMap('world', geoJson);
+            });
+          }
+        }
       }
 
       KPIChart(){
@@ -2571,8 +2547,27 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
       this.draggedMeasureValuesData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
     });
   }
-  // this.table = false;
-  this.chartsDataSet(responce);
+
+  const savedOptions = responce?.sheet_data?.savedChartOptions;
+  if(savedOptions && typeof savedOptions === 'object'){
+    this.chartOptionsSet = savedOptions;
+    const cfg = this.chartRenderService.getChartConfig(responce.chart_id);
+    if(cfg){
+      const f = cfg.flags;
+      this.chartDisplay(f.table,f.bar,f.area,f.line,f.pie,f.sidebysideBar,f.stocked,f.barLine,f.horizentalStocked,f.grouped,f.multiLine,f.donut,f.radar,f.kpi,f.heatMap,f.funnel,f.guage,f.map,f.calendar,f.pivotTable,responce.chart_id);
+      this.chartType = cfg.chartType;
+      if(cfg.chartType === 'map'){
+        this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+          echarts.registerMap('world', geoJson);
+        });
+      }
+      return;
+    }
+    console.warn('Unknown chart configuration for chart id', responce.chart_id);
+  } else {
+    console.warn('savedChartOptions missing or malformed, using legacy computation');
+    this.chartsDataSet(responce);
+  }
   if(responce.chart_id == 1){
     // this.tableData = this.sheetResponce.results.tableData;
     // this.displayedColumns = this.sheetResponce?.results.tableColumns;

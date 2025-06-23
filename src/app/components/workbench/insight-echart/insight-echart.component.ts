@@ -87,6 +87,8 @@ export class InsightEchartComponent {
   @Input() mapChartOptions:any;
   @Input() actionId:any;
   @Input() SDKChartOptions: any;
+  /** Saved options from backend for direct chart rendering */
+  @Input() savedChartOptions: any;
   @Input() isRadarDistribution:any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
@@ -138,7 +140,7 @@ export class InsightEchartComponent {
     if(this.chartType === 'map'){
       this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
         echarts.registerMap('world', geoJson);
-        this.chartInstance?.setOption(this.SDKChartOptions ? this.SDKChartOptions :this.chartOptions,true);
+        this.chartInstance?.setOption(this.savedChartOptions ? this.savedChartOptions : (this.SDKChartOptions ? this.SDKChartOptions : this.chartOptions),true);
       });
     }
     else{
@@ -1910,7 +1912,18 @@ chartInitialize(){
   }
   ngOnChanges(changes: SimpleChanges) {
     
-     if(changes['SDKChartOptions']){
+     if(changes['savedChartOptions'] && this.savedChartOptions){
+      if(this.chartType === 'map'){
+        this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+          echarts.registerMap('world', geoJson);
+          this.chartInstance?.setOption(this.savedChartOptions,true);
+        });
+      } else {
+        setTimeout(() => {
+          this.chartInstance?.setOption(this.savedChartOptions, true);
+        }, 100);
+      }
+     } else if(changes['SDKChartOptions']){
       if(this.chartType === 'map'){
         this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
           echarts.registerMap('world', geoJson);
