@@ -71,8 +71,6 @@ export class InsightApexComponent {
   @Input() dataLabelsBarFontPosition:any;
   @Input() dataLabelsLineFontPosition:any;
   @Input() selectedColorScheme:any;
-  /** Saved options from backend for direct chart rendering */
-  @Input() savedChartOptions: any;
   @Input() SDKChartOptions: any;
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() saveOrUpdateChart = new EventEmitter<object>();
@@ -103,10 +101,7 @@ export class InsightApexComponent {
 
   ngOnChanges(changes: SimpleChanges) {
 
-    if(changes['savedChartOptions'] && this.savedChartOptions){
-      this.chartOptions = this.savedChartOptions;
-      this.chartType = this.chartType;
-    } else if(changes['SDKChartOptions']){
+  if(changes['SDKChartOptions']){
       this.chartOptions = this.SDKChartOptions;
       this.chartType = this.chartType;
     } else {

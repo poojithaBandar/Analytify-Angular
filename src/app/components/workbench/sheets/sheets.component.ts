@@ -184,9 +184,9 @@ export class SheetsComponent{
   // The radius of the pie chart is half the smallest side
   public radius = Math.min(this.width, this.height) / 2 - this.margin;
   public colors:any;
-  /** @deprecated chartsColumnData is deprecated. Use savedChartOptions instead */
+  // /** @deprecated chartsColumnData is deprecated. Use savedChartOptions instead */
   chartsColumnData = [] as any;
-  /** @deprecated chartsRowData is deprecated. Use savedChartOptions instead */
+  // /** @deprecated chartsRowData is deprecated. Use savedChartOptions instead */
   chartsRowData = [] as any;
   public lineChartOptions!: Partial<EChartsOption>;
   chartOptions:any;
@@ -2316,7 +2316,11 @@ const obj={
     "color2":bandColor2,
     "items_per_page":this.itemsPerPage,
     "total_items":this.totalItems,
-
+    "axisConfig": {
+      xAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisColumnData : this.chartsColumnData,
+      yAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisRowData : this.chartsRowData,
+      type: [7,5,4,2,3,8,27,29].includes(this.chartId) ? 'dual' : 'single'
+    },
 
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
@@ -2547,15 +2551,18 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
       this.draggedMeasureValuesData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
     });
   }
-
-  const savedOptions = responce?.sheet_data?.savedChartOptions;
-  if(savedOptions && typeof savedOptions === 'object'){
-    this.chartOptionsSet = savedOptions;
+  const axisConfig = responce?.sheet_data?.results?.axisConfig;
+  if((responce.chart_id != 1 || responce.chart_id != 25 || responce.chart_id != 9) && axisConfig && axisConfig.type){
+    if(axisConfig.type === 'dual'){
+      this.dualAxisColumnData = axisConfig.xAxis;
+      this.dualAxisRowData = axisConfig.yAxis;
+    } else {
+      this.chartsColumnData = axisConfig.xAxis;
+      this.chartsRowData = axisConfig.yAxis;
+    }
     const cfg = this.chartRenderService.getChartConfig(responce.chart_id);
     if(cfg){
-      const f = cfg.flags;
-      this.chartDisplay(f.table,f.bar,f.area,f.line,f.pie,f.sidebysideBar,f.stocked,f.barLine,f.horizentalStocked,f.grouped,f.multiLine,f.donut,f.radar,f.kpi,f.heatMap,f.funnel,f.guage,f.map,f.calendar,f.pivotTable,responce.chart_id);
-      this.chartType = cfg.chartType;
+     this.chartType = cfg.chartType;
       if(cfg.chartType === 'map'){
         this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
           echarts.registerMap('world', geoJson);
