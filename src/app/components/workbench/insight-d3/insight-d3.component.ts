@@ -8,7 +8,6 @@ import * as d3 from 'd3';
   styleUrl: './insight-d3.component.scss'
 })
 export class InsightD3Component implements OnChanges {
-  @Input() chartOptions: any;
   @Input() chartType!: string;
   @Input() chartsRowData: any;
   @Input() chartsColumnData: any;
@@ -22,10 +21,10 @@ export class InsightD3Component implements OnChanges {
   @Input() yLabelSwitch: boolean = true;
   @Input() xLabelFontFamily: string = 'inherit';
   @Input() xLabelFontSize: number = 12;
-  @Input() xlabelFontWeight: string = 'normal';
+  @Input() xlabelFontWeight: string | number = 'normal';
   @Input() yLabelFontFamily: string = 'inherit';
   @Input() yLabelFontSize: number = 12;
-  @Input() ylabelFontWeight: string = 'normal';
+  @Input() ylabelFontWeight: number = 400;
   @Input() backgroundColor: string = '#ffffff';
   @Input() color: string = 'steelblue';
   @Input() barColor: string = '';
@@ -66,6 +65,7 @@ export class InsightD3Component implements OnChanges {
   @Input() yGridColor: string = '#e0e0e0';
   @Input() yLabelColor: string = '#000';
   @Input() isZoom: boolean = false;
+  @Input() isBold: any;
 
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
 
@@ -78,8 +78,7 @@ export class InsightD3Component implements OnChanges {
   }
 
   private renderChart(): void {
-    if (!this.chartOptions) return;
-    this.clear();
+    // this.clear();
 
     switch (this.chartType) {
       case 'bar':
@@ -105,10 +104,10 @@ export class InsightD3Component implements OnChanges {
   }
 
   private renderBar(): void {
-    const data = this.chartOptions.series?.[0]?.data || [];
-    const labels = this.chartOptions.xaxis?.categories || [];
-    const width = this.chartContainer.nativeElement.clientWidth;
-    const height = 400;
+    const data: number[] = (this.chartsRowData || []) as number[];
+    const labels: string[] = (this.chartsColumnData || []) as string[];
+    const width = 200;
+    const height = 200;
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
     const svg = d3
@@ -132,7 +131,7 @@ export class InsightD3Component implements OnChanges {
 
     svg
       .append('g')
-      .attr('fill', this.barColor || this.color || this.chartOptions.colors?.[0] || 'steelblue')
+      .attr('fill', this.barColor || this.color || this.selectedColorScheme[0])
       .selectAll('rect')
       .data(data)
       .enter()
@@ -148,7 +147,7 @@ export class InsightD3Component implements OnChanges {
       .call(d3.axisBottom(x).tickSize(this.xGridSwitch ? -height + margin.top + margin.bottom : 0));
     xAxis.selectAll('line').attr('stroke', this.xGridColor);
     xAxis.selectAll('text')
-      .style('display', this.xLabelSwitch ? null : 'none')
+      .style('display', this.xLabelSwitch ? null : ('none' as any))
       .attr('font-family', this.xLabelFontFamily)
       .attr('font-size', this.xLabelFontSize)
       .attr('font-weight', this.xlabelFontWeight)
@@ -160,7 +159,7 @@ export class InsightD3Component implements OnChanges {
       .call(d3.axisLeft(y).tickSize(this.yGridSwitch ? -width + margin.left + margin.right : 0));
     yAxis.selectAll('line').attr('stroke', this.yGridColor);
     yAxis.selectAll('text')
-      .style('display', this.yLabelSwitch ? null : 'none')
+      .style('display', this.yLabelSwitch ? null : ('none' as any))
       .attr('font-family', this.yLabelFontFamily)
       .attr('font-size', this.yLabelFontSize)
       .attr('font-weight', this.ylabelFontWeight)
@@ -180,13 +179,13 @@ export class InsightD3Component implements OnChanges {
         .attr('font-size', this.dataLabelsFontSize)
         .attr('font-weight', this.isBold ? 'bold' : 'normal')
         .attr('fill', this.dataLabelsColor)
-        .text(d => d);
+        .text((d: any) => d);
     }
   }
 
   private renderLine(): void {
-    const data = this.chartOptions.series?.[0]?.data || [];
-    const labels = this.chartOptions.xaxis?.categories || [];
+    const data: number[] = (this.chartsRowData || []) as number[];
+    const labels: string[] = (this.chartsColumnData || []) as string[];
     const width = this.chartContainer.nativeElement.clientWidth;
     const height = 400;
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
@@ -218,7 +217,7 @@ export class InsightD3Component implements OnChanges {
       .append('path')
       .datum(data)
       .attr('fill', 'none')
-      .attr('stroke', this.lineColor || this.color || this.chartOptions.colors?.[0] || 'steelblue')
+      .attr('stroke', this.lineColor || this.color || this.selectedColorScheme?.[0] || 'steelblue')
       .attr('stroke-width', 1.5)
       .attr('d', line);
 
@@ -228,7 +227,7 @@ export class InsightD3Component implements OnChanges {
       .call(d3.axisBottom(x).tickSize(this.xGridSwitch ? -height + margin.top + margin.bottom : 0));
     xAxis.selectAll('line').attr('stroke', this.xGridColor);
     xAxis.selectAll('text')
-      .style('display', this.xLabelSwitch ? null : 'none')
+      .style('display', this.xLabelSwitch ? null : ('none' as any))
       .attr('font-family', this.xLabelFontFamily)
       .attr('font-size', this.xLabelFontSize)
       .attr('font-weight', this.xlabelFontWeight)
@@ -240,7 +239,7 @@ export class InsightD3Component implements OnChanges {
       .call(d3.axisLeft(y).tickSize(this.yGridSwitch ? -width + margin.left + margin.right : 0));
     yAxis.selectAll('line').attr('stroke', this.yGridColor);
     yAxis.selectAll('text')
-      .style('display', this.yLabelSwitch ? null : 'none')
+      .style('display', this.yLabelSwitch ? null : ('none' as any))
       .attr('font-family', this.yLabelFontFamily)
       .attr('font-size', this.yLabelFontSize)
       .attr('font-weight', this.ylabelFontWeight)
@@ -260,13 +259,13 @@ export class InsightD3Component implements OnChanges {
         .attr('font-size', this.dataLabelsFontSize)
         .attr('font-weight', this.isBold ? 'bold' : 'normal')
         .attr('fill', this.dataLabelsColor)
-        .text(d => d);
+        .text((d: any) => d);
     }
   }
 
   private renderArea(): void {
-    const data = this.chartOptions.series?.[0]?.data || [];
-    const labels = this.chartOptions.xaxis?.categories || [];
+    const data: number[] = (this.chartsRowData || []) as number[];
+    const labels: string[] = (this.chartsColumnData || []) as string[];
     const width = this.chartContainer.nativeElement.clientWidth;
     const height = 400;
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
@@ -298,7 +297,7 @@ export class InsightD3Component implements OnChanges {
     svg
       .append('path')
       .datum(data)
-      .attr('fill', this.areaColor || this.color || this.chartOptions.colors?.[0] || 'steelblue')
+      .attr('fill', this.areaColor || this.color || this.selectedColorScheme?.[0] || 'steelblue')
       .attr('d', area);
 
     const xAxis = svg
@@ -307,7 +306,7 @@ export class InsightD3Component implements OnChanges {
       .call(d3.axisBottom(x).tickSize(this.xGridSwitch ? -height + margin.top + margin.bottom : 0));
     xAxis.selectAll('line').attr('stroke', this.xGridColor);
     xAxis.selectAll('text')
-      .style('display', this.xLabelSwitch ? null : 'none')
+      .style('display', this.xLabelSwitch ? null : ('none' as any))
       .attr('font-family', this.xLabelFontFamily)
       .attr('font-size', this.xLabelFontSize)
       .attr('font-weight', this.xlabelFontWeight)
@@ -319,7 +318,7 @@ export class InsightD3Component implements OnChanges {
       .call(d3.axisLeft(y).tickSize(this.yGridSwitch ? -width + margin.left + margin.right : 0));
     yAxis.selectAll('line').attr('stroke', this.yGridColor);
     yAxis.selectAll('text')
-      .style('display', this.yLabelSwitch ? null : 'none')
+      .style('display', this.yLabelSwitch ? null : ('none' as any))
       .attr('font-family', this.yLabelFontFamily)
       .attr('font-size', this.yLabelFontSize)
       .attr('font-weight', this.ylabelFontWeight)
@@ -339,13 +338,13 @@ export class InsightD3Component implements OnChanges {
         .attr('font-size', this.dataLabelsFontSize)
         .attr('font-weight', this.isBold ? 'bold' : 'normal')
         .attr('fill', this.dataLabelsColor)
-        .text(d => d);
+        .text((d: any) => d);
     }
   }
 
   private renderPie(): void {
-    const data = this.chartOptions.series || [];
-    const labels = this.chartOptions.labels || [];
+    const data = this.chartsRowData || [];
+    const labels = this.chartsColumnData || [];
     const width = 400;
     const height = 400;
     const radius = Math.min(width, height) / 2;
@@ -360,7 +359,7 @@ export class InsightD3Component implements OnChanges {
 
     const color = d3
       .scaleOrdinal<string>()
-      .range(this.selectedColorScheme.length ? this.selectedColorScheme : (this.chartOptions.colors || d3.schemeCategory10));
+      .range(this.selectedColorScheme.length ? this.selectedColorScheme : (this.selectedColorScheme || d3.schemeCategory10));
 
     const arc = d3
       .arc<d3.PieArcDatum<number>>()
@@ -381,7 +380,7 @@ export class InsightD3Component implements OnChanges {
       const legend = svg
         .append('g')
         .attr('transform', `translate(${radius + 20},${-radius})`);
-      labels.forEach((l, i) => {
+      labels.forEach((l: string, i: number) => {
         const g = legend.append('g').attr('transform', `translate(0, ${i * 20})`);
         g.append('rect').attr('width', 12).attr('height', 12).attr('fill', color(l));
         g.append('text').attr('x', 16).attr('y', 10).text(l).attr('font-size', 12);
@@ -390,7 +389,7 @@ export class InsightD3Component implements OnChanges {
   }
 
   private renderScatter(): void {
-    const data = this.chartOptions.series?.[0]?.data || [];
+    const data: any[] = this.chartsRowData || [];
     const width = this.chartContainer.nativeElement.clientWidth;
     const height = 400;
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
@@ -404,13 +403,13 @@ export class InsightD3Component implements OnChanges {
 
     const x = d3
       .scaleLinear()
-      .domain(d3.extent(data, (d: any) => d[0]) as [number, number])
+      .domain(d3.extent(data, (d: any) => d[0]) as unknown as [number, number])
       .nice()
       .range([margin.left, width - margin.right]);
 
     const y = d3
       .scaleLinear()
-      .domain(d3.extent(data, (d: any) => d[1]) as [number, number])
+      .domain(d3.extent(data, (d: any) => d[1]) as unknown as [number, number])
       .nice()
       .range([height - margin.bottom, margin.top]);
 
@@ -420,7 +419,7 @@ export class InsightD3Component implements OnChanges {
       .call(d3.axisBottom(x).tickSize(this.xGridSwitch ? -height + margin.top + margin.bottom : 0));
     xAxis.selectAll('line').attr('stroke', this.xGridColor);
     xAxis.selectAll('text')
-      .style('display', this.xLabelSwitch ? null : 'none')
+      .style('display', this.xLabelSwitch ? null : ('none' as any))
       .attr('font-family', this.xLabelFontFamily)
       .attr('font-size', this.xLabelFontSize)
       .attr('font-weight', this.xlabelFontWeight)
@@ -432,7 +431,7 @@ export class InsightD3Component implements OnChanges {
       .call(d3.axisLeft(y).tickSize(this.yGridSwitch ? -width + margin.left + margin.right : 0));
     yAxis.selectAll('line').attr('stroke', this.yGridColor);
     yAxis.selectAll('text')
-      .style('display', this.yLabelSwitch ? null : 'none')
+      .style('display', this.yLabelSwitch ? null : ('none' as any))
       .attr('font-family', this.yLabelFontFamily)
       .attr('font-size', this.yLabelFontSize)
       .attr('font-weight', this.ylabelFontWeight)
@@ -446,6 +445,6 @@ export class InsightD3Component implements OnChanges {
       .attr('cx', (d: any) => x(d[0]))
       .attr('cy', (d: any) => y(d[1]))
       .attr('r', this.chartType === 'bubble' ? (d: any) => d[2] || 5 : 5)
-      .attr('fill', this.color || this.chartOptions.colors?.[0] || 'steelblue');
+      .attr('fill', this.color || this.selectedColorScheme?.[0]);
   }
 }
