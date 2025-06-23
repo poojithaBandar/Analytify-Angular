@@ -2083,17 +2083,6 @@ try {
       this.calendar = false;
       this.guage = false;
       this.banding = false;
-      this.barOptions = undefined;
-      this.lineOptions = undefined;
-      this.areaOptions = undefined;
-      this.pieOptions = undefined;
-      this.sidebysideBarOptions = undefined;
-      this.stokedOptions = undefined;
-      this.barLineOptions = undefined;
-      this.hStockedOptions = undefined;
-      this.hgroupedOptions = undefined;
-      this.multiLineOptions = undefined;
-      this.donutOptions = undefined;
       this.kpiFontSize = '3';
       this.kpiColor = '#000000';
       this.GridColor = '#089ffc';
