@@ -2520,7 +2520,22 @@
                 [dataLabelsLineFontPosition]="dataLabelsLineFontPosition" [selectedColorScheme]="selectedColorScheme"
                 (saveOrUpdateChart)="setChartOptions($event)" (setDrilldowns)="setDrilldowns($event)">
                 </app-insight-apex>
-    
+            } @else if(isD3Charts && !table && !kpi && !pivotTable){
+                <app-insight-d3 [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData"
+                [dualAxisRowData]="dualAxisRowData" [tablePreviewRow]="tablePreviewRow" [chartType]="chartType" [xGridSwitch]="xGridSwitch"
+                [xLabelSwitch]="xLabelSwitch" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [xLabelFontFamily]="xLabelFontFamily"
+                [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [backgroundColor]="backgroundColor" [color]="color"
+                [ylabelFontWeight]="ylabelFontWeight" [isBold]="isBold" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
+                [barColor]="barColor" [lineColor]="lineColor" [gridColor]="GridColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"
+                [label]="label" [donutSize]="donutSize" [isDistributed]="isDistributed" [minValueGuage]="minValueGuage" [maxValueGuage]="maxValueGuage"
+                [legendsAllignment]="legendsAllignment" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
+                [dataLabelsFontPosition]="dataLabelsFontPosition" [dataLabelsColor]="dataLabelsColor" [measureAlignment]="measureAlignment"
+                [dimensionAlignment]="dimensionAlignment" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                [donutDecimalPlaces]="donutDecimalPlaces" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"
+                [drillDownObject]="drillDownObject" [sortType]="sortType" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [dataLabelsBarFontPosition]="dataLabelsBarFontPosition"
+                [dataLabelsLineFontPosition]="dataLabelsLineFontPosition" [selectedColorScheme]="selectedColorScheme"
+                (saveOrUpdateChart)="setChartOptions($event)" (setDrilldowns)="setDrilldowns($event)">
+                </app-insight-d3>
             } @else {
             @if(bar && chartId){         
             <div class="card-body">
@@ -3766,9 +3781,10 @@
                                                                             <div class="form-group mb-0 p-0">
                                                                                 <select class="form-select form-select select2 fs-14" [(ngModel)]="selectedChartPlugin"
                                                                                     (change)="customizechangeChartPlugin()">
-                                                                                    <option *ngIf="!(radar || calendar || map)" value="apex">Basic</option>
-                                                                                    <option *ngIf="!(guage)" value="echart">Advanced</option>
-                                                                                </select>
+            <option *ngIf="!(radar || calendar || map)" value="apex">Basic</option>
+            <option *ngIf="!(guage)" value="echart">Advanced</option>
+            <option value="d3">D3</option>
+        </select>
                                                                             </div>
                                                     
                                                                             <span ngbTooltip=""></span>
