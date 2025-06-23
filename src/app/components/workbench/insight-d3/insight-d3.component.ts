@@ -106,8 +106,8 @@ export class InsightD3Component implements OnChanges {
   private renderBar(): void {
     const data: number[] = (this.chartsRowData || []) as number[];
     const labels: string[] = (this.chartsColumnData || []) as string[];
-    const width = 200;
-    const height = 200;
+    const width = this.chartContainer.nativeElement.clientWidth;
+    const height = 400;
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
     const svg = d3
@@ -345,7 +345,7 @@ export class InsightD3Component implements OnChanges {
   private renderPie(): void {
     const data = this.chartsRowData || [];
     const labels = this.chartsColumnData || [];
-    const width = 400;
+    const width = this.chartContainer.nativeElement.clientWidth;
     const height = 400;
     const radius = Math.min(width, height) / 2;
 
