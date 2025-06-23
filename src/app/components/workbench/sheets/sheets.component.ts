@@ -48,6 +48,7 @@ import { lastValueFrom, Subscription, timer } from 'rxjs';
 import { evaluate, i, parse } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import { InsightD3Component } from '../insight-d3/insight-d3.component';
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
@@ -103,7 +104,7 @@ declare var $:any;
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent,NgbTooltipModule],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,InsightD3Component,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent,NgbTooltipModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -137,9 +138,10 @@ export class SheetsComponent{
   errorMessage : any;
   errorMessage1:any;
   userPrompt: string = '';
-  selectedChartPlugin : string = '';	
+  selectedChartPlugin : string = '';
   isApexCharts : boolean = true;
   isEChatrts : boolean = false;
+  isD3Charts : boolean = false;
   isZoom : boolean = false;
   xLabelFontSize : number = 12;
   yLabelFontSize : number = 12;
@@ -4138,9 +4140,15 @@ customizechangeChartPlugin() {
   if (this.selectedChartPlugin == 'apex') {
     this.isApexCharts = true;
     this.isEChatrts = false;
+    this.isD3Charts = false;
+  } else if (this.selectedChartPlugin == 'd3') {
+    this.isApexCharts = false;
+    this.isEChatrts = false;
+    this.isD3Charts = true;
   } else {
     this.isApexCharts = false;
     this.isEChatrts = true;
+    this.isD3Charts = false;
   }
   // this.reAssignChartData();
 }
@@ -4149,9 +4157,15 @@ customizechangeChartPlugin() {
     if (this.selectedChartPlugin == 'apex') {
       this.isApexCharts = true;
       this.isEChatrts = false;
+      this.isD3Charts = false;
+    } else if (this.selectedChartPlugin == 'd3') {
+      this.isApexCharts = false;
+      this.isEChatrts = false;
+      this.isD3Charts = true;
     } else {
       this.isApexCharts = false;
       this.isEChatrts = true;
+      this.isD3Charts = false;
     }
     // if(this.retriveDataSheet_id){
     //   if((this.sheetResponce.isEChart && this.isEChatrts && (this.sheetChartId === this.chartId)) || (this.sheetResponce.isApexChart && this.isApexCharts && (this.sheetChartId === this.chartId))){
