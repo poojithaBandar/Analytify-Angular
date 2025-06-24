@@ -286,7 +286,12 @@ export class TemplateDashboardService {
     true,
     ylabelFontWeight
     : 
-    400}
+    400,
+    toggleTablePagination
+    :true,
+    toggleTableSearch
+    : true,
+  }
   echartInstance!: InsightEchartComponent;
   sheetsInstance!: SheetsComponent;
   dashboardInstance! : SheetsdashboardComponent;
@@ -379,6 +384,7 @@ export class TemplateDashboardService {
           ...rest,
           col_data: sheet_col,
           row_data: sheet_row,
+          ...(chart_id === 9 && { pivot_measure: sheet.sheet_pivot }),
           sheet_data: {
           savedChartOptions : chartOptions,
             ...sheet_data,
