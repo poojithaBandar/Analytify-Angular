@@ -129,7 +129,7 @@ export class InsightD3Component implements OnChanges {
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    svg
+    const bars = svg
       .append('g')
       .attr('fill', this.barColor || this.color || this.selectedColorScheme[0])
       .selectAll('rect')
@@ -137,9 +137,16 @@ export class InsightD3Component implements OnChanges {
       .enter()
       .append('rect')
       .attr('x', (_d, i) => x(labels[i])!)
-      .attr('y', (d: number) => y(d))
-      .attr('height', (d: number) => y(0) - y(d))
+      .attr('y', y(0))
+      .attr('height', 0)
       .attr('width', x.bandwidth());
+
+    bars
+      .transition()
+      .duration(800)
+      .ease(d3.easeCubicOut)
+      .attr('y', (d: number) => y(d))
+      .attr('height', (d: number) => y(0) - y(d));
 
     const xAxis = svg
       .append('g')
