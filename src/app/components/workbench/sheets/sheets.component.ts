@@ -62,6 +62,7 @@ import { TestPipe } from '../../../test.pipe';
 import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
 import { CustomSheetsComponent } from '../custom-sheets/custom-sheets.component';
+import { error } from 'jquery';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -251,7 +252,6 @@ export class SheetsComponent{
   createdBy : any;
   calculatedFieldFunction : string = '';
   nestedCalculatedFieldData : string = '';
-  isHorizontalBar:boolean=false;
   toggleTableSearch:boolean=true;
   toggleTablePagination:boolean=true;
   radar: boolean = false;
@@ -384,7 +384,7 @@ export class SheetsComponent{
   next: number = 3;
   isAnchor: boolean = false;
   anchorDate: any;
-
+  isHorizontalBar: boolean = false;
   locationDrillDownSwitch: boolean = false;
   locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
@@ -772,6 +772,8 @@ try {
             this.pivotColumnData = responce?.data?.col;
             this.pivotRowData = responce?.data?.row;
             this.pivotMeasureData = responce?.data?.pivot_measure;
+            if(isSyncData){
+            }
             if (this.chartsRowData.length > 0) {
               // this.enableDisableCharts();
               // this.chartsOptionsSet();
@@ -794,6 +796,7 @@ try {
               this.table = true;
               this.pivotTable = false;
               this.bar = false;
+              this.horizontalBar = false;
               this.area = false;
               this.line = false;
               this.pie = false;
@@ -813,10 +816,11 @@ try {
               this.calendar = false;
               this.map=false;
               // this.tableDisplayPagination();
-            } else if(((this.pie || this.bar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
+            } else if(((this.pie || this.bar || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
               this.pivotTable = false;
               this.bar = false;
+              this.horizontalBar = false;
               this.area = false;
               this.line = false;
               this.pie = false;
@@ -937,6 +941,7 @@ try {
                 if(this.page === 1 && this.pageNo === 1){
                   this.displayedColumns = this.tableColumnsDisplay;
                   this.tableDataStore = this.tableDataDisplay;
+                  console.log(this.displayedColumns, this.tableDataStore);
                 }
                 if(isSyncData){
                   this.sheetSave();
@@ -1140,6 +1145,9 @@ try {
       chartsOptionsSet(){
         if (this.bar) {
           this.chartType = 'bar';
+        }
+        if(this.horizontalBar){
+          this.chartType = 'horizontalBar'
         }
         else if(this.pivotTable){
           this.chartType = 'pivotTable'
@@ -1583,6 +1591,7 @@ try {
   table = true;
   pivotTable = false;
   bar = false;
+  horizontalBar = false;
   sidebyside = false;
   area = false;
   line = false;
@@ -1599,10 +1608,11 @@ try {
   guage = false;
   calendar = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,chartId:any){
     this.table = table;
     this.pivotTable = pivotTable;
     this.bar=bar;
+    this.horizontalBar = horizontalBar
     this.area=area;
     this.line=line;
     this.pie=pie;
@@ -1621,7 +1631,10 @@ try {
     this.guage = guage;
     this.map = map;
     this.calendar = calendar;
-    if(!(this.bar|| this.pie || this.donut)){
+    if(this.bar){
+      this.isHorizontalBar = false;
+    }
+    if(!(this.bar|| this.horizontalBar || this.pie || this.donut)){
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
       this.drillDownIndex = 0;
@@ -1631,7 +1644,9 @@ try {
       this.draggedMeasureValues=[]
       this.draggedMeasureValuesData=[]
     }
+    if(!this.horizontalBar){
     this.resetCustomizations();
+    }
     this.chartsOptionsSet(); 
     this.hasUnSavedChanges=true;
   }
@@ -2086,6 +2101,7 @@ try {
       this.table = true;
       this.pivotTable = false;
       this.bar = false;
+      this.horizontalBar = false;
       this.pie = false;
       this.line = false;
       this.area = false;
@@ -2182,6 +2198,7 @@ try {
   donutOptions : any = undefined;
   eMapChartOptions : any;
 
+  isMailRefresh=false;
 sheetSave(isDashboardTransfer?: boolean){
   let savedChartOptions ;
   let kpiData;
@@ -2207,6 +2224,19 @@ sheetSave(isDashboardTransfer?: boolean){
     //  bandColor2 = this.color2;
     }
   if(this.bar && this.chartId == 6){
+    this.saveBar = this.chartsRowData;
+    this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
+    if (this.originalData) {
+      this.saveBar = this.originalData.data;
+      this.barXaxis = this.originalData.categories;
+      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
+      tablePreviewRow[0].result_data = this.originalData.data;
+      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
+      tablePreviewCol[0].result_data = this.originalData.categories;
+      delete this.originalData;
+    }
+  }
+   if(this.horizontalBar && this.chartId == 14){
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
@@ -2403,10 +2433,10 @@ sheetSave(isDashboardTransfer?: boolean){
     pivotColumnTotals : this.pivotColumnTotals,
     bandingOddColor :this.bandingOddColor,
     bandingEvenColor:this.bandingEvenColor,
-    isHorizontalBar:this.isHorizontalBar,
     toggleTableSearch:this.toggleTableSearch,
     toggleTablePagination:this.toggleTablePagination,
-    isRadarDistribution:this.isRadarDistribution
+    isRadarDistribution:this.isRadarDistribution,
+    isHorizontalBar  : this.isHorizontalBar,
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2419,7 +2449,7 @@ sheetSave(isDashboardTransfer?: boolean){
   } else {
     draggedColumnsObj = this.draggedColumnsData
   }
-const obj={
+let obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
@@ -2522,9 +2552,17 @@ const obj={
     "suffix" : this.suffix
   }
 }
-}
+} as any
 console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
+  if(this.isMailRefresh){
+    obj.is_mail_refresh = true;
+    if(this.isSyncForEmail){
+    obj.action_type = 'sheet_refresh';
+    }else{
+      obj.action_type = 'sheet_update';
+    }
+  }
   console.log("Sheet Update")
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
     if(this.tabs[this.SheetIndex]){
@@ -2541,7 +2579,6 @@ if(this.retriveDataSheet_id){
       }
     })
   }
-  
   },
   error: (error) => {
     console.log(error);
@@ -2764,6 +2801,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.table = true;
     this.pivotTable = false;
     this.bar = false;
+    this.horizontalBar = false;
     this.pie = false;
     this.line = false;
     this.area = false;
@@ -2782,7 +2820,30 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.calendar = false;
     this.itemsPerPage = this.sheetResponce?.results?.items_per_page;
-    this.tableDisplayPagination(false);
+    if (isDashboardTransfer) {
+      let rowCountData: any;
+      if (this.tablePreviewColumn[0]?.result_data?.length) {
+        rowCountData = this.tablePreviewColumn[0]?.result_data?.length;
+      } else {
+        rowCountData = this.tablePreviewRow[0]?.result_data?.length;
+      }
+      this.tableColumnsDisplay = this.tablePreviewColumn.map((col: any) => col.column).concat(this.tablePreviewRow.map((row: any) => row.column));
+
+      for (let i = 0; i < rowCountData; i++) {
+        const tableRow: TableRow = {};
+        this.tablePreviewColumn?.forEach((col: any) => {
+          tableRow[col.column] = col.result_data[i];
+        });
+        this.tablePreviewRow?.forEach((rowData: any) => {
+          tableRow[rowData.column] = rowData.result_data[i];
+        });
+        this.tableDataDisplay.push(tableRow);
+      }
+      this.displayedColumns = this.tableColumnsDisplay;
+      this.tableDataStore = this.tableDataDisplay.slice(0, this.itemsPerPage);
+    } else {
+      this.tableDisplayPagination(false);
+    }
   }
   if(responce.chart_id == 9){
     // this.tableData = this.sheetResponce.results.tableData;
@@ -2790,6 +2851,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.table = false;
     this.pivotTable = true;
     this.bar = false;
+    this.horizontalBar = false;
     this.pie = false;
     this.line = false;
     this.area = false;
@@ -2825,6 +2887,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.table = false;
     this.pivotTable = false;
     this.bar = false;
+    this.horizontalBar = false;
     this.pie = false;
     this.line = false;
     this.area = false;
@@ -2850,6 +2913,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.table = false;
     this.pivotTable = false;
     this.bar = false;
+    this.horizontalBar = false;
     this.pie = false;
     this.line = false;
     this.area = false;
@@ -2875,6 +2939,34 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'bar';
 //  this.barChart();
   this.bar = true;
+  this.horizontalBar = false;
+  this.table = false;
+  this.pivotTable = false;
+    this.pie = false;
+    this.line = false;
+    this.area = false;
+    this.sidebyside = false;
+    this.stocked = false;
+    this.barLine = false;
+    this.horizentalStocked = false;
+    this.grouped = false;
+    this.multiLine = false;
+    this.donut = false;
+    this.radar = false;
+    this.kpi = false;
+    this.heatMap = false;
+    this.funnel = false;
+    this.guage = false;
+    this.map = false;
+    this.calendar = false;
+ }
+  if(responce.chart_id == 14){
+  // this.chartsRowData = this.sheetResponce.results.barYaxis;
+  // this.chartsColumnData = this.sheetResponce.results.barXaxis;
+  this.chartType = 'horizontalBar';
+//  this.barChart();
+  this.bar = false;
+  this.horizontalBar = true;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -2899,6 +2991,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'pie';
   // this.pieChart();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = true;
@@ -2923,6 +3016,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'line';
   // this.lineChart();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -2947,6 +3041,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'area';
   // this.areaChart();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -2971,6 +3066,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'sidebyside';
   // this.sidebysideBar();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -2995,6 +3091,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'stocked';
   // this.stockedBar();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3019,6 +3116,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'barline';
   // this.barLineChart();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3043,6 +3141,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'radar';
   // this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3067,6 +3166,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'hstocked';
   // this.horizentalStockedBar();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3091,6 +3191,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'hgrouped';
   // this.hGrouped();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3115,6 +3216,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'multiline';
   // this.multiLineChart();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3139,6 +3241,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.chartType = 'donut';
   // this.donutChart();
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3162,6 +3265,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
  if(responce.chart_id == 26){
   this.chartType = 'heatmap';
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3185,6 +3289,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
  if(responce.chart_id == 27){
   this.chartType = 'funnel';
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3208,6 +3313,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
  if(responce.chart_id == 28){
   this.chartType = 'guage';
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -3231,6 +3337,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
  if(responce.chart_id == 11){
   this.chartType = 'calendar';
   this.bar = false;
+  this.horizontalBar = false;
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
@@ -4149,15 +4256,18 @@ fetchChartData(chartData: any){
           this.sheetTitle = chartData.chart_title;
           this.sheetTagName = chartData.chart_title;
           if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
-          }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+          }else if(chartData.chart_type.toLowerCase().includes("horizontalBar")){
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,2);
+          }
+          else if (chartData.chart_type.toLowerCase().includes("pie")){
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,10);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,10);
           }
           this.dataExtraction(false);
 
@@ -4306,11 +4416,11 @@ customizechangeChartPlugin() {
     this.pivotColumnTotals = data.pivotColumnTotals ?? true,
     this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff' 
     this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa',
-    this.isHorizontalBar = data.isHorizontalBar ?? false,
     this.toggleTableSearch = data.toggleTableSearch ?? true,
     this.toggleTablePagination = data.toggleTablePagination ?? true
     this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa'
     this.isRadarDistribution = data.isRadarDistribution ?? false; 
+    this.isHorizontalBar = data.isHorizontalBar ?? false;
   }
 
   resetCustomizations(){
@@ -4407,9 +4517,9 @@ customizechangeChartPlugin() {
     this.pivotRowTotals = true;
     this.bandingEvenColor= '#ffffff' 
     this.bandingOddColor= '#f5f7fa'
-    this.isHorizontalBar = false,
     this.toggleTableSearch = true;
     this.toggleTablePagination = true;
+    // this.isHorizontalBar = false;
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
     // this.KPIPrefix = '',
@@ -4889,6 +4999,11 @@ customizechangeChartPlugin() {
 
   setOriginalData(){
         if(this.bar){//bar
+          if(!this.originalData){
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+          }
+        }
+        if(this.horizontalBar){//bar
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
           }
@@ -6513,6 +6628,7 @@ customizechangeChartPlugin() {
       this.table = true;
       this.pivotTable = false;
       this.bar = false;
+      this.horizontalBar = false;
       this.area = false;
       this.line = false;
       this.pie = false;
@@ -7274,9 +7390,11 @@ getCaretCoordinates(textarea: HTMLTextAreaElement, position: number) {
 
   return { top, left };
 }
+isSyncForEmail = false;
   refreshSheetData(){
     this.columnsData();
     this.dataExtraction(true);
+    this.isSyncForEmail = true;
   }
   downloadAsCSV() {
     if (!this.retriveDataSheet_id) return;

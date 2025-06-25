@@ -87,7 +87,6 @@ export class InsightEchartComponent {
   @Input() mapChartOptions:any;
   @Input() actionId:any;
   @Input() SDKChartOptions: any;
-  @Input() isHorizontalBar:any
   @Input() isRadarDistribution:any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
@@ -168,7 +167,7 @@ export class InsightEchartComponent {
     }
   }
 
-  barChart(chartsColumnData? : any ,chartsRowData?: any ){
+ barChart(chartsColumnData? : any ,chartsRowData?: any ){
     if(chartsColumnData && chartsRowData){
       this.chartsColumnData = chartsColumnData;
       this.chartsRowData = chartsRowData;
@@ -206,142 +205,64 @@ export class InsightEchartComponent {
         bottom: '13%',
         containLabel: true,
       },
-      // xAxis: {
-      //   type: 'category',
-      //   data: this.chartsColumnData,
-      //   nameLocation:this.xlabelAlignment,
-      //   splitLine: {
-      //     lineStyle: {
-      //       color: this.xGridColor
-      //     }, show: this.xGridSwitch
-      //   },
-      //   axisLine: {
-      //     lineStyle: {
-      //       color: this.xLabelColor,
-      //     },
-      //   },
-      //   axisLabel: {
-      //     show: this.xLabelSwitch,
-      //     fontFamily: this.xLabelFontFamily,
-      //     fontSize: this.xLabelFontSize,
-      //     fontWeight: this.xlabelFontWeight,
-      //     color:this.dimensionColor,
-      //     // align: this.xlabelAlignment,// Hide xAxis labels
-      //     interval: 0, // Show all labels
-      //     padding: [10, 0, 10, 0],
-      //     align: this.dimensionAlignment,
-      //     formatter: function(value:any) {
-      //       return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
-      //   }
-      //   }
-      // },
+      xAxis: {
+        type: 'category',
+        data: this.chartsColumnData,
+        nameLocation:this.xlabelAlignment,
+        splitLine: {
+          lineStyle: {
+            color: this.xGridColor
+          }, show: this.xGridSwitch
+        },
+        axisLine: {
+          lineStyle: {
+            color: this.xLabelColor,
+          },
+        },
+        axisLabel: {
+          show: this.xLabelSwitch,
+          fontFamily: this.xLabelFontFamily,
+          fontSize: this.xLabelFontSize,
+          fontWeight: this.xlabelFontWeight,
+          color:this.dimensionColor,
+          // align: this.xlabelAlignment,// Hide xAxis labels
+          interval: 0, // Show all labels
+          padding: [10, 0, 10, 0],
+          align: this.dimensionAlignment,
+          formatter: function(value:any) {
+            return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
+        }
+        }
+      },
       toggleGridLines: true,
-      // yAxis: {
-      //   type: 'value',
-      //   axisLine: {
-      //     lineStyle: {
-      //       color: this.yLabelColor
-      //     },
-      //     show:this.yGridSwitch
-      //   },
-      //   axisLabel: {
-      //     show: this.yLabelSwitch,
-      //     fontFamily: this.yLabelFontFamily,
-      //     fontSize: this.yLabelFontSize,
-      //     fontWeight: this.ylabelFontWeight,
-      //     color:this.measureColor,
-      //     rotate:0,
-      //     formatter: function(value:any) {
-      //       return value.length > 5 ? value.substring(0, 2) + '...' : value; // Truncate long labels
-      //   }
-      //   // formatter:(params:any) => this.formatNumber(params.value) 
-      //   },
-      //   splitLine: {
-      //     lineStyle: {
-      //       color: this.yGridColor
-      //     },
-      //     show: this.yGridSwitch
-      //   }
-      // },
+      yAxis: {
+        type: 'value',
+        axisLine: {
+          lineStyle: {
+            color: this.yLabelColor
+          },
+          show:this.yGridSwitch
+        },
+        axisLabel: {
+          show: this.yLabelSwitch,
+          fontFamily: this.yLabelFontFamily,
+          fontSize: this.yLabelFontSize,
+          fontWeight: this.ylabelFontWeight,
+          color:this.measureColor,
+          rotate:0,
+          formatter: function(value:any) {
+            return value.length > 5 ? value.substring(0, 2) + '...' : value; // Truncate long labels
+        }
+        // formatter:(params:any) => this.formatNumber(params.value) 
+        },
+        splitLine: {
+          lineStyle: {
+            color: this.yGridColor
+          },
+          show: this.yGridSwitch
+        }
+      },
       // itemStyle: {borderWidth : '50px' },
-      xAxis: this.isHorizontalBar ? {
-  type: 'value',
-  axisLine: {
-    lineStyle: { color: this.xLabelColor }
-  },
-  splitLine: {
-    lineStyle: { color: this.xGridColor },
-    show: this.xGridSwitch
-  },
-  axisLabel: {
-    show: this.xLabelSwitch,
-    fontFamily: this.xLabelFontFamily,
-    fontSize: this.xLabelFontSize,
-    fontWeight: this.xlabelFontWeight,
-    color: this.dimensionColor,
-    formatter: (value: any) => value,
-  }
-} : {
-  type: 'category',
-  data: this.chartsColumnData,
-  nameLocation: this.xlabelAlignment,
-  splitLine: {
-    lineStyle: { color: this.xGridColor },
-    show: this.xGridSwitch
-  },
-  axisLine: {
-    lineStyle: { color: this.xLabelColor }
-  },
-  axisLabel: {
-    show: this.xLabelSwitch,
-    fontFamily: this.xLabelFontFamily,
-    fontSize: this.xLabelFontSize,
-    fontWeight: this.xlabelFontWeight,
-    color: this.dimensionColor,
-    interval: 0,
-    padding: [10, 0, 10, 0],
-    align: this.dimensionAlignment,
-    formatter: (value: any) => value.length > 5 ? value.substring(0, 5) + '...' : value
-  }
-},
-
-yAxis: this.isHorizontalBar ? {
-  type: 'category',
-  data: this.chartsColumnData,
-  axisLine: {
-    lineStyle: { color: this.yLabelColor }
-  },
-  axisLabel: {
-    show: this.yLabelSwitch,
-    fontFamily: this.yLabelFontFamily,
-    fontSize: this.yLabelFontSize,
-    fontWeight: this.ylabelFontWeight,
-    color: this.measureColor,
-    formatter: (value: any) => value.length > 5 ? value.substring(0, 5) + '...' : value
-  },
-  splitLine: {
-    lineStyle: { color: this.yGridColor },
-    show: this.yGridSwitch
-  }
-} : {
-  type: 'value',
-  axisLine: {
-    lineStyle: { color: this.yLabelColor }
-  },
-  axisLabel: {
-    show: this.yLabelSwitch,
-    fontFamily: this.yLabelFontFamily,
-    fontSize: this.yLabelFontSize,
-    fontWeight: this.ylabelFontWeight,
-    color: this.measureColor,
-    formatter: (value: any) => this.formatNumber(value)
-  },
-  splitLine: {
-    lineStyle: { color: this.yGridColor },
-    show: this.yGridSwitch
-  }
-},
-
       series: [
         {
           itemStyle: {
@@ -370,6 +291,121 @@ yAxis: this.isHorizontalBar ? {
 
     };
     return this.chartOptions;
+}
+horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
+  if (chartsColumnData && chartsRowData) {
+    this.chartsColumnData = chartsColumnData;
+    this.chartsRowData = chartsRowData;
+  }
+  
+  this.chartOptions = {
+    backgroundColor: this.backgroundColor,
+    legend: {
+      orient: 'vertical',
+      left: 'left'
+    },
+    toolbox: {
+      feature: {
+        magicType: { show: true, type: ['line'] },
+        restore: { show: true },
+        saveAsImage: { show: true }
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+      formatter: (params: any) => params[0].name + " : " + this.formatNumber(params[0].data)
+    },
+    axisPointer: {
+      type: 'none'
+    },
+    dataZoom: [
+      {
+        show: this.isZoom,
+        type: 'slider'
+      }
+    ],
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '13%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: this.xLabelColor
+        }
+      },
+      axisLabel: {
+        show: this.xLabelSwitch,
+        fontFamily: this.xLabelFontFamily,
+        fontSize: this.xLabelFontSize,
+        fontWeight: this.xlabelFontWeight,
+        color: this.dimensionColor,
+        formatter: (value: any) => this.formatNumber(value)
+      },
+      splitLine: {
+        lineStyle: {
+          color: this.xGridColor
+        },
+        show: this.xGridSwitch
+      }
+    },
+    yAxis: {
+      type: 'category',
+      data: this.chartsColumnData,
+      nameLocation: this.xlabelAlignment,
+      axisLine: {
+        lineStyle: {
+          color: this.yLabelColor
+        }
+      },
+      axisLabel: {
+        show: this.yLabelSwitch,
+        fontFamily: this.yLabelFontFamily,
+        fontSize: this.yLabelFontSize,
+        fontWeight: this.ylabelFontWeight,
+        color: this.measureColor,
+        width: 120,  // Maximum width for labels
+        overflow: 'break', // or 'break' for line breaks
+        interval: 0,
+        align: this.dimensionAlignment,
+        padding: [0, 35, 0, 0], 
+        formatter: function(value: any) {
+          return value.length > 5 ? value.substring(0, 5) + '...' : value;
+        }
+      },
+      splitLine: {
+        lineStyle: {
+          color: this.yGridColor
+        },
+        show: this.yGridSwitch
+      },
+      inverse: true
+    },
+    series: [
+      {
+        type: 'bar',
+        data: this.chartsRowData,
+        label: {
+          show: true,
+          position: this.getLabelPosition(),
+          fontFamily: this.dataLabelsFontFamily,
+          verticalAlign: 'middle',
+          distance:5,
+          fontSize: this.dataLabelsFontSize,
+          fontWeight: this.isBold ? 700 : 400,
+          color: this.dataLabelsColor,
+          formatter: (params: any) => this.formatNumber(params.value)
+        },
+        colorBy: 'data',
+      }
+    ],
+    color: this.isDistributed ? this.selectedColorScheme : this.color
+  };
+console.log('Horizontal Bar Chart Options:', this.chartOptions);
+  return this.chartOptions;
 }
 flattenDimensions(dimensions: Dimension[]): string[] {
   const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
@@ -421,6 +457,18 @@ funnelchart(dualAxisColumnData? : any ,dualAxisRowData?: any){
     ],
   };
   return this.chartOptions;
+}
+getLabelPosition(){
+  switch (this.dataLabelsFontPosition) {
+    case 'top':
+      return 'right';
+    case 'bottom':
+      return 'insideLeft';
+    case 'center':
+      return 'inside';
+    default:
+      return 'inside'; // Default position if none matches
+  }
 }
 stackedChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1926,7 +1974,10 @@ ngOnInit(){
 chartInitialize(){
   if(this.chartType ==='bar'){
     this.barChart();
-  }else if(this.chartType ==='funnel'){
+  }else if(this.chartType ==='horizontalBar'){
+  this.horizontalBarChart();
+ }
+  else if(this.chartType ==='funnel'){
   this.funnelchart();
   }
   else if(this.chartType ==='stocked'){
@@ -2004,9 +2055,6 @@ chartInitialize(){
       this.chartInitialize();
      } else if (!this.chartInstance) {
       this.chartInitialize();
-    }
-    if(changes['isHorizontalBar']){
-      this.resetchartoptions();
     }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       // if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
@@ -2752,6 +2800,43 @@ radarDistributionSetOptions() {
         series.label.position = this.dataLabelsFontPosition; 
     });
     this.chartInstance?.setOption(this.chartOptions,true)
+     } else if(this.chartType === 'horizontalBar'){
+      if(this.dataLabelsFontPosition === 'center'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'inside'
+            }
+          }]
+        }
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = 'inside' ;
+      }
+      else if(this.dataLabelsFontPosition === 'top'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'right'
+            }
+          }]
+        }
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = 'right' ;
+      }
+      else if(this.dataLabelsFontPosition === 'bottom'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'insideLeft'
+            }
+          }]
+        }
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = 'insideLeft' ;
+      }
      }
      else if(this.chartType ==='funnel'){
       if(this.dataLabelsFontPosition === 'center'){
@@ -2906,7 +2991,7 @@ radarDistributionSetOptions() {
     });
     this.chartInstance?.setOption(this.chartOptions,true)
      }
-     else{
+     else if(this.chartType !== 'map'){
        let obj ={
          series :[
           {
@@ -3093,7 +3178,7 @@ radarDistributionSetOptions() {
       this.chartInstance?.setOption(obj);
       this.chartOptions.series[0].itemStyle.color = this.barColor;
       this.chartOptions.series[1].lineStyle.color = this.lineColor;
-    } else if(['bar', 'funnel'].includes(this.chartType)){
+    } else if(['bar', 'funnel','horizontalBar'].includes(this.chartType)){
       let obj ={
         color:this.isDistributed ? this.selectedColorScheme : this.color
        }
@@ -3390,6 +3475,9 @@ updateNumberFormat(){
   if(this.chartType === 'bar'){
     this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
     this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'horizontalBar'){
+    this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.xAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
   } else if(this.chartType === 'line'){
     this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
     this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
@@ -3467,7 +3555,7 @@ updateNumberFormat(){
 }
 
 updateCategories(){
-  if(this.chartType === 'bar' || this.chartType === 'line' || this.chartType === 'area'){
+  if(this.chartType === 'bar' || this.chartType === 'horizontalBar' || this.chartType === 'line' || this.chartType === 'area'){
    let obj={
     xAxis:{
       data:this.chartsColumnData
@@ -3573,7 +3661,7 @@ updateCategories(){
 
 }
 updateSeries(){
-  if(this.chartType === 'bar' || this.chartType === 'line' || this.chartType === 'area'){
+  if(this.chartType === 'bar' || this.chartType === 'horizontalBar' || this.chartType === 'line' || this.chartType === 'area'){
     let obj={
      series:[{
        data:this.chartsRowData
