@@ -275,11 +275,14 @@ export class InsightEchartComponent {
             fontSize:this.dataLabelsFontSize,
             fontWeight:this.isBold ? 700 : 400,
             color:this.dataLabelsColor,
-            formatter:(params:any) => this.formatNumber(params.value) 
+            formatter:(params:any) => this.formatNumber(params.value)
            },
           type: 'bar',
           barWidth: '80%',
-          data: this.chartsRowData
+          data: this.chartsRowData,
+          animation: true,
+          animationDuration: 1000,
+          animationEasing: 'cubicOut'
           // data: this.chartsRowData.map((value: any, index: number) => ({
           //   value,
           //   itemStyle: { color: this.isDistributed ? this.selectedColorScheme[index % this.selectedColorScheme.length] : this.color  }
@@ -1200,7 +1203,7 @@ barLineChart(){
         data: this.dualAxisRowData[0]?.data,
         itemStyle:{
           color:this.barColor, // Default bar color
-          
+
       },
         label:{
           show:true,
@@ -1209,8 +1212,11 @@ barLineChart(){
           fontWeight:this.isBold ? 700 : 400,
           position:this.dataLabelsBarFontPosition,
           align:'center',
-          formatter:(params:any) => this.formatNumber(params.value) 
-        }
+          formatter:(params:any) => this.formatNumber(params.value)
+        },
+        animation: true,
+        animationDuration: 1000,
+        animationEasing: 'cubicOut'
       },
 
       {
@@ -1792,11 +1798,14 @@ let barChartOptions = {
         fontSize:this.dataLabelsFontSize,
         fontWeight:this.isBold ? 700 : 400,
         color: this.dataLabelsColor,
-        formatter:(params:any) => this.formatNumber(params.value) 
+        formatter:(params:any) => this.formatNumber(params.value)
        },
       type: 'bar',
       barWidth: '80%',
-      data: this.chartsRowData
+      data: this.chartsRowData,
+      animation: true,
+      animationDuration: 1000,
+      animationEasing: 'cubicOut'
       // data: this.chartsRowData.map((value: any, index: number) => ({
       //   value,
       //   itemStyle: { borderWidth: '50px' }
