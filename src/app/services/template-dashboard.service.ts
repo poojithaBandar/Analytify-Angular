@@ -379,7 +379,7 @@ export class TemplateDashboardService {
         let chartTransformaedData = this.transformTableAndChartData(transformData);
         let chartOptions = sheet.sheet_data.savedChartOptions;
         if(![1, 9, 25].includes(chart_id)){ 
-          chartOptions = this.updateChartOptions(chartOptions,sheet.chart_type,sheet.sheet_data.isApexChart,chartTransformaedData.xAxisCategories,chartTransformaedData.multiSeriesChartData);
+          chartOptions = this.updateChartOptions(chartOptions,chart_id,sheet.sheet_data.isApexChart,chartTransformaedData.xAxisCategories,chartTransformaedData.multiSeriesChartData);
         }
         const transformed = {
           chart_id,
@@ -623,6 +623,7 @@ export class TemplateDashboardService {
         let dualAxisRowData:any=[];
         let chartsColumnData:any=[];
         let chartsRowData:any = [];
+        let totalCount: any;
           if (tablePreviewColumn && tablePreviewRow) {
             tablePreviewColumn.forEach((res: any) => {
               let obj1 = {
@@ -657,6 +658,7 @@ export class TemplateDashboardService {
             } else {
               rowCountStore = transformData?.rows_data[0]?.result_data?.length;
             }
+            totalCount = _.cloneDeep(rowCountStore);
             rowCountStore = rowCountStore > 10 ? 10:rowCountStore;
             for (let i = 0; i < rowCountStore; i++) {
               const row: TableRow = {};
@@ -678,7 +680,7 @@ export class TemplateDashboardService {
           }
           let displayedColumns = tablePreviewColumn.map((col: any) => col.column).concat(tablePreviewRow.map((row: any) => row.column));
           this.dashboardQuerySetIds.push(data.queryset_id);
-          return this.sheetUpdate(chartsColumnData, chartsRowData, dualAxisRowData, dualAxisColumnData,data.sheet_query_data.columns_data,data.sheet_query_data.rows_data,data,dashboardData,index,formType,transformData,tableDataStore,displayedColumns);
+          return this.sheetUpdate(chartsColumnData, chartsRowData, dualAxisRowData, dualAxisColumnData,data.sheet_query_data.columns_data,data.sheet_query_data.rows_data,data,dashboardData,index,formType,transformData,tableDataStore,displayedColumns,totalCount);
         
       });
       
@@ -730,7 +732,7 @@ export class TemplateDashboardService {
     return transformed;
   }
 
-  sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number, formType : string,tranformedData:any,tableDataStore: any[],displayedColumns : string[]) {
+  sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number, formType : string,tranformedData:any,tableDataStore: any[],displayedColumns : string[],totalCount:number) {
     let chartData;
     if(data.chart_id == 8){
       chartData = this.echartInstance.multiLineChart(dualAxisColumnData, dualAxisRowData);
@@ -877,15 +879,15 @@ export class TemplateDashboardService {
 
       }
     }
-    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,"kpiPrefix": "","kpiSuffix": "",kpiDecimalUnit: "none",rows:tranformedData.rows_data},formType,tableDataStore,displayedColumns);
+    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,"kpiPrefix": "","kpiSuffix": "",kpiDecimalUnit: "none",rows:tranformedData.rows_data},formType,tableDataStore,displayedColumns,totalCount);
     dashboardData.push(dashbaordObj);
    return this.workbechService.sheetUpdate(obj, data.sheet_id);
 
   }
 
-  updateDashboardJSONData(chartData: any, data: any, index : number,kpiData : any,formType : string, tableDataStore : any[],displayedColumns : string[]){
+  updateDashboardJSONData(chartData: any, data: any, index : number,kpiData : any,formType : string, tableDataStore : any[],displayedColumns : string[],totalCount: any){
     let tableData;
-    let totalRecordCount;
+    let totalRecordCount = totalCount;
     const sheet_rows_data = data.row_data.map((item:any) => {
       return [
         item.orginal_column,
@@ -923,16 +925,16 @@ export class TemplateDashboardService {
         "tableTotalItems": totalRecordCount,
         "tablePage": 1
       };
-      this.workbechService.tablePaginationSearch(obj).subscribe(
-        {
-          next: (data: any) => {
-             totalRecordCount = data.total_items;
-          },
-          error: (error) => {
-            console.log(error);
-          }
-        }
-      )
+      // this.workbechService.tablePaginationSearch(obj).subscribe(
+      //   {
+      //     next: (data: any) => {
+      //        totalRecordCount = data.total_items;
+      //     },
+      //     error: (error) => {
+      //       console.log(error);
+      //     }
+      //   }
+      // )
     }
       let obj = {
         id : uuidv4(),
@@ -1230,8 +1232,15 @@ export class TemplateDashboardService {
         combinedTableData.push(rowObj);
       }
   
-      if (colArray.length > 0) {
-        xAxisCategories.push(...(colArray[0].result_data?.map((v: any) => v ?? 'null') || []));
+      // if (colArray.length > 0) {
+      //   xAxisCategories.push(...(colArray[0].result_data?.map((v: any) => v ?? 'nu  ll') || []));
+      // }
+
+      const maxLength = Math.max(...colArray.map((col:any) => col.result_data?.length || 0));
+
+      for (let i = 0; i < maxLength; i++) {
+        const combined = colArray.map((col:any) => col.result_data?.[i] ?? 'null').join(', ');
+        xAxisCategories.push(combined);
       }
   
       multiSeriesChartData.push(
@@ -1249,7 +1258,7 @@ export class TemplateDashboardService {
       };
     }
   
-    updateChartOptions(chartOptions: any, chartType: string, isApexChart: boolean,
+    updateChartOptions(chartOptions: any, chartId: any, isApexChart: boolean,
       xAxisCategories: string[], multiSeriesChartData: { name: string; data: number[] }[]): any {
         // chartType = chartType?.toLowerCase();
       // if (!chartOptions) chartOptions = {};
@@ -1281,10 +1290,10 @@ export class TemplateDashboardService {
        if (!chartOptions) chartOptions = {};
   
     if (isApexChart) {
-      if (['pie', 'DONUT'].includes(chartType)) {
+      if ([24, 10].includes(chartId)) {
         chartOptions.series = multiSeriesChartData[0]?.data || [];
         chartOptions.labels = xAxisCategories;
-      } else if(chartType === 'GAUGE'){
+      } else if(chartId == 28){
         chartOptions.series = multiSeriesChartData[0]?.data || [];
         chartOptions.labels = [multiSeriesChartData[0]?.name];
       } else {
@@ -1295,11 +1304,11 @@ export class TemplateDashboardService {
         chartOptions.xaxis.categories = xAxisCategories;
       }
     } else {
-      if (!['RADAR', 'HEAT MAP', 'CALENDAR', 'WORLD MAP', 'pie', 'DONUT', 'FUNNEL'].includes(chartType)) {
+      if (![12, 26, 11, 29, 24, 10, 27].includes(chartId)) {
         chartOptions.series?.forEach((row: any, index: number) => {
           row.data = multiSeriesChartData[index]?.data || [];
         });
-      } else if (chartType === 'HEAT MAP') {
+      } else if (chartId == 26) {
         const heatmapData: any[][] = [];
         multiSeriesChartData.forEach((row, rowIndex: any) => {
           row.data.forEach((value, colIndex: any) => { // Assuming each row has a data array
@@ -1314,15 +1323,16 @@ export class TemplateDashboardService {
         });
       }
   
-      if (chartType === 'DUAL COMBINATION') {
+      if (chartId == 4) {
         chartOptions.xAxis?.forEach((column: any) => {
           column.data = xAxisCategories;
         });
-      } else if (['HORIZONTAL STACKED BAR', 'HORIZONTAL SIDE BY SIDE'].includes(chartType)) {
-        chartOptions.yAxis?.forEach((column: any) => {
-          column.data = xAxisCategories;
-        });
-      } else if (chartType == 'RADAR') {
+      } else if ([2, 3, 14].includes(chartId)) {
+        // chartOptions.yAxis?.forEach((column: any) => {
+        //   column.data = xAxisCategories;
+        // });
+        chartOptions.yAxis.data = xAxisCategories;
+      } else if (chartId == 12) {
         let radarArray = xAxisCategories.map((value: any, index: number) => ({
           name: xAxisCategories[index]
         }));
@@ -1335,7 +1345,7 @@ export class TemplateDashboardService {
         chartOptions.series[0].data.forEach((row: any, index: any) => {
           row.value = multiSeriesChartData[index].data;
         });
-      } else if (chartType === 'CALENDAR') {
+      } else if (chartId == 11) {
         let calendarData: any[] = [];
         let years: Set<any> = new Set();
   
@@ -1391,7 +1401,7 @@ export class TemplateDashboardService {
         } else {
           chartOptions = {};
         }
-      } else if (chartType === 'WORLD MAP') {
+      } else if (chartId == 29) {
         const result: any[] = [];
         let minData = 0;
         const maxData = Math.max(...multiSeriesChartData[0].data);
@@ -1407,7 +1417,7 @@ export class TemplateDashboardService {
           result.push(countryData);
         });
   
-        if (multiSeriesChartData.length > 1) {
+        if (multiSeriesChartData.length > 0) {
           minData = Math.min(...multiSeriesChartData[0].data);
         }
   
@@ -1434,7 +1444,8 @@ export class TemplateDashboardService {
         };
   
         chartOptions.series[0].data = result;
-      } else if(['pie', 'DONUT', 'FUNNEL'].includes(chartType)){
+        chartOptions = {...chartOptions};
+      } else if([24, 10, 27].includes(chartId)){
         let data: any[] = [];
         xAxisCategories.forEach((col: any, index: any) => {
           data.push({ value: multiSeriesChartData[0].data[index], name: col })
