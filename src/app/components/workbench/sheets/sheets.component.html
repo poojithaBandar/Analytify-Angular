@@ -127,7 +127,7 @@
                     <div class="input-group justify-content-between">
                     <h6 class="mb-0 p-1">Tables</h6>
 
-                    <div class="dashboard-option">
+                    <div [ngClass]="{ 'd-none': !databaseId }" class="dashboard-option">
                         <div class=" p-1" ngbDropdown [autoClose]="false" #level1="ngbDropdown">
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                 aria-haspopup="true" aria-expanded="false" class="" ><i
@@ -135,7 +135,7 @@
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
                                 <div class="" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
-                                <a class="dropdown-item btn-primary-light" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
+                                <a *ngIf="databaseId" class="dropdown-item btn-primary-light" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
                                 <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
                                     <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
                                         <div cdkDropList cdkDropListOrientation="horizontal" class="form-control calculated-parent-card" 
@@ -1212,15 +1212,16 @@
                                                                             <!-- <input type="number" value="10" /><span>by</span> -->
                                                                         </div>
                                                                         <div class="field-options ">
-                                                                            <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
+                                                                            <select class="field-options-width"  [(ngModel)]="selectedTopColumn" (change)="onRowSelected()">
                                                                                 <option value="select" selected disabled> select </option>
                                                                                 <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                             </select>
                                                                             <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
-                                                                                <option value="sum">Sum</option>
-                                                                                <option value="avg">Avg</option>
-                                                                                <option value="min">Min</option>
-                                                                                <option value="max">Max</option>
+                                                                                <option value="" selected disabled> select </option>
+                                                                                <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="sum">Sum</option>
+                                                                                <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="avg">Avg</option>
+                                                                                <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="min">Min</option>
+                                                                                <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="max">Max</option>
                                                                                 <option value="count">Count</option>
                                                                             </select>
                                                                         </div>
@@ -1778,15 +1779,16 @@
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
                                                                     <div class="field-options">
-                                                                        <select class="field-options-width" [(ngModel)]="selectedTopColumn">
+                                                                        <select class="field-options-width" [(ngModel)]="selectedTopColumn" (change)="onRowSelected()">
                                                                             <option value="select" selected disabled> select </option>
                                                                             <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                         </select>
                                                                         <select class="topAggregate-width" [(ngModel)] = "topAggregate">
-                                                                            <option value="sum">Sum</option>
-                                                                            <option value="avg">Avg</option>
-                                                                            <option value="min">Min</option>
-                                                                            <option value="max">Max</option>
+                                                                            <option value="" selected disabled> select </option>
+                                                                            <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="sum">Sum</option>
+                                                                            <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="avg">Avg</option>
+                                                                            <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="min">Min</option>
+                                                                            <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="max">Max</option>
                                                                             <option value="count">Count</option>
                                                                         </select>
                                                                     </div>
@@ -3315,15 +3317,16 @@
                                                                                                     <!-- <input type="number" value="10" /><span>by</span> -->
                                                                                                 </div>
                                                                                                 <div class="field-options">
-                                                                                                    <select class="field-options-width" [(ngModel)]="selectedTopColumn">
+                                                                                                    <select class="field-options-width" [(ngModel)]="selectedTopColumn" (change)="onRowSelected()">
                                                                                                         <option value="select" selected disabled> select </option>
                                                                                                         <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                                                     </select>
                                                                                                     <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
-                                                                                                        <option value="sum">Sum</option>
-                                                                                                        <option value="avg">Avg</option>
-                                                                                                        <option value="min">Min</option>
-                                                                                                        <option value="max">Max</option>
+                                                                                                        <option value="" selected disabled> select </option>
+                                                                                                        <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="sum">Sum</option>
+                                                                                                        <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="avg">Avg</option>
+                                                                                                        <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="min">Min</option>
+                                                                                                        <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="max">Max</option>
                                                                                                         <option value="count">Count</option>
                                                                                                     </select>
                                                                                                 </div>
