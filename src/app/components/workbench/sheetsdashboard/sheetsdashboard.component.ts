@@ -201,7 +201,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   usersForUpdateDashboard:[] =[];
   tableNameSelectedForFilter:any;
   isPanelHidden: boolean = true;
-  frequency! : number;
+  frequency : number = 0;
 
   tableItemsPerPage:any;
   tablePageNo = 1;
@@ -246,7 +246,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   isEmbeddedFilter : boolean = false;
   genieHover = false;
   showGenieTooltip = false;
-
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -7100,6 +7099,16 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       }
       }
      }
+
+     onClearClick(dropdown: any): void {
+      dropdown.close();
+      // optionally reset your fields:
+      this.imageTitle = '';
+      this.uploadedImage = null;
+      this.fileName = 'No file chosen'; 
+      this.imageUpload.nativeElement.value = '';
+    }
+
   addTextItem() {
     this.textEditorContent = '';
     this.textEditorTitle = '';
@@ -7819,7 +7828,11 @@ validateTextEditor(): boolean {
       }
       this.workbechService.autoRefreshFrequency(object).subscribe({
         next:(data)=>{
-          this.toasterService.success('Dashboard refresh scheduled.','success',{ positionClass: 'toast-center-center'});
+          if(this.frequency > 0){
+            this.toasterService.success('Refresh interval updated successfully.','success',{ positionClass: 'toast-top-right'})
+            } else {
+              this.toasterService.success('Refresh interval cancelled/removed successfully.','success',{ positionClass: 'toast-top-right'})
+            }
           if(this.refreshNow){
           this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
             next:(data)=>{

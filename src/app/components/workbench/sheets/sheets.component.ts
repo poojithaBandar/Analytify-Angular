@@ -374,7 +374,7 @@ export class SheetsComponent{
   topType: string = 'desc';
   topLimit: number = 5;
   selectedTopColumn: any = 'select';
-  topAggregate: string = 'sum';
+  topAggregate: string = '';
 
   previewFromDate: any;
   previewToDate: any;
@@ -2059,6 +2059,7 @@ try {
     this.dimetionMeasure = [];
     this.dualAxisColumnData = [];
     this.dualAxisRowData = [];
+    this.radarRowData = [];
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
@@ -3699,7 +3700,7 @@ trackByFn(index: number, item: any): number {
         this.filterDateRange = [];
         this.formatExtractType = '';
         this.selectedTopColumn = 'select';
-        this.topAggregate = 'sum';
+        this.topAggregate = '';
         this.topLimit = 5;
         this.topType = 'desc';
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
@@ -3737,6 +3738,7 @@ trackByFn(index: number, item: any): number {
           this.selectedTopColumn = responce?.top_bottom[0];
           this.topAggregate = responce?.top_bottom[1];
           this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
+          this.onRowSelected();
         }
         if(responce.is_embedded){
           this.activeTabId = 7;
@@ -3907,7 +3909,7 @@ trackByFn(index: number, item: any): number {
           this.filterDateRange = [];
           this.isAllSelected = false;
           this.selectedTopColumn = 'select';
-          this.topAggregate = 'sum';
+          this.topAggregate = '';
           this.topLimit = 5;
           this.topType = 'desc';
           this.defaultRelativeDates();
@@ -7702,6 +7704,16 @@ qoqOptions = [
   'QOQ Option 4', 'QOQ Option 5', 'QOQ Option 6',
   'QOQ Option 7', 'QOQ Option 8'
 ];
+
+topSelecetdColumnDataType : any = '';
+onRowSelected() {
+  const selectedColumnObj = this.draggedRows.find((col: any) => col.column === this.selectedTopColumn);
+  if (selectedColumnObj) {
+    this.topSelecetdColumnDataType = selectedColumnObj.data_type || '';
+  } else {
+    this.topSelecetdColumnDataType = '';
+  }
+}
 
 }
 
