@@ -63,6 +63,7 @@ export class WorkbenchComponent implements OnInit{
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
   openMongoDbForm = false;
+  openSapHanaForm = false;
   openTallyForm = false;
   sqlLiteForm = false;
   openTablesUI = false;
@@ -932,23 +933,29 @@ export class WorkbenchComponent implements OnInit{
 )
     }
     DatabaseUpdate(){
-      const obj={
-          // "database_type":"postgresql",
+      const obj:any = {
           "database_type":this.databaseType,
           "hostname":this.postGreServerName,
           "port":this.postGrePortName,
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
-          "database": this.postGreDatabaseName,
           "display_name":this.displayName,
           "database_id":this.databaseId,
-          "schema": this.selectedSchema
-      }as any
+      };
       if(this.databaseType === 'oracle'){
-        delete obj.database
-        obj.service_name=this.postGreDatabaseName;
+        obj.service_name = this.postGreDatabaseName;
+      }else if(this.databaseType === 'sap hana'){
+        if(this.postGreDatabaseName){
+          obj.database = this.postGreDatabaseName;
+        }
+        if(this.selectedSchema){
+          obj.schema = this.selectedSchema;
+        }
+      }else{
+        obj.database = this.postGreDatabaseName;
+        obj.schema = this.selectedSchema;
       }
-        this.workbechService.postGreSqlConnectionput(obj).subscribe({next: (responce) => {
+      this.workbechService.postGreSqlConnectionput(obj).subscribe({next: (responce) => {
               console.log(responce);
               this.modalService.dismissAll('close');
               this.schemaList = [];
@@ -1733,6 +1740,62 @@ export class WorkbenchComponent implements OnInit{
       });
     }
 
+    openSapHana(){
+      this.openSapHanaForm = true;
+      this.databaseconnectionsList = false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+      this.selectedSchema = '';
+    }
+
+    sapHanaSignIn(){
+      const obj:any = {
+          "database_type":"sap hana",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "display_name":this.displayName,
+      };
+      if(this.postGreDatabaseName){
+        obj.database = this.postGreDatabaseName;
+      }
+      if(this.selectedSchema){
+        obj.schema = this.selectedSchema;
+      }
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip === true) {
+          this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
+                if(responce){
+                  this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                  this.databaseId=responce.database?.hierarchy_id;
+                  this.modalService.dismissAll();
+                  if(!this.datasourceSwitchUI){
+                  this.openSapHanaForm = false;
+                  }
+                  const encodedId = btoa(this.databaseId.toString());
+                  if(this.iscrossDbSelect){
+                    this.selectedHirchyIdCrsDb = this.databaseId;
+                    this.connectCrossDbs();
+                  }else if(this.datasourceSwitchUI){
+                    this.switchDatabase();
+                  }else{
+                    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  }
+                }
+              },
+              error: (error) => {
+                console.log(error);
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'});
+              }
+            }
+          )
+        } else if(isSkip === false) {
+          this.checkDataSourceConnection(obj);
+        }
+      });
+    }
+
     opensqlLite(){
       this.sqlLiteForm=true;
       this.databaseconnectionsList= false;
@@ -2217,7 +2280,7 @@ connectGoogleSheets(){
       } else {
         this.postGreDatabaseName = editData.database;
       }
-      if(this.databaseType == 'postgresql'){
+      if(this.databaseType == 'postgresql' || this.databaseType == 'sap hana'){
         this.selectedSchema = editData.schema;
       }
       this.errorCheck();
@@ -2333,6 +2396,7 @@ connectGoogleSheets(){
   this.openMicrosoftSqlServerForm = false;
   this.openSnowflakeServerForm = false;
   this.ibmDb2Form= false;
+  this.openSapHanaForm = false;
   this.sqlLiteForm = false;
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
@@ -2415,14 +2479,22 @@ connectGoogleSheets(){
   }
   databaseConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? '' : 'public';
       this.schemaList = [];
     }
+    if(this.openSapHanaForm){
+      if(this.postGreDatabaseName || this.selectedSchema){
+        this.databaseError = false;
+      }else{
+        this.databaseError = true;
+      }
+    } else {
       if (this.postGreDatabaseName) {
         this.databaseError = false;
       } else {
         this.databaseError = true;
       }
+    }
     this.portConditionError();
     this.errorCheck();
   }
@@ -2498,6 +2570,15 @@ connectGoogleSheets(){
         } else{
           this.disableConnectBtn = false;
         }
+      }
+    } 
+    else if(this.openSapHanaForm){
+      if(this.serverError || this.portError || this.userNameError || this.displayNameError || this.passwordError || this.databaseError){
+        this.disableConnectBtn = true;
+      } else if(!(this.postGreServerName && this.postGrePortName && this.postGreUserName && this.displayName && this.PostGrePassword && (this.postGreDatabaseName || this.selectedSchema))) {
+        this.disableConnectBtn = true;
+      } else{
+        this.disableConnectBtn = false;
       }
     }
     else if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
@@ -2613,14 +2694,16 @@ connectGoogleSheets(){
 
   fetchSchemaList() {
     this.loaderService.show();
-    const obj = {
-      "database_type": "postgresql",
+    const obj:any = {
+      "database_type": this.openSapHanaForm ? "sap hana" : "postgresql",
       "hostname": this.postGreServerName,
       "port": this.postGrePortName,
       "username": this.postGreUserName,
       "password": this.PostGrePassword,
-      "database": this.postGreDatabaseName,
       "display_name": this.displayName
+    };
+    if(this.postGreDatabaseName){
+      obj.database = this.postGreDatabaseName;
     }
     this.workbechService.fetchSchemaList(obj).subscribe({
       next: (responce) => {
