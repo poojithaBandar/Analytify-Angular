@@ -100,6 +100,7 @@ export class WorkbenchComponent implements OnInit{
   canUploadCsv = false;
   schemaList: any[] = [];
   selectedSchema : string = 'public';
+  readonly SAP_DEFAULT_SCHEMA = 'DBADMIN';
   querysetIdFromDataSource :any;
   datasourceSwitchUI=false;
   databaseSwitchType:any;
@@ -959,7 +960,7 @@ export class WorkbenchComponent implements OnInit{
               console.log(responce);
               this.modalService.dismissAll('close');
               this.schemaList = [];
-              this.selectedSchema = 'public';
+              this.selectedSchema = this.databaseType === 'sap hana' ? this.SAP_DEFAULT_SCHEMA : 'public';
               if(responce){
                 this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
               }
@@ -1745,7 +1746,7 @@ export class WorkbenchComponent implements OnInit{
       this.databaseconnectionsList = false;
       this.viewNewDbs = false;
       this.emptyVariables();
-      this.selectedSchema = '';
+      this.selectedSchema = this.SAP_DEFAULT_SCHEMA;
     }
 
     sapHanaSignIn(){
@@ -2281,7 +2282,7 @@ connectGoogleSheets(){
         this.postGreDatabaseName = editData.database;
       }
       if(this.databaseType == 'postgresql' || this.databaseType == 'sap hana'){
-        this.selectedSchema = editData.schema;
+        this.selectedSchema = editData.schema || (this.databaseType === 'sap hana' ? this.SAP_DEFAULT_SCHEMA : 'public');
       }
       this.errorCheck();
     }
@@ -2454,7 +2455,7 @@ connectGoogleSheets(){
 
   serverConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.postGreServerName){
@@ -2466,7 +2467,7 @@ connectGoogleSheets(){
   }
   portConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.postGrePortName){
@@ -2479,7 +2480,7 @@ connectGoogleSheets(){
   }
   databaseConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = this.openSapHanaForm ? '' : 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.openSapHanaForm){
@@ -2500,7 +2501,7 @@ connectGoogleSheets(){
   }
   userNameConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.postGreUserName){
@@ -2533,7 +2534,7 @@ connectGoogleSheets(){
   }
   passwordConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.PostGrePassword){
