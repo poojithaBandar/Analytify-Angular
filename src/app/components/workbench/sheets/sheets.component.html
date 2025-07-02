@@ -1194,7 +1194,7 @@
                                                                               <option value="desc">Top</option>
                                                                               <option value="asc">Bottom</option>
                                                                             </select>
-                                                                            <select [(ngModel)] = "topLimit">
+                                                                            <!-- <select [(ngModel)] = "topLimit">
                                                                                 <option *ngIf="totalDataLength > 0" value="5">5</option>
                                                                                 <option *ngIf="totalDataLength > 5" value="10">10</option>
                                                                                 <option *ngIf="totalDataLength > 10" value="20">20</option>
@@ -1208,7 +1208,8 @@
                                                                                 <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
                                                                                 <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
                                                                                 <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                              </select>
+                                                                              </select> -->
+                                                                            <input type="number" [(ngModel)] = "topLimit" min="1">
                                                                             <!-- <input type="number" value="10" /><span>by</span> -->
                                                                         </div>
                                                                         <div class="field-options ">
@@ -1296,7 +1297,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid) ||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && (selectedTopColumn == 'select' || topAggregate == '') ) || (activeTabId === 5 && !isRelativeDateValid) ||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -1761,7 +1762,7 @@
                                                                           <option value="desc">Top</option>
                                                                           <option value="asc">Bottom</option>
                                                                         </select>
-                                                                        <select [(ngModel)] = "topLimit">
+                                                                        <!-- <select [(ngModel)] = "topLimit">
                                                                             <option *ngIf="totalDataLength > 0" value="5">5</option>
                                                                             <option *ngIf="totalDataLength > 5" value="10">10</option>
                                                                             <option *ngIf="totalDataLength > 10" value="20">20</option>
@@ -1775,7 +1776,8 @@
                                                                             <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
                                                                             <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
                                                                             <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                          </select>
+                                                                          </select> -->
+                                                                          <input type="number" [(ngModel)] = "topLimit" min="1">
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
                                                                     <div class="field-options">
@@ -1792,6 +1794,7 @@
                                                                             <option value="count">Count</option>
                                                                         </select>
                                                                     </div>
+                                                                    <span *ngIf="isMeasureAbsent" class="text-danger">*Filtered Measure not present in Row Shelf</span>
                                                                 </div>
                                                             </div>
                                                         </ng-template>
@@ -1871,7 +1874,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && (selectedTopColumn == 'select'  || topAggregate == '' || isMeasureAbsent)) || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -3299,7 +3302,7 @@
                                                                                                       <option value="desc">Top</option>
                                                                                                       <option value="asc">Bottom</option>
                                                                                                     </select>
-                                                                                                    <select [(ngModel)] = "topLimit">
+                                                                                                    <!-- <select [(ngModel)] = "topLimit">
                                                                                                         <option *ngIf="totalDataLength > 0" value="5">5</option>
                                                                                                         <option *ngIf="totalDataLength > 5" value="10">10</option>
                                                                                                         <option *ngIf="totalDataLength > 10" value="20">20</option>
@@ -3313,7 +3316,8 @@
                                                                                                         <option *ngIf="totalDataLength > 2000" value="3000">3000</option>
                                                                                                         <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
                                                                                                         <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                                                      </select>
+                                                                                                      </select> -->
+                                                                                                      <input type="number" [(ngModel)] = "topLimit" min="1">
                                                                                                     <!-- <input type="number" value="10" /><span>by</span> -->
                                                                                                 </div>
                                                                                                 <div class="field-options">
@@ -3330,6 +3334,7 @@
                                                                                                         <option value="count">Count</option>
                                                                                                     </select>
                                                                                                 </div>
+                                                                                                <span *ngIf="isMeasureAbsent" class="text-danger">*Filtered Measure not present in Row Shelf</span>
                                                                                             </div>
                                                                                         </div>
                                                                                     </ng-template>
@@ -3407,7 +3412,7 @@
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
+                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && (selectedTopColumn == 'select'  || topAggregate == '' || isMeasureAbsent)) || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close

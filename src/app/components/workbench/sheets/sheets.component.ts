@@ -7706,12 +7706,15 @@ qoqOptions = [
 ];
 
 topSelecetdColumnDataType : any = '';
+isMeasureAbsent : boolean = false;
 onRowSelected() {
   const selectedColumnObj = this.draggedRows.find((col: any) => col.column === this.selectedTopColumn);
   if (selectedColumnObj) {
     this.topSelecetdColumnDataType = selectedColumnObj.data_type || '';
+    this.isMeasureAbsent = false;
   } else {
     this.topSelecetdColumnDataType = '';
+    this.isMeasureAbsent = true;
   }
 }
 
