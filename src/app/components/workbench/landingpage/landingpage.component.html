@@ -533,6 +533,10 @@
                                         <img alt="product" src="./assets/images/icons/postSQL-icon.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
+                                    <td *ngIf="database.server_type === 'SAP HANA'">
+                                        <img alt="product" src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
                                     <td *ngIf="database.server_type === 'TALLY'">
                                         <img alt="product" src="./assets/images/icons/TallyLogo.png"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
