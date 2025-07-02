@@ -803,7 +803,12 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
   };
   return this.chartOptions;
 }
-hstackedChart(){
+
+  hstackedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
+    if(dualAxisColumnData && dualAxisRowData){
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);

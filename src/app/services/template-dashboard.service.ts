@@ -749,8 +749,10 @@ export class TemplateDashboardService {
       chartData = this.echartInstance.sidebySide(dualAxisColumnData, dualAxisRowData);
     }  else if(data.chart_id == 27) {
       chartData = this.echartInstance.funnelchart(dualAxisColumnData, dualAxisRowData);
-    }  else if(data.chart_id == 29) {
+    } else if(data.chart_id == 29) {
       chartData = this.echartInstance.mapChart(dualAxisColumnData, dualAxisRowData,chartsRowData);
+    }  else if(data.chart_id == 2) {
+      chartData = this.echartInstance.hstackedChart(dualAxisColumnData, dualAxisRowData);
     }
     const sheetRows = data.row_data.map((item:any) => {
       return {
