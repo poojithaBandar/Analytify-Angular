@@ -923,8 +923,7 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
     
 
   };
-  console.log('Categories:', categories);
-console.log('Y Axis Options:', yaxisOptions);
+  return this.chartOptions;
 }
 areaChart(){
   this.chartOptions = {
