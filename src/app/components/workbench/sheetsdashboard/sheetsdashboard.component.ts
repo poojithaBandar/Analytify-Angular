@@ -247,14 +247,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   genieHover = false;
   showGenieTooltip = false;
 
-  dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz', 'nullable(date)', 'nullable(time)', 'nullable(datetime)',
-    'nullable(timestamp)',
-    'nullable(timestamp with time zone)',
-    'nullable(timestamp without time zone)',
-    'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)',
-    'nullable(datetime)', 'datetime64', 'datetime32', 'date32', 'nullable(date32)', 'nullable(datetime64)', 'nullable(datetime32)', 'date', 'datetime', 'time', 'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 'nullable(date32)']
-
-
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef){
@@ -6702,24 +6694,27 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   getActionData(actionId : any){
     if(this.actionId && this.actionId != 0){
       this.setDrillThrough('',[]);
+      this.actionId = '';
+      this.sourceSheetId = 0;
+    } else {
+      console.log(actionId);
+      this.workbechService.getDrillThroughAction(actionId, this.isPublicUrl).subscribe({
+        next: (data) => {
+          console.log(data);
+          this.actionId = data.drill_through_id;
+          this.sourceSheetId = data.source_sheet_id;
+        },
+        error: (error) => {
+          console.log(error)
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      });
     }
-    console.log(actionId);
-    this.workbechService.getDrillThroughAction(actionId, this.isPublicUrl).subscribe({
-      next:(data)=>{
-        console.log(data);
-        this.actionId = data.drill_through_id;
-        this.sourceSheetId = data.source_sheet_id;
-      },
-      error:(error)=>{
-        console.log(error)
-        Swal.fire({
-          icon: 'error',
-          title: 'oops!',
-          text: error.error.message,
-          width: '400px',
-        })
-      }
-    });
   }
   updateDrillThroughAction(){
     const Obj = {
@@ -6861,15 +6856,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       selectedXValue = selectedValue.split(',').map((item : any) => [item]);
       item.column_Data.forEach((col: any) => {
         columnNames.push(col[0]);
-        if (this.dateList.includes(col[1])) {
-          if (col[2] === '') {
-            dataTypes.push(col[1]);
-          } else{
-            dataTypes.push(col[2]);
-          }
-        } else {
-          dataTypes.push(col[1]);
-        }
+        dataTypes.push(col[1]);
       });
       }
         let filterKeys = Object.keys(filterData);
