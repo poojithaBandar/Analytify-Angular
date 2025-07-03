@@ -6694,24 +6694,27 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   getActionData(actionId : any){
     if(this.actionId && this.actionId != 0){
       this.setDrillThrough('',[]);
+      this.actionId = '';
+      this.sourceSheetId = 0;
+    } else {
+      console.log(actionId);
+      this.workbechService.getDrillThroughAction(actionId, this.isPublicUrl).subscribe({
+        next: (data) => {
+          console.log(data);
+          this.actionId = data.drill_through_id;
+          this.sourceSheetId = data.source_sheet_id;
+        },
+        error: (error) => {
+          console.log(error)
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      });
     }
-    console.log(actionId);
-    this.workbechService.getDrillThroughAction(actionId, this.isPublicUrl).subscribe({
-      next:(data)=>{
-        console.log(data);
-        this.actionId = data.drill_through_id;
-        this.sourceSheetId = data.source_sheet_id;
-      },
-      error:(error)=>{
-        console.log(error)
-        Swal.fire({
-          icon: 'error',
-          title: 'oops!',
-          text: error.error.message,
-          width: '400px',
-        })
-      }
-    });
   }
   updateDrillThroughAction(){
     const Obj = {
