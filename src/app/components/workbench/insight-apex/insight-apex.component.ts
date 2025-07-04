@@ -24,7 +24,7 @@ interface Dimension {
   styleUrl: './insight-apex.component.scss'
 })
 export class InsightApexComponent {
-  @Input() chartsRowData: any; 
+  @Input() chartsRowData: any;
   @Input() chartsColumnData: any;
   @Input() dualAxisColumnData : any;
   @Input() dualAxisRowData : any;
@@ -106,7 +106,7 @@ export class InsightApexComponent {
 
   ngOnChanges(changes: SimpleChanges) {
 
-    if(changes['SDKChartOptions']){
+  if(changes['SDKChartOptions']){
       this.chartOptions = this.SDKChartOptions;
       this.chartType = this.chartType;
     } else {
