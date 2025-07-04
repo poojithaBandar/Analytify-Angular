@@ -194,8 +194,53 @@
                   </ng-select>
                 </div>
               </form>
+            } 
+            @else if(databaseType == 'sap hana') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': serverError}" class="col-form-label">Server<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': portError}" class="col-form-label">Port<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 443" (input)="portConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': databaseError}" class="col-form-label">Database</label>
+                  <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. SAPHDB" (input)="databaseConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': userNameError}" class="col-form-label">User Name <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Admin" (input)="userNameConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. SAP" (input)="displayNameConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': passwordError}" class="col-form-label">Password <span class="text-danger ms-1">*</span></label>
+                  <div class="d-flex">
+                    <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
+                    <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>
+                  </div>
+                </div>
+                @if(schemaList && schemaList.length > 0) {
+                <div class="mb-2">
+                  <label class="col-form-label">Select Schema</label>
+                  <select id="schemaupdateSelect" [(ngModel)]="selectedSchema" [ngModelOptions]="{standalone: true}" class="form-select">
+                    <option value="" disabled selected>Select Schema</option>
+                    <option *ngFor="let schema of schemaList" [value]="schema">{{ schema }}</option>
+                  </select>
+                </div>
+                }
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
+                  <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
+                  <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
+                </div>
+              </form>
             }
-            
+
              @else {
             <form>
               <div class="mb-2">
