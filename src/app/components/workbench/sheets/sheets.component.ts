@@ -1706,7 +1706,7 @@ try {
              this.tabs.push(this.sheetName);
           }else{
             this.getChartData();
-            this.sheetNumber = this.tabs.length+1;
+            this.sheetNumber = this.getNextSheetNumber();
              this.tabs.push('Sheet ' +this.sheetNumber);
              this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
              this.selectedTabIndex = this.tabs.length - 1;
@@ -1740,7 +1740,7 @@ try {
        this.tabs.push(this.sheetName);
     }else{
       this.getChartData();
-      this.sheetNumber = this.tabs.length+1;
+      this.sheetNumber = this.getNextSheetNumber();
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
        this.selectedTabIndex = this.tabs.length - 1;
@@ -1753,7 +1753,7 @@ try {
   }
 
   sheetDuplicate(){
-    this.sheetNumber = this.tabs.length+1;
+    this.sheetNumber = this.getNextSheetNumber();
     this.sheetTagName = 'Sheet ' +this.sheetNumber;
     // this.setChartType();
     if(this.filterId?.length > 0){
@@ -1764,7 +1764,7 @@ try {
           this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
           this.selectedTabIndex = this.tabs.length - 1;
           this.sheetRetrive(true,data.filters_list);
-          
+
         },
         error: (error: any) => {
           Swal.fire({
@@ -1782,6 +1782,26 @@ try {
       this.selectedTabIndex = this.tabs.length - 1;
       this.sheetRetrive(true);
     }
+  }
+
+  getNextSheetNumber(): number {
+    const existingSheetNumbers = this.tabs
+      .map(tab => {
+        const name = tab.sheet_name;
+        const match = name.match(/^Sheet (\d+)$/);
+        return match ? parseInt(match[1], 10) : null;
+      })
+      .filter(num => num !== null)
+      .sort((a:any, b:any) => a - b);
+
+    let newSheetNumber = 1;
+    for (let i = 0; i < existingSheetNumbers.length; i++) {
+      if (existingSheetNumbers[i] !== i + 1) {
+        return i + 1;
+      }
+    }
+
+    return existingSheetNumbers.length + 1;
   }
 
   sheetNameChange(name:any,event:any){
@@ -3641,7 +3661,7 @@ filterCheck(event: any, data: string) {
   } else {
     this.filterDataArray.delete(data);
   }
-
+  this.isAllSelected = this.filterData.every((element: any) => element.selected);
   console.log('Selected Filters:', this.filterDataArray);
 }
 
@@ -3780,6 +3800,7 @@ trackByFn(index: number, item: any): number {
               this.filterDataArray.add(filter.label);
             }
           });
+          this.isAllSelected = this.filterData.length === this.filterDataArray.size;
         }
         if(this.dateList.includes(responce.data_type) && responce?.range_values){
           let rawLabel = this.filterData[0].label;
@@ -7717,6 +7738,23 @@ onRowSelected() {
     this.isMeasureAbsent = true;
   }
 }
+
+  onEditorReady(editor: any) {
+    setTimeout(() => {
+      editor.editing.view.focus();
+
+      editor.model.change((writer: any) => {
+        const root = editor.model.document.getRoot();
+        const endPosition = writer.createPositionAt(root, 'end');
+        writer.setSelection(endPosition);
+      });
+    }, 0);
+
+    const editableElement = editor.ui.view.editable.element;
+    editableElement.addEventListener('blur', () => {
+      this.editor = false;
+    });
+  }
 
 }
 
