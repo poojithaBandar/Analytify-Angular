@@ -233,11 +233,6 @@
                   </select>
                 </div>
                 }
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
-                  <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
-                  <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
-                </div>
               </form>
             }
 
@@ -321,7 +316,12 @@
             } @else if(databaseType == 'immybot') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="ImmybotConnectionUpdate()" [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot ) ">Update</button>
-            } @else {
+            } @else if(databaseType == 'sap hana') {
+              <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
+              <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
+            }
+            @else {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
             }
@@ -428,6 +428,10 @@
                       <td *ngIf="database.server_type === 'SALESFORCE'">
                         <img alt="product" src="./assets/images/icons/salesforce-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'SAP HANA'">
+                        <img alt="product" src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      
                       <td *ngIf="database.server_type === 'CONNECTWISE'">
                         <img alt="product" src="./assets/images/icons/connectwise-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
@@ -546,6 +550,8 @@
                                         <img src="./assets/images/icons/csv-icon.jpg" alt="" class="rounded-circle"></span>
                                         <span *ngIf="database.server_type === 'SALESFORCE'" class="avatar avatar rounded-circle">
                                           <img src="./assets/images/icons/salesforce-icon.jpg" alt="" class="rounded-circle"></span>
+                                          <span *ngIf="database.server_type === 'SAP HANA'" class="avatar avatar rounded-circle">
+                                            <img src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png" alt="" class="rounded-circle"></span>
                                           <span *ngIf="database.server_type === 'QUICKBOOKS'" class="avatar avatar rounded-circle">
                                             <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
                                             <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
