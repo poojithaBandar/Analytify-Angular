@@ -159,6 +159,17 @@
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Tally" (input)="displayNameIntegrationConditionError()">
                 </div>
               </form>
+            } @else if(databaseType == 'open_ai') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': openAiKeyError}" class="col-form-label">OpenAI Key <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': openAiKeyError}" type="text" class="form-control" [(ngModel)]="openAiKey" [ngModelOptions]="{standalone: true}" (input)="openAiKeyInputError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. OpenAI" (input)="displayNameIntegrationConditionError()">
+                </div>
+              </form>
             }@else if(databaseType == 'google_analytics') {
               <form>
                 <div class="mb-2">
