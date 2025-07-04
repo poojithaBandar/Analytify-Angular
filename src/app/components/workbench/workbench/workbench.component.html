@@ -410,7 +410,9 @@
                       <td *ngIf="database.server_type === 'HUBSPOT'">
                         <img alt="product" src="./assets/images/icons/hubspotlogo.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
-                      
+                      <td *ngIf="database.server_type === 'OPEN_AI'">
+                        <img alt="product" src="https://logo.clearbit.com/openai.com" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>                      
                       <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
@@ -506,6 +508,8 @@
                                           <img src="./assets/images/icons/salesforce-icon.jpg" alt="" class="rounded-circle"></span>
                                           <span *ngIf="database.server_type === 'QUICKBOOKS'" class="avatar avatar rounded-circle">
                                             <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
+                                            <span *ngIf="database.server_type === 'OPEN_AI'" class="avatar avatar rounded-circle">
+                                              <img src="https://logo.clearbit.com/openai.com" alt="" class="rounded-circle"></span>
                                             <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
