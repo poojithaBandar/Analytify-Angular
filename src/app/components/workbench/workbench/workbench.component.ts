@@ -61,6 +61,7 @@ export class WorkbenchComponent implements OnInit{
   openHubspotForm = false;
   openShopifyForm =false;
   openGoogleAnalyticsForm = false;
+  openOpenAIForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -358,6 +359,7 @@ export class WorkbenchComponent implements OnInit{
     shopifyToken = '';
     shopifyName = '';
     tallyToken = '';
+    openAiKey = '';
 
     googleAnalytics: {
       type: string;
@@ -893,6 +895,27 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+
+    openAIUpdate(){
+      const obj = {
+        "open_ai_key": this.openAiKey,
+        "display_name": this.displayName,
+        "hierarchy_id": this.databaseId
+      }
+      this.workbechService.openAiConnectionUpdate(obj).subscribe({next:(res)=>{
+            this.modalService.dismissAll('close');
+            if(res){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error:(error)=>{
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
     googleAnalyticsUpdate(){
       const g = this.googleAnalytics;
      const obj = { type: g.type,
@@ -1076,13 +1099,19 @@ export class WorkbenchComponent implements OnInit{
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
     }
-    connectHubspot(){
-      this.openHubspotForm = true;
-      this.databaseconnectionsList = false;
-      this.viewNewDbs = false;
-      this.emptyVariables();
-    }
-    companyIdError(){
+  connectHubspot(){
+    this.openHubspotForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
+  connectOpenAI(){
+    this.openOpenAIForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
+  companyIdError(){
       if(this.companyId){
         this.companyIDError = false;
       }else{
@@ -1194,6 +1223,13 @@ export class WorkbenchComponent implements OnInit{
         this.tallyTokenError = false;
       }else{
         this.tallyTokenError = true;
+      }
+    }
+    openAiKeyInputError(){
+      if(this.openAiKey){
+        this.openAiKeyError = false;
+      }else{
+        this.openAiKeyError = true;
       }
     }
     shopfyNameError(){
@@ -1494,6 +1530,34 @@ export class WorkbenchComponent implements OnInit{
           }
         }
       }, error: (error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      }});
+    }
+
+    openAISignIn(){
+      const obj = {
+        "open_ai_key": this.openAiKey,
+        "display_name": this.displayName
+      }
+      this.workbechService.openAiConnection(obj).subscribe({next:(res)=>{
+        if(res){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = res?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openOpenAIForm = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+          }
+        }
+      }, error:(error)=>{
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       }});
     }
@@ -2198,6 +2262,9 @@ connectGoogleSheets(){
     } else if (this.databaseType == "tally") {
       this.displayName = editData.display_name;
       this.tallyToken = editData.token_key;
+    } else if (this.databaseType == "open_ai") {
+      this.displayName = editData.display_name;
+      this.openAiKey = editData.open_ai_key;
     }else if (this.databaseType === 'google_analytics') {
       this.googleAnalytics = {
         type: 'service_account',
@@ -2346,6 +2413,7 @@ connectGoogleSheets(){
   this.openHaloPSAForm = false;
   this.openShopifyForm = false;
   this.openTallyForm = false;
+  this.openOpenAIForm = false;
   this.openHubspotForm = false;
   this.openGoogleAnalyticsForm = false;
   this.openGoogleAnalyticsForm = false;
@@ -2366,6 +2434,8 @@ connectGoogleSheets(){
   this.siteURLPSA = '';
   this.tallyToken = '';
   this.tallyTokenError = false;
+  this.openAiKey = '';
+  this.openAiKeyError = false;
   this.ninjaRMMClientid = '';
   this.ninjaRMMClientSecret = '';
   this.selectedNinjaRMMScopes = [];
@@ -2395,6 +2465,7 @@ connectGoogleSheets(){
   shopifyApiTokenError:boolean = false;
   shopifyNameError:boolean = false;
   tallyTokenError:boolean = false;
+  openAiKeyError:boolean = false;
 
   serverConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
