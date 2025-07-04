@@ -1059,7 +1059,7 @@
                       <div *ngIf="dashboardId && !editor" class="SearchBarCu" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle"></div>              
                        
                         </div>
-                        <ckeditor *ngIf="editor && !isPublicUrl" placeholder="dashbaord Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName" (ngModelChange)="updatedashboardName(dashboardTagName)" style="color: black;" ></ckeditor>
+                        <ckeditor *ngIf="editor && !isPublicUrl" placeholder="dashbaord Name" (ready)="onEditorReady($event);" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName" (ngModelChange)="updatedashboardName(dashboardTagName)" style="color: black;" ></ckeditor>
                         <!-- <div *ngIf="editor" class="popup">
                           <div class="popup-content">
                             <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName">

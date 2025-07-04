@@ -8474,6 +8474,23 @@ resetGenieAnimation() {
     el.classList.remove('bounce');
   }
 }
+
+  onEditorReady(editor: any) {
+    setTimeout(() => {
+      editor.editing.view.focus();
+
+      editor.model.change((writer: any) => {
+        const root = editor.model.document.getRoot();
+        const endPosition = writer.createPositionAt(root, 'end');
+        writer.setSelection(endPosition);
+      });
+    }, 0);
+
+    const editableElement = editor.ui.view.editable.element;
+    editableElement.addEventListener('blur', () => {
+      this.editor = false;
+    });
+  }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
