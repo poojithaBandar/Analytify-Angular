@@ -27,7 +27,7 @@ interface Dimension {
   styleUrl: './insight-echart.component.scss'
 })
 export class InsightEchartComponent {
-  @Input() chartsRowData: any; 
+  @Input() chartsRowData: any;
   @Input() isZoom: any;
   @Input() chartsColumnData: any;
   @Input() chartType!:string;
@@ -139,8 +139,7 @@ export class InsightEchartComponent {
     if(this.chartType === 'map'){
       this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
         echarts.registerMap('world', geoJson);
-        this.chartInstance?.setOption(this.SDKChartOptions ? this.SDKChartOptions :this.chartOptions,true);
-      });
+        this.chartInstance?.setOption(this.SDKChartOptions ? this.SDKChartOptions :this.chartOptions,true);      });
     }
     else{
       this.chartInstance?.setOption(
@@ -2051,7 +2050,7 @@ chartInitialize(){
   }
   ngOnChanges(changes: SimpleChanges) {
     
-     if(changes['SDKChartOptions']){
+  if(changes['SDKChartOptions']){
       if(this.chartType === 'map'){
         this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
           echarts.registerMap('world', geoJson);

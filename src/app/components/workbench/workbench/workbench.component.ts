@@ -2507,7 +2507,7 @@ connectGoogleSheets(){
       this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
-    if(this.openSapHanaForm){
+    if(this.openSapHanaForm || this.databaseType === 'sap hana'){
       if(this.postGreDatabaseName || this.selectedSchema){
         this.databaseError = false;
       }else{
@@ -2598,6 +2598,15 @@ connectGoogleSheets(){
       }
     } 
     else if(this.openSapHanaForm){
+      if(this.serverError || this.portError || this.userNameError || this.displayNameError || this.passwordError || this.databaseError){
+        this.disableConnectBtn = true;
+      } else if(!(this.postGreServerName && this.postGrePortName && this.postGreUserName && this.displayName && this.PostGrePassword && (this.postGreDatabaseName || this.selectedSchema))) {
+        this.disableConnectBtn = true;
+      } else{
+        this.disableConnectBtn = false;
+      }
+    }
+    else if(this.databaseType === 'sap hana'){
       if(this.serverError || this.portError || this.userNameError || this.displayNameError || this.passwordError || this.databaseError){
         this.disableConnectBtn = true;
       } else if(!(this.postGreServerName && this.postGrePortName && this.postGreUserName && this.displayName && this.PostGrePassword && (this.postGreDatabaseName || this.selectedSchema))) {
@@ -2720,7 +2729,7 @@ connectGoogleSheets(){
   fetchSchemaList() {
     this.loaderService.show();
     const obj:any = {
-      "database_type": this.openSapHanaForm ? "sap hana" : "postgresql",
+      "database_type": (this.openSapHanaForm || this.databaseType === 'sap hana') ? "sap hana" : "postgresql",
       "hostname": this.postGreServerName,
       "port": this.postGrePortName,
       "username": this.postGreUserName,
