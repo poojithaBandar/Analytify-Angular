@@ -40,6 +40,8 @@ export class DashboardPageComponent implements OnInit{
   createUrl =false;
   publicUrl:any;
   shareAsPrivate = false;
+  shareAsProtected = false;
+  passKey: string = '';
   dashboardPropertyId:any;
   publishedDashboard = false;
   port:any;
@@ -348,12 +350,19 @@ sharePublish(value:any){
   if(value === 'public'){
     this.createUrl = true;
     this.shareAsPrivate = false
+    this.shareAsProtected = false;
     const publicDashboardId = btoa(this.dashboardId.toString());
     this.publicUrl = 'https://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId;
     this.publishDashboard();
   } else if(value === 'private'){
     this.createUrl = false;
     this.shareAsPrivate = true;
+    this.shareAsProtected = false;
+    this.publishedDashboard = false;
+  } else if(value === 'protected'){
+    this.createUrl = true;
+    this.shareAsPrivate = false;
+    this.shareAsProtected = true;
     this.publishedDashboard = false;
   }
   }
@@ -392,9 +401,9 @@ fallbackCopyTextToClipboard(text: string): void {
   }
   document.body.removeChild(textArea);
 }
-publishDashboard(){
-  this.workbechService.publishDashbord(this.dashboardPropertyId).subscribe({
-    next:(data)=>{
+  publishDashboard(){
+    this.workbechService.publishDashbord(this.dashboardPropertyId).subscribe({
+      next:(data)=>{
       console.log(data);
       this.toasterservice.success('Dashboard Published','success',{ positionClass: 'toast-center-center'})
       this.publishedDashboard = true;
@@ -403,6 +412,23 @@ publishDashboard(){
       console.log(error);
       this.toasterservice.error('Dashboard Published','error',{ positionClass: 'toast-center-center'})
 
+    }
+  })
+}
+
+createProtectedShare(){
+  if(!this.passKey || this.passKey.length < 6){
+    this.toasterservice.error('Passkey must be at least 6 characters','error',{ positionClass: 'toast-top-right'});
+    return;
+  }
+  const obj = { dashboardId: this.dashboardId, passKey: this.passKey };
+  this.workbechService.protectedShare(obj).subscribe({
+    next:(data)=>{
+      this.publicUrl = data.protectedShareUrl;
+      this.publishedDashboard = true;
+    },
+    error:(error)=>{
+      this.toasterservice.error(error.error.message || 'Failed to create link','error',{ positionClass: 'toast-top-right'});
     }
   })
 }

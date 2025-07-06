@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, AfterViewInit } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -127,7 +127,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
-export class SheetsdashboardComponent implements OnDestroy {
+export class SheetsdashboardComponent implements OnDestroy, AfterViewInit {
  // @HostListener('window:resize', ['$event'])
  itemsPerPage:any;
   private destroy$ = new Subject<void>();
@@ -195,6 +195,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   isPublicUrl = false;
+  isProtectedUrl = false;
   publicHeader = false;
   columnSearch: any;
   rolesForUpdateDashboard:[] = [];
@@ -232,6 +233,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   @ViewChild('analyzeDashbaordModal') analyzeDashbaordModal:any;
   @ViewChild('textEditorModal') textEditorModal!: any;
   @ViewChild('ImageUploadText') ImageUploadText!: ElementRef;
+  @ViewChild('passKeyModal') passKeyModal!: any;
   textItem: any;
   textEditorContent: string = '';
   textEditorTitle: string = '';
@@ -246,6 +248,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   isEmbeddedFilter : boolean = false;
   genieHover = false;
   showGenieTooltip = false;
+  enteredPassKey: string = '';
+  passKeyError: string = '';
 
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -263,6 +267,15 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.publicHeader = true
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
+      }
+    }
+    if(currentUrl.includes('dashboard/share/protected')){
+      this.updateDashbpardBoolen= true;
+      this.isProtectedUrl = true;
+      this.active = 2;
+      this.publicHeader = true;
+      if(route.snapshot.params['id1']){
+        this.dashboardId = +atob(route.snapshot.params['id1']);
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
@@ -591,7 +604,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     };
     if(this.dashboardToken){
       this.fetchDashboardIdFromToken();
-    } else {
+    } else if(!this.isProtectedUrl){
       this.initialiserMethods();
     }
     //this.getSheetData();
@@ -3139,6 +3152,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   ngAfterViewInit() {
     if(this.isEmbedDashboard){
       this.toggleSidebar();
+    }
+    if(this.isProtectedUrl){
+      this.modalService.open(this.passKeyModal, { backdrop: 'static', keyboard: false });
     }
     this.dashboard.forEach(item => {
       this.initializeChart(item);
@@ -8762,6 +8778,25 @@ resetGenieAnimation() {
   if (el) {
     el.classList.remove('bounce');
   }
+}
+
+verifyPassKey(modal: any){
+  if(!this.enteredPassKey || this.enteredPassKey.length < 6){
+    this.passKeyError = 'Passkey must be at least 6 characters';
+    return;
+  }
+  const obj = { dashboardId: this.dashboardId, passKey: this.enteredPassKey };
+  this.workbechService.verifyPassKey(obj).subscribe({
+    next:()=>{
+      this.passKeyError = '';
+      modal.close();
+      this.isPublicUrl = true;
+      this.initialiserMethods();
+    },
+    error:(error)=>{
+      this.passKeyError = error.error.message || 'Invalid passkey';
+    }
+  });
 }
 }
 // export interface CustomGridsterItem extends GridsterItem {
