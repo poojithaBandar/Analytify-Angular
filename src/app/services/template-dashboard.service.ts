@@ -1021,6 +1021,37 @@ export class TemplateDashboardService {
       }
     )
     this.buildDashboardResponseData(responce,'salesforce');
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }
+    }
+  )
+  }
+
+  buildSampleOpenAIDashboard(container: ViewContainerRef , databaseId: any){
+    const componentRef =container.createComponent(InsightEchartComponent);
+    this.echartInstance = componentRef.instance;
+    this.workbechService.buildSampleOpenAIDashboard(databaseId).subscribe({next: (responce) => {
+      const obj ={
+        query_set_id:responce.datasource_query.queryset_id,
+        hierarchy_id:responce.datasource_query.hierarchy_id,
+        joining_tables: responce.datasource_query.joining_tables,
+        join_type:responce.datasource_query.join_type,
+        joining_conditions:responce.datasource_query.joining_conditions,
+        dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
+      } as any
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (res) => {
+        this.buildDashboardResponseData(res,'openai');
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+      this.buildDashboardResponseData(responce,'openai');
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
