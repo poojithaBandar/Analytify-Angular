@@ -2167,11 +2167,7 @@ sheetSave(isDashboardTransfer?: boolean){
     }
   }
    if(this.horizontalBar && this.chartId == 14){
-    this.saveBar = this.chartsRowData;
-    this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
-      this.saveBar = this.originalData.data;
-      this.barXaxis = this.originalData.categories;
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
       tablePreviewRow[0].result_data = this.originalData.data;
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
