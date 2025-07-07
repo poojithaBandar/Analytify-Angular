@@ -495,7 +495,7 @@ export class TemplateDashboardService {
           dragged_array: {dragged_array: query.dragged_array, dragged_array_indexing:{}},
         } as any;
         this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-            this.buildDashboardResponseData(responce);
+            // this.buildDashboardResponseData(responce);
           },
           error: (error) => {
             this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -529,7 +529,7 @@ export class TemplateDashboardService {
         } as any
         this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
 
-          this.buildDashboardResponseData(responce);
+          // this.buildDashboardResponseData(responce);
             },
             error: (error) => {
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -564,7 +564,7 @@ export class TemplateDashboardService {
           } as any;
           this.workbechService.joiningTablesTest(obj).subscribe({
             next: (res) => {
-              this.buildDashboardResponseData(res);
+              // this.buildDashboardResponseData(res);
             },
             error: (error) => {
               this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
@@ -597,7 +597,7 @@ export class TemplateDashboardService {
           } as any;
           this.workbechService.joiningTablesTest(obj).subscribe({
             next: (res) => {
-              this.buildDashboardResponseData(res);
+              // this.buildDashboardResponseData(res);
             },
             error: (error) => {
               this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
@@ -994,7 +994,7 @@ export class TemplateDashboardService {
           dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
         } as any;
         this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-          this.buildDashboardResponseData(responce);
+          // this.buildDashboardResponseData(responce);
             },
             error: (error) => {
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -1027,7 +1027,7 @@ export class TemplateDashboardService {
           dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
         } as any
         this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-          this.buildDashboardResponseData(responce);
+          // this.buildDashboardResponseData(responce);
             },
             error: (error) => {
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -1061,7 +1061,7 @@ export class TemplateDashboardService {
           dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
         } as any
         this.workbechService.joiningTablesTest(obj).subscribe({next: (res) => {
-            this.buildDashboardResponseData(res);
+            // this.buildDashboardResponseData(res);
             },
             error: (error) => {
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
