@@ -91,6 +91,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/shopify_authentication/`+this.accessToken,obj);
   }
+  openAiConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
+  }
   hubspotConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -121,6 +126,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/tally_authentication/`+this.accessToken, config);
+  }
+
+  openAiConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
   }
 
   ninjaRMMConnectionUpdate(obj:any){
@@ -1020,6 +1031,11 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem('currentUser');
       this.accessToken = JSON.parse(currentUser!)['Token'];
       return this.http.get<any>(`${environment.apiUrl}/ninja_dashbaord/` + id + '/' + this.accessToken);
+    }
+    buildSampleOpenAIDashboard(id: number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/open_ai_dashbaord/`+id+'/'+this.accessToken);
     }
     buildSampleSalesforceDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );

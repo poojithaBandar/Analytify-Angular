@@ -159,6 +159,17 @@
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Tally" (input)="displayNameIntegrationConditionError()">
                 </div>
               </form>
+            } @else if(databaseType == 'open_ai') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': openAiKeyError}" class="col-form-label">OpenAI Key <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': openAiKeyError}" type="text" class="form-control" [(ngModel)]="openAiKey" [ngModelOptions]="{standalone: true}" (input)="openAiKeyInputError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. OpenAI" (input)="displayNameIntegrationConditionError()">
+                </div>
+              </form>
             }@else if(databaseType == 'google_analytics') {
               <form>
                 <div class="mb-2">
@@ -306,6 +317,9 @@
             } @else if(databaseType == 'tally') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="tallyUpdate()" [disabled]="(tallyTokenError || displayNameError) || !(tallyToken && displayName)">Update</button>
+            } @else if(databaseType == 'open_ai') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="openAIUpdate()" [disabled]="(openAiKeyError || displayNameError) || !(openAiKey && displayName)">Update</button>
             } @else if(databaseType == 'google_analytics') {
               <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary"
@@ -456,7 +470,9 @@
                       <td *ngIf="database.server_type === 'HUBSPOT'">
                         <img alt="product" src="./assets/images/icons/hubspotlogo.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
-                      
+                      <td *ngIf="database.server_type === 'OPEN_AI'">
+                        <img alt="product" src="https://logo.clearbit.com/openai.com" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>                      
                       <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
@@ -554,6 +570,8 @@
                                             <img src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png" alt="" class="rounded-circle"></span>
                                           <span *ngIf="database.server_type === 'QUICKBOOKS'" class="avatar avatar rounded-circle">
                                             <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
+                                            <span *ngIf="database.server_type === 'OPEN_AI'" class="avatar avatar rounded-circle">
+                                              <img src="https://logo.clearbit.com/openai.com" alt="" class="rounded-circle"></span>
                                             <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
@@ -1565,9 +1583,56 @@
                     </div>
                   </div>
                 </div>
+            </div>
+          </div>
+        }
+
+        @if(openOpenAIForm){
+          <div class="main-container container-fluid px-4 TopHeader">
+            <div class="row">
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card Relational-database-height">
+                  <div class="card-header">
+                    <h4 class="card-title">Connect To OpenAI</h4>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': openAiKeyError}" class="col-form-label">OpenAI Key <span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': openAiKeyError}" type="text" class="form-control" [(ngModel)]="openAiKey" [ngModelOptions]="{standalone: true}" (input)="openAiKeyInputError()">
+                      </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="openAISignIn()" [disabled]="(openAiKeyError || displayNameError) || !(openAiKey && displayName)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card user-card border Relational-database-height">
+                  <div class="user-image">
+                    <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                      <img src="https://logo.clearbit.com/openai.com" alt="" class="rounded-circle bg-white user-image-border-color">
+                    </span>
+                  </div>
+                  <div class="card-body server-content-card">
+                    <ul class="">
+                      <li><span class="mt-1">OpenAI integration allows access to advanced language models for generating insights and automations.</span></li>
+                      <li><h6 class=" mt-3"><strong>Inputs to connect</strong></h6></li>
+                      <li><span class="mb-0"><strong>OpenAI Key:</strong> API key from your OpenAI account.</span></li>
+                      <li><span class="mb-0"><strong>Display Name:</strong> Friendly name to identify this connection.</span></li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
-          }
+          </div>
+        }
 
       @if(openOracleForm){
         <div class="main-container container-fluid px-4 TopHeader">
@@ -2264,12 +2329,12 @@
                         </div>
                       </div> -->
                       <div class="database-logo">
-                        <div class="imgcard p-4 op-4">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectOpenAI()">
                           <img src="https://logo.clearbit.com/openai.com"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span>OpenAI</span>
-                      </div>        
+                      </div>
                     </div>
                     <div class="database-logo">
                         <div class="imgcard p-4 op-4">
