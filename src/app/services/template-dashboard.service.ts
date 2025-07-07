@@ -1040,14 +1040,14 @@ buildSampleTallyDashboard(container: ViewContainerRef, databaseId: any) {
       } as any;
       this.workbechService.joiningTablesTest(obj).subscribe({
         next: (res) => {
-          this.buildDashboardResponseData(res, 'tally');
+          this.buildDashboardResponseData(res);
         },
         error: (error) => {
           this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
           console.log(error);
         }
       });
-      this.buildDashboardResponseData(responce, 'tally');
+      this.buildDashboardResponseData(responce);
     },
     error: (error: any) => {
       this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
@@ -1070,14 +1070,14 @@ buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any) {
       } as any;
       this.workbechService.joiningTablesTest(obj).subscribe({
         next: (res) => {
-          this.buildDashboardResponseData(res, 'hubspot');
+          this.buildDashboardResponseData(res);
         },
         error: (error) => {
           this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
           console.log(error);
         }
       });
-      this.buildDashboardResponseData(responce, 'hubspot');
+      this.buildDashboardResponseData(responce);
     },
     error: (error: any) => {
       this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
