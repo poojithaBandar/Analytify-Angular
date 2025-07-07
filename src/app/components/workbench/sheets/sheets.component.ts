@@ -45,7 +45,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom, Subscription, timer } from 'rxjs';
-import { evaluate, i, parse, re } from 'mathjs';
+import { boolean, evaluate, i, parse, re } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
@@ -2630,7 +2630,6 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
           echarts.registerMap('world', geoJson);
         });
       }
-      return;
     }
     console.warn('Unknown chart configuration for chart id', responce.chart_id);
   } else {
@@ -7542,6 +7541,32 @@ rows.forEach((row, rowIndex) => {
     }
   }
 });
+}
+
+changeDimensionDatatype(dim:any, newType:any) {
+ if (newType === 'float') {
+    newType = 'boolean';
+  }  
+  const object = {
+    "queryset_id":this.qrySetId,
+    "table_name":dim.table_name,
+    "column_name":dim.column,
+    "old_datatype":dim.data_type,
+    "new_datatype":newType === 'boolean' ? 'float' : newType,
+  }
+  this.workbechService.changeDataType(object).subscribe({
+    next: (response: any) => {
+      console.log(response);
+      dim.data_type = newType;
+      this.columnsData();
+    },
+    error: (error) => {
+      console.log(error);
+      this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+    }
+  });
+
+
 
 }
 
@@ -7572,16 +7597,23 @@ updateMeasureColorRanges() {
   console.log('Measure Color Ranges:', this.measureColorRanges);
 }
 
-
-qoqOpen = false
-toggleQOQDropdown() {
-  this.qoqOpen = !this.qoqOpen;
+isDatatypeConvertible(currentType: string, targetType: string): boolean {
+  // If currentType is in dateList, only allow changing to types not in dateList
+if (this.dateList.includes(currentType)) {
+    return targetType !== 'date';
+  }
+  if (this.boolList.includes(currentType)) {
+    return targetType !== 'float';
+  }
+  if (this.stringList.includes(currentType)) {
+    return targetType !== 'string';
+  }
+  if (this.integerList.includes(currentType)) {
+    return targetType !== 'integer';
+  }
+  // Otherwise, allow all except the same type
+  return currentType !== targetType;
 }
-qoqOptions = [
-  'QOQ Option 1', 'QOQ Option 2', 'QOQ Option 3',
-  'QOQ Option 4', 'QOQ Option 5', 'QOQ Option 6',
-  'QOQ Option 7', 'QOQ Option 8'
-];
 
 topSelecetdColumnDataType : any = '';
 isMeasureAbsent : boolean = false;

@@ -484,25 +484,26 @@ export class TemplateDashboardService {
     const componentRef =container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleDashbaord(databaseId).subscribe({next: (responce) => {
-      const obj ={
-        query_set_id:responce.datasource_query.queryset_id,
-        hierarchy_id:responce.datasource_query.hierarchy_id,
-        joining_tables: responce.datasource_query.joining_tables,
-        join_type:responce.datasource_query.join_type,
-        joining_conditions:responce.datasource_query.joining_conditions,
-        dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
-      } as any
-      this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-      
-        this.buildDashboardResponseData(responce,"connectWise");
+      const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+      queries.forEach((query: any) => {
+        const obj = {
+          query_set_id: query.queryset_id,
+          hierarchy_id: query.hierarchy_id,
+          joining_tables: query.joining_tables,
+          join_type: query.join_type,
+          joining_conditions: query.joining_conditions,
+          dragged_array: {dragged_array: query.dragged_array, dragged_array_indexing:{}},
+        } as any;
+        this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
+            // this.buildDashboardResponseData(responce);
           },
           error: (error) => {
             this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             console.log(error);
           }
-        }
-      )
-      this.buildDashboardResponseData(responce,"connectWise");
+        });
+      });
+      this.buildDashboardResponseData(responce);
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -516,25 +517,28 @@ export class TemplateDashboardService {
     const componentRef =container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
     this.workbechService.buildQuickBooksDashbaord(databaseId).subscribe({next: (responce) => {
-      const obj ={
-        query_set_id:responce.datasource_query.queryset_id,
-        hierarchy_id:responce.datasource_query.hierarchy_id,
-        joining_tables: responce.datasource_query.joining_tables,
-        join_type:responce.datasource_query.join_type,
-        joining_conditions:responce.datasource_query.joining_conditions,
-        dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
-      } as any
-      this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-      
-        this.buildDashboardResponseData(responce,'quickbooks');
-          },
-          error: (error) => {
-            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-            console.log(error);
+      const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+      queries.forEach((query: any) => {
+        const obj ={
+          query_set_id:query.queryset_id,
+          hierarchy_id:query.hierarchy_id,
+          joining_tables: query.joining_tables,
+          join_type:query.join_type,
+          joining_conditions:query.joining_conditions,
+          dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+        } as any
+        this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
+
+          // this.buildDashboardResponseData(responce);
+            },
+            error: (error) => {
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              console.log(error);
+            }
           }
-        }
-      )
-      this.buildDashboardResponseData(responce,'quickbooks');
+        )
+      });
+      this.buildDashboardResponseData(responce);
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -548,24 +552,27 @@ export class TemplateDashboardService {
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleImmybotDashboard(databaseId).subscribe({
       next: (responce:any) => {
-        const obj = {
-          query_set_id: responce.datasource_query.queryset_id,
-          hierarchy_id: responce.datasource_query.hierarchy_id,
-          joining_tables: responce.datasource_query.joining_tables,
-          join_type: responce.datasource_query.join_type,
-          joining_conditions: responce.datasource_query.joining_conditions,
-          dragged_array: { dragged_array: responce.datasource_query.dragged_array, dragged_array_indexing: {} },
-        } as any;
-        this.workbechService.joiningTablesTest(obj).subscribe({
-          next: (res) => {
-            this.buildDashboardResponseData(res, 'immybot');
-          },
-          error: (error) => {
-            this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-            console.log(error);
-          }
+        const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+        queries.forEach((query: any) => {
+          const obj = {
+            query_set_id: query.queryset_id,
+            hierarchy_id: query.hierarchy_id,
+            joining_tables: query.joining_tables,
+            join_type: query.join_type,
+            joining_conditions: query.joining_conditions,
+            dragged_array: { dragged_array: query.dragged_array, dragged_array_indexing: {} },
+          } as any;
+          this.workbechService.joiningTablesTest(obj).subscribe({
+            next: (res) => {
+              // this.buildDashboardResponseData(res);
+            },
+            error: (error) => {
+              this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
+              console.log(error);
+            }
+          });
         });
-        this.buildDashboardResponseData(responce, 'immybot');
+        this.buildDashboardResponseData(responce);
       },
       error: (error:any) => {
         this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
@@ -578,24 +585,27 @@ export class TemplateDashboardService {
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleNinjaRMMDashboard(databaseId).subscribe({
       next: (responce: any) => {
-        const obj = {
-          query_set_id: responce.datasource_query.queryset_id,
-          hierarchy_id: responce.datasource_query.hierarchy_id,
-          joining_tables: responce.datasource_query.joining_tables,
-          join_type: responce.datasource_query.join_type,
-          joining_conditions: responce.datasource_query.joining_conditions,
-          dragged_array: { dragged_array: responce.datasource_query.dragged_array, dragged_array_indexing: {} },
-        } as any;
-        this.workbechService.joiningTablesTest(obj).subscribe({
-          next: (res) => {
-            this.buildDashboardResponseData(res, 'ninjarmm');
-          },
-          error: (error) => {
-            this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-            console.log(error);
-          }
+        const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+        queries.forEach((query: any) => {
+          const obj = {
+            query_set_id: query.queryset_id,
+            hierarchy_id: query.hierarchy_id,
+            joining_tables: query.joining_tables,
+            join_type: query.join_type,
+            joining_conditions: query.joining_conditions,
+            dragged_array: { dragged_array: query.dragged_array, dragged_array_indexing: {} },
+          } as any;
+          this.workbechService.joiningTablesTest(obj).subscribe({
+            next: (res) => {
+              // this.buildDashboardResponseData(res);
+            },
+            error: (error) => {
+              this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
+              console.log(error);
+            }
+          });
         });
-        this.buildDashboardResponseData(responce, 'ninjarmm');
+        this.buildDashboardResponseData(responce);
       },
       error: (error: any) => {
         this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
@@ -603,7 +613,7 @@ export class TemplateDashboardService {
       }
     });
   }
-  buildDashboardResponseData(responce: any,formType: string){
+  buildDashboardResponseData(responce: any){
     let dashboardData: any[] = [];
     if(responce){
       this.sheetsData = responce.sheets.map(function(obj:any) {
@@ -680,7 +690,7 @@ export class TemplateDashboardService {
           }
           let displayedColumns = tablePreviewColumn.map((col: any) => col.column).concat(tablePreviewRow.map((row: any) => row.column));
           this.dashboardQuerySetIds.push(data.queryset_id);
-          return this.sheetUpdate(chartsColumnData, chartsRowData, dualAxisRowData, dualAxisColumnData,data.sheet_query_data.columns_data,data.sheet_query_data.rows_data,data,dashboardData,index,formType,transformData,tableDataStore,displayedColumns,totalCount);
+          return this.sheetUpdate(chartsColumnData, chartsRowData, dualAxisRowData, dualAxisColumnData,data.sheet_query_data.columns_data,data.sheet_query_data.rows_data,data,dashboardData,index,transformData,tableDataStore,displayedColumns,totalCount);
         
       });
       
@@ -732,7 +742,7 @@ export class TemplateDashboardService {
     return transformed;
   }
 
-  sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number, formType : string,tranformedData:any,tableDataStore: any[],displayedColumns : string[],totalCount:number) {
+  sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number, tranformedData:any,tableDataStore: any[],displayedColumns : string[],totalCount:number) {
     let chartData;
     if(data.chart_id == 8){
       chartData = this.echartInstance.multiLineChart(dualAxisColumnData, dualAxisRowData);
@@ -825,13 +835,13 @@ export class TemplateDashboardService {
 
       }
     }
-    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,"kpiPrefix": "","kpiSuffix": "",kpiDecimalUnit: "none",rows:tranformedData.rows_data},formType,tableDataStore,displayedColumns,totalCount);
+    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,"kpiPrefix": "","kpiSuffix": "",kpiDecimalUnit: "none",rows:tranformedData.rows_data},tableDataStore,displayedColumns,totalCount);
     dashboardData.push(dashbaordObj);
    return this.workbechService.sheetUpdate(obj, data.sheet_id);
 
   }
 
-  updateDashboardJSONData(chartData: any, data: any, index : number,kpiData : any,formType : string, tableDataStore : any[],displayedColumns : string[],totalCount: any){
+  updateDashboardJSONData(chartData: any, data: any, index : number,kpiData : any, tableDataStore : any[],displayedColumns : string[],totalCount: any){
     let tableData;
     let totalRecordCount = totalCount;
     const sheet_rows_data = data.row_data.map((item:any) => {
@@ -919,24 +929,27 @@ export class TemplateDashboardService {
     const componentRef =container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleHALOPSADashbaord(databaseId).subscribe({next: (responce) => {
-      const obj ={
-        query_set_id:responce.datasource_query.queryset_id,
-        hierarchy_id:responce.datasource_query.hierarchy_id,
-        joining_tables: responce.datasource_query.joining_tables,
-        join_type:responce.datasource_query.join_type,
-        joining_conditions:responce.datasource_query.joining_conditions,
-        dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
-      } as any
-      this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {        
-      this.buildDashboardResponseData(responce,'HALOPSA');      
-        },
-        error: (error) => {
-          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-          console.log(error);
-        }
-      }
-    )
-    this.buildDashboardResponseData(responce,'HALOPSA');
+      const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+      queries.forEach((query: any) => {
+        const obj ={
+          query_set_id:query.queryset_id,
+          hierarchy_id:query.hierarchy_id,
+          joining_tables: query.joining_tables,
+          join_type:query.join_type,
+          joining_conditions:query.joining_conditions,
+          dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+        } as any;
+        this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
+          // this.buildDashboardResponseData(responce);
+            },
+            error: (error) => {
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              console.log(error);
+            }
+          }
+        )
+      });
+      this.buildDashboardResponseData(responce);
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -949,24 +962,61 @@ export class TemplateDashboardService {
     const componentRef =container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
     this.workbechService.buildSampleSalesforceDashbaord(databaseId).subscribe({next: (responce) => {
-      const obj ={
-        query_set_id:responce.datasource_query.queryset_id,
-        hierarchy_id:responce.datasource_query.hierarchy_id,
-        joining_tables: responce.datasource_query.joining_tables,
-        join_type:responce.datasource_query.join_type,
-        joining_conditions:responce.datasource_query.joining_conditions,
-        dragged_array: {dragged_array:responce.datasource_query.dragged_array,dragged_array_indexing:{}},
-      } as any
-      this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-      this.buildDashboardResponseData(responce,'salesforce');      
-        },
-        error: (error) => {
-          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-          console.log(error);
-        }
+      const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+      queries.forEach((query: any) => {
+        const obj ={
+          query_set_id:query.queryset_id,
+          hierarchy_id:query.hierarchy_id,
+          joining_tables: query.joining_tables,
+          join_type:query.join_type,
+          joining_conditions:query.joining_conditions,
+          dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+        } as any
+        this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
+          // this.buildDashboardResponseData(responce);
+            },
+            error: (error) => {
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              console.log(error);
+            }
+          }
+        )
+      });
+      this.buildDashboardResponseData(responce);
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
       }
-    )
-    this.buildDashboardResponseData(responce,'salesforce');
+    }
+  )
+  }
+
+  buildSampleOpenAIDashboard(container: ViewContainerRef , databaseId: any){
+    const componentRef =container.createComponent(InsightEchartComponent);
+    this.echartInstance = componentRef.instance;
+    this.workbechService.buildSampleOpenAIDashboard(databaseId).subscribe({next: (responce) => {
+      const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+      queries.forEach((query: any) => {
+        const obj ={
+          query_set_id:query.queryset_id,
+          hierarchy_id:query.hierarchy_id,
+          joining_tables: query.joining_tables,
+          join_type:query.join_type,
+          joining_conditions:query.joining_conditions,
+          dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+        } as any
+        this.workbechService.joiningTablesTest(obj).subscribe({next: (res) => {
+            // this.buildDashboardResponseData(res);
+            },
+            error: (error) => {
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              console.log(error);
+            }
+          }
+        )
+      });
+      this.buildDashboardResponseData(responce);
         },
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -978,62 +1028,68 @@ export class TemplateDashboardService {
 buildSampleTallyDashboard(container: ViewContainerRef, databaseId: any) {
   const componentRef = container.createComponent(InsightEchartComponent);
   this.echartInstance = componentRef.instance;
-  this.workbechService.buildSampleTallyDashboard(databaseId).subscribe({
-    next: (responce: any) => {
-      const obj = {
-        query_set_id: responce.datasource_query.queryset_id,
-        hierarchy_id: responce.datasource_query.hierarchy_id,
-        joining_tables: responce.datasource_query.joining_tables,
-        join_type: responce.datasource_query.join_type,
-        joining_conditions: responce.datasource_query.joining_conditions,
-        dragged_array: { dragged_array: responce.datasource_query.dragged_array, dragged_array_indexing: {} },
-      } as any;
-      this.workbechService.joiningTablesTest(obj).subscribe({
-        next: (res) => {
-          this.buildDashboardResponseData(res, 'tally');
-        },
-        error: (error) => {
-          this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-          console.log(error);
+  this.workbechService.buildSampleTallyDashboard(databaseId).subscribe({next: (responce) => {
+    const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+    queries.forEach((query: any) => {
+      const obj ={
+        query_set_id:query.queryset_id,
+        hierarchy_id:query.hierarchy_id,
+        joining_tables: query.joining_tables,
+        join_type:query.join_type,
+        joining_conditions:query.joining_conditions,
+        dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+      } as any
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (res) => {
+          // this.buildDashboardResponseData(res);
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
         }
-      });
-      this.buildDashboardResponseData(responce, 'tally');
-    },
-    error: (error: any) => {
-      this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-      console.log(error);
+      )
+    });
+    this.buildDashboardResponseData(responce);
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }
     }
-  });
+  )
 }
 buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any) {
   const componentRef = container.createComponent(InsightEchartComponent);
   this.echartInstance = componentRef.instance;
-  this.workbechService.buildSampleHubspotDashboard(databaseId).subscribe({
-    next: (responce: any) => {
-      const obj = {
-        query_set_id: responce.datasource_query.queryset_id,
-        hierarchy_id: responce.datasource_query.hierarchy_id,
-        joining_tables: responce.datasource_query.joining_tables,
-        join_type: responce.datasource_query.join_type,
-        joining_conditions: responce.datasource_query.joining_conditions,
-        dragged_array: { dragged_array: responce.datasource_query.dragged_array, dragged_array_indexing: {} },
-      } as any;
-      this.workbechService.joiningTablesTest(obj).subscribe({
-        next: (res) => {
-          this.buildDashboardResponseData(res, 'hubspot');
-        },
-        error: (error) => {
-          this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-          console.log(error);
+  this.workbechService.buildSampleHubspotDashboard(databaseId).subscribe({next: (responce) => {
+    const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+    queries.forEach((query: any) => {
+      const obj ={
+        query_set_id:query.queryset_id,
+        hierarchy_id:query.hierarchy_id,
+        joining_tables: query.joining_tables,
+        join_type:query.join_type,
+        joining_conditions:query.joining_conditions,
+        dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+      } as any
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (res) => {
+          // this.buildDashboardResponseData(res);
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
         }
-      });
-      this.buildDashboardResponseData(responce, 'hubspot');
-    },
-    error: (error: any) => {
-      this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-      console.log(error);
+      )
+    });
+    this.buildDashboardResponseData(responce);
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }
     }
-  });
+  )
 }
   private readonly KPI_MAX       = 8;
   private readonly KPI_PER_ROW   = 8;

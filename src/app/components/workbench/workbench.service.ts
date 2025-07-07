@@ -91,6 +91,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/shopify_authentication/`+this.accessToken,obj);
   }
+  openAiConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
+  }
   hubspotConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -121,6 +126,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/tally_authentication/`+this.accessToken, config);
+  }
+
+  openAiConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
   }
 
   ninjaRMMConnectionUpdate(obj:any){
@@ -1021,6 +1032,11 @@ deleteUser(id:any){
       this.accessToken = JSON.parse(currentUser!)['Token'];
       return this.http.get<any>(`${environment.apiUrl}/ninja_dashbaord/` + id + '/' + this.accessToken);
     }
+    buildSampleOpenAIDashboard(id: number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/open_ai_dashbaord/`+id+'/'+this.accessToken);
+    }
     buildSampleSalesforceDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -1206,6 +1222,11 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/send_mail/`+this.accessToken, obj);
+    }
+    changeDataType(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/data_type_conversion/`+this.accessToken,obj);
     }
     // Airflow API
     airflowToken: string | null = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlzcyI6W10sImF1ZCI6ImFwYWNoZS1haXJmbG93IiwibmJmIjoxNzQ5MDQyOTI5LCJleHAiOjE3NDkxMjkzMjksImlhdCI6MTc0OTA0MjkyOX0.OPipRIhG-me15qyyGXRlt2xLuNWKOr2RexHtU7xc8kyXqP3dHfcNAq2t6Zf6sNiKbnb437AyKsagA9rgbKK6wg';
