@@ -1035,7 +1035,7 @@ deleteUser(id:any){
     buildSampleOpenAIDashboard(id: number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/open_ai_dashboard/`+id+'/'+this.accessToken);
+      return this.http.get<any>(`${environment.apiUrl}/open_ai_dashbaord/`+id+'/'+this.accessToken);
     }
     buildSampleSalesforceDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );
