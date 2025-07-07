@@ -1904,9 +1904,9 @@
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 p-1 d-flex" >
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
-                                    <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
+                                    <app-insights-button *ngIf="!retriveDataSheet_id" id="save-btn" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false"></app-insights-button>
-                                    <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
+                                    <app-insights-button *ngIf="retriveDataSheet_id" id="update-btn" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
                                     (btnClickEvent)="isMailRefresh = true;(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false;" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
@@ -4903,8 +4903,13 @@
                                                                     <div *ngIf="!isMeasureDistribution" class="toggle toggle-sm off mb-0" (click)="isMeasureDistribution = !isMeasureDistribution; (isDistributed = isMeasureDistribution ? false : true); updateMeasureColorRanges()">
                                                                         <span></span>
                                                                     </div>
+                                                                    <!-- <input type="number" min="2" max="10" [(ngModel)]="measureDivisions" [disabled]="!isMeasureDistribution"
+                                                                    (ngModelChange)="onMeasureDivisionChange($event)" class="form-control ms-2" style="width: 60px;"/>
+                                                                    <span class="ms-1">Div</span> -->
+                                                                </div>
+                                                                <div *ngIf="isMeasureDistribution" class="d-flex align-items-center justify-content-start">
                                                                     <input type="number" min="2" max="10" [(ngModel)]="measureDivisions" [disabled]="!isMeasureDistribution"
-                                                                    (change)="updateMeasureColorRanges()" class="form-control ms-2" style="width: 60px;"/>
+                                                                    (ngModelChange)="onMeasureDivisionChange($event)" class="form-control ms-2" style="width: 60px;"/>
                                                                     <span class="ms-1">Div</span>
                                                                 </div>
                                                                 <div *ngIf="isMeasureDistribution" class="mt-2">
