@@ -1028,62 +1028,68 @@ export class TemplateDashboardService {
 buildSampleTallyDashboard(container: ViewContainerRef, databaseId: any) {
   const componentRef = container.createComponent(InsightEchartComponent);
   this.echartInstance = componentRef.instance;
-  this.workbechService.buildSampleTallyDashboard(databaseId).subscribe({
-    next: (responce: any) => {
-      const obj = {
-        query_set_id: responce.datasource_query.queryset_id,
-        hierarchy_id: responce.datasource_query.hierarchy_id,
-        joining_tables: responce.datasource_query.joining_tables,
-        join_type: responce.datasource_query.join_type,
-        joining_conditions: responce.datasource_query.joining_conditions,
-        dragged_array: { dragged_array: responce.datasource_query.dragged_array, dragged_array_indexing: {} },
-      } as any;
-      this.workbechService.joiningTablesTest(obj).subscribe({
-        next: (res) => {
-          this.buildDashboardResponseData(res);
-        },
-        error: (error) => {
-          this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-          console.log(error);
+  this.workbechService.buildSampleTallyDashboard(databaseId).subscribe({next: (responce) => {
+    const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+    queries.forEach((query: any) => {
+      const obj ={
+        query_set_id:query.queryset_id,
+        hierarchy_id:query.hierarchy_id,
+        joining_tables: query.joining_tables,
+        join_type:query.join_type,
+        joining_conditions:query.joining_conditions,
+        dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+      } as any
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (res) => {
+          // this.buildDashboardResponseData(res);
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
         }
-      });
-      this.buildDashboardResponseData(responce);
-    },
-    error: (error: any) => {
-      this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-      console.log(error);
+      )
+    });
+    this.buildDashboardResponseData(responce);
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }
     }
-  });
+  )
 }
 buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any) {
   const componentRef = container.createComponent(InsightEchartComponent);
   this.echartInstance = componentRef.instance;
-  this.workbechService.buildSampleHubspotDashboard(databaseId).subscribe({
-    next: (responce: any) => {
-      const obj = {
-        query_set_id: responce.datasource_query.queryset_id,
-        hierarchy_id: responce.datasource_query.hierarchy_id,
-        joining_tables: responce.datasource_query.joining_tables,
-        join_type: responce.datasource_query.join_type,
-        joining_conditions: responce.datasource_query.joining_conditions,
-        dragged_array: { dragged_array: responce.datasource_query.dragged_array, dragged_array_indexing: {} },
-      } as any;
-      this.workbechService.joiningTablesTest(obj).subscribe({
-        next: (res) => {
-          this.buildDashboardResponseData(res);
-        },
-        error: (error) => {
-          this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-          console.log(error);
+  this.workbechService.buildSampleHubspotDashboard(databaseId).subscribe({next: (responce) => {
+    const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+    queries.forEach((query: any) => {
+      const obj ={
+        query_set_id:query.queryset_id,
+        hierarchy_id:query.hierarchy_id,
+        joining_tables: query.joining_tables,
+        join_type:query.join_type,
+        joining_conditions:query.joining_conditions,
+        dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+      } as any
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (res) => {
+          // this.buildDashboardResponseData(res);
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
         }
-      });
-      this.buildDashboardResponseData(responce);
-    },
-    error: (error: any) => {
-      this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
-      console.log(error);
+      )
+    });
+    this.buildDashboardResponseData(responce);
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }
     }
-  });
+  )
 }
   private readonly KPI_MAX       = 8;
   private readonly KPI_PER_ROW   = 8;
