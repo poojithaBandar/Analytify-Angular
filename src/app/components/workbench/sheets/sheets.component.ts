@@ -2604,7 +2604,6 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
           echarts.registerMap('world', geoJson);
         });
       }
-      return;
     }
     console.warn('Unknown chart configuration for chart id', responce.chart_id);
   } else {
