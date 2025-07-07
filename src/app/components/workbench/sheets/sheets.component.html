@@ -637,7 +637,7 @@
                                 {{ dimensions.column?.substr(0,15) }}{{ dimensions.column.length > 15 ? '...' : '' }}
                                 </li>
                                 <div class="dashboard-option">
-                                    <div class=" p-1" ngbDropdown>
+                                    <div class=" p-1" ngbDropdown [autoClose]="'outside'">
                                         <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                             aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(dimensions.column)"><i
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -645,6 +645,25 @@
                                         <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
                                             <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,dimensions)"> Apply Filters </button>
                                             <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
+
+                                            <!-- Change Datatype Option -->
+                                            <div ngbDropdown class="dropdown-submenu">
+                                                <a class="dropdown-item btn-primary-light border d-flex justify-content-between align-items-center"
+                                                ngbDropdownToggle>
+                                                    Change Datatype
+                                                    <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                </a>
+                                                <ul ngbDropdownMenu class="dropdown-menu custom-dropdown">
+                                                    <li *ngFor="let dtype of ['string','integer','float','date']"
+                                                         [hidden]="!isDatatypeConvertible(dimensions.data_type, dtype)">
+                                                        <a class="dropdown-item border Aggregation-select-padding"
+                                                        (click)="changeDimensionDatatype(dimensions, dtype)">
+                                                            {{ dtype | titlecase }}
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <!-- End Change Datatype Option -->
                                         </div>
                                     </div>
                                   </div>
@@ -662,7 +681,7 @@
                                 <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.column}}" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" ># 
                                     {{ measures.column?.substr(0,18) }}{{ measures.column.length > 18 ? '...' : '' }}
                                     <div class="dashboard-option">
-                                        <div class=" p-1" ngbDropdown>
+                                        <div class=" p-1" ngbDropdown [autoClose]="'outside'">
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.column)"><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -670,6 +689,24 @@
                                             <div class="dropdown-menu SelectDropDownCard" ngbDropdownMenu>
                                                 <a *ngIf="!filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </a>
                                                 <a *ngIf="filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                                                                                        <!-- Change Datatype Option for Measures -->
+                                                        <div ngbDropdown class="dropdown-submenu">
+                                                            <a class="dropdown-item btn-primary-light border d-flex justify-content-between align-items-center"
+                                                            ngbDropdownToggle>
+                                                                Change Datatype
+                                                                <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                            </a>
+                                                            <ul ngbDropdownMenu class="dropdown-menu custom-dropdown">
+                                                                <li *ngFor="let dtype of ['string','integer','float','date']"
+                                                                    [hidden]="!isDatatypeConvertible(measures.data_type, dtype)">
+                                                                    <a class="dropdown-item border Aggregation-select-padding"
+                                                                    (click)="changeDimensionDatatype(measures, dtype)">
+                                                                        {{ dtype | titlecase }}
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <!-- End Change Datatype Option for Measures -->
                                             </div>
                                         </div>
                                       </div>
@@ -709,6 +746,7 @@
                                                 <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
                                                     <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+
                                                     <a class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;validationMessage = '';fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                     <a class="dropdown-item btn-secondary-light border" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
                                                 </div>
