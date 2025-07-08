@@ -37,7 +37,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
   standalone: true,
   imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent,NgMultiSelectDropDownModule,NgSelectModule],
   templateUrl: './workbench.component.html',
-  styleUrl: './workbench.component.scss'
+  styleUrl: './workbench.component.scss',
+  providers: [TemplateDashboardService]
 })
 export class WorkbenchComponent implements OnInit{
   @ViewChild('fileInput') fileInput:any;
