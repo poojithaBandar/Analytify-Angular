@@ -322,17 +322,25 @@ export class TemplateDashboardService {
     this.sheetsInstance = componentRef.instance;
     const dashboardComponentRef =container.createComponent(SheetsdashboardComponent);
     this.dashboardInstance = dashboardComponentRef.instance;
-    const obj ={
-      query_set_id:responesData.datasource_query.queryset_id,
-      hierarchy_id:responesData.datasource_query.hierarchy_id,
-      joining_tables: responesData.datasource_query.joining_tables,
-      join_type:responesData.datasource_query.join_type,
-      joining_conditions:responesData.datasource_query.joining_conditions,
-      dragged_array: {dragged_array:responesData.datasource_query.dragged_array,dragged_array_indexing:{}},
-    } as any
-    let responseData = _.cloneDeep(this.mergeSheetData(responesData));
-    this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-      responesData.sheets.forEach((sheet: any)=> {
+    const queries = Array.isArray(responesData.datasource_query) ? responesData.datasource_query : [responesData.datasource_query];
+    queries.forEach((query: any) => {
+      const obj ={
+        query_set_id:query.queryset_id,
+        hierarchy_id:query.hierarchy_id,
+        joining_tables: query.joining_tables,
+        join_type:query.join_type,
+        joining_conditions:query.joining_conditions,
+        dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+      } as any;
+      this.workbechService.joiningTablesTest(obj).subscribe({
+        next: () => {},
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      });
+    });
+    responesData.sheets.forEach((sheet: any)=> {
         const {
           chart_id,
           sheet_col,
@@ -428,21 +436,14 @@ export class TemplateDashboardService {
           }
         }
       });
-        let responseData = _.cloneDeep(this.mergeSheetData(responesData));
-        this.updateDashboardData(responseData.dashboard, responseData.sheets).then(() => {
-          this.dashboardInstance.dashboardId = responesData.dashboard.dashboard_id;
-          this.dashboardInstance.assignDashboardParams(responseData.dashboard,true);
-          // this.dashboardInstance.updateDashboard(false,false,true);
-        }).catch(error => {
-          console.error('Error updating dashboard data:', error);
-        });
-        },
-        error: (error) => {
-          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-          console.log(error);
-        }
-      }
-    )
+    let responseData = _.cloneDeep(this.mergeSheetData(responesData));
+    this.updateDashboardData(responseData.dashboard, responseData.sheets).then(() => {
+      this.dashboardInstance.dashboardId = responesData.dashboard.dashboard_id;
+      this.dashboardInstance.assignDashboardParams(responseData.dashboard,true);
+      // this.dashboardInstance.updateDashboard(false,false,true);
+    }).catch(error => {
+      console.error('Error updating dashboard data:', error);
+    });
   }
 
   mergeSheetData(data: any) {

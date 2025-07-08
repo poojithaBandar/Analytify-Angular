@@ -1325,7 +1325,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Create smart dashboard from your data with just one click?",
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1381,7 +1381,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Create smart dashboard from your data with just one click?",
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1436,7 +1436,7 @@ export class WorkbenchComponent implements OnInit{
                 position: "center",
                 // icon: "question",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
+                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1488,7 +1488,7 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
+                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1581,7 +1581,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Create smart dashboard from your data with just one click?",
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
