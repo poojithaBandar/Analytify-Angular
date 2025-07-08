@@ -232,6 +232,7 @@ selectedSheet: any = null;
  this.workbechService.getMailAletsDashboardData(id).subscribe({
       next: (data: any) => {
         if (data) {
+          this.fetchThresholds();
           console.log(data);
           this.dashboardName = data.data?.dashboard_name;
           this.updateTogglesFromApi(data.data?.mail_action);
@@ -368,7 +369,6 @@ updateDatasourceTogglesFromApi(mailAction: any) {
     this.dashboardId=dashboard?.dashboard_id;
     console.log(dashboard?.dashboard_id)
     this.getdashboardDetails(dashboard?.dashboard_id);
-    this.fetchThresholds();
   }
   onSheetSelect(sheet:any){
     this.sheetId=sheet?.sheet_id;
@@ -648,5 +648,20 @@ toggleSection(section: string) {
     }
   }
 }
-
+isEmailValid(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim()) && !email.includes(',');
+}
+isThresholdFormValid(): boolean {
+ const f = this.thresholdForm;
+  return (
+    f.selectedChart &&
+    f.condition &&
+    f.threshold_value !== null &&
+    f.threshold_value !== undefined &&
+    f.threshold_value !== '' &&
+    f.email &&
+    this.isEmailValid(f.email)
+  );
+}
 }

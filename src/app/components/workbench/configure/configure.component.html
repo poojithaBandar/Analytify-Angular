@@ -286,7 +286,7 @@
   <div >
     <!-- Dashboard Update Alerts -->
     <div class="dashboard-flat-card mb-4">
-        <div class="section-title d-flex justify-content-between align-items-center mb-2" (click)="toggleSection('dashboard')" style="cursor:pointer;">
+        <div class="section-title d-flex justify-content-between align-items-center" (click)="toggleSection('dashboard')" style="cursor:pointer;">
     <span>Dashboard Update Alerts</span>
     <span>
       <i class="bi" [ngClass]="dashboardAlertsOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
@@ -364,8 +364,8 @@
   </div>
 </div>
     <!-- Threshold Limit Alerts -->
-    <div *ngIf="selectableDashbaord" class="dashboard-flat-card mt-4">
-  <div class="section-title d-flex justify-content-between align-items-center mb-2"  (click)="toggleSection('threshold')" style="cursor:pointer;">
+    <div *ngIf="dashboardId" class="dashboard-flat-card mt-4">
+  <div class="section-title d-flex justify-content-between align-items-center"  (click)="toggleSection('threshold')" style="cursor:pointer;">
     <span>Threshold Limit Alerts</span>
       <span>
       <i class="bi" [ngClass]="thresholdAlertsOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
@@ -693,13 +693,16 @@
         <input type="number" class="form-control" [(ngModel)]="thresholdForm.threshold_value" name="threshold_value" required>
       </div>
       <div class="mb-3">
-        <label class="form-label">Email Recipients</label>
-        <input type="text" class="form-control" [(ngModel)]="thresholdForm.email" name="email" required placeholder="Separate multiple emails with commas">
+        <label class="form-label">Email Recipient</label>
+        <input type="email" class="form-control" [(ngModel)]="thresholdForm.email" name="email" required placeholder="Enter email address">
+        <div *ngIf="thresholdForm.email && !isEmailValid(thresholdForm.email)" class="text-danger mt-1" style="font-size: 13px;">
+        Please enter valid email address.
+      </div>
       </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-      <button type="submit" class="btn btn-primary">{{ editingThreshold ? 'Update' : 'Save' }} Alert Rule</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!isThresholdFormValid()">{{ editingThreshold ? 'Update' : 'Save' }} Alert Rule</button>
     </div>
   </form>
 </ng-template>
