@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { WorkbenchService } from '../workbench.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../shared/sharedmodule';
 // import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { UsersDashboardComponent } from '../users-dashboard/users-dashboard.component';
@@ -35,10 +35,19 @@ export class ConfigureComponent implements OnInit {
   selectableDashbaord = false;
   userId:any;
   enabledEmail=false;
+
+  charts: any[] = [];
+  existingThresholds: any[] = [];
+  thresholdForm: any = {};
+  editingThreshold: any = null;
+  selectedChart: any = null;
+  @ViewChild('thresholdModal') thresholdModal: any;
+
   constructor(
     private workbechService: WorkbenchService,
     private http: HttpClient,
     private router: Router,route:ActivatedRoute,
+    private modalService: NgbModal,
     private toasterService:ToastrService
   ) {
     if(this.router.url.includes('/analytify/configure-page/email/dashboard')){
@@ -358,7 +367,8 @@ updateDatasourceTogglesFromApi(mailAction: any) {
   onDashboardSelect(dashboard:any){
     this.dashboardId=dashboard?.dashboard_id;
     console.log(dashboard?.dashboard_id)
-    this.getdashboardDetails(dashboard?.dashboard_id)
+    this.getdashboardDetails(dashboard?.dashboard_id);
+    this.fetchThresholds();
   }
   onSheetSelect(sheet:any){
     this.sheetId=sheet?.sheet_id;
@@ -533,4 +543,110 @@ getSelectedDatasourceMailActions(): string[] {
   if (this.datasourceToggles.datasource_update) actions.push('datasource_update');
   return actions;
 }
+
+filteredCharts: any[] = [];
+
+fetchThresholds(){
+this.workbechService.getThresholds(this.dashboardId).subscribe({
+  next: (data: any) => {  
+    if (data) {
+      console.log(data);
+      this.charts = data.charts || [];
+        this.filteredCharts = this.charts.filter(c => c.chart_id === 25);
+      this.existingThresholds = data.existing_thresholds || [];
+    }
+  },
+  error: (error: any) => {
+    console.log(error);
+  }
+});
+}
+  getSheetName(sheet_id: number) {
+    const chart = this.charts.find(c => c.sheet_id === sheet_id);
+    return chart ? chart.chart_name : '';
+  }
+
+// ...existing code...
+openThresholdModal(editThreshold: any = null) {
+  this.editingThreshold = editThreshold;
+  if (editThreshold && typeof editThreshold === 'object') {
+    this.thresholdForm = { ...editThreshold };
+    this.selectedChart = this.charts.find(
+      c => c.sheet_id === editThreshold.sheet_id && c.chart_id === 25
+    );
+  } else {
+    this.thresholdForm = {
+      sheet_id: null,
+      metric: '',
+      condition: '>',
+      threshold_value: null,
+      email: ''
+    };
+    this.selectedChart = null;
+  }
+  this.modalService.open(this.thresholdModal, { centered: true });
+}
+// ...existing code...
+  onSheetChange() {
+    this.selectedChart = this.charts.find(c => c.sheet_id == this.thresholdForm.sheet_id && c.chart_id === 25);
+    if (this.selectedChart) {
+      this.thresholdForm.metric = this.selectedChart.column_name;
+    }
+  }
+
+  saveThreshold(modal:any) {
+  const chart = this.thresholdForm.selectedChart;
+    const obj = {
+    "dashboard_id":this.dashboardId,
+    "sheet_id": chart.sheet_id,
+    "metric": chart.column_name,
+    "metric_name": chart.chart_name,
+    "condition": this.thresholdForm.condition,
+    "threshold_value": this.thresholdForm.threshold_value,
+    "email": this.thresholdForm.email
+    }
+    this.workbechService.saveThreshold(obj).subscribe({
+      next: (res:any) => {
+        this.toasterService.success('Threshold alert saved successfully!');
+        modal.close();
+        this.fetchThresholds();
+      },
+      error: (error) => {
+        this.toasterService.error('Failed to save threshold');
+      }
+    });
+  }
+
+  editThreshold(threshold:any) {
+    this.openThresholdModal(threshold);
+  }
+
+  deleteThreshold(threshold:any) {
+    // this.fetchThresholds();
+    this.workbechService.deleteThreshold(threshold.id).subscribe({
+      next: (res:any) => {
+        this.toasterService.success('Threshold alert deleted successfully!');
+      },
+      error: (error) => {
+        this.toasterService.error('Failed to delete threshold alert');
+      }
+    });
+  }
+  dashboardAlertsOpen = true;
+  thresholdAlertsOpen = false;
+
+toggleSection(section: string) {
+  if (section === 'dashboard') {
+    this.dashboardAlertsOpen = !this.dashboardAlertsOpen;
+    if (this.dashboardAlertsOpen) {
+      this.thresholdAlertsOpen = false;
+    }
+  } else if (section === 'threshold') {
+    this.thresholdAlertsOpen = !this.thresholdAlertsOpen;
+    if (this.thresholdAlertsOpen) {
+      this.dashboardAlertsOpen = false;
+    }
+  }
+}
+
 }
