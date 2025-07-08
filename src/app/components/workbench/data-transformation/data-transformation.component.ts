@@ -569,6 +569,7 @@ export class DataTransformationComponent {
       ...(isEdit && { hierarchy_id: this.hierarchyId }),
     }
     console.log('payload : ',object);
+    this.hasUnSavedChanges = false;
     this.workbechService.setTransformations(object).subscribe({
       next: (response: any) => {
         console.log(response);
