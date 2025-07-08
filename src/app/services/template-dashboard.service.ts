@@ -436,7 +436,6 @@ export class TemplateDashboardService {
           }
         }
       });
-    });
     let responseData = _.cloneDeep(this.mergeSheetData(responesData));
     this.updateDashboardData(responseData.dashboard, responseData.sheets).then(() => {
       this.dashboardInstance.dashboardId = responesData.dashboard.dashboard_id;
