@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NumberValue } from 'd3';
 import { RolespriviledgesService } from '../rolespriviledges.service';
@@ -25,6 +25,7 @@ export class InsightsButtonComponent {
   @Output() btnClickEvent: EventEmitter<any>;
   @Input() gotoSheetButton! : boolean;
   @Input() imageUrl!: string; 
+  @HostBinding('attr.id') @Input() id!: string;
   displayButton : boolean = false;
   constructor(private rolesPrevilidgesService : RolespriviledgesService){
     this.btnClickEvent = new EventEmitter();
