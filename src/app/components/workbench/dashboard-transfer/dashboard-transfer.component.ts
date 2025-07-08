@@ -15,7 +15,8 @@ import { forkJoin } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule,SharedModule],
   templateUrl: './dashboard-transfer.component.html',
-  styleUrls: ['./dashboard-transfer.component.scss']
+  styleUrls: ['./dashboard-transfer.component.scss'],
+  providers: [TemplateDashboardService]
 })
 export class DashboardTransferComponent {
   exportDashboardId! : number;

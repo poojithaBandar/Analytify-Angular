@@ -37,7 +37,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
   standalone: true,
   imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent,NgMultiSelectDropDownModule,NgSelectModule],
   templateUrl: './workbench.component.html',
-  styleUrl: './workbench.component.scss'
+  styleUrl: './workbench.component.scss',
+  providers: [TemplateDashboardService]
 })
 export class WorkbenchComponent implements OnInit{
   @ViewChild('fileInput') fileInput:any;
@@ -1325,7 +1326,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Create smart dashboard from your data with just one click?",
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1381,7 +1382,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Create smart dashboard from your data with just one click?",
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1436,7 +1437,7 @@ export class WorkbenchComponent implements OnInit{
                 position: "center",
                 // icon: "question",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
+                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1488,7 +1489,7 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
+                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1581,7 +1582,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Create smart dashboard from your data with just one click?",
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',

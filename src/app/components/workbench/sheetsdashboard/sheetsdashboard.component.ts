@@ -8475,6 +8475,7 @@ resetGenieAnimation() {
   }
 }
 
+buttonClicked = false;
   onEditorReady(editor: any) {
     setTimeout(() => {
       editor.editing.view.focus();
@@ -8486,10 +8487,10 @@ resetGenieAnimation() {
       });
     }, 0);
 
-    const editableElement = editor.ui.view.editable.element;
-    editableElement.addEventListener('blur', () => {
-      this.editor = false;
-    });
+    // const editableElement = editor.ui.view.editable.element;
+    // editableElement.addEventListener('blur', () => {
+    //   this.editor = false;
+    // });
   }
 }
 // export interface CustomGridsterItem extends GridsterItem {
