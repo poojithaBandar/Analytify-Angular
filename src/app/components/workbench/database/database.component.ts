@@ -37,6 +37,7 @@ const EXCEL_TYPE =
   imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent,ScrollingModule,TestPipe],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
+  providers: [TemplateDashboardService],
   animations:[
     trigger('toggle', [
       state('open', style({

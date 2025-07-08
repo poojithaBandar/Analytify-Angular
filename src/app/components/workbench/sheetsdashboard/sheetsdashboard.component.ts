@@ -8487,27 +8487,10 @@ buttonClicked = false;
       });
     }, 0);
 
-    const editableElement = editor.ui.view.editable.element;
-
-    // Register button click tracking
-    const saveBtn = document.getElementById('save-btn');
-    const updateBtn = document.getElementById('update-btn');
-
-    [saveBtn, updateBtn].forEach((btn) => {
-      btn?.addEventListener('mousedown', () => {
-        this.buttonClicked = true;
-      });
-    });
-
-    // Handle blur event
-    editableElement.addEventListener('blur', () => {
-      setTimeout(() => {
-        if (!this.buttonClicked) {
-          this.editor = false;
-        }
-        this.buttonClicked = false; // Reset
-      }, 0);
-    });
+    // const editableElement = editor.ui.view.editable.element;
+    // editableElement.addEventListener('blur', () => {
+    //   this.editor = false;
+    // });
   }
 }
 // export interface CustomGridsterItem extends GridsterItem {
