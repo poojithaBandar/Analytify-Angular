@@ -331,9 +331,16 @@ export class TemplateDashboardService {
         join_type:query.join_type,
         joining_conditions:query.joining_conditions,
         dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
-      } as any
-      this.workbechService.joiningTablesTest(obj).subscribe({next: (responce) => {
-      responesData.sheets.forEach((sheet: any)=> {
+      } as any;
+      this.workbechService.joiningTablesTest(obj).subscribe({
+        next: () => {},
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      });
+    });
+    responesData.sheets.forEach((sheet: any)=> {
         const {
           chart_id,
           sheet_col,
@@ -429,20 +436,14 @@ export class TemplateDashboardService {
           }
         }
       });
-        let responseData = _.cloneDeep(this.mergeSheetData(responesData));
-        this.updateDashboardData(responseData.dashboard, responseData.sheets).then(() => {
-          this.dashboardInstance.dashboardId = responesData.dashboard.dashboard_id;
-          this.dashboardInstance.assignDashboardParams(responseData.dashboard,true);
-          // this.dashboardInstance.updateDashboard(false,false,true);
-        }).catch(error => {
-          console.error('Error updating dashboard data:', error);
-        });
-        },
-        error: (error) => {
-          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-          console.log(error);
-        }
-      });
+    });
+    let responseData = _.cloneDeep(this.mergeSheetData(responesData));
+    this.updateDashboardData(responseData.dashboard, responseData.sheets).then(() => {
+      this.dashboardInstance.dashboardId = responesData.dashboard.dashboard_id;
+      this.dashboardInstance.assignDashboardParams(responseData.dashboard,true);
+      // this.dashboardInstance.updateDashboard(false,false,true);
+    }).catch(error => {
+      console.error('Error updating dashboard data:', error);
     });
   }
 
