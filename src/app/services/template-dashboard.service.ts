@@ -826,7 +826,14 @@ export class TemplateDashboardService {
           "kpiNumber": tranformedData.rows_data[0]?.result_data[0],
           "kpiPrefix": "",
           "kpiSuffix": "",
-          kpiDecimalUnit: "none"
+          kpiDecimalUnit: "none",
+          "tableData": tableDataStore,
+          "tableColumns": displayedColumns,
+          "banding": false,
+          "color1": "#f5f5f5",  
+          "color2": "#ffffff",
+          "items_per_page": 10,
+          "total_items": totalCount
         },
         "isApexChart": false,
         "isEChart": true,
