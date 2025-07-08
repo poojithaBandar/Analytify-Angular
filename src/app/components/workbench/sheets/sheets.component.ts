@@ -1608,7 +1608,7 @@ try {
     if(this.bar){
       this.isHorizontalBar = false;
     }
-    if(this.bar || this.horizontalBar || this.pie || this.donut || this.funnel){
+    if(this.bar || this.pie || this.donut || this.funnel){
     this.updateMeasureColorRanges();
     }
     if(!(this.bar|| this.horizontalBar || this.pie || this.donut)){
@@ -2614,28 +2614,28 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     });
   }
   const axisConfig = responce?.sheet_data?.results?.axisConfig;
-  if((responce.chart_id != 1 || responce.chart_id != 25 || responce.chart_id != 9) && axisConfig && axisConfig.type){
-    if(axisConfig.type === 'dual'){
-      this.dualAxisColumnData = axisConfig.xAxis;
-      this.dualAxisRowData = axisConfig.yAxis;
-    } else {
-      this.chartsColumnData = axisConfig.xAxis;
-      this.chartsRowData = axisConfig.yAxis;
-    }
-    const cfg = this.chartRenderService.getChartConfig(responce.chart_id);
-    if(cfg){
-     this.chartType = cfg.chartType;
-      if(cfg.chartType === 'map'){
-        this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
-          echarts.registerMap('world', geoJson);
-        });
-      }
-    }
-    console.warn('Unknown chart configuration for chart id', responce.chart_id);
-  } else {
+  // if((responce.chart_id != 1 || responce.chart_id != 25 || responce.chart_id != 9) && axisConfig && axisConfig.type){
+  //   if(axisConfig.type === 'dual'){
+  //     this.dualAxisColumnData = axisConfig.xAxis;
+  //     this.dualAxisRowData = axisConfig.yAxis;
+  //   } else {
+  //     this.chartsColumnData = axisConfig.xAxis;
+  //     this.chartsRowData = axisConfig.yAxis;
+  //   }
+  //   const cfg = this.chartRenderService.getChartConfig(responce.chart_id);
+  //   if(cfg){
+  //    this.chartType = cfg.chartType;
+  //     if(cfg.chartType === 'map'){
+  //       this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+  //         echarts.registerMap('world', geoJson);
+  //       });
+  //     }
+  //   }
+  //   console.warn('Unknown chart configuration for chart id', responce.chart_id);
+  // } else {
     console.warn('savedChartOptions missing or malformed, using legacy computation');
     this.chartsDataSet(responce);
-  }
+  // }
   if(responce.chart_id == 1){
     // this.tableData = this.sheetResponce.results.tableData;
     // this.displayedColumns = this.sheetResponce?.results.tableColumns;
@@ -7578,15 +7578,40 @@ onMeasureColorChange() {
   this.measureColorRanges = [...this.measureColorRanges];
 }
 // Call this whenever measureDivisions or isMeasureDistribution changes
+// updateMeasureColorRanges() {
+//   if (!this.chartsRowData || this.chartsRowData.length === 0) return;
+//   const min = Math.min(...this.chartsRowData);
+//   const max = Math.max(...this.chartsRowData);
+//   const step = Math.ceil((max - min + 1) / this.measureDivisions);
+//   this.measureColorRanges = [];
+//   for (let i = 0; i < this.measureDivisions; i++) {
+//     const rangeMin = min + i * step;
+//     const rangeMax = i === this.measureDivisions - 1 ? max : rangeMin + step - 1;
+//     this.measureColorRanges.push({
+//       min: rangeMin,
+//       max: rangeMax,
+//       color: this.selectedColorScheme[i % this.selectedColorScheme.length] || '#2392c1',
+//       label: `${rangeMin} - ${rangeMax}`
+//     });
+//   }
+//   console.log('Measure Color Ranges:', this.measureColorRanges);
+// }
+
 updateMeasureColorRanges() {
   if (!this.chartsRowData || this.chartsRowData.length === 0) return;
+
   const min = Math.min(...this.chartsRowData);
   const max = Math.max(...this.chartsRowData);
-  const step = Math.ceil((max - min + 1) / this.measureDivisions);
+  const step = (max - min) / this.measureDivisions;
+
   this.measureColorRanges = [];
+
   for (let i = 0; i < this.measureDivisions; i++) {
-    const rangeMin = min + i * step;
-    const rangeMax = i === this.measureDivisions - 1 ? max : rangeMin + step - 1;
+    const rangeMin = +(min + i * step).toFixed(2); // Keep 2 decimal precision
+    const rangeMax = i === this.measureDivisions - 1
+      ? max
+      : +(rangeMin + step).toFixed(2);
+
     this.measureColorRanges.push({
       min: rangeMin,
       max: rangeMax,
@@ -7594,6 +7619,7 @@ updateMeasureColorRanges() {
       label: `${rangeMin} - ${rangeMax}`
     });
   }
+
   console.log('Measure Color Ranges:', this.measureColorRanges);
 }
 
@@ -7615,6 +7641,18 @@ if (this.dateList.includes(currentType)) {
   return currentType !== targetType;
 }
 
+onMeasureDivisionChange(value: number) {
+  if (value < 2) {
+    this.measureDivisions = 2;
+  } else if (value > 10) {
+    this.measureDivisions = 10;
+  } else {
+    this.measureDivisions = value;
+  }
+
+  this.updateMeasureColorRanges();
+}
+
 topSelecetdColumnDataType : any = '';
 isMeasureAbsent : boolean = false;
 onRowSelected() {
@@ -7628,6 +7666,7 @@ onRowSelected() {
   }
 }
 
+buttonClicked = false;
   onEditorReady(editor: any) {
     setTimeout(() => {
       editor.editing.view.focus();
@@ -7640,8 +7679,25 @@ onRowSelected() {
     }, 0);
 
     const editableElement = editor.ui.view.editable.element;
+
+    // Register button click tracking
+    const saveBtn = document.getElementById('save-btn');
+    const updateBtn = document.getElementById('update-btn');
+
+    [saveBtn, updateBtn].forEach((btn) => {
+      btn?.addEventListener('mousedown', () => {
+        this.buttonClicked = true;
+      });
+    });
+
+    // Handle blur event
     editableElement.addEventListener('blur', () => {
-      this.editor = false;
+      setTimeout(() => {
+        if (!this.buttonClicked) {
+          this.editor = false;
+        }
+        this.buttonClicked = false; // Reset
+      }, 0);
     });
   }
 

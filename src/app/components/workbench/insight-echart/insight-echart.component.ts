@@ -292,7 +292,7 @@ export class InsightEchartComponent {
           // })),
         },
       ],
-      color: this.isDistributed ? this.selectedColorScheme : this.color,
+      color: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : (this.isDistributed ? this.selectedColorScheme : this.color),
       colorBy: 'data',
 
     };
@@ -408,7 +408,7 @@ horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
         colorBy: 'data',
       }
     ],
-    color: this.isDistributed ? this.selectedColorScheme : this.color
+    color: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : (this.isDistributed ? this.selectedColorScheme : this.color),
   };
 console.log('Horizontal Bar Chart Options:', this.chartOptions);
   return this.chartOptions;
@@ -437,8 +437,9 @@ funnelchart(dualAxisColumnData? : any ,dualAxisRowData?: any){
       });
     });
   });
+  let data = combinedArray.map((item: any) => item.value);
   this.chartOptions = {
-    color: this.isDistributed ? this.selectedColorScheme : this.color,
+    color: this.isMeasureDistribution ? this.setColorsOnRanges(data) : (this.isDistributed ? this.selectedColorScheme : this.color),
     tooltip: {
       trigger: 'item',
     },
@@ -1139,7 +1140,7 @@ pieChart(chartsColumnData?:any[],chartsRowData?:any[]){
   // let legendObject = this.setEchartLegendAlignment();
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
-    color:this.selectedColorScheme,
+    color:this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme,
     tooltip: {
       trigger: 'item',
       formatter:(params:any) => params.name + ' : ' + this.formatNumber(params.value) 
@@ -1189,7 +1190,7 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
   // let legendObject = this.setEchartLegendAlignment();
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
-    color:this.selectedColorScheme,
+    color:this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme,
     tooltip: {
       trigger: 'item',
     },
@@ -2267,16 +2268,23 @@ chartInitialize(){
       this.radarDistributionSetOptions();
     }
     // Handle measure distribution changes for single axis charts
-    if (
-        changes['isMeasureDistribution'] ||
-        changes['measureColorRanges']
-      ) {
-        if (
-          ['bar','pie', 'donut', 'funnel', 'horizontalBar'].includes(this.chartType)
-        ) {
-          this.applyMeasureDistribution();
-        }
+    // if (
+    //     changes['isMeasureDistribution'] ||
+    //     changes['measureColorRanges']
+    //   ) {
+    //     if (
+    //       ['bar','pie', 'donut', 'funnel', 'horizontalBar'].includes(this.chartType)
+    //     ) {
+    //       this.applyMeasureDistribution();
+    //     }
+    // }
+
+    if (changes['isMeasureDistribution'] || changes['measureColorRanges']) {
+      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar'].includes(this.chartType)) {
+        this.setMeasureRangeColors();
+      }
     }
+
     // if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
     //   this.sortSeries(this.sortType);
     // }
@@ -2289,63 +2297,93 @@ chartInitialize(){
     console.log(this.chartOptions);
   }
 
-  applyMeasureDistribution() {
-  if (!this.isMeasureDistribution || !this.measureColorRanges?.length) {
-    // Fallback to normal color logic
-    this.chartInitialize();
-    this.chartInstance?.setOption(this.chartOptions, true);
-    return;
-  }
-if (!this.chartOptions || !Array.isArray(this.chartOptions.series) || !this.chartOptions.series[0]) {
-    return; // Or handle initialization here
-  }
-  if (this.chartType === 'bar' || this.chartType === 'horizontalBar' ) {
-    // For bar/area/line, set itemStyle.color for each data point
-    const coloredData = this.chartsRowData.map((value: number) => ({
-      value,
-      itemStyle: { color: this.getColorForValue(value) }
-    }));
-    this.chartOptions.series[0].data = coloredData;
-    // this.chartInstance?.setOption({  series: [{
-    // type: this.chartType, // e.g., 'bar', 'line', etc.
-    // data: coloredData
-    // }] }, true);
-    // this.chartInstance?.setOption(this.chartOptions, true);
-    this.chartInstance?.setOption(
-  { series: this.chartOptions.series },
-  { notMerge: false, replaceMerge: ['series'] }
-);
-  } else if (this.chartType === 'pie' || this.chartType === 'donut') {
-    // For pie/donut, set itemStyle.color for each slice
-    const combinedArray = this.chartsRowData.map((value: number, index: number) => ({
-      value,
-      name: this.chartsColumnData[index],
-      itemStyle: { color: this.getColorForValue(value) }
-    }));
-    this.chartOptions.series[0].data = combinedArray;
-    this.chartInstance?.setOption(this.chartOptions, true);
+//   applyMeasureDistribution() {
+//   if (!this.isMeasureDistribution || !this.measureColorRanges?.length) {
+//     // Fallback to normal color logic
+//     this.chartInitialize();
+//     this.chartInstance?.setOption(this.chartOptions, true);
+//     return;
+//   }
+// if (!this.chartOptions || !Array.isArray(this.chartOptions.series) || !this.chartOptions.series[0]) {
+//     return; // Or handle initialization here
+//   }
+//   if (this.chartType === 'bar' || this.chartType === 'horizontalBar' ) {
+//     // For bar/area/line, set itemStyle.color for each data point
+//     const coloredData = this.chartsRowData.map((value: number) => ({
+//       value,
+//       itemStyle: { color: this.getColorForValue(value) }
+//     }));
+//     this.chartOptions.series[0].data = coloredData;
+//     // this.chartInstance?.setOption({  series: [{
+//     // type: this.chartType, // e.g., 'bar', 'line', etc.
+//     // data: coloredData
+//     // }] }, true);
+//     // this.chartInstance?.setOption(this.chartOptions, true);
+//     this.chartInstance?.setOption(
+//   { series: this.chartOptions.series },
+//   { notMerge: false, replaceMerge: ['series'] }
+// );
+//   } else if (this.chartType === 'pie' || this.chartType === 'donut') {
+//     // For pie/donut, set itemStyle.color for each slice
+//     const combinedArray = this.chartsRowData.map((value: number, index: number) => ({
+//       value,
+//       name: this.chartsColumnData[index],
+//       itemStyle: { color: this.getColorForValue(value) }
+//     }));
+//     this.chartOptions.series[0].data = combinedArray;
+//     this.chartInstance?.setOption(this.chartOptions, true);
 
-    // this.chartInstance?.setOption({ series: [{ data: combinedArray }] }, true);
-  } else if (this.chartType === 'funnel') {
-    // For funnel, set itemStyle.color for each data point
-    const combinedArray: { name: any; value: any; itemStyle: { color: string; }; }[] = [];
-    this.dualAxisColumnData.forEach((item: any) => {
-      this.dualAxisRowData.forEach((categoryObj: any) => {
-        item.values.forEach((value: any, index: number) => {
-          combinedArray.push({
-            name: value,
-            value: categoryObj.data[index],
-            itemStyle: { color: this.getColorForValue(categoryObj.data[index]) }
-          });
-        });
-      });
+//     // this.chartInstance?.setOption({ series: [{ data: combinedArray }] }, true);
+//   } else if (this.chartType === 'funnel') {
+//     // For funnel, set itemStyle.color for each data point
+//     const combinedArray: { name: any; value: any; itemStyle: { color: string; }; }[] = [];
+//     this.dualAxisColumnData.forEach((item: any) => {
+//       this.dualAxisRowData.forEach((categoryObj: any) => {
+//         item.values.forEach((value: any, index: number) => {
+//           combinedArray.push({
+//             name: value,
+//             value: categoryObj.data[index],
+//             itemStyle: { color: this.getColorForValue(categoryObj.data[index]) }
+//           });
+//         });
+//       });
+//     });
+//     this.chartOptions.series[0].data = combinedArray;
+//     // this.chartInstance?.setOption({ series: [{ data: combinedArray }] }, true);
+//         this.chartInstance?.setOption(this.chartOptions, true);
+
+//   }
+// }
+
+setColorsOnRanges(data: any): string[] {
+    let colors = data.map((value:any) => {
+      const matchedRange = this.measureColorRanges.find((range:any) =>
+        value >= range.min && value <= range.max
+      );
+      return matchedRange ? matchedRange.color : '#2392c1';
     });
-    this.chartOptions.series[0].data = combinedArray;
-    // this.chartInstance?.setOption({ series: [{ data: combinedArray }] }, true);
-        this.chartInstance?.setOption(this.chartOptions, true);
-
+    return colors;
   }
-}
+
+  setMeasureRangeColors() {
+    if (this.isMeasureDistribution) {
+      if (['bar', 'horizontalBar'].includes(this.chartType)) {
+        let obj = {
+          color: this.setColorsOnRanges(this.chartOptions.series[0].data)
+        }
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.color = obj.color;
+      } else {
+        let data = this.chartOptions.series[0].data.map((item: any) => item.value);
+        let obj = {
+          color: this.setColorsOnRanges(data)
+        }
+        this.chartInstance?.setOption(obj)
+        this.chartOptions.color = obj.color;
+        console.log('chartoptionsecahrtcolor', this.chartOptions)
+      }
+    }
+  }
 
   xLabelFontFamilySetOptions(){
     if(this.chartType !== 'heatmap'){
