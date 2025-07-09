@@ -7642,16 +7642,18 @@ if (this.dateList.includes(currentType)) {
 }
 
 onMeasureDivisionChange(value: number) {
-  if (value < 2) {
-    this.measureDivisions = 2;
-  } else if (value > 10) {
-    this.measureDivisions = 10;
-  } else {
-    this.measureDivisions = value;
-  }
+    setTimeout(() => {
+      if (value < 2) {
+        this.measureDivisions = 2;
+      } else if (value > 10) {
+        this.measureDivisions = 10;
+      } else {
+        this.measureDivisions = value;
+      }
 
-  this.updateMeasureColorRanges();
-}
+      this.updateMeasureColorRanges();
+    }, 0);
+  }
 
 topSelecetdColumnDataType : any = '';
 isMeasureAbsent : boolean = false;
