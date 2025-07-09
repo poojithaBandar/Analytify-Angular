@@ -700,6 +700,18 @@ deleteUser(id:any){
   publishDashbord(id:any){
     return this.http.get<any>(`${environment.apiUrl}/is_public/`+id);
   }
+
+  protectedShare(obj:any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/dashboard/protected-share`, obj);
+  }
+
+  verifyPassKey(obj:any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/dashboard/verify-passkey`, obj);
+  }
   getDashboardFilterredListPublic(obj:any){
     return this.http.post<any>(`${environment.apiUrl}/public/dashboard_filter_list/`,obj); 
   }

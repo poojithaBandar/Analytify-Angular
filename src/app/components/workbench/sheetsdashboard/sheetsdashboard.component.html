@@ -2404,7 +2404,22 @@
      [ngStyle]="{ boxShadow: genieHover ? '0 8px 24px rgba(0,0,0,0.28)' : '0 4px 16px rgba(0,0,0,0.18)' }">
   <img src="assets/images/analyze-genieaiq1.webp" alt="Genie AIQ" class="overlay-img"/>
 <div class="genie-tooltip" *ngIf="showGenieTooltip">
-    Analyze Dashboard
-  </div>
+  Analyze Dashboard
 </div>
+</div>
+
+<ng-template #passKeyModal let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Enter Pass Key</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <input type="password" class="form-control" [(ngModel)]="enteredPassKey" placeholder="Pass Key" />
+    <div class="text-danger mt-2" *ngIf="passKeyError">{{passKeyError}}</div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn ripple btn-secondary" (click)="modal.dismiss('Close click')">Cancel</button>
+    <button type="button" class="btn ripple btn-primary" [disabled]="enteredPassKey.length < 6" (click)="verifyPassKey(modal)">Apply</button>
+  </div>
+</ng-template>
 
