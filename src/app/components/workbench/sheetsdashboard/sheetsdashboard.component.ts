@@ -1687,7 +1687,7 @@ export class SheetsdashboardComponent implements OnDestroy {
             width: '400px',
           })
         } else {
-          if(!isLiveReloadData){
+          if(!isLiveReloadData && !isSwitchDb){
             this.takeScreenshot();
           }
         const targetIds = this.switchConditions.map(c => c.targetHierarchyId).filter(id => id);
@@ -8090,7 +8090,7 @@ loadTargetDbs(index:number){
       next:(data)=>{
         const currentHierarchyId = cond.sourceDetails.hierarchy_id;
         cond.targetDbData = data.user_connections.filter(
-          (db: any) => db.hierarchy_id !== currentHierarchyId
+          (db: any) => db.hierarchy_id !== currentHierarchyId && db.is_cross_db !== true
         );
       },
       error:(error)=>{
