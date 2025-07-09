@@ -245,6 +245,7 @@ if(this.roleTitle === ''){
       console.log(data);
       this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
       // this.router.navigate(['/analytify/roles/roles-list'])
+      this.getSavedRolesList();
       this.viewSavedRoles();
      },
     error:(error)=>{
@@ -344,6 +345,7 @@ editRoles(){
       //   width: '400px',
       // })
       this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+      this.getSavedRolesList();
       this.viewSavedRoles();
      },
     error:(error)=>{
