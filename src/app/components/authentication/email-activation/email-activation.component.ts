@@ -32,10 +32,13 @@ export class EmailActivationComponent {
   displayTimer: boolean = false;
   otp:any;
   emailActivationToken:any;
+  returnUrl: string | null = null;
 constructor( @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private authService:AuthService,private router:Router,private toasterService:ToastrService,
 private renderer: Renderer2,private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute){}
 
 ngOnInit(): void {
+
+  this.returnUrl = this.activatedRoute.snapshot.queryParamMap.get('returnUrl');
  
   this.renderer.addClass(this.document.body, 'login-img');
   this.renderer.addClass(this.document.body, 'ltr');
@@ -105,7 +108,7 @@ validateOtp(){
             text: 'Your Email is verified!, Please Login',
             width: '400px',
           })
-          this.router.navigate(['/authentication/login']);
+          this.router.navigate(['/authentication/login'], { queryParams: { returnUrl: this.returnUrl }});
         }
         
                   

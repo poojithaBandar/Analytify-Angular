@@ -2,7 +2,7 @@ import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, ElementRef, Inject, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { PasswordValidators } from '../../../shared/password-validator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -20,11 +20,13 @@ export class RegisterComponent {
   confirmPasswordError = false;
   emailActivationToken:any;
   @ViewChild('inputRef') inputRef!: ElementRef;
+  returnUrl: string | null = null;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private authService:AuthService,
-    private renderer: Renderer2,private formBuilder:FormBuilder,private router:Router
+    private renderer: Renderer2,private formBuilder:FormBuilder,private router:Router,private route: ActivatedRoute
   ) {
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     this.signupForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.maxLength(64)]],
       // username: ['', Validators.required],
@@ -143,7 +145,7 @@ onSubmit(){
           console.log(data);
           this.emailActivationToken = data.emailActivationToken;
           this.authService.emailActivationToken = data.emailActivationToken;
-          this.router.navigate(['/authentication/email-activation/'+ this.emailActivationToken]);
+          this.router.navigate(['/authentication/email-activation/' + this.emailActivationToken], { queryParams: { returnUrl: this.returnUrl }});
 
         },
         error:(error:any)=>{
