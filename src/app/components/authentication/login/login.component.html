@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="text-center">
                                     <p class="mb-0 tx-14">Don't have an account yet?
-                                        <a routerLink="/authentication/register" class="tx ms-1 text-decoration-underline default-color">Sign Up</a>
+                                        <a [routerLink]="'/authentication/register'" [queryParams]="{ returnUrl: returnUrl }" class="tx ms-1 text-decoration-underline default-color">Sign Up</a>
                                     </p>
                                 </div>
                             </div>

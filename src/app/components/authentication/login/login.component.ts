@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, ElementRef, Inject, Renderer2 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
 import Swal from 'sweetalert2';
 import { RolespriviledgesService } from '../../workbench/rolespriviledges.service';
@@ -21,6 +21,8 @@ import { LoaderService } from '../../../shared/services/loader.service';
 export class LoginComponent {
 
 loginForm:FormGroup;
+
+returnUrl: string | null = null;
 
 
 showPassword = false;
@@ -44,10 +46,11 @@ toggleVisibility1() {
   }
 }
   constructor(
-    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,private switcherComponent: SwitcherComponent,private themeService : CustomThemeService,
+    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,private route: ActivatedRoute,private switcherComponent: SwitcherComponent,private themeService : CustomThemeService,
     private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService,private loaderService : LoaderService
   ) {
     const currentUser = localStorage.getItem('currentUser');
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     if (currentUser) {
       this.router.navigate(['analytify/home']);
     }
@@ -99,7 +102,11 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }
     if(data.accessToken){
-      this.router.navigate(['analytify/home'])
+      if(this.returnUrl){
+        this.router.navigateByUrl(this.returnUrl);
+      } else {
+        this.router.navigate(['analytify/home']);
+      }
     }
   },
   error:(error:any)=>{
@@ -123,5 +130,4 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     }
   }
 })
-}
-}
+}}

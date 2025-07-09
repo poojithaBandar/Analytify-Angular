@@ -341,6 +341,12 @@ export const admin: Routes = [
           import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
       },
       {
+        path: 'dashboard/share/protected/:id1',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+      },
+      {
         path: 'configure-page/configure',
         canActivate: [authGuard],
         loadComponent: () =>
