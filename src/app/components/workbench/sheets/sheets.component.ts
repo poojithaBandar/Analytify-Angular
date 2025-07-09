@@ -7650,7 +7650,7 @@ onMeasureDivisionChange() {
       // } else {
       //   this.measureDivisions = value;
       // }
-      if(this.measureDivisions){
+      if(this.measureDivisions || this.measureDivisions === 0){
         if (this.measureDivisions < 2) {
           this.measureDivisions = 2;
         } else if (this.measureDivisions > 10) {
