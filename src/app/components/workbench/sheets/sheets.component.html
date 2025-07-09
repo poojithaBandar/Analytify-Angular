@@ -4955,7 +4955,7 @@
                                                                 </div>
                                                                 <div *ngIf="isMeasureDistribution" class="d-flex align-items-center justify-content-start">
                                                                     <input type="number" min="2" max="10" [(ngModel)]="measureDivisions" [disabled]="!isMeasureDistribution"
-                                                                    (ngModelChange)="onMeasureDivisionChange($event)" class="form-control" style="width: 40%;"/>
+                                                                    (ngModelChange)="onMeasureDivisionChange()" class="form-control" style="width: 40%;"/>
                                                                     <span class="ms-1">Div</span>
                                                                 </div>
                                                                 <div *ngIf="isMeasureDistribution" class="mt-2">
@@ -5066,7 +5066,7 @@
                                                         </div>
                                                         <div *ngIf="donut && !isEChatrts" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                             <div class="" > 
-                                                                <label class="mb-0" >Label </label>
+                                                                <label class="mb-0" >Total </label>
                                                             </div>
                                                             <div *ngIf="label" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('label')">
                                                                 <span></span>

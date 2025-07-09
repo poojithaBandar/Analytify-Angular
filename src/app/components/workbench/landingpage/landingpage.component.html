@@ -60,7 +60,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{dashboardList.dashboard_name}}"
                                             (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)">
-                                            {{dashboardList.dashboard_name | slice:0:11}}</h5>
+                                            {{ dashboardList.dashboard_name.length > 18 ? (dashboardList.dashboard_name | slice:0:18) + '..' : dashboardList.dashboard_name }}</h5>
                                         <p class="card-text">Modified on {{dashboardList.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -95,7 +95,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{dashboardList.dashboard_name}}"
                                             (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)">
-                                            {{dashboardList.dashboard_name | slice:0:11}}</h5>
+                                            {{ dashboardList.dashboard_name.length > 18 ? (dashboardList.dashboard_name | slice:0:18) + '..' : dashboardList.dashboard_name }}</h5>
                                         <p class="card-text">Modified on {{dashboardList.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -227,7 +227,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
                                             (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
-                                            > {{sheetlist.sheet_name | slice:0:11}}</h5>
+                                            >{{sheetlist.sheet_name.length > 18 ? (sheetlist.sheet_name | slice:0:18) + '..' : sheetlist.sheet_name }}</h5>
                                         <p class="card-text text-truncate">Modified on {{sheetlist.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -316,7 +316,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
                                             (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
-                                            > {{sheetlist.sheet_name | slice:0:16}}</h5>
+                                            >{{sheetlist.sheet_name.length > 18 ? (sheetlist.sheet_name | slice:0:18) + '..' : sheetlist.sheet_name }}</h5>
                                         <p class="card-text">Modified on {{sheetlist.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">

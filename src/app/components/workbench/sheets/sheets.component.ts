@@ -7641,14 +7641,21 @@ if (this.dateList.includes(currentType)) {
   return currentType !== targetType;
 }
 
-onMeasureDivisionChange(value: number) {
+onMeasureDivisionChange() {
     setTimeout(() => {
-      if (value < 2) {
-        this.measureDivisions = 2;
-      } else if (value > 10) {
-        this.measureDivisions = 10;
-      } else {
-        this.measureDivisions = value;
+      // if (value < 2) {
+      //   this.measureDivisions = 2;
+      // } else if (value > 10) {
+      //   this.measureDivisions = 10;
+      // } else {
+      //   this.measureDivisions = value;
+      // }
+      if(this.measureDivisions || this.measureDivisions === 0){
+        if (this.measureDivisions < 2) {
+          this.measureDivisions = 2;
+        } else if (this.measureDivisions > 10) {
+          this.measureDivisions = 10;
+        }
       }
 
       this.updateMeasureColorRanges();
