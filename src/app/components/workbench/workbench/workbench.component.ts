@@ -1870,8 +1870,6 @@ export class WorkbenchComponent implements OnInit{
       if(this.selectedSchema){
         obj.schema = this.selectedSchema;
       }
-      this.confirmPopupForDataTransformation().then((isSkip) => {
-        if (isSkip === true) {
           this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
                 if(responce){
                   this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
@@ -1897,10 +1895,6 @@ export class WorkbenchComponent implements OnInit{
               }
             }
           )
-        } else if(isSkip === false) {
-          this.checkDataSourceConnection(obj);
-        }
-      });
     }
 
     opensqlLite(){
@@ -1970,8 +1964,6 @@ export class WorkbenchComponent implements OnInit{
       metrics: g.metrics,
       display_name:g.displayname
      }
-    this.confirmPopupForDataTransformation().then((isSkip) => {
-      if (isSkip === true) {
         this.workbechService.googleAnalyticsConnectionApi(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
@@ -2004,10 +1996,6 @@ export class WorkbenchComponent implements OnInit{
           }
           }
         )
-      } else if(isSkip === false) {
-        this.checkDataSourceConnection(obj);
-      }
-    });
     }
         
     triggerFileUpload(value:any) {
