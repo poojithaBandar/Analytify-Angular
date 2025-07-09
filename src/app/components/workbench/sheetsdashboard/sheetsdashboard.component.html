@@ -305,7 +305,7 @@
                                             <button type="button" 
                                                 class="btn btn-primary w-100" 
                                                 (click)="addTextItem()">
-                                                <i class="fa fa-font"></i>   Add Text
+                                                <i class="fa fa-font me-2"></i>Add Text
                                             </button>
                                             </div>
                                           </div>
@@ -1059,7 +1059,7 @@
                       <div *ngIf="dashboardId && !editor" class="SearchBarCu" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle"></div>              
                        
                         </div>
-                        <ckeditor *ngIf="editor && !isPublicUrl" placeholder="dashbaord Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName" (ngModelChange)="updatedashboardName(dashboardTagName)" style="color: black;" ></ckeditor>
+                        <ckeditor *ngIf="editor && !isPublicUrl" placeholder="dashbaord Name" (ready)="onEditorReady($event);" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName" (ngModelChange)="updatedashboardName(dashboardTagName)" style="color: black;" ></ckeditor>
                         <!-- <div *ngIf="editor" class="popup">
                           <div class="popup-content">
                             <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName">
@@ -1077,8 +1077,8 @@
                           <button  class="btn btn-primary me-1"><i class="fa fa-pencil"></i></button>
                         </span>
                         <span [ngbTooltip]="dashboard.length === 0 ? 'Add sheet to save dashboard' : ''">
-                            <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button></span>
-                            <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
+                            <button [disabled]="dashboard.length === 0" id="save-btn" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button></span>
+                            <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" id="update-btn" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
                             (btnClickEvent)="updateDashboard(false,true,false);editor =false"></app-insights-button>
                             <!-- <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button> -->
                             <!-- <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button> -->

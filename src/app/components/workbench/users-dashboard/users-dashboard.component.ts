@@ -311,6 +311,7 @@ addUser(){
           next:(data)=>{
             console.log(data);
             this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+            this.getUserList();
             this.viewUsers();
            },
           error:(error)=>{
@@ -336,7 +337,7 @@ addUser(){
         console.log(data);
         // this.addUserDivForm = false;
         this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-        // this.getUserList();
+        this.getUserList();
         this.viewUsers();
        },
       error:(error)=>{
