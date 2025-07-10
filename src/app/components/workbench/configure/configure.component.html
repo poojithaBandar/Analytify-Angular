@@ -661,14 +661,19 @@
     <h5 class="modal-title">{{ editingThreshold ? 'Edit' : 'Add' }} Threshold Alert Rule</h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
-  <form (ngSubmit)="saveThreshold(modal)">
+  <form (ngSubmit)="editingThreshold ? updateThreshold(modal) : saveThreshold(modal)">
           <div class="modal-body">
             <div class="mb-3">
         <label for="sheetSelect" class="form-label">Select Sheet</label>
         <ng-container *ngIf="filteredCharts.length > 0; else noKpi">
-          <select class="form-select" [(ngModel)]="thresholdForm.selectedChart" name="selectedChart" required (change)="onSheetChange()">
+          <select *ngIf="!editingThreshold" class="form-select" [(ngModel)]="thresholdForm.selectedChart" name="selectedChart" required (change)="onSheetChange()">
             <option *ngFor="let chart of filteredCharts" [ngValue]="chart">
               {{ chart.chart_name }}
+            </option>
+          </select>
+          <select *ngIf="editingThreshold" class="form-select" [(ngModel)]="selectedChart.chart_name" name="selectedChart"[disabled]="editingThreshold" >
+            <option selected [ngValue]="selectedChart.chart_name">
+              {{ selectedChart.chart_name }}
             </option>
           </select>
         </ng-container>
@@ -692,13 +697,13 @@
         <label class="form-label">Threshold Value</label>
         <input type="number" class="form-control" [(ngModel)]="thresholdForm.threshold_value" name="threshold_value" required>
       </div>
-      <div class="mb-3">
+      <!-- <div class="mb-3">
         <label class="form-label">Email Recipient</label>
         <input type="email" class="form-control" [(ngModel)]="thresholdForm.email" name="email" required placeholder="Enter email address">
         <div *ngIf="thresholdForm.email && !isEmailValid(thresholdForm.email)" class="text-danger mt-1" style="font-size: 13px;">
         Please enter valid email address.
       </div>
-      </div>
+      </div> -->
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>

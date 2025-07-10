@@ -603,7 +603,7 @@ openThresholdModal(editThreshold: any = null) {
     "metric_name": chart.chart_name,
     "condition": this.thresholdForm.condition,
     "threshold_value": this.thresholdForm.threshold_value,
-    "email": this.thresholdForm.email
+    "email": this.charts[0].email
     }
     this.workbechService.saveThreshold(obj).subscribe({
       next: (res:any) => {
@@ -616,7 +616,31 @@ openThresholdModal(editThreshold: any = null) {
       }
     });
   }
+  updateThreshold(modal:any) {
+    const chart = this.thresholdForm;
+    const obj = {
+      "id": this.editingThreshold.id,
+      "dashboard_id": this.dashboardId,
+      "sheet_id": chart.sheet_id,
+      "metric": chart.metric,
+      "metric_name": chart.chart_name,
+      "condition": this.thresholdForm.condition,
+      "threshold_value": this.thresholdForm.threshold_value,
+      "email": this.thresholdForm.email
+    };
+    this.workbechService.updateThreshold(obj).subscribe({
+      next: (res:any) => {
+        this.toasterService.success('Threshold alert updated successfully!');
+        modal.close();
+        this.fetchThresholds();
+        this.editingThreshold = null;
+      },
+      error: (error) => {
+        this.toasterService.error('Failed to update threshold');
+      }
+    });
 
+  }
   editThreshold(threshold:any) {
     this.openThresholdModal(threshold);
   }
@@ -626,6 +650,7 @@ openThresholdModal(editThreshold: any = null) {
     this.workbechService.deleteThreshold(threshold.id).subscribe({
       next: (res:any) => {
         this.toasterService.success('Threshold alert deleted successfully!');
+        this.fetchThresholds();
       },
       error: (error) => {
         this.toasterService.error('Failed to delete threshold alert');
@@ -654,14 +679,23 @@ isEmailValid(email: string): boolean {
 }
 isThresholdFormValid(): boolean {
  const f = this.thresholdForm;
+ if(!this.editingThreshold){
   return (
     f.selectedChart &&
     f.condition &&
     f.threshold_value !== null &&
     f.threshold_value !== undefined &&
-    f.threshold_value !== '' &&
-    f.email &&
-    this.isEmailValid(f.email)
+    f.threshold_value !== '' 
+    // f.email &&
+    // this.isEmailValid(f.email)
   );
+}else{
+  return (
+    f.condition &&
+    f.threshold_value !== null &&
+    f.threshold_value !== undefined &&
+    f.threshold_value !== '' 
+  );
+}
 }
 }
