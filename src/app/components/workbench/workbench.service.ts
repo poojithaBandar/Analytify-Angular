@@ -1218,6 +1218,11 @@ deleteUser(id:any){
     analyzeAndDownloadDashboard(obj:any){
       return this.http.post<any>(`${environment.apiUrl}/analyze-dashboard/`,obj);
     }
+    shareAnalysisReportEmail(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/analyze_share_report/`+this.accessToken, obj);
+    }
     sheetUpdateRefreshMail(obj:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -1237,6 +1242,11 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/threshold_mails/`+this.accessToken,obj);
+    }
+    updateThreshold(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/threshold_mails/`+this.accessToken,obj);
     }
     deleteThreshold(id:any){
       const currentUser = localStorage.getItem( 'currentUser' );

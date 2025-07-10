@@ -776,7 +776,7 @@ xaxis: {
       },
       yaxis: {
         labels: {
-          show: true,
+          show: this.yLabelSwitch,
           offsetY: (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)),
           style: {
             // colors: this.color,
@@ -871,7 +871,7 @@ xaxis: {
         categories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
         tickPlacement: 'on',
         labels: {
-          show: true,
+          show: this.xLabelSwitch,
           offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10)),
           style: {
             // colors: this.color,
@@ -883,7 +883,7 @@ xaxis: {
       },
       yaxis: {
         labels: {
-          show: true,
+          show: this.yLabelSwitch,
           offsetY: (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)),
           style: {
             // colors: this.color,

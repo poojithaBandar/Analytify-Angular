@@ -2355,6 +2355,13 @@
     </ng-template>
   </div>
  <div class="modal-footer">
+   <button
+      type="button"
+      class="btn btn-info"
+      [disabled]="!report_url"
+      (click)="shareReportByEmail()">
+      <i class="fa fa-envelope"></i> Share via Email
+    </button>
     <button 
       type="button" 
       class="btn btn-primary"
