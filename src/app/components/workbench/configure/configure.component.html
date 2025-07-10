@@ -213,7 +213,7 @@
                     </button>
                 </div>
 
-                <div *ngIf="activeEmailModule === 'dashboard'" class="module-section">
+                <div *ngIf="activeEmailModule === 'dashboard'">
                     <!-- <div class="card-body">
                         <div class="mb-4" *ngIf="selectableDashbaord">
                     <label for="dashboardSelect" class="form-label">Select a Dashboard</label>
@@ -283,9 +283,16 @@
                             </div>
                         </div>    
                     </div> -->
-  <div class="dashboard-section">
+  <div >
     <!-- Dashboard Update Alerts -->
     <div class="dashboard-flat-card mb-4">
+        <div class="section-title d-flex justify-content-between align-items-center" (click)="toggleSection('dashboard')" style="cursor:pointer;">
+    <span>Dashboard Update Alerts</span>
+    <span>
+      <i class="bi" [ngClass]="dashboardAlertsOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+    </span>
+  </div>
+  <div *ngIf="dashboardAlertsOpen">
   <div class="card-body">
     <div class="mb-4" *ngIf="selectableDashbaord">
       <label for="dashboardSelect" class="form-label">Select a Dashboard</label>
@@ -354,31 +361,52 @@
       </div>
     </div>
   </div>
+  </div>
 </div>
     <!-- Threshold Limit Alerts -->
-    <!-- <div class="dashboard-flat-card">
-      <div class="section-title d-flex justify-content-between align-items-center">
-        <span>Threshold Limit Alerts</span>
-        <button class="btn btn-primary btn-sm" >+ Add Alert Rule</button>
-      </div>
-      <div class="dashboard-toggle-row flex-column align-items-center" *ngIf="!dashboardToggles.length">
-        <img src="assets/images/empty-state.svg" alt="No alert rules" style="width:48px; margin-bottom:8px;">
-        <div class="toggle-desc text-center mb-1">No alert rules added yet.</div>
-        <div class="toggle-desc text-center">Create threshold-based alerts to monitor your key metrics.</div>
-      </div>
-      <div *ngFor="let rule of dashboardToggles" class="dashboard-toggle-row">
-        <div>
-          <div class="toggle-title">{{rule.title}}</div>
-          <div class="toggle-desc">{{rule.desc}}</div>
-        </div>
-        <div>
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="rule.value" (change)="checkSaveorUpdate()">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-    </div> -->
+    <div *ngIf="dashboardId" class="dashboard-flat-card mt-4">
+  <div class="section-title d-flex justify-content-between align-items-center"  (click)="toggleSection('threshold')" style="cursor:pointer;">
+    <span>Threshold Limit Alerts</span>
+      <span>
+      <i class="bi" [ngClass]="thresholdAlertsOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+    </span>
+    <button class="btn btn-primary btn-sm" (click)="openThresholdModal()">+ Add Alert Rule</button>
+  </div>
+  <div *ngIf="thresholdAlertsOpen">
+  <div *ngIf="existingThresholds && existingThresholds.length > 0; else noThresholds">
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr>
+          <th>Sheet Name</th>
+          <th>Metric Name</th>
+          <th>Threshold Value</th>
+          <th>Condition</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let threshold of existingThresholds">
+          <td>{{ getSheetName(threshold.sheet_id) }}</td>
+          <td>{{ threshold.metric }}</td>
+          <td>{{ threshold.threshold_value }}</td>
+          <td>{{ threshold.condition }}</td>
+          <td>{{ threshold.email }}</td>
+          <td>
+            <button class="btn btn-link btn-sm" (click)="editThreshold(threshold)">Edit</button>
+            <button class="btn btn-link btn-sm text-danger" (click)="deleteThreshold(threshold)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #noThresholds>
+    <div class="dashboard-toggle-row flex-column align-items-center">
+      <div class="toggle-desc text-center mb-1">No alert rules added yet.</div>
+    </div>
+  </ng-template>
+</div>
+</div>
   </div>
                 </div>
 
@@ -625,3 +653,57 @@
             </div>
         </div>
 </div>
+
+<!-- ...existing code... -->
+<!-- Threshold Modal -->
+<ng-template #thresholdModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ editingThreshold ? 'Edit' : 'Add' }} Threshold Alert Rule</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <form (ngSubmit)="saveThreshold(modal)">
+          <div class="modal-body">
+            <div class="mb-3">
+        <label for="sheetSelect" class="form-label">Select Sheet</label>
+        <ng-container *ngIf="filteredCharts.length > 0; else noKpi">
+          <select class="form-select" [(ngModel)]="thresholdForm.selectedChart" name="selectedChart" required (change)="onSheetChange()">
+            <option *ngFor="let chart of filteredCharts" [ngValue]="chart">
+              {{ chart.chart_name }}
+            </option>
+          </select>
+        </ng-container>
+        <ng-template #noKpi>
+          <div class="text-danger">No KPI's in dashboard</div>
+        </ng-template>
+      </div>
+      <div class="mb-3" *ngIf="selectedChart">
+        <label class="form-label">Metric</label>
+        <input class="form-control" [value]="selectedChart.column_name" readonly>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Condition</label>
+        <select class="form-select" [(ngModel)]="thresholdForm.condition" name="condition" required>
+          <option value=">">&gt; Greater than</option>
+          <option value="<">&lt; Less than</option>
+          <option value="=">= Equal to</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Threshold Value</label>
+        <input type="number" class="form-control" [(ngModel)]="thresholdForm.threshold_value" name="threshold_value" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email Recipient</label>
+        <input type="email" class="form-control" [(ngModel)]="thresholdForm.email" name="email" required placeholder="Enter email address">
+        <div *ngIf="thresholdForm.email && !isEmailValid(thresholdForm.email)" class="text-danger mt-1" style="font-size: 13px;">
+        Please enter valid email address.
+      </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!isThresholdFormValid()">{{ editingThreshold ? 'Update' : 'Save' }} Alert Rule</button>
+    </div>
+  </form>
+</ng-template>
+<!-- ...existing code... -->
