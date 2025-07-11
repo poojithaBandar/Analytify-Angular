@@ -5,7 +5,6 @@ import { WorkbenchService } from '../workbench.service';
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 import { ToastrService } from 'ngx-toastr';
 import { SharedModule } from '../../../shared/sharedmodule';
-import { forkJoin } from 'rxjs';
 
 /**
  * Component for importing and exporting dashboards.
@@ -32,22 +31,33 @@ export class DashboardTransferComponent {
   ) {}
 
   ngOnInit(){
-    forkJoin({
-      responseA:  this.workbenchService.getdatabaseConnectionsList({need_pagination : false, need_cross_datasources: false}),
-      responseB: this.workbenchService.getuserDashboardsList()
-    }).subscribe({
-      next: ({ responseA, responseB }) => {
-        this.connectionsList = responseA;
-        this.dashboardList = responseB;
-        // this.loading = false;
+    this.workbenchService.getuserDashboardsList().subscribe({
+      next: (response: any) => {
+        this.dashboardList = response;
       },
       error: (err) => {
-        console.error('Error loading APIs', err);
-        // this.loading = false;
+        console.error('Error loading dashboards', err);
       }
     });
-    // this.getDashboardsList();
-    // this.getdatabaseConnectionsList();
+  }
+
+  /** Fetch connections linked to the provided import key */
+  onImportKeyChange(){
+    if(!this.importKey){
+      this.connectionsList = [];
+      this.hierarchyId = undefined as any;
+      return;
+    }
+    const payload = { dashboard_import_id: this.importKey };
+    this.workbenchService.getSharedConnections(payload).subscribe({
+      next: (res: any) => {
+        this.connectionsList = res;
+      },
+      error: err => {
+        console.error('Error fetching connections', err);
+        this.toastr.error(err.error?.message || 'Failed to load connections');
+      }
+    });
   }
 
   getdatabaseConnectionsList(){

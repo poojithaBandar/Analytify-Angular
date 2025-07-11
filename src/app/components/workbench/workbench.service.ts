@@ -1063,6 +1063,14 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/import_dashboard/`+this.accessToken,object);
     }
 
+    /**
+     * Fetch list of shared connections for a given dashboard import id.
+     * @param object request payload containing dashboard_import_id
+     */
+    getSharedConnections(object: any){
+      return this.http.post<any>(`${environment.apiUrl}/shared_connections`, object);
+    }
+
     getSheetSdkData(object:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
