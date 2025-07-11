@@ -61,6 +61,7 @@
                     type="text"
                     class="form-control"
                     [(ngModel)]="importKey"
+                    (change)="onImportKeyChange()"
                     name="importKey"
                     placeholder="Enter Import Key"
                     required
