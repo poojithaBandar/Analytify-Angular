@@ -2743,6 +2743,30 @@ connectGoogleSheets(){
       }
     })
   }
+
+  smartDashboardFromConnection(database:any){
+    this.workbechService.createSmartDashboard(database.hierarchy_id).subscribe({
+      next: () => {
+        switch(database.server_type){
+          case 'NINJA':
+            this.templateDashboardService.buildSampleNinjaRMMDashboard(this.container, database.hierarchy_id);
+            break;
+          case 'IMMYBOT':
+            this.templateDashboardService.buildSampleImmybotDashboard(this.container, database.hierarchy_id);
+            break;
+          case 'CONNECTWISE':
+            this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, database.hierarchy_id);
+            break;
+          case 'HALOPS':
+            this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id);
+            break;
+        }
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      }
+    })
+  }
   gotoDashboardWithoutSwitch(){
     const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
     this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId])
