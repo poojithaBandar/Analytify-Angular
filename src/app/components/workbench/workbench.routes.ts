@@ -379,6 +379,7 @@ export const admin: Routes = [
       {
         path: 'databaseConnection/dataTransformation/:id',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
       },
@@ -386,6 +387,7 @@ export const admin: Routes = [
       {
         path: 'transformationList/dataTransformation/:id',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
       },
@@ -400,6 +402,7 @@ export const admin: Routes = [
       {
         path: 'crossDatabase/dataTransformation/:id1/:id2/:id3',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
       },
@@ -407,6 +410,7 @@ export const admin: Routes = [
       {
         path: 'crossDatabase/dataTransformation/:id1/:id2',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
       },
@@ -414,6 +418,7 @@ export const admin: Routes = [
       {
         path: 'crossDatabase/customSql/dataTransformation/:id1/:id2/:id3',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
       },
@@ -421,6 +426,7 @@ export const admin: Routes = [
       {
         path: 'crossDatabase/customSql/dataTransformation/:id1/:id2',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
       },
