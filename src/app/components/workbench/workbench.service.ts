@@ -1052,6 +1052,12 @@ deleteUser(id:any){
       this.accessToken = JSON.parse(currentUser!)['Token'];
       return this.http.get<any>(`${environment.apiUrl}/hubspot_dashbaord/` + id + '/' + this.accessToken);
     }
+    createSmartDashboard(hierarchyId: number){
+      return this.http.post<any>(
+        'http://127.0.0.1:8000/v1/smart_dashboard_create/eETAlQhNbqQS0IT8QVe5j7AdJ4AZwX',
+        { hierarchy_id: hierarchyId }
+      );
+    }
     fetchSDKData(){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
