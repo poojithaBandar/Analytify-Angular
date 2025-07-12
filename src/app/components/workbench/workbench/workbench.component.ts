@@ -27,15 +27,18 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import _ from 'lodash';
 
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent,NgSelectModule],
+  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule,InsightsButtonComponent,InsightEchartComponent,NgMultiSelectDropDownModule,NgSelectModule],
   templateUrl: './workbench.component.html',
-  styleUrl: './workbench.component.scss'
+  styleUrl: './workbench.component.scss',
+  providers: [TemplateDashboardService]
 })
 export class WorkbenchComponent implements OnInit{
   @ViewChild('fileInput') fileInput:any;
@@ -59,10 +62,12 @@ export class WorkbenchComponent implements OnInit{
   openHubspotForm = false;
   openShopifyForm =false;
   openGoogleAnalyticsForm = false;
+  openOpenAIForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
   openMongoDbForm = false;
+  openSapHanaForm = false;
   openTallyForm = false;
   sqlLiteForm = false;
   openTablesUI = false;
@@ -99,6 +104,7 @@ export class WorkbenchComponent implements OnInit{
   canUploadCsv = false;
   schemaList: any[] = [];
   selectedSchema : string = 'public';
+  readonly SAP_DEFAULT_SCHEMA = 'DBADMIN';
   querysetIdFromDataSource :any;
   datasourceSwitchUI=false;
   databaseSwitchType:any;
@@ -178,8 +184,14 @@ export class WorkbenchComponent implements OnInit{
     "tickets",
     "crm.import",
     "account-info.security.read",
-    "settings.currencies.read"
+  "settings.currencies.read"
   ];
+  hubspotDropdownSettings: IDropdownSettings = {
+    enableCheckAll: true,
+    allowSearchFilter: true,
+    itemsShowLimit: 10,
+    closeDropDownOnSelection: false
+  };
   selectedHubspotScopes: string[] = [];
   hubspotClientIdError = false;
   hubspotClientSecretError = false;
@@ -350,6 +362,7 @@ export class WorkbenchComponent implements OnInit{
     shopifyToken = '';
     shopifyName = '';
     tallyToken = '';
+    openAiKey = '';
 
     googleAnalytics: {
       type: string;
@@ -885,6 +898,27 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+
+    openAIUpdate(){
+      const obj = {
+        "open_ai_key": this.openAiKey,
+        "display_name": this.displayName,
+        "hierarchy_id": this.databaseId
+      }
+      this.workbechService.openAiConnectionUpdate(obj).subscribe({next:(res)=>{
+            this.modalService.dismissAll('close');
+            if(res){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error:(error)=>{
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
     googleAnalyticsUpdate(){
       const g = this.googleAnalytics;
      const obj = { type: g.type,
@@ -932,27 +966,33 @@ export class WorkbenchComponent implements OnInit{
 )
     }
     DatabaseUpdate(){
-      const obj={
-          // "database_type":"postgresql",
+      const obj:any = {
           "database_type":this.databaseType,
           "hostname":this.postGreServerName,
           "port":this.postGrePortName,
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
-          "database": this.postGreDatabaseName,
           "display_name":this.displayName,
           "database_id":this.databaseId,
-          "schema": this.selectedSchema
-      }as any
+      };
       if(this.databaseType === 'oracle'){
-        delete obj.database
-        obj.service_name=this.postGreDatabaseName;
+        obj.service_name = this.postGreDatabaseName;
+      }else if(this.databaseType === 'sap hana'){
+        if(this.postGreDatabaseName){
+          obj.database = this.postGreDatabaseName;
+        }
+        if(this.selectedSchema){
+          obj.schema = this.selectedSchema;
+        }
+      }else{
+        obj.database = this.postGreDatabaseName;
+        obj.schema = this.selectedSchema;
       }
-        this.workbechService.postGreSqlConnectionput(obj).subscribe({next: (responce) => {
+      this.workbechService.postGreSqlConnectionput(obj).subscribe({next: (responce) => {
               console.log(responce);
               this.modalService.dismissAll('close');
               this.schemaList = [];
-              this.selectedSchema = 'public';
+              this.selectedSchema = this.databaseType === 'sap hana' ? this.SAP_DEFAULT_SCHEMA : 'public';
               if(responce){
                 this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
               }
@@ -1068,13 +1108,19 @@ export class WorkbenchComponent implements OnInit{
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
     }
-    connectHubspot(){
-      this.openHubspotForm = true;
-      this.databaseconnectionsList = false;
-      this.viewNewDbs = false;
-      this.emptyVariables();
-    }
-    companyIdError(){
+  connectHubspot(){
+    this.openHubspotForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
+  connectOpenAI(){
+    this.openOpenAIForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
+  companyIdError(){
       if(this.companyId){
         this.companyIDError = false;
       }else{
@@ -1188,6 +1234,13 @@ export class WorkbenchComponent implements OnInit{
         this.tallyTokenError = true;
       }
     }
+    openAiKeyInputError(){
+      if(this.openAiKey){
+        this.openAiKeyError = false;
+      }else{
+        this.openAiKeyError = true;
+      }
+    }
     shopfyNameError(){
       if(this.shopifyName){
         this.shopifyNameError = false;
@@ -1208,10 +1261,10 @@ export class WorkbenchComponent implements OnInit{
     this.hubspotRedirectURLError = !this.hubspotRedirectURL;
   }
 
-    onHubspotScopeChange(event:any){
-      this.selectedHubspotScopes = event;
-      this.hubspotScopeError = this.selectedHubspotScopes.length <= 0;
-    }
+  onHubspotScopeChange(): void {
+    this.hubspotScopeError = this.selectedHubspotScopes.length <= 0;
+  }
+  
     shopifySignIn(){
       const obj={
         "api_token":this.shopifyToken,
@@ -1273,7 +1326,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Create smart dashboard from your data with just one click?",
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1329,7 +1382,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Create smart dashboard from your data with just one click?",
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1384,7 +1437,7 @@ export class WorkbenchComponent implements OnInit{
                 position: "center",
                 // icon: "question",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
+                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1436,7 +1489,7 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
+                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1482,10 +1535,71 @@ export class WorkbenchComponent implements OnInit{
           }else if(this.datasourceSwitchUI){
             this.switchDatabase();
           }else{
+    Swal.fire({
+          position: "center",
+          iconHtml: '<img src="./assets/images/copilot.gif">',
+          title: "Create smart dashboard from your data with just one click?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Skip',
+          customClass: {
+            icon: 'no-icon-bg',
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.templateDashboardService.buildSampleTallyDashboard(this.container, this.databaseId);
+          } else {
             this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
           }
+        });          }
         }
       }, error: (error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      }});
+    }
+
+    openAISignIn(){
+      const obj = {
+        "open_ai_key": this.openAiKey,
+        "display_name": this.displayName
+      }
+      this.workbechService.openAiConnection(obj).subscribe({next:(res)=>{
+        if(res){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = res?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openOpenAIForm = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            Swal.fire({
+              position: "center",
+              iconHtml: '<img src="./assets/images/copilot.gif">',
+              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+              showConfirmButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'Skip',
+              customClass: {
+                icon: 'no-icon-bg',
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.templateDashboardService.buildSampleOpenAIDashboard(this.container, this.databaseId);
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            });
+          }
+        }
+      }, error:(error)=>{
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       }});
     }
@@ -1733,6 +1847,56 @@ export class WorkbenchComponent implements OnInit{
       });
     }
 
+    openSapHana(){
+      this.openSapHanaForm = true;
+      this.databaseconnectionsList = false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+      this.selectedSchema = this.SAP_DEFAULT_SCHEMA;
+    }
+
+    sapHanaSignIn(){
+      const obj:any = {
+          "database_type":"sap hana",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "display_name":this.displayName,
+      };
+      if(this.postGreDatabaseName){
+        obj.database = this.postGreDatabaseName;
+      }
+      if(this.selectedSchema){
+        obj.schema = this.selectedSchema;
+      }
+          this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
+                if(responce){
+                  this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                  this.databaseId=responce.database?.hierarchy_id;
+                  this.modalService.dismissAll();
+                  if(!this.datasourceSwitchUI){
+                  this.openSapHanaForm = false;
+                  }
+                  const encodedId = btoa(this.databaseId.toString());
+                  if(this.iscrossDbSelect){
+                    this.selectedHirchyIdCrsDb = this.databaseId;
+                    this.connectCrossDbs();
+                  }else if(this.datasourceSwitchUI){
+                    this.switchDatabase();
+                  }else{
+                    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  }
+                }
+              },
+              error: (error) => {
+                console.log(error);
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'});
+              }
+            }
+          )
+    }
+
     opensqlLite(){
       this.sqlLiteForm=true;
       this.databaseconnectionsList= false;
@@ -1800,8 +1964,6 @@ export class WorkbenchComponent implements OnInit{
       metrics: g.metrics,
       display_name:g.displayname
      }
-    this.confirmPopupForDataTransformation().then((isSkip) => {
-      if (isSkip === true) {
         this.workbechService.googleAnalyticsConnectionApi(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
@@ -1834,10 +1996,6 @@ export class WorkbenchComponent implements OnInit{
           }
           }
         )
-      } else if(isSkip === false) {
-        this.checkDataSourceConnection(obj);
-      }
-    });
     }
         
     triggerFileUpload(value:any) {
@@ -2190,6 +2348,9 @@ connectGoogleSheets(){
     } else if (this.databaseType == "tally") {
       this.displayName = editData.display_name;
       this.tallyToken = editData.token_key;
+    } else if (this.databaseType == "open_ai") {
+      this.displayName = editData.display_name;
+      this.openAiKey = editData.open_ai_key;
     }else if (this.databaseType === 'google_analytics') {
       this.googleAnalytics = {
         type: 'service_account',
@@ -2217,8 +2378,8 @@ connectGoogleSheets(){
       } else {
         this.postGreDatabaseName = editData.database;
       }
-      if(this.databaseType == 'postgresql'){
-        this.selectedSchema = editData.schema;
+      if(this.databaseType == 'postgresql' || this.databaseType == 'sap hana'){
+        this.selectedSchema = editData.schema || (this.databaseType === 'sap hana' ? this.SAP_DEFAULT_SCHEMA : 'public');
       }
       this.errorCheck();
     }
@@ -2333,11 +2494,13 @@ connectGoogleSheets(){
   this.openMicrosoftSqlServerForm = false;
   this.openSnowflakeServerForm = false;
   this.ibmDb2Form= false;
+  this.openSapHanaForm = false;
   this.sqlLiteForm = false;
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
   this.openShopifyForm = false;
   this.openTallyForm = false;
+  this.openOpenAIForm = false;
   this.openHubspotForm = false;
   this.openGoogleAnalyticsForm = false;
   this.openGoogleAnalyticsForm = false;
@@ -2358,6 +2521,8 @@ connectGoogleSheets(){
   this.siteURLPSA = '';
   this.tallyToken = '';
   this.tallyTokenError = false;
+  this.openAiKey = '';
+  this.openAiKeyError = false;
   this.ninjaRMMClientid = '';
   this.ninjaRMMClientSecret = '';
   this.selectedNinjaRMMScopes = [];
@@ -2387,10 +2552,11 @@ connectGoogleSheets(){
   shopifyApiTokenError:boolean = false;
   shopifyNameError:boolean = false;
   tallyTokenError:boolean = false;
+  openAiKeyError:boolean = false;
 
   serverConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.postGreServerName){
@@ -2402,7 +2568,7 @@ connectGoogleSheets(){
   }
   portConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.postGrePortName){
@@ -2415,20 +2581,28 @@ connectGoogleSheets(){
   }
   databaseConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
+    if(this.openSapHanaForm || this.databaseType === 'sap hana'){
+      if(this.postGreDatabaseName || this.selectedSchema){
+        this.databaseError = false;
+      }else{
+        this.databaseError = true;
+      }
+    } else {
       if (this.postGreDatabaseName) {
         this.databaseError = false;
       } else {
         this.databaseError = true;
       }
+    }
     this.portConditionError();
     this.errorCheck();
   }
   userNameConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.postGreUserName){
@@ -2461,7 +2635,7 @@ connectGoogleSheets(){
   }
   passwordConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
-      this.selectedSchema = 'public';
+      this.selectedSchema = this.openSapHanaForm ? this.SAP_DEFAULT_SCHEMA : 'public';
       this.schemaList = [];
     }
     if(this.PostGrePassword){
@@ -2498,6 +2672,24 @@ connectGoogleSheets(){
         } else{
           this.disableConnectBtn = false;
         }
+      }
+    } 
+    else if(this.openSapHanaForm){
+      if(this.serverError || this.portError || this.userNameError || this.displayNameError || this.passwordError || this.databaseError){
+        this.disableConnectBtn = true;
+      } else if(!(this.postGreServerName && this.postGrePortName && this.postGreUserName && this.displayName && this.PostGrePassword && (this.postGreDatabaseName || this.selectedSchema))) {
+        this.disableConnectBtn = true;
+      } else{
+        this.disableConnectBtn = false;
+      }
+    }
+    else if(this.databaseType === 'sap hana'){
+      if(this.serverError || this.portError || this.userNameError || this.displayNameError || this.passwordError || this.databaseError){
+        this.disableConnectBtn = true;
+      } else if(!(this.postGreServerName && this.postGrePortName && this.postGreUserName && this.displayName && this.PostGrePassword && (this.postGreDatabaseName || this.selectedSchema))) {
+        this.disableConnectBtn = true;
+      } else{
+        this.disableConnectBtn = false;
       }
     }
     else if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
@@ -2613,14 +2805,16 @@ connectGoogleSheets(){
 
   fetchSchemaList() {
     this.loaderService.show();
-    const obj = {
-      "database_type": "postgresql",
+    const obj:any = {
+      "database_type": (this.openSapHanaForm || this.databaseType === 'sap hana') ? "sap hana" : "postgresql",
       "hostname": this.postGreServerName,
       "port": this.postGrePortName,
       "username": this.postGreUserName,
       "password": this.PostGrePassword,
-      "database": this.postGreDatabaseName,
       "display_name": this.displayName
+    };
+    if(this.postGreDatabaseName){
+      obj.database = this.postGreDatabaseName;
     }
     this.workbechService.fetchSchemaList(obj).subscribe({
       next: (responce) => {

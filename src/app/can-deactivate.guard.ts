@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { SheetsComponent } from './components/workbench/sheets/sheets.component';
 import { DatabaseComponent } from './components/workbench/database/database.component';
 import { SheetsdashboardComponent } from './components/workbench/sheetsdashboard/sheetsdashboard.component';
+import { DataTransformationComponent } from './components/workbench/data-transformation/data-transformation.component';
 
 export interface CanComponentDeactivate {
   canDeactivate: () => boolean | Observable<boolean>;
@@ -32,6 +33,12 @@ export const canDeactivateGuard: CanDeactivateFn<CanComponentDeactivate> = (comp
   } else if(component instanceof SheetsdashboardComponent){
     if(component.canNavigate()){
       return component.dashboardNotSaveAlert().then((result) => {
+        return result;
+      });
+    }
+  } else if(component instanceof DataTransformationComponent){
+    if(component.canNavigate()){
+      return component.dataNotSaveAlert().then((result) => {
         return result;
       });
     }
