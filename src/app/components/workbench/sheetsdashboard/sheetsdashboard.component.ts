@@ -195,6 +195,10 @@ export class SheetsdashboardComponent implements OnDestroy {
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   isPublicUrl = false;
+  isProtectedUrl = false;
+  isProtectedValidated = false;
+  passkey: string = '';
+  @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
   columnSearch: any;
   rolesForUpdateDashboard:[] = [];
@@ -263,6 +267,15 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.publicHeader = true
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
+      }
+    }
+    if(currentUrl.includes('dashboard/share/protected')){
+      this.updateDashbpardBoolen= true;
+      this.isProtectedUrl = true;
+      this.active = 2;
+      this.publicHeader = true;
+      if (route.snapshot.params['id1']) {
+        this.dashboardId = +atob(route.snapshot.params['id1']);
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
@@ -3148,6 +3161,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     } else {
       console.error('Gridster element not found!');
     }
+    if(this.isProtectedUrl && !this.isProtectedValidated){
+      this.modalService.open(this.passkeyModal,{backdrop:'static', centered:true});
+    }
     this.cdr.detectChanges();
   }
   initializeChart(item: DashboardItem): void {
@@ -5998,6 +6014,29 @@ kpiData?: KpiData;
         })
       }
     })
+  }
+
+  validateProtectedDashboard(modal:any){
+    const obj = {
+      dashboard_id: this.dashboardId,
+      protected_key: this.passkey,
+      need_validation: 'True'
+    };
+    this.workbechService.validateProtectedKey(obj).subscribe({
+      next: ()=>{
+        this.isProtectedValidated = true;
+        modal.close();
+        this.loadProtectedDashboard();
+      },
+      error: ()=>{
+        this.toasterService.error('Invalid Passkey','error');
+      }
+    });
+  }
+
+  loadProtectedDashboard(){
+    this.getSavedDashboardDataPublic();
+    this.getDashboardFilterredListPublic();
   }
   }
 

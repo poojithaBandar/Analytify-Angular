@@ -1226,10 +1226,18 @@ deleteUser(id:any){
       });
     }
 
-    getTaskInstances(dagId: string, runId: string) {
-      return this.http.get(
+  getTaskInstances(dagId: string, runId: string) {
+    return this.http.get(
         `${environment.airflowApiUrl}/dags/${dagId}/dagRuns/${runId}/taskInstances`,
         { headers: this.getHeaders() }
       );
     }
+
+  sendProtectedEmails(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/dashboard_protected_emails/`, obj);
+  }
+
+  validateProtectedKey(obj:any){
+    return this.http.post<any>(`http://127.0.0.1:8000/v1/protected_key/Pr6zbRVX0BaOZWdFSlc8rbUO5dEGxh`, obj);
+  }
 }

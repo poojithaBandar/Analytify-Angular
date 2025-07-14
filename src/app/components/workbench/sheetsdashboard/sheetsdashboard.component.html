@@ -2397,6 +2397,18 @@
     <button type="button" class="btn btn-primary" [disabled]="!validateTextEditor()" (click)="saveTextContent()">  {{editingItemId ? 'Update Text' : 'Add to Dashboard'}}</button>
   </div>
 </ng-template>
+
+<ng-template #passkeyModal let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Enter Passkey</h6>
+  </div>
+  <div class="modal-body">
+    <input type="password" class="form-control" [(ngModel)]="passkey" placeholder="Passkey" />
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="validateProtectedDashboard(modal)">Submit</button>
+  </div>
+</ng-template>
   <!-- Overlay Genie AIQ Icon -->
 <div *ngIf="!isPublicUrl && dashboardId && dashboard.length > 0 && !canNavigateToAnotherPage"  class="overlay-div genie-animate" 
      (mouseenter)="genieHover=true;playGenieAnimation();showGenieTooltip = true" (mouseleave)="genieHover=false;resetGenieAnimation();showGenieTooltip = false" 
