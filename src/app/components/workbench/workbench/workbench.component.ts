@@ -2942,17 +2942,32 @@ connectGoogleSheets(){
     this.workbechService.createSmartDashboard(database.hierarchy_id).subscribe({
       next: () => {
         switch(database.server_type){
-          case 'NINJA':
-            this.templateDashboardService.buildSampleNinjaRMMDashboard(this.container, database.hierarchy_id);
+          case 'TALLY':
+            this.templateDashboardService.buildSampleTallyDashboard(this.container, database.hierarchy_id);
+            break;
+          case 'SALESFORCE':
+            this.templateDashboardService.buildSampleSalesforceDashboard(this.container, database.hierarchy_id);
+            break;
+          case 'QUICKBOOKS':
+            this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, database.hierarchy_id);
             break;
           case 'IMMYBOT':
             this.templateDashboardService.buildSampleImmybotDashboard(this.container, database.hierarchy_id);
+            break;
+            case 'NINJA':
+            this.templateDashboardService.buildSampleNinjaRMMDashboard(this.container, database.hierarchy_id);
+            break;
+          case 'HUBSPOT':
+            this.templateDashboardService.buildSampleHubspotDashboard(this.container, database.hierarchy_id);
             break;
           case 'CONNECTWISE':
             this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, database.hierarchy_id);
             break;
           case 'HALOPS':
             this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id);
+            break;
+            case 'OPEN_AI':
+            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id);
             break;
         }
       },
