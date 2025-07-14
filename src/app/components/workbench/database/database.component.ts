@@ -1201,48 +1201,83 @@ clearJoinCondns(){
   this.enableJoinButton();
 }
 
-getJoiningTableData(){
-  const obj ={
-    hierarchy_id:this.databaseId,
-    query_id:this.qurtySetId,
-    datasource_queryset_id:this.datasourceQuerysetId,
-    row_limit:this.rowLimit
-  } as any
-if(obj.row_limit === null || obj.row_limit === undefined){
- delete obj.row_limit;
-}
-  this.workbechService.getTableJoiningData(obj).subscribe(
-    {
-      next:(data:any) =>{
-        console.log('qury_data/tablejoined_data',data)
-        this.TabledataJoining = data;
-        this.qryTime = data.query_exection_time;
-        this.qryRows = data.no_of_rows;
-        this.totalRows = data.total_rows;
-        this.showingRows = data.no_of_rows;
-        this.gotoSheetButtonDisable = false;
-        if(this.saveQueryName ==='' || this.saveQueryName === null || this.saveQueryName === undefined){
-        this.saveQueryName = data.queryset_name;
-        this.checkQerynameChange = data.queryset_name;
-        this.titleMarkDirty = true;
-        }
-        this.queryBuilt = data.custom_query;
-        if(this.TabledataJoining?.column_data?.length === 0){
-          this.gotoSheetButtonDisable = true;
-        }
-      },
-      error:(error:any)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-
+  getJoiningTableData() {
+    const obj = {
+      hierarchy_id: this.databaseId,
+      query_id: this.qurtySetId,
+      datasource_queryset_id: this.datasourceQuerysetId,
+      row_limit: this.rowLimit,
+      offset: this.offset
+    } as any
+    if (obj.row_limit === null || obj.row_limit === undefined) {
+      delete obj.row_limit;
     }
-    })
-}
+    this.workbechService.disableLoaderForNextRequest();
+    this.workbechService.getTableJoiningData(obj).subscribe(
+      {
+        next: (data: any) => {
+          console.log('qury_data/tablejoined_data', data)
+          if (this.offset === 0) {
+            this.TabledataJoining = data;
+          } else {
+            // Append new rows
+            this.TabledataJoining.row_data = [
+              ...this.TabledataJoining.row_data,
+              ...data.row_data
+            ];
+          }
+          // this.TabledataJoining = data;
+          this.qryTime = data.query_exection_time;
+          this.qryRows = data.no_of_rows;
+          this.totalRows = data.total_rows;
+          this.showingRows = data.no_of_rows;
+          this.gotoSheetButtonDisable = false;
+          if (this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined) {
+            this.saveQueryName = data.queryset_name;
+            this.checkQerynameChange = data.queryset_name;
+            this.titleMarkDirty = true;
+          }
+          this.queryBuilt = data.custom_query;
+          if (this.TabledataJoining?.column_data?.length === 0) {
+            this.gotoSheetButtonDisable = true;
+          }
+          this.isLoadingResults = false;
+
+        },
+        error: (error: any) => {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+
+        }
+      })
+  }
+  // resultOffset = 0;
+  resultLimit = 100;
+  isLoadingResults = false;
+  offset = 0;
+  lastScrollIndex = 0; // Track last scroll index
+
+  onResultScroll(index: number) {
+    // Only trigger when scrolling down
+    if (
+      index > this.lastScrollIndex && // Only when scrolling down
+      !this.isLoadingResults &&
+      this.TabledataJoining.row_data &&
+      index >= this.TabledataJoining.row_data.length - 10 && // Near bottom
+      this.TabledataJoining.row_data.length < this.totalRows && // Not all loaded
+      !(this.rowLimit && this.TabledataJoining.row_data.length >= this.rowLimit) 
+    ) {
+      this.isLoadingResults = true;
+      this.offset += this.resultLimit;
+      this.getJoiningTableData();
+    }
+    this.lastScrollIndex = index;
+  }
 
 downloadExcel() {
   const obj ={

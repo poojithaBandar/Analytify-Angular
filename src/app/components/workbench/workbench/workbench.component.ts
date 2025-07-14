@@ -1326,7 +1326,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+              title: "Create smart dashboard from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1382,7 +1382,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+              title: "Create smart dashboard from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1437,7 +1437,7 @@ export class WorkbenchComponent implements OnInit{
                 position: "center",
                 // icon: "question",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+                title: "Create smart dashboard from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1489,7 +1489,7 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+                title: "Create smart dashboard from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1579,18 +1579,36 @@ export class WorkbenchComponent implements OnInit{
           }else if(this.datasourceSwitchUI){
             this.switchDatabase();
           }else{
-            Swal.fire({
-              position: "center",
-              iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
-              showConfirmButton: true,
-              showCancelButton: true,
-              confirmButtonText: 'Yes',
-              cancelButtonText: 'Skip',
-              customClass: {
-                icon: 'no-icon-bg',
-              }
-            }).then((result) => {
+            // Swal.fire({
+            //   position: "center",
+            //   iconHtml: '<img src="./assets/images/copilot.gif">',
+            //   title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+            //   showConfirmButton: true,
+            //   showCancelButton: true,
+            //   confirmButtonText: 'Yes',
+            //   cancelButtonText: 'Skip',
+            //   customClass: {
+            //     icon: 'no-icon-bg',
+            //   }
+            // })
+                Swal.fire({
+                title: '✨ Ready to Build Your Smart Dashboard?',
+                html: `
+                  <img src="./assets/images/copilot.gif">
+                  <p style="font-size: 16px;">Let AI turn your data into insights — instantly.</p>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Generate It!',
+                cancelButtonText: 'Skip for Now',
+                confirmButtonColor: '#007bff',
+                cancelButtonColor: '#e0e0e0',
+                reverseButtons: true,
+                customClass: {
+                  popup: 'rounded-lg',
+                  title: 'font-semibold',
+                  htmlContainer: 'text-gray-600',
+                }
+              }).then((result) => {
               if (result.isConfirmed) {
                 this.templateDashboardService.buildSampleOpenAIDashboard(this.container, this.databaseId);
               } else {

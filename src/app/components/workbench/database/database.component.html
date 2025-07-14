@@ -466,7 +466,7 @@
                                         <div class="table-responsive Result-preview-table-h" 
                                             [class.table-left]="crossDbId && !isOpen"
                                             [class.table-right]="crossDbId && isOpen">
-                                            <table
+                                            <!-- <table
                                                 class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 ">
                                                 <thead class="Result-preview-table-sticky">
                                                     <tr>
@@ -486,7 +486,30 @@
                                                     </tr>
                                                     }
                                                 </tbody>
-                                            </table>
+                                            </table> -->
+                                            <cdk-virtual-scroll-viewport itemSize="40" class="viewport-full-table" (scrolledIndexChange)="onResultScroll($event)">
+                                                <table
+                                                    class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 ">
+                                                    <thead class="Result-preview-table-sticky">
+                                                        <tr>
+                                                            @for(data of TabledataJoining.column_data;track data){
+                                                            <th>{{data}}</th>
+                                                            }
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @for(rowss of TabledataJoining.row_data;track rowss;){
+                                                        <tr>
+                                                            @for(rowdata of rowss;track rowdata;let i = $index){
+
+                                                            <td>{{rowdata}}</td>
+                                                            }
+                                                        </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </cdk-virtual-scroll-viewport>
                                         </div>
                                         }
                                     </div>
