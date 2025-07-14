@@ -8492,6 +8492,21 @@ buttonClicked = false;
     //   this.editor = false;
     // });
   }
+  shareReportByEmail(){
+         const obj ={
+    dashboard_id:this.dashboardId,
+    }
+     this.workbechService.shareAnalysisReportEmail(obj).subscribe({
+        next:(data)=>{
+          if(data){
+         this.toasterService.success('Shared to registered Email.','Success',{ positionClass: 'toast-top-right'});
+          }
+        },
+        error:(error)=>{
+          this.toasterService.error(error.error.error,'Error',{ positionClass: 'toast-top-right'})       
+            }
+      }) 
+  }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
