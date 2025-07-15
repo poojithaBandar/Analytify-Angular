@@ -180,7 +180,8 @@
             <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="sharePublish($event)" [closeOnSelect]="true" placeholder="Share or Publish">
              <ng-option  value="public" selected>Public</ng-option>
              <ng-option  value="private" selected>Private</ng-option>
-            </ng-select>
+             <ng-option  value="protected" selected>Protected</ng-option>
+             </ng-select>
        </div>
           <div *ngIf="shareAsPrivate" class="">
             
@@ -196,9 +197,14 @@
             <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(open)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [disabled]="selectedRoleIds.length === 0" [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
                 <ng-option *ngFor="let user of usersOnSelectedRole" [value]="user.user_id">{{user.username}}</ng-option>
               
-            </ng-select>
+           </ng-select>
        </div>
-       <div *ngIf="publishedDashboard" class="">
+       <div *ngIf="shareAsProtected" class="">
+            <p class="fw-semibold mb-2 mt-3">Emails</p>
+            <ng-select class="form-control p-0" [addTag]="true" [multiple]="true" [(ngModel)]="protectedEmails" placeholder="Add emails"></ng-select>
+            <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" />
+        </div>
+        <div *ngIf="publishedDashboard" class="">
             
         <p class="fw-semibold mb-2 mt-3">Url</p>
         <button class="btn text-left" style="border: 1px solid #edebeb;width: 100%;">{{publicUrl}}
@@ -221,7 +227,13 @@
         </button>
       </div> -->
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button
+          type="button"
+          [disabled]="shareAsPrivate ? (!selectedRoleIds?.length || !selectedUserIds?.length) : (shareAsProtected ? !protectedEmails.length : false)"
+          *ngIf="!createUrl && !applyButtonEnableOnEditUser"
+          (click)="saveDashboardProperties()"
+          class="btn ripple btn-primary"
+        >Apply</button>
         <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
 
         <button
