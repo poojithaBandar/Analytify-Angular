@@ -1672,8 +1672,8 @@
           </div>
           @if(displayTabs){
             <div class="d-flex p-2">
-              <mat-tab-group disableRipple  [selectedIndex]="selectedTabIndex"
-              (selectedTabChange)="selectedSheetTab($event);" 
+              <mat-tab-group disableRipple mat-stretch-tabs [selectedIndex]="selectedTabIndex"
+              (selectedTabChange)="selectedSheetTab($event);"
               >
               <!-- @for(tab of sheetTabs;track tab; let index = $index){ -->
   <!-- <mat-tab data="tab"  [label]="tab.name">
