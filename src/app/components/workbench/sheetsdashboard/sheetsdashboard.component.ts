@@ -232,6 +232,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   @ViewChild('analyzeDashbaordModal') analyzeDashbaordModal:any;
   @ViewChild('textEditorModal') textEditorModal!: any;
   @ViewChild('ImageUploadText') ImageUploadText!: ElementRef;
+  @ViewChild('editTabModal') editTabModal: any;
+
   textItem: any;
   textEditorContent: string = '';
   textEditorTitle: string = '';
@@ -8507,6 +8509,50 @@ buttonClicked = false;
             }
       }) 
   }
+  // selectedTab: any = {};
+selectedTabIndexToEdit: number = -1;
+
+openEditTabModal(tab: any, index: number) {
+  this.selectedTab = { ...tab };
+  this.selectedTabIndexToEdit = index;
+  this.modalService.open(this.editTabModal, { size: 'md', backdrop: 'static' });
+}
+
+saveTabEdit(modal: any) {
+  if (this.selectedTabIndexToEdit > -1) {
+    this.sheetTabs[this.selectedTabIndexToEdit] = {
+      ...this.sheetTabs[this.selectedTabIndexToEdit],
+      ...this.selectedTab
+    };
+  }
+
+  modal.close();
+
+  // Delay to ensure DOM is updated
+  // setTimeout(() => this.applyTabHeaderStyles(), 100);
+}
+// applyTabHeaderStyles(): void {
+//   const tabHeaders = document.querySelectorAll('.mat-tab-label');
+
+//   if (!tabHeaders.length) {
+//     console.warn('No .mat-tab-labels found. Retrying...');
+//     setTimeout(() => this.applyTabHeaderStyles(), 100); // Retry if DOM not ready
+//     return;
+//   }
+
+//  tabHeaders.forEach((tabHeader: Element, index: number) => {
+//     const htmlTabHeader = tabHeader as HTMLElement; // Explicitly cast to HTMLElement
+//     const tab = this.sheetTabs[index];
+//     if (tab && tab.bgColor) {
+//       htmlTabHeader.style.backgroundColor = tab.bgColor;
+//       htmlTabHeader.style.color = tab.fontColor;
+//       htmlTabHeader.style.fontSize = `${tab.fontSize}px`;
+//       htmlTabHeader.style.fontStyle = tab.fontStyle; // Assuming fontStyle is also a property you want to apply
+//     }
+//   });
+// }
+
+
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

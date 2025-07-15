@@ -1672,8 +1672,8 @@
           </div>
           @if(displayTabs){
             <div class="d-flex p-2">
-              <mat-tab-group [selectedIndex]="selectedTabIndex"
-              (selectedTabChange)="selectedSheetTab($event)" 
+              <mat-tab-group disableRipple  [selectedIndex]="selectedTabIndex"
+              (selectedTabChange)="selectedSheetTab($event);" 
               >
               <!-- @for(tab of sheetTabs;track tab; let index = $index){ -->
   <!-- <mat-tab data="tab"  [label]="tab.name">
@@ -1695,11 +1695,27 @@
 
       <!-- View Mode (Default) -->
       <ng-template #viewMode>
+         <div
+    class="tab-label-wrapper"
+    (mouseenter)="tab.hover = true"
+    (mouseleave)="tab.hover = false"
+    [ngStyle]="{
+      'background-color': tab.bgColor,
+      'color': tab.fontColor,
+      'font-size': tab.fontSize + 'px',
+      'font-style': tab.fontStyle
+    }"
+  >
         <span class="p-2" (dblclick)="enableEdit(i)">
           {{ tab.name }}
         </span>
-          <i *ngIf ="!isPublicUrl && !isEmbedDashboard" aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i>
-      </ng-template>
+          <!-- <i *ngIf ="!isPublicUrl && !isEmbedDashboard" aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i> -->
+         <div class="tab-action-buttons" *ngIf="tab.hover && !isPublicUrl && !isEmbedDashboard">
+      <i class="fa fa-pencil me-1 edit-icon" (click)="openEditTabModal(tab, i)" ngbTooltip="Edit Tab"></i>
+      <i class="fa fa-close close-icon" (click)="removeTab(i)" ngbTooltip="Remove Tab"></i>
+    </div>
+    </div>
+        </ng-template>
     </ng-template>
 
   </mat-tab>
@@ -2421,3 +2437,33 @@
   </div>
 </div>
 
+<ng-template #editTabModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Edit Tab</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <label>Tab Name</label>
+    <input type="text" class="form-control mb-2" [(ngModel)]="selectedTab.name" />
+
+    <label>Font Color</label>
+    <input type="color" class="form-control form-control-color mb-2" [(ngModel)]="selectedTab.fontColor" />
+
+    <label>Background Color</label>
+    <input type="color" class="form-control form-control-color mb-2" [(ngModel)]="selectedTab.bgColor" />
+
+    <label>Font Size</label>
+    <input type="number" class="form-control mb-2" [(ngModel)]="selectedTab.fontSize" min="10" max="30" />
+
+    <label>Font Style</label>
+    <select class="form-control" [(ngModel)]="selectedTab.fontStyle">
+      <option value="normal">Normal</option>
+      <option value="italic">Italic</option>
+      <option value="bold">Bold</option>
+    </select>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-primary" (click)="saveTabEdit(modal)">Save</button>
+  </div>
+</ng-template>
