@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { FormsModule } from '@angular/forms';
 import { TableFilterDTPipe } from '../../../shared/pipes/table-filter-dt.pipe';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 type TransformationType = {
   key: string;
@@ -93,8 +94,9 @@ export class DataTransformationComponent {
   ngSelectPivotValues : any;
   ngSelectPivotColumns : any;
   ngSelectPivotIndex : any;
+  hasUnSavedChanges : boolean = false;
 
-  constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal) {
+  constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router, private modalService: NgbModal, private loaderService: LoaderService) {
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
     if (this.router.url.startsWith('/analytify/databaseConnection/dataTransformation')) {
@@ -180,6 +182,7 @@ export class DataTransformationComponent {
         }
       }
     }, 100); 
+    this.hasUnSavedChanges = true;
   }
   
   editTransformationPreview(index: number, transformationIndex: number, typeIndex:number){
@@ -302,6 +305,7 @@ export class DataTransformationComponent {
       this.isApplyDisable = false;
     }
     this.checkTransformationsValid(false);
+    this.hasUnSavedChanges = true;
   }
 
   setTransformationType(index:number,transformationKey:any,event:any,isDropdown:boolean,isInput:boolean,transformationIndex:number,isJoinType:boolean,isOperator:boolean,isIndex:boolean,isValue:boolean,isColumns:boolean,isAggregation:boolean) {
@@ -398,12 +402,14 @@ export class DataTransformationComponent {
     
     this.checkTransformationsValid(this.selectedTransformations[index][transformationIndex].isError);
     this.checkcurrentTableTransformationValid(index);
+    this.hasUnSavedChanges = true;
   }
 
   removeTransformation(index: number, transformationIndex: number) {
     this.selectedTransformations[index].splice(transformationIndex, 1);
     this.checkTransformationsValid(false);
     this.checkcurrentTableTransformationValid(index)
+    this.hasUnSavedChanges = true;
   }
   removeTable(index: number) {
     this.draggedTables.splice(index,1);
@@ -422,6 +428,7 @@ export class DataTransformationComponent {
     this.checkTransformationsValid(false);
     console.log(this.draggedTables);
     console.log(this.selectedTransformations);
+    this.hasUnSavedChanges = true;
   }
 
   setTransformationsEditPreview() {
@@ -562,6 +569,7 @@ export class DataTransformationComponent {
       ...(isEdit && { hierarchy_id: this.hierarchyId }),
     }
     console.log('payload : ',object);
+    this.hasUnSavedChanges = false;
     this.workbechService.setTransformations(object).subscribe({
       next: (response: any) => {
         console.log(response);
@@ -730,5 +738,27 @@ export class DataTransformationComponent {
         })
       }
     })
+  }
+
+  dataNotSaveAlert(): Promise<boolean> {
+    this.loaderService.hide();
+    return Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "Your work has not been saved, Do you want to continue?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
+  canNavigate(): boolean {
+    return this.hasUnSavedChanges;
   }
 }

@@ -45,11 +45,12 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom, Subscription, timer } from 'rxjs';
-import { evaluate, i, parse, re } from 'mathjs';
+import { boolean, evaluate, i, parse, re } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
+import { ChartRenderService } from '../../../services/chart-render.service';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 // import $ from 'jquery';
 import { saveAs } from 'file-saver';
@@ -184,7 +185,9 @@ export class SheetsComponent{
   // The radius of the pie chart is half the smallest side
   public radius = Math.min(this.width, this.height) / 2 - this.margin;
   public colors:any;
+  // /** @deprecated chartsColumnData is deprecated. Use savedChartOptions instead */
   chartsColumnData = [] as any;
+  // /** @deprecated chartsRowData is deprecated. Use savedChartOptions instead */
   chartsRowData = [] as any;
   public lineChartOptions!: Partial<EChartsOption>;
   chartOptions:any;
@@ -374,7 +377,7 @@ export class SheetsComponent{
   topType: string = 'desc';
   topLimit: number = 5;
   selectedTopColumn: any = 'select';
-  topAggregate: string = 'sum';
+  topAggregate: string = '';
 
   previewFromDate: any;
   previewToDate: any;
@@ -447,7 +450,7 @@ export class SheetsComponent{
   is_sheet_Embed : boolean = false;
   isEmbedSDK: boolean = false;;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
-    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService, private chartRenderService: ChartRenderService){
 
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
@@ -1143,53 +1146,24 @@ try {
       }
       chartType : string ='';
       chartsOptionsSet(){
-        if (this.bar) {
-          this.chartType = 'bar';
-        }
-        if(this.horizontalBar){
-          this.chartType = 'horizontalBar'
-        }
-        else if(this.pivotTable){
-          this.chartType = 'pivotTable'
-        } else if (this.area) {
-          this.chartType = 'area';
-        } else if (this.line) {
-          this.chartType = 'line';
-        } else if (this.pie) {
-          this.chartType = 'pie';
-        } else if (this.sidebyside) {
-          this.chartType = 'sidebyside';
-        } else if (this.stocked) {
-          this.chartType = 'stocked';
-        } else if (this.barLine) {
-          this.chartType = 'barline';
-        } else if (this.horizentalStocked) {
-          this.chartType = 'hstocked';
-        } else if (this.grouped) {
-          this.chartType = 'hgrouped';
-        } else if (this.multiLine) {
-          this.chartType = 'multiline';
-        } else if (this.donut) {
-          this.chartType = 'donut';
-        } else if (this.radar) {
-          this.chartType = 'radar';
-        } else if (this.heatMap) {
-          this.chartType = 'heatmap';
-        } else if (this.kpi){
+        if(this.kpi){
           this.KPIChart();
-        } else if (this.funnel){
-          this.chartType = 'funnel';
-        }else if(this.guage){
-          this.chartType = 'guage';
-        } else if(this.map){
-          this.chartType = 'map';
-          this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
-            echarts.registerMap('world', geoJson);  // Register the map data
-          });
-        } else if(this.calendar){
-          this.chartType = 'calendar';
+          return;
+        } else if(this.horizontalBar){
+          this.chartType = 'horizontalBar'
+        }else if(this.pivotTable){
+          this.chartType = 'pivotTable';
+          return;
         }
-
+        const cfg = this.chartRenderService.getChartConfig(this.chartId);
+        if(cfg){
+          this.chartType = cfg.chartType;
+          if(cfg.chartType === 'map'){
+            this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+              echarts.registerMap('world', geoJson);
+            });
+          }
+        }
       }
 
       KPIChart(){
@@ -1634,7 +1608,7 @@ try {
     if(this.bar){
       this.isHorizontalBar = false;
     }
-    if(this.bar || this.horizontalBar || this.pie || this.donut || this.funnel){
+    if(this.bar || this.pie || this.donut || this.funnel){
     this.updateMeasureColorRanges();
     }
     if(!(this.bar|| this.horizontalBar || this.pie || this.donut)){
@@ -1709,7 +1683,7 @@ try {
              this.tabs.push(this.sheetName);
           }else{
             this.getChartData();
-            this.sheetNumber = this.tabs.length+1;
+            this.sheetNumber = this.getNextSheetNumber();
              this.tabs.push('Sheet ' +this.sheetNumber);
              this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
              this.selectedTabIndex = this.tabs.length - 1;
@@ -1743,7 +1717,7 @@ try {
        this.tabs.push(this.sheetName);
     }else{
       this.getChartData();
-      this.sheetNumber = this.tabs.length+1;
+      this.sheetNumber = this.getNextSheetNumber();
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
        this.selectedTabIndex = this.tabs.length - 1;
@@ -1756,7 +1730,7 @@ try {
   }
 
   sheetDuplicate(){
-    this.sheetNumber = this.tabs.length+1;
+    this.sheetNumber = this.getNextSheetNumber();
     this.sheetTagName = 'Sheet ' +this.sheetNumber;
     // this.setChartType();
     if(this.filterId?.length > 0){
@@ -1767,7 +1741,7 @@ try {
           this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
           this.selectedTabIndex = this.tabs.length - 1;
           this.sheetRetrive(true,data.filters_list);
-          
+
         },
         error: (error: any) => {
           Swal.fire({
@@ -1785,6 +1759,26 @@ try {
       this.selectedTabIndex = this.tabs.length - 1;
       this.sheetRetrive(true);
     }
+  }
+
+  getNextSheetNumber(): number {
+    const existingSheetNumbers = this.tabs
+      .map(tab => {
+        const name = tab.sheet_name;
+        const match = name.match(/^Sheet (\d+)$/);
+        return match ? parseInt(match[1], 10) : null;
+      })
+      .filter(num => num !== null)
+      .sort((a:any, b:any) => a - b);
+
+    let newSheetNumber = 1;
+    for (let i = 0; i < existingSheetNumbers.length; i++) {
+      if (existingSheetNumbers[i] !== i + 1) {
+        return i + 1;
+      }
+    }
+
+    return existingSheetNumbers.length + 1;
   }
 
   sheetNameChange(name:any,event:any){
@@ -2066,12 +2060,6 @@ try {
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
-      this.saveBar = [];
-      this.savePie = [];
-      this.lineYaxis = [];
-      this.lineXaxis = [];
-      this.areaYaxis = [];
-      this.areaXaxis = [];
       this.draggedColumns = [];
       this.draggedRows = [];
       this.tablePreviewColumn = [];
@@ -2087,20 +2075,6 @@ try {
       this.chartsColumnData = [];
       this.draggedColumnsData = [];
       this.draggedRowsData = [];
-      this.sidebysideBarYaxis = [];
-      this.sidebysideBarXaxis = [];
-      this.stokedBarYaxis = [];
-      this.stokedBarXaxis = [];
-      this.barLineYaxis = [];
-      this.barLineXaxis = [];
-      this.hStockedYaxis = [];
-      this.hStockedXaxis = [];
-      this.hgroupedYaxis = [];
-      this.hgroupedXaxis = [];
-      this.multiLineYaxis = [];
-      this.multiLineXaxis = [];
-      this.donutYaxis = [];
-      this.donutXaxis = [];
       this.sortedData = [];
       this.table = true;
       this.pivotTable = false;
@@ -2124,17 +2098,6 @@ try {
       this.calendar = false;
       this.guage = false;
       this.banding = false;
-      this.barOptions = undefined;
-      this.lineOptions = undefined;
-      this.areaOptions = undefined;
-      this.pieOptions = undefined;
-      this.sidebysideBarOptions = undefined;
-      this.stokedOptions = undefined;
-      this.barLineOptions = undefined;
-      this.hStockedOptions = undefined;
-      this.hgroupedOptions = undefined;
-      this.multiLineOptions = undefined;
-      this.donutOptions = undefined;
       this.kpiFontSize = '3';
       this.kpiColor = '#000000';
       this.GridColor = '#089ffc';
@@ -2167,40 +2130,7 @@ try {
   saveTableData = [] as any;
   savedisplayedColumns = [] as any;
   banding : boolean = false;
-  saveBar = [] as any;
-  savePie = [] as any;
-  lineYaxis = [] as any;
-  lineXaxis = [] as any;
-  lineOptions : any = undefined;
-  areaYaxis = [] as any;
-  areaXaxis = [] as any;
-  areaOptions : any = undefined;
-  barXaxis = [] as any;
-  barOptions : any = undefined;
-  pieXaxis = [] as any;
-  pieOptions : any = undefined;
-  sidebysideBarYaxis = [] as any;
-  sidebysideBarXaxis = [] as any;
-  sidebysideBarOptions : any = undefined;
-  stokedBarYaxis = [] as any;
-  stokedBarXaxis = [] as any;
-  stokedOptions : any = undefined;
-  barLineYaxis = [] as any;
-  barLineXaxis = [] as any;
-  barLineOptions : any = undefined;
-  hStockedYaxis = [] as any;
-  hStockedXaxis = [] as any;
-  hStockedOptions : any = undefined;
-  hgroupedYaxis = [] as any;
-  hgroupedXaxis = [] as any;
-  hgroupedOptions : any = undefined;
-  multiLineYaxis = [] as any;
-  multiLineXaxis = [] as any;
-  multiLineOptions : any = undefined;
-  donutYaxis = [] as any;
-  donutXaxis = [] as any;
-  donutOptions : any = undefined;
-  eMapChartOptions : any;
+
 
   isMailRefresh=false;
 sheetSave(isDashboardTransfer?: boolean){
@@ -2228,11 +2158,7 @@ sheetSave(isDashboardTransfer?: boolean){
     //  bandColor2 = this.color2;
     }
   if(this.bar && this.chartId == 6){
-    this.saveBar = this.chartsRowData;
-    this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
-      this.saveBar = this.originalData.data;
-      this.barXaxis = this.originalData.categories;
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
       tablePreviewRow[0].result_data = this.originalData.data;
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
@@ -2241,11 +2167,7 @@ sheetSave(isDashboardTransfer?: boolean){
     }
   }
    if(this.horizontalBar && this.chartId == 14){
-    this.saveBar = this.chartsRowData;
-    this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
-      this.saveBar = this.originalData.data;
-      this.barXaxis = this.originalData.categories;
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
       tablePreviewRow[0].result_data = this.originalData.data;
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
@@ -2254,13 +2176,7 @@ sheetSave(isDashboardTransfer?: boolean){
     }
   }
   if(this.pie && this.chartId == 24){
-    this.savePie = this.chartsRowData;
-    this.pieXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
-      this.savePie = this.originalData.data;
-      this.pieXaxis = this.originalData.categories;
-      // savedChartOptions.labels = this.originalData.categories;
-      // savedChartOptions.series = this.originalData.data;
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
       tablePreviewRow[0].result_data = this.originalData.data;
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
@@ -2268,48 +2184,8 @@ sheetSave(isDashboardTransfer?: boolean){
       delete this.originalData;
     }
   }
-  if(this.line && this.chartId == 13){
-    this.lineYaxis = this.chartsRowData;
-    this.lineXaxis = this.chartsColumnData;
-  }
-  if(this.area && this.chartId == 17){
-    this.areaYaxis = this.chartsRowData;
-    this.areaXaxis = this.chartsColumnData;
-  }
-  if(this.sidebyside && this.chartId == 7){
-    this.sidebysideBarYaxis = this.dualAxisRowData;
-    this.sidebysideBarXaxis = this.dualAxisColumnData;
-  }
-  if(this.stocked && this.chartId == 5){
-    this.stokedBarYaxis = this.dualAxisRowData;
-    this.stokedBarXaxis = this.dualAxisColumnData;
-  }
-  if(this.barLine && this.chartId == 4){
-    this.barLineYaxis = this.dualAxisRowData;
-    this.barLineXaxis = this.dualAxisColumnData;
-  }
-  if(this.horizentalStocked && this.chartId == 2){
-    this.hStockedYaxis = this.dualAxisRowData;
-    this.hStockedXaxis = this.dualAxisColumnData;
-  }
-  if(this.grouped && this.chartId == 3){
-    this.hgroupedYaxis = this.dualAxisRowData;
-    this.hgroupedXaxis = this.dualAxisColumnData;    
-  }
-  if(this.multiLine && this.chartId == 8){
-    this.multiLineYaxis = this.dualAxisRowData;
-    this.multiLineXaxis = this.dualAxisColumnData;    
-  }
   if(this.donut && this.chartId == 10){
-    
-    this.donutYaxis = this.chartsRowData;
-    this.donutXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
-    
     if (this.originalData) {
-      this.donutYaxis = this.originalData.data;
-      this.donutXaxis = this.originalData.categories;
-      // savedChartOptions.labels = this.originalData.categories;
-      // savedChartOptions.series = this.originalData.data;
       tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
       tablePreviewRow[0].result_data = this.originalData.data;
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
@@ -2493,51 +2369,11 @@ let obj={
     "color2":bandColor2,
     "items_per_page":this.itemsPerPage,
     "total_items":this.totalItems,
-
-    "barYaxis":this.saveBar,
-    "barXaxis":this.barXaxis,
-  //  "barOptions":this.barOptions,
-
-    "pieYaxis":this.savePie,
-    "pieXaxis":this.pieXaxis,
-  //   "pieOptions":this.pieOptions,
-
-    "lineYaxis":this.lineYaxis,
-    "lineXaxis": this.lineXaxis,
-  //   "lineOptions":this.lineOptions,
-
-    "areaYaxis":this.areaYaxis,
-    "areaXaxis":this.areaXaxis,
-  //   "areaOptions":this.areaOptions,
-
-      "sidebysideBarYaxis": this.sidebysideBarYaxis,
-      "sidebysideBarXaxis": this.sidebysideBarXaxis,
-  //     "sidebysideBarOptions":this.sidebysideBarOptions,
-   
-      "stokedBarYaxis": this.stokedBarYaxis,
-      "stokedBarXaxis": this.stokedBarXaxis,
-  //     "stokedOptions":this.stokedOptions,
-  
-      "barLineYaxis":this.barLineYaxis,
-      "barLineXaxis":this.barLineXaxis,
-  //     "barLineOptions":this.barLineOptions,
-
-      "hStockedYaxis": this.hStockedYaxis,
-      "hStockedXaxis": this.hStockedXaxis,
-  //     "hStockedOptions":this.hStockedOptions,
-
-      "hgroupedYaxis": this.hgroupedYaxis,
-      "hgroupedXaxis": this.hgroupedXaxis,
-  //     "hgroupedOptions":this.hgroupedOptions,
-
-      "multiLineYaxis":this.multiLineYaxis,
-      "multiLineXaxis": this.multiLineXaxis,
-  //     "multiLineOptions":this.multiLineOptions,
-
-      "donutYaxis": this.donutYaxis,
-      "donutXaxis": this.donutXaxis,
-      "decimalplaces": this.donutDecimalPlaces,
-  //     "donutOptions":this.donutOptions,
+    "axisConfig": {
+      xAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisColumnData : this.chartsColumnData,
+      yAxis: [7,5,4,2,3,8,27,29].includes(this.chartId) ? this.dualAxisRowData : this.chartsRowData,
+      type: [7,5,4,2,3,8,27,29].includes(this.chartId) ? 'dual' : 'single'
+    },
 
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
@@ -2619,28 +2455,6 @@ if(this.retriveDataSheet_id){
     }
     this.saveTableData= [];
     this.savedisplayedColumns = [];
-    this.saveBar =[];
-    this.barXaxis = [];
-    this.savePie = [];
-    this.pieXaxis =[];
-    this.lineYaxis = [];
-    this.lineXaxis =[];
-    this.areaYaxis =[];
-    this.areaXaxis =[];
-    this.sidebysideBarYaxis =[];
-    this.sidebysideBarXaxis =[];
-    this.stokedBarYaxis =[];
-    this.stokedBarXaxis =[];
-    this.barLineYaxis =[];
-    this.barLineXaxis =[];
-    this.hStockedYaxis =[];
-    this.hStockedXaxis =[];
-    this.hgroupedYaxis =[];
-    this.hgroupedXaxis =[];
-    this.multiLineYaxis =[];
-    this.multiLineXaxis =[];
-    this.donutYaxis =[];
-    this.donutXaxis =[];
     this.measureValues = [];
   //  this.draggedRowsData = [];
    // this.draggedColumnsData = [];
@@ -2799,8 +2613,29 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
       this.draggedMeasureValuesData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
     });
   }
-  // this.table = false;
-  this.chartsDataSet(responce);
+  const axisConfig = responce?.sheet_data?.results?.axisConfig;
+  // if((responce.chart_id != 1 || responce.chart_id != 25 || responce.chart_id != 9) && axisConfig && axisConfig.type){
+  //   if(axisConfig.type === 'dual'){
+  //     this.dualAxisColumnData = axisConfig.xAxis;
+  //     this.dualAxisRowData = axisConfig.yAxis;
+  //   } else {
+  //     this.chartsColumnData = axisConfig.xAxis;
+  //     this.chartsRowData = axisConfig.yAxis;
+  //   }
+  //   const cfg = this.chartRenderService.getChartConfig(responce.chart_id);
+  //   if(cfg){
+  //    this.chartType = cfg.chartType;
+  //     if(cfg.chartType === 'map'){
+  //       this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+  //         echarts.registerMap('world', geoJson);
+  //       });
+  //     }
+  //   }
+  //   console.warn('Unknown chart configuration for chart id', responce.chart_id);
+  // } else {
+    console.warn('savedChartOptions missing or malformed, using legacy computation');
+    this.chartsDataSet(responce);
+  // }
   if(responce.chart_id == 1){
     // this.tableData = this.sheetResponce.results.tableData;
     // this.displayedColumns = this.sheetResponce?.results.tableColumns;
@@ -3647,7 +3482,7 @@ filterCheck(event: any, data: string) {
   } else {
     this.filterDataArray.delete(data);
   }
-
+  this.isAllSelected = this.filterData.every((element: any) => element.selected);
   console.log('Selected Filters:', this.filterDataArray);
 }
 
@@ -3706,7 +3541,7 @@ trackByFn(index: number, item: any): number {
         this.filterDateRange = [];
         this.formatExtractType = '';
         this.selectedTopColumn = 'select';
-        this.topAggregate = 'sum';
+        this.topAggregate = '';
         this.topLimit = 5;
         this.topType = 'desc';
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
@@ -3744,6 +3579,7 @@ trackByFn(index: number, item: any): number {
           this.selectedTopColumn = responce?.top_bottom[0];
           this.topAggregate = responce?.top_bottom[1];
           this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
+          this.onRowSelected();
         }
         if(responce.is_embedded){
           this.activeTabId = 7;
@@ -3785,6 +3621,7 @@ trackByFn(index: number, item: any): number {
               this.filterDataArray.add(filter.label);
             }
           });
+          this.isAllSelected = this.filterData.length === this.filterDataArray.size;
         }
         if(this.dateList.includes(responce.data_type) && responce?.range_values){
           let rawLabel = this.filterData[0].label;
@@ -3914,7 +3751,7 @@ trackByFn(index: number, item: any): number {
           this.filterDateRange = [];
           this.isAllSelected = false;
           this.selectedTopColumn = 'select';
-          this.topAggregate = 'sum';
+          this.topAggregate = '';
           this.topLimit = 5;
           this.topType = 'desc';
           this.defaultRelativeDates();
@@ -7704,6 +7541,32 @@ rows.forEach((row, rowIndex) => {
     }
   }
 });
+}
+
+changeDimensionDatatype(dim:any, newType:any) {
+ if (newType === 'float') {
+    newType = 'boolean';
+  }  
+  const object = {
+    "queryset_id":this.qrySetId,
+    "table_name":dim.table_name,
+    "column_name":dim.column,
+    "old_datatype":dim.data_type,
+    "new_datatype":newType === 'boolean' ? 'float' : newType,
+  }
+  this.workbechService.changeDataType(object).subscribe({
+    next: (response: any) => {
+      console.log(response);
+      dim.data_type = newType;
+      this.columnsData();
+    },
+    error: (error) => {
+      console.log(error);
+      this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+    }
+  });
+
+
 
 }
 
@@ -7715,15 +7578,40 @@ onMeasureColorChange() {
   this.measureColorRanges = [...this.measureColorRanges];
 }
 // Call this whenever measureDivisions or isMeasureDistribution changes
+// updateMeasureColorRanges() {
+//   if (!this.chartsRowData || this.chartsRowData.length === 0) return;
+//   const min = Math.min(...this.chartsRowData);
+//   const max = Math.max(...this.chartsRowData);
+//   const step = Math.ceil((max - min + 1) / this.measureDivisions);
+//   this.measureColorRanges = [];
+//   for (let i = 0; i < this.measureDivisions; i++) {
+//     const rangeMin = min + i * step;
+//     const rangeMax = i === this.measureDivisions - 1 ? max : rangeMin + step - 1;
+//     this.measureColorRanges.push({
+//       min: rangeMin,
+//       max: rangeMax,
+//       color: this.selectedColorScheme[i % this.selectedColorScheme.length] || '#2392c1',
+//       label: `${rangeMin} - ${rangeMax}`
+//     });
+//   }
+//   console.log('Measure Color Ranges:', this.measureColorRanges);
+// }
+
 updateMeasureColorRanges() {
   if (!this.chartsRowData || this.chartsRowData.length === 0) return;
+
   const min = Math.min(...this.chartsRowData);
   const max = Math.max(...this.chartsRowData);
-  const step = Math.ceil((max - min + 1) / this.measureDivisions);
+  const step = (max - min) / this.measureDivisions;
+
   this.measureColorRanges = [];
+
   for (let i = 0; i < this.measureDivisions; i++) {
-    const rangeMin = min + i * step;
-    const rangeMax = i === this.measureDivisions - 1 ? max : rangeMin + step - 1;
+    const rangeMin = +(min + i * step).toFixed(2); // Keep 2 decimal precision
+    const rangeMax = i === this.measureDivisions - 1
+      ? max
+      : +(rangeMin + step).toFixed(2);
+
     this.measureColorRanges.push({
       min: rangeMin,
       max: rangeMax,
@@ -7731,19 +7619,79 @@ updateMeasureColorRanges() {
       label: `${rangeMin} - ${rangeMax}`
     });
   }
+
   console.log('Measure Color Ranges:', this.measureColorRanges);
 }
 
-
-qoqOpen = false
-toggleQOQDropdown() {
-  this.qoqOpen = !this.qoqOpen;
+isDatatypeConvertible(currentType: string, targetType: string): boolean {
+  // If currentType is in dateList, only allow changing to types not in dateList
+if (this.dateList.includes(currentType)) {
+    return targetType !== 'date';
+  }
+  if (this.boolList.includes(currentType)) {
+    return targetType !== 'float';
+  }
+  if (this.stringList.includes(currentType)) {
+    return targetType !== 'string';
+  }
+  if (this.integerList.includes(currentType)) {
+    return targetType !== 'integer';
+  }
+  // Otherwise, allow all except the same type
+  return currentType !== targetType;
 }
-qoqOptions = [
-  'QOQ Option 1', 'QOQ Option 2', 'QOQ Option 3',
-  'QOQ Option 4', 'QOQ Option 5', 'QOQ Option 6',
-  'QOQ Option 7', 'QOQ Option 8'
-];
+
+onMeasureDivisionChange() {
+    setTimeout(() => {
+      // if (value < 2) {
+      //   this.measureDivisions = 2;
+      // } else if (value > 10) {
+      //   this.measureDivisions = 10;
+      // } else {
+      //   this.measureDivisions = value;
+      // }
+      if(this.measureDivisions || this.measureDivisions === 0){
+        if (this.measureDivisions < 2) {
+          this.measureDivisions = 2;
+        } else if (this.measureDivisions > 10) {
+          this.measureDivisions = 10;
+        }
+      }
+
+      this.updateMeasureColorRanges();
+    }, 0);
+  }
+
+topSelecetdColumnDataType : any = '';
+isMeasureAbsent : boolean = false;
+onRowSelected() {
+  const selectedColumnObj = this.draggedRows.find((col: any) => col.column === this.selectedTopColumn);
+  if (selectedColumnObj) {
+    this.topSelecetdColumnDataType = selectedColumnObj.data_type || '';
+    this.isMeasureAbsent = false;
+  } else {
+    this.topSelecetdColumnDataType = '';
+    this.isMeasureAbsent = true;
+  }
+}
+
+buttonClicked = false;
+  onEditorReady(editor: any) {
+    setTimeout(() => {
+      editor.editing.view.focus();
+
+      editor.model.change((writer: any) => {
+        const root = editor.model.document.getRoot();
+        const endPosition = writer.createPositionAt(root, 'end');
+        writer.setSelection(endPosition);
+      });
+    }, 0);
+
+    // const editableElement = editor.ui.view.editable.element;
+    // editableElement.addEventListener('blur', () => {
+    //   this.editor = false;
+    // });
+  }
 
 }
 

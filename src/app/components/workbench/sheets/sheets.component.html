@@ -637,7 +637,7 @@
                                 {{ dimensions.column?.substr(0,15) }}{{ dimensions.column.length > 15 ? '...' : '' }}
                                 </li>
                                 <div class="dashboard-option">
-                                    <div class=" p-1" ngbDropdown>
+                                    <div class=" p-1" ngbDropdown [autoClose]="'outside'">
                                         <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                             aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(dimensions.column)"><i
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -645,6 +645,25 @@
                                         <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
                                             <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,dimensions)"> Apply Filters </button>
                                             <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
+
+                                            <!-- Change Datatype Option -->
+                                            <div ngbDropdown class="dropdown-submenu">
+                                                <a class="dropdown-item btn-primary-light border d-flex justify-content-between align-items-center"
+                                                ngbDropdownToggle>
+                                                    Change Datatype
+                                                    <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                </a>
+                                                <ul ngbDropdownMenu class="dropdown-menu custom-dropdown">
+                                                    <li *ngFor="let dtype of ['string','integer','float','date']"
+                                                         [hidden]="!isDatatypeConvertible(dimensions.data_type, dtype)">
+                                                        <a class="dropdown-item border Aggregation-select-padding"
+                                                        (click)="changeDimensionDatatype(dimensions, dtype)">
+                                                            {{ dtype | titlecase }}
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <!-- End Change Datatype Option -->
                                         </div>
                                     </div>
                                   </div>
@@ -662,7 +681,7 @@
                                 <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.column}}" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" ># 
                                     {{ measures.column?.substr(0,18) }}{{ measures.column.length > 18 ? '...' : '' }}
                                     <div class="dashboard-option">
-                                        <div class=" p-1" ngbDropdown>
+                                        <div class=" p-1" ngbDropdown [autoClose]="'outside'">
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.column)"><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -670,6 +689,24 @@
                                             <div class="dropdown-menu SelectDropDownCard" ngbDropdownMenu>
                                                 <a *ngIf="!filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </a>
                                                 <a *ngIf="filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                                                                                        <!-- Change Datatype Option for Measures -->
+                                                        <div ngbDropdown class="dropdown-submenu">
+                                                            <a class="dropdown-item btn-primary-light border d-flex justify-content-between align-items-center"
+                                                            ngbDropdownToggle>
+                                                                Change Datatype
+                                                                <i class="fe fe-chevron-right fs-12 ms-2"></i>
+                                                            </a>
+                                                            <ul ngbDropdownMenu class="dropdown-menu custom-dropdown">
+                                                                <li *ngFor="let dtype of ['string','integer','float','date']"
+                                                                    [hidden]="!isDatatypeConvertible(measures.data_type, dtype)">
+                                                                    <a class="dropdown-item border Aggregation-select-padding"
+                                                                    (click)="changeDimensionDatatype(measures, dtype)">
+                                                                        {{ dtype | titlecase }}
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <!-- End Change Datatype Option for Measures -->
                                             </div>
                                         </div>
                                       </div>
@@ -709,6 +746,7 @@
                                                 <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
                                                     <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+
                                                     <a class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;validationMessage = '';fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                     <a class="dropdown-item btn-secondary-light border" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
                                                 </div>
@@ -758,7 +796,7 @@
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                                <label for="selectAll" class="form-check-label"> Select All </label>
                                                             </div>
                                                             <!-- <div *ngFor="let data of filterData">
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -770,11 +808,11 @@
                                                             }
                                                         </div> -->
                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
-                                                            <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn">
+                                                            <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn; let i = index">
                                                                 <div class="form-check d-flex" >
-                                                                    <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
+                                                                    <input type="checkbox" [id]="'checkbox' + i" [(ngModel)]="data.selected"
                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
-                                                                    <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
+                                                                    <label [for]="'checkbox' + i" class="form-check-label">{{ data.label }}</label>
                                                                 </div>
                                                             </div>
                                                         </cdk-virtual-scroll-viewport>
@@ -859,12 +897,12 @@
                                                                     <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                                                                     <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                 </div>
-                                                                <div *ngFor="let data of filterData">
+                                                                <div *ngFor="let data of filterData; let i = index">
                                                                     @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                     <div class="form-check">
-                                                                        <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input"
+                                                                        <input type="checkbox" name="checkbox" id="'checkbox' + i" [checked]="data.selected" class="form-check-input"
                                                                             (click)="filterCheck($event,data.label)">
-                                                                        <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                        <label for="'checkbox' + i" class="form-check-label"> {{data.label}} </label>
                                                                     </div>
                                                                     }
                                                                 </div>
@@ -1152,7 +1190,7 @@
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                                <label for="selectAll" class="form-check-label"> Select All </label>
                                                             </div>
                                                           
                                                         
@@ -1194,7 +1232,7 @@
                                                                               <option value="desc">Top</option>
                                                                               <option value="asc">Bottom</option>
                                                                             </select>
-                                                                            <select [(ngModel)] = "topLimit">
+                                                                            <!-- <select [(ngModel)] = "topLimit">
                                                                                 <option *ngIf="totalDataLength > 0" value="5">5</option>
                                                                                 <option *ngIf="totalDataLength > 5" value="10">10</option>
                                                                                 <option *ngIf="totalDataLength > 10" value="20">20</option>
@@ -1208,19 +1246,21 @@
                                                                                 <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
                                                                                 <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
                                                                                 <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                              </select>
+                                                                              </select> -->
+                                                                            <input type="number" [(ngModel)] = "topLimit" min="1">
                                                                             <!-- <input type="number" value="10" /><span>by</span> -->
                                                                         </div>
                                                                         <div class="field-options ">
-                                                                            <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
+                                                                            <select class="field-options-width"  [(ngModel)]="selectedTopColumn" (change)="onRowSelected()">
                                                                                 <option value="select" selected disabled> select </option>
                                                                                 <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                             </select>
                                                                             <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
-                                                                                <option value="sum">Sum</option>
-                                                                                <option value="avg">Avg</option>
-                                                                                <option value="min">Min</option>
-                                                                                <option value="max">Max</option>
+                                                                                <option value="" selected disabled> select </option>
+                                                                                <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="sum">Sum</option>
+                                                                                <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="avg">Avg</option>
+                                                                                <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="min">Min</option>
+                                                                                <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="max">Max</option>
                                                                                 <option value="count">Count</option>
                                                                             </select>
                                                                         </div>
@@ -1295,7 +1335,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid) ||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && (selectedTopColumn == 'select' || topAggregate == '') ) || (activeTabId === 5 && !isRelativeDateValid) ||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -1427,11 +1467,11 @@
                                                                         <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
                                                                         <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                     </div>
-                                                                    @for(data of filterData;track data){
+                                                                    @for(data of filterData;track data; let i = $index){
                                                                         @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                             <div class="form-check">
-                                                                                <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
-                                                                                <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                                <input type="checkbox" name="checkbox" id="'checkbox' + i" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                                <label for="'checkbox' + i" class="form-check-label"> {{data.label}} </label>
                                                                             </div>
                                                                         }
                                                                     }
@@ -1719,7 +1759,7 @@
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                                <label for="selectAll" class="form-check-label"> Select All </label>
                                                             </div>
                                                             <!-- <div *ngFor="let data of filterData">
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -1760,7 +1800,7 @@
                                                                           <option value="desc">Top</option>
                                                                           <option value="asc">Bottom</option>
                                                                         </select>
-                                                                        <select [(ngModel)] = "topLimit">
+                                                                        <!-- <select [(ngModel)] = "topLimit">
                                                                             <option *ngIf="totalDataLength > 0" value="5">5</option>
                                                                             <option *ngIf="totalDataLength > 5" value="10">10</option>
                                                                             <option *ngIf="totalDataLength > 10" value="20">20</option>
@@ -1774,22 +1814,25 @@
                                                                             <option *ngIf="totalDataLength > 2000"value="3000">3000</option>
                                                                             <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
                                                                             <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                          </select>
+                                                                          </select> -->
+                                                                          <input type="number" [(ngModel)] = "topLimit" min="1">
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
                                                                     <div class="field-options">
-                                                                        <select class="field-options-width" [(ngModel)]="selectedTopColumn">
+                                                                        <select class="field-options-width" [(ngModel)]="selectedTopColumn" (change)="onRowSelected()">
                                                                             <option value="select" selected disabled> select </option>
                                                                             <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                         </select>
                                                                         <select class="topAggregate-width" [(ngModel)] = "topAggregate">
-                                                                            <option value="sum">Sum</option>
-                                                                            <option value="avg">Avg</option>
-                                                                            <option value="min">Min</option>
-                                                                            <option value="max">Max</option>
+                                                                            <option value="" selected disabled> select </option>
+                                                                            <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="sum">Sum</option>
+                                                                            <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="avg">Avg</option>
+                                                                            <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="min">Min</option>
+                                                                            <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="max">Max</option>
                                                                             <option value="count">Count</option>
                                                                         </select>
                                                                     </div>
+                                                                    <span *ngIf="isMeasureAbsent" class="text-danger">*Filtered Measure not present in Row Shelf</span>
                                                                 </div>
                                                             </div>
                                                         </ng-template>
@@ -1869,7 +1912,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && (selectedTopColumn == 'select'  || topAggregate == '' || isMeasureAbsent)) || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -1900,13 +1943,13 @@
                                         <button class="btn btn-primary FaFaIconProperties"><i class="fa fa-pencil FaFaIconProperties"></i></button>
                                     </span>
                                 </div> 
-                                <ckeditor *ngIf="editor" placeholder="Sheet Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName" (ngModelChange)="updateSheetName()"></ckeditor>
+                                <ckeditor *ngIf="editor" placeholder="Sheet Name" (ready)="onEditorReady($event);" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName" (ngModelChange)="updateSheetName()"></ckeditor>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 p-1 d-flex" >
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
-                                    <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
+                                    <app-insights-button *ngIf="!retriveDataSheet_id" id="save-btn" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false"></app-insights-button>
-                                    <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
+                                    <app-insights-button *ngIf="retriveDataSheet_id" id="update-btn" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
                                     (btnClickEvent)="isMailRefresh = true;(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false;" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" class="me-1">
@@ -1947,7 +1990,7 @@
                     </div>
                 </div>
         
-                <div class="card-body column-card" (click)="editor =false">
+                <div class="card-body column-card">
                     <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
@@ -2670,7 +2713,7 @@
                     }
             @else if(radar && chartId){
                 <div class="card-body">
-                    <app-insight-echart  [chartType]="chartType" [color]="color"  [isBold]="isBold" [radarRowData]="radarRowData" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [chartType]="chartType" [color]="color"  [isBold]="isBold" [radarRowData]="radarRowData" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily"  [isRadarDistribution]="isRadarDistribution" [selectedColorScheme]="selectedColorScheme"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -2678,7 +2721,7 @@
                 }
                 @else if(map && chartId){
                     <div class="card-body">
-                        <app-insight-echart  [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment"
                         [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily"
                         [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch"
@@ -2751,7 +2794,7 @@
                                 </button>
                             </li>
                             <li role="presentation" class="nav-item me-1">
-                                <button type="button" ngbnavlink="" ngbTooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
+                                <button type="button" ngbnavlink="" ngbTooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id || SheetSavePlusEnabled.length>0" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="btn-sm btn-info-light"
                                     (click)="sheetDuplicate()" >
                                     <i class="fa fa-copy"></i>
@@ -2860,11 +2903,11 @@
                                                                                             }
                                                                                         } -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
-                                                                                            <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
+                                                                                            <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn; let i = index">
                                                                                                 <div class="form-check d-flex">
-                                                                                                    <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
+                                                                                                    <input type="checkbox" [id]="'checkbox' + i" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
-                                                                                                    <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
+                                                                                                    <label [for]="'checkbox' + i" class="form-check-label">{{ data.label }}</label>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </cdk-virtual-scroll-viewport>
@@ -2949,11 +2992,11 @@
                                                                                                     <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
                                                                                                     <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                                                 </div>
-                                                                                                @for(data of filterData;track data){
+                                                                                                @for(data of filterData;track data; let i = $index){
                                                                                                     @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                                                         <div class="form-check">
-                                                                                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
-                                                                                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                                                            <input type="checkbox" name="checkbox" id="'checkbox' + i" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                                                            <label for="'checkbox' + i" class="form-check-label"> {{data.label}} </label>
                                                                                                         </div>
                                                                                                     }
                                                                                                 }
@@ -3264,7 +3307,7 @@
                                                                                         </div>
                                                                                         <div class="form-check">
                                                                                             <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                                                                            <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                                                            <label for="selectAll" class="form-check-label"> Select All </label>
                                                                                         </div>
                                                                                         <!-- <div *ngFor="let data of filterData">
                                                                                             @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -3275,11 +3318,11 @@
                                                                                             }
                                                                                         </div> -->
                                                                                         <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
-                                                                                            <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn">
+                                                                                            <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn; let i = index">
                                                                                                 <div class="form-check d-flex" >
-                                                                                                    <input type="checkbox" [id]="'checkbox' + data.id" [(ngModel)]="data.selected"
+                                                                                                    <input type="checkbox" [id]="'checkbox' + i" [(ngModel)]="data.selected"
                                                                                                         class="form-check-input" (change)="filterCheck($event, data.label)">
-                                                                                                    <label [for]="'checkbox' + data.id" class="form-check-label">{{ data.label }}</label>
+                                                                                                    <label [for]="'checkbox' + i" class="form-check-label">{{ data.label }}</label>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </cdk-virtual-scroll-viewport>
@@ -3301,7 +3344,7 @@
                                                                                                       <option value="desc">Top</option>
                                                                                                       <option value="asc">Bottom</option>
                                                                                                     </select>
-                                                                                                    <select [(ngModel)] = "topLimit">
+                                                                                                    <!-- <select [(ngModel)] = "topLimit">
                                                                                                         <option *ngIf="totalDataLength > 0" value="5">5</option>
                                                                                                         <option *ngIf="totalDataLength > 5" value="10">10</option>
                                                                                                         <option *ngIf="totalDataLength > 10" value="20">20</option>
@@ -3315,22 +3358,25 @@
                                                                                                         <option *ngIf="totalDataLength > 2000" value="3000">3000</option>
                                                                                                         <option *ngIf="totalDataLength > 3000" value="4000">4000</option>
                                                                                                         <option *ngIf="totalDataLength > 4000" value="5000">5000</option>
-                                                                                                      </select>
+                                                                                                      </select> -->
+                                                                                                      <input type="number" [(ngModel)] = "topLimit" min="1">
                                                                                                     <!-- <input type="number" value="10" /><span>by</span> -->
                                                                                                 </div>
                                                                                                 <div class="field-options">
-                                                                                                    <select class="field-options-width" [(ngModel)]="selectedTopColumn">
+                                                                                                    <select class="field-options-width" [(ngModel)]="selectedTopColumn" (change)="onRowSelected()">
                                                                                                         <option value="select" selected disabled> select </option>
                                                                                                         <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                                                     </select>
                                                                                                     <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
-                                                                                                        <option value="sum">Sum</option>
-                                                                                                        <option value="avg">Avg</option>
-                                                                                                        <option value="min">Min</option>
-                                                                                                        <option value="max">Max</option>
+                                                                                                        <option value="" selected disabled> select </option>
+                                                                                                        <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="sum">Sum</option>
+                                                                                                        <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="avg">Avg</option>
+                                                                                                        <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="min">Min</option>
+                                                                                                        <option *ngIf="integerList.includes(topSelecetdColumnDataType)" value="max">Max</option>
                                                                                                         <option value="count">Count</option>
                                                                                                     </select>
                                                                                                 </div>
+                                                                                                <span *ngIf="isMeasureAbsent" class="text-danger">*Filtered Measure not present in Row Shelf</span>
                                                                                             </div>
                                                                                         </div>
                                                                                     </ng-template>
@@ -3408,7 +3454,7 @@
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && selectedTopColumn == 'select') || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
+                                                            <button [disabled]="((activeTabId === 1 || activeTabId === 3) && filterDataArray.size === 0 && !isEmbed) || (activeTabId === 2 && (filterDateRange.length === 0 || dateRangeError !== '')) || (activeTabId === 6 && ((minRangeValue === null || minRangeValue === undefined || maxRangeValue === null || maxRangeValue === undefined || measureRangeError !== ''))) || (activeTabId === 4 && (selectedTopColumn == 'select'  || topAggregate == '' || isMeasureAbsent)) || (activeTabId === 5 && !isRelativeDateValid)||(activeTabId == 7 &&(!SDKFilterName || !isEmbed))" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close
@@ -4903,8 +4949,13 @@
                                                                     <div *ngIf="!isMeasureDistribution" class="toggle toggle-sm off mb-0" (click)="isMeasureDistribution = !isMeasureDistribution; (isDistributed = isMeasureDistribution ? false : true); updateMeasureColorRanges()">
                                                                         <span></span>
                                                                     </div>
+                                                                    <!-- <input type="number" min="2" max="10" [(ngModel)]="measureDivisions" [disabled]="!isMeasureDistribution"
+                                                                    (ngModelChange)="onMeasureDivisionChange($event)" class="form-control ms-2" style="width: 60px;"/>
+                                                                    <span class="ms-1">Div</span> -->
+                                                                </div>
+                                                                <div *ngIf="isMeasureDistribution" class="d-flex align-items-center justify-content-start">
                                                                     <input type="number" min="2" max="10" [(ngModel)]="measureDivisions" [disabled]="!isMeasureDistribution"
-                                                                    (change)="updateMeasureColorRanges()" class="form-control ms-2" style="width: 60px;"/>
+                                                                    (ngModelChange)="onMeasureDivisionChange()" class="form-control" style="width: 40%;"/>
                                                                     <span class="ms-1">Div</span>
                                                                 </div>
                                                                 <div *ngIf="isMeasureDistribution" class="mt-2">
@@ -5015,7 +5066,7 @@
                                                         </div>
                                                         <div *ngIf="donut && !isEChatrts" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                             <div class="" > 
-                                                                <label class="mb-0" >Label </label>
+                                                                <label class="mb-0" >Total </label>
                                                             </div>
                                                             <div *ngIf="label" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('label')">
                                                                 <span></span>
