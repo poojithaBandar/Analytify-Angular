@@ -15,6 +15,7 @@ export class PasskeyLoginComponent {
   emailForm: FormGroup;
   otpForm: FormGroup;
   showOtp = false;
+  emailToken: string | null = null;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router){
     this.emailForm = this.fb.group({
@@ -27,16 +28,17 @@ export class PasskeyLoginComponent {
 
   sendRecoveryEmail(){
     if(this.emailForm.invalid){ return; }
-    this.authService.sendRecoveryEmail(this.emailForm.value).subscribe({
-      next: ()=>{ this.showOtp = true; },
+    this.authService.sendPasskeyEmail(this.emailForm.value).subscribe({
+      next: (res)=>{ this.showOtp = true; this.emailToken = res.emailvalidation_token; },
       error: ()=>{}
     });
   }
 
   verifyOtp(){
     if(this.otpForm.invalid){ return; }
-    const payload = {email: this.emailForm.value.email, otp: this.otpForm.value.otp};
-    this.authService.verifyRecoveryOtp(payload).subscribe({
+    if(!this.emailToken){ return; }
+    const payload = { otp: this.otpForm.value.otp };
+    this.authService.verifyOtp(this.emailToken, payload).subscribe({
       next: ()=>{
         localStorage.setItem('protected_access','true');
         localStorage.setItem('protected_email', this.emailForm.value.email);
