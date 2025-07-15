@@ -3083,6 +3083,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   }  
 }
 
+
   onChartInit(event: any, item: DashboardItem) {
     item['chartInstance'] = event.chart;
   }
@@ -5718,6 +5719,7 @@ kpiData?: KpiData;
       }
     })
   }
+}
 
   validateProtectedDashboard(modal:any){
     const obj = {
@@ -8559,6 +8561,7 @@ buttonClicked = false;
       }) 
   }
 }
+
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
 //   content: string;
