@@ -195,6 +195,11 @@ export class SheetsdashboardComponent implements OnDestroy {
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   isPublicUrl = false;
+  isProtectedUrl = false;
+  isProtectedValidated = false;
+  hasProtectedAccess = false;
+  passkey: string = '';
+  @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
   columnSearch: any;
   rolesForUpdateDashboard:[] = [];
@@ -263,6 +268,15 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.publicHeader = true
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
+      }
+    }
+    if(currentUrl.includes('dashboard/share/protected')){
+      this.updateDashbpardBoolen= true;
+      this.isProtectedUrl = true;
+      this.active = 2;
+      this.publicHeader = true;
+      if (route.snapshot.params['id1']) {
+        this.dashboardId = +atob(route.snapshot.params['id1']);
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
@@ -550,7 +564,11 @@ export class SheetsdashboardComponent implements OnDestroy {
     })
   }
 
-  ngOnInit() {  
+  ngOnInit() {
+    this.hasProtectedAccess = localStorage.getItem('protected_access') === 'true';
+    if(this.hasProtectedAccess){
+      this.isProtectedValidated = true;
+    }
     let displayGrid = DisplayGrid.Always;
     this.options = {
       gridType: GridType.Fit,
@@ -3147,6 +3165,13 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       console.log('HEllo element initialized:', this.gridster);
     } else {
       console.error('Gridster element not found!');
+    }
+    if(this.isProtectedUrl){
+      if(this.isProtectedValidated){
+        this.loadProtectedDashboard();
+      } else {
+        this.modalService.open(this.passkeyModal,{backdrop:'static', centered:true});
+      }
     }
     this.cdr.detectChanges();
   }
@@ -5999,6 +6024,32 @@ kpiData?: KpiData;
       }
     })
   }
+
+  validateProtectedDashboard(modal:any){
+    const obj = {
+      dashboard_id: this.dashboardId,
+      protected_key: this.passkey,
+      need_validation: 'True'
+    };
+    this.workbechService.validateProtectedKey(obj).subscribe({
+      next: ()=>{
+        this.isProtectedValidated = true;
+        modal.close();
+        this.loadProtectedDashboard();
+      },
+      error: ()=>{
+        this.toasterService.error('Invalid Passkey','error');
+      }
+    });
+  }
+
+  loadProtectedDashboard(){
+    this.getSavedDashboardDataPublic();
+    this.getDashboardFilterredListPublic();
+  }
+
+  goBackToProtectedHome(){
+    this.router.navigate(['/protected/home']);
   }
 
   publicDataExtraction(item : any){
