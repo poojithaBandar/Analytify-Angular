@@ -1696,25 +1696,26 @@
       <!-- View Mode (Default) -->
       <ng-template #viewMode>
          <div
-    class="tab-label-wrapper"
-    (mouseenter)="tab.hover = true"
-    (mouseleave)="tab.hover = false"
-    [ngStyle]="{
-      'background-color': tab.bgColor,
-      'color': tab.fontColor,
-      'font-size': tab.fontSize + 'px',
-      'font-style': tab.fontStyle
-    }"
-  >
-        <span class="p-2" (dblclick)="enableEdit(i)">
+          class="tab-label-wrapper"
+          (mouseenter)="tab.hover = true"
+          (mouseleave)="tab.hover = false"
+          [style.background-color]="tab.bgColor"
+          [ngStyle]="{
+            'background-color': tab.bgColor,
+            'color': tab.fontColor,
+            'font-size': tab.fontSize + 'px',
+            'font-weight': tab.fontStyle === 'bold' ? 'bold' : 'normal',
+            'font-style': tab.fontStyle === 'italic' ? 'italic' : 'normal'
+          }">
+        <span class="tab-title" (dblclick)="enableEdit(i)" style="flex: 1;">
           {{ tab.name }}
         </span>
           <!-- <i *ngIf ="!isPublicUrl && !isEmbedDashboard" aria-label="Close" class="fa fa-close" (click)="removeTab(i)"></i> -->
-         <div class="tab-action-buttons" *ngIf="tab.hover && !isPublicUrl && !isEmbedDashboard">
-      <i class="fa fa-pencil me-1 edit-icon" (click)="openEditTabModal(tab, i)" ngbTooltip="Edit Tab"></i>
-      <i class="fa fa-close close-icon" (click)="removeTab(i)" ngbTooltip="Remove Tab"></i>
-    </div>
-    </div>
+         <div class="tab-action-buttons d-flex align-items-center" *ngIf="tab.hover && !isPublicUrl && !isEmbedDashboard">
+            <i class="fa fa-pencil me-2 edit-icon" (click)="openEditTabModal(tab, i)" ngbTooltip="Edit Tab"></i>
+            <i class="fa fa-close close-icon" (click)="removeTab(i)" ngbTooltip="Remove Tab"></i>
+         </div>
+        </div>
         </ng-template>
     </ng-template>
 
@@ -2442,25 +2443,80 @@
     <h5 class="modal-title">Edit Tab</h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
-  <div class="modal-body">
-    <label>Tab Name</label>
-    <input type="text" class="form-control mb-2" [(ngModel)]="selectedTab.name" />
+ <div class="modal-body">
+      <!-- Tab name with live preview -->
+    <div class="form-group mb-3">
+      <label class="form-label">Tab Name</label>
+      <input type="text" class="form-control" 
+             [(ngModel)]="selectedTab.name"
+              [ngStyle]="{
+               'color': selectedTab.fontColor,
+               'background-color': selectedTab.bgColor,
+               'font-size': selectedTab.fontSize + 'px',
+               'font-weight': selectedTab.fontStyle === 'bold' ? 'bold' : 'normal',
+               'font-style': selectedTab.fontStyle === 'italic' ? 'italic' : 'normal'
+             }"/>
+    </div>
+       <!-- Color controls in a row -->
+   <div class="row mb-3">
+      <div class="col-6">
+        <label class="form-label">Font Color</label>
+        <div class="input-group color-input-group">
+          <input type="color" 
+                 class="form-control form-control-color" 
+                 [(ngModel)]="selectedTab.fontColor"
+                 (input)="updateColorInput($event, 'font')" />
+          <input type="text" 
+                 class="form-control" 
+                 [(ngModel)]="selectedTab.fontColor"
+                 (input)="validateColorInput($event, 'font')"
+                 placeholder="#000000" 
+                 pattern="^#[0-9A-Fa-f]{6}$" />
+        </div>
+      </div>
+      <div class="col-6">
+        <label class="form-label">Background Color</label>
+        <div class="input-group color-input-group">
+          <input type="color" 
+                 class="form-control form-control-color"
+                 [(ngModel)]="selectedTab.bgColor"
+                 (input)="updateColorInput($event, 'bg')" />
+          <input type="text" 
+                 class="form-control"
+                 [(ngModel)]="selectedTab.bgColor"
+                 (input)="validateColorInput($event, 'bg')"
+                 placeholder="#FFFFFF"
+                 pattern="^#[0-9A-Fa-f]{6}$" />
+        </div>
+      </div>
+    </div>
 
-    <label>Font Color</label>
-    <input type="color" class="form-control form-control-color mb-2" [(ngModel)]="selectedTab.fontColor" />
-
-    <label>Background Color</label>
-    <input type="color" class="form-control form-control-color mb-2" [(ngModel)]="selectedTab.bgColor" />
-
-    <label>Font Size</label>
-    <input type="number" class="form-control mb-2" [(ngModel)]="selectedTab.fontSize" min="10" max="30" />
-
-    <label>Font Style</label>
-    <select class="form-control" [(ngModel)]="selectedTab.fontStyle">
-      <option value="normal">Normal</option>
-      <option value="italic">Italic</option>
-      <option value="bold">Bold</option>
-    </select>
+    <!-- Font controls -->
+        <div class="row">
+      <div class="col-6">
+        <label class="form-label">Font Size (10-24px)</label>
+        <div class="input-group">
+          <input type="number" 
+                 class="form-control" 
+                 [(ngModel)]="selectedTab.fontSize"
+                 [min]="10"
+                 [max]="24"
+                 (input)="restrictFontSize($event)"
+                 (blur)="validateFontSize()" />
+          <span class="input-group-text">px</span>
+        </div>
+      </div>
+      <div class="col-6">
+        <label class="form-label">Font Style</label>
+        <select class="form-control" 
+                [(ngModel)]="selectedTab.fontStyle"
+                (change)="updateFontStyle()">
+          <option value="normal" selected>Normal</option>
+          <option value="bold">Bold</option>
+          <option value="italic">Italic</option>
+        </select>
+      </div>
+    </div>
   </div>
   <div class="modal-footer">
     <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>

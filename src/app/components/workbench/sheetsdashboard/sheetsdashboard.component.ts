@@ -1402,6 +1402,10 @@ export class SheetsdashboardComponent implements OnDestroy {
         if(this.sheetTabs && this.sheetTabs.length > 0){
           sheetTabsData.forEach((sheetData) => {
             sheetData.dashboard  = this.assignOriginalDataToDashboard(sheetData.dashboard);
+            sheetData.bgColor = sheetData.bgColor || '#ffffff';
+            sheetData.fontColor = sheetData.fontColor || '#000000';
+            sheetData.fontSize = sheetData.fontSize || 14;
+            sheetData.fontStyle = sheetData.fontStyle || 'normal';
           })
         } 
         this.setQuerySetIds();
@@ -1518,9 +1522,11 @@ export class SheetsdashboardComponent implements OnDestroy {
             .catch((error) => {
               console.error('oops, something went wrong!', error);
               reject(error); // Reject in case of error
+              this.loaderService.hide();
             });
         } else {
           reject('No element found for screenshot');
+          this.loaderService.hide();
         }
       }, 1000);
     });
@@ -1689,9 +1695,9 @@ export class SheetsdashboardComponent implements OnDestroy {
             width: '400px',
           })
         } else {
-          if(!isLiveReloadData && !isSwitchDb){
-            this.takeScreenshot();
-          }
+          // if(!isLiveReloadData && !isSwitchDb){
+          //   this.takeScreenshot();
+          // }
         const targetIds = this.switchConditions.map(c => c.targetHierarchyId).filter(id => id);
         obj ={
           grid : this.gridType,
@@ -1763,8 +1769,11 @@ export class SheetsdashboardComponent implements OnDestroy {
         else if(isShowpopup){
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
         }
-        if(!isLiveReloadData && !isDashboardTransfer){
-          this.saveDashboardimageUpdate();
+        if(!isLiveReloadData && !isDashboardTransfer && !isSwitchDb){
+          this.takeScreenshot().then(() => {
+            this.saveDashboardimageUpdate();
+          });
+          // this.saveDashboardimageUpdate();
         }
         this.endMethod(); 
       },
@@ -4987,11 +4996,12 @@ const obj ={
 
   addTabs() {
     this.displayTabs = true;
+    this.initializeTabDefaults();
     let id = uuidv4();
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
     let name = this.selectedTabIndex > 0 ? "Tab Title " + this.selectedTabIndex : "Tab Title";
-    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
+    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid,bgColor:this.selectedTab.bgColor,fontColor:this.selectedTab.fontColor,fontStyle:this.selectedTab.fontStyle,fontSize:this.selectedTab.fontSize});
     this.dashboardTest = [];
   }
   Editor = ClassicEditor;
@@ -8527,31 +8537,89 @@ saveTabEdit(modal: any) {
   }
 
   modal.close();
-
-  // Delay to ensure DOM is updated
-  // setTimeout(() => this.applyTabHeaderStyles(), 100);
 }
-// applyTabHeaderStyles(): void {
-//   const tabHeaders = document.querySelectorAll('.mat-tab-label');
+// Default values
+private readonly DEFAULT_FONT_SIZE = 14;
+private readonly MIN_FONT_SIZE = 10;
+private readonly MAX_FONT_SIZE = 24;
 
-//   if (!tabHeaders.length) {
-//     console.warn('No .mat-tab-labels found. Retrying...');
-//     setTimeout(() => this.applyTabHeaderStyles(), 100); // Retry if DOM not ready
-//     return;
-//   }
+// Color input handling
+updateColorInput(event: Event, type: 'font' | 'bg') {
+  const color = (event.target as HTMLInputElement).value;
+  if (type === 'font') {
+    this.selectedTab.fontColor = color.toUpperCase();
+  } else {
+    this.selectedTab.bgColor = color.toUpperCase();
+  }
+}
 
-//  tabHeaders.forEach((tabHeader: Element, index: number) => {
-//     const htmlTabHeader = tabHeader as HTMLElement; // Explicitly cast to HTMLElement
-//     const tab = this.sheetTabs[index];
-//     if (tab && tab.bgColor) {
-//       htmlTabHeader.style.backgroundColor = tab.bgColor;
-//       htmlTabHeader.style.color = tab.fontColor;
-//       htmlTabHeader.style.fontSize = `${tab.fontSize}px`;
-//       htmlTabHeader.style.fontStyle = tab.fontStyle; // Assuming fontStyle is also a property you want to apply
-//     }
-//   });
-// }
+validateColorInput(event: Event, type: 'font' | 'bg') {
+  const input = event.target as HTMLInputElement;
+  const color = input.value;
+  
+  // Ensure color starts with #
+  if (!color.startsWith('#')) {
+    input.value = '#' + color;
+  }
+  
+  // Validate hex color format
+  if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+    if (type === 'font') {
+      this.selectedTab.fontColor = color.toUpperCase();
+    } else {
+      this.selectedTab.bgColor = color.toUpperCase();
+    }
+  }
+}
 
+// Font size handling
+restrictFontSize(event: Event) {
+  const input = event.target as HTMLInputElement;
+  let value = parseInt(input.value);
+  
+  if (isNaN(value)) {
+    value = this.DEFAULT_FONT_SIZE;
+  }
+  
+  if (value < this.MIN_FONT_SIZE) {
+    value = this.MIN_FONT_SIZE;
+  } else if (value > this.MAX_FONT_SIZE) {
+    value = this.MAX_FONT_SIZE;
+  }
+  
+  this.selectedTab.fontSize = value;
+}
+
+validateFontSize() {
+  if (!this.selectedTab.fontSize) {
+    this.selectedTab.fontSize = this.DEFAULT_FONT_SIZE;
+  }
+}
+
+// Font style handling
+updateFontStyle() {
+  // Force update the preview
+  this.selectedTab = {...this.selectedTab};
+}
+
+// Initialize tab defaults when opening modal
+initializeTabDefaults() {
+  if (!this.selectedTab) {
+    this.selectedTab = {
+      name: '',
+      fontColor: '#000000',
+      bgColor: '#FFFFFF',
+      fontSize: this.DEFAULT_FONT_SIZE,
+      fontStyle: 'normal'
+    };
+  }
+  
+  // Ensure existing values are valid
+  this.selectedTab.fontSize = Math.min(
+    Math.max(this.selectedTab.fontSize || this.DEFAULT_FONT_SIZE, this.MIN_FONT_SIZE),
+    this.MAX_FONT_SIZE
+  );
+}// Default values
 
 }
 // export interface CustomGridsterItem extends GridsterItem {

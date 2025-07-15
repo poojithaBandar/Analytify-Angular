@@ -511,7 +511,66 @@ p { margin-bottom: 0px !important;}
   position: relative;
   display: inline-block;
 }
+tab-label-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 8px;
+  position: relative;
+   span {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 60px; // Reserve space for icons
+    text-align: center;
+  }
 
+  .tab-action-buttons {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    background: inherit;
+    padding: 4px;
+    z-index: 2;
+
+    .edit-icon,
+    .close-icon {
+      cursor: pointer;
+      padding: 4px;
+      font-size: 14px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+      color: inherit;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  &:hover .tab-action-buttons {
+    opacity: 1;
+  }
+}
+// Style mat-tab-label to ensure proper spacing
+::ng-deep .mat-tab-label {
+  min-width: 120px !important;
+  padding: 0 8px !important;
+  height: 48px !important;
+
+  .mat-tab-label-content {
+    width: 100%;
+    position: relative;
+  }
+}
 .genie-tooltip {
   position: absolute;
   bottom: 110%; /* Show above the icon */
