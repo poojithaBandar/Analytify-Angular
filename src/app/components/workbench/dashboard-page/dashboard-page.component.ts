@@ -40,6 +40,8 @@ export class DashboardPageComponent implements OnInit{
   createUrl =false;
   publicUrl:any;
   shareAsPrivate = false;
+  shareAsProtected = false;
+  protectedEmails: string[] = [];
   dashboardPropertyId:any;
   publishedDashboard = false;
   port:any;
@@ -354,6 +356,12 @@ sharePublish(value:any){
   } else if(value === 'private'){
     this.createUrl = false;
     this.shareAsPrivate = true;
+    this.shareAsProtected = false;
+    this.publishedDashboard = false;
+  } else if(value === 'protected'){
+    this.createUrl = false;
+    this.shareAsPrivate = false;
+    this.shareAsProtected = true;
     this.publishedDashboard = false;
   }
   }
@@ -462,6 +470,27 @@ gotoConfigureEmailAlerts(id:any){
     const encodedDatabaseId = btoa(id.toString());
 
 this.router.navigate(['/analytify/configure-page/email/dashboard/'+encodedDatabaseId])
+}
+
+uploadProtectedCSV(event: any){
+  const file = event.target.files[0];
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = reader.result as string;
+    const lines = text.split(/\r?\n/).slice(1);
+    lines.forEach(l => { const e = l.trim(); if(e){ this.protectedEmails.push(e); } });
+  };
+  reader.readAsText(file);
+}
+
+applyProtectedEmails(){
+  if(!this.protectedEmails.length){ return; }
+  const obj = {dashboard_id: this.dashboardId, emails: this.protectedEmails};
+  this.workbechService.sendProtectedEmails(obj).subscribe({
+    next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
+    error: ()=>{}
+  });
 }
 
 

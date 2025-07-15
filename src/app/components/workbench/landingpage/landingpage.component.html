@@ -650,9 +650,10 @@
             <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="sharePublish($event)" [closeOnSelect]="true" placeholder="Share or Publish">
              <ng-option  value="public" selected>Public</ng-option>
              <ng-option  value="private" selected>Private</ng-option>
-            </ng-select>
-           </div>
-          <div *ngIf="shareAsPrivate" class="">
+             <ng-option  value="protected" selected>Protected</ng-option>
+             </ng-select>
+             </div>
+            <div *ngIf="shareAsPrivate" class="">
             
                <p class="fw-semibold mb-0 mt-3">Roles</p>
                <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="onRolesChange($event)" [closeOnSelect]="false" [(ngModel)]="selectedRoleIds"  [multiple]="true" placeholder="Select Roles">
@@ -668,7 +669,13 @@
               
             </ng-select>
        </div>
-       <div *ngIf="publishedDashboard" class="">
+       <div *ngIf="shareAsProtected" class="">
+            <p class="fw-semibold mb-0 mt-3">Emails</p>
+            <ng-select class="form-control p-0" [addTag]="true" [multiple]="true" [(ngModel)]="protectedEmails" placeholder="Add emails"></ng-select>
+            <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" />
+            <button type="button" class="btn btn-primary mt-2" (click)="applyProtectedEmails()">Apply</button>
+       </div>
+        <div *ngIf="publishedDashboard" class="">
             
         <p class="fw-semibold mb-2 mt-3">Url</p>
         <button class="btn text-left border">{{publicUrl}}

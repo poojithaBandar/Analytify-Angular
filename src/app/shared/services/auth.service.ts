@@ -188,10 +188,18 @@ getTokensalesforce(data:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/callback/`+this.accessToken,data); 
 }
-resendOtpApi(obj:any){
-  return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj); 
-}
-logOut(){
+  resendOtpApi(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj);
+  }
+
+  sendRecoveryEmail(data:any){
+    return this.http.post<any>(`${environment.apiUrl}/protected_dashboard/recover/`, data);
+  }
+
+  verifyRecoveryOtp(data:any){
+    return this.http.post<any>(`${environment.apiUrl}/protected_dashboard/verify/`, data);
+  }
+  logOut(){
   localStorage.removeItem('username');
          localStorage.removeItem('currentUser');
         //  this.currentUserSubject.next(this.currentUserValue);

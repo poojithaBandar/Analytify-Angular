@@ -1,0 +1,18 @@
+<div class="container mt-5" *ngIf="!showOtp">
+  <form [formGroup]="emailForm" (ngSubmit)="sendRecoveryEmail()">
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" formControlName="email">
+    </div>
+    <button class="btn btn-primary" type="submit">Send Recovery Email</button>
+  </form>
+</div>
+<div class="container mt-5" *ngIf="showOtp">
+  <form [formGroup]="otpForm" (ngSubmit)="verifyOtp()">
+    <div class="mb-3">
+      <label class="form-label">OTP</label>
+      <input type="text" class="form-control" formControlName="otp">
+    </div>
+    <button class="btn btn-primary" type="submit">Verify</button>
+  </form>
+</div>
