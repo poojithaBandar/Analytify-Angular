@@ -1290,18 +1290,18 @@ deleteUser(id:any){
 
   generateProtectedLink(obj:any){
     return this.http.post<any>(
-      `http://127.0.0.1:8000/v1/dashboard_protected_key_generation/mkcXBhN9DIPpBh8R1ur4Xi4hAr5s6p`,
+      `${environment.apiUrl}/dashboard_protected_key_generation/`+this.accessToken,
       obj
     );
   }
 
   validateProtectedKey(obj:any){
-    return this.http.post<any>(`http://127.0.0.1:8000/v1/pass_key_validation/`, obj);
+    return this.http.post<any>(`${environment.apiUrl}/pass_key_validation/`, obj);
   }
 
   getProtectedDashboards(email: string){
     return this.http.post<any>(
-      `http://127.0.0.1:8000/v1/shared_dashboards_list/`,
+      `${environment.apiUrl}/shared_dashboards_list/`,
       { email }
     );
   }

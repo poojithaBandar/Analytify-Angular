@@ -193,11 +193,11 @@ getTokensalesforce(data:any){
   }
 
   sendPasskeyEmail(data:any){
-    return this.http.post<any>(`http://127.0.0.1:8000/v1/shared_email/`, data);
+    return this.http.post<any>(`${environment.apiUrl}/shared_email/`, data);
   }
 
   verifyOtp(token:string, data:any){
-    return this.http.post<any>(`http://127.0.0.1:8000/v1/otp_validation/${token}`, data);
+    return this.http.post<any>(`${environment.apiUrl}/otp_validation/${token}`, data);
   }
   logOut(){
   localStorage.removeItem('username');
