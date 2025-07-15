@@ -40,6 +40,8 @@ export class DashboardPageComponent implements OnInit{
   createUrl =false;
   publicUrl:any;
   shareAsPrivate = false;
+  shareAsProtected = false;
+  protectedEmails: string[] = [];
   dashboardPropertyId:any;
   publishedDashboard = false;
   port:any;
@@ -285,6 +287,10 @@ console.log('selectedUsers',this.selectedUserIdsToNumbers)
 }
 
 saveDashboardProperties(){
+  if(this.shareAsProtected){
+    this.applyProtectedEmails();
+    return;
+  }
 const obj ={
   dashboard_id:this.dashboardId,
   role_ids:this.selectedRoleIdsToNumbers,
@@ -354,6 +360,12 @@ sharePublish(value:any){
   } else if(value === 'private'){
     this.createUrl = false;
     this.shareAsPrivate = true;
+    this.shareAsProtected = false;
+    this.publishedDashboard = false;
+  } else if(value === 'protected'){
+    this.createUrl = false;
+    this.shareAsPrivate = false;
+    this.shareAsProtected = true;
     this.publishedDashboard = false;
   }
   }
@@ -458,6 +470,34 @@ gotoConfigureEmailAlerts(id:any){
     const encodedDatabaseId = btoa(id.toString());
 
 this.router.navigate(['/analytify/configure-page/email/dashboard/'+encodedDatabaseId])
+}
+
+uploadProtectedCSV(event: any){
+  const file = event.target.files[0];
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = reader.result as string;
+    const lines = text.split(/\r?\n/).slice(1);
+    lines.forEach(l => { const e = l.trim(); if(e){ this.protectedEmails.push(e); } });
+  };
+  reader.readAsText(file);
+}
+
+applyProtectedEmails(){
+  if(!this.protectedEmails.length){ return; }
+  const emails = this.protectedEmails
+    .map((e: any) => typeof e === 'string' ? e : e.label || e.value || '')
+    .filter((e) => !!e);
+  const obj = {
+    dashboard_id: this.dashboardId,
+    encrypted_dahboard_id: btoa(String(this.dashboardId)),
+    emails_ids: emails
+  };
+  this.workbechService.generateProtectedLink(obj).subscribe({
+    next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
+    error: ()=>{}
+  });
 }
 
 

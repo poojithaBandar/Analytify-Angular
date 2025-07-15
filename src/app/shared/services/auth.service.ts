@@ -188,10 +188,18 @@ getTokensalesforce(data:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/callback/`+this.accessToken,data); 
 }
-resendOtpApi(obj:any){
-  return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj); 
-}
-logOut(){
+  resendOtpApi(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj);
+  }
+
+  sendPasskeyEmail(data:any){
+    return this.http.post<any>(`http://127.0.0.1:8000/v1/shared_email/`, data);
+  }
+
+  verifyOtp(token:string, data:any){
+    return this.http.post<any>(`http://127.0.0.1:8000/v1/otp_validation/${token}`, data);
+  }
+  logOut(){
   localStorage.removeItem('username');
          localStorage.removeItem('currentUser');
         //  this.currentUserSubject.next(this.currentUserValue);
