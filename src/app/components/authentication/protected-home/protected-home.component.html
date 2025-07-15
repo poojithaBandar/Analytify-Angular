@@ -1,0 +1,8 @@
+<div class="container mt-5">
+  <h3>Protected Dashboards</h3>
+  <ul class="list-group mt-3">
+    <li class="list-group-item" *ngFor="let dash of dashboards" (click)="openDashboard(dash.id)">
+      {{ dash.name || dash.title }}
+    </li>
+  </ul>
+</div>

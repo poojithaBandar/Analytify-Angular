@@ -1240,4 +1240,8 @@ deleteUser(id:any){
   validateProtectedKey(obj:any){
     return this.http.post<any>(`http://127.0.0.1:8000/v1/protected_key/Pr6zbRVX0BaOZWdFSlc8rbUO5dEGxh`, obj);
   }
+
+  getProtectedDashboards(){
+    return this.http.get<any>(`${environment.apiUrl}/protected_dashboard/list/`);
+  }
 }

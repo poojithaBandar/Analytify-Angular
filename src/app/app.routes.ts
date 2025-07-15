@@ -25,6 +25,11 @@ export const App_Route: Route[] = [
           import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
       },
       {
+        path: 'protected/home',
+        loadComponent: () =>
+          import('../app/components/authentication/protected-home/protected-home.component').then((m) => m.ProtectedHomeComponent),
+      },
+      {
         path: 'embed/dashboard/:dashboardToken/:token/:clientId',
         loadComponent: () =>
           import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent)

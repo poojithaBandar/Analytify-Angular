@@ -197,6 +197,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   isPublicUrl = false;
   isProtectedUrl = false;
   isProtectedValidated = false;
+  hasProtectedAccess = false;
   passkey: string = '';
   @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
@@ -563,7 +564,11 @@ export class SheetsdashboardComponent implements OnDestroy {
     })
   }
 
-  ngOnInit() {  
+  ngOnInit() {
+    this.hasProtectedAccess = localStorage.getItem('protected_access') === 'true';
+    if(this.hasProtectedAccess){
+      this.isProtectedValidated = true;
+    }
     let displayGrid = DisplayGrid.Always;
     this.options = {
       gridType: GridType.Fit,
@@ -3161,8 +3166,12 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     } else {
       console.error('Gridster element not found!');
     }
-    if(this.isProtectedUrl && !this.isProtectedValidated){
-      this.modalService.open(this.passkeyModal,{backdrop:'static', centered:true});
+    if(this.isProtectedUrl){
+      if(this.isProtectedValidated){
+        this.loadProtectedDashboard();
+      } else {
+        this.modalService.open(this.passkeyModal,{backdrop:'static', centered:true});
+      }
     }
     this.cdr.detectChanges();
   }
@@ -6038,6 +6047,9 @@ kpiData?: KpiData;
     this.getSavedDashboardDataPublic();
     this.getDashboardFilterredListPublic();
   }
+
+  goBackToProtectedHome(){
+    this.router.navigate(['/protected/home']);
   }
 
   publicDataExtraction(item : any){

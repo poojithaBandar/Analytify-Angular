@@ -37,7 +37,10 @@ export class PasskeyLoginComponent {
     if(this.otpForm.invalid){ return; }
     const payload = {email: this.emailForm.value.email, otp: this.otpForm.value.otp};
     this.authService.verifyRecoveryOtp(payload).subscribe({
-      next: ()=>{ this.router.navigate(['/']); },
+      next: ()=>{
+        localStorage.setItem('protected_access','true');
+        this.router.navigate(['/protected/home']);
+      },
       error: ()=>{}
     });
   }
