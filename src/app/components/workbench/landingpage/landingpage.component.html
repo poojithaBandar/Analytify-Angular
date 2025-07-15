@@ -673,7 +673,6 @@
             <p class="fw-semibold mb-0 mt-3">Emails</p>
             <ng-select class="form-control p-0" [addTag]="true" [multiple]="true" [(ngModel)]="protectedEmails" placeholder="Add emails"></ng-select>
             <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" />
-            <button type="button" class="btn btn-primary mt-2" (click)="applyProtectedEmails()">Apply</button>
        </div>
         <div *ngIf="publishedDashboard" class="">
             
@@ -688,7 +687,13 @@
    </div>
       </div>
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl  && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button
+          type="button"
+          [disabled]="shareAsPrivate ? (!selectedRoleIds?.length || !selectedUserIds?.length) : (shareAsProtected ? !protectedEmails.length : false)"
+          *ngIf="!createUrl  && !applyButtonEnableOnEditUser"
+          (click)="saveDashboardProperties()"
+          class="btn ripple btn-primary"
+        >Apply</button>
         <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
 
         <button
