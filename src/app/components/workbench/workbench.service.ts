@@ -1233,12 +1233,15 @@ deleteUser(id:any){
       );
     }
 
-  sendProtectedEmails(obj:any){
-    return this.http.post<any>(`${environment.apiUrl}/dashboard_protected_emails/`, obj);
+  generateProtectedLink(obj:any){
+    return this.http.post<any>(
+      `http://127.0.0.1:8000/v1/dashboard_protected_key_generation/mkcXBhN9DIPpBh8R1ur4Xi4hAr5s6p`,
+      obj
+    );
   }
 
   validateProtectedKey(obj:any){
-    return this.http.post<any>(`http://127.0.0.1:8000/v1/protected_key/Pr6zbRVX0BaOZWdFSlc8rbUO5dEGxh`, obj);
+    return this.http.post<any>(`http://127.0.0.1:8000/v1/pass_key_validation/`, obj);
   }
 
   getProtectedDashboards(email: string){

@@ -679,6 +679,10 @@ getSelectedUsers(selected: number[]){
   }
 
 saveDashboardProperties(){
+  if(this.shareAsProtected){
+    this.applyProtectedEmails();
+    return;
+  }
   const obj ={
     dashboard_id:this.dashboardId,
     role_ids:this.selectedRoleIdsToNumbers,
@@ -741,9 +745,13 @@ uploadProtectedCSV(event: any){
 
 applyProtectedEmails(){
   if(!this.protectedEmails.length){ return; }
-  const obj = {dashboard_id: this.dashboardId, emails: this.protectedEmails};
-  this.workbechService.sendProtectedEmails(obj).subscribe({
-    next: (res)=>{ this.toasterservice.success('Emails Saved','success'); },
+  const obj = {
+    dashboard_id: this.dashboardId,
+    encrypted_dahboard_id: btoa(String(this.dashboardId)),
+    emails_ids: this.protectedEmails
+  };
+  this.workbechService.generateProtectedLink(obj).subscribe({
+    next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
     error: ()=>{}
   });
 }

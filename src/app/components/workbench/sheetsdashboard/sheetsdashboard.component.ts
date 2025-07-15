@@ -198,6 +198,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   isProtectedUrl = false;
   isProtectedValidated = false;
   hasProtectedAccess = false;
+  encryptedEmail: string | null = null;
   passkey: string = '';
   @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
@@ -277,6 +278,9 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.publicHeader = true;
       if (route.snapshot.params['id1']) {
         this.dashboardId = +atob(route.snapshot.params['id1']);
+      }
+      if(route.snapshot.params['id2']){
+        this.encryptedEmail = route.snapshot.params['id2'];
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
@@ -6029,7 +6033,7 @@ kpiData?: KpiData;
     const obj = {
       dashboard_id: this.dashboardId,
       protected_key: this.passkey,
-      need_validation: 'True'
+      email: this.encryptedEmail
     };
     this.workbechService.validateProtectedKey(obj).subscribe({
       next: ()=>{
