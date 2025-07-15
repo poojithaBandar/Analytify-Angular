@@ -16,9 +16,12 @@ export class ProtectedHomeComponent implements OnInit {
   constructor(private workbenchService: WorkbenchService, private router: Router) {}
 
   ngOnInit(): void {
-    this.workbenchService.getProtectedDashboards().subscribe({
+    const email = localStorage.getItem('protected_email');
+    if (!email) {
+      return;
+    }
+    this.workbenchService.getProtectedDashboards(email).subscribe({
       next: (data) => {
-        // expect array or object with "dashboards" key
         this.dashboards = (data && (data.dashboards || data)) || [];
       },
       error: () => {}

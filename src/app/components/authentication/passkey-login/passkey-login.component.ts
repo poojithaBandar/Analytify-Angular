@@ -39,6 +39,7 @@ export class PasskeyLoginComponent {
     this.authService.verifyRecoveryOtp(payload).subscribe({
       next: ()=>{
         localStorage.setItem('protected_access','true');
+        localStorage.setItem('protected_email', this.emailForm.value.email);
         this.router.navigate(['/protected/home']);
       },
       error: ()=>{}
