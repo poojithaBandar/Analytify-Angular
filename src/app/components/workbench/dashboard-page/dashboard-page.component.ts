@@ -531,5 +531,17 @@ searchViewers(){
   this.getDashboardViewers(this.viewerSearch);
 }
 
+sendReminder(email: string){
+  const obj = {
+    dashboard_id: this.selectedDashboardForViewers,
+    encrypted_dashboard_id: btoa(String(this.selectedDashboardForViewers)),
+    email
+  };
+  this.workbechService.sendEmailReminder(obj).subscribe({
+    next: () => this.toasterservice.success(`Reminder set for ${email}`,'success'),
+    error: () => this.toasterservice.error('Failed to set reminder','error')
+  });
+}
+
 
 }
