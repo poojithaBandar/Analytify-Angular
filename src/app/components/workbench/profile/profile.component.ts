@@ -101,7 +101,7 @@ export class ProfileComponent {
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
-      company: ['', [Validators.required, Validators.minLength(2)]],
+      company: ['', [Validators.minLength(2)]],
       bio: ['', [Validators.maxLength(500)]]
     });
   }
