@@ -861,7 +861,7 @@
                                 <a href="javascript:void(0);" class="header-link dropdown-toggle d-flex align-items-center" ngbDropdownToggle
                                     id="mainHeaderProfile" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span class="me-2">
-                                        <img src="./assets/images/users/21.jpg" alt="img" width="30"
+                                        <img [src]="profileImage" alt="img" width="30"
                                             height="30" class="rounded-circle">
                                     </span>
                                     <div class="d-xl-block d-none lh-1">
@@ -894,7 +894,8 @@
                                         class="ti ti-user-circle fs-18 me-2 op-7"></i>List Users</a></li> -->
                                     <!-- <li *ngIf="viewRoles"><a ngbDropdownItem class="dropdown-item" (click)="routeToRolesDashboard()"><i
                                                     class="ti ti-clipboard-check fs-18 me-2 op-7"></i>List Roles</a></li> -->
-
+                                    <li><a ngbDropdownItem class="dropdown-item" (click)="routeToUserProfile()"><i
+                                                class="ti ti-user-circle fs-18 me-2 op-7"></i>Profile</a></li>
                                     <li><a ngbDropdownItem class="dropdown-item" (click)="routeToConfigurePage()"><i
                                                 class="ti ti-settings fs-18 me-2 op-7"></i>Configure</a></li>
                                     <!-- <li><a ngbDropdownItem class="dropdown-item" (click)="routeToSDKPage()"><i class="fe fe-code fs-18 me-2 op-7"></i>Embed

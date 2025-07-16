@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UpdatePasswordComponent } from '../update-password/update-password.component';
 import { AuthService } from '../../../shared/services/auth.service';
 import { Router } from '@angular/router';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-profile',
@@ -30,7 +31,7 @@ export class ProfileComponent {
   hasImageChanged: boolean = false;
    isLoading: boolean = false;
    userProfileData:any
-  constructor(private fb: FormBuilder,private workbechService:WorkbenchService, private toasterService: ToastrService,private authService:AuthService, private router: Router) {
+  constructor(private fb: FormBuilder,private workbechService:WorkbenchService, private toasterService: ToastrService,private authService:AuthService, private router: Router,private sharedService:SharedService) {
     this.initializeForms();
   }
   ngOnInit() {
@@ -45,6 +46,10 @@ export class ProfileComponent {
             this.userProfileData = data;
             this.populateForm(data);
             this.isLoading = false;
+               if(this.isImageUpdated){
+          this.sharedService.setprofileImage(data.imagepath);
+          this.isImageUpdated = false;
+         }
            }
          },
          error: (error: any) => {
@@ -55,12 +60,10 @@ export class ProfileComponent {
       }
       populateForm(userData:any): void {
       this.profileForm.patchValue({
-        name: userData.name || '',
-        username: userData.username || '',
         email: userData.email || '',
-        first_name: userData.first_name || '',
-        last_name: userData.last_name || '',
-        country: userData.country || ''
+        firstName: userData.first_name || '',
+        lastName: userData.last_name || '',
+        company:userData.company || ''
       });
       this.setProfileImage(userData.imagepath);
     }
@@ -145,6 +148,7 @@ export class ProfileComponent {
       }
     });
   }
+  isImageUpdated = false;
   onProfileSubmit(): void {
     if (this.profileForm.valid) {
      this.isLoading = true;
@@ -157,13 +161,16 @@ export class ProfileComponent {
     formData.append('email', profileData.email || '');
     formData.append('first_name', profileData.firstName || '');
     formData.append('last_name', profileData.lastName || '');
-    formData.append('company', profileData.comapny || '');
+    formData.append('company', profileData.company || '');
     formData.append('bio', profileData.bio || '');
 
        if (this.hasImageChanged && this.croppedImage) {
       try {
         const imageFile = this.base64ToFile(this.croppedImage, `profile_${Date.now()}.png`);
-        formData.append('profile_image', imageFile, imageFile.name);
+        formData.append('imagepath', imageFile, imageFile.name);
+        if(imageFile){
+          this.isImageUpdated = true;
+        }
       } catch (error) {
         console.error('Error processing image:', error);
         this.isLoading = false;
@@ -186,6 +193,7 @@ export class ProfileComponent {
             this.hasImageChanged = false;
           this.toasterService.success('Profile updated successfully');
           this.loadUserProfile(); // Reload user profile data
+      
         },
         error: (error: any) => {
            this.isLoading = false;
@@ -289,6 +297,7 @@ blobToBase64(blob: Blob): Promise<string> {
     this.hasImageChanged = true;
     this.showImageCropper = false;
     this.imageChangedEvent = '';
+    this.resetImageInput();
     }
   }
 

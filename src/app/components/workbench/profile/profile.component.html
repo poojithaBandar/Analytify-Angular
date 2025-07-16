@@ -32,10 +32,10 @@
                         <!-- <div class="avatar">AK</div> -->
 
                         <div class="profile-img-1">
-                            <img alt="img" id="profile-img" [src]="profileImageUrl" style="cursor: pointer;" (click)="fileInput.click()">
-                            <a aria-label="anchor" class="rounded-pill avatar-icons bg-primary tx-fixed-white p-2" (click)="fileInput.click()">
+                            <img alt="img" id="profile-img" [src]="profileImageUrl" style="cursor: pointer;" >
+                            <a aria-label="anchor" class="rounded-pill avatar-icons bg-primary tx-fixed-white p-2">
                                 <input  #fileInput type="file"  accept="image/*" name="photo" id="profile-change" class="position-absolute w-100 h-100 op-0" (change)="onImageSelect($event)" style="display: none;">
-                                <i class="fe fe-camera lh-base" (click)="fileInput.click()"></i>
+                                <i class="fe fe-camera lh-base" style="cursor: pointer;" (click)="fileInput.click()"></i>
                             </a>
                         </div>
 
