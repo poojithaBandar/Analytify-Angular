@@ -25,7 +25,7 @@ export class ProtectedHomeComponent implements OnInit {
     }
     this.workbenchService.getProtectedDashboards(email).subscribe({
       next: (data) => {
-        this.dashboards = (data && (data.dashboards || data)) || [];
+        this.dashboards = data.sheets|| [];
       },
       error: () => {}
     });

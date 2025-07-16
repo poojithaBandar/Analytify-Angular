@@ -272,6 +272,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     }
     if(currentUrl.includes('dashboard/share/protected')){
       this.updateDashbpardBoolen= true;
+      this.isPublicUrl = true;
       this.isProtectedUrl = true;
       this.active = 2;
       this.publicHeader = true;
@@ -506,8 +507,9 @@ export class SheetsdashboardComponent implements OnDestroy {
     if(this.isPublicUrl){
       displayGrid = DisplayGrid.None;
     }
-    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
-      echarts.registerMap('world', geoJson); 
+    this.http.get('/assets/maps/world.json').subscribe({
+      next: (geoJson: any) => {
+              echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
       if(!this.isPublicUrl || !this.isEmbedDashboard){
         if(this.fileId.length > 0 || this.databaseId.length > 0){
@@ -531,6 +533,9 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         if(this.dashboardId != undefined || null){
           this.getDrillThroughActionList();
+        }},
+        error: () => {
+          this.loaderService.hide();
         }
 
     });    
@@ -612,7 +617,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     };
     if(this.dashboardToken){
       this.fetchDashboardIdFromToken();
-    } else {
+    } else if(!this.isPublicUrl){
       this.initialiserMethods();
     }
     //this.getSheetData();

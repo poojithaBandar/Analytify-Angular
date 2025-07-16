@@ -745,10 +745,13 @@ uploadProtectedCSV(event: any){
 
 applyProtectedEmails(){
   if(!this.protectedEmails.length){ return; }
+  const emails = this.protectedEmails
+    .map((e: any) => typeof e === 'string' ? e : e.label || e.value || '')
+    .filter((e) => !!e);
   const obj = {
     dashboard_id: this.dashboardId,
     encrypted_dahboard_id: btoa(String(this.dashboardId)),
-    emails_ids: this.protectedEmails
+    emails_ids: emails
   };
   this.workbechService.generateProtectedLink(obj).subscribe({
     next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
