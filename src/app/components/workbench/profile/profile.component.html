@@ -40,12 +40,12 @@
                         </div>
 
                           <div class="modal" [style.display]="showImageCropper ? 'block' : 'none'" style="background-color: rgba(0,0,0,0.5);">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
+                                <div class="modal-dialog modal-lg" style="max-height: 90vh; margin: 5vh auto;">
+                                    <div class="modal-content" style="height: 100%; display: flex; flex-direction: column;">
+                                        <div class="modal-header" style="flex-shrink: 0;">
                                             <h5 class="modal-title">Crop Profile Image</h5>
                                         </div>
-                                        <div class="modal-body">
+                                        <div class="modal-body" style="flex: 1; overflow-y: auto; max-height: calc(90vh - 120px);">
                                             <image-cropper
                                                 [imageChangedEvent]="imageChangedEvent"
                                                 [maintainAspectRatio]="true"
@@ -109,7 +109,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                <label for="company">Company *</label>
+                                <label for="company">Company </label>
                                 <input 
                                     class="form-control" 
                                     id="company" 
