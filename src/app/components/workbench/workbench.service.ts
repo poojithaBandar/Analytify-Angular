@@ -1315,4 +1315,13 @@ deleteUser(id:any){
       { headers }
     );
   }
+
+  getDashboardViewers(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(
+      `http://127.0.0.1:8000/v1/list_of_shared_users/${this.accessToken}`,
+      obj
+    );
+  }
 }
