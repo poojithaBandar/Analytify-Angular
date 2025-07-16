@@ -31,6 +31,8 @@ export class PasskeyLoginComponent {
   displayTimer = false;
   showPasskeyPanel = false;
   otp: string = '';
+  errorMessage = '';
+  successMessage = '';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router){
     this.emailForm = this.fb.group({
@@ -71,11 +73,16 @@ export class PasskeyLoginComponent {
   sendRecoveryEmail(){
     if(this.emailForm.invalid){ return; }
     this.authService.sendRecoveryEmail(this.emailForm.value).subscribe({
-      next: ()=>{ 
-        this.showOtp = true; 
+      next: ()=>{
+        this.showOtp = true;
         this.startTimer(1);
+        this.successMessage = 'OTP sent to registered email';
+        this.errorMessage = '';
       },
-      error: ()=>{}
+      error: ()=>{
+        this.errorMessage = 'Failed to send OTP';
+        this.successMessage = '';
+      }
     });
   }
 
@@ -90,11 +97,18 @@ export class PasskeyLoginComponent {
         localStorage.setItem('protected_email', this.emailForm.value.email);
         this.router.navigate(['/protected/home']);
       },
-      error: ()=>{ this.isLoading = false; }
+      error: (err)=>{ 
+        this.isLoading = false; 
+        this.errorMessage = err.error?.message || 'Invalid OTP';
+      }
     });
   }
 
   resendOtpApi(){
     this.sendRecoveryEmail();
+  }
+
+  togglePasskeyPanel(){
+    this.showPasskeyPanel = !this.showPasskeyPanel;
   }
 }
