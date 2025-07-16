@@ -2,22 +2,19 @@
 //     margin:10px 0px;
 //     display: block !important;
 //   }
-  .pwd_character{
-    font-size: 12px;
-    margin: 10px 0px;
+.pwd_character{ font-size: 12px;  margin: 10px 0px; }
+.bi-x-square { font-size: 14px; margin-right: 5px; }
+.bi-check-square-fill { font-size: 14px; margin-right: 5px; }
+.signin-text{ color: #005E87;}
+.default-background-color{ background-color: #2392c1; color: #fff; }
+.login-logo{ height: 60px;}
+
+// for 90% Resolution //
+@media ( 1420px <= width <= 1560px) {
+    img { max-width: 85%; }
 }
-.bi-x-square {
-    font-size: 14px;
-    margin-right: 5px;
-}
-.bi-check-square-fill {
-    font-size: 14px;
-    margin-right: 5px;
-}
-.signin-text{
-    color: #005E87;
-}
-.default-background-color{
-    background-color: #2392c1;
-    color: #fff;
+
+// for 100% Resolution //
+@media ( 1280px <= width <= 1420px) {
+ img { max-width: 85%; }
 }
