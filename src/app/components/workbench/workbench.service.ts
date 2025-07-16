@@ -1305,4 +1305,14 @@ deleteUser(id:any){
       { email }
     );
   }
+
+  getProtectedDashboardsList(token: string){
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.get<any>(
+      `http://127.0.0.1:8000/v1/shared_dashboards_list/mkcXBhN9DIPpBh8R1ur4Xi4hAr5s6pm`,
+      { headers }
+    );
+  }
 }
