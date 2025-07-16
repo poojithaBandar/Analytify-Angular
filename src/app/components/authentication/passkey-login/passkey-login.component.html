@@ -25,9 +25,6 @@
               <button class="btn btn-primary" type="submit" [disabled]="emailForm.invalid">Send Recovery Email</button>
             </div>
             <div class="text-success mt-2" *ngIf="successMessage">{{ successMessage }}</div>
-            <div class="text-center">
-              <a class="tx ms-1 text-decoration-underline default-color" (click)="togglePasskeyPanel()">Login with Passkey?</a>
-            </div>
           </form>
           <form [formGroup]="otpForm" (ngSubmit)="verifyOtp()" *ngIf="showOtp">
             <div class="mb-3">

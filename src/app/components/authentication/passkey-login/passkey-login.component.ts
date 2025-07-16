@@ -20,7 +20,7 @@ export class PasskeyLoginComponent {
   isLoading = false;
   config = {
     allowNumbersOnly: true,
-    length: 5,
+    length: 6,
     isPasswordInput: false,
     disableAutoFocus: false,
     placeholder: '',
@@ -33,7 +33,7 @@ export class PasskeyLoginComponent {
   otp: string = '';
   errorMessage = '';
   successMessage = '';
-  emailToken: string | null = null;
+  emailToken!: string ;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router){
     this.emailForm = this.fb.group({
@@ -73,9 +73,11 @@ export class PasskeyLoginComponent {
 
   sendRecoveryEmail(){
     if(this.emailForm.invalid){ return; }
-    this.authService.sendRecoveryEmail(this.emailForm.value).subscribe({
-      next: ()=>{
+   
+    this.authService.sendPasskeyEmail(this.emailForm.value).subscribe({
+      next: (response : any)=>{
         this.showOtp = true;
+        this.emailToken = response.emailvalidation_token;
         this.startTimer(1);
         this.successMessage = 'OTP sent to registered email';
         this.errorMessage = '';
@@ -90,8 +92,8 @@ export class PasskeyLoginComponent {
   verifyOtp(){
     if(this.otpForm.invalid){ return; }
     this.isLoading = true;
-    const payload = {email: this.emailForm.value.email, otp: this.otpForm.value.otp};
-    this.authService.verifyRecoveryOtp(payload).subscribe({
+    const payload = {otp: this.otpForm.value.otp};
+    this.authService.verifyOtp(this.emailToken,payload).subscribe({
       next: ()=>{
         this.isLoading = false;
         localStorage.setItem('protected_access','true');

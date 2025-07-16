@@ -1311,7 +1311,7 @@ deleteUser(id:any){
       Authorization: `Bearer ${token}`
     });
     return this.http.get<any>(
-      `http://127.0.0.1:8000/v1/shared_dashboards_list/mkcXBhN9DIPpBh8R1ur4Xi4hAr5s6pm`,
+      `${environment.apiUrl}/shared_dashboards_list/mkcXBhN9DIPpBh8R1ur4Xi4hAr5s6pm`,
       { headers }
     );
   }
@@ -1320,7 +1320,7 @@ deleteUser(id:any){
     const currentUser = localStorage.getItem('currentUser');
     this.accessToken = JSON.parse(currentUser!)['Token'];
     return this.http.post<any>(
-      `http://127.0.0.1:8000/v1/list_of_shared_users/${this.accessToken}`,
+      `${environment.apiUrl}/list_of_shared_users/${this.accessToken}`,
       obj
     );
   }
