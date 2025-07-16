@@ -48,7 +48,7 @@
                             itemsPerPage: itemsPerPage,
                             currentPage: page,
                             totalItems: totalItems
-                          }">
+                          }; let i = index">
                             <td>
                               <div class="d-flex">
                                 <div (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="imgdf">
@@ -59,6 +59,10 @@
 
                                     (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">
                                     {{dashboard.dashboard_name.length > 13 ? (dashboard.dashboard_name | slice:0:15)+'...' : dashboard.dashboard_name }}</a>
+                                  <span class="viewer-icon ms-1" (mouseenter)="hoverIndex=i" (mouseleave)="hoverIndex=null" (click)="openViewerList(dashboard.dashboard_id)">
+                                    <i class="fa fa-eye"></i>
+                                    <span *ngIf="hoverIndex===i" class="badge bg-secondary viewer-badge">{{dashboard.count_of_views}}</span>
+                                  </span>
                                   <p class="mb-0">Created by : {{dashboard.created_by}}</p>
                                 </div>
                               </div>
@@ -98,13 +102,17 @@
                     itemsPerPage: itemsPerPage,
                     currentPage: page,
                     totalItems: totalItems
-                  }" class="col-md-12 col-xl-3">
+                  }; let i = index" class="col-md-12 col-xl-3">
                   <div class="card  ">
                     <div class="user-image card-box-shadow ">                        
                           <img [src]="dashboard.dashboard_image ? dashboard.dashboard_image : '/assets/images/Db_server_images/smartdashboard.jpg'"  (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" alt="" class="card-img-top img-cursor dashboard-user-img-h">
                     </div>
                     <div class="card-body p-1 mt-1 text-center">
                         <a  class="card-title fw-bold d-block"  [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name.length > 13 ? (dashboard.dashboard_name | slice:0:15)+'...' : dashboard.dashboard_name }}</a>
+                        <span class="viewer-icon ms-1" (mouseenter)="hoverIndex=i" (mouseleave)="hoverIndex=null" (click)="openViewerList(dashboard.dashboard_id)">
+                          <i class="fa fa-eye"></i>
+                          <span *ngIf="hoverIndex===i" class="badge bg-secondary viewer-badge">{{dashboard.count_of_views}}</span>
+                        </span>
                     </div>
                     <div class=" p-1 text-center">
                       <div class="row">
@@ -244,6 +252,24 @@
           Close
         </button>
       </div>
+</ng-template>
+
+<ng-template #viewerListModal let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Viewers</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Search" [(ngModel)]="viewerSearch" (keyup.enter)="searchViewers()">
+      <button class="btn btn-primary" type="button" (click)="searchViewers()"><i class="fe fe-search"></i></button>
+    </div>
+    <div *ngFor="let viewer of viewerList" class="d-flex justify-content-between border-bottom py-1">
+      <span>{{viewer.email}}</span>
+      <i class="fa" [ngClass]="viewer.is_viewed ? 'fa-eye' : 'fa-eye-slash'"></i>
+    </div>
+    <div *ngIf="viewerList.length === 0" class="text-center">No viewers found</div>
+  </div>
 </ng-template>
  
 <ng-template #autorefresh let-modal>

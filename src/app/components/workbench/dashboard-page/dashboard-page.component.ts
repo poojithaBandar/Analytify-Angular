@@ -47,10 +47,15 @@ export class DashboardPageComponent implements OnInit{
   port:any;
   host:any; 
   @ViewChild('propertiesModal') propertiesModal : any;
+  @ViewChild('viewerListModal') viewerListModal : any;
   frequency : number = 0;
   refreshNow: boolean = false;
   lastRefresh: any;
   nextRefresh: any;
+  viewerList: any[] = [];
+  viewerSearch: string = '';
+  selectedDashboardForViewers: any;
+  hoverIndex: number | null = null;
   
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
   private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
@@ -502,6 +507,28 @@ applyProtectedEmails(){
     next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
     error: ()=>{}
   });
+}
+
+openViewerList(dashboardId: any){
+  this.selectedDashboardForViewers = dashboardId;
+  this.viewerSearch = '';
+  this.getDashboardViewers();
+  this.modalService.open(this.viewerListModal, { centered: true });
+}
+
+getDashboardViewers(search?: string){
+  const obj: any = { dashboard_id: this.selectedDashboardForViewers };
+  if(search){
+    obj.search = search;
+  }
+  this.workbechService.getDashboardViewers(obj).subscribe({
+    next: (data) => { this.viewerList = data?.sheets || []; },
+    error: () => { this.viewerList = []; }
+  });
+}
+
+searchViewers(){
+  this.getDashboardViewers(this.viewerSearch);
 }
 
 
