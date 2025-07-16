@@ -207,6 +207,7 @@ export class HeaderComponent implements OnInit {
   public items!: Menu[];
   public text!: string;
   public SearchResultEmpty:boolean = false;
+  profileImage: string | null = null;
   ngOnInit() {
     if(!this.isPublicUrl){
       this.viewRoles=this.viewTemplateService.ViewRoles();
@@ -217,10 +218,17 @@ export class HeaderComponent implements OnInit {
     this.navServices.items.subscribe((menuItems) => {
       this.items = menuItems;
     });
-
+    this.sharedService.profileImage$.subscribe((url: string | null) => {
+      if(url){
+        this.profileImage = url;
+      } else {
+                  this.profileImage = './assets/images/users/18.jpg'; // Default image
+      }
+      });
+    }
     // let html = this.elementRef.nativeElement.ownerDocument.documentElement;
     // html.setAttribute('data-toggled', 'icon-overlay-close');
-  }
+  
   refreshPublicDashboard(){
     this.sharedService.refresh();
   }
@@ -239,6 +247,9 @@ export class HeaderComponent implements OnInit {
   }
   routehelpGuide(){
     this.router.navigate(['/analytify/help-guide']);
+  }
+  routeToUserProfile(){
+    this.router.navigate(['/analytify/profile']); 
   }
     Search(searchText: string) {
       if (!searchText) return this.menuItems = [];

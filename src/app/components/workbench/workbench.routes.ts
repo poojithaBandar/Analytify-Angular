@@ -11,6 +11,12 @@ export const admin: Routes = [
   {
     path: 'analytify', children: [
       {
+        path: 'profile',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
         path: 'datasources/new-connections',
         canActivate: [authGuard],
         loadComponent: () =>
