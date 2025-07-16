@@ -20,6 +20,11 @@ export const App_Route: Route[] = [
           import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
       },
       {
+        path: 'dashboard/share/protected/:id1/:id2',
+        loadComponent: () =>
+          import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+      },
+      {
         path: 'dashboard/share/protected/:id1',
         loadComponent: () =>
           import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),

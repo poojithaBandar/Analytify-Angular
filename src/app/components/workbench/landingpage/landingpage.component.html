@@ -60,7 +60,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{dashboardList.dashboard_name}}"
                                             (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)">
-                                            {{dashboardList.dashboard_name | slice:0:11}}</h5>
+                                            {{ dashboardList.dashboard_name.length > 18 ? (dashboardList.dashboard_name | slice:0:18) + '..' : dashboardList.dashboard_name }}</h5>
                                         <p class="card-text">Modified on {{dashboardList.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -95,7 +95,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{dashboardList.dashboard_name}}"
                                             (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)">
-                                            {{dashboardList.dashboard_name | slice:0:11}}</h5>
+                                            {{ dashboardList.dashboard_name.length > 18 ? (dashboardList.dashboard_name | slice:0:18) + '..' : dashboardList.dashboard_name }}</h5>
                                         <p class="card-text">Modified on {{dashboardList.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -227,7 +227,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
                                             (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
-                                            > {{sheetlist.sheet_name | slice:0:11}}</h5>
+                                            >{{sheetlist.sheet_name.length > 18 ? (sheetlist.sheet_name | slice:0:18) + '..' : sheetlist.sheet_name }}</h5>
                                         <p class="card-text text-truncate">Modified on {{sheetlist.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -316,7 +316,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
                                             (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
-                                            > {{sheetlist.sheet_name | slice:0:16}}</h5>
+                                            >{{sheetlist.sheet_name.length > 18 ? (sheetlist.sheet_name | slice:0:18) + '..' : sheetlist.sheet_name }}</h5>
                                         <p class="card-text">Modified on {{sheetlist.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -533,6 +533,10 @@
                                         <img alt="product" src="./assets/images/icons/postSQL-icon.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
+                                    <td *ngIf="database.server_type === 'SAP HANA'">
+                                        <img alt="product" src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
                                     <td *ngIf="database.server_type === 'TALLY'">
                                         <img alt="product" src="./assets/images/icons/TallyLogo.png"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
@@ -549,7 +553,11 @@
                                         <img alt="product" src="./assets/images/icons/hubspotlogo.png"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
-                                    
+                                    <td *ngIf="database.server_type === 'OPEN_AI'">
+                                        <img alt="product" src="https://logo.clearbit.com/openai.com"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                                                   
                                     <td *ngIf="database.server_type === 'MYSQL'">
                                         <img alt="product" src="./assets/images/icons/MySql-icon1.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
@@ -665,7 +673,6 @@
             <p class="fw-semibold mb-0 mt-3">Emails</p>
             <ng-select class="form-control p-0" [addTag]="true" [multiple]="true" [(ngModel)]="protectedEmails" placeholder="Add emails"></ng-select>
             <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" />
-            <button type="button" class="btn btn-primary mt-2" (click)="applyProtectedEmails()">Apply</button>
        </div>
         <div *ngIf="publishedDashboard" class="">
             
@@ -680,7 +687,13 @@
    </div>
       </div>
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl  && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button
+          type="button"
+          [disabled]="shareAsPrivate ? (!selectedRoleIds?.length || !selectedUserIds?.length) : (shareAsProtected ? !protectedEmails.length : false)"
+          *ngIf="!createUrl  && !applyButtonEnableOnEditUser"
+          (click)="saveDashboardProperties()"
+          class="btn ripple btn-primary"
+        >Apply</button>
         <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
 
         <button

@@ -203,7 +203,6 @@
             <p class="fw-semibold mb-2 mt-3">Emails</p>
             <ng-select class="form-control p-0" [addTag]="true" [multiple]="true" [(ngModel)]="protectedEmails" placeholder="Add emails"></ng-select>
             <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" />
-            <button type="button" class="btn btn-primary mt-2" (click)="applyProtectedEmails()">Apply</button>
         </div>
         <div *ngIf="publishedDashboard" class="">
             
@@ -228,7 +227,13 @@
         </button>
       </div> -->
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button
+          type="button"
+          [disabled]="shareAsPrivate ? (!selectedRoleIds?.length || !selectedUserIds?.length) : (shareAsProtected ? !protectedEmails.length : false)"
+          *ngIf="!createUrl && !applyButtonEnableOnEditUser"
+          (click)="saveDashboardProperties()"
+          class="btn ripple btn-primary"
+        >Apply</button>
         <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
 
         <button
@@ -253,7 +258,8 @@
       <label class="form-label">Frequency <span class="text-red">*</span><i
           ngbTooltip="Periodical automatted time interval to refresh/sync dashboard."
           class="icon icon-info ms-1 cursor-pointer"></i></label>
-        <select [(ngModel)]="frequency" class="form-control cursor-pointer">
+        <select [(ngModel)]="frequency" class="form-select cursor-pointer">
+          <option value="0" disabled selected>Select Interval</option>
           <option value="-1"> Don't refresh </option>
           <option value="1"> 1 hour</option>
           <option value="2"> 2 hours</option>
@@ -272,7 +278,7 @@
             ngbTooltip="last refreshed date for respective dashboard." class="icon icon-info ms-1 cursor-pointer"></i></label>
         <input type="text" readonly="true" [(ngModel)]="lastRefresh" />
           }
-          @if(nextRefresh){
+          @if(nextRefresh && frequency > 0){
             <label class="form-label">Next Refresh will happen in 
               <span class="fw-bold">{{nextRefresh}}</span> minutes.</label>
           }

@@ -33,6 +33,7 @@ export class PasskeyLoginComponent {
   otp: string = '';
   errorMessage = '';
   successMessage = '';
+  emailToken: string | null = null;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router){
     this.emailForm = this.fb.group({

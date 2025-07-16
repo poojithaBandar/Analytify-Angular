@@ -198,6 +198,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   isProtectedUrl = false;
   isProtectedValidated = false;
   hasProtectedAccess = false;
+  encryptedEmail: string | null = null;
   passkey: string = '';
   @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
@@ -206,7 +207,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   usersForUpdateDashboard:[] =[];
   tableNameSelectedForFilter:any;
   isPanelHidden: boolean = true;
-  frequency! : number;
+  frequency : number = 0;
 
   tableItemsPerPage:any;
   tablePageNo = 1;
@@ -252,7 +253,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   genieHover = false;
   showGenieTooltip = false;
 
-
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef){
@@ -272,11 +272,15 @@ export class SheetsdashboardComponent implements OnDestroy {
     }
     if(currentUrl.includes('dashboard/share/protected')){
       this.updateDashbpardBoolen= true;
+      this.isPublicUrl = true;
       this.isProtectedUrl = true;
       this.active = 2;
       this.publicHeader = true;
       if (route.snapshot.params['id1']) {
         this.dashboardId = +atob(route.snapshot.params['id1']);
+      }
+      if(route.snapshot.params['id2']){
+        this.encryptedEmail = route.snapshot.params['id2'];
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
@@ -503,8 +507,9 @@ export class SheetsdashboardComponent implements OnDestroy {
     if(this.isPublicUrl){
       displayGrid = DisplayGrid.None;
     }
-    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
-      echarts.registerMap('world', geoJson); 
+    this.http.get('/assets/maps/world.json').subscribe({
+      next: (geoJson: any) => {
+              echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
       if(!this.isPublicUrl || !this.isEmbedDashboard){
         if(this.fileId.length > 0 || this.databaseId.length > 0){
@@ -528,6 +533,9 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         if(this.dashboardId != undefined || null){
           this.getDrillThroughActionList();
+        }},
+        error: () => {
+          this.loaderService.hide();
         }
 
     });    
@@ -609,7 +617,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     };
     if(this.dashboardToken){
       this.fetchDashboardIdFromToken();
-    } else {
+    } else if(!this.isPublicUrl){
       this.initialiserMethods();
     }
     //this.getSheetData();
@@ -1706,7 +1714,7 @@ export class SheetsdashboardComponent implements OnDestroy {
             width: '400px',
           })
         } else {
-          if(!isLiveReloadData){
+          if(!isLiveReloadData && !isSwitchDb){
             this.takeScreenshot();
           }
         const targetIds = this.switchConditions.map(c => c.targetHierarchyId).filter(id => id);
@@ -2141,157 +2149,9 @@ export class SheetsdashboardComponent implements OnDestroy {
     });
   }
   getChartOptionsBasedOnType(sheet:any){
-    if(sheet.chart_id === 9){
-      let xaxis = sheet.sheet_data?.results?.barXaxis;
-      let yaxis = sheet.sheet_data?.results?.barYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
-    }
-    if(sheet.chart_id === 6){
-      let xaxis = sheet.sheet_data?.results?.barXaxis;
-      let yaxis = sheet.sheet_data?.results?.barYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
-    }
-    if(sheet.chart_id === 29){
-      let xaxis = sheet.sheet_data?.results?.mapChartXaxis;
-      let yaxis = sheet.sheet_data?.results?.mapChartYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return sheet.sheet_data.savedChartOptions;
-      // return this.mapChartOptions(xaxis,yaxis,savedOptions) 
-    }
-    if(sheet.chart_id === 17){
-      let xaxis = sheet.sheet_data?.results?.areaXaxis;
-      let yaxis = sheet.sheet_data?.results?.areaYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.areaChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 13){
-      let xaxis = sheet.sheet_data?.results?.lineXaxis;
-      let yaxis = sheet.sheet_data?.results?.lineYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.lineChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 24){
-      let xaxis = sheet.sheet_data?.results?.pieXaxis;
-      let yaxis = sheet.sheet_data?.results?.pieYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.pieChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    //sidebyside
-    if(sheet.chart_id === 7){
-      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] =xaxis
-      const categories = this.flattenDimensions(dimensions)
-      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
-
-    }
-    if(sheet.chart_id === 12){//radar
-      return sheet.sheet_data.savedChartOptions;
-      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] =xaxis
-      const categories = this.flattenDimensions(dimensions)
-      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
-
-    }
-    if(sheet.chart_id === 5){
-      let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.stokedBarYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-
-      return this.stockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 4){
-      let xaxis = sheet.sheet_data?.results?.barLineXaxis;
-      let yaxis = sheet.sheet_data?.results?.barLineYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      console.log('barlinexaxis',xaxis)
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-      console.log('barlinecategories',categories)
-
-      return this.barLineChartOptions(categories,yaxis,savedOptions)
-    }
-    if(sheet.chart_id === 2){
-      let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
-      let yaxis = sheet.sheet_data?.results?.hStockedYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-      return this.hStockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart);
-    }
-    if(sheet.chart_id === 3){
-      let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
-      let yaxis = sheet.sheet_data?.results?.hgroupedYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-
-      return this.hGroupedChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 8){
-      let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
-      let yaxis = sheet.sheet_data?.results?.multiLineYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-
-      return this.multiLineChartOptions(categories,yaxis,savedOptions)
-    }
-    if(sheet.chart_id === 10){
-      let xaxis = sheet.sheet_data?.results?.donutXaxis;
-      let yaxis = sheet.sheet_data?.results?.donutYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      this.donutDecimalPlaces = sheet.sheet_data?.results?.decimalplaces;
-      return this.donutChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 26){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
-    if(sheet.chart_id === 27){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
-    if(sheet.chart_id === 28){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
-    if(sheet.chart_id === 11){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
-    if(sheet.chart_id === 14){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
+    return sheet.sheet_data.savedChartOptions;
   }
 
-  getChartData(results: any, chartType: string): any[] | undefined{
-    switch (chartType) {
-      case 'bar':
-         return results.bar.map((item: any) => ({ name: item.col, value: item.row }));
-         //return results.bar.forEach((item: { col: any; row: any; }) => chartOptions.series[0].data.push(item.col));
-      case 'line':
-        return [{xAis:results.lineXaxis,yAxis:results.lineYaxis}]
-      case 'area':
-        return results.areaXaxis+results.areaYaxis
-      default:
-        return undefined;        
-    }
-  }
 getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1: any, color2: any ,tableItemsPerPage : any,tableTotalItems : any, tablePage : number } {
     // Example implementation for table data extraction
     // this.tableItemsPerPage=tableData.results.items_per_page
@@ -3232,167 +3092,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   }  
 }
 
+
   onChartInit(event: any, item: DashboardItem) {
     item['chartInstance'] = event.chart;
   }
 
-/////chartOptions
-barChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
-  if (isEchart) {
-    savedOptions.series[0].data = yaxis;
-    savedOptions.xAxis.data = xaxis;
-    return savedOptions;
-  } else {
-    savedOptions.series[0].data = yaxis;
-    savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
-    return savedOptions;
-  }
-}
-areaChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
-  if (isEchart) {
-  savedOptions.series.data = yaxis;
-  savedOptions.xAxis.data = xaxis;
-  return savedOptions;
-  } else {
-    savedOptions.series.data = yaxis;
-    savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
-    return savedOptions;
-  }
-}
-lineChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    savedOptions.series.data = yaxis;
-    savedOptions.xAxis.data = xaxis;
-    return savedOptions;
-  } else {
-    savedOptions.series.data = yaxis;
-    savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
-    return savedOptions;
-  }
-}
-pieChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    let combinedArray = yaxis?.map((value : any, index :number) => ({
-      value: value,
-      name: xaxis[index]
-    }));
-    savedOptions.series.data = combinedArray;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
-  return savedOptions;
-  }
-}
-sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    yaxis.forEach((bar: any) => {
-      bar["type"] = "bar";
-    });
-    savedOptions.series.data = yaxis.data;
-    savedOptions.xAxis.categories = xaxis;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
-  return savedOptions;
-  }
-}
-
-eRadarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-      let radarArray = categories.map((value: any, index: number) => ({
-        name: categories[index]
-      }));
-  savedOptions.series.data = yaxis.data;
-    savedOptions.radar.indicator = radarArray;
-    return savedOptions;
-}
-stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    yaxis.forEach((bar: any) => {
-      bar["type"] = "bar";
-      bar["stack"]="total";
-    });
-    savedOptions.series.data = yaxis.data;
-    savedOptions.xAxis.data = xaxis;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
-  return savedOptions;
-  }
-}
-barLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  // savedOptions.series = [
-  //   {
-  //     name: yaxis[0]?.name,
-  //     type: "column",
-  //     data: yaxis[0]?.data
-  //   },
-  //   {
-  //     name: yaxis[1]?.name,
-  //     type: "line",
-  //     data: yaxis[1]?.data,
-  //   }
-  // ];
-  // savedOptions.labels = xaxis;
-  return savedOptions;
-}
-hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  
-  if (isEchart) {
-    yaxis.forEach((bar: any) => {
-      bar["type"] = "bar";
-      bar["stack"]="total";
-    });
-    savedOptions.series.data = yaxis.data;
-    savedOptions.yAxis.data = xaxis;
-    return savedOptions;
-  } else {
-    savedOptions.series = yaxis;
-    savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
-    return savedOptions;
-  }
-}
-
-hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    yaxis.forEach((bar: any) => {
-      bar["type"] = "bar";
-    });
-    savedOptions.series.data = yaxis.data;
-    savedOptions.yAxis.data = xaxis;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
-  return savedOptions;
-  }
-}
-multiLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  // savedOptions.series = yaxis;
-  // savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
-}
-donutChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    let combinedArray = yaxis.map((value : any, index :number) => ({
-      value: value,
-      name: xaxis[index]
-    }));
-    savedOptions.series.data = combinedArray;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
-  return savedOptions;
-  }
-}
-heatMapChartOptions(savedOptions:any){
-  return savedOptions;
-}
 addIcon(iconModal:any,item:any){
   this.modalService.open(iconModal, {
     centered: true,
@@ -6024,12 +5728,13 @@ kpiData?: KpiData;
       }
     })
   }
+}
 
   validateProtectedDashboard(modal:any){
     const obj = {
       dashboard_id: this.dashboardId,
       protected_key: this.passkey,
-      need_validation: 'True'
+      email: this.encryptedEmail
     };
     this.workbechService.validateProtectedKey(obj).subscribe({
       next: ()=>{
@@ -6746,24 +6451,27 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   getActionData(actionId : any){
     if(this.actionId && this.actionId != 0){
       this.setDrillThrough('',[]);
+      this.actionId = '';
+      this.sourceSheetId = 0;
+    } else {
+      console.log(actionId);
+      this.workbechService.getDrillThroughAction(actionId, this.isPublicUrl).subscribe({
+        next: (data) => {
+          console.log(data);
+          this.actionId = data.drill_through_id;
+          this.sourceSheetId = data.source_sheet_id;
+        },
+        error: (error) => {
+          console.log(error)
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      });
     }
-    console.log(actionId);
-    this.workbechService.getDrillThroughAction(actionId, this.isPublicUrl).subscribe({
-      next:(data)=>{
-        console.log(data);
-        this.actionId = data.drill_through_id;
-        this.sourceSheetId = data.source_sheet_id;
-      },
-      error:(error)=>{
-        console.log(error)
-        Swal.fire({
-          icon: 'error',
-          title: 'oops!',
-          text: error.error.message,
-          width: '400px',
-        })
-      }
-    });
   }
   updateDrillThroughAction(){
     const Obj = {
@@ -7151,6 +6859,16 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       }
       }
      }
+
+     onClearClick(dropdown: any): void {
+      dropdown.close();
+      // optionally reset your fields:
+      this.imageTitle = '';
+      this.uploadedImage = null;
+      this.fileName = 'No file chosen'; 
+      this.imageUpload.nativeElement.value = '';
+    }
+
   addTextItem() {
     this.textEditorContent = '';
     this.textEditorTitle = '';
@@ -7870,7 +7588,11 @@ validateTextEditor(): boolean {
       }
       this.workbechService.autoRefreshFrequency(object).subscribe({
         next:(data)=>{
-          this.toasterService.success('Dashboard refresh scheduled.','success',{ positionClass: 'toast-center-center'});
+          if(this.frequency > 0){
+            this.toasterService.success('Refresh interval updated successfully.','success',{ positionClass: 'toast-top-right'})
+            } else {
+              this.toasterService.success('Refresh interval cancelled/removed successfully.','success',{ positionClass: 'toast-top-right'})
+            }
           if(this.refreshNow){
           this.workbechService.fetchRefreshedData(this.dashboardId).subscribe({
             next:(data)=>{
@@ -8430,7 +8152,7 @@ loadTargetDbs(index:number){
       next:(data)=>{
         const currentHierarchyId = cond.sourceDetails.hierarchy_id;
         cond.targetDbData = data.user_connections.filter(
-          (db: any) => db.hierarchy_id !== currentHierarchyId
+          (db: any) => db.hierarchy_id !== currentHierarchyId && db.is_cross_db !== true
         );
       },
       error:(error)=>{
@@ -8814,7 +8536,41 @@ resetGenieAnimation() {
     el.classList.remove('bounce');
   }
 }
+
+buttonClicked = false;
+  onEditorReady(editor: any) {
+    setTimeout(() => {
+      editor.editing.view.focus();
+
+      editor.model.change((writer: any) => {
+        const root = editor.model.document.getRoot();
+        const endPosition = writer.createPositionAt(root, 'end');
+        writer.setSelection(endPosition);
+      });
+    }, 0);
+
+    // const editableElement = editor.ui.view.editable.element;
+    // editableElement.addEventListener('blur', () => {
+    //   this.editor = false;
+    // });
+  }
+  shareReportByEmail(){
+         const obj ={
+    dashboard_id:this.dashboardId,
+    }
+     this.workbechService.shareAnalysisReportEmail(obj).subscribe({
+        next:(data)=>{
+          if(data){
+         this.toasterService.success('Shared to registered Email.','Success',{ positionClass: 'toast-top-right'});
+          }
+        },
+        error:(error)=>{
+          this.toasterService.error(error.error.error,'Error',{ positionClass: 'toast-top-right'})       
+            }
+      }) 
+  }
 }
+
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
 //   content: string;

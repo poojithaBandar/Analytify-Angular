@@ -192,12 +192,12 @@ getTokensalesforce(data:any){
     return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj);
   }
 
-  sendRecoveryEmail(data:any){
-    return this.http.post<any>(`${environment.apiUrl}/protected_dashboard/recover/`, data);
+  sendPasskeyEmail(data:any){
+    return this.http.post<any>(`${environment.apiUrl}/shared_email/`, data);
   }
 
-  verifyRecoveryOtp(data:any){
-    return this.http.post<any>(`${environment.apiUrl}/protected_dashboard/verify/`, data);
+  verifyOtp(token:string, data:any){
+    return this.http.post<any>(`${environment.apiUrl}/otp_validation/${token}`, data);
   }
   logOut(){
   localStorage.removeItem('username');

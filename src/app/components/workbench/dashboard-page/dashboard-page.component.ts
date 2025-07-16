@@ -47,7 +47,7 @@ export class DashboardPageComponent implements OnInit{
   port:any;
   host:any; 
   @ViewChild('propertiesModal') propertiesModal : any;
-  frequency! : number;
+  frequency : number = 0;
   refreshNow: boolean = false;
   lastRefresh: any;
   nextRefresh: any;
@@ -287,6 +287,10 @@ console.log('selectedUsers',this.selectedUserIdsToNumbers)
 }
 
 saveDashboardProperties(){
+  if(this.shareAsProtected){
+    this.applyProtectedEmails();
+    return;
+  }
 const obj ={
   dashboard_id:this.dashboardId,
   role_ids:this.selectedRoleIdsToNumbers,
@@ -432,7 +436,11 @@ autoFrequencyRefresh(){
   }
   this.workbechService.autoRefreshFrequency(object).subscribe({
     next:(data)=>{
-      this.toasterservice.success('Dashboard refresh scheduled','success',{ positionClass: 'toast-center-center'})
+      if(this.frequency > 0){
+      this.toasterservice.success('Refresh interval updated successfully.','success',{ positionClass: 'toast-top-right'})
+      } else {
+        this.toasterservice.success('Refresh interval cancelled/removed successfully.','success',{ positionClass: 'toast-top-right'})
+      }
       },
     error:(error)=>{
       console.log(error)
@@ -482,8 +490,15 @@ uploadProtectedCSV(event: any){
 
 applyProtectedEmails(){
   if(!this.protectedEmails.length){ return; }
-  const obj = {dashboard_id: this.dashboardId, emails: this.protectedEmails};
-  this.workbechService.sendProtectedEmails(obj).subscribe({
+  const emails = this.protectedEmails
+    .map((e: any) => typeof e === 'string' ? e : e.label || e.value || '')
+    .filter((e) => !!e);
+  const obj = {
+    dashboard_id: this.dashboardId,
+    encrypted_dahboard_id: btoa(String(this.dashboardId)),
+    emails_ids: emails
+  };
+  this.workbechService.generateProtectedLink(obj).subscribe({
     next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
     error: ()=>{}
   });
