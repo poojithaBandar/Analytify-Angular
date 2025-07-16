@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
-import { WorkbenchService } from '../../workbench/workbench.service';
+import { WorkbenchService } from '../workbench.service';
 
 @Component({
   selector: 'app-protected-dashboards',
@@ -32,6 +32,7 @@ export class ProtectedDashboardsComponent implements OnInit {
   }
 
   openDashboard(id: number): void {
+    localStorage.setItem('protected_access','true');
     const encoded = btoa(id.toString());
     this.router.navigate(['/dashboard/share/protected', encoded]);
   }

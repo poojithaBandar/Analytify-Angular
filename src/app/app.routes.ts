@@ -47,17 +47,7 @@ export const App_Route: Route[] = [
       // { path: '', component: ContentLayoutComponent, children: content },
       { path: '', component: AuthenticationLayoutComponent, children: authen },
       // { path: '', component: LandingpageLayoutComponent, children: landing },
-      {
-        path: 'protected-dashboards',
-        component: WorkbenchLayoutsComponent,
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('../app/components/authentication/protected-dashboards/protected-dashboards.component').then((m) => m.ProtectedDashboardsComponent),
-          },
-        ],
-      },
+      
       { path: '', component: WorkbenchLayoutsComponent, children: workbench },
 
 

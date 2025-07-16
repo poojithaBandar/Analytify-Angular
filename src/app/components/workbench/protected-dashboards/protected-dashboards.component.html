@@ -41,12 +41,7 @@
                   <td>{{ dashboard.created_by }}</td>
                   <td>{{ dashboard.created }}</td>
                   <td>
-                    <span class="badge" [ngClass]="dashboard.is_public ? 'bg-success' : 'bg-secondary'">
-                      {{ dashboard.is_public ? 'Public' : 'Private' }}
-                    </span>
-                  </td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" (click)="openDashboard(dashboard.dashboard_id)">Open Dashboard</button>
+                    <button class="btn btn-sm btn-primary" (click)="openDashboard(dashboard.dashboard_id)">View Dashboard</button>
                   </td>
                 </tr>
               </tbody>
@@ -67,9 +62,6 @@
                 <div class="p-1 text-center">
                   <div><span class="fw-semibold fs-14">Created by:</span> {{ dashboard.created_by }}</div>
                   <div><span class="fw-semibold fs-14">Created on:</span> {{ dashboard.created }}</div>
-                  <span class="badge" [ngClass]="dashboard.is_public ? 'bg-success' : 'bg-secondary'">
-                    {{ dashboard.is_public ? 'Public' : 'Private' }}
-                  </span>
                   <div class="mt-1">
                     <button class="btn btn-sm btn-primary" (click)="openDashboard(dashboard.dashboard_id)">Open Dashboard</button>
                   </div>

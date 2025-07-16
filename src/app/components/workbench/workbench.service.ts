@@ -1307,12 +1307,11 @@ deleteUser(id:any){
   }
 
   getProtectedDashboardsList(token: string){
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    return this.http.get<any>(
-      `${environment.apiUrl}/shared_dashboards_list/mkcXBhN9DIPpBh8R1ur4Xi4hAr5s6pm`,
-      { headers }
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(
+      `${environment.apiUrl}/shared_dashboards_list/${this.accessToken}`,
+      {}
     );
   }
 
@@ -1327,7 +1326,7 @@ deleteUser(id:any){
 
   sendEmailReminder(obj: any){
     return this.http.post<any>(
-      'http://127.0.0.1:8000/v1/email_remainder/wLP4ie8GOyGfX8o19ETTSrWqoNpR0E',
+      `${environment.apiUrl}/email_remainder/${this.accessToken}`,
       obj
     );
   }

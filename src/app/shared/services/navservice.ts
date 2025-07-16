@@ -374,14 +374,15 @@ export class NavService implements OnDestroy {
     },
     {
       title: 'Protected Dashboards',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
-        <path d="M12 17a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2z"></path>
-        <path d="M17 8V7a5 5 0 0 0-10 0v1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-1 0H8V7a4 4 0 0 1 8 0z"></path>
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="side-menu__icon">
+      <path d="M0 0h24v24H0V0z" fill="none"></path>
+      <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16zm0-11.47L17.74 9 12 13.47 6.26 9 12 4.53z">
+      </path>
       </svg>`,
       active: false,
       badgeClass: 'badge badge-sm bg-secondary badge-hide',
       badgeValue: 'new',
-      path: 'protected-dashboards',
+      path: 'analytify/protected-dashboards',
       type: 'link',
       nochild: true,
     },
