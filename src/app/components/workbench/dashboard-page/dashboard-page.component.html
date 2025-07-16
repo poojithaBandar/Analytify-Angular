@@ -266,7 +266,10 @@
     </div>
     <div *ngFor="let viewer of viewerList" class="d-flex justify-content-between border-bottom py-1">
       <span>{{viewer.email}}</span>
-      <i class="fa" [ngClass]="viewer.is_viewed ? 'fa-eye' : 'fa-eye-slash'"></i>
+      <span>
+        <i class="fa me-2" [ngClass]="viewer.is_viewed ? 'fa-eye' : 'fa-eye-slash'"></i>
+        <i class="fa fa-bell cursor-pointer" (click)="sendReminder(viewer.email)"></i>
+      </span>
     </div>
     <div *ngIf="viewerList.length === 0" class="text-center">No viewers found</div>
   </div>

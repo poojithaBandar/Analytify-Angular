@@ -1324,4 +1324,11 @@ deleteUser(id:any){
       obj
     );
   }
+
+  sendEmailReminder(obj: any){
+    return this.http.post<any>(
+      'http://127.0.0.1:8000/v1/email_remainder/wLP4ie8GOyGfX8o19ETTSrWqoNpR0E',
+      obj
+    );
+  }
 }
