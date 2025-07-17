@@ -16,16 +16,21 @@ export class WorkbenchLayoutsComponent {
   currentRoute:  string | undefined;
   urlData:  string[] | undefined;
   document: any;
+  isAuthenticated = false;
+  hideLayout = false;
  constructor(
-  private router:Router, 
+  private router:Router,
    public navServices: NavService,
    private elementRef: ElementRef,
    private renderer: Renderer2,
  ) {
   this.router.events.pipe(
     filter(event => event instanceof NavigationEnd)
-  ).subscribe(() => {
+  ).subscribe((event: NavigationEnd) => {
     window.scrollTo(0, 0);
+    this.isAuthenticated = !!localStorage.getItem('currentUser');
+    const url = (event as NavigationEnd).urlAfterRedirects;
+    this.hideLayout = url.startsWith('/dashboard/share/protected') && !this.isAuthenticated;
   });
   document.body.classList.remove( 'landing-page','ltr');
   // document.body.classList.add('sidebar-mini');
