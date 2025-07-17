@@ -242,6 +242,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   @ViewChild('analyzeDashbaordModal') analyzeDashbaordModal:any;
   @ViewChild('textEditorModal') textEditorModal!: any;
   @ViewChild('ImageUploadText') ImageUploadText!: ElementRef;
+  @ViewChild('editTabModal') editTabModal: any;
+
   textItem: any;
   textEditorContent: string = '';
   textEditorTitle: string = '';
@@ -1461,6 +1463,10 @@ export class SheetsdashboardComponent implements OnDestroy {
         if(this.sheetTabs && this.sheetTabs.length > 0){
           sheetTabsData.forEach((sheetData) => {
             sheetData.dashboard  = this.assignOriginalDataToDashboard(sheetData.dashboard);
+            sheetData.bgColor = sheetData.bgColor || '#ffffff';
+            sheetData.fontColor = sheetData.fontColor || '#000000';
+            sheetData.fontSize = sheetData.fontSize || 14;
+            sheetData.fontStyle = sheetData.fontStyle || 'normal';
           })
         } 
         this.setQuerySetIds();
@@ -1577,9 +1583,11 @@ export class SheetsdashboardComponent implements OnDestroy {
             .catch((error) => {
               console.error('oops, something went wrong!', error);
               reject(error); // Reject in case of error
+              this.loaderService.hide();
             });
         } else {
           reject('No element found for screenshot');
+          this.loaderService.hide();
         }
       }, 1000);
     });
@@ -1748,9 +1756,9 @@ export class SheetsdashboardComponent implements OnDestroy {
             width: '400px',
           })
         } else {
-          if(!isLiveReloadData && !isSwitchDb){
-            this.takeScreenshot();
-          }
+          // if(!isLiveReloadData && !isSwitchDb){
+          //   this.takeScreenshot();
+          // }
         const targetIds = this.switchConditions.map(c => c.targetHierarchyId).filter(id => id);
         obj ={
           grid : this.gridType,
@@ -1822,8 +1830,11 @@ export class SheetsdashboardComponent implements OnDestroy {
         else if(isShowpopup){
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
         }
-        if(!isLiveReloadData && !isDashboardTransfer){
-          this.saveDashboardimageUpdate();
+        if(!isLiveReloadData && !isDashboardTransfer && !isSwitchDb){
+          this.takeScreenshot().then(() => {
+            this.saveDashboardimageUpdate();
+          });
+          // this.saveDashboardimageUpdate();
         }
         this.endMethod(); 
       },
@@ -5054,11 +5065,12 @@ const obj ={
 
   addTabs() {
     this.displayTabs = true;
+    this.initializeTabDefaults();
     let id = uuidv4();
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
     let name = this.selectedTabIndex > 0 ? "Tab Title " + this.selectedTabIndex : "Tab Title";
-    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
+    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid,bgColor:this.selectedTab.bgColor,fontColor:this.selectedTab.fontColor,fontStyle:this.selectedTab.fontStyle,fontSize:this.selectedTab.fontSize});
     this.dashboardTest = [];
   }
   Editor = ClassicEditor;
@@ -8605,6 +8617,110 @@ buttonClicked = false;
             }
       }) 
   }
+  // selectedTab: any = {};
+selectedTabIndexToEdit: number = -1;
+
+openEditTabModal(tab: any, index: number) {
+  this.selectedTab = { ...tab };
+  this.selectedTabIndexToEdit = index;
+  this.selectedTabfontSize = this.selectedTab.fontSize;
+  this.modalService.open(this.editTabModal, { size: 'md', backdrop: 'static' });
+
+}
+
+saveTabEdit(modal: any) {
+  if (this.selectedTabIndexToEdit > -1) {
+    this.sheetTabs[this.selectedTabIndexToEdit] = {
+      ...this.sheetTabs[this.selectedTabIndexToEdit],
+      ...this.selectedTab
+    };
+  }
+console.log( this.sheetTabs);
+  modal.close();
+}
+// Default values
+private readonly DEFAULT_FONT_SIZE = 14;
+private readonly MIN_FONT_SIZE = 10;
+private readonly MAX_FONT_SIZE = 24;
+
+// Color input handling
+updateColorInput(event: Event, type: 'font' | 'bg') {
+  const color = (event.target as HTMLInputElement).value;
+  if (type === 'font') {
+    this.selectedTab.fontColor = color.toUpperCase();
+  } else {
+    this.selectedTab.bgColor = color.toUpperCase();
+  }
+}
+
+validateColorInput(event: Event, type: 'font' | 'bg') {
+  const input = event.target as HTMLInputElement;
+  const color = input.value;
+  
+  // Ensure color starts with #
+  if (!color.startsWith('#')) {
+    input.value = '#' + color;
+  }
+  
+  // Validate hex color format
+  if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+    if (type === 'font') {
+      this.selectedTab.fontColor = color.toUpperCase();
+    } else {
+      this.selectedTab.bgColor = color.toUpperCase();
+    }
+  }
+}
+
+// Font size handling
+selectedTabfontSize=10
+restrictFontSize(event: Event) {
+   setTimeout(() => {
+      if(this.selectedTabfontSize || this.selectedTabfontSize  === 0){
+        if (this.selectedTab.fontSize < 2) {
+          // this.selectedTab.fontSize = 2;
+          this.selectedTabfontSize = 2
+        } else if (this.selectedTabfontSize > 24) {
+          // this.selectedTab.fontSize = 24;
+          this.selectedTabfontSize = 24
+
+        }
+      }
+       this.selectedTab.fontSize = this.selectedTabfontSize
+    }, 0);
+}
+
+validateFontSize() {
+  if (!this.selectedTab.fontSize) {
+    this.selectedTab.fontSize = this.DEFAULT_FONT_SIZE;
+  }
+}
+
+// Font style handling
+updateFontStyle() {
+  // Force update the preview
+  this.selectedTab = {...this.selectedTab};
+}
+
+// Initialize tab defaults when opening modal
+initializeTabDefaults() {
+  if (!this.selectedTab) {
+    this.selectedTab = {
+      name: '',
+      fontColor: '#000000',
+      bgColor: '#FFFFFF',
+      fontSize: this.DEFAULT_FONT_SIZE,
+      fontStyle: 'normal'
+    };
+  }
+  
+  // Ensure existing values are valid
+  this.selectedTab.fontSize = Math.min(
+    Math.max(this.selectedTab.fontSize || this.DEFAULT_FONT_SIZE, this.MIN_FONT_SIZE),
+    this.MAX_FONT_SIZE
+  );
+}// Default values
+
 }
 
 // export interface CustomGridsterItem extends GridsterItem {
