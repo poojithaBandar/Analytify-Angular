@@ -5185,11 +5185,11 @@
                                 </li>
 
                                 <li [ngbNavItem]="3">
-                                    <a ngbNavLink class="p-1" (click)="getChartSuggestions()" >
+                                    <!-- <a ngbNavLink class="p-1" (click)="getChartSuggestions()" >
                                         <button class="copilot-button" matTooltip="Genie AIQ is an AI-powered query engine designed to generate insights from MetaData." matTooltipPosition="above">
                                             <img src="./assets/images/copilot.gif" alt="Copilot" class="copilot-icon border rounded-5" />
                                         </button>
-                                    </a>
+                                    </a> -->
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane" id="linktabs">
                                             <div class="copilot-container p-1">
@@ -5326,7 +5326,7 @@
         </ng-template>
           <!-- Overlay Genie AIQ Icon -->
 <div  class="overlay-div genie-animate">
-  <img src="assets/images/analyze-genieaiq1.webp" alt="Genie AIQ" class="overlay-img"/>
+  <img src="assets/images/analyze-genieaiq1.webp" (click)="openGenieAiQTab()" alt="Genie AIQ" class="overlay-img"/>
 </div>
     </div>
 }

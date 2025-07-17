@@ -7692,6 +7692,8 @@ buttonClicked = false;
     //   this.editor = false;
     // });
   }
-
+openGenieAiQTab(){
+   this.active = 3;
+}
 }
 
