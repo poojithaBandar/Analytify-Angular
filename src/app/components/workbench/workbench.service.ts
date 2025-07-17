@@ -1316,10 +1316,53 @@ deleteUser(id:any){
       });
     }
 
-    getTaskInstances(dagId: string, runId: string) {
-      return this.http.get(
+  getTaskInstances(dagId: string, runId: string) {
+    return this.http.get(
         `${environment.airflowApiUrl}/dags/${dagId}/dagRuns/${runId}/taskInstances`,
         { headers: this.getHeaders() }
       );
     }
+
+  generateProtectedLink(obj:any){
+    return this.http.post<any>(
+      `${environment.apiUrl}/dashboard_protected_key_generation/`+this.accessToken,
+      obj
+    );
+  }
+
+  validateProtectedKey(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/pass_key_validation/`, obj);
+  }
+
+  getProtectedDashboards(email: string){
+    return this.http.post<any>(
+      `${environment.apiUrl}/shared_dashboards_list/`,
+      { email }
+    );
+  }
+
+  getProtectedDashboardsList(token: string){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(
+      `${environment.apiUrl}/shared_dashboards_list/${this.accessToken}`,
+      {}
+    );
+  }
+
+  getDashboardViewers(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(
+      `${environment.apiUrl}/list_of_shared_users/${this.accessToken}`,
+      obj
+    );
+  }
+
+  sendEmailReminder(obj: any){
+    return this.http.post<any>(
+      `${environment.apiUrl}/email_remainder/${this.accessToken}`,
+      obj
+    );
+  }
 }

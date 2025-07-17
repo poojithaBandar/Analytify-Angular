@@ -61,6 +61,7 @@ import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
 import { i } from 'mathjs';
 import { SafeUrlPipe, SanitizeHtmlPipe } from '../../../shared/pipes/sanitize-html.pipe';
+import { AuthService } from '../../../shared/services/auth.service';
 
 interface TableRow {
   [key: string]: any;
@@ -195,6 +196,15 @@ export class SheetsdashboardComponent implements OnDestroy {
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   isPublicUrl = false;
+  isProtectedUrl = false;
+  isProtectedValidated = false;
+  hasProtectedAccess = false;
+  protectedQuery = false;
+  isAuthenticated = false;
+  encryptedEmail: string | null = null;
+  passkey: string = '';
+  userEmail: string | null = null;
+  @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
   columnSearch: any;
   rolesForUpdateDashboard:[] = [];
@@ -249,9 +259,18 @@ export class SheetsdashboardComponent implements OnDestroy {
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
-     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef){
+     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef,private authService: AuthService){
     this.dashboard = [];
-    const currentUrl = this.router.url; 
+    if(localStorage.getItem('protected_email')){
+      this.userEmail = localStorage.getItem('protected_email');
+    }
+    if(this.isAuthenticated){
+      const u = this.authService.getCurrentUser();
+      if(u?.email){
+        this.userEmail = u.email;
+      }
+    }
+    const currentUrl = this.router.url;
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
     });
@@ -259,9 +278,23 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
       this.active = 2;
-      this.publicHeader = true
+      this.publicHeader = true;
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
+      }
+    }
+    if(currentUrl.includes('dashboard/share/protected')){
+      this.updateDashbpardBoolen= true;
+      this.isProtectedUrl = true;
+      // protected dashboards always use public APIs
+      this.isPublicUrl = true;
+      this.active = 2;
+      this.publicHeader = true;
+      if (route.snapshot.params['id1']) {
+        this.dashboardId = +atob(route.snapshot.params['id1']);
+      }
+      if(route.snapshot.params['id2']){
+        this.encryptedEmail = route.snapshot.params['id2'];
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
@@ -280,8 +313,18 @@ export class SheetsdashboardComponent implements OnDestroy {
     //     }
     // }
     else if(currentUrl.includes('analytify/home/sheetsdashboard')){
-      this.dashboardView = true;
-      this.updateDashbpardBoolen= true
+      this.updateDashbpardBoolen = true;
+      const isProtected = this.route.snapshot.queryParamMap.get('protected') === 'true';
+      this.protectedQuery = isProtected;
+      if (isProtected) {
+        this.isProtectedUrl = true;
+        this.isPublicUrl = true;
+        this.active = 2;
+        this.publicHeader = false;
+      } else {
+        this.dashboardView = true;
+        this.publicHeader = true;
+      }
       if (route.snapshot.params['id3']) {
         // this.databaseId = +atob(route.snapshot.params['id1']);
         // this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -296,7 +339,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         const dbcopy = navigation?.extras?.state?.['dbCopy'] ?? history.state?.['dbCopy'];
         if(dbcopy){
           this.toasterService.success('Dashboard Copied Successfully.','success',{ positionClass: 'toast-top-right'})
-        }else if (dbSwitched) {
+        }else if (dbSwitched && !isProtected) {
           this.getSavedDashboardData();
            setTimeout(() => {
             this.refreshDashboard(true);  // might run before API completes!
@@ -488,8 +531,9 @@ export class SheetsdashboardComponent implements OnDestroy {
     if(this.isPublicUrl){
       displayGrid = DisplayGrid.None;
     }
-    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
-      echarts.registerMap('world', geoJson); 
+    this.http.get('/assets/maps/world.json').subscribe({
+      next: (geoJson: any) => {
+              echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
       if(!this.isPublicUrl || !this.isEmbedDashboard){
         if(this.fileId.length > 0 || this.databaseId.length > 0){
@@ -513,6 +557,9 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         if(this.dashboardId != undefined || null){
           this.getDrillThroughActionList();
+        }},
+        error: () => {
+          this.loaderService.hide();
         }
 
     });    
@@ -549,7 +596,21 @@ export class SheetsdashboardComponent implements OnDestroy {
     })
   }
 
-  ngOnInit() {  
+  ngOnInit() {
+    this.isAuthenticated = !!localStorage.getItem('currentUser');
+    this.hasProtectedAccess = localStorage.getItem('protected_access') === 'true';
+    if(this.hasProtectedAccess){
+      this.userEmail = localStorage.getItem('protected_email') || this.userEmail;
+    }
+    if(this.isAuthenticated){
+      const u = this.authService.getCurrentUser();
+      if(u?.email){
+        this.userEmail = u.email;
+      }
+    }
+    if(this.hasProtectedAccess){
+      this.isProtectedValidated = true;
+    }
     let displayGrid = DisplayGrid.Always;
     this.options = {
       gridType: GridType.Fit,
@@ -590,7 +651,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     };
     if(this.dashboardToken){
       this.fetchDashboardIdFromToken();
-    } else {
+    } else if(!this.isPublicUrl && !this.isProtectedUrl){
       this.initialiserMethods();
     }
     //this.getSheetData();
@@ -2999,6 +3060,13 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     } else {
       console.error('Gridster element not found!');
     }
+    if(this.isProtectedUrl){
+      if(this.isProtectedValidated || !this.encryptedEmail){
+        this.loadProtectedDashboard();
+      } else {
+        this.modalService.open(this.passkeyModal,{backdrop:'static', centered:true});
+      }
+    }
     this.cdr.detectChanges();
   }
   initializeChart(item: DashboardItem): void {
@@ -3057,6 +3125,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     // item['chartInstance'].render();
   }  
 }
+
 
   onChartInit(event: any, item: DashboardItem) {
     item['chartInstance'] = event.chart;
@@ -5493,7 +5562,8 @@ kpiData?: KpiData;
   //public apis
   getSavedDashboardDataPublic(){
     const obj ={
-      dashboard_id:this.dashboardId
+      dashboard_id:this.dashboardId,
+      email: this.userEmail
     }
     this.workbechService.getSavedDashboardDataPublic(obj).subscribe({
       next:(data)=>{
@@ -5693,6 +5763,34 @@ kpiData?: KpiData;
       }
     })
   }
+}
+
+  validateProtectedDashboard(modal:any){
+    const obj = {
+      dashboard_id: this.dashboardId,
+      protected_key: this.passkey,
+      email: this.encryptedEmail
+    };
+    this.workbechService.validateProtectedKey(obj).subscribe({
+      next: (res: any)=>{
+        this.isProtectedValidated = true;
+        this.userEmail = res?.email || this.userEmail;
+        modal.close();
+        this.loadProtectedDashboard();
+      },
+      error: ()=>{
+        this.toasterService.error('Invalid Passkey','error');
+      }
+    });
+  }
+
+  loadProtectedDashboard(){
+    this.getSavedDashboardDataPublic();
+    this.getDashboardFilterredListPublic();
+  }
+
+  goBackToProtectedHome(){
+    this.router.navigate(['/protected/home']);
   }
 
   publicDataExtraction(item : any){
@@ -8508,6 +8606,7 @@ buttonClicked = false;
       }) 
   }
 }
+
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
 //   content: string;
