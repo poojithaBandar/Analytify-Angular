@@ -1058,6 +1058,14 @@ deleteUser(id:any){
       this.accessToken = JSON.parse(currentUser!)['Token'];
       return this.http.get<any>(`${environment.apiUrl}/hubspot_dashbaord/` + id + '/' + this.accessToken);
     }
+    createSmartDashboard(hierarchyId: number){
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.post<any>(
+        `${environment.apiUrl}/smart_dashboard_create/` + this.accessToken,
+        { hierarchy_id: hierarchyId }
+      );
+    }
     fetchSDKData(){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -1259,6 +1267,27 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.delete<any>(`${environment.apiUrl}/threshold_mails/`+this.accessToken+'/' + id + '/');
     }
+    getUserProfileDetails(){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/userprofile_data/`+this.accessToken);
+    }
+    updateProfile(data:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/userprofile_data/`+this.accessToken,data);
+    }
+    updateEmail(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/updateemail/`+this.accessToken,obj);
+    }
+    validateEmailOtp(emailToken:any, otp:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/emailconformation/`+this.accessToken+'/'+emailToken,{otp: otp});
+    }
+
     // Airflow API
     airflowToken: string | null = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlzcyI6W10sImF1ZCI6ImFwYWNoZS1haXJmbG93IiwibmJmIjoxNzQ5MDQyOTI5LCJleHAiOjE3NDkxMjkzMjksImlhdCI6MTc0OTA0MjkyOX0.OPipRIhG-me15qyyGXRlt2xLuNWKOr2RexHtU7xc8kyXqP3dHfcNAq2t6Zf6sNiKbnb437AyKsagA9rgbKK6wg';
 

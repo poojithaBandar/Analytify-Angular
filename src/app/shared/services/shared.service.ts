@@ -22,6 +22,13 @@ export class SharedService {
       this.localStorageValue.next(newValue); // Notify subscribers
     }
   
+  private profileImageSource = new BehaviorSubject<string | null>(null);
+  profileImage$ = this.profileImageSource.asObservable();
+
+  setprofileImage(url:string){
+    this.profileImageSource.next(url)
+  }
+
     // Method to get the current value
     getValue(): string | null {
       return this.localStorageValue.getValue();
@@ -38,4 +45,6 @@ export class SharedService {
     this.refreshRequestSource.next(); // Notify subscribers that a refresh has been requested
 
   }
+
+
 }

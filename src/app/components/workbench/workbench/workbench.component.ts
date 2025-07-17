@@ -2955,6 +2955,48 @@ connectGoogleSheets(){
       }
     })
   }
+
+  smartDashboardFromConnection(database:any){
+    this.workbechService.createSmartDashboard(database.hierarchy_id).subscribe({
+      next: (responce) => {
+        switch(database.server_type){
+          case 'TALLY':
+            this.templateDashboardService.buildSampleTallyDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'SHOPIFY':
+            this.templateDashboardService.buildSampleShopifyDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'SALESFORCE':
+            this.templateDashboardService.buildSampleSalesforceDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'QUICKBOOKS':
+            this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'IMMYBOT':
+            this.templateDashboardService.buildSampleImmybotDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'NINJA':
+            this.templateDashboardService.buildSampleNinjaRMMDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'HUBSPOT':
+            this.templateDashboardService.buildSampleHubspotDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'CONNECTWISE':
+            this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'HALOPS':
+            this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'OPEN_AI':
+            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
+            break;
+        }
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      }
+    })
+  }
   gotoDashboardWithoutSwitch(){
     const encodedDashboardId = btoa(this.dashbaordIdToSwitch.toString());
     this.router.navigate(['/analytify/home/sheetsdashboard/',encodedDashboardId])
