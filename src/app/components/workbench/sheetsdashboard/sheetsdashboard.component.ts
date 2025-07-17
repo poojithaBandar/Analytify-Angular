@@ -61,6 +61,7 @@ import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
 import { i } from 'mathjs';
 import { SafeUrlPipe, SanitizeHtmlPipe } from '../../../shared/pipes/sanitize-html.pipe';
+import { AuthService } from '../../../shared/services/auth.service';
 
 interface TableRow {
   [key: string]: any;
@@ -202,6 +203,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   isAuthenticated = false;
   encryptedEmail: string | null = null;
   passkey: string = '';
+  userEmail: string | null = null;
   @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
   columnSearch: any;
@@ -257,8 +259,17 @@ export class SheetsdashboardComponent implements OnDestroy {
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
-     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef){
+     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef,private authService: AuthService){
     this.dashboard = [];
+    if(localStorage.getItem('protected_email')){
+      this.userEmail = localStorage.getItem('protected_email');
+    }
+    if(this.isAuthenticated){
+      const u = this.authService.getCurrentUser();
+      if(u?.email){
+        this.userEmail = u.email;
+      }
+    }
     const currentUrl = this.router.url;
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
@@ -588,6 +599,15 @@ export class SheetsdashboardComponent implements OnDestroy {
   ngOnInit() {
     this.isAuthenticated = !!localStorage.getItem('currentUser');
     this.hasProtectedAccess = localStorage.getItem('protected_access') === 'true';
+    if(this.hasProtectedAccess){
+      this.userEmail = localStorage.getItem('protected_email') || this.userEmail;
+    }
+    if(this.isAuthenticated){
+      const u = this.authService.getCurrentUser();
+      if(u?.email){
+        this.userEmail = u.email;
+      }
+    }
     if(this.hasProtectedAccess){
       this.isProtectedValidated = true;
     }
@@ -5542,7 +5562,8 @@ kpiData?: KpiData;
   //public apis
   getSavedDashboardDataPublic(){
     const obj ={
-      dashboard_id:this.dashboardId
+      dashboard_id:this.dashboardId,
+      email: this.userEmail
     }
     this.workbechService.getSavedDashboardDataPublic(obj).subscribe({
       next:(data)=>{
@@ -5751,8 +5772,9 @@ kpiData?: KpiData;
       email: this.encryptedEmail
     };
     this.workbechService.validateProtectedKey(obj).subscribe({
-      next: ()=>{
+      next: (res: any)=>{
         this.isProtectedValidated = true;
+        this.userEmail = res?.email || this.userEmail;
         modal.close();
         this.loadProtectedDashboard();
       },

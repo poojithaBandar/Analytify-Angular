@@ -218,4 +218,14 @@ getTokensalesforce(data:any){
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/updatepassword/`+this.accessToken,obj)
   }
+  getCurrentUser(){
+    try {
+      const data = localStorage.getItem('username');
+      if(data){
+        const parsed = JSON.parse(data);
+        return { email: parsed.userName };
+      }
+    } catch (err) {}
+    return null;
+  }
 }
