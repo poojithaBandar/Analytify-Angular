@@ -8525,7 +8525,9 @@ selectedTabIndexToEdit: number = -1;
 openEditTabModal(tab: any, index: number) {
   this.selectedTab = { ...tab };
   this.selectedTabIndexToEdit = index;
+  this.selectedTabfontSize = this.selectedTab.fontSize;
   this.modalService.open(this.editTabModal, { size: 'md', backdrop: 'static' });
+
 }
 
 saveTabEdit(modal: any) {
@@ -8535,7 +8537,7 @@ saveTabEdit(modal: any) {
       ...this.selectedTab
     };
   }
-
+console.log( this.sheetTabs);
   modal.close();
 }
 // Default values
@@ -8573,21 +8575,21 @@ validateColorInput(event: Event, type: 'font' | 'bg') {
 }
 
 // Font size handling
+selectedTabfontSize=10
 restrictFontSize(event: Event) {
-  const input = event.target as HTMLInputElement;
-  let value = parseInt(input.value);
-  
-  if (isNaN(value)) {
-    value = this.DEFAULT_FONT_SIZE;
-  }
-  
-  if (value < this.MIN_FONT_SIZE) {
-    value = this.MIN_FONT_SIZE;
-  } else if (value > this.MAX_FONT_SIZE) {
-    value = this.MAX_FONT_SIZE;
-  }
-  
-  this.selectedTab.fontSize = value;
+   setTimeout(() => {
+      if(this.selectedTabfontSize || this.selectedTabfontSize  === 0){
+        if (this.selectedTab.fontSize < 2) {
+          // this.selectedTab.fontSize = 2;
+          this.selectedTabfontSize = 2
+        } else if (this.selectedTabfontSize > 24) {
+          // this.selectedTab.fontSize = 24;
+          this.selectedTabfontSize = 24
+
+        }
+      }
+       this.selectedTab.fontSize = this.selectedTabfontSize
+    }, 0);
 }
 
 validateFontSize() {
