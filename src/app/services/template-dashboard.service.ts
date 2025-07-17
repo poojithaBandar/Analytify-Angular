@@ -1066,6 +1066,40 @@ buildSampleTallyDashboard(container: ViewContainerRef, databaseId: any) {
     }
   )
 }
+
+buildSampleShopifyDashboard(container: ViewContainerRef, databaseId: any) {
+  const componentRef = container.createComponent(InsightEchartComponent);
+  this.echartInstance = componentRef.instance;
+  this.workbechService.buildSampleShopifyDashbaord(databaseId).subscribe({next: (responce) => {
+    const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+    queries.forEach((query: any) => {
+      const obj ={
+        query_set_id:query.queryset_id,
+        hierarchy_id:query.hierarchy_id,
+        joining_tables: query.joining_tables,
+        join_type:query.join_type,
+        joining_conditions:query.joining_conditions,
+        dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}}
+      } as any;
+      this.workbechService.joiningTablesTest(obj).subscribe({next: (res) => {
+          // this.buildDashboardResponseData(res);
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    });
+    this.buildDashboardResponseData(responce);
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }
+    }
+  )
+}
 buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any) {
   const componentRef = container.createComponent(InsightEchartComponent);
   this.echartInstance = componentRef.instance;
