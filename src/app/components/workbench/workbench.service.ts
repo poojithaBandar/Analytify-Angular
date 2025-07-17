@@ -1017,6 +1017,12 @@ deleteUser(id:any){
       return this.http.get<any>(`${environment.apiUrl}/halops_dashboard/`+id+'/'+this.accessToken);
     }
 
+    buildSampleShopifyDashbaord(id: number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/shopify_dashbaord/`+id+'/'+this.accessToken);
+    }
+
     buildQuickBooksDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
