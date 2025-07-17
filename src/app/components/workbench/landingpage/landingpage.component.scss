@@ -10,7 +10,7 @@ a { cursor: pointer;}
 .header-bg-radius { border-radius: 0px 0px 15px 15px; }
 .landing-connect-search { display: flex; justify-content: flex-end; }
 .img-cursor{ cursor: pointer; }
-.table-responsive{ height: 359px; overflow: auto; }
+.table-responsive{ height: 520px; overflow: auto; }
 .overflow{ overflow: auto;}
 .card.img-shadow:hover { box-shadow: 0 16px 32px #21212126; }
 tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius: 20px; }
@@ -18,8 +18,13 @@ tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius:
 .properties-modal-height{ height: 500px;overflow: scroll; }
 .text-truncate { max-width: 140px !important;}
 .avatar-md { width: 2.9rem; height: 2.9rem; line-height: 2.5rem; font-size: 0.8rem; }
-.w-4 { width: 1.3rem !important; }
-.h-4 { height: 1.5rem !important; }
+.w-5 { width: 2.5rem !important; }
+.h-5 { height: 2.5rem !important; }
+.landing-icon{ width: 23px;}
+.landing-dash-bg{ background-color: #dae9ff;} 
+.landing-chart-bg{ background-color: #defbe9;} 
+.landing-queries-bg{ background-color: #f5e7fe;} 
+.landing-data-bg{ background-color: #fef3c6;} 
 
 
 // for Mobile Resolution //
