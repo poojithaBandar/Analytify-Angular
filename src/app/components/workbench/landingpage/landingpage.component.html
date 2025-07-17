@@ -712,7 +712,7 @@
                                             </span>
                                             <div class="ms-2">
                                                 <p class="mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</p>
-                                                <span class="text-muted">{{database.server_type}}</span>
+                                                <span class="text-muted">{{database.server_type | lowercase}}</span>
                                             </div>
                                         </div>
                                     </td>
