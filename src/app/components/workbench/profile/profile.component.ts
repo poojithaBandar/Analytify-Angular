@@ -10,11 +10,12 @@ import { UpdatePasswordComponent } from '../update-password/update-password.comp
 import { AuthService } from '../../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import { SharedService } from '../../../shared/services/shared.service';
+import { NgOtpInputModule } from 'ng-otp-input';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [NgbModule,CommonModule,SharedModule,ImageCropperComponent,ReactiveFormsModule,UpdatePasswordComponent],
+  imports: [NgbModule,CommonModule,SharedModule,ImageCropperComponent,ReactiveFormsModule,UpdatePasswordComponent,NgOtpInputModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
@@ -25,12 +26,19 @@ export class ProfileComponent {
   croppedImage: any = '';
   showImageCropper: boolean = false;
   profileImageUrl: string = './assets/images/users/18.jpg';
-    defaultImageUrl: string = './assets/images/users/18.jpg'; // Keep reference to default
+  defaultImageUrl: string = './assets/images/users/18.jpg'; // Keep reference to default
 
   profileImageFile: File | null = null; // Store the original file
   hasImageChanged: boolean = false;
-   isLoading: boolean = false;
-   userProfileData:any
+  isLoading: boolean = false;
+  userProfileData: any;
+
+  // Email verification logic
+  originalEmail: string = '';
+  emailNeedsVerification: boolean = false;
+  emailVerified: boolean = true; // Initially true, as the loaded email is already verified
+  timerInterval: any;
+
   constructor(private fb: FormBuilder,private workbechService:WorkbenchService, private toasterService: ToastrService,private authService:AuthService, private router: Router,private sharedService:SharedService) {
     this.initializeForms();
   }
@@ -63,9 +71,18 @@ export class ProfileComponent {
         email: userData.email || '',
         firstName: userData.first_name || '',
         lastName: userData.last_name || '',
-        company:userData.company || ''
+        company:userData.company || '',
+        bio: userData.bio || ''
       });
       this.setProfileImage(userData.imagepath);
+      // Set original email and reset verification state
+      this.originalEmail = userData.email || '';
+      this.emailVerified = true;
+      this.emailNeedsVerification = false;
+      // Subscribe to email field changes
+      this.profileForm.get('email')?.valueChanges.subscribe((value: string) => {
+        this.onEmailChanged(value);
+      });
     }
     setProfileImage(imageUrl: string | null): void {
   if (imageUrl && imageUrl.trim() !== '') {
@@ -149,41 +166,134 @@ export class ProfileComponent {
     });
   }
   isImageUpdated = false;
-  onProfileSubmit(): void {
-    if (this.profileForm.valid) {
-     this.isLoading = true;
-    
-    // Create FormData for multipart/form-data request
-    const formData = new FormData();
-    
-    // Add form fields
-    const profileData = this.profileForm.value;
-    formData.append('email', profileData.email || '');
-    formData.append('first_name', profileData.firstName || '');
-    formData.append('last_name', profileData.lastName || '');
-    formData.append('company', profileData.company || '');
-    formData.append('bio', profileData.bio || '');
 
-       if (this.hasImageChanged && this.croppedImage) {
-      try {
-        const imageFile = this.base64ToFile(this.croppedImage, `profile_${Date.now()}.png`);
-        formData.append('imagepath', imageFile, imageFile.name);
-        if(imageFile){
-          this.isImageUpdated = true;
-        }
-      } catch (error) {
-        console.error('Error processing image:', error);
-        this.isLoading = false;
-        alert('Error processing image. Please try again.');
-        return;
-      }
-    }
-     console.log('FormData contents:',formData);
-       this.updateUserProfile(formData);
-
+  onEmailChanged(newEmail: string): void {
+    if (newEmail !== this.originalEmail) {
+      this.emailNeedsVerification = true;
+      this.emailVerified = false;
     } else {
-    this.markFormGroupTouched(this.profileForm);
+      this.emailNeedsVerification = false;
+      this.emailVerified = true;
+    }
   }
+activationToken:any
+showOtpInput: boolean = false;
+otp: string = '';
+otpError: string = '';
+  verifyEmail(): void {
+    // Call backend to send OTP and get activation token
+    const obj = { email : this.profileForm.get('email')?.value}
+    this.workbechService.updateEmail(obj).subscribe({
+      next: (res: any) => {
+        this.activationToken = res.emailActivationToken; // adjust key as per API
+        this.showOtpInput = true;
+        this.otp = '';
+        this.otpError = '';
+        this.startTimer();
+        this.toasterService.success('OTP sent to your email!');
+      },
+      error: () => {
+        this.toasterService.error('Failed to send OTP.');
+      }
+    });
+  }
+
+  onOtpChange(otp: string) {
+    this.otp = otp;
+    this.otpError = '';
+  }
+
+  validateOtp() {
+    if (!this.otp || this.otp.length !== 5) {
+      this.otpError = 'Please enter a valid 5-digit OTP.';
+      return;
+    }
+    this.workbechService.validateEmailOtp(
+      this.activationToken,
+     this.otp
+    ).subscribe({
+      next: () => {
+        this.originalEmail = this.profileForm.get('email')?.value || '';
+        this.emailVerified = true;
+        this.emailNeedsVerification = false;
+        this.showOtpInput = false;
+        this.otp = '';
+        this.otpError = '';
+        this.stopTimer();
+        this.toasterService.success('Email verified!');
+      },
+      error: () => {
+        this.otpError = 'Invalid OTP. Please try again.';
+      }
+    });
+  }
+  config = {
+    allowNumbersOnly: true,
+    length: 5,
+    isPasswordInput: false,
+    disableAutoFocus: false,
+    placeholder: '',
+    inputStyles: {
+      'width': '50px',
+      'height': '50px'
+    }
+  };
+  display: any;
+  resendOtp: boolean = false;
+  displayTimer: boolean = false;
+  emailActivationToken:any;
+  startTimer() {
+    this.display = 60;
+    this.displayTimer = true;
+    this.resendOtp = false;
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = setInterval(() => {
+      this.display--;
+      if (this.display <= 0) {
+        this.displayTimer = false;
+        this.resendOtp = true;
+        clearInterval(this.timerInterval);
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    this.displayTimer = false;
+    this.resendOtp = false;
+    if (this.timerInterval) clearInterval(this.timerInterval);
+}
+
+  onProfileSubmit(): void {
+    if (this.profileForm.valid && this.emailVerified) {
+      this.isLoading = true;
+      // Create FormData for multipart/form-data request
+      const formData = new FormData();
+      // Add form fields
+      const profileData = this.profileForm.value;
+      formData.append('email', profileData.email || '');
+      formData.append('first_name', profileData.firstName || '');
+      formData.append('last_name', profileData.lastName || '');
+      formData.append('company', profileData.company || '');
+      formData.append('bio', profileData.bio || '');
+      if (this.hasImageChanged && this.croppedImage) {
+        try {
+          const imageFile = this.base64ToFile(this.croppedImage, `profile_${Date.now()}.png`);
+          formData.append('imagepath', imageFile, imageFile.name);
+          if(imageFile){
+            this.isImageUpdated = true;
+          }
+        } catch (error) {
+          console.error('Error processing image:', error);
+          this.isLoading = false;
+          alert('Error processing image. Please try again.');
+          return;
+        }
+      }
+      console.log('FormData contents:',formData);
+      this.updateUserProfile(formData);
+    } else {
+      this.markFormGroupTouched(this.profileForm);
+    }
   }
   updateUserProfile(formData: FormData): void {
 

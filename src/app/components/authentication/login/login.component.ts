@@ -96,8 +96,13 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     this.themeService.setApiCustomTheme(data.custome_theme);
     this.themeService.setCurrentTheme(data.custome_theme);
     this.switcherComponent.setCustomThemeData(data.custome_theme);
+    if(data.imagepath){
     this.sharedService.setprofileImage(data.imagepath);
     localStorage.setItem('profileImage', data.imagepath);
+    }else{
+      this.sharedService.setprofileImage('./assets/images/users/18.jpg');
+    localStorage.setItem('profileImage', './assets/images/users/18.jpg');
+    }
     if(data.previlages){
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }
