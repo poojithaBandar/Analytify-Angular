@@ -11,7 +11,7 @@ import { SharedModule } from '../../../sharedmodule';
   templateUrl: './workbench-layouts.component.html',
   styleUrl: './workbench-layouts.component.scss'
 })
-export class WorkbenchLayoutsComponent implements OnInit {
+export class WorkbenchLayoutsComponent {
   public menuItems!: Menu[];
   currentRoute:  string | undefined;
   urlData:  string[] | undefined;
@@ -37,14 +37,6 @@ export class WorkbenchLayoutsComponent implements OnInit {
   //    this.menuItems = menuItems;
   //  });
   
- }
- ngOnInit(){
-  this.isAuthenticated = !!localStorage.getItem('currentUser');
-  this.updateLayout(this.router.url);
- }
-
- private updateLayout(url: string){
-  this.hideLayout = url.startsWith('/dashboard/share/protected') && !this.isAuthenticated;
  }
 
  togglesidemenuBody() {
