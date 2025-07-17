@@ -1,17 +1,17 @@
 
-<app-switcher></app-switcher>
+<app-switcher *ngIf="!hideLayout"></app-switcher>
 <div class="page">
     <div class="page-main">
-        <app-header></app-header>
-        <app-sidebar appHoverEffectSidebar></app-sidebar>
+        <app-header *ngIf="!hideLayout"></app-header>
+        <app-sidebar *ngIf="!hideLayout" appHoverEffectSidebar></app-sidebar>
         <div class="main-content app-content mt-0"  (click)="togglesidemenuBody()">
 
                 <router-outlet></router-outlet>
-            
-            
+
+
         </div>
     </div>
     <!-- <app-footer></app-footer> -->
-<app-tab-to-top></app-tab-to-top>
+<app-tab-to-top *ngIf="!hideLayout"></app-tab-to-top>
 </div>
 <div id="responsive-overlay" (click)="clearToggle()"></div>
