@@ -262,7 +262,7 @@
     <div *ngFor="let viewer of viewerList" class="d-flex justify-content-between border-bottom py-1">
       <span>{{viewer.email}}</span>
       <span>
-        <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2"><i [ngClass]="viewer.is_viewed ? 'fa fa-eye' : 'fa fa-eye-slash'"></i></button>
+        <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2" ngbTooltip="{{viewer.count_of_views}} views"><i [ngClass]="viewer.is_viewed ? 'fa fa-eye' : 'fa fa-eye-slash'"></i></button>
         <button class="btn btn-icon btn-sm btn-blue-light btn-wave waves-effect waves-light" ngbTooltip="Reminder" (click)="sendReminder(viewer.email)"><i class="fa fa-bell" ></i></button>
       </span>
     </div>
