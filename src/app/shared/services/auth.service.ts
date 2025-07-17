@@ -188,10 +188,18 @@ getTokensalesforce(data:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/callback/`+this.accessToken,data); 
 }
-resendOtpApi(obj:any){
-  return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj); 
-}
-logOut(){
+  resendOtpApi(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj);
+  }
+
+  sendPasskeyEmail(data:any){
+    return this.http.post<any>(`${environment.apiUrl}/shared_email/`, data);
+  }
+
+  verifyOtp(token:string, data:any){
+    return this.http.post<any>(`${environment.apiUrl}/otp_validation/${token}`, data);
+  }
+  logOut(){
   localStorage.removeItem('username');
          localStorage.removeItem('currentUser');
         //  this.currentUserSubject.next(this.currentUserValue);
@@ -209,5 +217,15 @@ logOut(){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/updatepassword/`+this.accessToken,obj)
+  }
+  getCurrentUser(){
+    try {
+      const data = localStorage.getItem('username');
+      if(data){
+        const parsed = JSON.parse(data);
+        return { email: parsed.userName };
+      }
+    } catch (err) {}
+    return null;
   }
 }

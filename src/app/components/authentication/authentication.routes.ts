@@ -28,6 +28,10 @@ export const admin: Routes = [
     loadComponent: () =>
       import('./forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
   },  {
+    path: 'passkey-login',
+    loadComponent: () =>
+      import('./passkey-login/passkey-login.component').then((m) => m.PasskeyLoginComponent),
+  },  {
     path: 'under-maintainance',
     loadComponent: () =>
       import('./under-maintainance/under-maintainance.component').then((m) => m.UnderMaintainanceComponent),

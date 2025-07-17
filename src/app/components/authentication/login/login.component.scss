@@ -1,14 +1,16 @@
-.default-background-color{
-    background-color: #2392c1;
-    color: #fff;
-}
+.default-background-color{ background-color: #2392c1; color: #fff; }
 .default-background-color:focus,
-.default-background-color:active{
-    background-color: #2392c1 !important;
+.default-background-color:active{ background-color: #2392c1 !important; }
+.default-color{ color: #2392c1; }
+.signin-text{ color: #005E87; }
+.login-logo{ height: 60px;}
+
+// for 90% Resolution //
+@media ( 1420px <= width <= 1560px) {
+    img { max-width: 85%; }
 }
-.default-color{
-    color: #2392c1;
-}
-.signin-text{
-    color: #005E87;
+
+// for 100% Resolution //
+@media ( 1280px <= width <= 1420px) {
+ img { max-width: 85%; }
 }

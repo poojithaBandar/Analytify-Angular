@@ -11,6 +11,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import { SharedService } from '../../../shared/services/shared.service';
 import { NgOtpInputModule } from 'ng-otp-input';
+import { error } from 'jquery';
 
 @Component({
   selector: 'app-profile',
@@ -192,8 +193,8 @@ otpError: string = '';
         this.startTimer();
         this.toasterService.success('OTP sent to your email!');
       },
-      error: () => {
-        this.toasterService.error('Failed to send OTP.');
+      error: (error) => {
+         this.toasterService.error(error.error.message);
       }
     });
   }

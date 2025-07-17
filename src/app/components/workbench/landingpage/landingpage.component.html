@@ -33,8 +33,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start">
                          <div class="min-w-fit-content me-2">
-                            <span class="avatar rounded-circle avatar-md br-5 bg-info-transparent text-primary">
-                                <i class="fe fe-grid fs-22"></i>
+                            <span class="avatar rounded-circle avatar-md br-5 landing-dash-bg">
+                               <img src="./assets/images/icons/land-dashboard.png" alt="Google Sheets" class="landing-icon">
                             </span>
                         </div>
                         <div class="flex-grow-1">
@@ -50,8 +50,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start">
                          <div class="min-w-fit-content me-2">
-                            <span class="avatar rounded-circle avatar-md br-5 bg-secondary-transparent text-secondary">
-                                <i class="fa fa-line-chart fs-22"></i>
+                            <span class="avatar rounded-circle avatar-md br-5 landing-chart-bg">
+                               <img src="./assets/images/icons/land-chart.png" alt="Google Sheets" class="landing-icon">
                             </span>
                         </div>
                         <div class="flex-grow-1">
@@ -67,8 +67,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start">
                          <div class="min-w-fit-content me-2">
-                            <span class="avatar rounded-circle avatar-md br-5 bg-info-transparent text-primary">
-                                <i class="fe fe-credit-card fs-22"></i>
+                            <span class="avatar rounded-circle avatar-md br-5 landing-queries-bg">
+                               <img src="./assets/images/icons/land-queries.png" alt="Google Sheets" class="landing-icon">
                             </span>
                         </div>
                         <div class="flex-grow-1">
@@ -84,8 +84,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start">
                          <div class="min-w-fit-content me-2">
-                            <span class="avatar avatar-md br-5 bg-warning-transparent text-warning rounded-circle">
-                                <i class="fa fa-database fs-22"></i>
+                            <span class="avatar rounded-circle avatar-md br-5 landing-data-bg">
+                               <img src="./assets/images/icons/land-data.png" alt="Google Sheets" class="landing-icon">
                             </span>
                         </div>
                         <div class="flex-grow-1">
@@ -595,7 +595,7 @@
                                 @for(database of connectionList;track database){
                                 <tr>
                                     <td>
-                                        <div class="d-flex mt-0">
+                                        <div class="d-flex align-items-center mt-0">
                                             <!-- <span class="rounded-5  p-2 border">
                                                 <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img w-5 h-5">
                                             </span> -->
@@ -711,8 +711,8 @@
                                                 class="card-img w-5 h-5" />
                                             </span>
                                             <div class="ms-2">
-                                                <p class="mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</p>
-                                                <span class="text-muted">{{database.server_type}}</span>
+                                                <h6 class="mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</h6>
+                                                <span class="text-muted fs-12">{{database.server_type | lowercase}}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -851,9 +851,10 @@
             <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="sharePublish($event)" [closeOnSelect]="true" placeholder="Share or Publish">
              <ng-option  value="public" selected>Public</ng-option>
              <ng-option  value="private" selected>Private</ng-option>
-            </ng-select>
-           </div>
-          <div *ngIf="shareAsPrivate" class="">
+             <ng-option  value="protected" selected>Protected</ng-option>
+             </ng-select>
+             </div>
+            <div *ngIf="shareAsPrivate" class="">
             
                <p class="fw-semibold mb-0 mt-3">Roles</p>
                <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="onRolesChange($event)" [closeOnSelect]="false" [(ngModel)]="selectedRoleIds"  [multiple]="true" placeholder="Select Roles">
@@ -869,7 +870,12 @@
               
             </ng-select>
        </div>
-       <div *ngIf="publishedDashboard" class="">
+       <div *ngIf="shareAsProtected" class="">
+            <p class="fw-semibold mb-0 mt-3">Emails</p>
+            <ng-select class="form-control p-0" [addTag]="true" [multiple]="true" [(ngModel)]="protectedEmails" placeholder="Add emails"></ng-select>
+            <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" />
+       </div>
+        <div *ngIf="publishedDashboard" class="">
             
         <p class="fw-semibold mb-2 mt-3">Url</p>
         <button class="btn text-left border">{{publicUrl}}
@@ -882,7 +888,13 @@
    </div>
       </div>
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl  && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button
+          type="button"
+          [disabled]="shareAsPrivate ? (!selectedRoleIds?.length || !selectedUserIds?.length) : (shareAsProtected ? !protectedEmails.length : false)"
+          *ngIf="!createUrl  && !applyButtonEnableOnEditUser"
+          (click)="saveDashboardProperties()"
+          class="btn ripple btn-primary"
+        >Apply</button>
         <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
 
         <button
