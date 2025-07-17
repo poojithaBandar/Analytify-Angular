@@ -206,13 +206,24 @@ getTokensalesforce(data:any){
          localStorage.clear();
          //this.userSubject.next(null);
          window.location.reload();
-  
-         this.router.navigate(['/authentication/signin']) 
+
+         this.router.navigate(['/authentication/signin'])
         //  .then(() => {
-        //  }); 
+        //  });
          return of({ success: false });
   }
-  
+
+  getCurrentUser(){
+    try {
+      const data = localStorage.getItem('username');
+      if(data){
+        const parsed = JSON.parse(data);
+        return { email: parsed.userName };
+      }
+    } catch (err) {}
+    return null;
+  }
+
   updatePassword(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
