@@ -97,6 +97,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     this.themeService.setCurrentTheme(data.custome_theme);
     this.switcherComponent.setCustomThemeData(data.custome_theme);
     this.sharedService.setprofileImage(data.imagepath);
+    localStorage.setItem('profileImage', data.imagepath);
     if(data.previlages){
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }

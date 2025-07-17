@@ -218,14 +218,25 @@ export class HeaderComponent implements OnInit {
     this.navServices.items.subscribe((menuItems) => {
       this.items = menuItems;
     });
-    this.sharedService.profileImage$.subscribe((url: string | null) => {
-      if(url){
-        this.profileImage = url;
-      } else {
-                  this.profileImage = './assets/images/users/18.jpg'; // Default image
-      }
-      });
+    // On init, check localStorage for profile image
+    const savedProfileImage = localStorage.getItem('profileImage');
+    if (savedProfileImage) {
+      this.profileImage = savedProfileImage;
+    } else {
+      this.profileImage = './assets/images/users/18.jpg'; // Default image
     }
+    this.sharedService.profileImage$.subscribe((url: string | null) => {
+      // Only update if a valid URL is emitted (not null/empty/undefined)
+      if (url && url.trim() !== '') {
+        const currentStored = localStorage.getItem('profileImage');
+        if (url !== currentStored) {
+          this.profileImage = url;
+          localStorage.setItem('profileImage', url);
+        }
+      }
+      // Do not overwrite with null/empty, so reload keeps last good image
+    });
+  }
     // let html = this.elementRef.nativeElement.ownerDocument.documentElement;
     // html.setAttribute('data-toggled', 'icon-overlay-close');
   
