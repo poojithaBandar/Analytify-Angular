@@ -70,6 +70,8 @@ ngOnInit(){
 // }
 addRolesDivOpen(){
 this.addRoleDiv = true;
+this.savedRolesList = [];
+this.roleTitle = '';
 // this.router.navigate(['/analytify/roles/add-role'])
 }
 updateRolesDivOpen(id:any){
@@ -345,6 +347,8 @@ editRoles(){
       //   width: '400px',
       // })
       this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+      this.selectedArray = [];
+      this.roleTitle = '';
       this.getSavedRolesList();
       this.viewSavedRoles();
      },

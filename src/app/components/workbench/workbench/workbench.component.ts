@@ -1281,12 +1281,30 @@ export class WorkbenchComponent implements OnInit{
               this.openShopifyForm = false;
               }
               const encodedId = btoa(this.databaseId.toString());
-              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                this.switchDatabase();
               }else{
-              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                Swal.fire({
+                  position: "center",
+                  iconHtml: '<img src="./assets/images/copilot.gif">',
+                  title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+                  showConfirmButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: 'Yes',
+                  cancelButtonText: 'Skip',
+                  customClass: {
+                    icon: 'no-icon-bg',
+                  }
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    this.templateDashboardService.buildSampleShopifyDashboard(this.container, this.databaseId);
+                  } else {
+                    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  }
+                });
               }
             }
           },
@@ -2944,6 +2962,9 @@ connectGoogleSheets(){
         switch(database.server_type){
           case 'TALLY':
             this.templateDashboardService.buildSampleTallyDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'SHOPIFY':
+            this.templateDashboardService.buildSampleShopifyDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'SALESFORCE':
             this.templateDashboardService.buildSampleSalesforceDashboard(this.container, database.hierarchy_id, responce);
