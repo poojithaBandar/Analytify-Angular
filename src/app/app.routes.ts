@@ -7,6 +7,7 @@ import { authen } from './shared/routes/authenticationroutes';
 // import { landing } from './shared/routes/landingroutes';
 import { workbench } from './shared/routes/workbenckroutes';
 import { WorkbenchLayoutsComponent } from './shared/layout-components/layouts/workbench-layouts/workbench-layouts.component';
+import { authGuard } from './auth.guard';
 export const App_Route: Route[] = [
       { path: '', redirectTo: 'authentication/login', pathMatch: 'full' },
       {
@@ -26,8 +27,14 @@ export const App_Route: Route[] = [
       },
       {
         path: 'dashboard/share/protected/:id1',
-        loadComponent: () =>
-          import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+        component: WorkbenchLayoutsComponent,
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+          },
+        ],
       },
       {
         path: 'protected/home',
@@ -62,3 +69,4 @@ export const App_Route: Route[] = [
 
 
     ]
+

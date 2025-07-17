@@ -12,7 +12,7 @@
 
     <app-page-header (btnClickEvent)="toggleSidebar()" title="{{dashboardTagName}}" title1="public" [isPublicUrl]="false" activeitem="Dashboard"></app-page-header>
     </div>
-  <div *ngIf="isProtectedUrl && hasProtectedAccess" class="p-2">
+  <div *ngIf="isProtectedUrl && hasProtectedAccess && !isAuthenticated" class="p-2">
     <button class="btn btn-link" (click)="goBackToProtectedHome()">Back to Dashboards</button>
   </div>
   <!-- <div *ngIf="publicHeader">
