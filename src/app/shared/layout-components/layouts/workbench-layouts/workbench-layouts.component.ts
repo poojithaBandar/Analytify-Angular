@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { Menu, NavService } from '../../../services/navservice';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
@@ -11,7 +11,7 @@ import { SharedModule } from '../../../sharedmodule';
   templateUrl: './workbench-layouts.component.html',
   styleUrl: './workbench-layouts.component.scss'
 })
-export class WorkbenchLayoutsComponent {
+export class WorkbenchLayoutsComponent implements OnInit {
   public menuItems!: Menu[];
   currentRoute:  string | undefined;
   urlData:  string[] | undefined;
@@ -26,11 +26,8 @@ export class WorkbenchLayoutsComponent {
  ) {
   this.router.events.pipe(
     filter(event => event instanceof NavigationEnd)
-  ).subscribe((event: NavigationEnd) => {
+  ).subscribe(() => {
     window.scrollTo(0, 0);
-    this.isAuthenticated = !!localStorage.getItem('currentUser');
-    const url = (event as NavigationEnd).urlAfterRedirects;
-    this.hideLayout = url.startsWith('/dashboard/share/protected') && !this.isAuthenticated;
   });
   document.body.classList.remove( 'landing-page','ltr');
   // document.body.classList.add('sidebar-mini');
@@ -41,6 +38,15 @@ export class WorkbenchLayoutsComponent {
   //  });
   
  }
+ ngOnInit(){
+  this.isAuthenticated = !!localStorage.getItem('currentUser');
+  this.updateLayout(this.router.url);
+ }
+
+ private updateLayout(url: string){
+  this.hideLayout = url.startsWith('/dashboard/share/protected') && !this.isAuthenticated;
+ }
+
  togglesidemenuBody() {
   document.querySelector('.offcanvas-end')?.classList.remove('show')
   document.querySelector("body")!.classList.remove("overflow:hidden");

@@ -27,14 +27,8 @@ export const App_Route: Route[] = [
       },
       {
         path: 'dashboard/share/protected/:id1',
-        component: WorkbenchLayoutsComponent,
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
-          },
-        ],
+        loadComponent: () =>
+          import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
       },
       {
         path: 'protected/home',

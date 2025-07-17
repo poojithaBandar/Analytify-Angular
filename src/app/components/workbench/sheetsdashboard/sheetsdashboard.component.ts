@@ -198,7 +198,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   isProtectedUrl = false;
   isProtectedValidated = false;
   hasProtectedAccess = false;
-  isAuthenticated = false;
   encryptedEmail: string | null = null;
   passkey: string = '';
   @ViewChild('passkeyModal') passkeyModal:any;
@@ -258,7 +257,6 @@ export class SheetsdashboardComponent implements OnDestroy {
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef){
     this.dashboard = [];
-    this.isAuthenticated = !!localStorage.getItem('currentUser');
     const currentUrl = this.router.url;
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
@@ -278,7 +276,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       // protected dashboards always use public APIs
       this.isPublicUrl = true;
       this.active = 2;
-      this.publicHeader = !this.isAuthenticated;
+      this.publicHeader = true;
       if (route.snapshot.params['id1']) {
         this.dashboardId = +atob(route.snapshot.params['id1']);
       }
@@ -577,7 +575,7 @@ export class SheetsdashboardComponent implements OnDestroy {
 
   ngOnInit() {
     this.hasProtectedAccess = localStorage.getItem('protected_access') === 'true';
-    if(this.hasProtectedAccess || this.isAuthenticated){
+    if(this.hasProtectedAccess){
       this.isProtectedValidated = true;
     }
     let displayGrid = DisplayGrid.Always;
