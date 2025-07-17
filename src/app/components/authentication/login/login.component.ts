@@ -10,6 +10,7 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import { SwitcherComponent } from '../../../shared/layout-components/switcher/switcher.component';
 import { CustomThemeService } from '../../../services/custom-theme.service';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-login',
@@ -44,7 +45,7 @@ toggleVisibility1() {
   }
 }
   constructor(
-    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,private switcherComponent: SwitcherComponent,private themeService : CustomThemeService,
+    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,private switcherComponent: SwitcherComponent,private themeService : CustomThemeService,private sharedService: SharedService,
     private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService,private loaderService : LoaderService
   ) {
     const currentUser = localStorage.getItem('currentUser');
@@ -95,6 +96,13 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     this.themeService.setApiCustomTheme(data.custome_theme);
     this.themeService.setCurrentTheme(data.custome_theme);
     this.switcherComponent.setCustomThemeData(data.custome_theme);
+    if(data.imagepath){
+    this.sharedService.setprofileImage(data.imagepath);
+    localStorage.setItem('profileImage', data.imagepath);
+    }else{
+      this.sharedService.setprofileImage('./assets/images/users/18.jpg');
+    localStorage.setItem('profileImage', './assets/images/users/18.jpg');
+    }
     if(data.previlages){
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }

@@ -10,11 +10,12 @@ import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule],
+  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule,TimeAgoPipe],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
@@ -51,6 +52,10 @@ port:any;
 host:any;
 publishedDashboard = false;
 testVariableToChange! : string ;
+totalDashbaords:any;
+totalSheets:any;
+totalQueries:any;
+totalDatabases:any;
 @ViewChild('propertiesModal') propertiesModal : any;
 @ViewChild('sampleDashboardPropertiesModal') sampleDashboardPropertiesModal : any;
 
@@ -99,7 +104,7 @@ getDbConnectionList(){
     next:(data)=>{
       this.connectionList = data.sheets
       console.log('jdhcvjsh',this.connectionList);
-
+      this.totalDatabases = data.total_items
      },
     error:(error)=>{
       console.log(error);
@@ -125,7 +130,7 @@ getuserSheets(){
       next:(data:any) =>{
         this.userSheetsList=data?.sheets
         console.log(this.userSheetsList)
-
+        this.totalSheets = data.total_items;
       },
       error:(error:any)=>{
       console.log(error);
@@ -153,7 +158,7 @@ getuserDashboardsList(){
         this.savedDashboardList=data.sheets;
         this.demoDashboardList = data.sample_dashboards;
         console.log(this.savedDashboardList)
-
+        this.totalDashbaords = data.total_items;
       },
       error:(error:any)=>{
       console.log(error);
@@ -178,7 +183,8 @@ getSavedQueries(){
   this.workbechService.getSavedQueryList(Obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.savedQueryList = data?.sheets
+      this.savedQueryList = data?.sheets;
+      this.totalQueries = data.total_items;
      },
     error:(error)=>{
       console.log(error);
