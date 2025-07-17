@@ -198,6 +198,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   isProtectedUrl = false;
   isProtectedValidated = false;
   hasProtectedAccess = false;
+  protectedQuery = false;
+  isAuthenticated = false;
   encryptedEmail: string | null = null;
   passkey: string = '';
   @ViewChild('passkeyModal') passkeyModal:any;
@@ -300,8 +302,18 @@ export class SheetsdashboardComponent implements OnDestroy {
     //     }
     // }
     else if(currentUrl.includes('analytify/home/sheetsdashboard')){
-      this.dashboardView = true;
-      this.updateDashbpardBoolen= true
+      this.updateDashbpardBoolen = true;
+      const isProtected = this.route.snapshot.queryParamMap.get('protected') === 'true';
+      this.protectedQuery = isProtected;
+      if (isProtected) {
+        this.isProtectedUrl = true;
+        this.isPublicUrl = true;
+        this.active = 2;
+        this.publicHeader = false;
+      } else {
+        this.dashboardView = true;
+        this.publicHeader = true;
+      }
       if (route.snapshot.params['id3']) {
         // this.databaseId = +atob(route.snapshot.params['id1']);
         // this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -316,7 +328,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         const dbcopy = navigation?.extras?.state?.['dbCopy'] ?? history.state?.['dbCopy'];
         if(dbcopy){
           this.toasterService.success('Dashboard Copied Successfully.','success',{ positionClass: 'toast-top-right'})
-        }else if (dbSwitched) {
+        }else if (dbSwitched && !isProtected) {
           this.getSavedDashboardData();
            setTimeout(() => {
             this.refreshDashboard(true);  // might run before API completes!
@@ -574,6 +586,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   }
 
   ngOnInit() {
+    this.isAuthenticated = !!localStorage.getItem('currentUser');
     this.hasProtectedAccess = localStorage.getItem('protected_access') === 'true';
     if(this.hasProtectedAccess){
       this.isProtectedValidated = true;
