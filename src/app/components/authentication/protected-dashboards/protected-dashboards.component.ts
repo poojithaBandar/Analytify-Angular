@@ -33,6 +33,13 @@ export class ProtectedDashboardsComponent implements OnInit {
 
   openDashboard(id: number): void {
     const encoded = btoa(id.toString());
-    this.router.navigate(['/dashboard/share/protected', encoded]);
+    const isAuthenticated = !!localStorage.getItem('currentUser');
+    if (isAuthenticated) {
+      this.router.navigate(['/analytify/home/sheetsdashboard', encoded], {
+        queryParams: { protected: true }
+      });
+    } else {
+      this.router.navigate(['/dashboard/share/protected', encoded]);
+    }
   }
 }
