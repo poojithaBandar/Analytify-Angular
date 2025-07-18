@@ -1102,6 +1102,12 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/import_dashboard/`+this.accessToken,object);
     }
 
+    getSharedConnections(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/shared_connections/`+this.accessToken,object);
+    }
+
     getSheetSdkData(object:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
