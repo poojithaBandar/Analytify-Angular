@@ -84,7 +84,7 @@
                                   (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                                   [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
                                   <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
-                                  <button class="btn btn-icon btn-sm btn-purple-light btn-wave waves-effect waves-light" ngbTooltip="Export Dashboard" (click)="openExportDashboard(dashboard.dashboard_id, exportDashboardModal)"><i class="bi bi-download"></i></button>
+                                  <button class="btn btn-icon btn-sm btn-purple-light btn-wave waves-effect waves-light" ngbTooltip="Export Dashboard" (click)="openExportDashboard(dashboard.dashboard_id, dashboard.dashboard_name, exportDashboardModal)"><i class="bi bi-download"></i></button>
                                   <button class="btn btn-icon btn-sm btn-orange-light btn-wave waves-effect waves-light" ngbTooltip="Set Alerts" (click)="gotoConfigureEmailAlerts(dashboard.dashboard_id)"><i class="fa fa-bell" ></i></button>
                                   <button class="btn btn-icon btn-sm btn-blue-light btn-wave waves-effect waves-light" ngbTooltip="Copy Dashboard" (click)="copyDashboard(dashboard.dashboard_id)"><i class="fa fa-copy" ></i></button>
                                   <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Protected Share - {{dashboard.count_of_views}}"  (click)="openViewerList(dashboard.dashboard_id)"><i class="fa fa-eye" ></i></button>
@@ -143,7 +143,7 @@
                             (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                             [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
                             <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
-                            <button class="btn btn-icon btn-sm btn-purple-light btn-wave waves-effect waves-light me-2" ngbTooltip="Export Dashboard" (click)="openExportDashboard(dashboard.dashboard_id, exportDashboardModal)"><i class="bi bi-download"></i></button>
+                            <button class="btn btn-icon btn-sm btn-purple-light btn-wave waves-effect waves-light me-2" ngbTooltip="Export Dashboard" (click)="openExportDashboard(dashboard.dashboard_id, dashboard.dashboard_name, exportDashboardModal)"><i class="bi bi-download"></i></button>
                             <button class="btn btn-icon btn-sm btn-orange-light btn-wave waves-effect waves-light me-2" ngbTooltip="Set Alerts" (click)="gotoConfigureEmailAlerts(dashboard.dashboard_id)"><i class="fa fa-bell" ></i></button>
                             <button class="btn btn-icon btn-sm btn-blue-light btn-wave waves-effect waves-light me-2" ngbTooltip="Copy Dashboard" (click)="copyDashboard(dashboard.dashboard_id)"><i class="fa fa-copy" ></i></button>
                             <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Protected Share - {{dashboard.count_of_views}}"  (click)="openViewerList(dashboard.dashboard_id)"><i class="fa fa-eye" ></i></button>
@@ -175,6 +175,7 @@
       <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
     </div>
     <div class="modal-body">
+      <p class="fw-semibold">{{ exportDashboardName }}</p>
       <p>Generate a secure key to share your dashboard structure with other accounts.</p>
 
       <form [formGroup]="exportForm">
