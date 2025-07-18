@@ -807,7 +807,7 @@
                                                                 </div>
                                                             }
                                                         </div> -->
-                                                        <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
+                                                        <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;" (scrolledIndexChange)="onFilterScroll($event)">
                                                             <div *cdkVirtualFor="let data of filterData | test:filterSearch:'label'; trackBy: trackByFn; let i = index">
                                                                 <div class="form-check d-flex" >
                                                                     <input type="checkbox" [id]="'checkbox' + i" [(ngModel)]="data.selected"
@@ -816,6 +816,10 @@
                                                                 </div>
                                                             </div>
                                                         </cdk-virtual-scroll-viewport>
+                                                        <div class="text-center py-2" *ngIf="isFilterLoading">
+                                                            <div class="spinner-border text-primary" role="status"></div>
+                                                        </div>
+                                                        <p class="text-center" *ngIf="!isFilterLoading && !hasMoreFilterData">No more data</p>
                                                         </div>
                                                     </ng-template>
                                                 </li>
@@ -1373,7 +1377,7 @@
                                                                     </div>
                                                                 }
                                                             } -->
-                                                            <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;">
+                                                            <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;" (scrolledIndexChange)="onFilterScroll($event)">
                                                                 <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn" class="form-check-container">
                                                                   <div class="form-check">
                                                                     <input type="checkbox" [id]="'defaultCheck' + data.label"
@@ -1386,6 +1390,10 @@
                                                                   </div>
                                                                 </div>
                                                               </cdk-virtual-scroll-viewport>
+                                                              <div class="text-center py-2" *ngIf="isFilterLoading">
+                                                                <div class="spinner-border text-primary" role="status"></div>
+                                                              </div>
+                                                              <p class="text-center" *ngIf="!isFilterLoading && !hasMoreFilterData">No more data</p>
                                                         </div>
                                                     </ng-template>
                                                 </li>
@@ -1769,7 +1777,7 @@
                                                                     </div>
                                                                 }
                                                                 </div> -->
-                                                                <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;">
+                                                                <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="virtual-scroll-container" style="height: 410px;" (scrolledIndexChange)="onFilterScroll($event)">
                                                                     <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label';" class="form-check-container">
                                                                       <div class="form-check">
                                                                         <input type="checkbox" [id]="'defaultCheck' + data.label"
@@ -1782,6 +1790,10 @@
                                                                       </div>
                                                                     </div>
                                                                   </cdk-virtual-scroll-viewport>
+                                                                  <div class="text-center py-2" *ngIf="isFilterLoading">
+                                                                    <div class="spinner-border text-primary" role="status"></div>
+                                                                  </div>
+                                                                  <p class="text-center" *ngIf="!isFilterLoading && !hasMoreFilterData">No more data</p>
                                                         </div>
                                                     </ng-template>
                                                 </li>
@@ -2902,7 +2914,7 @@
                                                                                                 </div>
                                                                                             }
                                                                                         } -->
-                                                                                        <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;">
+        <cdk-virtual-scroll-viewport itemSize="15" *ngIf="filterData.length > 0" class="viewport" style="height: 510px;" (scrolledIndexChange)="onFilterScroll($event)">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn; let i = index">
                                                                                                 <div class="form-check d-flex">
                                                                                                     <input type="checkbox" [id]="'checkbox' + i" [(ngModel)]="data.selected"
@@ -2910,8 +2922,12 @@
                                                                                                     <label [for]="'checkbox' + i" class="form-check-label">{{ data.label }}</label>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </cdk-virtual-scroll-viewport>
-                                                                                    </div>
+        </cdk-virtual-scroll-viewport>
+        <div class="text-center py-2" *ngIf="isFilterLoading">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+        <p class="text-center" *ngIf="!isFilterLoading && !hasMoreFilterData">No more data</p>
+    </div>
                                                                                 </ng-template>
                                                                             </li>
                                                                             <li [ngbNavItem]="2" [class.disabled]="formatExtractType || (activeTabId !== 2)">
@@ -3317,7 +3333,7 @@
                                                                                                 </div>
                                                                                             }
                                                                                         </div> -->
-                                                                                        <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;">
+        <cdk-virtual-scroll-viewport itemSize="15" class="viewport" style="height: 510px;" (scrolledIndexChange)="onFilterScroll($event)">
                                                                                             <div *cdkVirtualFor="let data of filterData | test:editFilterSearch:'label'; trackBy: trackByFn; let i = index">
                                                                                                 <div class="form-check d-flex" >
                                                                                                     <input type="checkbox" [id]="'checkbox' + i" [(ngModel)]="data.selected"
@@ -3325,8 +3341,12 @@
                                                                                                     <label [for]="'checkbox' + i" class="form-check-label">{{ data.label }}</label>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </cdk-virtual-scroll-viewport>
-                                                                                    </div>
+        </cdk-virtual-scroll-viewport>
+        <div class="text-center py-2" *ngIf="isFilterLoading">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+        <p class="text-center" *ngIf="!isFilterLoading && !hasMoreFilterData">No more data</p>
+    </div>
                                                                                 </ng-template>
                                                                             </li>
                                                                             @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
