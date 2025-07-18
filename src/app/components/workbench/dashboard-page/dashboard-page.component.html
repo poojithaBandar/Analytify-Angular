@@ -19,12 +19,12 @@
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="dashboardName" (keyup.enter)="searchDashboarList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchDashboarList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
 
-            <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary new-sheet-btn-radius'" [previledgeId]="34" [isBtn]="true"
+            <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary new-sheet-btn-radius me-2'" [previledgeId]="34" [isBtn]="true"
             (btnClickEvent)="dashboardRoute()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
 
-            <button class="btn btn-primary ms-2" (click)="openImportDashboard(importDashboardModal)">
-              <i class="bi bi-download"></i> Import Dashboard
-            </button>
+            <app-insights-button [buttonName]="' Import Dashboard'" [classesList]="'btn btn-primary new-sheet-btn-radius'" [previledgeId]="34" [isBtn]="true"
+            (btnClickEvent)="openImportDashboard(importDashboardModal)" [isIcon]="true" [faIconList]="'fa fa-download'"></app-insights-button>
+
           </div>
         </div>
     </div>
