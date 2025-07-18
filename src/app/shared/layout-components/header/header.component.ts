@@ -363,8 +363,5 @@ export class HeaderComponent implements OnInit {
   routeToUpdatePasswordPage(){
     this.router.navigate(['/analytify/update-password']);
   }
-  routeToDashboardSkeletonPage(){
-    this.router.navigate(['/analytify/dashboard/transfer']);
-  }
 }
 
