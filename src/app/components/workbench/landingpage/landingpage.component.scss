@@ -41,7 +41,7 @@ h6 { font-size: 14px; }
 .fs-11 { font-size: 11px !important; }
 .table td{ font-size: 12px;}
 .quick-start-txt { font-size: 13px; }
-.table-responsive { height: 499px; overflow: hidden;}
+.table-responsive { height: 499px; overflow: auto;}
 .text-truncate { max-width: 115px !important;}
 .card-text { font-size: 12px; }
 }
@@ -59,7 +59,7 @@ h1, h1 { font-size: 37px; }
 .new-chart-btn { font-size: 11px; }
 .form-control{ padding: 0.275rem 0.75rem; }
 .input-group-text{ padding: 0.275rem 0.75rem; }
-.table-responsive{ height: 487px; overflow: hidden; }
+.table-responsive{ height: 487px; overflow: auto; }
 .text-truncate { max-width: 90px !important;}
 .card-text{ font-size: 11px;}
 }

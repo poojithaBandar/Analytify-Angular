@@ -369,11 +369,9 @@ button.FaFaIconProperties { padding: 6px 8px; border-top-left-radius: 0px !impor
 .genie-animate.bounce {
   animation: genieBounce 0.7s cubic-bezier(.68,-0.55,.27,1.55);
 }
-.hide-show-btn{ width: fit-content;  cursor: pointer;  position: relative;  right: 25px;  top: 300px;  z-index: 9;  padding: 3px 6px;}
-.sheet-card-top {
-    position: relative;
-    top: -26px;
-}
+.hide-show-btn{ width: fit-content;  cursor: pointer;  position: relative;  right: 18px;  top: 300px;  z-index: 9;  padding: 6px 9px;}
+.sheet-card-top { position: relative; top: -26px; }
+.card-top{  margin-top: 15px; padding: 5px; }
 
 @media ( 1280px <= width <= 1422px) {
   .dropdown-menu.SelectDropDownCard.show {
