@@ -504,7 +504,7 @@ applyProtectedEmails(){
     emails_ids: emails
   };
   this.workbechService.generateProtectedLink(obj).subscribe({
-    next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
+    next: ()=>{ this.toasterservice.success('Emails Sent Successfully.','success'); },
     error: ()=>{}
   });
 }
