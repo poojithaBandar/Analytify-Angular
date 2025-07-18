@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { WorkbenchService } from '../workbench.service';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-protected-dashboards',
@@ -16,7 +17,7 @@ export class ProtectedDashboardsComponent implements OnInit {
   dashboards: any[] = [];
   gridView = true;
 
-  constructor(private workbenchService: WorkbenchService, private router: Router) {}
+  constructor(private workbenchService: WorkbenchService, private router: Router, private loaderService: LoaderService) {}
 
   ngOnInit(): void {
     const token = JSON.parse(localStorage.getItem('currentUser') || '{}').Token;
@@ -26,6 +27,7 @@ export class ProtectedDashboardsComponent implements OnInit {
     this.workbenchService.getProtectedDashboardsList(token).subscribe({
       next: (data) => {
         this.dashboards = data?.sheets || [];
+        this.loaderService.hide();
       },
       error: () => {}
     });
