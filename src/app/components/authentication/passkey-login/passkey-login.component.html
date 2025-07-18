@@ -25,6 +25,8 @@
               <button class="btn btn-primary" type="submit" [disabled]="emailForm.invalid">Send Email</button>
             </div>
             <div class="text-success mt-2" *ngIf="successMessage">{{ successMessage }}</div>
+            <div class="text-danger mt-2" *ngIf="errorMessage">{{ errorMessage }}</div>
+
           </form>
           <form [formGroup]="otpForm" (ngSubmit)="verifyOtp()" *ngIf="showOtp">
             <div class="mb-3">

@@ -3,7 +3,7 @@
 <div class="main-container container-fluid TopHeader">
   <div class="row card-padding-top">
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0">
-      <div class="d-flex justify-content-between px-5">
+      <div *ngIf="dashboards.length > 0" class="d-flex justify-content-between px-5">
         <div class="connect-txt">
           <h4 class="card-title mt-2">Dashboards</h4>
         </div>

@@ -82,8 +82,8 @@ export class PasskeyLoginComponent {
         this.successMessage = 'OTP sent to registered email';
         this.errorMessage = '';
       },
-      error: ()=>{
-        this.errorMessage = 'Failed to send OTP';
+      error: (error: any)=>{
+        this.errorMessage = error?.error?.message;
         this.successMessage = '';
       }
     });
