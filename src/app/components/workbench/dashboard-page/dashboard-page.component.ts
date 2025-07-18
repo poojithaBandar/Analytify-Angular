@@ -1,22 +1,23 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [NgbModule,CommonModule,SharedModule,FormsModule,NgxPaginationModule,InsightsButtonComponent,NgSelectModule],
+  imports: [NgbModule,CommonModule,SharedModule,FormsModule,ReactiveFormsModule,NgxPaginationModule,InsightsButtonComponent,NgSelectModule],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss'
 })
@@ -48,6 +49,8 @@ export class DashboardPageComponent implements OnInit{
   host:any; 
   @ViewChild('propertiesModal') propertiesModal : any;
   @ViewChild('viewerListModal') viewerListModal : any;
+  @ViewChild('exportDashboardModal') exportDashboardModal: any;
+  @ViewChild('importDashboardModal') importDashboardModal: any;
   frequency : number = 0;
   refreshNow: boolean = false;
   lastRefresh: any;
@@ -56,9 +59,19 @@ export class DashboardPageComponent implements OnInit{
   viewerSearch: string = '';
   selectedDashboardForViewers: any;
   hoverIndex: number | null = null;
+
+  exportForm!: FormGroup;
+  generatedKey = '';
+  exportDashboardId: any;
+  exportDashboardName = '';
+  importKey = '';
+  importDashboardName = '';
+  dataSource: any;
+  dataSources: any[] = [];
+  @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
-  private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
+  private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService,private fb: FormBuilder,private templateDashboardService: TemplateDashboardService){
   this.viewDashboardList=this.templateViewService.viewDashboard()
 
 }
@@ -68,6 +81,9 @@ ngOnInit(){
   this.getuserDashboardsListput();
   }
   this.getHostAndPort();
+  this.exportForm = this.fb.group({
+    title: ['', Validators.required]
+  });
 }
 getHostAndPort(): void {
   const { hostname, port } = window.location;
@@ -540,6 +556,74 @@ sendReminder(email: string){
   this.workbechService.sendEmailReminder(obj).subscribe({
     next: () => this.toasterservice.success(`Reminder set for ${email}`,'success'),
     error: () => this.toasterservice.error('Failed to set reminder','error')
+  });
+}
+
+openExportDashboard(id: any, name: string, modal: any){
+  this.exportDashboardId = id;
+  this.exportDashboardName = name;
+  this.generatedKey = '';
+  this.exportForm.reset();
+  this.exportForm.patchValue({ title: name });
+  this.modalService.open(modal, { centered: true });
+}
+
+generateKey(){
+  if(this.exportForm.invalid){ return; }
+  const obj = {
+    dashboard_id: this.exportDashboardId,
+  };
+  this.workbechService.exportDashboard(obj).subscribe({
+    next: (res:any)=>{ this.generatedKey = res.shared_dashboard_token; this.toasterservice.success('Export key generated','success'); },
+    error: (err)=> this.toasterservice.error(err.error?.message || 'Failed to generate key','error')
+  });
+}
+
+copyKey(){
+  navigator.clipboard.writeText(this.generatedKey);
+  this.toasterservice.success('Copied','success');
+}
+
+resetImportForm() {
+  this.importKey = '';
+  this.importDashboardName = '';
+  this.dataSource = '';
+  this.dataSources = []; // Optional: clear available sources if needed
+}
+
+openImportDashboard(modal: any){
+  this.importKey = '';
+  this.importDashboardName = '';
+  this.dataSource = null;
+  this.dataSources = [];
+  this.modalService.open(modal, { centered: true });
+}
+
+fetchDataSources(){
+  if(!this.importKey){ return; }
+  const obj = { dashboard_import_id: this.importKey };
+  this.workbechService.getSharedConnections(obj).subscribe({
+    next: (res:any)=>{ this.dataSources = res || []; },
+    error: ()=>{ this.dataSources = []; }
+  });
+}
+
+importDashboard(modal: any){
+  if(!this.importKey || !this.dataSource || !this.importDashboardName){
+    this.toasterservice.error('Please fill all fields','error');
+    return;
+  }
+  const obj = {
+    hierarchy_id: this.dataSource.hierarchy_id || this.dataSource,
+    dashboard_name: this.importDashboardName,
+    dashboard_import_id: this.importKey
+  };
+  this.workbechService.importDashboard(obj).subscribe({
+    next: (res: any)=>{
+      modal.dismiss('Cross click');
+      this.templateDashboardService.buildDashboardTransfer(this.container,res);
+    },
+    error: (err)=> this.toasterservice.error(err.error?.message || 'Import failed','error')
   });
 }
 

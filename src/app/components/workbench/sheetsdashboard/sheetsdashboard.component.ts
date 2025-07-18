@@ -325,7 +325,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         this.publicHeader = false;
       } else {
         this.dashboardView = true;
-        this.publicHeader = true;
+        this.publicHeader = false;
       }
       if (route.snapshot.params['id3']) {
         // this.databaseId = +atob(route.snapshot.params['id1']);

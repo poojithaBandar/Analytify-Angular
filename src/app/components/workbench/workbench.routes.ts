@@ -271,12 +271,6 @@ export const admin: Routes = [
         import('./protected-dashboards/protected-dashboards.component').then((m) => m.ProtectedDashboardsComponent),
       },
       {
-        path: 'dashboard/transfer',
-        canActivate: [authGuard],
-        loadComponent: () =>
-          import('./dashboard-transfer/dashboard-transfer.component').then(m => m.DashboardTransferComponent)
-      },
-      {
         path: 'sheets-dashboard',
         canActivate: [authGuard],
         loadComponent: () =>
