@@ -44,7 +44,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatT
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
-import { lastValueFrom, Subscription, timer } from 'rxjs';
+import { lastValueFrom, Subscription, timer, Subject, debounceTime } from 'rxjs';
 import { boolean, evaluate, i, parse, re } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
@@ -537,6 +537,13 @@ export class SheetsComponent{
 
   }
   ngOnInit(): void {
+    this.filterScrollSubscription = this.filterScroll$
+      .pipe(debounceTime(200))
+      .subscribe((index) => {
+        if (index + 10 >= this.filterData.length) {
+          this.loadMoreFilterData();
+        }
+      });
     if(this.sdkSheetId){
       this.retriveDataSheet_id = this.sdkSheetId;
       this.qrySetId = this.sdkQuerySetID;
@@ -577,6 +584,8 @@ export class SheetsComponent{
     }
     console.log(this.defaultColorSchemes);
   }
+  ngOnDestroy(): void {
+    this.filterScrollSubscription?.unsubscribe();
   }
   isColorSchemeDropdownOpen = false;
   toggleDropdownColorScheme() {
@@ -3240,6 +3249,8 @@ error: (error) => {
   openSuperScaled(modal: any,data:any) {
     this.filterSearch = '';
     this.filterDataArray.clear();
+    this.resetFilterPagination();
+    this.isEditMode = false;
     this.isExclude = false;
     this.isEmbed = false;
     this.modalService.open(modal, {
@@ -3256,6 +3267,19 @@ error: (error) => {
     this.filterDataGet();
   }
   filterData = [] as any;
+  filterLimit: number = 50;
+  filterOffset: number = 0;
+  hasMoreFilterData: boolean = true;
+  isFilterLoading: boolean = false;
+  isEditMode: boolean = false;
+  private filterScroll$ = new Subject<number>();
+  private filterScrollSubscription?: Subscription;
+
+  resetFilterPagination() {
+    this.filterOffset = 0;
+    this.filterData = [];
+    this.hasMoreFilterData = true;
+  }
   filter_id: any;
   minValue: any;
   maxValue: any;
@@ -3352,7 +3376,13 @@ error: (error) => {
   formatExtractType : string = '';
   extractTypesForTab : any[] = ['year','quarter','month','day','week numbers','weekdays','count','count_distinct','min','max'];
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
-  filterDataGet(){
+  filterDataGet(reset: boolean = true){
+    if(reset){
+      this.resetFilterPagination();
+    }
+    if(!this.hasMoreFilterData){
+      return;
+    }
     if(this.activeTabId === 4){
       this.totalDataLength = this.tablePreviewRow[0]?.result_data?.length;
     }
@@ -3367,13 +3397,20 @@ error: (error) => {
       "parent_user":this.createdBy,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
-      "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType
+      "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
+      "limit": this.filterLimit,
+      "offset": this.filterOffset
 }
+  this.isFilterLoading = true;
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
-        this.filterData = convertedArray;
-        if(this.dateList.includes(responce.dtype) && this.activeTabId === 2){
+        this.filterData = [...this.filterData, ...convertedArray];
+        this.filterOffset += convertedArray.length;
+        if(convertedArray.length < this.filterLimit){
+          this.hasMoreFilterData = false;
+        }
+        if(this.filterOffset === convertedArray.length && this.dateList.includes(responce.dtype) && this.activeTabId === 2){
           let rawLabel = this.filterData[0].label;
           // let datePart = rawLabel.split(" ")[0];
           // let [year, month, day] = datePart.split("/");
@@ -3434,14 +3471,28 @@ error: (error) => {
           };
           this.updateMeasureRange(false);
         }
+        this.isFilterLoading = false;
         //this.filter_id = responce.filter_id;
       },
       error: (error) => {
         console.log(error);
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+        this.isFilterLoading = false;
       }
     }
   )
+  }
+
+  loadMoreFilterData(){
+    if(this.isEditMode){
+      this.filterEditGet(false);
+    } else {
+      this.filterDataGet(false);
+    }
+  }
+
+  onFilterScroll(index: number){
+    this.filterScroll$.next(index);
   }
   // toggleEditAllRows(event:any){
   //   // this.isAllSelected = !this.isAllSelected;
@@ -3555,16 +3606,25 @@ trackByFn(index: number, item: any): number {
   )
   this.hasUnSavedChanges = true;
   }
-   filterEditGet(){
-    this.filterData = [];
+  filterEditGet(reset: boolean = true){
+    if(reset){
+      this.resetFilterPagination();
+    }
+    if(!this.hasMoreFilterData){
+      return;
+    }
     const obj={
       "type_filter":"chartfilter",
       "hierarchy_id" :this.databaseId,
       "filter_id" :this.filter_id,
-      "search":this.editFilterSearch
+      "search":this.editFilterSearch,
+      "limit": this.filterLimit,
+      "offset": this.filterOffset
 }
+  this.isFilterLoading = true;
   this.workbechService.filterEditPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
+        if(this.filterOffset === 0){
         this.filter_id = responce.filter_id;
         this.filterName=responce.column_name;
         this.filterType=responce.data_type;
@@ -3610,7 +3670,12 @@ trackByFn(index: number, item: any): number {
         else {
           this.activeTabId = 1;
         }
-        this.filterData = responce.result
+        }
+        this.filterData = [...this.filterData, ...responce.result]
+        this.filterOffset += responce.result.length;
+        if(responce.result.length < this.filterLimit){
+          this.hasMoreFilterData = false;
+        }
         // responce.result.forEach((element:any) => {
         //   this.filterData.push(element);
         //  // Force update
@@ -3697,10 +3762,12 @@ trackByFn(index: number, item: any): number {
           };
           this.updateMeasureRange(false);
         }
+        this.isFilterLoading = false;
       },
       error: (error) => {
         console.log(error);
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+        this.isFilterLoading = false;
       }
     }
   )
@@ -3795,6 +3862,8 @@ trackByFn(index: number, item: any): number {
 }
 openSuperScalededitFilter(modal: any,data:any) {
   this.editFilterSearch = '';
+  this.resetFilterPagination();
+  this.isEditMode = true;
   this.modalService.open(modal, {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
