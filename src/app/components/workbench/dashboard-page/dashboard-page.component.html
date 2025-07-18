@@ -23,7 +23,7 @@
             (btnClickEvent)="dashboardRoute()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
 
             <button class="btn btn-primary ms-2" (click)="openImportDashboard(importDashboardModal)">
-              <i class="bi bi-upload"></i> Import Dashboard
+              <i class="bi bi-download"></i> Import Dashboard
             </button>
           </div>
         </div>
@@ -84,7 +84,7 @@
                                   (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                                   [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
                                   <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
-                                  <button class="btn btn-icon btn-sm btn-purple-light btn-wave waves-effect waves-light" ngbTooltip="Export Dashboard" (click)="openExportDashboard(dashboard.dashboard_id, dashboard.dashboard_name, exportDashboardModal)"><i class="bi bi-download"></i></button>
+                                  <button class="btn btn-icon btn-sm btn-purple-light btn-wave waves-effect waves-light" ngbTooltip="Export Dashboard" (click)="openExportDashboard(dashboard.dashboard_id, dashboard.dashboard_name, exportDashboardModal)"><i class="bi bi-upload"></i></button>
                                   <button class="btn btn-icon btn-sm btn-orange-light btn-wave waves-effect waves-light" ngbTooltip="Set Alerts" (click)="gotoConfigureEmailAlerts(dashboard.dashboard_id)"><i class="fa fa-bell" ></i></button>
                                   <button class="btn btn-icon btn-sm btn-blue-light btn-wave waves-effect waves-light" ngbTooltip="Copy Dashboard" (click)="copyDashboard(dashboard.dashboard_id)"><i class="fa fa-copy" ></i></button>
                                   <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Protected Share - {{dashboard.count_of_views}}"  (click)="openViewerList(dashboard.dashboard_id)"><i class="fa fa-eye" ></i></button>
@@ -143,7 +143,7 @@
                             (btnClickEvent)="viewPropertiesTab(dashboard.dashboard_name,dashboard.dashboard_id)"
                             [faIconList]="'fa fa-sliders'" [isIcon]="true"></app-insights-button>
                             <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2" ngbTooltip="Set Schedular" (click)="viewSchedular(dashboard.dashboard_id,autorefresh)"><i class="fa fa-clock" ></i></button>
-                            <button class="btn btn-icon btn-sm btn-purple-light btn-wave waves-effect waves-light me-2" ngbTooltip="Export Dashboard" (click)="openExportDashboard(dashboard.dashboard_id, dashboard.dashboard_name, exportDashboardModal)"><i class="bi bi-download"></i></button>
+                            <button class="btn btn-icon btn-sm btn-purple-light btn-wave waves-effect waves-light me-2" ngbTooltip="Export Dashboard" (click)="openExportDashboard(dashboard.dashboard_id, dashboard.dashboard_name, exportDashboardModal)"><i class="bi bi-upload"></i></button>
                             <button class="btn btn-icon btn-sm btn-orange-light btn-wave waves-effect waves-light me-2" ngbTooltip="Set Alerts" (click)="gotoConfigureEmailAlerts(dashboard.dashboard_id)"><i class="fa fa-bell" ></i></button>
                             <button class="btn btn-icon btn-sm btn-blue-light btn-wave waves-effect waves-light me-2" ngbTooltip="Copy Dashboard" (click)="copyDashboard(dashboard.dashboard_id)"><i class="fa fa-copy" ></i></button>
                             <button class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbTooltip="Protected Share - {{dashboard.count_of_views}}"  (click)="openViewerList(dashboard.dashboard_id)"><i class="fa fa-eye" ></i></button>
@@ -168,64 +168,73 @@
     </div>
     </div>
   </div>
-
   <ng-template #exportDashboardModal let-modal>
     <div class="modal-header">
       <h5 class="modal-title">Export Dashboard Layout</h5>
-      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
     </div>
+  
     <div class="modal-body">
-      <p class="fw-semibold">{{ exportDashboardName }}</p>
-      <p>Generate a secure key to share your dashboard structure with other accounts.</p>
-
-      <form [formGroup]="exportForm">
-        <label>Dashboard Title</label>
-        <input formControlName="title" class="form-control" placeholder="Revenue Growth Analysis" />
-
-        <button class="btn btn-primary w-100" [disabled]="exportForm.invalid" (click)="generateKey()">
-          <i class="bi bi-key me-1"></i> Generate Export Key
-        </button>
-
-        <div *ngIf="generatedKey" class="mt-4">
-          <label>Export Key:</label>
-          <div class="input-group">
-            <input class="form-control" readonly [value]="generatedKey">
-            <button class="btn btn-outline-secondary" (click)="copyKey()">
-              <i class="bi bi-clipboard"></i> Copy Key
-            </button>
-          </div>
+      <div class="alert alert-light" role="alert">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        Generate a secure key to share your dashboard structure with other accounts.
+      </div>
+  
+      <div class="mb-3">
+        <label for="dashboardTitle" class="form-label">Dashboard Title</label>
+        <input type="text" readonly class="form-control" id="dashboardTitle" [(ngModel)]="exportDashboardName" name="dashboardTitle" />
+      </div>
+  
+      <button class="btn btn-primary w-100 my-2" (click)="generateKey()">
+        <i class="bi bi-key me-2"></i>Generate Export Key
+      </button>
+  
+      <div *ngIf="generatedKey" class="border p-3 bg-light">
+        <label class="form-label fw-semibold">Export Key:</label>
+        <div class="input-group">
+          <input type="text" class="form-control" [value]="generatedKey" readonly />
+          <button class="btn btn-outline-secondary" (click)="copyKey()">
+            <i class="bi bi-clipboard"></i> Copy Key
+          </button>
         </div>
-      </form>
+      </div>
     </div>
   </ng-template>
 
   <ng-template #importDashboardModal let-modal>
     <div class="modal-header">
       <h5 class="modal-title">Import Dashboard</h5>
-      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+      <button type="button" class="btn-close" aria-label="Close" (click)="resetImportForm();modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
-      <div class="alert alert-light">
-        <i class="bi bi-info-circle-fill me-2"></i>
-        Use an export key to import a dashboard layout from another account.
+      <div class="alert alert-light" role="alert">
+        <i class="bi bi-info-circle-fill me-2"></i>Use an export key to import a dashboard layout from another account.
       </div>
-
+  
       <form>
-        <label>Import Key</label><input class="form-control" [(ngModel)]="importKey" name="importKey" (ngModelChange)="fetchDataSources()" />
-        <label>Dashboard Name</label><input class="form-control" [(ngModel)]="importDashboardName" name="dashboardName" />
-        <label>Data Source</label>
-        <select class="form-select" [(ngModel)]="dataSource" name="dataSource">
-          <option disabled>Select data source</option>
-          <option *ngFor="let src of dataSources" [ngValue]="src">{{ src.display_name }}</option>
-        </select>
+        <div class="mb-3">
+          <label for="importKey" class="form-label">Import Key</label>
+          <input type="text" id="importKey" class="form-control" [(ngModel)]="importKey" (ngModelChange)="fetchDataSources()" name="importKey" />
+        </div>
+        <div class="mb-3">
+          <label for="dashboardName" class="form-label">Dashboard Name</label>
+          <input type="text" id="dashboardName" class="form-control" [(ngModel)]="importDashboardName" name="dashboardName" />
+        </div>
+        <div class="mb-3">
+          <label for="dataSource" class="form-label">Data Source</label>
+          <select id="dataSource" class="form-select" [(ngModel)]="dataSource" name="dataSource">
+            <option selected disabled>Select data source</option>
+            <option *ngFor="let source of dataSources" [value]="source.hierarchy_id">{{ source.display_name }}</option>
+          </select>
+        </div>
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
-      <button class="btn btn-success" (click)="importDashboard()">Import</button>
+      <button class="btn btn-outline-secondary" (click)="resetImportForm();modal.dismiss('cancel')">Cancel</button>
+      <button class="btn btn-primary" [disabled]="!importKey || !importDashboardName || !dataSource" (click)="importDashboard(modal)">Import</button>
     </div>
   </ng-template>
-
+  
   <ng-template #propertiesModal let-modal>
     <div class="modal-header">
         <h6 class="modal-title">Dashboard properties</h6>
@@ -378,3 +387,5 @@
   </div>
 
 </ng-template>
+
+<ng-template #sheetcontainer></ng-template>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,7 @@ import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -67,9 +68,10 @@ export class DashboardPageComponent implements OnInit{
   importDashboardName = '';
   dataSource: any;
   dataSources: any[] = [];
+  @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
-  private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService,private fb: FormBuilder){
+  private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService,private fb: FormBuilder,private templateDashboardService: TemplateDashboardService){
   this.viewDashboardList=this.templateViewService.viewDashboard()
 
 }
@@ -570,7 +572,6 @@ generateKey(){
   if(this.exportForm.invalid){ return; }
   const obj = {
     dashboard_id: this.exportDashboardId,
-    title: this.exportForm.value.title
   };
   this.workbechService.exportDashboard(obj).subscribe({
     next: (res:any)=>{ this.generatedKey = res.shared_dashboard_token; this.toasterservice.success('Export key generated','success'); },
@@ -581,6 +582,13 @@ generateKey(){
 copyKey(){
   navigator.clipboard.writeText(this.generatedKey);
   this.toasterservice.success('Copied','success');
+}
+
+resetImportForm() {
+  this.importKey = '';
+  this.importDashboardName = '';
+  this.dataSource = '';
+  this.dataSources = []; // Optional: clear available sources if needed
 }
 
 openImportDashboard(modal: any){
@@ -600,7 +608,7 @@ fetchDataSources(){
   });
 }
 
-importDashboard(){
+importDashboard(modal: any){
   if(!this.importKey || !this.dataSource || !this.importDashboardName){
     this.toasterservice.error('Please fill all fields','error');
     return;
@@ -611,7 +619,10 @@ importDashboard(){
     dashboard_import_id: this.importKey
   };
   this.workbechService.importDashboard(obj).subscribe({
-    next: ()=>{ this.toasterservice.success('Dashboard Imported','success'); this.modalService.dismissAll(); this.getuserDashboardsListput(); },
+    next: (res: any)=>{
+      modal.dismiss('Cross click');
+      this.templateDashboardService.buildDashboardTransfer(this.container,res);
+    },
     error: (err)=> this.toasterservice.error(err.error?.message || 'Import failed','error')
   });
 }
