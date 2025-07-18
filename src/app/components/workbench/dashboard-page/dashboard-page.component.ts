@@ -62,6 +62,7 @@ export class DashboardPageComponent implements OnInit{
   exportForm!: FormGroup;
   generatedKey = '';
   exportDashboardId: any;
+  exportDashboardName = '';
 
   importKey = '';
   importDashboardName = '';
@@ -557,10 +558,12 @@ sendReminder(email: string){
   });
 }
 
-openExportDashboard(id: any, modal: any){
+openExportDashboard(id: any, name: string, modal: any){
   this.exportDashboardId = id;
+  this.exportDashboardName = name;
   this.generatedKey = '';
   this.exportForm.reset();
+  this.exportForm.patchValue({ title: name });
   this.modalService.open(modal, { centered: true });
 }
 
