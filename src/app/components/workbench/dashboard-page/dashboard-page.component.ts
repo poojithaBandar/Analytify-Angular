@@ -307,6 +307,15 @@ console.log('selectedUsers',this.selectedUserIdsToNumbers)
 
 }
 
+emptyDashboardProperties(){
+  this.shareAsProtected = false;
+  this.shareAsPrivate = false;
+  this.protectedEmails = [];
+  this.selectedRoleIds = [];
+  this.selectedUserIds = [];
+
+}
+
 saveDashboardProperties(){
   if(this.shareAsProtected){
     this.applyProtectedEmails();
@@ -520,7 +529,7 @@ applyProtectedEmails(){
     emails_ids: emails
   };
   this.workbechService.generateProtectedLink(obj).subscribe({
-    next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
+    next: ()=>{ this.toasterservice.success('Emails Sent Successfully.','success'); },
     error: ()=>{}
   });
 }
