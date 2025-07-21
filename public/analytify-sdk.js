@@ -179,7 +179,7 @@
     return fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ clientId: opts.clientId, clientSecret: opts.clientSecret })
+      body: JSON.stringify({ client_id: opts.clientId, client_secret: opts.clientSecret })
     })
       .then(function (res) {
         if (!res.ok) {
