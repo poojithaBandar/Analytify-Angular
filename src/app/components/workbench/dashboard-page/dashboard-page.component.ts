@@ -367,7 +367,8 @@ sharePublish(value:any){
   console.log(value);
   if(value === 'public'){
     this.createUrl = true;
-    this.shareAsPrivate = false
+    this.shareAsPrivate = false;
+    this.shareAsProtected = false;
     const publicDashboardId = btoa(this.dashboardId.toString());
     this.publicUrl = 'https://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId;
     this.publishDashboard();
@@ -376,11 +377,14 @@ sharePublish(value:any){
     this.shareAsPrivate = true;
     this.shareAsProtected = false;
     this.publishedDashboard = false;
-  } else if(value === 'protected'){
+    if(this.selectedUserIds.length > 0){
+      this.applyButtonEnableOnEditUser = true;
+    }  } else if(value === 'protected'){
     this.createUrl = false;
     this.shareAsPrivate = false;
     this.shareAsProtected = true;
     this.publishedDashboard = false;
+    this.applyButtonEnableOnEditUser = false;
   }
   }
 copyUrl(): void {
