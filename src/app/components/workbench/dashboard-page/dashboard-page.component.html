@@ -167,7 +167,7 @@
   <ng-template #propertiesModal let-modal>
     <div class="modal-header">
         <h6 class="modal-title">Dashboard properties</h6>
-        <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+        <button type="button"class="btn-close"aria-label="Close"(click)="emptyDashboardProperties();modal.dismiss('Cross click');">
         </button>
       </div>
     
@@ -242,7 +242,7 @@
         <button
           type="button"
           class="btn ripple btn-secondary"
-          (click)="modal.close('Save click')"
+          (click)="emptyDashboardProperties();modal.close('Cross click')"
         >
           Close
         </button>

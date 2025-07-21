@@ -767,4 +767,12 @@ gotoConfigureEmailAlertsDashbaord(id:any){
 
 this.router.navigate(['/analytify/configure-page/email/dashboard/'+encodedDatabaseId])
 }
+
+emptyDashboardProperties(){
+  this.shareAsProtected = false;
+  this.shareAsPrivate = false;
+  this.protectedEmails = [];
+  this.selectedRoleIds = [];
+  this.selectedUserIds = [];
+}
 }

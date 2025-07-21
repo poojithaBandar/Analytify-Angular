@@ -291,6 +291,15 @@ console.log('selectedUsers',this.selectedUserIdsToNumbers)
 
 }
 
+emptyDashboardProperties(){
+  this.shareAsProtected = false;
+  this.shareAsPrivate = false;
+  this.protectedEmails = [];
+  this.selectedRoleIds = [];
+  this.selectedUserIds = [];
+
+}
+
 saveDashboardProperties(){
   if(this.shareAsProtected){
     this.applyProtectedEmails();

@@ -651,7 +651,11 @@ export class SheetsdashboardComponent implements OnDestroy {
     };
     if(this.dashboardToken){
       this.fetchDashboardIdFromToken();
-    } else if(!this.isPublicUrl && !this.isProtectedUrl){
+    } else if(this.isProtectedUrl){
+      if(!this.encryptedEmail){
+        this.initialiserMethods();
+      }
+    } else {
       this.initialiserMethods();
     }
     //this.getSheetData();
@@ -3062,7 +3066,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     }
     if(this.isProtectedUrl){
       if(this.isProtectedValidated || !this.encryptedEmail){
-        this.loadProtectedDashboard();
+        // this.loadProtectedDashboard();
       } else {
         this.modalService.open(this.passkeyModal,{backdrop:'static', centered:true});
       }
@@ -5778,8 +5782,8 @@ kpiData?: KpiData;
         modal.close();
         this.loadProtectedDashboard();
       },
-      error: ()=>{
-        this.toasterService.error('Invalid Passkey','error');
+      error: (error: any)=>{
+        this.toasterService.error(error?.error?.message,'error');
       }
     });
   }
@@ -5787,6 +5791,7 @@ kpiData?: KpiData;
   loadProtectedDashboard(){
     this.getSavedDashboardDataPublic();
     this.getDashboardFilterredListPublic();
+    this.getDrillThroughActionList();
   }
 
   goBackToProtectedHome(){
