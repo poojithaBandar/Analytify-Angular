@@ -175,7 +175,7 @@
       return;
     }
     var base = _config.apiBaseUrl || EMBED_BASE.replace(/embed\/?$/, '');
-    var endpoint = _config.tokenEndpoint + '/sdk-authenticate';
+    var endpoint = _config.tokenEndpoint + '/app_access_token/';
     return fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
