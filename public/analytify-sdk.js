@@ -122,7 +122,7 @@
    * @param {{sheetId: string|number, container: string|HTMLElement, filters?: object, width?: string, height?: string}} options
    * @returns {Promise<HTMLIFrameElement>|void}
    */
-    function embedSheet(options) {
+  function embedSheet(options) {
       console.log("loadSheet");
       if (!_config.clientId || !_config.apiBaseUrl) {
         console.error('AnalytifySDK.embedSheet: SDK not initialized; call init() first');
@@ -158,14 +158,63 @@
           // return iframe;
         })
         .catch(function (err) {
-          console.error('AnalytifySDK.sheetload error:', err);
-        });
+        console.error('AnalytifySDK.sheetload error:', err);
+      });
+  }
+
+  function loadSdkProject(opts) {
+    if (!opts || !opts.clientId || !opts.clientSecret || !opts.container) {
+      console.error('AnalytifySDK.loadSdkProject: Missing required options');
+      return;
     }
+    var containerEl = typeof opts.container === 'string'
+      ? document.querySelector(opts.container)
+      : opts.container;
+    if (!containerEl) {
+      console.error('AnalytifySDK.loadSdkProject: Container not found', opts.container);
+      return;
+    }
+    var base = _config.apiBaseUrl || EMBED_BASE.replace(/embed\/?$/, '');
+    var endpoint = _config.tokenEndpoint + '/sdk-authenticate';
+    return fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientId: opts.clientId, clientSecret: opts.clientSecret })
+    })
+      .then(function (res) {
+        if (!res.ok) {
+          throw new Error('SDK authentication failed: ' + res.status + ' ' + res.statusText);
+        }
+        return res.json();
+      })
+      .then(function (data) {
+        var token = (data.data && data.data.access_token) || data.accessToken || data.token;
+        if (!token)
+          throw new Error('Missing token in response');
+        localStorage.setItem('currentUser', JSON.stringify({ Token: token }));
+        var src = base + '/embed/sdk?token=' + encodeURIComponent(token) + '&clientId=' + encodeURIComponent(opts.clientId);
+        if (opts.options && opts.options.landingRoute) {
+          src += '&route=' + encodeURIComponent(opts.options.landingRoute);
+        }
+        var iframe = document.createElement('iframe');
+        iframe.src = src;
+        iframe.style.border = 'none';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        containerEl.innerHTML = '';
+        containerEl.appendChild(iframe);
+        return iframe;
+      })
+      .catch(function (err) {
+        console.error('AnalytifySDK.loadSdkProject error:', err);
+      });
+  }
 
   // Expose the two entry points
   global.AnalytifySDK = {
     init: init,
     loadDashboard: loadDashboard,
-    embedSheet: embedSheet
+    embedSheet: embedSheet,
+    loadSdkProject: loadSdkProject
   };
 })(typeof window !== 'undefined' ? window : this);
