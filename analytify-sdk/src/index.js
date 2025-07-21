@@ -155,8 +155,62 @@ export function embedSheet(options) {
     });
 }
 
+/**
+ * Load the full Analytify platform inside a container.
+ * Handles authentication and injects an iframe pointing to /embed/sdk.
+ * @param {{clientId:string, clientSecret:string, container:string|HTMLElement, options?:{landingRoute?:string}}} opts
+ * @returns {Promise<HTMLIFrameElement>|void}
+ */
+export function loadSdkProject(opts) {
+  if (!opts || !opts.clientId || !opts.clientSecret || !opts.container) {
+    console.error('AnalytifySDK.loadSdkProject: Missing required options');
+    return;
+  }
+  const containerEl = typeof opts.container === 'string'
+    ? document.querySelector(opts.container)
+    : opts.container;
+  if (!containerEl) {
+    console.error('AnalytifySDK.loadSdkProject: Container not found', opts.container);
+    return;
+  }
+  const base = _config.apiBaseUrl;
+  const endpoint = _config.tokenEndpoint + '/sdk-authenticate';
+  return fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ clientId: opts.clientId, clientSecret: opts.clientSecret })
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('SDK authentication failed: ' + res.status + ' ' + res.statusText);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const token = data.data?.access_token || data.accessToken || data.token;
+      if (!token) throw new Error('Missing token in response');
+      localStorage.setItem('currentUser', JSON.stringify({ Token: token }));
+      let src = base + '/embed/sdk?token=' + encodeURIComponent(token) + '&clientId=' + encodeURIComponent(opts.clientId);
+      if (opts.options && opts.options.landingRoute) {
+        src += '&route=' + encodeURIComponent(opts.options.landingRoute);
+      }
+      const iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.style.border = 'none';
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      containerEl.innerHTML = '';
+      containerEl.appendChild(iframe);
+      return iframe;
+    })
+    .catch(err => {
+      console.error('AnalytifySDK.loadSdkProject error:', err);
+    });
+}
+
 export default {
   init,
   loadDashboard,
-  embedSheet
+  embedSheet,
+  loadSdkProject
 };
