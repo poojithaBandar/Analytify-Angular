@@ -760,7 +760,7 @@ applyProtectedEmails(){
     emails_ids: emails
   };
   this.workbechService.generateProtectedLink(obj).subscribe({
-    next: ()=>{ this.toasterservice.success('Emails Saved','success'); },
+    next: ()=>{ this.toasterservice.success('Emails Sent Successfully.','success'); },
     error: ()=>{}
   });
 }
@@ -772,5 +772,13 @@ gotoConfigureEmailAlertsDashbaord(id:any){
     const encodedDatabaseId = btoa(id.toString());
 
 this.router.navigate(['/analytify/configure-page/email/dashboard/'+encodedDatabaseId])
+}
+
+emptyDashboardProperties(){
+  this.shareAsProtected = false;
+  this.shareAsPrivate = false;
+  this.protectedEmails = [];
+  this.selectedRoleIds = [];
+  this.selectedUserIds = [];
 }
 }
