@@ -414,7 +414,7 @@ export class SheetsComponent{
   //   ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
   //   ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
   // ];
-
+isSidebarCollapsed: boolean = false;
   defaultColorSchemes : { [key: string]: string[] } = {};
   userDefinedColorSchemes : { [key: string]: string[] } = {};
   keysOfColorSchemes : { key: string; colorPalette: string[] }[] = [];
@@ -7692,6 +7692,8 @@ buttonClicked = false;
     //   this.editor = false;
     // });
   }
-
+openGenieAiQTab(){
+   this.active = 3;
+}
 }
 
