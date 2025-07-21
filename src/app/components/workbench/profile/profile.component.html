@@ -104,10 +104,10 @@
                                         formControlName="email"
                                         [class.is-invalid]="isFieldInvalid(profileForm, 'email')"
                                     />
-                                    <div *ngIf="emailNeedsVerification && !showOtpInput" style="float: right;" class="mt-1">
-                                        <button type="button" style="padding: 2px 10px !important;" class="btn btn-warning btn-sm" (click)="verifyEmail()">Verify</button>
+                                    <div *ngIf="emailNeedsVerification && !showOtpInput && profileForm.get('email')?.valid" style="float: right;" class="mt-1">
+                                    <button type="button" style="padding: 2px 10px !important;" class="btn btn-warning btn-sm" (click)="verifyEmail()">Verify</button>
                                     </div>
-                                    <div *ngIf="emailNeedsVerification && !showOtpInput" style="float: right;" class="mt-1 me-1">
+                                    <div *ngIf="emailNeedsVerification && !showOtpInput && profileForm.get('email')?.valid" style="float: right;" class="mt-1 me-1">
                                         <span *ngIf="!emailVerified" class="text-danger small">Email not verified</span>
                                         <span *ngIf="emailVerified" class="text-success small">Verified</span>
                                     </div>
