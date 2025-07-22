@@ -2853,7 +2853,7 @@
                         <div class="tabs-menu1">
                             <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14 justify-content-around">
 
-                                <li [ngbNavItem]="1">
+                                <li [ngbNavItem]="1" class="ms-3">
                                     <a ngbNavLink class="p-2">Data</a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane active" id="activetabs">
@@ -3551,7 +3551,7 @@
                                         </div>
                                     </ng-template>
                                 </li>
-                                <li [ngbNavItem]="2" [class.disabled]="(draggedColumns?.length === 0 && draggedRows?.length ===0)">
+                                <li [ngbNavItem]="2" [class.disabled]="(draggedColumns?.length === 0 && draggedRows?.length ===0)" class="ms-3">
                                      <a ngbNavLink class="p-2">Customize</a>
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
@@ -5202,25 +5202,68 @@
                                         <div class="tab-pane" id="linktabs">
                                             <div class="copilot-container p-1">
                                                 <h6 class='rounded-2 genie-aiq-text mb-1'><img src="./assets/images/Gen-star.png" alt="Copilot"> Genie AIQ</h6>
-                                                <p class="light-text mb-0">Describe your chart idea, and our AI will create it for you.</p>
+                                                <!-- <p class="light-text mb-0">Describe your chart idea, and our AI will create it for you.</p> -->
                                                  <div class="input-group border rounded-1">
                                                     <!-- <input type="text" class="form-control p-1" placeholder="Describe the chart you want to create..."> -->
-                                                     <textarea id="text-area" rows="1" class="form-control" placeholder="Describe the chart you want to create..." style="height: 80px;"></textarea>
+                                                     <textarea id="text-area" rows="1" class="form-control" [(ngModel)]="userPrompt" placeholder="Describe the chart you want to create..." style="height: 80px;"></textarea>
                                                 </div>
-                                                <h6 class='rounded-2 bg-black mb-1 mt-2 text-white p-3 text-center'><img src="./assets/images/Gen-star.png" alt="Copilot"> Generate</h6>
+                                                <div class="d-flex align-items-center justify-content-between justify-content-normal">
+                                                    <h6 class='rounded-2 bg-black mb-1 mt-2 text-white p-3 text-center w-100' (click)="sendPrompt()"><img src="./assets/images/Gen-star.png" alt="Copilot"> Generate</h6>
+                                                    <button (click)="startVoiceRecognition()" style="height: 33px; width:33px" class="rounded-2 mt-2 mb-1"> <img
+                                                                src="./assets/images/microphone.svg" alt="Micro Phone" /> </button>
+                                                </div>
                                                 <p class="pt-4 fw-600">Try these examples:</p>
-                                                <p class="bg-light border p-3">Show me sales trends by region</p>
-                                                <p class="bg-light border p-3">Create a comparison chart of quarterly revenue</p>
-                                                <p class="bg-light border p-3">Build a funnel chart for conversion rates</p>
-                                                <div class="bg-primary-transparent p-3 mb-2">
-                                                    <img src="./assets/images/Gen-star.png" alt="Copilot" class="bg-primary rounded-5 p-2 mb-1">
-                                                    <p class="mb-0"><b>AI Chart Generation</b></p>
-                                                    <p class="mb-0 text-black lh-sm">Describe what you want to visualize.</p>
+                                                <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-1">
+                                                    <button *ngFor="let chart of chartSuggestions" type="button"
+                                                        class="btn ripple btn-primary inp-btn d-flex align-items-center p1-text-start"
+                                                        (click)="fetchChartData(chart)"
+                                                        matTooltip="{{ chart.description }}" matTooltipPosition="above">
+                                                        <span class="avatar avatar rounded-circle-copilot mr-2 me-2">
+                                                            <img *ngIf="chart.chart_id === 1"
+                                                                src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 6"
+                                                                src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 17"
+                                                                src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 13"
+                                                                src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 24"
+                                                                src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 7"
+                                                                src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 5"
+                                                                src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 4"
+                                                                src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 2"
+                                                                src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 3"
+                                                                src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 8"
+                                                                src="./assets/images/Tiled view sheet icons/multiline-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 10"
+                                                                src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                        </span>
+                                                        <span>{{ chart.chart_title }}</span>
+                                                    </button>
                                                 </div>
-                                                <div class="bg-primary-transparent p-3">
-                                                    <img src="./assets/images/Gen-star.png" alt="Copilot" class="bg-primary rounded-5 p-2 mb-1">
-                                                    <p class="mb-0"><b>AI Chart Generation</b></p>
-                                                    <p class="mb-0 text-black lh-sm">Describe what you want to visualize.</p>
+                                                <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
+                                                    <a class="cursor-pointer" *ngIf="!qrySetId" (click)="goToConnections()" ><span
+                                                        class="add-txt text-info">Connect to DataSource</span></a>
+                                                    <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                                    <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
                                                 </div>
                                                 <!-- <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-1">
                                                     <button *ngFor="let chart of chartSuggestions" type="button"
