@@ -2532,15 +2532,20 @@
     <!-- Font controls -->
         <div class="row">
       <div class="col-6">
-        <label class="form-label">Font Size (10-24px)</label>
+        <label class="form-label">Font Size</label>
         <div class="input-group">
-          <input type="number" 
+          <!-- <input type="number" 
                  class="form-control" 
                  [(ngModel)]="selectedTabfontSize"
                  [min]="10"
                  [max]="24"
                  (input)="restrictFontSize($event)"
-                 (blur)="validateFontSize()" />
+                 (blur)="validateFontSize()" /> -->
+                   <select class="form-select"
+            [(ngModel)]="selectedTab.fontSize"
+            >
+      <option *ngFor="let size of fontSizes" [value]="size">{{ size }}</option>
+    </select>
           <span class="input-group-text">px</span>
         </div>
       </div>

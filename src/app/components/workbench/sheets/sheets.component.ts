@@ -7693,8 +7693,12 @@ buttonClicked = false;
     // });
   }
 openGenieAiQTab(){
+  if(this.active !== 3){
    this.active = 3;
-   this.getChartSuggestions()
+      this.getChartSuggestions()
+  }else{
+    this.active = 1;
+  }
 }
 }
 
