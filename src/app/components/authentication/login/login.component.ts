@@ -11,6 +11,7 @@ import { SwitcherComponent } from '../../../shared/layout-components/switcher/sw
 import { CustomThemeService } from '../../../services/custom-theme.service';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { SharedService } from '../../../shared/services/shared.service';
+import * as CryptoJS from 'crypto-js';
 
 @Component({
   selector: 'app-login',
@@ -86,8 +87,14 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
       const colorPalettId = data?.user_colours[0]?.id;
       localStorage.setItem('colorPalettId', colorPalettId);
     }
+
+    const secretKey = 'email';
+    const encryptedEmail = CryptoJS.AES.encrypt(data.email, secretKey).toString();
+    localStorage.setItem('email', encryptedEmail);
+
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
+    // localStorage.setItem('email', btoa(JSON.stringify(data.email)));
     localStorage.setItem('chartType', chartType);
     localStorage.setItem('userId', userId);  
     localStorage.setItem('customTheme', JSON.stringify(data.custome_theme)); 
