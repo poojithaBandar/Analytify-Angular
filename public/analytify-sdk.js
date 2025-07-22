@@ -17,7 +17,7 @@
     clientId: '',
     clientSecret: '',
     apiBaseUrl: '',
-    tokenEndpoint: 'https://api.insightapps.ai/v1'
+    tokenEndpoint: 'https://api.qa.insightapps.ai/v1'
   };
   var _token = null;
   var _tokenExpiry = 0;
