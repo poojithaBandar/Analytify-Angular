@@ -2853,7 +2853,7 @@
                         <div class="tabs-menu1">
                             <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14 justify-content-around">
 
-                                <li [ngbNavItem]="1">
+                                <li [ngbNavItem]="1" class="ms-3">
                                     <a ngbNavLink class="p-2">Data</a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane active" id="activetabs">
@@ -3551,7 +3551,7 @@
                                         </div>
                                     </ng-template>
                                 </li>
-                                <li [ngbNavItem]="2" [class.disabled]="(draggedColumns?.length === 0 && draggedRows?.length ===0)">
+                                <li [ngbNavItem]="2" [class.disabled]="(draggedColumns?.length === 0 && draggedRows?.length ===0)" class="ms-3">
                                      <a ngbNavLink class="p-2">Customize</a>
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
