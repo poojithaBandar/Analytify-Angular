@@ -7694,6 +7694,7 @@ buttonClicked = false;
   }
 openGenieAiQTab(){
    this.active = 3;
+   this.getChartSuggestions()
 }
 }
 
