@@ -193,7 +193,7 @@ button.viewQueryImg {  border: none;  background: none;}
 .show-chart-card{ height: 478px; }
 .show-chart-card-no-heirarchy{  height: 512px; }
 .sheet-table-h{ height: 475px; overflow-y: auto;}
-.panel-body-h{ height: 620px; overflow: auto;}
+.panel-body-h{ height: 620px; }
 .chart-icon.active {  border-color:#00a2a5 !important; /* Change to the color you prefer for the active state */ opacity: 1; background-color: #ecf0f1; }
 .custom-dropdown.show { position:fixed !important;  display: flex !important; flex-direction: column !important;}
 .d-inline-block { display: inline-block !important; vertical-align: middle; /* Aligns vertically centered with text */ }
@@ -425,7 +425,7 @@ app-insights-button { font-size: 12px;}
 .sheet-table-h{ height: 408px; overflow-y: auto;}
 .show-chart-card { height: 408px;}
 .show-chart-card-no-heirarchy{ height: 440px;}
-.panel-body-h { height: 538px; overflow: auto;}
+.panel-body-h { height: 538px;}
 .charts-card-height { overflow-y: auto; height: 350px; }
 .filter-card-height { height: 150px; overflow-y: auto; }
 .marks-card-height{ height: 164px; overflow-y: auto; }
@@ -481,7 +481,7 @@ app-insights-button { font-size: 12px; }
 .filter-card-height { height: 130px; overflow-y: auto;}
 .charts-card-height { overflow-y: auto; height: 300px;}
 .marks-card-height { height: 142px; overflow-y: auto; }
-.panel-body-h { height: 475px; overflow: auto;}
+.panel-body-h { height: 475px;}
 .column-text { font-size: 12px;}
 .row-text{ font-size: 12px;}
 .mat-mdc-tab:not(.mdc-tab--stacked) {  height: 33px;}
