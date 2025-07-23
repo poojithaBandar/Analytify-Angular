@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
+import * as CryptoJS from 'crypto-js';
 export interface User {
   uid: string;
   email: string;
@@ -188,10 +189,18 @@ getTokensalesforce(data:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/callback/`+this.accessToken,data); 
 }
-resendOtpApi(obj:any){
-  return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj); 
-}
-logOut(){
+  resendOtpApi(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj);
+  }
+
+  sendPasskeyEmail(data:any){
+    return this.http.post<any>(`${environment.apiUrl}/shared_email/`, data);
+  }
+
+  verifyOtp(token:string, data:any){
+    return this.http.post<any>(`${environment.apiUrl}/otp_validation/${token}`, data);
+  }
+  logOut(){
   localStorage.removeItem('username');
          localStorage.removeItem('currentUser');
         //  this.currentUserSubject.next(this.currentUserValue);
@@ -209,5 +218,16 @@ logOut(){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/updatepassword/`+this.accessToken,obj)
+  }
+  getCurrentUser(){
+    try {
+      const data = CryptoJS.AES.decrypt(localStorage.getItem('email')!, 'email').toString(CryptoJS.enc.Utf8);
+      console.log(data);
+      if(data){
+        // const parsed = JSON.parse(atob(data));
+        return { email: data };
+      }
+    } catch (err) {}
+    return null;
   }
 }
