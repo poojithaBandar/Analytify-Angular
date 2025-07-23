@@ -291,6 +291,7 @@ export class SheetsComponent{
   guagechartRowData:any;
   minValueGuage: number = 0; // Default minimum value
   maxValueGuage: number = 100; // Default maximum value
+  gaugeDisplayMode= 'both'; // Default gauge display mode
   map: boolean = false;
 
   guageNumber:any;
@@ -2266,6 +2267,7 @@ sheetSave(isDashboardTransfer?: boolean){
     isDistributed : this.isDistributed,
     kpiFontSize : this.kpiFontSize,
     minValueGuage : this.minValueGuage,
+    gaugeDisplayMode: this.gaugeDisplayMode,
     maxValueGuage : this.maxValueGuage,
     donutDecimalPlaces : this.donutDecimalPlaces,
     decimalPlaces : this.decimalPlaces,
@@ -4215,6 +4217,7 @@ customizechangeChartPlugin() {
     this.isDistributed = data.isDistributed ?? true;
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
+    this.gaugeDisplayMode = data.gaugeDisplayMode ?? 'both';
     this.maxValueGuage = data.maxValueGuage ?? 100;
     this.donutDecimalPlaces = data.donutDecimalPlaces ?? 2;
     this.decimalPlaces = data.decimalPlaces ?? 2;
@@ -4322,6 +4325,7 @@ customizechangeChartPlugin() {
     this.isDistributed = true;
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
+    this.gaugeDisplayMode = 'both';
     this.maxValueGuage = 100;
     this.donutDecimalPlaces = 2;
     // this.decimalPlaces = 0;
