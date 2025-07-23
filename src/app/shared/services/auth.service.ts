@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
+import * as CryptoJS from 'crypto-js';
 export interface User {
   uid: string;
   email: string;
@@ -220,10 +221,11 @@ getTokensalesforce(data:any){
   }
   getCurrentUser(){
     try {
-      const data = localStorage.getItem('username');
+      const data = CryptoJS.AES.decrypt(localStorage.getItem('email')!, 'email').toString(CryptoJS.enc.Utf8);
+      console.log(data);
       if(data){
-        const parsed = JSON.parse(data);
-        return { email: parsed.userName };
+        // const parsed = JSON.parse(atob(data));
+        return { email: data };
       }
     } catch (err) {}
     return null;

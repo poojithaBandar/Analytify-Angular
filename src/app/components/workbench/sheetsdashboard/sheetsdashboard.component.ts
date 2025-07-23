@@ -8627,8 +8627,12 @@ selectedTabIndexToEdit: number = -1;
 
 openEditTabModal(tab: any, index: number) {
   this.selectedTab = { ...tab };
+  this.selectedTab.bgColor = this.selectedTab.bgColor ?? '#FFFFFF';
+  this.selectedTab.fontColor = this.selectedTab.fontColor ?? '#2392c1';
+  this.selectedTab.fontSize = this.selectedTab.fontSize ?? this.DEFAULT_FONT_SIZE;
+  this.selectedTab.fontStyle = this.selectedTab.fontStyle ?? 'normal';
   this.selectedTabIndexToEdit = index;
-  this.selectedTabfontSize = this.selectedTab.fontSize;
+  // this.selectedTabfontSize = this.selectedTab.fontSize;
   this.modalService.open(this.editTabModal, { size: 'md', backdrop: 'static' });
 
 }
@@ -8678,22 +8682,8 @@ validateColorInput(event: Event, type: 'font' | 'bg') {
 }
 
 // Font size handling
-selectedTabfontSize=10
-restrictFontSize(event: Event) {
-   setTimeout(() => {
-      if(this.selectedTabfontSize || this.selectedTabfontSize  === 0){
-        if (this.selectedTab.fontSize < 2) {
-          // this.selectedTab.fontSize = 2;
-          this.selectedTabfontSize = 2
-        } else if (this.selectedTabfontSize > 24) {
-          // this.selectedTab.fontSize = 24;
-          this.selectedTabfontSize = 24
-
-        }
-      }
-       this.selectedTab.fontSize = this.selectedTabfontSize
-    }, 0);
-}
+// selectedTabfontSize=10
+fontSizes: number[] = Array.from({length: 8}, (_, i) => 10 + i * 2);
 
 validateFontSize() {
   if (!this.selectedTab.fontSize) {

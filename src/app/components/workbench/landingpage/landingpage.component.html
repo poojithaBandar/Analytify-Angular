@@ -38,7 +38,7 @@
                             </span>
                         </div>
                         <div class="flex-grow-1">
-                            <p class="mb-0 text-gray-600">Dashboards</p>
+                            <h6 class="mb-0 500">Dashboards</h6>
                             <span class="fw-600 fs-5">{{totalDashbaords}}</span>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                             </span>
                         </div>
                         <div class="flex-grow-1">
-                            <p class="mb-0 text-gray-600">Charts</p>
+                            <h6 class="mb-0 fw-500">Charts</h6>
                             <span class="fw-600 fs-5">{{totalSheets}}</span>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                             </span>
                         </div>
                         <div class="flex-grow-1">
-                            <p class="mb-0 text-gray-600">Queries</p>
+                            <h6 class="mb-0 fw-500">Queries</h6>
                             <span class="fw-600 fs-5">{{totalQueries}}</span>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                             </span>
                         </div>
                         <div class="flex-grow-1">
-                            <p class="mb-0 text-gray-600">Data sources</p>
+                            <h6 class="mb-0 fw-500">Data sources</h6>
                             <span class="fw-600 fs-5">{{totalDatabases}}</span>
                         </div>
                     </div>
@@ -712,7 +712,7 @@
                                             </span>
                                             <div class="ms-2">
                                                 <h6 class="mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</h6>
-                                                <span class="text-muted fs-12">{{database.server_type | lowercase}}</span>
+                                                <span class="text-muted fs-14 fw-600">{{database.server_type | lowercase}}</span>
                                             </div>
                                         </div>
                                     </td>

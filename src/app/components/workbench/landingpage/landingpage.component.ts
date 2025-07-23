@@ -574,6 +574,7 @@ console.log(value);
 this.testVariableToChange = value;
 if(value === 'public'){
   this.createUrl = true;
+  this.shareAsProtected = false;
   this.shareAsPrivate = false
   const publicDashboardId = btoa(this.dashboardId.toString());
   this.publicUrl = 'https://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
@@ -583,11 +584,15 @@ if(value === 'public'){
   this.shareAsPrivate = true;
   this.shareAsProtected = false;
   this.publishedDashboard = false;
+  if(this.selectedUserIds.length > 0){
+    this.applyButtonEnableOnEditUser = true;
+  }
 } else if(value === 'protected'){
   this.createUrl = false;
   this.shareAsPrivate = false;
   this.shareAsProtected = true;
   this.publishedDashboard = false;
+  this.applyButtonEnableOnEditUser = false;
 }
 }
 // copyUrl(): void {
