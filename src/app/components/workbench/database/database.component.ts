@@ -390,7 +390,9 @@ export class DatabaseComponent {
           this.datasourceQuerysetId = data.dragged_data.dastasource_queryset_id;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
-            this.joiningTables();
+            // this.joiningTables();
+            this.buildCustomJoin();
+            this.getJoiningTableData();
             this.dropdownOptions = this.buildDropdownOptions(this.draggedtables);
             //for custom join dropdown
             this.filterColumnsT1();
