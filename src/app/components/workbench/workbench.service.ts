@@ -1236,7 +1236,7 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/mail_alerts/`+ this.accessToken,obj);
     }
     analyzeAndDownloadDashboard(obj:any){
-      return this.http.post<any>(`${environment.apiUrl}/analyze-dashboard/`,obj);
+      return this.http.post<any>(`${environment.apiUrl}/analyze-dashboard/`+this.accessToken,obj);
     }
     shareAnalysisReportEmail(obj:any){
       const currentUser = localStorage.getItem( 'currentUser' );

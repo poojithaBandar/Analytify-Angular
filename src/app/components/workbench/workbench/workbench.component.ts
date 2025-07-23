@@ -1290,7 +1290,7 @@ export class WorkbenchComponent implements OnInit{
                 Swal.fire({
                   position: "center",
                   iconHtml: '<img src="./assets/images/copilot.gif">',
-                  title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+                  title: "Create smart dashboard from your data with just one click?",
                   showConfirmButton: true,
                   showCancelButton: true,
                   confirmButtonText: 'Yes',
@@ -1598,7 +1598,7 @@ export class WorkbenchComponent implements OnInit{
             this.switchDatabase();
           }else{
             Swal.fire({
-                title: '✨ Ready to Build Your Smart Dashboard?',
+                title: '✨ Ready to Build Your AI Adoption Dashboard?',
                 html: `
                   <img src="./assets/images/copilot.gif">
                   <p style="font-size: 16px;">Let AI turn your data into insights — instantly.</p>

@@ -331,6 +331,7 @@ export class TemplateDashboardService {
         join_type:query.join_type,
         joining_conditions:query.joining_conditions,
         dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+        is_smart_dashboard:true
       } as any;
       this.workbechService.joiningTablesTest(obj).subscribe({
         next: () => {},
@@ -495,6 +496,8 @@ export class TemplateDashboardService {
           join_type: query.join_type,
           joining_conditions: query.joining_conditions,
           dragged_array: {dragged_array: query.dragged_array, dragged_array_indexing:{}},
+          is_smart_dashboard:true
+
         } as any;
         this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
           error: (error) => {
@@ -533,6 +536,8 @@ export class TemplateDashboardService {
           join_type:query.join_type,
           joining_conditions:query.joining_conditions,
           dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+          is_smart_dashboard:true
+
         } as any
         this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
             error: (error) => {
@@ -570,6 +575,7 @@ export class TemplateDashboardService {
             join_type: query.join_type,
             joining_conditions: query.joining_conditions,
             dragged_array: { dragged_array: query.dragged_array, dragged_array_indexing: {} },
+            is_smart_dashboard:true
           } as any;
           this.workbechService.joiningTablesTest(obj).subscribe({
             next: () => {},
@@ -608,6 +614,7 @@ export class TemplateDashboardService {
             join_type: query.join_type,
             joining_conditions: query.joining_conditions,
             dragged_array: { dragged_array: query.dragged_array, dragged_array_indexing: {} },
+            is_smart_dashboard:true
           } as any;
           this.workbechService.joiningTablesTest(obj).subscribe({
             next: () => {},
@@ -965,6 +972,7 @@ export class TemplateDashboardService {
           join_type:query.join_type,
           joining_conditions:query.joining_conditions,
           dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+          is_smart_dashboard:true
         } as any;
           this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
               error: (error) => {
@@ -1003,6 +1011,7 @@ export class TemplateDashboardService {
           join_type:query.join_type,
           joining_conditions:query.joining_conditions,
           dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+          is_smart_dashboard:true
         } as any
           this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
             error: (error) => {
@@ -1041,6 +1050,7 @@ export class TemplateDashboardService {
           join_type:query.join_type,
           joining_conditions:query.joining_conditions,
           dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+          is_smart_dashboard:true
         } as any
           this.workbechService.joiningTablesTest(obj).subscribe({next: () => {
               },
@@ -1080,6 +1090,7 @@ buildSampleTallyDashboard(container: ViewContainerRef, databaseId: any, responce
         join_type:query.join_type,
         joining_conditions:query.joining_conditions,
         dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+        is_smart_dashboard:true
       } as any
         this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
             error: (error) => {
@@ -1118,6 +1129,7 @@ buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any, respon
         join_type:query.join_type,
         joining_conditions:query.joining_conditions,
         dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+        is_smart_dashboard:true
       } as any
         this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
             error: (error) => {
@@ -1157,6 +1169,7 @@ buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any, respon
           join_type:query.join_type,
           joining_conditions:query.joining_conditions,
           dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+          is_smart_dashboard:true
         } as any
           this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
               error: (error) => {
