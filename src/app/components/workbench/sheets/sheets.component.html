@@ -2561,7 +2561,7 @@
                 [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [backgroundColor]="backgroundColor" [color]="color"
                 [ylabelFontWeight]="ylabelFontWeight" [isBold]="isBold" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
                 [barColor]="barColor" [lineColor]="lineColor" [gridColor]="GridColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"
-                [label]="label" [donutSize]="donutSize" [isDistributed]="isDistributed" [minValueGuage]="minValueGuage" [maxValueGuage]="maxValueGuage"
+                [label]="label" [donutSize]="donutSize" [isDistributed]="isDistributed" [minValueGuage]="minValueGuage" [maxValueGuage]="maxValueGuage" [gaugeDisplayMode]="gaugeDisplayMode"
                 [legendsAllignment]="legendsAllignment" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
                 [dataLabelsFontPosition]="dataLabelsFontPosition" [dataLabelsColor]="dataLabelsColor" [measureAlignment]="measureAlignment" 
                 [dimensionAlignment]="dimensionAlignment" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
@@ -4686,7 +4686,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && !isMeasureDistribution && (bar || horizontalBar || funnel)) || area || line || (radar && !isRadarDistribution))" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && !isMeasureDistribution && (bar || horizontalBar || funnel)) || area || line || (radar && !isRadarDistribution) || guage)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
@@ -5177,6 +5177,15 @@
                                                             <label for="maxValue">Enter Maximum Value:</label>
                                                             <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue"  />
                                                         </div>
+                                                    </div>
+                                                    <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2">
+                                                         <label for="guageDisplay">Select Gauge Display:</label>
+                                                            <select class="form-control fs-14 w-100" [(ngModel)]="gaugeDisplayMode">
+                                                            <option value="percentage">Percentage</option>
+                                                            <option value="value">Value</option>
+                                                            <option value="both">Both</option>
+                                                            </select>
+                                                        
                                                     </div>
                                                     <!-- <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="sorting">Sort by: </label>
