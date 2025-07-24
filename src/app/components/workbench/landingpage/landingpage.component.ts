@@ -10,11 +10,12 @@ import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule],
+  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule,TimeAgoPipe],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
@@ -45,12 +46,18 @@ dashboardPropertyId:any;
 dashboardId :any;
 createUrl =false;
 shareAsPrivate = false;
+shareAsProtected = false;
+protectedEmails: string[] = [];
 UrlCopy:string | null = null;
 publicUrl:any;
 port:any;
 host:any;
 publishedDashboard = false;
 testVariableToChange! : string ;
+totalDashbaords:any;
+totalSheets:any;
+totalQueries:any;
+totalDatabases:any;
 @ViewChild('propertiesModal') propertiesModal : any;
 @ViewChild('sampleDashboardPropertiesModal') sampleDashboardPropertiesModal : any;
 
@@ -99,7 +106,7 @@ getDbConnectionList(){
     next:(data)=>{
       this.connectionList = data.sheets
       console.log('jdhcvjsh',this.connectionList);
-
+      this.totalDatabases = data.total_items
      },
     error:(error)=>{
       console.log(error);
@@ -125,7 +132,7 @@ getuserSheets(){
       next:(data:any) =>{
         this.userSheetsList=data?.sheets
         console.log(this.userSheetsList)
-
+        this.totalSheets = data.total_items;
       },
       error:(error:any)=>{
       console.log(error);
@@ -153,7 +160,7 @@ getuserDashboardsList(){
         this.savedDashboardList=data.sheets;
         this.demoDashboardList = data.sample_dashboards;
         console.log(this.savedDashboardList)
-
+        this.totalDashbaords = data.total_items;
       },
       error:(error:any)=>{
       console.log(error);
@@ -178,7 +185,8 @@ getSavedQueries(){
   this.workbechService.getSavedQueryList(Obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.savedQueryList = data?.sheets
+      this.savedQueryList = data?.sheets;
+      this.totalQueries = data.total_items;
      },
     error:(error)=>{
       console.log(error);
@@ -566,6 +574,7 @@ console.log(value);
 this.testVariableToChange = value;
 if(value === 'public'){
   this.createUrl = true;
+  this.shareAsProtected = false;
   this.shareAsPrivate = false
   const publicDashboardId = btoa(this.dashboardId.toString());
   this.publicUrl = 'https://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
@@ -573,7 +582,17 @@ if(value === 'public'){
 } else if(value === 'private'){
   this.createUrl = false;
   this.shareAsPrivate = true;
+  this.shareAsProtected = false;
   this.publishedDashboard = false;
+  if(this.selectedUserIds.length > 0){
+    this.applyButtonEnableOnEditUser = true;
+  }
+} else if(value === 'protected'){
+  this.createUrl = false;
+  this.shareAsPrivate = false;
+  this.shareAsProtected = true;
+  this.publishedDashboard = false;
+  this.applyButtonEnableOnEditUser = false;
 }
 }
 // copyUrl(): void {
@@ -671,6 +690,10 @@ getSelectedUsers(selected: number[]){
   }
 
 saveDashboardProperties(){
+  if(this.shareAsProtected){
+    this.applyProtectedEmails();
+    return;
+  }
   const obj ={
     dashboard_id:this.dashboardId,
     role_ids:this.selectedRoleIdsToNumbers,
@@ -718,6 +741,34 @@ publishDashboard(){
     }
   })
 }
+
+uploadProtectedCSV(event: any){
+  const file = event.target.files[0];
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = reader.result as string;
+    const lines = text.split(/\r?\n/).slice(1);
+    lines.forEach(l => { const e = l.trim(); if(e){ this.protectedEmails.push(e); } });
+  };
+  reader.readAsText(file);
+}
+
+applyProtectedEmails(){
+  if(!this.protectedEmails.length){ return; }
+  const emails = this.protectedEmails
+    .map((e: any) => typeof e === 'string' ? e : e.label || e.value || '')
+    .filter((e) => !!e);
+  const obj = {
+    dashboard_id: this.dashboardId,
+    encrypted_dahboard_id: btoa(String(this.dashboardId)),
+    emails_ids: emails
+  };
+  this.workbechService.generateProtectedLink(obj).subscribe({
+    next: ()=>{ this.toasterservice.success('Emails Sent Successfully.','success'); },
+    error: ()=>{}
+  });
+}
 gotoConfigureEmailAlerts(id:any){
 const encodedDatabaseId = btoa(id.toString());
 this.router.navigate(['/analytify/configure-page/email/sheet/'+encodedDatabaseId])
@@ -726,5 +777,13 @@ gotoConfigureEmailAlertsDashbaord(id:any){
     const encodedDatabaseId = btoa(id.toString());
 
 this.router.navigate(['/analytify/configure-page/email/dashboard/'+encodedDatabaseId])
+}
+
+emptyDashboardProperties(){
+  this.shareAsProtected = false;
+  this.shareAsPrivate = false;
+  this.protectedEmails = [];
+  this.selectedRoleIds = [];
+  this.selectedUserIds = [];
 }
 }

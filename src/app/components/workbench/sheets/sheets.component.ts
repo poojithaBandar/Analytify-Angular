@@ -291,6 +291,7 @@ export class SheetsComponent{
   guagechartRowData:any;
   minValueGuage: number = 0; // Default minimum value
   maxValueGuage: number = 100; // Default maximum value
+  gaugeDisplayMode= 'both'; // Default gauge display mode
   map: boolean = false;
 
   guageNumber:any;
@@ -414,7 +415,7 @@ export class SheetsComponent{
   //   ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
   //   ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
   // ];
-
+isSidebarCollapsed: boolean = false;
   defaultColorSchemes : { [key: string]: string[] } = {};
   userDefinedColorSchemes : { [key: string]: string[] } = {};
   keysOfColorSchemes : { key: string; colorPalette: string[] }[] = [];
@@ -2266,6 +2267,7 @@ sheetSave(isDashboardTransfer?: boolean){
     isDistributed : this.isDistributed,
     kpiFontSize : this.kpiFontSize,
     minValueGuage : this.minValueGuage,
+    gaugeDisplayMode: this.gaugeDisplayMode,
     maxValueGuage : this.maxValueGuage,
     donutDecimalPlaces : this.donutDecimalPlaces,
     decimalPlaces : this.decimalPlaces,
@@ -4215,6 +4217,7 @@ customizechangeChartPlugin() {
     this.isDistributed = data.isDistributed ?? true;
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
+    this.gaugeDisplayMode = data.gaugeDisplayMode ?? 'both';
     this.maxValueGuage = data.maxValueGuage ?? 100;
     this.donutDecimalPlaces = data.donutDecimalPlaces ?? 2;
     this.decimalPlaces = data.decimalPlaces ?? 2;
@@ -4322,6 +4325,7 @@ customizechangeChartPlugin() {
     this.isDistributed = true;
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
+    this.gaugeDisplayMode = 'both';
     this.maxValueGuage = 100;
     this.donutDecimalPlaces = 2;
     // this.decimalPlaces = 0;
@@ -7692,6 +7696,13 @@ buttonClicked = false;
     //   this.editor = false;
     // });
   }
-
+openGenieAiQTab(){
+  if(this.active !== 3){
+   this.active = 3;
+      this.getChartSuggestions()
+  }else{
+    this.active = 1;
+  }
+}
 }
 

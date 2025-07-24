@@ -1,0 +1,60 @@
+<div class="text-center mb-4">
+  <a><img style="height: 40px;" src="./assets/images/brand/analytify-logo-genBI.png" class="header-brand-img m-0" alt=""></a>
+</div>
+<div class="container-lg">
+  <div class="row justify-content-center mt-4 mx-0">
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
+      <div class="card shadow-none">
+        <div class="card-body p-sm-6">
+          <div class="text-center mb-4" *ngIf="!showOtp">
+            <h4 class="mb-1">Protected Access</h4>
+            <p>Enter email to receive OTP.</p>
+          </div>
+          <form [formGroup]="emailForm" (ngSubmit)="sendRecoveryEmail()" *ngIf="!showOtp">
+            <div class="mb-3">
+              <label class="mb-2 fw-500">Email<span class="text-danger ms-1">*</span></label>
+              <input class="form-control ms-0" type="email" formControlName="email" placeholder="Enter your email">
+              <div class="text-danger" *ngIf="emailForm.get('email')?.hasError('required') && emailForm.get('email')?.touched">
+                Email required
+              </div>
+              <div class="text-danger" *ngIf="emailForm.get('email')?.hasError('email') && emailForm.get('email')?.touched">
+                Please enter a valid email address
+              </div>
+            </div>
+            <div class="d-grid mb-3">
+              <button class="btn btn-primary" type="submit" [disabled]="emailForm.invalid">Send Email</button>
+            </div>
+            <div class="text-success mt-2" *ngIf="successMessage">{{ successMessage }}</div>
+            <div class="text-danger mt-2" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+          </form>
+          <form [formGroup]="otpForm" (ngSubmit)="verifyOtp()" *ngIf="showOtp">
+            <div class="mb-3">
+              <label class="mb-2 fw-500">OTP<span class="text-danger ms-1">*</span></label>
+              <ng-otp-input [config]="config" (onInputChange)="onOtpChange($event)"></ng-otp-input>
+            </div>
+            <div class="text-danger mt-2" *ngIf="errorMessage">{{ errorMessage }}</div>
+            <div class="d-grid mb-3">
+              <button class="btn btn-primary" type="submit" [disabled]="isLoading || otpForm.invalid">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                Verify
+              </button>
+            </div>
+            <div class="text-center">
+              <p *ngIf="displayTimer">Didn't recieve otp? Resend in {{ display }}s</p>
+              <a *ngIf="resendOtp" (click)="resendOtpApi()" class="tx ms-1 text-decoration-underline default-color resend-link">Resend OTP</a>
+            </div>
+            <div class="text-center mt-2">
+              <a (click)="showOtp=false" class="tx ms-1 text-decoration-underline default-color">Back</a>
+            </div>
+          </form>
+          <div *ngIf="showPasskeyPanel" class="passkey-panel slide-in mt-3">
+            <div class="alert alert-secondary">
+              Passkey login coming soon.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

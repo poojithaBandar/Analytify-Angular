@@ -19,6 +19,7 @@ export class SidebarComponent{
   viewSheets = false;
   viewSavedQueries = false;
   viewDashboard = false;
+  viewProtectedDashboard = true;
   viewDataSource = false;
   viewTransformations = false;
   viewEtl = false;
@@ -135,6 +136,9 @@ export class SidebarComponent{
           return true;
         }
         if (item.title === 'Transformations' && this.viewTransformations) { 
+          return true;
+        }
+        if (item.title === 'Protected Dashboards' && this.viewProtectedDashboard) { 
           return true;
         }
         if (item.title === 'ETL' && this.viewEtl) { 

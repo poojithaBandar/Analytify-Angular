@@ -11,6 +11,12 @@ export const admin: Routes = [
   {
     path: 'analytify', children: [
       {
+        path: 'profile',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
         path: 'datasources/new-connections',
         canActivate: [authGuard],
         loadComponent: () =>
@@ -259,10 +265,10 @@ export const admin: Routes = [
           import('./dashboard-page/dashboard-page.component').then((m) => m.DashboardPageComponent)
       },
       {
-        path: 'dashboard/transfer',
+        path: 'protected-dashboards',
         canActivate: [authGuard],
         loadComponent: () =>
-          import('./dashboard-transfer/dashboard-transfer.component').then(m => m.DashboardTransferComponent)
+        import('./protected-dashboards/protected-dashboards.component').then((m) => m.ProtectedDashboardsComponent),
       },
       {
         path: 'sheets-dashboard',

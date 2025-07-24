@@ -1281,12 +1281,30 @@ export class WorkbenchComponent implements OnInit{
               this.openShopifyForm = false;
               }
               const encodedId = btoa(this.databaseId.toString());
-              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                this.switchDatabase();
               }else{
-              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                Swal.fire({
+                  position: "center",
+                  iconHtml: '<img src="./assets/images/copilot.gif">',
+                  title: "Create smart dashboard from your data with just one click?",
+                  showConfirmButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: 'Yes',
+                  cancelButtonText: 'Skip',
+                  customClass: {
+                    icon: 'no-icon-bg',
+                  }
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    this.templateDashboardService.buildSampleShopifyDashboard(this.container, this.databaseId);
+                  } else {
+                    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  }
+                });
               }
             }
           },
@@ -1326,7 +1344,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+              title: "Create smart dashboard from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1382,7 +1400,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+              title: "Create smart dashboard from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1437,7 +1455,7 @@ export class WorkbenchComponent implements OnInit{
                 position: "center",
                 // icon: "question",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+                title: "Create smart dashboard from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1489,7 +1507,7 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+                title: "Create smart dashboard from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1580,17 +1598,23 @@ export class WorkbenchComponent implements OnInit{
             this.switchDatabase();
           }else{
             Swal.fire({
-              position: "center",
-              iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
-              showConfirmButton: true,
-              showCancelButton: true,
-              confirmButtonText: 'Yes',
-              cancelButtonText: 'Skip',
-              customClass: {
-                icon: 'no-icon-bg',
-              }
-            }).then((result) => {
+                title: '✨ Ready to Build Your AI Adoption Dashboard?',
+                html: `
+                  <img src="./assets/images/copilot.gif">
+                  <p style="font-size: 16px;">Let AI turn your data into insights — instantly.</p>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Generate It!',
+                cancelButtonText: 'Skip for Now',
+                confirmButtonColor: '#007bff',
+                cancelButtonColor: '#e0e0e0',
+                reverseButtons: true,
+                customClass: {
+                  popup: 'rounded-lg',
+                  title: 'font-semibold',
+                  htmlContainer: 'text-gray-600',
+                }
+              }).then((result) => {
               if (result.isConfirmed) {
                 this.templateDashboardService.buildSampleOpenAIDashboard(this.container, this.databaseId);
               } else {
@@ -2934,6 +2958,48 @@ connectGoogleSheets(){
       error:(error)=>{
         console.log(error);
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+      }
+    })
+  }
+
+  smartDashboardFromConnection(database:any){
+    this.workbechService.createSmartDashboard(database.hierarchy_id).subscribe({
+      next: (responce) => {
+        switch(database.server_type){
+          case 'TALLY':
+            this.templateDashboardService.buildSampleTallyDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'SHOPIFY':
+            this.templateDashboardService.buildSampleShopifyDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'SALESFORCE':
+            this.templateDashboardService.buildSampleSalesforceDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'QUICKBOOKS':
+            this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'IMMYBOT':
+            this.templateDashboardService.buildSampleImmybotDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'NINJA':
+            this.templateDashboardService.buildSampleNinjaRMMDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'HUBSPOT':
+            this.templateDashboardService.buildSampleHubspotDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'CONNECTWISE':
+            this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'HALOPS':
+            this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'OPEN_AI':
+            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
+            break;
+        }
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       }
     })
   }
