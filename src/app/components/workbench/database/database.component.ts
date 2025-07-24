@@ -343,7 +343,8 @@ export class DatabaseComponent {
   getSavedQueryData(){
     const obj ={
       database_id:this.databaseId,
-      queryset_id: this.custumQuerySetid
+      queryset_id: this.custumQuerySetid,
+      offset : 0
     }
     this.workbechService.getSavedQueryData(obj).subscribe({
       next:(data:any)=>{
@@ -749,12 +750,17 @@ clearFiltersOnClearQuery(){
   }
 }
 checkQerynameChange:any;
+resetAndRunQuery(){
+  this.offset = 0;
+  this.executeQuery();
+}
 executeQuery(){
   const obj ={
     database_id: this.databaseId,
     custom_query: this.sqlQuery,
     row_limit:this.rowLimit,
     queryset_id:this.custumQuerySetid,
+    offset:this.offset
     // query_name:this.saveQueryName,
   }as any
   if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
@@ -762,6 +768,7 @@ executeQuery(){
   }if(this.custumQuerySetid === 0 || this.custumQuerySetid === '0'){
     delete obj.queryset_id
   }
+  this.workbechService.disableLoaderForNextRequest();
   this.workbechService.executeQuery(obj)
   .subscribe(
     {
@@ -769,7 +776,16 @@ executeQuery(){
         console.log(data)
         // this.relationOfTables = data[2]?.relation?.condition
         // console.log('relation',this.relationOfTables)
-        this.cutmquryTable = data
+        // this.cutmquryTable = data
+         if (this.offset === 0) {
+            this.cutmquryTable = data;
+          } else {
+            // Append new rows
+            this.cutmquryTable.row_data = [
+              ...this.cutmquryTable.row_data,
+              ...data.row_data
+            ];
+          }
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
         if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
@@ -784,6 +800,7 @@ executeQuery(){
         this.totalRowsCustomQuery=data.total_rows
         console.log('custumQuery Data',this.cutmquryTable)
         this.gotoSheetButtonDisable = false;
+        this.isLoadingResults = false;
       },
       error:(error:any)=>{
       console.log(error);
@@ -1261,6 +1278,24 @@ clearJoinCondns(){
   isLoadingResults = false;
   offset = 0;
   lastScrollIndex = 0; // Track last scroll index
+  allLoaded = false; // Flag to stop loading when all data fetched
+
+  // Infinite scroll handler for table container (line 660)
+  onTableScroll(index: number) {
+    if (
+      index > this.lastScrollIndex && // Only when scrolling down
+      !this.isLoadingResults &&
+      this.cutmquryTable.row_data &&
+      index >= this.cutmquryTable.row_data.length - 10 && 
+      this.cutmquryTable?.row_data?.length < this.totalRowsCustomQuery &&
+      !(this.rowLimit && this.cutmquryTable.row_data.length >= this.rowLimit)
+    ) {
+      this.isLoadingResults = true;
+      this.offset += this.resultLimit;
+      this.executeQuery();
+      // If API returns less than resultLimit, set allLoaded = true in getJoiningTableData()
+    }
+  }
 
   onResultScroll(index: number) {
     // Only trigger when scrolling down

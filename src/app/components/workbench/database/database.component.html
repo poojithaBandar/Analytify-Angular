@@ -487,7 +487,7 @@
                                                     }
                                                 </tbody>
                                             </table> -->
-                                            <cdk-virtual-scroll-viewport itemSize="40" class="viewport-full-table" (scrolledIndexChange)="onResultScroll($event)">
+                                            <cdk-virtual-scroll-viewport itemSize="40" class="viewport-full-table" style="height: 193px;" (scrolledIndexChange)="onResultScroll($event)">
                                                 <table
                                                     class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 ">
                                                     <thead class="Result-preview-table-sticky">
@@ -599,11 +599,11 @@
                             <a *ngIf="!fromSavedQuery" class="btn btn-blue-light m-1"
                                 (click)=backToTableJoining()>Back to Table Joining</a>
                                 @if(custmQryTime){
-                            <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
+                            <!-- <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
                                 (click)="openSuperScaled(applyFiltersModal);getFilteredList('fromcustomsql')"
                                 class="modal-effect btn btn-primary m-1">
                                 <i class="fa fa-filter"></i> Apply Filters
-                            </a>
+                            </a> -->
                                 }
                         </div>
                     </div>
@@ -619,7 +619,7 @@
                             [classesList]="'btn btn-primary'" [previledgeId]="52" [isBtn]="true"
                             (btnClickEvent)="updateCustmQuery()" [isIcon]="false"></app-insights-button>
                         <button *ngIf="!updateQuery" aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length"
-                            (click)="executeQuery()"> Run Query </button>
+                            (click)="resetAndRunQuery()"> Run Query </button>
                         <button aria-expanded="false" class="btn btn-secondary" (click)="clrQuery()"> Clear Query
                         </button>
                     </div>
@@ -655,28 +655,38 @@
                         <div class="card-body d-flex align-items-center justify-content-center p-0">
 
                             <div *ngIf="cutmquryTable" class="table-responsive"
-                                style="overflow-y: auto;height: 233px;">
-                                <table
-                                    class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                    <thead class="Result-preview-table-sticky">
-                                        <tr>
-                                            @for(data of cutmquryTable.column_data;track data){
-                                            <th>{{data}}</th>
-                                            }
-                                        </tr>
-
-                                    </thead>
-                                    <tbody>
-                                        @for(rowss of cutmquryTable.row_data;track rowss;){
-                                        <tr>
-                                            @for(rowdata of rowss;track rowdata;let i = $index){
-
+                            style="overflow-y: auto;height: 233px;">
+                          
+                            <cdk-virtual-scroll-viewport itemSize="40" class="viewport-full-table" style="height: 230px;" (scrolledIndexChange)="onTableScroll($event)">
+                            <table
+                            class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                            <thead class="Result-preview-table-sticky">
+                            <tr>
+                            @for(data of cutmquryTable.column_data;track data){
+                            <th>{{data}}</th>
+                            }
+                            </tr>
+                            
+                            </thead>
+                            <tbody>  
+                                @for(rowss of cutmquryTable.row_data;track rowss){
+                                    <tr>
+                                        @for(rowdata of rowss; track rowdata;let i = $index){
                                             <td>{{rowdata}}</td>
-                                            }
-                                        </tr>
                                         }
-                                    </tbody>
-                                </table>
+                                    </tr>
+                                } 
+                                </tbody>
+                            </table>
+                             @if(isLoadingResults && cutmquryTable?.row_data?.length){
+                                                    <div class="d-flex align-items-center p-3">
+                                                        <div class="spinner-border text-primary me-2" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                        <span>Loading more data...</span>
+                                                    </div>
+                                                    }
+                            </cdk-virtual-scroll-viewport>
                             </div>
                             <!-- } -->
                         </div>
