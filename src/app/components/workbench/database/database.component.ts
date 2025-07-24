@@ -752,7 +752,29 @@ clearFiltersOnClearQuery(){
   }
 }
 checkQerynameChange:any;
-resetAndRunQuery(){
+resetAndRunQuery() {
+  // If rowLimit is defined and data is already present
+  if (this.rowLimit && this.cutmquryTable?.row_data?.length) {
+    const alreadyLoaded = this.cutmquryTable.row_data.length;
+
+    if (alreadyLoaded >= this.rowLimit) {
+      // Case 1: Already loaded more than rowLimit → Trim
+      this.cutmquryTable.row_data = this.cutmquryTable.row_data.slice(0, this.rowLimit);
+      this.offset = this.rowLimit;
+      this.isLoadingResults = false; // prevent further loading
+      return;
+    } else {
+      // Case 2: Partially loaded, resume from where left off
+      this.offset = alreadyLoaded;
+    }
+  } else {
+    // No rowLimit or no data yet — start fresh
+    this.offset = 0;
+  }
+
+  this.executeQuery();
+}
+resetAndRunQueryFreshQuery(){
   this.offset = 0;
   this.executeQuery();
 }
@@ -770,7 +792,9 @@ executeQuery(){
   }if(this.custumQuerySetid === 0 || this.custumQuerySetid === '0'){
     delete obj.queryset_id
   }
+  if(this.offset !== 0){
   this.workbechService.disableLoaderForNextRequest();
+  }
   this.workbechService.executeQuery(obj)
   .subscribe(
     {
@@ -788,6 +812,10 @@ executeQuery(){
               ...data.row_data
             ];
           }
+          if (this.rowLimit && this.cutmquryTable.row_data.length > this.rowLimit) {
+          this.cutmquryTable.row_data = this.cutmquryTable.row_data.slice(0, this.rowLimit);
+          this.isLoadingResults = false;
+        }
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
         if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
@@ -1223,7 +1251,26 @@ clearJoinCondns(){
   this.selectedClmnT2=null;
   this.enableJoinButton();
 }
+resetOffsetgetJoiningTableData() {
+  if (this.rowLimit && this.TabledataJoining?.row_data?.length) {
+    const alreadyLoaded = this.TabledataJoining.row_data.length;
 
+    if (alreadyLoaded >= this.rowLimit) {
+      // Case: Already loaded more than new rowLimit → trim data and stop
+      this.TabledataJoining.row_data = this.TabledataJoining.row_data.slice(0, this.rowLimit);
+      this.offset = this.rowLimit;
+      this.isLoadingResults = false; // Stop further fetching
+      return;
+    } else {
+      // Case: Loaded less than rowLimit → adjust offset and fetch more
+      this.offset = alreadyLoaded;
+    }
+  } else {
+    this.offset = 0;
+  }
+
+  this.getJoiningTableData();
+}
   getJoiningTableData() {
     const obj = {
       hierarchy_id: this.databaseId,
@@ -1235,7 +1282,9 @@ clearJoinCondns(){
     if (obj.row_limit === null || obj.row_limit === undefined) {
       delete obj.row_limit;
     }
+    if(this.offset !== 0){
     this.workbechService.disableLoaderForNextRequest();
+    }
     this.workbechService.getTableJoiningData(obj).subscribe(
       {
         next: (data: any) => {
@@ -1288,11 +1337,12 @@ clearJoinCondns(){
 
   // Infinite scroll handler for table container (line 660)
   onTableScroll(index: number) {
+    const buffer = Math.floor(this.resultLimit * 0.3); // fetch when 70% scrolled
     if (
       index > this.lastScrollIndex && // Only when scrolling down
       !this.isLoadingResults &&
       this.cutmquryTable.row_data &&
-      index >= this.cutmquryTable.row_data.length - 10 && 
+      index >= this.cutmquryTable.row_data.length - buffer && 
       this.cutmquryTable?.row_data?.length < this.totalRowsCustomQuery &&
       !(this.rowLimit && this.cutmquryTable.row_data.length >= this.rowLimit)
     ) {
@@ -1305,11 +1355,13 @@ clearJoinCondns(){
 
   onResultScroll(index: number) {
     // Only trigger when scrolling down
+     const buffer = Math.floor(this.resultLimit * 0.3); // fetch when 70% scrolled
+
     if (
       index > this.lastScrollIndex && // Only when scrolling down
       !this.isLoadingResults &&
       this.TabledataJoining.row_data &&
-      index >= this.TabledataJoining.row_data.length - 10 && // Near bottom
+      index >= this.TabledataJoining.row_data.length - buffer && // Near bottom
       this.TabledataJoining.row_data.length < this.totalRows && // Not all loaded
       !(this.rowLimit && this.TabledataJoining.row_data.length >= this.rowLimit) 
     ) {

@@ -446,11 +446,11 @@
                                                     <i class="fa fa-download"></i>
                                                 </button>
                                             <input type="number" [(ngModel)]="rowLimit" id="input-text"
-                                                (keydown.enter)="getJoiningTableData()" placeholder="rows"
+                                                (keydown.enter)="resetOffsetgetJoiningTableData()" placeholder="rows"
                                                 class="form-control w-30" min="0">
                                             <a [class.disabled]="!rowLimit || rowLimit <= 0"
                                                 [style.pointer-events]="!rowLimit || rowLimit <= 0 ? 'none' : 'auto'"
-                                                (click)="getJoiningTableData()"><i
+                                                (click)="resetOffsetgetJoiningTableData()"><i
                                                     class="mdi mdi-arrow-right-thick result-icon"></i></a>
                                             <app-insights-button [buttonName]="' Go to sheet '"
                                                 [classesList]="'btn btn-primary ms-2'" [previledgeId]="17"
@@ -619,7 +619,7 @@
                             [classesList]="'btn btn-primary'" [previledgeId]="52" [isBtn]="true"
                             (btnClickEvent)="updateCustmQuery()" [isIcon]="false"></app-insights-button>
                         <button *ngIf="!updateQuery" aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length"
-                            (click)="resetAndRunQuery()"> Run Query </button>
+                            (click)="resetAndRunQueryFreshQuery()"> Run Query </button>
                         <button aria-expanded="false" class="btn btn-secondary" (click)="clrQuery()"> Clear Query
                         </button>
                     </div>
@@ -642,9 +642,9 @@
                                         <i class="fa fa-download"></i>
                                     </button>
                                 <input type="number" [(ngModel)]="rowLimit" id="input-text"
-                                    (keydown.enter)="executeQuery()"
+                                    (keydown.enter)="resetAndRunQuery()"
                                     placeholder="rows" class="form-control w-30" min="0">
-                                <a (click)="executeQuery()"><i
+                                <a (click)="resetAndRunQuery()"><i
                                         class="mdi mdi-arrow-right-thick result-icon me-2"></i></a>
                                 <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'"
                                     [previledgeId]="17" [isBtn]="true" (btnClickEvent)="goToSheet('fromcustomsql')"
