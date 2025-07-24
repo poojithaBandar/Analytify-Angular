@@ -683,8 +683,10 @@ try {
  
       tableDimentions = [] as any;
       tableMeasures = [] as any;
+      isLoading: boolean = false;
       columnsData(){
         this.suggestions=[];
+        this.isLoading = true;
         const obj = {
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -694,18 +696,20 @@ try {
           next: (responce: any) => {
             console.log(responce);
             if(responce.length > 0){
-            this.tableColumnsData = responce;
-            this.database_name = responce[0].database_name;
-            this.isCustomSql = responce[0].is_custom_sql;
-            this.tableDimentions = responce.dimensions;
-            this.tableMeasures = responce.measures;
-            this.buildSuggestionsForCalculations(responce);
-          }else{
-            this.tableColumnsData = responce;
-          }
-        },
+              this.tableColumnsData = responce;
+              this.database_name = responce[0].database_name;
+              this.isCustomSql = responce[0].is_custom_sql;
+              this.tableDimentions = responce.dimensions;
+              this.tableMeasures = responce.measures;
+              this.buildSuggestionsForCalculations(responce);
+            }else{
+              this.tableColumnsData = responce;
+            }
+            this.isLoading = false;
+          },
           error: (error) => {
             console.log(error);
+            this.isLoading = false;
           }
         }
         )

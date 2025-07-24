@@ -765,7 +765,7 @@
                         <p fs-16>No Data Found!</p>
                         }
                         }@placeholder {
-                            <div class="text-center my-4">
+                            <div class="text-center my-4" *ngIf="isLoading">
                             <div class="spinner-border text-primary" role="status"></div>
                             <div>Loading Tables...</div>
                             </div>
