@@ -1,9 +1,23 @@
 <div class="main-container container-fluid">
-    <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius" id="home" #home>
+    <!-- <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius" id="home" #home>
         <div class="container px-sm-0">
         <div class="row justify-content-center">
             <div class="col-xl-8 col-lg-6 pb-5 text-center my-auto animation-zidex pos-relative landing-main-heading">
                 <h1 class="text-  tx-fixed-white mt-0">A quick and easy way to build your Business with <span class="tx-fixed-white fw-bold">"Analytify"</span></h1>
+            </div>
+        </div>
+        </div>
+    </div> -->
+     <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius" id="home" #home>
+        <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-12 col-lg-6 p-0">
+                <div class="card mb-0">
+                    <img src="./assets/images/backgrounds/landing-bg-header.jpg" alt="..." class="card-img">
+                    <div class="card-img-overlay d-flex justify-content-center align-items-center p-0">
+                        <h1 class="text-  tx-fixed-white mt-0 text-center">A quick and easy way to build your <br>Business with <span class="tx-fixed-white fw-bold">"Analytify"</span></h1>
+                    </div>
+                </div>
             </div>
         </div>
         </div>
@@ -27,70 +41,70 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xl-3">
-            <div class="card">
+            <div class="card mb-0 border">
                 <div class="card-body">
-                    <div class="d-flex align-items-start">
-                         <div class="min-w-fit-content me-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <h5 class="mb-0 500 dashboard-T-C">Dashboards</h5>
+                            <h2 class="fw-500 mb-0"><b>{{totalDashbaords}}</b></h2>
+                        </div>
+                         <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md br-5 landing-dash-bg">
                                <img src="./assets/images/icons/land-dashboard.png" alt="Google Sheets" class="landing-icon">
                             </span>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0 500">Dashboards</h6>
-                            <span class="fw-600 fs-5">{{totalDashbaords}}</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xl-3">
-            <div class="card">
+            <div class="card mb-0 border">
                 <div class="card-body">
-                    <div class="d-flex align-items-start">
-                         <div class="min-w-fit-content me-2">
+                    <div class="d-flex justify-content-between">
+                         <div class="">
+                            <h5 class="mb-0 fw-500 chart-T-C">Charts</h5>
+                            <h2 class="fw-500 mb-0"><b>{{totalSheets}}</b></h2>
+                        </div>
+                         <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md br-5 landing-chart-bg">
                                <img src="./assets/images/icons/land-chart.png" alt="Google Sheets" class="landing-icon">
                             </span>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0 fw-500">Charts</h6>
-                            <span class="fw-600 fs-5">{{totalSheets}}</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xl-3">
-            <div class="card">
+            <div class="card mb-0 border">
                 <div class="card-body">
-                    <div class="d-flex align-items-start">
-                         <div class="min-w-fit-content me-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <h5 class="mb-0 fw-500 queries-T-C">Queries</h5>
+                            <h2 class="fw-500 mb-0"><b>{{totalQueries}}</b></h2>
+                        </div>
+                         <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md br-5 landing-queries-bg">
                                <img src="./assets/images/icons/land-queries.png" alt="Google Sheets" class="landing-icon">
                             </span>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0 fw-500">Queries</h6>
-                            <span class="fw-600 fs-5">{{totalQueries}}</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xl-3">
-            <div class="card">
+            <div class="card mb-0 border">
                 <div class="card-body">
-                    <div class="d-flex align-items-start">
-                         <div class="min-w-fit-content me-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <h5 class="mb-0 fw-500 data-T-C">Data sources</h5>
+                            <h2 class="fw-500 mb-0 "><b>{{totalDatabases}}</b></h2>
+                        </div>
+                         <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md br-5 landing-data-bg">
                                <img src="./assets/images/icons/land-data.png" alt="Google Sheets" class="landing-icon">
                             </span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0 fw-500">Data sources</h6>
-                            <span class="fw-600 fs-5">{{totalDatabases}}</span>
                         </div>
                     </div>
                 </div>
