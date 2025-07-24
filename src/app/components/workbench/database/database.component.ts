@@ -391,7 +391,9 @@ export class DatabaseComponent {
           this.datasourceQuerysetId = data.dragged_data.dastasource_queryset_id;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
-            this.joiningTables();
+            // this.joiningTables();
+            this.buildCustomJoin();
+            this.getJoiningTableData();
             this.dropdownOptions = this.buildDropdownOptions(this.draggedtables);
             //for custom join dropdown
             this.filterColumnsT1();
@@ -912,6 +914,7 @@ joiningTablesWithoutQuerySetId(){
     join_type:[],
     joining_conditions:[],
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
+    is_smart_dashboard:false
   } as any
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -954,6 +957,7 @@ joiningTables(){
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
+    is_smart_dashboard:false
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -1038,6 +1042,7 @@ joiningTablesFromDelete(){
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
+    is_smart_dashboard:false
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -1121,6 +1126,7 @@ customTableJoin(){
     join_type:this.joinTypes,
     joining_conditions:joiningConditions,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
+    is_smart_dashboard:false
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(

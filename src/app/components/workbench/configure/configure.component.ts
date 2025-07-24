@@ -612,7 +612,7 @@ openThresholdModal(editThreshold: any = null) {
         this.fetchThresholds();
       },
       error: (error) => {
-        this.toasterService.error('Failed to save threshold');
+        this.toasterService.error(error.error.message);
       }
     });
   }

@@ -52,6 +52,7 @@ export class InsightApexComponent {
   @Input() donutSize : any;
   @Input() isDistributed : any;
   @Input() minValueGuage : any;
+  @Input() gaugeDisplayMode :any;
   @Input() maxValueGuage : any;
   @Input() legendsAllignment: any;
   @Input() dataLabelsFontFamily : any;
@@ -94,6 +95,7 @@ export class InsightApexComponent {
   @ViewChild('funnelChart') funnelCharts!: ChartComponent;
   @ViewChild('guageChart') guageCharts!: ChartComponent;
   @ViewChild('heatmapchart') heatmapCharts!: ChartComponent;
+
   series: any[] = [];
   chartOptions: any = {};
   guageNumber : any;
@@ -209,9 +211,22 @@ export class InsightApexComponent {
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
-    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
-      this.customMinMaxGuage();
-    }
+    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage']) || changes['gaugeDisplayMode']){
+      if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
+      if (changes['maxValueGuage']) {
+        this.maxValueGuage = changes['maxValueGuage'].currentValue;
+         this.customMinMaxGuage();
+      }
+      if (changes['minValueGuage']) {
+        this.minValueGuage = changes['minValueGuage'].currentValue;
+         this.customMinMaxGuage();
+      }
+    }else if( changes['gaugeDisplayMode']) {
+        this.gaugeDisplayMode = changes['gaugeDisplayMode'].currentValue;
+        this.customMinMaxGuage();
+      }
+     
+       }
     // if(['funnel','bar'].includes(this.chartType) && changes['sortType'] && changes['sortType']?.currentValue !== 0){
     //   this.sortSeries(this.sortType);
     // }
@@ -1896,7 +1911,7 @@ xaxis: {
       { limit: 100000, max: 100000 },    // Up to 1 lakh
       { limit: 500000, max: 500000 },    // Up to 5 lakhs
       { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
-      { limit: Infinity, max: Math.ceil(this.guageNumber / 1000000) * 1000000 } // Above 10 lakhs
+      { limit: Infinity, max: (Math.ceil(this.guageNumber / 1000000) + 1) * 1000000 } // Above 10 lakhs
     ];
 
     // Determine maxValueGuage based on guageNumber
@@ -1985,7 +2000,18 @@ xaxis: {
               fontWeight: this.isBold ? 700 : 400
             },
             value: {
-              formatter: (val: any) => `${val.toFixed(2)}%`, // Displaying percentage
+              formatter: (val: any) => {
+                switch (this.gaugeDisplayMode) {
+                  case 'percentage':
+                    return `${val.toFixed(2)}%`;
+                  case 'value':
+                    return `${this.guageNumber}`;
+                  case 'both':
+                    return `${val.toFixed(2)}% (${this.guageNumber})`;
+                  default:
+                    return `${val.toFixed(2)}%`;
+                } 
+              },
               show: true,
               color: this.dataLabelsColor,
               fontSize: this.dataLabelsFontSize,
@@ -3006,6 +3032,9 @@ xaxis: {
     }
     else if(this.chartType === 'heatmap'){
       this.heatmapCharts?.updateOptions(object);
+    }
+    else if(this.chartType === 'gauge'){
+      this.guageCharts?.updateOptions(object);
     }
   }
   gridLineColor(){
