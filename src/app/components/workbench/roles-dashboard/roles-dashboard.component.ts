@@ -367,5 +367,6 @@ editRoles(){
 viewSavedRoles(){
   // this.router.navigate(['/analytify/roles/roles-list'])
   this.addRoleDiv = false;
+  this.getSavedRolesList();
 }
 }
