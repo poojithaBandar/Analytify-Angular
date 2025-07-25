@@ -6167,7 +6167,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   }
 
   updateNumberFormat(sheet : any, numberFormat : any, chartId : any, isEcharts : any){
-    if(numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix){
+    if(numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix || chartId === 28){
       if(isEcharts){
         if([2,3,14].includes(chartId)){
           if (sheet.echartOptions?.xAxis?.axisLabel) {
@@ -6255,6 +6255,22 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               const category = opts.w.config.xaxis.categories[opts.dataPointIndex];
               const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
               return `${category}: ${formattedValue}`;
+            }
+          }
+        } else if(chartId === 28){
+          if (sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value) {
+            sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: any, opts: any) => {
+              
+                switch (sheet.customizeOptions.gaugeDisplayMode) {
+                  case 'percentage':
+                    return `${val.toFixed(2)}%`;
+                  case 'value':
+                    return `${val}`;
+                  case 'both':
+                    return `${val.toFixed(2)}% (${val})`;
+                  default:
+                    return `${val.toFixed(2)}%`;
+                } 
             }
           }
         } else if(![1, 25, 10, 24, 9].includes(chartId)){
