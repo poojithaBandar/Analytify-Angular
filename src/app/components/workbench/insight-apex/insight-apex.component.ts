@@ -211,7 +211,7 @@ export class InsightApexComponent {
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
-    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage']) || changes['gaugeDisplayMode']){
+    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'] || changes['gaugeDisplayMode'])){
       if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
       if (changes['maxValueGuage']) {
         this.maxValueGuage = changes['maxValueGuage'].currentValue;
