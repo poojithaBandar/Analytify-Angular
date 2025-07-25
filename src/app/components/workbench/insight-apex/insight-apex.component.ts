@@ -436,6 +436,18 @@ export class InsightApexComponent {
       );
     }
   }
+
+  autoAdjustChartHeightForHBar() {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = this.chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    // Optional: set a minimum height
+    const chartHeight = Math.max(calculatedHeight, 320); // e.g., 300px minimum
+
+    return chartHeight;
+  }
+
   barChart() {
     const self = this;
     this.chartOptions = {
@@ -609,7 +621,7 @@ horizontalBarChart() {
         autoSelected: 'zoom' 
       },
       type: 'bar',
-      height: 320,
+      height: this.autoAdjustChartHeightForHBar(),
       background: this.backgroundColor,
       events: {
         dataPointSelection: function (event: any, chartContext: any, config: any) {

@@ -2328,7 +2328,8 @@ sheetSave(isDashboardTransfer?: boolean){
     isHorizontalBar  : this.isHorizontalBar,
     isMeasureDistribution : this.isMeasureDistribution,
     measureColorRanges : this.measureColorRanges,
-    measureDivisions : this.measureDivisions
+    measureDivisions : this.measureDivisions,
+    hBarHeight : this.hBarHeight
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -4281,6 +4282,7 @@ customizechangeChartPlugin() {
     this.measureColorRanges = data.measureColorRanges ?? [];
     this.isMeasureDistribution = data.isMeasureDistribution ?? false;
     this.measureDivisions = data.measureDivisions ?? 2;
+    this.hBarHeight = data.hBarHeight ?? '';
   }
 
   resetCustomizations(){
@@ -4383,6 +4385,8 @@ customizechangeChartPlugin() {
     this.measureColorRanges = [];
     this.isMeasureDistribution = false;
     this.measureDivisions = 2;
+
+    this.hBarHeight = '';
     // this.isHorizontalBar = false;
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
@@ -6449,8 +6453,12 @@ customizechangeChartPlugin() {
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
+    hBarHeight : string = '';
     setChartOptions(event : any){
       this.chartOptionsSet = event.chartOptions;
+      if(this.isEChatrts && this.chartType === 'horizontalBar' && event?.height){
+        this.hBarHeight = event.height;
+      }
       this.sheetSave();
       this.isSheetSaveOrUpdate = false;
     }
