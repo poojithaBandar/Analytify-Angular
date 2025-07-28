@@ -4481,6 +4481,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                 });
               });
             });
+            item1.customizeOptions.hBarHeight = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
             item1.echartOptions.series[0].data = combinedArray;
             item1.echartOptions = {
               ...item1.echartOptions,
@@ -4494,6 +4495,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         // if(isDrillThrough){
           item1.chartOptions = {
             ...item1.chartOptions,
+            chart: {
+              ...item1.chartOptions.chart,
+              height: this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values),
+            },
             xaxis: {
               ...item1.chartOptions.xaxis,
               categories: categories,
@@ -4616,7 +4621,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           }
         }
       }
-       if((item.chart_id == '14' || item.chartId == '14' && (isFilter || isDrillDown)) || (item1.chartId == '14' && isDrillThrough)){//bar
+       if((item.chart_id == '14' || item.chartId == '14' && (isFilter || isDrillDown)) || (item1.chartId == '14' && isDrillThrough)){//Hbar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData && !switchDb){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4628,6 +4633,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             item1.drillDownIndex = 0;
             item1.drillDownObject = [];
           }
+          item1.customizeOptions.hBarHeight = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
           item1.echartOptions.yAxis.data = this.filteredColumnData[0]?.values;
         item1.echartOptions.series[0].data = this.filteredRowData[0]?.data;
         item1.echartOptions = {
@@ -4642,6 +4648,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
+        item1.chartOptions.chart.height = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
       item1.chartOptions.xaxis.categories = this.filteredColumnData[0]?.values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData;
       }
@@ -8731,6 +8738,20 @@ initializeTabDefaults() {
     this.MAX_FONT_SIZE
   );
 }// Default values
+
+  autoAdjustChartHeightForHBar(isEchart: boolean, chartsColumnData: any[]) {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    if(isEchart){
+      const chartHeight = Math.max(calculatedHeight, 400);
+      return chartHeight + 'px';
+    } else{
+      const chartHeight = Math.max(calculatedHeight, 320);
+      return chartHeight;
+    }
+  }
 
 }
 

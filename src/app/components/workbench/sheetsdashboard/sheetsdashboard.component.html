@@ -1380,7 +1380,7 @@
                   [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
                   <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
                     (chartClick)="onEChartClick($event,item)" class="echart-charts"
-                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : (item['chartId'] === 14 ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
+                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
                 </div>
             
                 } @else if(item['isEChart'] && item['chartId']=== 29){
@@ -1854,7 +1854,7 @@
                   [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
                   <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
                     (chartClick)="onEChartClick($event,item)" class="echart-charts"
-                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : (item['chartId'] === 14 ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
+                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
                 </div>
             
                 } @else if(item['isEChart'] && item['chartId']=== 29){

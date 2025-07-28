@@ -6456,7 +6456,7 @@ customizechangeChartPlugin() {
     hBarHeight : string = '';
     setChartOptions(event : any){
       this.chartOptionsSet = event.chartOptions;
-      if(this.isEChatrts && this.chartType === 'horizontalBar' && event?.height){
+      if(this.isEChatrts && ['horizontalBar', 'funnel'].includes(this.chartType) && event?.height){
         this.hBarHeight = event.height;
       }
       this.sheetSave();
