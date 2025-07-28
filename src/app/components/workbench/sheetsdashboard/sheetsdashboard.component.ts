@@ -104,6 +104,12 @@ interface KpiData {
   kpiSuffix: string;
   kpiDecimalUnit : string;
   kpiDecimalPlaces: number;
+  trendData: [], 
+  trendLabels: [],
+  kpiShowTrendline : boolean,
+  kpiShowIndicator : boolean,
+  indicatorIsIncreased : any,
+  indicatorValue : any,
 }
 declare var $:any;
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -130,6 +136,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
 })
 export class SheetsdashboardComponent implements OnDestroy {
  // @HostListener('window:resize', ['$event'])
+ 
  itemsPerPage:any;
   private destroy$ = new Subject<void>();
  pageNo = 1;
@@ -233,7 +240,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   actionId : any;
   drillThroughActionList : any[] =[];
   drillThroughDatabaseName : any = '';
-
   calendarTotalHeight : string = '400px';
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
@@ -258,6 +264,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   isEmbeddedFilter : boolean = false;
   genieHover = false;
   showGenieTooltip = false;
+  trendData= [];
+  trendLabels = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -918,6 +926,12 @@ export class SheetsdashboardComponent implements OnDestroy {
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              kpiShowIndicator : sheet.sheet_data?.results?.kpiShowIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -2038,6 +2052,12 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+               trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              kpiShowIndicator : sheet.sheet_data?.results?.kpiShowIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -2112,6 +2132,12 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+               trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              kpiShowIndicator : sheet.sheet_data?.results?.kpiShowIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -5158,6 +5184,12 @@ kpiData?: KpiData;
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+                 trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              kpiShowIndicator : sheet.sheet_data?.results?.kpiShowIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
