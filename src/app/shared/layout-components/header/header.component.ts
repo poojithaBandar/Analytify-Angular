@@ -257,7 +257,13 @@ export class HeaderComponent implements OnInit {
     });
   }
   routehelpGuide(){
-    this.router.navigate(['/analytify/help-guide']);
+    // this.router.navigate(['/analytify/help-guide']);
+
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/analytify/help-guide'])
+    );
+    const fullUrl = `${window.location.origin}${url}`;
+    window.open(fullUrl, '_blank');
   }
   routeToUserProfile(){
     this.router.navigate(['/analytify/profile']); 

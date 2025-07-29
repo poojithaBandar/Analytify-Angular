@@ -34,7 +34,13 @@ ngOnChanges(){
 
 helpRoute(){
   console.log(this.moduleId)
-  this.route.navigate([`/analytify/help-guide/${this.moduleId}`])
+  // this.route.navigate([`/analytify/help-guide/${this.moduleId}`])
+
+  const url = this.route.serializeUrl(
+    this.moduleId ? this.route.createUrlTree([`/analytify/help-guide/${this.moduleId}`]) : this.route.createUrlTree([`/analytify/help-guide`])
+  );
+  const fullUrl = `${window.location.origin}${url}`;
+  window.open(fullUrl, '_blank');
 }
 routeHome(){
   this.route.navigate(['/analytify/home'])
