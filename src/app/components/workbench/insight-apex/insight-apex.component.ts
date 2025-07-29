@@ -77,6 +77,7 @@ export class InsightApexComponent {
   @Input() SDKChartOptions: any;
   @Input() measureColorRanges: any;
   @Input() isMeasureDistribution: any;
+  @Input() valueToDivide : any;
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   
@@ -98,9 +99,8 @@ export class InsightApexComponent {
 
   series: any[] = [];
   chartOptions: any = {};
-  guageNumber : any;
-  valueToDivide : any;
   formattedData : any[] = [];
+  guageNumber : any;
 
   ngOnInit(){
     // this.generateChart();
@@ -211,19 +211,19 @@ export class InsightApexComponent {
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
-    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage']) || changes['gaugeDisplayMode']){
+    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'] || changes['gaugeDisplayMode'])){
       if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
       if (changes['maxValueGuage']) {
         this.maxValueGuage = changes['maxValueGuage'].currentValue;
-         this.customMinMaxGuage();
+        this.guageChart1();
       }
       if (changes['minValueGuage']) {
         this.minValueGuage = changes['minValueGuage'].currentValue;
-         this.customMinMaxGuage();
+        this.guageChart1();
       }
     }else if( changes['gaugeDisplayMode']) {
         this.gaugeDisplayMode = changes['gaugeDisplayMode'].currentValue;
-        this.customMinMaxGuage();
+        this.guageChart1();
       }
      
        }
@@ -412,7 +412,7 @@ export class InsightApexComponent {
     } else if(this.chartType === 'funnel'){
       this.funnelChart();
     } else if(this.chartType === 'guage'){
-      this.guageChart();
+      this.guageChart1();
     }
     let isValid = this.validateSeriesData(this.chartOptions.series);
     if (!isValid) {
@@ -436,6 +436,18 @@ export class InsightApexComponent {
       );
     }
   }
+
+  autoAdjustChartHeightForHBar() {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = this.chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    // Optional: set a minimum height
+    const chartHeight = Math.max(calculatedHeight, 320); // e.g., 300px minimum
+
+    return chartHeight;
+  }
+
   barChart() {
     const self = this;
     this.chartOptions = {
@@ -609,7 +621,7 @@ horizontalBarChart() {
         autoSelected: 'zoom' 
       },
       type: 'bar',
-      height: 320,
+      height: this.autoAdjustChartHeightForHBar(),
       background: this.backgroundColor,
       events: {
         dataPointSelection: function (event: any, chartContext: any, config: any) {
@@ -1900,45 +1912,46 @@ xaxis: {
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData ) : (this.isDistributed ? this.selectedColorScheme : [this.color])
     };
   }
-  guageChart() {
-    // Clone the gauge number from the API response
-    this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+  // guageChart() {
+  //   // Clone the gauge number from the API response
+  //   this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
 
-    // Define thresholds and corresponding max values
-    const thresholds = [
-      { limit: 1000, max: 1000 },       // Up to 1,000
-      { limit: 10000, max: 10000 },     // Up to 10,000
-      { limit: 100000, max: 100000 },    // Up to 1 lakh
-      { limit: 500000, max: 500000 },    // Up to 5 lakhs
-      { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
-      { limit: Infinity, max: (Math.ceil(this.guageNumber / 1000000) + 1) * 1000000 } // Above 10 lakhs
-    ];
+  //   // Define thresholds and corresponding max values
+  //   const thresholds = [
+  //     { limit: 1000, max: 1000 },       // Up to 1,000
+  //     { limit: 10000, max: 10000 },     // Up to 10,000
+  //     { limit: 100000, max: 100000 },    // Up to 1 lakh
+  //     { limit: 500000, max: 500000 },    // Up to 5 lakhs
+  //     { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
+  //     { limit: Infinity, max: (Math.ceil(this.guageNumber / 1000000) + 1) * 1000000 } // Above 10 lakhs
+  //   ];
 
-    // Determine maxValueGuage based on guageNumber
-    const determineMaxValue = (value: number) => {
-      for (const threshold of thresholds) {
-        if (value <= threshold.limit) {
-          return threshold.max;
-        }
-      }
-    };
+  //   // Determine maxValueGuage based on guageNumber
+  //   const determineMaxValue = (value: number) => {
+  //     for (const threshold of thresholds) {
+  //       if (value <= threshold.limit) {
+  //         return threshold.max;
+  //       }
+  //     }
+  //   };
 
-    // Set maxValueGuage based on guageNumber
-    this.maxValueGuage = determineMaxValue(this.guageNumber)!;
+  //   // Set maxValueGuage based on guageNumber
+  //   this.maxValueGuage = determineMaxValue(this.guageNumber)!;
 
-    // Calculate the value to divide
-    this.valueToDivide = this.maxValueGuage - this.minValueGuage;
-    this.guageChart1()
-  }
-  customMinMaxGuage() {
-    this.valueToDivide = this.maxValueGuage - this.minValueGuage;
-    this.guageChart1();
-  }
+  //   // Calculate the value to divide
+  //   this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+  //   this.guageChart1()
+  // }
+  // customMinMaxGuage() {
+  //   this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+  //   this.guageChart1();
+  // }
   guageChart1() {
     // this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
     // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
     //  const valueToDivide = this.maxValueGuage-this.minValueGuage
     // Initialize the chart options
+    this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
     const self = this;
     this.chartOptions = {
       series: [((this.guageNumber / this.valueToDivide) * 100)], // Correct percentage calculation

@@ -173,6 +173,18 @@ export class InsightEchartComponent {
     }
     return this.color;
   }
+
+  autoAdjustChartHeightForHBar() {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = this.chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    // Optional: set a minimum height
+    const chartHeight = Math.max(calculatedHeight, 400);
+
+    this.height = chartHeight + 'px';
+  }
+
  barChart(chartsColumnData? : any ,chartsRowData?: any ){
     if(chartsColumnData && chartsRowData){
       this.chartsColumnData = chartsColumnData;
@@ -325,9 +337,16 @@ horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
       type: 'none'
     },
     dataZoom: [
+      // {
+      //   show: this.isZoom,
+      //   type: 'slider'
+      // }
       {
         show: this.isZoom,
-        type: 'slider'
+        type: 'slider',
+        yAxisIndex: 0,
+        start: 0,
+        end: 100
       }
     ],
     grid: {
@@ -1986,7 +2005,8 @@ chartInitialize(){
   if(this.chartType ==='bar'){
     this.barChart();
   }else if(this.chartType ==='horizontalBar'){
-  this.horizontalBarChart();
+    this.autoAdjustChartHeightForHBar();
+    this.horizontalBarChart();
  }
   else if(this.chartType ==='funnel'){
   this.funnelchart();
@@ -2086,16 +2106,37 @@ chartInitialize(){
     if(changes['isZoom']){
       if (this.chartInstance) {
 
-        let obj ={
-          dataZoom: this.isZoom ? [
-            {
-              type: 'slider',
-              show: true
-            }] : [{
-              type: 'slider',
-              show: false
-            }
-          ]
+        let obj ={};
+        if (this.chartType === 'horizontalBar') {
+          obj = {
+            dataZoom: this.isZoom ? [
+              {
+                show: true,
+                type: 'slider',
+                yAxisIndex: 0,
+                start: 0,
+                end: 100
+              }] : [{
+                show: false,
+                type: 'slider',
+                yAxisIndex: 0,
+                start: 0,
+                end: 100
+              }
+            ]
+          }
+        } else {
+          obj = {
+            dataZoom: this.isZoom ? [
+              {
+                type: 'slider',
+                show: true
+              }] : [{
+                type: 'slider',
+                show: false
+              }
+            ]
+          }
         }
         this.chartInstance?.setOption(obj);
         this.chartOptions = { ...this.chartOptions, ...obj };
@@ -2290,7 +2331,8 @@ chartInitialize(){
     // }
     if(this.isSheetSaveOrUpdate){
       let object = {
-        chartOptions : this.chartOptions
+        chartOptions : this.chartOptions,
+        height: this.height
       }
       this.saveOrUpdateChart.emit(object);
     }

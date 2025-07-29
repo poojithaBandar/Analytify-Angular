@@ -696,8 +696,10 @@ try {
  
       tableDimentions = [] as any;
       tableMeasures = [] as any;
+      isLoading: boolean = false;
       columnsData(){
         this.suggestions=[];
+        this.isLoading = true;
         const obj = {
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -727,9 +729,11 @@ try {
             }else{
               this.tableColumnsData = responce;
             }
+            this.isLoading = false;
           },
           error: (error) => {
             console.log(error);
+            this.isLoading = false;
           }
         }
         )
@@ -1183,6 +1187,9 @@ try {
         const cfg = this.chartRenderService.getChartConfig(this.chartId);
         if(cfg){
           this.chartType = cfg.chartType;
+          if(this.chartType === 'guage'){
+            this.guageChart();
+          }
           if(cfg.chartType === 'map'){
             this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
               echarts.registerMap('world', geoJson);
@@ -2353,7 +2360,8 @@ sheetSave(isDashboardTransfer?: boolean){
     isMeasureDistribution : this.isMeasureDistribution,
     measureColorRanges : this.measureColorRanges,
     measureDivisions : this.measureDivisions,
-    kpiChartColorSwitch : this.kpiChartColorSwitch
+    kpiChartColorSwitch : this.kpiChartColorSwitch,
+    hBarHeight : this.hBarHeight
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2681,6 +2689,9 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     console.warn('savedChartOptions missing or malformed, using legacy computation');
     this.chartsDataSet(responce);
   // }
+  if (this.sheetResponce.customizeOptions) {
+    this.setCustomizeOptions(this.sheetResponce.customizeOptions);
+  }
   if(responce.chart_id == 1){
     // this.tableData = this.sheetResponce.results.tableData;
     // this.displayedColumns = this.sheetResponce?.results.tableColumns;
@@ -3210,6 +3221,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
  }
  if(responce.chart_id == 28){
+  this.customMinMaxGuage();
   this.chartType = 'guage';
   this.bar = false;
   this.horizontalBar = false;
@@ -3256,9 +3268,6 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = true;
- }
- if(this.sheetResponce.customizeOptions){
- this.setCustomizeOptions(this.sheetResponce.customizeOptions);
  }
  this.getDimensionAndMeasures();
  this.changeSelectedColumn();
@@ -4338,6 +4347,7 @@ customizechangeChartPlugin() {
     this.indicatorIsIncreased = this.indicatorIsIncreased ?? '';
     this.kpiChartColorSwitch = this.kpiChartColorSwitch ?? false;
 
+    this.hBarHeight = data.hBarHeight ?? '';
   }
 
   resetCustomizations(){
@@ -4451,6 +4461,7 @@ customizechangeChartPlugin() {
     this.indicatorValue = '';
     this.indicatorIsIncreased = '';
     this.kpiChartColorSwitch = false;
+    this.hBarHeight = '';
     // this.isHorizontalBar = false;
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
@@ -6520,8 +6531,12 @@ customizechangeChartPlugin() {
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
+    hBarHeight : string = '';
     setChartOptions(event : any){
       this.chartOptionsSet = event.chartOptions;
+      if(this.isEChatrts && this.chartType === 'horizontalBar' && event?.height){
+        this.hBarHeight = event.height;
+      }
       this.sheetSave();
       this.isSheetSaveOrUpdate = false;
     }
