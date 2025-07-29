@@ -1380,7 +1380,7 @@
                   [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
                   <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
                     (chartClick)="onEChartClick($event,item)" class="echart-charts"
-                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : {}"></div>
+                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
                 </div>
             
                 } @else if(item['isEChart'] && item['chartId']=== 29){
@@ -1590,6 +1590,30 @@
                     @for(row of item['kpiData'].rows;track row){
                     <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'"
                       [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
+                        <apx-chart *ngIf="item['kpiData']?.trendData && item['kpiData']?.kpiShowTrendline "
+                            [series]="[{ name: 'KPI Trend',data:item['kpiData']?.trendData  }]"
+                            [chart]="{ type: 'line', height: 50, sparkline: { enabled: true } }"
+                            [stroke]="{ curve: 'smooth', width: 2 }"
+                            [colors]="[item['kpiData']?.kpiChartColor]"
+                            [tooltip]="{ enabled: true }"
+                            [xaxis]="{ categories: item['kpiData']?.trendlables}"
+                            [markers]="{ size: 3, colors: ['#fff'], strokeColors: item['kpiData']?.kpiChartColor, strokeWidth: 2 }"
+                            style="margin-top: 5px;">
+                          </apx-chart>
+                            <div *ngIf="item['kpiData']?.showKpiIndicator"
+                                class="d-flex justify-content-around mt-2 flex-wrap text-center"
+                                style="font-size: 12px;">
+                              <span [ngStyle]="{
+                                      color: item['kpiData']?.indicatorIsIncreased === 'up' ? 'green' : 'red',
+                                      fontWeight: 'bold'
+                                    }">
+                                <i class="bi"
+                                  [ngClass]="item['kpiData']?.indicatorIsIncreased === 'up'
+                                                ? 'bi-arrow-up'
+                                                : 'bi-arrow-down'"></i>
+                                {{ item['kpiData']?.indicatorValue }}%
+                              </span>
+                            </div>
                     }
                     <i [class]="item['kpiIconsArray']?.kpiIcon" [style.font-size]="item['kpiIconsArray']?.kpiIconSize + 'px'"
                       [style.color]="item['kpiIconsArray']?.kpiIconColor"
@@ -1854,7 +1878,7 @@
                   [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
                   <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
                     (chartClick)="onEChartClick($event,item)" class="echart-charts"
-                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : {}"></div>
+                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
                 </div>
             
                 } @else if(item['isEChart'] && item['chartId']=== 29){

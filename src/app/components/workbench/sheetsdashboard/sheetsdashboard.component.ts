@@ -104,6 +104,13 @@ interface KpiData {
   kpiSuffix: string;
   kpiDecimalUnit : string;
   kpiDecimalPlaces: number;
+  trendData: [], 
+  trendLabels: [],
+  kpiShowTrendline : boolean,
+  showKpiIndicator : boolean,
+  indicatorIsIncreased : any,
+  indicatorValue : any,
+  kpiChartColor: string;
 }
 declare var $:any;
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -130,6 +137,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
 })
 export class SheetsdashboardComponent implements OnDestroy {
  // @HostListener('window:resize', ['$event'])
+ 
  itemsPerPage:any;
   private destroy$ = new Subject<void>();
  pageNo = 1;
@@ -233,7 +241,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   actionId : any;
   drillThroughActionList : any[] =[];
   drillThroughDatabaseName : any = '';
-
   calendarTotalHeight : string = '400px';
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
@@ -258,6 +265,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   isEmbeddedFilter : boolean = false;
   genieHover = false;
   showGenieTooltip = false;
+  trendData= [];
+  trendLabels = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -918,6 +927,13 @@ export class SheetsdashboardComponent implements OnDestroy {
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+              trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -2038,6 +2054,13 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+               trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -2112,6 +2135,13 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+               trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -4481,6 +4511,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                 });
               });
             });
+            item1.customizeOptions.hBarHeight = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
             item1.echartOptions.series[0].data = combinedArray;
             item1.echartOptions = {
               ...item1.echartOptions,
@@ -4494,6 +4525,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         // if(isDrillThrough){
           item1.chartOptions = {
             ...item1.chartOptions,
+            chart: {
+              ...item1.chartOptions.chart,
+              height: this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values),
+            },
             xaxis: {
               ...item1.chartOptions.xaxis,
               categories: categories,
@@ -4616,7 +4651,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           }
         }
       }
-       if((item.chart_id == '14' || item.chartId == '14' && (isFilter || isDrillDown)) || (item1.chartId == '14' && isDrillThrough)){//bar
+       if((item.chart_id == '14' || item.chartId == '14' && (isFilter || isDrillDown)) || (item1.chartId == '14' && isDrillThrough)){//Hbar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData && !switchDb){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4628,6 +4663,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             item1.drillDownIndex = 0;
             item1.drillDownObject = [];
           }
+          item1.customizeOptions.hBarHeight = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
           item1.echartOptions.yAxis.data = this.filteredColumnData[0]?.values;
         item1.echartOptions.series[0].data = this.filteredRowData[0]?.data;
         item1.echartOptions = {
@@ -4642,6 +4678,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
+        item1.chartOptions.chart.height = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
       item1.chartOptions.xaxis.categories = this.filteredColumnData[0]?.values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData;
       }
@@ -5158,6 +5195,13 @@ kpiData?: KpiData;
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+                 trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -8731,6 +8775,20 @@ initializeTabDefaults() {
     this.MAX_FONT_SIZE
   );
 }// Default values
+
+  autoAdjustChartHeightForHBar(isEchart: boolean, chartsColumnData: any[]) {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    if(isEchart){
+      const chartHeight = Math.max(calculatedHeight, 400);
+      return chartHeight + 'px';
+    } else{
+      const chartHeight = Math.max(calculatedHeight, 320);
+      return chartHeight;
+    }
+  }
 
 }
 

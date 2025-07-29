@@ -956,6 +956,7 @@ joiningTablesWithoutQuerySetId(){
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
+        this.offset = 0;
         this.getJoiningTableData();
         this.buildCustomJoin();
         this.tableCustomJoinError = false;
@@ -1002,6 +1003,7 @@ joiningTables(){
           this.getDsQuerysetId()
         }
         else{
+          this.offset = 0;
           this.getJoiningTableData();
         }
         this.buildCustomJoin();
@@ -1093,6 +1095,7 @@ joiningTablesFromDelete(){
           this.getDsQuerysetId()
         }
         else{
+          this.offset = 0;
           this.getJoiningTableData();
         }
         this.buildCustomJoin();
@@ -1170,6 +1173,7 @@ customTableJoin(){
           this.getDsQuerysetId()
         }
         else{
+          this.offset = 0;
           this.getJoiningTableData();
         }
         this.buildCustomJoin();
@@ -1659,6 +1663,7 @@ getDsQuerysetId(){
         console.log(data)
         this.datasourceQuerysetId = data.data.datasource_queryset_id;
         if(this.tableJoiningUI){
+        this.offset=0;
         this.getJoiningTableData();
         }
         if(this.customSql){

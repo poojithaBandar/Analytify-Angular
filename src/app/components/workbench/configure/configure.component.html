@@ -693,6 +693,17 @@
           <option value="=">= Equal to</option>
         </select>
       </div>
+
+      <div  *ngIf="selectedChart" class="mb-3">
+        <label class="form-label">Current Value</label>
+        <input type="number" class="form-control" [(ngModel)]="currentValue" name="current value" readonly>
+      </div>
+
+      <!-- <div  *ngIf="editingThreshold" class="mb-3">
+        <label class="form-label">Current Value</label>
+        <input type="number" class="form-control" [(ngModel)]="currentValue" name="current" readonly>
+      </div> -->
+
       <div class="mb-3">
         <label class="form-label">Threshold Value</label>
         <input type="number" class="form-control" [(ngModel)]="thresholdForm.threshold_value" name="threshold_value" required>
