@@ -111,6 +111,7 @@ interface KpiData {
   indicatorIsIncreased : any,
   indicatorValue : any,
   kpiChartColor: string;
+  kpiTarget: any;
 }
 declare var $:any;
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -934,6 +935,7 @@ export class SheetsdashboardComponent implements OnDestroy {
               showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -2061,6 +2063,8 @@ export class SheetsdashboardComponent implements OnDestroy {
               showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -2142,6 +2146,8 @@ export class SheetsdashboardComponent implements OnDestroy {
               showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -5202,6 +5208,7 @@ kpiData?: KpiData;
               showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
