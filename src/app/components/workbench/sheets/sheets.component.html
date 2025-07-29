@@ -2569,7 +2569,7 @@
                                     <div class="big-number-container">
                                         <!-- @for(data of tablePreviewRow;track data){ -->
                                             <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
-                                             <div class="text-center text-muted" [style.color]="kpiColor" style="font-size: 13px;">
+                                             <div *ngIf="showKpiIndicator" class="text-center text-muted" [style.color]="kpiColor" style="font-size: 13px;">
                                                     Target: {{ kpiTarget }}
                                              </div>
                                     <apx-chart *ngIf="kpiShowTrendline === true && trendData.length > 0"
@@ -2581,7 +2581,7 @@
                                     [xaxis]="{ categories: trendLabels }"
                                     ></apx-chart>
                                         <!-- } -->
-                                     @if(showKpiIndicator && kpiShowTrendline) {
+                                     @if(showKpiIndicator && kpiShowTrendline && indicatorValue) {
                             <div class="d-flex justify-content-around mt-2 flex-wrap text-center" style="font-size: 12px;">
                             <span [ngStyle]="{ color: indicatorIsIncreased === 'up' ? 'green' : 'red', fontWeight: 'bold' }">
                                 <i class="bi" [ngClass]="indicatorIsIncreased === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
@@ -4886,7 +4886,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                   <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                   <div *ngIf="kpi && kpiShowTrendline" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <label for="color">Chart color</label>
                                                                     <div *ngIf="kpiChartColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiChartColorSwitch = !kpiChartColorSwitch; resetKpiChartColor()">
                                                                         <span></span>
