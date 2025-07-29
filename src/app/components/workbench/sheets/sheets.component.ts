@@ -683,8 +683,10 @@ try {
  
       tableDimentions = [] as any;
       tableMeasures = [] as any;
+      isLoading: boolean = false;
       columnsData(){
         this.suggestions=[];
+        this.isLoading = true;
         const obj = {
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -694,18 +696,20 @@ try {
           next: (responce: any) => {
             console.log(responce);
             if(responce.length > 0){
-            this.tableColumnsData = responce;
-            this.database_name = responce[0].database_name;
-            this.isCustomSql = responce[0].is_custom_sql;
-            this.tableDimentions = responce.dimensions;
-            this.tableMeasures = responce.measures;
-            this.buildSuggestionsForCalculations(responce);
-          }else{
-            this.tableColumnsData = responce;
-          }
-        },
+              this.tableColumnsData = responce;
+              this.database_name = responce[0].database_name;
+              this.isCustomSql = responce[0].is_custom_sql;
+              this.tableDimentions = responce.dimensions;
+              this.tableMeasures = responce.measures;
+              this.buildSuggestionsForCalculations(responce);
+            }else{
+              this.tableColumnsData = responce;
+            }
+            this.isLoading = false;
+          },
           error: (error) => {
             console.log(error);
+            this.isLoading = false;
           }
         }
         )
@@ -1159,6 +1163,9 @@ try {
         const cfg = this.chartRenderService.getChartConfig(this.chartId);
         if(cfg){
           this.chartType = cfg.chartType;
+          if(this.chartType === 'guage'){
+            this.guageChart();
+          }
           if(cfg.chartType === 'map'){
             this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
               echarts.registerMap('world', geoJson);
@@ -2321,7 +2328,8 @@ sheetSave(isDashboardTransfer?: boolean){
     isHorizontalBar  : this.isHorizontalBar,
     isMeasureDistribution : this.isMeasureDistribution,
     measureColorRanges : this.measureColorRanges,
-    measureDivisions : this.measureDivisions
+    measureDivisions : this.measureDivisions,
+    hBarHeight : this.hBarHeight
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2638,6 +2646,9 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     console.warn('savedChartOptions missing or malformed, using legacy computation');
     this.chartsDataSet(responce);
   // }
+  if (this.sheetResponce.customizeOptions) {
+    this.setCustomizeOptions(this.sheetResponce.customizeOptions);
+  }
   if(responce.chart_id == 1){
     // this.tableData = this.sheetResponce.results.tableData;
     // this.displayedColumns = this.sheetResponce?.results.tableColumns;
@@ -3157,6 +3168,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
  }
  if(responce.chart_id == 28){
+  this.customMinMaxGuage();
   this.chartType = 'guage';
   this.bar = false;
   this.horizontalBar = false;
@@ -3203,9 +3215,6 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = true;
- }
- if(this.sheetResponce.customizeOptions){
- this.setCustomizeOptions(this.sheetResponce.customizeOptions);
  }
  this.getDimensionAndMeasures();
  this.changeSelectedColumn();
@@ -4273,6 +4282,7 @@ customizechangeChartPlugin() {
     this.measureColorRanges = data.measureColorRanges ?? [];
     this.isMeasureDistribution = data.isMeasureDistribution ?? false;
     this.measureDivisions = data.measureDivisions ?? 2;
+    this.hBarHeight = data.hBarHeight ?? '';
   }
 
   resetCustomizations(){
@@ -4375,6 +4385,8 @@ customizechangeChartPlugin() {
     this.measureColorRanges = [];
     this.isMeasureDistribution = false;
     this.measureDivisions = 2;
+
+    this.hBarHeight = '';
     // this.isHorizontalBar = false;
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
@@ -6441,8 +6453,12 @@ customizechangeChartPlugin() {
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
+    hBarHeight : string = '';
     setChartOptions(event : any){
       this.chartOptionsSet = event.chartOptions;
+      if(this.isEChatrts && this.chartType === 'horizontalBar' && event?.height){
+        this.hBarHeight = event.height;
+      }
       this.sheetSave();
       this.isSheetSaveOrUpdate = false;
     }
@@ -7704,5 +7720,38 @@ openGenieAiQTab(){
     this.active = 1;
   }
 }
+
+  guageChart() {
+      // Clone the gauge number from the API response
+      this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+  
+      // Define thresholds and corresponding max values
+      const thresholds = [
+        { limit: 1000, max: 1000 },       // Up to 1,000
+        { limit: 10000, max: 10000 },     // Up to 10,000
+        { limit: 100000, max: 100000 },    // Up to 1 lakh
+        { limit: 500000, max: 500000 },    // Up to 5 lakhs
+        { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
+        { limit: Infinity, max: (Math.ceil(this.guageNumber / 1000000) + 1) * 1000000 } // Above 10 lakhs
+      ];
+  
+      // Determine maxValueGuage based on guageNumber
+      const determineMaxValue = (value: number) => {
+        for (const threshold of thresholds) {
+          if (value <= threshold.limit) {
+            return threshold.max;
+          }
+        }
+      };
+  
+      // Set maxValueGuage based on guageNumber
+      this.maxValueGuage = determineMaxValue(this.guageNumber)!;
+  
+      // Calculate the value to divide
+      this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+    }
+    customMinMaxGuage() {
+      this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+    }
 }
 

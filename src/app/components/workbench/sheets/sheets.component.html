@@ -765,7 +765,7 @@
                         <p fs-16>No Data Found!</p>
                         }
                         }@placeholder {
-                            <div class="text-center my-4">
+                            <div class="text-center my-4" *ngIf="isLoading">
                             <div class="spinner-border text-primary" role="status"></div>
                             <div>Loading Tables...</div>
                             </div>
@@ -2561,7 +2561,8 @@
                 [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [backgroundColor]="backgroundColor" [color]="color"
                 [ylabelFontWeight]="ylabelFontWeight" [isBold]="isBold" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
                 [barColor]="barColor" [lineColor]="lineColor" [gridColor]="GridColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"
-                [label]="label" [donutSize]="donutSize" [isDistributed]="isDistributed" [minValueGuage]="minValueGuage" [maxValueGuage]="maxValueGuage" [gaugeDisplayMode]="gaugeDisplayMode"
+                [label]="label" [donutSize]="donutSize" [isDistributed]="isDistributed" [minValueGuage]="minValueGuage" [maxValueGuage]="maxValueGuage"
+                [gaugeDisplayMode]="gaugeDisplayMode" [valueToDivide]="valueToDivide"
                 [legendsAllignment]="legendsAllignment" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
                 [dataLabelsFontPosition]="dataLabelsFontPosition" [dataLabelsColor]="dataLabelsColor" [measureAlignment]="measureAlignment" 
                 [dimensionAlignment]="dimensionAlignment" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
@@ -5172,10 +5173,10 @@
                                                     <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2">
                                                         <div>
                                                             <label for="minValue">Enter Minimum Value:</label>
-                                                            <input type="number" class="form-control fs-14" [(ngModel)]="minValueGuage" id="minValue"  />
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="minValueGuage" id="minValue" (ngModelChange)="customMinMaxGuage()"/>
                                                           
                                                             <label for="maxValue">Enter Maximum Value:</label>
-                                                            <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue"  />
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue" (ngModelChange)="customMinMaxGuage()"/>
                                                         </div>
                                                     </div>
                                                     <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2">

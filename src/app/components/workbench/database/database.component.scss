@@ -64,7 +64,10 @@ h6.dropdown-header { font-weight: 700; background-color: aliceblue; }
 //   background-color: #e0e0e0;
 //   transition: flex-grow 0.3s ease-in-out;
 // }
-
+.viewport-full-table {
+  height: 234px; /* Adjust this height as needed for your layout */
+  overflow: auto;
+}
 .right-card.expanded {
   // flex: 2; /* Adjust this value to control how much the right card expands */
 max-width: 1226px; min-width: 1226px; margin:  auto 0; }
