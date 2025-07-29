@@ -2782,7 +2782,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.kpiFontSize = this.sheetResponce?.results?.kpiFontSize;
     this.kpiColor = this.sheetResponce?.results?.kpicolor;
     this.kpiChartColor = this.sheetResponce?.results?.kpiChartColor;
-    this.trendData = this.sheetResponce?.results?.trendData;
+    this.trendData = this.sheetResponce?.results?.trendData ?? [];
     this.trendLabels = this.sheetResponce?.results?.trendLabels;
     this.kpiTrendAxis = this.sheetResponce?.results?.kpiTrendAxis;
     this.kpiTarget = this.sheetResponce?.results?.kpiTarget;
@@ -7863,6 +7863,7 @@ openGenieAiQTab(){
           console.log(response);
           this.setTrendChartData(response?.trend_kpi_data);
           this.indicatorValue = response.difference;
+          this.indicatorIsIncreased = response?.is_increased;
           if(response?.is_increased){
           this.indicatorIsIncreased = 'up';
           }else{
