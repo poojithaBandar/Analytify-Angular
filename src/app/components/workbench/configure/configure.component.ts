@@ -587,11 +587,14 @@ openThresholdModal(editThreshold: any = null) {
   this.modalService.open(this.thresholdModal, { centered: true });
 }
 // ...existing code...
+currentValue: any = null;
   onSheetChange() {
-    this.selectedChart = this.charts.find(c => c.sheet_id == this.thresholdForm.sheet_id && c.chart_id === 25);
+    this.selectedChart = this.charts.find(c => c.sheet_id == this.thresholdForm.selectedChart.sheet_id && c.chart_id === 25);
     if (this.selectedChart) {
       this.thresholdForm.metric = this.selectedChart.column_name;
     }
+    console.log(this.selectedChart);
+    this.currentValue = this.thresholdForm.selectedChart?.current_value || null;
   }
 
   saveThreshold(modal:any) {
@@ -643,6 +646,7 @@ openThresholdModal(editThreshold: any = null) {
   }
   editThreshold(threshold:any) {
     this.openThresholdModal(threshold);
+    this.currentValue = threshold.current_value;
   }
 
   deleteThreshold(threshold:any) {
