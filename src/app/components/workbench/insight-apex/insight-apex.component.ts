@@ -1872,7 +1872,7 @@ xaxis: {
       series: this.dualAxisRowData,
       chart: {
         type: "bar",
-        height: 350,
+        height: this.autoAdjustChartHeightForHBar(),
         background: this.backgroundColor,
       },
       plotOptions: {

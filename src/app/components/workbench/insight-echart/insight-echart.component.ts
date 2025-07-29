@@ -183,6 +183,12 @@ export class InsightEchartComponent {
     const chartHeight = Math.max(calculatedHeight, 400);
 
     this.height = chartHeight + 'px';
+
+    setTimeout(() => {
+      if (this.chartInstance) {
+        this.chartInstance.resize();
+      }
+    }, 0);
   }
 
  barChart(chartsColumnData? : any ,chartsRowData?: any ){
@@ -2009,6 +2015,7 @@ chartInitialize(){
     this.horizontalBarChart();
  }
   else if(this.chartType ==='funnel'){
+  this.autoAdjustChartHeightForHBar();
   this.funnelchart();
   }
   else if(this.chartType ==='stocked'){
@@ -2329,6 +2336,9 @@ chartInitialize(){
     // if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
     //   this.sortSeries(this.sortType);
     // }
+    if (['horizontalBar', 'funnel'].includes(this.chartType)) {
+      this.autoAdjustChartHeightForHBar();
+    }
     if(this.isSheetSaveOrUpdate){
       let object = {
         chartOptions : this.chartOptions,
