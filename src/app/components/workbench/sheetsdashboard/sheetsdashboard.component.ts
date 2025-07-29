@@ -61,6 +61,7 @@ import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
 import { i } from 'mathjs';
 import { SafeUrlPipe, SanitizeHtmlPipe } from '../../../shared/pipes/sanitize-html.pipe';
+import { AuthService } from '../../../shared/services/auth.service';
 
 interface TableRow {
   [key: string]: any;
@@ -195,6 +196,15 @@ export class SheetsdashboardComponent implements OnDestroy {
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   isPublicUrl = false;
+  isProtectedUrl = false;
+  isProtectedValidated = false;
+  hasProtectedAccess = false;
+  protectedQuery = false;
+  isAuthenticated = false;
+  encryptedEmail: string | null = null;
+  passkey: string = '';
+  userEmail: string | null = null;
+  @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
   columnSearch: any;
   rolesForUpdateDashboard:[] = [];
@@ -232,6 +242,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   @ViewChild('analyzeDashbaordModal') analyzeDashbaordModal:any;
   @ViewChild('textEditorModal') textEditorModal!: any;
   @ViewChild('ImageUploadText') ImageUploadText!: ElementRef;
+  @ViewChild('editTabModal') editTabModal: any;
+
   textItem: any;
   textEditorContent: string = '';
   textEditorTitle: string = '';
@@ -249,9 +261,18 @@ export class SheetsdashboardComponent implements OnDestroy {
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
-     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef){
+     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef,private authService: AuthService){
     this.dashboard = [];
-    const currentUrl = this.router.url; 
+    if(localStorage.getItem('protected_email')){
+      this.userEmail = localStorage.getItem('protected_email');
+    }
+    if(this.isAuthenticated){
+      const u = this.authService.getCurrentUser();
+      if(u?.email){
+        this.userEmail = u.email;
+      }
+    }
+    const currentUrl = this.router.url;
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
     });
@@ -259,9 +280,23 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
       this.active = 2;
-      this.publicHeader = true
+      this.publicHeader = true;
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
+      }
+    }
+    if(currentUrl.includes('dashboard/share/protected')){
+      this.updateDashbpardBoolen= true;
+      this.isProtectedUrl = true;
+      // protected dashboards always use public APIs
+      this.isPublicUrl = true;
+      this.active = 2;
+      this.publicHeader = true;
+      if (route.snapshot.params['id1']) {
+        this.dashboardId = +atob(route.snapshot.params['id1']);
+      }
+      if(route.snapshot.params['id2']){
+        this.encryptedEmail = route.snapshot.params['id2'];
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
@@ -280,8 +315,18 @@ export class SheetsdashboardComponent implements OnDestroy {
     //     }
     // }
     else if(currentUrl.includes('analytify/home/sheetsdashboard')){
-      this.dashboardView = true;
-      this.updateDashbpardBoolen= true
+      this.updateDashbpardBoolen = true;
+      const isProtected = this.route.snapshot.queryParamMap.get('protected') === 'true';
+      this.protectedQuery = isProtected;
+      if (isProtected) {
+        this.isProtectedUrl = true;
+        this.isPublicUrl = true;
+        this.active = 2;
+        this.publicHeader = false;
+      } else {
+        this.dashboardView = true;
+        this.publicHeader = false;
+      }
       if (route.snapshot.params['id3']) {
         // this.databaseId = +atob(route.snapshot.params['id1']);
         // this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -296,7 +341,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         const dbcopy = navigation?.extras?.state?.['dbCopy'] ?? history.state?.['dbCopy'];
         if(dbcopy){
           this.toasterService.success('Dashboard Copied Successfully.','success',{ positionClass: 'toast-top-right'})
-        }else if (dbSwitched) {
+        }else if (dbSwitched && !isProtected) {
           this.getSavedDashboardData();
            setTimeout(() => {
             this.refreshDashboard(true);  // might run before API completes!
@@ -488,8 +533,9 @@ export class SheetsdashboardComponent implements OnDestroy {
     if(this.isPublicUrl){
       displayGrid = DisplayGrid.None;
     }
-    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
-      echarts.registerMap('world', geoJson); 
+    this.http.get('/assets/maps/world.json').subscribe({
+      next: (geoJson: any) => {
+              echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
       if(!this.isPublicUrl || !this.isEmbedDashboard){
         if(this.fileId.length > 0 || this.databaseId.length > 0){
@@ -513,6 +559,9 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         if(this.dashboardId != undefined || null){
           this.getDrillThroughActionList();
+        }},
+        error: () => {
+          this.loaderService.hide();
         }
 
     });    
@@ -549,7 +598,21 @@ export class SheetsdashboardComponent implements OnDestroy {
     })
   }
 
-  ngOnInit() {  
+  ngOnInit() {
+    this.isAuthenticated = !!localStorage.getItem('currentUser');
+    this.hasProtectedAccess = localStorage.getItem('protected_access') === 'true';
+    if(this.hasProtectedAccess){
+      this.userEmail = localStorage.getItem('protected_email') || this.userEmail;
+    }
+    if(this.isAuthenticated){
+      const u = this.authService.getCurrentUser();
+      if(u?.email){
+        this.userEmail = u.email;
+      }
+    }
+    if(this.hasProtectedAccess){
+      this.isProtectedValidated = true;
+    }
     let displayGrid = DisplayGrid.Always;
     this.options = {
       gridType: GridType.Fit,
@@ -590,6 +653,10 @@ export class SheetsdashboardComponent implements OnDestroy {
     };
     if(this.dashboardToken){
       this.fetchDashboardIdFromToken();
+    } else if(this.isProtectedUrl){
+      if(!this.encryptedEmail){
+        this.initialiserMethods();
+      }
     } else {
       this.initialiserMethods();
     }
@@ -1400,6 +1467,10 @@ export class SheetsdashboardComponent implements OnDestroy {
         if(this.sheetTabs && this.sheetTabs.length > 0){
           sheetTabsData.forEach((sheetData) => {
             sheetData.dashboard  = this.assignOriginalDataToDashboard(sheetData.dashboard);
+            sheetData.bgColor = sheetData.bgColor || '#ffffff';
+            sheetData.fontColor = sheetData.fontColor || '#000000';
+            sheetData.fontSize = sheetData.fontSize || 14;
+            sheetData.fontStyle = sheetData.fontStyle || 'normal';
           })
         } 
         this.setQuerySetIds();
@@ -1516,9 +1587,11 @@ export class SheetsdashboardComponent implements OnDestroy {
             .catch((error) => {
               console.error('oops, something went wrong!', error);
               reject(error); // Reject in case of error
+              this.loaderService.hide();
             });
         } else {
           reject('No element found for screenshot');
+          this.loaderService.hide();
         }
       }, 1000);
     });
@@ -1687,9 +1760,9 @@ export class SheetsdashboardComponent implements OnDestroy {
             width: '400px',
           })
         } else {
-          if(!isLiveReloadData){
-            this.takeScreenshot();
-          }
+          // if(!isLiveReloadData && !isSwitchDb){
+          //   this.takeScreenshot();
+          // }
         const targetIds = this.switchConditions.map(c => c.targetHierarchyId).filter(id => id);
         obj ={
           grid : this.gridType,
@@ -1761,8 +1834,11 @@ export class SheetsdashboardComponent implements OnDestroy {
         else if(isShowpopup){
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
         }
-        if(!isLiveReloadData && !isDashboardTransfer){
-          this.saveDashboardimageUpdate();
+        if(!isLiveReloadData && !isDashboardTransfer && !isSwitchDb){
+          this.takeScreenshot().then(() => {
+            this.saveDashboardimageUpdate();
+          });
+          // this.saveDashboardimageUpdate();
         }
         this.endMethod(); 
       },
@@ -2122,157 +2198,9 @@ export class SheetsdashboardComponent implements OnDestroy {
     });
   }
   getChartOptionsBasedOnType(sheet:any){
-    if(sheet.chart_id === 9){
-      let xaxis = sheet.sheet_data?.results?.barXaxis;
-      let yaxis = sheet.sheet_data?.results?.barYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
-    }
-    if(sheet.chart_id === 6){
-      let xaxis = sheet.sheet_data?.results?.barXaxis;
-      let yaxis = sheet.sheet_data?.results?.barYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
-    }
-    if(sheet.chart_id === 29){
-      let xaxis = sheet.sheet_data?.results?.mapChartXaxis;
-      let yaxis = sheet.sheet_data?.results?.mapChartYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return sheet.sheet_data.savedChartOptions;
-      // return this.mapChartOptions(xaxis,yaxis,savedOptions) 
-    }
-    if(sheet.chart_id === 17){
-      let xaxis = sheet.sheet_data?.results?.areaXaxis;
-      let yaxis = sheet.sheet_data?.results?.areaYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.areaChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 13){
-      let xaxis = sheet.sheet_data?.results?.lineXaxis;
-      let yaxis = sheet.sheet_data?.results?.lineYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.lineChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 24){
-      let xaxis = sheet.sheet_data?.results?.pieXaxis;
-      let yaxis = sheet.sheet_data?.results?.pieYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.pieChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    //sidebyside
-    if(sheet.chart_id === 7){
-      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] =xaxis
-      const categories = this.flattenDimensions(dimensions)
-      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
-
-    }
-    if(sheet.chart_id === 12){//radar
-      return sheet.sheet_data.savedChartOptions;
-      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] =xaxis
-      const categories = this.flattenDimensions(dimensions)
-      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
-
-    }
-    if(sheet.chart_id === 5){
-      let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
-      let yaxis = sheet.sheet_data?.results?.stokedBarYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-
-      return this.stockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 4){
-      let xaxis = sheet.sheet_data?.results?.barLineXaxis;
-      let yaxis = sheet.sheet_data?.results?.barLineYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      console.log('barlinexaxis',xaxis)
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-      console.log('barlinecategories',categories)
-
-      return this.barLineChartOptions(categories,yaxis,savedOptions)
-    }
-    if(sheet.chart_id === 2){
-      let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
-      let yaxis = sheet.sheet_data?.results?.hStockedYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-      return this.hStockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart);
-    }
-    if(sheet.chart_id === 3){
-      let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
-      let yaxis = sheet.sheet_data?.results?.hgroupedYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-
-      return this.hGroupedChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 8){
-      let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
-      let yaxis = sheet.sheet_data?.results?.multiLineYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-
-      const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-
-      return this.multiLineChartOptions(categories,yaxis,savedOptions)
-    }
-    if(sheet.chart_id === 10){
-      let xaxis = sheet.sheet_data?.results?.donutXaxis;
-      let yaxis = sheet.sheet_data?.results?.donutYaxis;
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      this.donutDecimalPlaces = sheet.sheet_data?.results?.decimalplaces;
-      return this.donutChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
-    }
-    if(sheet.chart_id === 26){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
-    if(sheet.chart_id === 27){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
-    if(sheet.chart_id === 28){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
-    if(sheet.chart_id === 11){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
-    if(sheet.chart_id === 14){
-      let savedOptions = sheet.sheet_data.savedChartOptions;
-      return savedOptions;
-    }
+    return sheet.sheet_data.savedChartOptions;
   }
 
-  getChartData(results: any, chartType: string): any[] | undefined{
-    switch (chartType) {
-      case 'bar':
-         return results.bar.map((item: any) => ({ name: item.col, value: item.row }));
-         //return results.bar.forEach((item: { col: any; row: any; }) => chartOptions.series[0].data.push(item.col));
-      case 'line':
-        return [{xAis:results.lineXaxis,yAxis:results.lineYaxis}]
-      case 'area':
-        return results.areaXaxis+results.areaYaxis
-      default:
-        return undefined;        
-    }
-  }
 getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1: any, color2: any ,tableItemsPerPage : any,tableTotalItems : any, tablePage : number } {
     // Example implementation for table data extraction
     // this.tableItemsPerPage=tableData.results.items_per_page
@@ -3147,6 +3075,13 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     } else {
       console.error('Gridster element not found!');
     }
+    if(this.isProtectedUrl){
+      if(this.isProtectedValidated || !this.encryptedEmail){
+        // this.loadProtectedDashboard();
+      } else {
+        this.modalService.open(this.passkeyModal,{backdrop:'static', centered:true});
+      }
+    }
     this.cdr.detectChanges();
   }
   initializeChart(item: DashboardItem): void {
@@ -3206,167 +3141,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   }  
 }
 
+
   onChartInit(event: any, item: DashboardItem) {
     item['chartInstance'] = event.chart;
   }
 
-/////chartOptions
-barChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
-  if (isEchart) {
-    savedOptions.series[0].data = yaxis;
-    savedOptions.xAxis.data = xaxis;
-    return savedOptions;
-  } else {
-    savedOptions.series[0].data = yaxis;
-    savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
-    return savedOptions;
-  }
-}
-areaChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
-  if (isEchart) {
-  savedOptions.series.data = yaxis;
-  savedOptions.xAxis.data = xaxis;
-  return savedOptions;
-  } else {
-    savedOptions.series.data = yaxis;
-    savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
-    return savedOptions;
-  }
-}
-lineChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    savedOptions.series.data = yaxis;
-    savedOptions.xAxis.data = xaxis;
-    return savedOptions;
-  } else {
-    savedOptions.series.data = yaxis;
-    savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
-    return savedOptions;
-  }
-}
-pieChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    let combinedArray = yaxis?.map((value : any, index :number) => ({
-      value: value,
-      name: xaxis[index]
-    }));
-    savedOptions.series.data = combinedArray;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
-  return savedOptions;
-  }
-}
-sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    yaxis.forEach((bar: any) => {
-      bar["type"] = "bar";
-    });
-    savedOptions.series.data = yaxis.data;
-    savedOptions.xAxis.categories = xaxis;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
-  return savedOptions;
-  }
-}
-
-eRadarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  const dimensions: Dimension[] = xaxis;
-      const categories = this.flattenDimensions(dimensions);
-      let radarArray = categories.map((value: any, index: number) => ({
-        name: categories[index]
-      }));
-  savedOptions.series.data = yaxis.data;
-    savedOptions.radar.indicator = radarArray;
-    return savedOptions;
-}
-stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    yaxis.forEach((bar: any) => {
-      bar["type"] = "bar";
-      bar["stack"]="total";
-    });
-    savedOptions.series.data = yaxis.data;
-    savedOptions.xAxis.data = xaxis;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
-  return savedOptions;
-  }
-}
-barLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  // savedOptions.series = [
-  //   {
-  //     name: yaxis[0]?.name,
-  //     type: "column",
-  //     data: yaxis[0]?.data
-  //   },
-  //   {
-  //     name: yaxis[1]?.name,
-  //     type: "line",
-  //     data: yaxis[1]?.data,
-  //   }
-  // ];
-  // savedOptions.labels = xaxis;
-  return savedOptions;
-}
-hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  
-  if (isEchart) {
-    yaxis.forEach((bar: any) => {
-      bar["type"] = "bar";
-      bar["stack"]="total";
-    });
-    savedOptions.series.data = yaxis.data;
-    savedOptions.yAxis.data = xaxis;
-    return savedOptions;
-  } else {
-    savedOptions.series = yaxis;
-    savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
-    return savedOptions;
-  }
-}
-
-hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    yaxis.forEach((bar: any) => {
-      bar["type"] = "bar";
-    });
-    savedOptions.series.data = yaxis.data;
-    savedOptions.yAxis.data = xaxis;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
-  return savedOptions;
-  }
-}
-multiLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  // savedOptions.series = yaxis;
-  // savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
-}
-donutChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
-  if (isEchart) {
-    let combinedArray = yaxis.map((value : any, index :number) => ({
-      value: value,
-      name: xaxis[index]
-    }));
-    savedOptions.series.data = combinedArray;
-    return savedOptions;
-  } else {
-  savedOptions.series = yaxis;
-  savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
-  return savedOptions;
-  }
-}
-heatMapChartOptions(savedOptions:any){
-  return savedOptions;
-}
 addIcon(iconModal:any,item:any){
   this.modalService.open(iconModal, {
     centered: true,
@@ -5290,11 +5069,12 @@ const obj ={
 
   addTabs() {
     this.displayTabs = true;
+    this.initializeTabDefaults();
     let id = uuidv4();
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
     let name = this.selectedTabIndex > 0 ? "Tab Title " + this.selectedTabIndex : "Tab Title";
-    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
+    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid,bgColor:this.selectedTab.bgColor,fontColor:this.selectedTab.fontColor,fontStyle:this.selectedTab.fontStyle,fontSize:this.selectedTab.fontSize});
     this.dashboardTest = [];
   }
   Editor = ClassicEditor;
@@ -5798,7 +5578,8 @@ kpiData?: KpiData;
   //public apis
   getSavedDashboardDataPublic(){
     const obj ={
-      dashboard_id:this.dashboardId
+      dashboard_id:this.dashboardId,
+      email: this.userEmail
     }
     this.workbechService.getSavedDashboardDataPublic(obj).subscribe({
       next:(data)=>{
@@ -5998,6 +5779,35 @@ kpiData?: KpiData;
       }
     })
   }
+}
+
+  validateProtectedDashboard(modal:any){
+    const obj = {
+      dashboard_id: this.dashboardId,
+      protected_key: this.passkey,
+      email: this.encryptedEmail
+    };
+    this.workbechService.validateProtectedKey(obj).subscribe({
+      next: (res: any)=>{
+        this.isProtectedValidated = true;
+        this.userEmail = res?.email || this.userEmail;
+        modal.close();
+        this.loadProtectedDashboard();
+      },
+      error: (error: any)=>{
+        this.toasterService.error(error?.error?.message,'error');
+      }
+    });
+  }
+
+  loadProtectedDashboard(){
+    this.getSavedDashboardDataPublic();
+    this.getDashboardFilterredListPublic();
+    this.getDrillThroughActionList();
+  }
+
+  goBackToProtectedHome(){
+    this.router.navigate(['/protected/home']);
   }
 
   publicDataExtraction(item : any){
@@ -8395,7 +8205,7 @@ loadTargetDbs(index:number){
       next:(data)=>{
         const currentHierarchyId = cond.sourceDetails.hierarchy_id;
         cond.targetDbData = data.user_connections.filter(
-          (db: any) => db.hierarchy_id !== currentHierarchyId
+          (db: any) => db.hierarchy_id !== currentHierarchyId && db.is_cross_db !== true
         );
       },
       error:(error)=>{
@@ -8780,6 +8590,7 @@ resetGenieAnimation() {
   }
 }
 
+buttonClicked = false;
   onEditorReady(editor: any) {
     setTimeout(() => {
       editor.editing.view.focus();
@@ -8796,7 +8607,117 @@ resetGenieAnimation() {
     //   this.editor = false;
     // });
   }
+  shareReportByEmail(){
+         const obj ={
+    dashboard_id:this.dashboardId,
+    }
+     this.workbechService.shareAnalysisReportEmail(obj).subscribe({
+        next:(data)=>{
+          if(data){
+         this.toasterService.success('Shared to registered Email.','Success',{ positionClass: 'toast-top-right'});
+          }
+        },
+        error:(error)=>{
+          this.toasterService.error(error.error.error,'Error',{ positionClass: 'toast-top-right'})       
+            }
+      }) 
+  }
+  // selectedTab: any = {};
+selectedTabIndexToEdit: number = -1;
+
+openEditTabModal(tab: any, index: number) {
+  this.selectedTab = { ...tab };
+  this.selectedTab.bgColor = this.selectedTab.bgColor ?? '#FFFFFF';
+  this.selectedTab.fontColor = this.selectedTab.fontColor ?? '#2392c1';
+  this.selectedTab.fontSize = this.selectedTab.fontSize ?? this.DEFAULT_FONT_SIZE;
+  this.selectedTab.fontStyle = this.selectedTab.fontStyle ?? 'normal';
+  this.selectedTabIndexToEdit = index;
+  // this.selectedTabfontSize = this.selectedTab.fontSize;
+  this.modalService.open(this.editTabModal, { size: 'md', backdrop: 'static' });
+
 }
+
+saveTabEdit(modal: any) {
+  if (this.selectedTabIndexToEdit > -1) {
+    this.sheetTabs[this.selectedTabIndexToEdit] = {
+      ...this.sheetTabs[this.selectedTabIndexToEdit],
+      ...this.selectedTab
+    };
+  }
+console.log( this.sheetTabs);
+  modal.close();
+}
+// Default values
+private readonly DEFAULT_FONT_SIZE = 14;
+private readonly MIN_FONT_SIZE = 10;
+private readonly MAX_FONT_SIZE = 24;
+
+// Color input handling
+updateColorInput(event: Event, type: 'font' | 'bg') {
+  const color = (event.target as HTMLInputElement).value;
+  if (type === 'font') {
+    this.selectedTab.fontColor = color.toUpperCase();
+  } else {
+    this.selectedTab.bgColor = color.toUpperCase();
+  }
+}
+
+validateColorInput(event: Event, type: 'font' | 'bg') {
+  const input = event.target as HTMLInputElement;
+  const color = input.value;
+  
+  // Ensure color starts with #
+  if (!color.startsWith('#')) {
+    input.value = '#' + color;
+  }
+  
+  // Validate hex color format
+  if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+    if (type === 'font') {
+      this.selectedTab.fontColor = color.toUpperCase();
+    } else {
+      this.selectedTab.bgColor = color.toUpperCase();
+    }
+  }
+}
+
+// Font size handling
+// selectedTabfontSize=10
+fontSizes: number[] = Array.from({length: 8}, (_, i) => 10 + i * 2);
+
+validateFontSize() {
+  if (!this.selectedTab.fontSize) {
+    this.selectedTab.fontSize = this.DEFAULT_FONT_SIZE;
+  }
+}
+
+// Font style handling
+updateFontStyle() {
+  // Force update the preview
+  this.selectedTab = {...this.selectedTab};
+}
+
+// Initialize tab defaults when opening modal
+initializeTabDefaults() {
+  if (!this.selectedTab) {
+    this.selectedTab = {
+      name: '',
+      fontColor: '#000000',
+      bgColor: '#FFFFFF',
+      fontSize: this.DEFAULT_FONT_SIZE,
+      fontStyle: 'normal'
+    };
+  }
+  
+  // Ensure existing values are valid
+  this.selectedTab.fontSize = Math.min(
+    Math.max(this.selectedTab.fontSize || this.DEFAULT_FONT_SIZE, this.MIN_FONT_SIZE),
+    this.MAX_FONT_SIZE
+  );
+}// Default values
+
+}
+
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
 //   content: string;

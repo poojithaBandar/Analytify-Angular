@@ -16,6 +16,9 @@ body {  margin: 0;  font-family: 'Segoe UI', sans-serif;  background-color: #f0f
     /* width: 7rem; */
     height: 7rem;
 }
+.table thead th {
+color: #222b45;
+}
 
     h1 {
       text-align: center;
@@ -152,6 +155,7 @@ body {  margin: 0;  font-family: 'Segoe UI', sans-serif;  background-color: #f0f
     }
     .profile-card {
     height: 100vh;
+    overflow: auto; 
     }
 
     .profile-img-1 {

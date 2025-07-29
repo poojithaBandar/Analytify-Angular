@@ -24,7 +24,7 @@ interface Dimension {
   styleUrl: './insight-apex.component.scss'
 })
 export class InsightApexComponent {
-  @Input() chartsRowData: any; 
+  @Input() chartsRowData: any;
   @Input() chartsColumnData: any;
   @Input() dualAxisColumnData : any;
   @Input() dualAxisRowData : any;
@@ -52,6 +52,7 @@ export class InsightApexComponent {
   @Input() donutSize : any;
   @Input() isDistributed : any;
   @Input() minValueGuage : any;
+  @Input() gaugeDisplayMode :any;
   @Input() maxValueGuage : any;
   @Input() legendsAllignment: any;
   @Input() dataLabelsFontFamily : any;
@@ -74,6 +75,8 @@ export class InsightApexComponent {
   @Input() dataLabelsLineFontPosition:any;
   @Input() selectedColorScheme:any;
   @Input() SDKChartOptions: any;
+  @Input() measureColorRanges: any;
+  @Input() isMeasureDistribution: any;
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   
@@ -92,6 +95,7 @@ export class InsightApexComponent {
   @ViewChild('funnelChart') funnelCharts!: ChartComponent;
   @ViewChild('guageChart') guageCharts!: ChartComponent;
   @ViewChild('heatmapchart') heatmapCharts!: ChartComponent;
+
   series: any[] = [];
   chartOptions: any = {};
   guageNumber : any;
@@ -104,7 +108,7 @@ export class InsightApexComponent {
 
   ngOnChanges(changes: SimpleChanges) {
 
-    if(changes['SDKChartOptions']){
+  if(changes['SDKChartOptions']){
       this.chartOptions = this.SDKChartOptions;
       this.chartType = this.chartType;
     } else {
@@ -198,7 +202,7 @@ export class InsightApexComponent {
     if(changes['backgroundColor']){
       this.setBackgroundColor();
     }
-    if(changes['barColor'] || changes['lineColor'] || changes['color'] || changes['selectedColorScheme']){
+    if(changes['barColor'] || changes['lineColor'] || changes['color'] || changes['selectedColorScheme'] ){
       this.setChartColor();
     }
     if(changes['gridColor']){
@@ -207,12 +211,30 @@ export class InsightApexComponent {
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
-    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
-      this.customMinMaxGuage();
-    }
+    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage']) || changes['gaugeDisplayMode']){
+      if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
+      if (changes['maxValueGuage']) {
+        this.maxValueGuage = changes['maxValueGuage'].currentValue;
+         this.customMinMaxGuage();
+      }
+      if (changes['minValueGuage']) {
+        this.minValueGuage = changes['minValueGuage'].currentValue;
+         this.customMinMaxGuage();
+      }
+    }else if( changes['gaugeDisplayMode']) {
+        this.gaugeDisplayMode = changes['gaugeDisplayMode'].currentValue;
+        this.customMinMaxGuage();
+      }
+     
+       }
     // if(['funnel','bar'].includes(this.chartType) && changes['sortType'] && changes['sortType']?.currentValue !== 0){
     //   this.sortSeries(this.sortType);
     // }
+    if (changes['isMeasureDistribution'] || changes['measureColorRanges']) {
+      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar'].includes(this.chartType)) {
+        this.setMeasureRangeColors();
+      }
+    }
     if(this.isSheetSaveOrUpdate){
       let object = {
         chartOptions : this.chartOptions
@@ -525,7 +547,7 @@ export class InsightApexComponent {
       },
       plotOptions: {
         bar: {
-          distributed : this.isDistributed,
+          distributed : this.isMeasureDistribution ? true : this.isDistributed,
           dataLabels: {
             position:this.dataLabelsFontPosition,
           },
@@ -545,7 +567,7 @@ export class InsightApexComponent {
       legend: {
         show: false,
       },
-      colors: this.isDistributed ? this.selectedColorScheme : [this.color]
+      colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : (this.isDistributed ? this.selectedColorScheme : [this.color])
     };
   }
 horizontalBarChart() {
@@ -649,7 +671,7 @@ xaxis: {
     plotOptions: {
       bar: {
         horizontal: true,  // 🔁 Make it horizontal
-        distributed: this.isDistributed,
+        distributed: this.isMeasureDistribution ? true : this.isDistributed,
         dataLabels: {
           position: this.dataLabelsFontPosition,
         },
@@ -669,7 +691,7 @@ xaxis: {
     legend: {
       show: false,
     },
-    colors: this.isDistributed ? this.selectedColorScheme : [this.color]
+    colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData ) : (this.isDistributed ? this.selectedColorScheme : [this.color])
   };
 }
 
@@ -769,7 +791,7 @@ xaxis: {
       },
       yaxis: {
         labels: {
-          show: true,
+          show: this.yLabelSwitch,
           offsetY: (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)),
           style: {
             // colors: this.color,
@@ -864,7 +886,7 @@ xaxis: {
         categories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
         tickPlacement: 'on',
         labels: {
-          show: true,
+          show: this.xLabelSwitch,
           offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10)),
           style: {
             // colors: this.color,
@@ -876,7 +898,7 @@ xaxis: {
       },
       yaxis: {
         labels: {
-          show: true,
+          show: this.yLabelSwitch,
           offsetY: (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)),
           style: {
             // colors: this.color,
@@ -920,7 +942,7 @@ xaxis: {
           }
         }
       },
-       colors:this.selectedColorScheme,
+      colors:this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData ) : this.selectedColorScheme,
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
       legend: {
         show: this.legendSwitch,
@@ -1697,7 +1719,7 @@ xaxis: {
           }
         }
       },
-      colors: this.selectedColorScheme,
+      colors:this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData ) : this.selectedColorScheme,
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
       // responsive: [
       //   {
@@ -1847,7 +1869,7 @@ xaxis: {
           horizontal: true,
           barHeight: "80%",
           isFunnel: true,
-          distributed : this.isDistributed,
+          distributed : this.isMeasureDistribution ? true : this.isDistributed,
           dataLabels: {
             position:  this.dataLabelsFontPosition,
           }
@@ -1875,7 +1897,7 @@ xaxis: {
       legend: {
         show: false
       },
-      colors: this.isDistributed ? this.selectedColorScheme : [this.color]
+      colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData ) : (this.isDistributed ? this.selectedColorScheme : [this.color])
     };
   }
   guageChart() {
@@ -1889,7 +1911,7 @@ xaxis: {
       { limit: 100000, max: 100000 },    // Up to 1 lakh
       { limit: 500000, max: 500000 },    // Up to 5 lakhs
       { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
-      { limit: Infinity, max: Math.ceil(this.guageNumber / 1000000) * 1000000 } // Above 10 lakhs
+      { limit: Infinity, max: (Math.ceil(this.guageNumber / 1000000) + 1) * 1000000 } // Above 10 lakhs
     ];
 
     // Determine maxValueGuage based on guageNumber
@@ -1978,7 +2000,18 @@ xaxis: {
               fontWeight: this.isBold ? 700 : 400
             },
             value: {
-              formatter: (val: any) => `${val.toFixed(2)}%`, // Displaying percentage
+              formatter: (val: any) => {
+                switch (this.gaugeDisplayMode) {
+                  case 'percentage':
+                    return `${val.toFixed(2)}%`;
+                  case 'value':
+                    return `${this.guageNumber}`;
+                  case 'both':
+                    return `${val.toFixed(2)}% (${this.guageNumber})`;
+                  default:
+                    return `${val.toFixed(2)}%`;
+                } 
+              },
               show: true,
               color: this.dataLabelsColor,
               fontSize: this.dataLabelsFontSize,
@@ -3000,6 +3033,9 @@ xaxis: {
     else if(this.chartType === 'heatmap'){
       this.heatmapCharts?.updateOptions(object);
     }
+    else if(this.chartType === 'gauge'){
+      this.guageCharts?.updateOptions(object);
+    }
   }
   gridLineColor(){
     if(this.chartOptions?.grid?.borderColor){
@@ -3223,6 +3259,60 @@ xaxis: {
   //     this.barCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
   //   }
   // }
+
+  setColorsOnRanges(data: any): string[] {
+    let colors = data.map((value:any) => {
+      const matchedRange = this.measureColorRanges.find((range:any) =>
+        value >= range.min && value <= range.max
+      );
+      return matchedRange ? matchedRange.color : '#2392c1';
+    });
+    return colors;
+  }
+
+  setMeasureRangeColors() {
+    if (this.isMeasureDistribution) {
+      let object = {};
+      if (this.chartType === 'bar') {
+        if (this.chartOptions?.colors && this.chartOptions?.series[0]?.data) {
+          this.chartOptions.colors = this.setColorsOnRanges(this.chartOptions.series[0].data);
+        }
+        this.chartOptions.plotOptions.bar.distributed = true;
+        object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
+        this.barCharts?.updateOptions(object);
+      }
+      else if (this.chartType === 'horizontalBar') {
+        if (this.chartOptions?.colors && this.chartOptions?.series[0]?.data) {
+        this.chartOptions.colors = this.setColorsOnRanges(this.chartOptions.series[0].data);
+        }
+        this.chartOptions.plotOptions.bar.distributed = true;
+        object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
+        this.horizontalBarCharts?.updateOptions(object);
+      }
+      else if (this.chartType === 'funnel') {
+        if (this.chartOptions?.colors && this.chartOptions?.series[0]?.data) {
+        this.chartOptions.colors = this.setColorsOnRanges(this.chartOptions.series[0].data);
+        }
+        this.chartOptions.plotOptions.bar.distributed = true;
+        object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
+        this.funnelCharts?.updateOptions(object);
+      }
+      else if (this.chartType === 'pie') {
+        if (this.chartOptions?.colors && this.chartOptions?.series) {
+        this.chartOptions.colors = this.setColorsOnRanges(this.chartOptions.series);
+        }
+        object = { colors: this.chartOptions.colors};
+        this.pieCharts?.updateOptions(object);
+      }
+      else if (this.chartType === 'donut') {
+        if (this.chartOptions?.colors && this.chartOptions?.series) {
+        this.chartOptions.colors = this.setColorsOnRanges(this.chartOptions.series);
+        }
+        object = { colors: this.chartOptions.colors};
+        this.donutCharts?.updateOptions(object);
+      }
+    }
+  }
 }
 // }
 

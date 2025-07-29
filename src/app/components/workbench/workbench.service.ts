@@ -91,6 +91,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/shopify_authentication/`+this.accessToken,obj);
   }
+  openAiConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
+  }
   hubspotConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -121,6 +126,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/tally_authentication/`+this.accessToken, config);
+  }
+
+  openAiConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
   }
 
   ninjaRMMConnectionUpdate(obj:any){
@@ -1006,6 +1017,12 @@ deleteUser(id:any){
       return this.http.get<any>(`${environment.apiUrl}/halops_dashboard/`+id+'/'+this.accessToken);
     }
 
+    buildSampleShopifyDashbaord(id: number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/shopify_dashbaord/`+id+'/'+this.accessToken);
+    }
+
     buildQuickBooksDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -1021,12 +1038,34 @@ deleteUser(id:any){
       this.accessToken = JSON.parse(currentUser!)['Token'];
       return this.http.get<any>(`${environment.apiUrl}/ninja_dashbaord/` + id + '/' + this.accessToken);
     }
+    buildSampleOpenAIDashboard(id: number){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/open_ai_dashbaord/`+id+'/'+this.accessToken);
+    }
     buildSampleSalesforceDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.get<any>(`${environment.apiUrl}/salesforce_dashbaord/`+id+'/'+this.accessToken);
     }
-
+    buildSampleTallyDashboard(id: number) {
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/tally_dashbaord/` + id + '/' + this.accessToken);
+    }
+    buildSampleHubspotDashboard(id: number) {
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/hubspot_dashbaord/` + id + '/' + this.accessToken);
+    }
+    createSmartDashboard(hierarchyId: number){
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.post<any>(
+        `${environment.apiUrl}/smart_dashboard_create/` + this.accessToken,
+        { hierarchy_id: hierarchyId }
+      );
+    }
     fetchSDKData(){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -1061,6 +1100,12 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/import_dashboard/`+this.accessToken,object);
+    }
+
+    getSharedConnections(object:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/shared_connections/`+this.accessToken,object);
     }
 
     getSheetSdkData(object:any){
@@ -1191,13 +1236,64 @@ deleteUser(id:any){
       return this.http.post<any>(`${environment.apiUrl}/mail_alerts/`+ this.accessToken,obj);
     }
     analyzeAndDownloadDashboard(obj:any){
-      return this.http.post<any>(`${environment.apiUrl}/analyze-dashboard/`,obj);
+      return this.http.post<any>(`${environment.apiUrl}/analyze-dashboard/`+this.accessToken,obj);
+    }
+    shareAnalysisReportEmail(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/analyze_share_report/`+this.accessToken, obj);
     }
     sheetUpdateRefreshMail(obj:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/send_mail/`+this.accessToken, obj);
     }
+    changeDataType(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/data_type_conversion/`+this.accessToken,obj);
+    }
+    getThresholds(id:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/threshold_mails/`+this.accessToken+'?dashboard_id='+id);
+    }
+    saveThreshold(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/threshold_mails/`+this.accessToken,obj);
+    }
+    updateThreshold(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/threshold_mails/`+this.accessToken,obj);
+    }
+    deleteThreshold(id:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.delete<any>(`${environment.apiUrl}/threshold_mails/`+this.accessToken+'/' + id + '/');
+    }
+    getUserProfileDetails(){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/userprofile_data/`+this.accessToken);
+    }
+    updateProfile(data:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/userprofile_data/`+this.accessToken,data);
+    }
+    updateEmail(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/updateemail/`+this.accessToken,obj);
+    }
+    validateEmailOtp(emailToken:any, otp:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/emailconformation/`+this.accessToken+'/'+emailToken,{otp: otp});
+    }
+
     // Airflow API
     airflowToken: string | null = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlzcyI6W10sImF1ZCI6ImFwYWNoZS1haXJmbG93IiwibmJmIjoxNzQ5MDQyOTI5LCJleHAiOjE3NDkxMjkzMjksImlhdCI6MTc0OTA0MjkyOX0.OPipRIhG-me15qyyGXRlt2xLuNWKOr2RexHtU7xc8kyXqP3dHfcNAq2t6Zf6sNiKbnb437AyKsagA9rgbKK6wg';
 
@@ -1226,10 +1322,53 @@ deleteUser(id:any){
       });
     }
 
-    getTaskInstances(dagId: string, runId: string) {
-      return this.http.get(
+  getTaskInstances(dagId: string, runId: string) {
+    return this.http.get(
         `${environment.airflowApiUrl}/dags/${dagId}/dagRuns/${runId}/taskInstances`,
         { headers: this.getHeaders() }
       );
     }
+
+  generateProtectedLink(obj:any){
+    return this.http.post<any>(
+      `${environment.apiUrl}/dashboard_protected_key_generation/`+this.accessToken,
+      obj
+    );
+  }
+
+  validateProtectedKey(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/pass_key_validation/`, obj);
+  }
+
+  getProtectedDashboards(email: string){
+    return this.http.post<any>(
+      `${environment.apiUrl}/shared_dashboards_list/`,
+      { email }
+    );
+  }
+
+  getProtectedDashboardsList(token: string){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(
+      `${environment.apiUrl}/shared_dashboards_list/${this.accessToken}`,
+      {}
+    );
+  }
+
+  getDashboardViewers(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(
+      `${environment.apiUrl}/list_of_shared_users/${this.accessToken}`,
+      obj
+    );
+  }
+
+  sendEmailReminder(obj: any){
+    return this.http.post<any>(
+      `${environment.apiUrl}/email_remainder/${this.accessToken}`,
+      obj
+    );
+  }
 }

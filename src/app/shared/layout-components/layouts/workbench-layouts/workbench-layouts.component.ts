@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { Menu, NavService } from '../../../services/navservice';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
@@ -16,8 +16,10 @@ export class WorkbenchLayoutsComponent {
   currentRoute:  string | undefined;
   urlData:  string[] | undefined;
   document: any;
+  isAuthenticated = false;
+  hideLayout = false;
  constructor(
-  private router:Router, 
+  private router:Router,
    public navServices: NavService,
    private elementRef: ElementRef,
    private renderer: Renderer2,
@@ -36,6 +38,7 @@ export class WorkbenchLayoutsComponent {
   //  });
   
  }
+
  togglesidemenuBody() {
   document.querySelector('.offcanvas-end')?.classList.remove('show')
   document.querySelector("body")!.classList.remove("overflow:hidden");
