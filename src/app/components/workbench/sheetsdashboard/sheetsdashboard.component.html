@@ -1594,12 +1594,13 @@
                             [series]="[{ name: 'KPI Trend',data:item['kpiData']?.trendData  }]"
                             [chart]="{ type: 'line', height: 50, sparkline: { enabled: true } }"
                             [stroke]="{ curve: 'smooth', width: 2 }"
-                            [colors]="[item['kpiData']?.color]"
+                            [colors]="[item['kpiData']?.kpiChartColor]"
                             [tooltip]="{ enabled: true }"
-                            [xaxis]="{ categories: item['kpiData']?.trendlables  }"
+                            [xaxis]="{ categories: item['kpiData']?.trendlables}"
+                            [markers]="{ size: 3, colors: ['#fff'], strokeColors: item['kpiData']?.kpiChartColor, strokeWidth: 2 }"
                             style="margin-top: 5px;">
                           </apx-chart>
-                            <div *ngIf="item['kpiData']?.kpiShowIndicator"
+                            <div *ngIf="item['kpiData']?.showKpiIndicator"
                                 class="d-flex justify-content-around mt-2 flex-wrap text-center"
                                 style="font-size: 12px;">
                               <span [ngStyle]="{

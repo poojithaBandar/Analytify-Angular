@@ -2569,20 +2569,23 @@
                                     <div class="big-number-container">
                                         <!-- @for(data of tablePreviewRow;track data){ -->
                                             <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
+                                             <div class="text-center text-muted" [style.color]="kpiColor" style="font-size: 13px;">
+                                                    Target: {{ kpiTarget }}
+                                             </div>
                                     <apx-chart *ngIf="kpiShowTrendline === true && trendData.length > 0"
                                     [series]="[{name: 'KPI Trend', data: trendData }]"
                                     [chart]="{ type: 'line', height: 60, sparkline: { enabled: true } }"
                                     [stroke]="{ curve: 'smooth', width: 2 }"
-                                    [colors]="[kpiColor]"
+                                    [colors]="[kpiChartColor]"
                                     [tooltip]="{ enabled: true }"
                                     [xaxis]="{ categories: trendLabels }"
-                                ></apx-chart>
+                                    ></apx-chart>
                                         <!-- } -->
-                                     @if(showKpiIndicator) {
+                                     @if(showKpiIndicator && kpiShowTrendline) {
                             <div class="d-flex justify-content-around mt-2 flex-wrap text-center" style="font-size: 12px;">
                             <span [ngStyle]="{ color: indicatorIsIncreased === 'up' ? 'green' : 'red', fontWeight: 'bold' }">
                                 <i class="bi" [ngClass]="indicatorIsIncreased === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                                {{ indicatorValue }}%
+                                {{ indicatorValue }}% {{ getDeltaLabel() }}
                             </span>
                             </div>
                         }
@@ -4879,6 +4882,20 @@
                                                                     <ngx-colors *ngIf="kpiColorSwitch"
                                                                     ngx-colors-trigger 
                                                                     [(ngModel)]="kpiColor"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
+                                                                   <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                    <label for="color">Chart color</label>
+                                                                    <div *ngIf="kpiChartColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiChartColorSwitch = !kpiChartColorSwitch; resetKpiChartColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!kpiChartColorSwitch" class="toggle toggle-sm off mb-0" (click)="kpiChartColorSwitch = !kpiChartColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="kpiChartColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="kpiChartColor"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>

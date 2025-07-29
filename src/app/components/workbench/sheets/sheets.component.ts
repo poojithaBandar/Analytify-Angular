@@ -26,7 +26,7 @@ import Swal from 'sweetalert2';
 import { NgxColorsModule } from 'ngx-colors';
 import { CommonModule } from '@angular/common';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading, FontSize } from 'ckeditor5';
+import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading, FontSize, findOptimalInsertionRange } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 import * as echarts from 'echarts';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
@@ -305,7 +305,7 @@ export class SheetsComponent{
   isDistributed : boolean = true;
   kpiFontSize: string = '3';
   kpiColor: string = '#000000';
-
+  kpiChartColor: string = '#2392c1';
   titleShow : boolean = true;
   legendsAllignment : any = 'bottom'
   donutSize:any = 50;
@@ -405,7 +405,8 @@ export class SheetsComponent{
   trendLabels = [];
   indicatorIsIncreased :any;
   indicatorValue:any;
-  showKpiIndicator:boolean = true;
+  showKpiIndicator:boolean = false;
+  kpiChartColorSwitch: boolean = false;
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
@@ -2063,6 +2064,9 @@ try {
     } else {
       this.suppressTabChangeEvent = false;
     }
+    if(this.kpiChartColor){
+      this.kpiChartColor = this.kpiChartColor;
+    }
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
@@ -2124,6 +2128,7 @@ try {
       this.banding = false;
       this.kpiFontSize = '3';
       this.kpiColor = '#000000';
+      this.kpiChartColor = '#2392c1';
       this.GridColor = '#089ffc';
       this.backgroundColor = '#fcfcfc';
       this.color = '#2392c1';
@@ -2161,6 +2166,7 @@ sheetSave(isDashboardTransfer?: boolean){
   let savedChartOptions ;
   let kpiData;
   let kpiColor;
+  let kpiChartColor;
   let kpiFontSize;
   let bandColor1;
   let bandColor2;
@@ -2220,6 +2226,7 @@ sheetSave(isDashboardTransfer?: boolean){
   if(this.kpi && this.chartId == 25){
     kpiData = this.tablePreviewRow;
     kpiColor = this.kpiColor;
+    kpiChartColor = this.kpiChartColor;
     kpiFontSize = this.kpiFontSize;
   }
   if(this.map && this.chartId == 29){
@@ -2280,6 +2287,7 @@ sheetSave(isDashboardTransfer?: boolean){
     color1 : this.color1,
     color2 : this.color2,
     kpiColor : this.kpiColor,
+    kpiChartColor : this.kpiChartColor,
     barColor : this.barColor,
     lineColor : this.lineColor,
     GridColor : this.GridColor,
@@ -2345,7 +2353,7 @@ sheetSave(isDashboardTransfer?: boolean){
     isMeasureDistribution : this.isMeasureDistribution,
     measureColorRanges : this.measureColorRanges,
     measureDivisions : this.measureDivisions,
- 
+    kpiChartColorSwitch : this.kpiChartColorSwitch
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2404,6 +2412,7 @@ let obj={
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
       "kpicolor": kpiColor,
+      "kpiChartColor" : kpiChartColor,
       "kpiNumber" : this.KPINumber,
       "kpiPrefix" : this.KPIPrefix,
       "kpiSuffix" : this.KPISuffix,
@@ -2415,6 +2424,7 @@ let obj={
     "kpiTrendAxis" : this.kpiTrendAxis,
     "trendData" : this.trendData,
     "trendLabels" : this.trendLabels,
+
     "indicatorIsIncreased" : this.indicatorIsIncreased,
     "indicatorValue" : this.indicatorValue,
     "showKpiIndicator": this.showKpiIndicator,
@@ -2755,6 +2765,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.KPINumber = this.sheetResponce?.results?.kpiNumber;
     this.kpiFontSize = this.sheetResponce?.results?.kpiFontSize;
     this.kpiColor = this.sheetResponce?.results?.kpicolor;
+    this.kpiChartColor = this.sheetResponce?.results?.kpiChartColor;
     this.trendData = this.sheetResponce?.results?.trendData;
     this.trendLabels = this.sheetResponce?.results?.trendLabels;
     this.kpiTrendAxis = this.sheetResponce?.results?.kpiTrendAxis;
@@ -4249,6 +4260,7 @@ customizechangeChartPlugin() {
     this.color1 = data.color1 ?? undefined;
     this.color2 = data.color2 ?? undefined;
     this.kpiColor = data.kpiColor ?? '#000000';
+    this.kpiChartColor = data.kpiChartColor ?? '#2392c1';
     this.barColor = data.barColor ?? '#4382f7';
     this.lineColor = data.lineColor ?? '#38ff98';
     this.GridColor = data.GridColor ?? '#089ffc';
@@ -4315,15 +4327,16 @@ customizechangeChartPlugin() {
     this.measureColorRanges = data.measureColorRanges ?? [];
     this.isMeasureDistribution = data.isMeasureDistribution ?? false;
     this.measureDivisions = data.measureDivisions ?? 2;
-    this.kpiShowTrendline = data.kpiShowTrendline ?? false;
+    // this.kpiShowTrendline = data.kpiShowTrendline ?? false;
     this.kpiTarget = this.kpiTarget ?? 0;
     this.kpiTrendAxis = this.kpiTrendAxis ?? 'month';
     this.trendData = this.trendData ?? [];
     this.trendLabels = this.trendLabels ?? [];
     this.selectedDateColumn = this.selectedDateColumn ?? '';
-    this.showKpiIndicator = this.showKpiIndicator ?? false;
+    // this.showKpiIndicator = this.showKpiIndicator ?? false;
     this.indicatorValue = this.indicatorValue ?? '';
     this.indicatorIsIncreased = this.indicatorIsIncreased ?? '';
+    this.kpiChartColorSwitch = this.kpiChartColorSwitch ?? false;
 
   }
 
@@ -4367,6 +4380,7 @@ customizechangeChartPlugin() {
     this.color1 = undefined;
     this.color2 = undefined;
     this.kpiColor = '#000000';
+    this.kpiChartColor = '#2392c1';
     this.barColor = '#4382f7';
     this.lineColor = '#38ff98';
     this.GridColor = '#089ffc';
@@ -4436,6 +4450,7 @@ customizechangeChartPlugin() {
     this.showKpiIndicator = false;
     this.indicatorValue = '';
     this.indicatorIsIncreased = '';
+    this.kpiChartColorSwitch = false;
     // this.isHorizontalBar = false;
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
@@ -5039,6 +5054,9 @@ customizechangeChartPlugin() {
       }
       resetKpiColor(){
         this.kpiColor = '#0f0f0f';
+      }
+      resetKpiChartColor(){
+        this.kpiChartColor = '#2392c1';
       }
       resetEchartXGridColor(){
         this.xGridColor = '#0f0f0f';
@@ -7813,12 +7831,20 @@ openGenieAiQTab(){
       if(!this.retriveDataSheet_id){
         delete object['sheet_id'];
       }
+      if(this.retriveDataSheet_id){
+        delete object['hierarchy_id'];
+        delete object['query'];
+      }
       this.workbechService.saveTrendline(object).subscribe({
         next: (response: any) => {
           console.log(response);
           this.setTrendChartData(response?.trend_kpi_data);
           this.indicatorValue = response.difference;
-          this.indicatorIsIncreased = response.is_increased;
+          if(response?.is_increased){
+          this.indicatorIsIncreased = 'up';
+          }else{
+            this.indicatorIsIncreased = 'down';
+          }
         },
         error: (error) => {
           console.log(error);
@@ -7832,6 +7858,11 @@ openGenieAiQTab(){
 
       this.trendData = valueColumn?.result || [];
       this.trendLabels = labelColumn?.result || [];
+    }
+    getDeltaLabel(): string {
+      if (this.KPINumber > this.kpiTarget) return 'above target';
+      if (this.KPINumber < this.kpiTarget) return 'below target';
+      return 'on target';
     }
 }
 

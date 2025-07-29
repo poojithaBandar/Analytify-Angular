@@ -107,9 +107,10 @@ interface KpiData {
   trendData: [], 
   trendLabels: [],
   kpiShowTrendline : boolean,
-  kpiShowIndicator : boolean,
+  showKpiIndicator : boolean,
   indicatorIsIncreased : any,
   indicatorValue : any,
+  kpiChartColor: string;
 }
 declare var $:any;
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -926,10 +927,11 @@ export class SheetsdashboardComponent implements OnDestroy {
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
               trendData: sheet.sheet_data?.results?.trendData || [], 
               trendLabels: sheet.sheet_data?.results?.trendLabels || [],
               kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
-              kpiShowIndicator : sheet.sheet_data?.results?.kpiShowIndicator || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
             };
@@ -2052,10 +2054,11 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
                trendData: sheet.sheet_data?.results?.trendData || [], 
               trendLabels: sheet.sheet_data?.results?.trendLabels || [],
               kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
-              kpiShowIndicator : sheet.sheet_data?.results?.kpiShowIndicator || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
           };
@@ -2132,10 +2135,11 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
                trendData: sheet.sheet_data?.results?.trendData || [], 
               trendLabels: sheet.sheet_data?.results?.trendLabels || [],
               kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
-              kpiShowIndicator : sheet.sheet_data?.results?.kpiShowIndicator || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
           };
@@ -5184,10 +5188,11 @@ kpiData?: KpiData;
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
                  trendData: sheet.sheet_data?.results?.trendData || [], 
               trendLabels: sheet.sheet_data?.results?.trendLabels || [],
               kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
-              kpiShowIndicator : sheet.sheet_data?.results?.kpiShowIndicator || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
             };
