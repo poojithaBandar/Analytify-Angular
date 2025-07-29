@@ -1302,7 +1302,12 @@ try {
     'nullable(timestamp without time zone)',
     'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)',
     'nullable(datetime)', 'datetime64', 'datetime32', 'date32', 'nullable(date32)', 'nullable(datetime64)', 'nullable(datetime32)', 'date', 'datetime', 'time', 'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 'nullable(date32)']
-
+  datetimeList = ['time', 'datetime', 'timestamp', 'timestamp with time zone',  'timezone', 'time zone', 'timestamptz',  'nullable(time)', 'nullable(datetime)',
+      'nullable(timestamp)',
+      'nullable(timestamp with time zone)',
+      'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)',
+      'nullable(datetime)', 'datetime64', 'datetime32',   'nullable(datetime64)', 'nullable(datetime32)',  'datetime', 'time', 'datetime64', 'datetime32',  'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 
+    ]
     rowdrop(event: CdkDragDrop<string[]>){
       // if (event.previousContainer === event.container) {
       //   moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -4833,7 +4838,10 @@ customizechangeChartPlugin() {
             this.dateDrillDownSwitch = !this.dateDrillDownSwitch;
             this.heirarchyColumnData = [];
             if(this.dateDrillDownSwitch){
-              this.draggedDrillDownColumns = ["year","quarter","month","date"];
+              this.draggedDrillDownColumns = ["year","quarter","month","weeks","date"];
+              if (this.datetimeList.includes(this.draggedColumns[0].data_type)){
+                this.draggedDrillDownColumns = ["year","quarter","month","weeks","year/month/day","date"];
+              }
               this.draggedDrillDownColumns.forEach((columnType:any)=>{
                 let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));
                 columnData[2] = columnType;
