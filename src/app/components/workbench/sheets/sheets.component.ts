@@ -1617,9 +1617,10 @@ try {
   heatMap = false;
   funnel = false;
   guage = false;
+  treeChart = false;
   calendar = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,treeChart:boolean,chartId:any){
     this.table = table;
     this.pivotTable = pivotTable;
     this.bar=bar;
@@ -1641,6 +1642,7 @@ try {
     this.funnel = funnel;
     this.guage = guage;
     this.map = map;
+    this.treeChart = treeChart;
     this.calendar = calendar;
     if(this.bar){
       this.isHorizontalBar = false;
@@ -3201,8 +3203,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.calendar = false;
  }
- if(responce.chart_id == 27){
-  this.chartType = 'funnel';
+  if(responce.chart_id == 27){
+    this.chartType = 'funnel';
   this.bar = false;
   this.horizontalBar = false;
   this.table = false;
@@ -3224,8 +3226,33 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
- }
- if(responce.chart_id == 28){
+  }
+  if(responce.chart_id == 16){
+   this.chartType = 'treechart';
+   this.bar = false;
+   this.horizontalBar = false;
+   this.table = false;
+   this.pivotTable = false;
+     this.pie = false;
+     this.line = false;
+     this.area = false;
+     this.sidebyside = false;
+     this.stocked = false;
+     this.barLine = false;
+     this.horizentalStocked = false;
+     this.grouped = false;
+     this.multiLine = false;
+     this.donut = false;
+     this.radar = false;
+     this.kpi = false;
+     this.heatMap = false;
+     this.funnel = false;
+     this.guage = false;
+     this.map = false;
+     this.treeChart = true;
+     this.calendar = false;
+  }
+  if(responce.chart_id == 28){
   this.customMinMaxGuage();
   this.chartType = 'guage';
   this.bar = false;
@@ -4171,18 +4198,18 @@ fetchChartData(chartData: any){
           this.sheetTitle = chartData.chart_title;
           this.sheetTagName = chartData.chart_title;
           if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if(chartData.chart_type.toLowerCase().includes("horizontalBar")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,2);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,2);
           }
           else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,10);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,10);
           }
           this.dataExtraction(false);
 
