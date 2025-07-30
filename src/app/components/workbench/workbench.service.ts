@@ -96,6 +96,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
   }
+  deepSeekConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/deepseek_authentication/token/`+this.accessToken,obj);
+  }
   hubspotConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -132,6 +137,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
+  }
+
+  deepSeekConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/deepseek_authentication/token/`+this.accessToken,obj);
   }
 
   ninjaRMMConnectionUpdate(obj:any){
