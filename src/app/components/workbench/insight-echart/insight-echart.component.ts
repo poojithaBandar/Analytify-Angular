@@ -85,6 +85,7 @@ export class InsightEchartComponent {
   @Input() leftLegend:any;
   @Input() isDistributed : any;
   @Input() mapChartOptions:any;
+  @Input() treeData: any;
   @Input() actionId:any;
   @Input() SDKChartOptions: any;
   @Input() isRadarDistribution:any;
@@ -102,6 +103,7 @@ export class InsightEchartComponent {
 
   series: any[] = [];
   chartOptions: any = {};
+  private treeChartData: any[] = [];
   constructor(private cdr: ChangeDetectorRef,private http: HttpClient){}
 
  
@@ -1651,6 +1653,48 @@ heatMapChart(){
   ],
 };
 }
+
+treeChart(treeData?: any[]) {
+  if (treeData) {
+    this.treeChartData = treeData;
+  } else if (this.treeData) {
+    this.treeChartData = this.treeData;
+  } else if (this.chartsColumnData) {
+    this.treeChartData = this.chartsColumnData.map((name: any) => ({ name, children: [] }));
+  }
+  this.chartOptions = {
+    tooltip: {
+      trigger: 'item',
+      triggerOn: 'mousemove'
+    },
+    series: [
+      {
+        type: 'tree',
+        data: this.treeChartData,
+        top: '5%',
+        left: '7%',
+        bottom: '2%',
+        right: '20%',
+        symbolSize: 7,
+        label: {
+          position: 'left',
+          verticalAlign: 'middle',
+          align: 'right'
+        },
+        leaves: {
+          label: {
+            position: 'right',
+            verticalAlign: 'middle'
+          }
+        },
+        expandAndCollapse: true,
+        animationDuration: 550,
+        animationDurationUpdate: 750
+      }
+    ]
+  };
+  return this.chartOptions;
+}
 calendarChart() {
   let calendarData: any[] = [];
   let years: Set<any> = new Set();
@@ -2054,6 +2098,9 @@ chartInitialize(){
   else if(this.chartType === 'heatmap'){
     this.heatMapChart();
   }
+  else if(this.chartType === 'tree'){
+    this.treeChart();
+  }
   else if(this.chartType === 'calendar'){
     this.calendarChart();
   }
@@ -2109,6 +2156,10 @@ chartInitialize(){
     if(changes['mapChartOptions'] ){
       this.chartOptions = this.mapChartOptions;
       this.chartInstance?.setOption(this.chartOptions, true);
+    }
+    if(changes['treeData']){
+      this.treeChartData = this.treeData;
+      this.resetchartoptions();
     }
     if(changes['isZoom']){
       if (this.chartInstance) {
@@ -3962,6 +4013,12 @@ updateSeries(){
 //   }
 // }
   onChartClick(event: any) {
+    if(this.chartType === 'tree'){
+      // avoid duplicate drilldown calls if children already loaded
+      if(event.data && Array.isArray(event.data.children) && event.data.children.length > 0){
+        return;
+      }
+    }
     if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
       console.log('X-axis value:', event.name);
       let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];

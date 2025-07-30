@@ -2594,7 +2594,7 @@
                                 @if(isApexCharts && !table && !kpi && !pivotTable){
               <!-- @if(bar && chartId){ -->
 
-                <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData"
+                <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [dualAxisColumnData]="dualAxisColumnData"
                 [dualAxisRowData]="dualAxisRowData" [tablePreviewRow]="tablePreviewRow" [chartType]="chartType" [xGridSwitch]="xGridSwitch"
                 [xLabelSwitch]="xLabelSwitch" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [xLabelFontFamily]="xLabelFontFamily"
                 [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [backgroundColor]="backgroundColor" [color]="color"
@@ -2618,7 +2618,7 @@
                     <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
                 </div> -->
 
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor"
                 [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
                 [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
@@ -2630,7 +2630,7 @@
             </div>          
             } @else if(horizontalBar && chartId ){
             <div class="card-body">
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor"
                 [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
                 [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
@@ -2644,7 +2644,7 @@
 
             @else if(funnel && chartId){         
                 <div class="card-body">
-                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [color]="color" [backgroundColor]="backgroundColor" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [selectedColorScheme]="selectedColorScheme" [isDistributed]="isDistributed"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)" [isMeasureDistribution]="isMeasureDistribution"
                     [measureColorRanges]="measureColorRanges"></app-insight-echart>
@@ -2658,15 +2658,15 @@
                     [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
                     [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [selectedColorScheme]="selectedColorScheme"
-                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
                 }
             @else if(sidebyside && chartId){         
                     <div class="card-body">
-                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
-                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [yGridColor]="yGridColor" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [yGridColor]="yGridColor" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -2680,7 +2680,7 @@
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [selectedColorScheme]="selectedColorScheme"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
-                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
             }
             @else if(horizentalStocked && chartId){         
@@ -2690,13 +2690,13 @@
                     [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
                     [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
-                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
         }
                 
             @else if(area && chartId){
             <div class="card-body">
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
@@ -2707,7 +2707,7 @@
             }
             @else if(line && chartId){
             <div class="card-body">
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
@@ -2719,7 +2719,7 @@
             }
             @else if(pie && chartId){
             <div class="card-body">
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                 [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"  [dataLabelsFontFamily]="dataLabelsFontFamily" [selectedColorScheme]="selectedColorScheme"
                 [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                 [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
@@ -2729,7 +2729,7 @@
             }
             @else if(donut && chartId){
                 <div class="card-body">
-                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" [selectedColorScheme]="selectedColorScheme"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"
                     [donutDecimalPlaces]="donutDecimalPlaces" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
@@ -2744,7 +2744,7 @@
                     [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"  [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [dataLabelsBarFontPosition]="dataLabelsBarFontPosition" [dataLabelsLineFontPosition]="dataLabelsLineFontPosition"
-                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
                 }
                 @else if(multiLine && chartId){
@@ -2755,20 +2755,20 @@
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [selectedColorScheme]="selectedColorScheme"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
-                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
                     }
             @else if(radar && chartId){
                 <div class="card-body">
                     <app-insight-echart [chartType]="chartType" [color]="color"  [isBold]="isBold" [radarRowData]="radarRowData" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily"  [isRadarDistribution]="isRadarDistribution" [selectedColorScheme]="selectedColorScheme"
-                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
                 }
                 @else if(map && chartId){
                     <div class="card-body">
-                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment"
                         [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily"
                         [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch"
@@ -2782,7 +2782,7 @@
                     
                 @else if(calendar){
                     <div class="card-body">
-                        <app-insight-echart [isZoom]="isZoom"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [selectedColorScheme]="selectedColorScheme"
+                        <app-insight-echart [isZoom]="isZoom"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [treeData]="treeData" [chartsRowData]="chartsRowData" [selectedColorScheme]="selectedColorScheme"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
                 }
@@ -2793,7 +2793,7 @@
                         [backgroundColor]="backgroundColor" [xLabelSwitch]="xLabelSwitch" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" [selectedColorScheme]="selectedColorScheme"
                         [xlabelFontWeight]="xlabelFontWeight" [yLabelSwitch]="yLabelSwitch" [yLabelColor]="yLabelColor" [yLabelFontSize]="[yLabelFontSize]" [yLabelFontFamily]="yLabelFontFamily" [ylabelFontWeight]="ylabelFontWeight"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
-                        [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                        [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
                 }
@@ -3582,7 +3582,10 @@
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,26)"><img src="./assets/images/charts/heatmap-new.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
                                                         </div>
                                                         <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length!=1)}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="World Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,29)"><img src="./assets/images/charts/world-map.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': map}"></a>
+                                                        <a href="javascript:void(0);"  triggers="hover" ngbTooltip="World Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,29)"><img src="./assets/images/charts/world-map.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': map}"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedColumns?.length<1 )}">
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Tree Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,16)"><img src="./assets/images/charts/tree-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': treeChart}"></a>
                                                         </div>
                                                     </div>
                                                 </div>
