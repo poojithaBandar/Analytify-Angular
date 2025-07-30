@@ -7848,7 +7848,6 @@ openGenieAiQTab(){
       }
       if(this.retriveDataSheet_id){
         delete object['hierarchy_id'];
-        delete object['query'];
       }
       this.workbechService.saveTrendline(object).subscribe({
         next: (response: any) => {
