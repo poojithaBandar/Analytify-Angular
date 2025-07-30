@@ -93,6 +93,7 @@ export class InsightEchartComponent {
   @Output() drillThrough = new EventEmitter<object>();
   @Input() isMeasureDistribution: boolean = false;
   @Input() measureColorRanges: { min: number, max: number, color: string }[] = [];
+  @Input() treeData: any[] = [];
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
@@ -141,7 +142,10 @@ export class InsightEchartComponent {
         echarts.registerMap('world', geoJson);
         this.chartInstance?.setOption(this.SDKChartOptions ? this.SDKChartOptions :this.chartOptions,true);      });
     }
-    else{
+    else if(this.chartType === 'tree'){
+      this.chartOptions = { series: [{ type: 'tree', data: this.treeData, initialTreeDepth: 1, expandAndCollapse: true }] };
+      this.chartInstance?.setOption(this.chartOptions, true);
+    } else {
       this.chartInstance?.setOption(
         this.chartOptions,true);
     }
@@ -2089,9 +2093,12 @@ chartInitialize(){
                 this.chartInstance?.setOption(this.SDKChartOptions, true); // Full reset
         }, 100);
       }
-     } else if(changes['chartType']){
+    } else if(changes['chartType']){
       this.chartInitialize();
-     } else if (!this.chartInstance) {
+    } else if(changes['treeData'] && this.chartType === 'tree'){
+      this.chartOptions = { series: [{ type: 'tree', data: this.treeData, initialTreeDepth: 1, expandAndCollapse: true }] };
+      this.resetchartoptions();
+    } else if (!this.chartInstance) {
       this.chartInitialize();
     }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
