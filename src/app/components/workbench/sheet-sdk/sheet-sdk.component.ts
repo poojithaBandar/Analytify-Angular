@@ -148,6 +148,9 @@ export class SheetSdkComponent {
           case 10:
             this.chartType = 'donut';
             break;
+          case 16:
+            this.chartType = 'tree';
+            break;
           case 27:
             this.chartType = 'funnel';
             break;

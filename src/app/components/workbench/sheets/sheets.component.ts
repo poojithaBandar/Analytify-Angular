@@ -268,6 +268,7 @@ export class SheetsComponent{
   draggedMeasureValues = [] as any;
   drillDownIndex : number = 0;
   originalData : any ;
+  treeData: any[] = [];
   dateDrillDownSwitch : boolean = false;
   drillDownObject: any[] = [];
   sheetCustomQuery: any;
@@ -293,6 +294,7 @@ export class SheetsComponent{
   maxValueGuage: number = 100; // Default maximum value
   gaugeDisplayMode= 'both'; // Default gauge display mode
   map: boolean = false;
+  treeChart: boolean = false;
 
   guageNumber:any;
   eFunnelChartOptions: any;
@@ -683,12 +685,36 @@ try {
      this.router.navigate(['/analytify/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
-  }
+      }
 
-  }
-  goToConnections(){
-    this.router.navigate(['/analytify/datasources/view-connections'])
-  }
+      }
+      addChildrenToTree(tree: any[], path: string[], children: string[]) {
+        if(!tree || path.length === 0){
+          return;
+        }
+        const name = path[0];
+        const node = tree.find((n:any)=>n.name === name);
+        if(!node){
+          return;
+        }
+        if(path.length === 1){
+          node.children = node.children || [];
+      children.forEach(ch => {
+        if(!node.children.some((c:any)=>c.name === ch)){
+          node.children.push({name: ch, children: [], collapsed: true});
+        }
+      });
+      } else {
+        this.addChildrenToTree(node.children || (node.children=[]), path.slice(1), children);
+      }
+      }
+
+      resetTreeChartState(){
+        this.treeData = [];
+      }
+      goToConnections(){
+        this.router.navigate(['/analytify/datasources/view-connections'])
+      }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
   }
@@ -846,6 +872,7 @@ try {
               this.guage = false;
               this.funnel = false;
               this.calendar = false;
+    this.treeChart = false;
               this.map=false;
               // this.tableDisplayPagination();
             } else if(((this.pie || this.bar || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
@@ -870,6 +897,7 @@ try {
               this.funnel = false;
               this.guage = false;
               this.calendar = false;
+    this.treeChart = false;
               this.map = false;
               // this.sidebysideBar();
               this.resetCustomizations();
@@ -1170,6 +1198,14 @@ try {
           //   const aa = { col: this.chartsColumnData[i], row: this.chartsRowData[i] };
           //   this.chartsData.push(aa);
           // }
+          if(this.chartId === 16){
+            const path = this.drillDownObject.map((o:any) => Object.values(o)[0]);
+            if(path.length === 0){
+              this.treeData = this.chartsColumnData.map((n:any)=>({name:n, children:[], collapsed: true}));
+            } else {
+              this.addChildrenToTree(this.treeData, path, this.chartsColumnData);
+            }
+          }
         }
 
       }
@@ -1279,6 +1315,9 @@ try {
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
+        if(this.chartId === 16){
+          this.resetTreeChartState();
+        }
         this.dataExtraction(false);
       }
       this.checkDateFormatForYOY();
@@ -1555,6 +1594,9 @@ try {
       }
       
     }
+   if(this.chartId === 16){
+     this.resetTreeChartState();
+   }
    this.dataExtraction(false);
    this.checkDateFormatForYOY();
   }
@@ -1635,6 +1677,7 @@ try {
     this.multiLine = multiLine;
     this.donut = donut;
     this.chartId = chartId;
+    this.treeChart = chartId === 16;
     this.radar = radar;
     this.kpi = kpi;
     this.heatMap = heatMap;
@@ -2136,6 +2179,7 @@ try {
       this.heatMap = false;
       this.funnel = false;
       this.calendar = false;
+    this.treeChart = false;
       this.guage = false;
       this.banding = false;
       this.kpiFontSize = '3';
@@ -2724,6 +2768,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.funnel = false;
     this.guage = false;
     this.calendar = false;
+    this.treeChart = false;
     this.itemsPerPage = this.sheetResponce?.results?.items_per_page;
     if (isDashboardTransfer) {
       let rowCountData: any;
@@ -2774,6 +2819,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.funnel = false;
     this.guage = false;
     this.calendar = false;
+    this.treeChart = false;
     this.pivotTableDatatransform(false);
   }
   if(responce.chart_id == 25){
@@ -2820,6 +2866,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
   }
   if(responce.chart_id == 29){
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -2846,6 +2893,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = true;
     this.calendar = false;
+    this.treeChart = false;
     this.chartType = 'map';
   }
  if(responce.chart_id == 6){
@@ -2874,6 +2922,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
   if(responce.chart_id == 14){
   // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -2901,6 +2950,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 24){
   this.chartType = 'pie';
@@ -2926,6 +2976,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.guage = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 13){
   this.chartType = 'line';
@@ -2951,6 +3002,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 17){
   this.chartType = 'area';
@@ -2976,6 +3028,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 7){
   this.chartType = 'sidebyside';
@@ -3001,6 +3054,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 5){
   this.chartType = 'stocked';
@@ -3026,6 +3080,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.guage = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 4){
   this.chartType = 'barline';
@@ -3051,6 +3106,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.guage = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 12){
   this.chartType = 'radar';
@@ -3076,6 +3132,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 2){
   this.chartType = 'hstocked';
@@ -3101,6 +3158,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.guage = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 3){
   this.chartType = 'hgrouped';
@@ -3126,6 +3184,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 8){
   this.chartType = 'multiline';
@@ -3151,6 +3210,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 10){
   this.chartType = 'donut';
@@ -3176,6 +3236,33 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
+ }
+ if(responce.chart_id == 16){
+  this.chartType = 'tree';
+  this.bar = false;
+  this.horizontalBar = false;
+  this.table = false;
+  this.pivotTable = false;
+    this.pie = false;
+    this.line = false;
+    this.area = false;
+    this.sidebyside = false;
+    this.stocked = false;
+    this.barLine = false;
+    this.horizentalStocked = false;
+    this.grouped = false;
+    this.multiLine = false;
+    this.donut = false;
+    this.radar = false;
+    this.kpi = false;
+    this.heatMap = false;
+    this.funnel = false;
+    this.guage = false;
+    this.map = false;
+    this.calendar = false;
+    this.treeChart = false;
+    this.treeChart = true;
  }
  if(responce.chart_id == 26){
   this.chartType = 'heatmap';
@@ -3200,6 +3287,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 27){
   this.chartType = 'funnel';
@@ -3224,6 +3312,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 28){
   this.customMinMaxGuage();
@@ -3249,6 +3338,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = true;
     this.map = false;
     this.calendar = false;
+    this.treeChart = false;
  }
  if(responce.chart_id == 11){
   this.chartType = 'calendar';
@@ -3605,6 +3695,9 @@ trackByFn(index: number, item: any): number {
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+        if(this.chartId === 16){
+          this.resetTreeChartState();
+        }
         this.dataExtraction(false);
         this.filterDataArray.clear();
         this.filterDateRange = [];
@@ -3815,6 +3908,9 @@ trackByFn(index: number, item: any): number {
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+          if(this.chartId === 16){
+            this.resetTreeChartState();
+          }
           this.dataExtraction(false);
           this.filterDataArray.clear();
           this.filterDateRange = [];
@@ -3839,8 +3935,11 @@ trackByFn(index: number, item: any): number {
         this.dimetionMeasure.splice(index, 1);
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
-         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-         this.dataExtraction(false);
+        this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+        if(this.chartId === 16){
+          this.resetTreeChartState();
+        }
+        this.dataExtraction(false);
       },
       error: (error) => {
         console.log(error);
@@ -4781,6 +4880,10 @@ customizechangeChartPlugin() {
           let columnData = [item.column,item.data_type,'',''];
           this.heirarchyColumnData.push(columnData);
         }
+        if(this.chartId === 16){
+          this.resetTreeChartState();
+          this.dataExtraction(false);
+        }
   }
   removeDrillDownColumn(index:any,column:any){
        
@@ -4797,6 +4900,9 @@ customizechangeChartPlugin() {
       this.drillDownObject = this.drillDownObject.slice(0, index - 1);
       this.drillDownIndex = index - 1;
     } 
+       if(this.chartId === 16){
+         this.resetTreeChartState();
+       }
        this.dataExtraction(false);
       }
       draggedMeasureValuesData = [] as any;
@@ -6604,6 +6710,7 @@ customizechangeChartPlugin() {
       this.guage = false;
       this.funnel = false;
       this.calendar = false;
+    this.treeChart = false;
       this.map = false;
     }
     sortColumn : any = 'select';

@@ -21,6 +21,7 @@ export interface ChartFlags {
   map: boolean;
   calendar: boolean;
   pivotTable: boolean;
+  treeChart: boolean;
 }
 
 export interface ChartConfig {
@@ -51,6 +52,7 @@ export class ChartRenderService {
     map: false,
     calendar: false,
     pivotTable: false,
+    treeChart: false,
   };
 
   private chartConfigMap: Record<number, ChartConfig> = {
@@ -65,6 +67,7 @@ export class ChartRenderService {
     3: { chartType: 'hgrouped', flags: { ...this.baseFlags, grouped: true } },
     8: { chartType: 'multiline', flags: { ...this.baseFlags, multiLine: true } },
     10: { chartType: 'donut', flags: { ...this.baseFlags, donut: true } },
+    16: { chartType: 'tree', flags: { ...this.baseFlags, treeChart: true } },
     12: { chartType: 'radar', flags: { ...this.baseFlags, radar: true } },
     26: { chartType: 'heatmap', flags: { ...this.baseFlags, heatMap: true } },
     27: { chartType: 'funnel', flags: { ...this.baseFlags, funnel: true } },
