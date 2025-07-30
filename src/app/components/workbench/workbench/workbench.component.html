@@ -488,7 +488,7 @@
                         <img alt="product" src="https://logo.clearbit.com/openai.com" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'DEEPSEEK'">
-                        <img alt="product" src="https://upload.wikimedia.org/wikipedia/commons/e/ec/DeepSeek_logo.svg" class="w-5 h-5 border me-2">{{database.server_type}}
+                        <img alt="product" src="./assets/images/icons/deepseek.svg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
@@ -593,6 +593,8 @@
                                             <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
                                             <span *ngIf="database.server_type === 'OPEN_AI'" class="avatar avatar rounded-circle">
                                               <img src="https://logo.clearbit.com/openai.com" alt="" class="rounded-circle"></span>
+                                              <span *ngIf="database.server_type === 'DEEPSEEK'" class="avatar avatar rounded-circle">
+                                                <img src="./assets/images/icons/deepseek.svg" alt="" class="rounded-circle"></span>
                                             <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
@@ -1687,7 +1689,7 @@
                 <div class="card user-card border Relational-database-height">
                   <div class="user-image">
                     <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/DeepSeek_logo.svg" alt="" class="rounded-circle bg-white user-image-border-color">
+                      <img src="./assets/images/icons/deepseek.svg" alt="" class="rounded-circle bg-white user-image-border-color">
                     </span>
                   </div>
                   <div class="card-body server-content-card">
@@ -2408,7 +2410,7 @@
                     </div>
                     <div class="database-logo">
                         <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectDeepSeek()">
-                          <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/DeepSeek_logo.svg"alt="Image" class="card-img">
+                          <img src="./assets/images/icons/deepseek.svg"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span>DeepSeek</span>

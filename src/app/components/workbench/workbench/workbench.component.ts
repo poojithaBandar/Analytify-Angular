@@ -1684,30 +1684,32 @@ export class WorkbenchComponent implements OnInit{
           }else if(this.datasourceSwitchUI){
             this.switchDatabase();
           }else{
-            Swal.fire({
-                title: '✨ Ready to Build Your AI Adoption Dashboard?',
-                html: `
-                  <img src="./assets/images/copilot.gif">
-                  <p style="font-size: 16px;">Let AI turn your data into insights — instantly.</p>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Generate It!',
-                cancelButtonText: 'Skip for Now',
-                confirmButtonColor: '#007bff',
-                cancelButtonColor: '#e0e0e0',
-                reverseButtons: true,
-                customClass: {
-                  popup: 'rounded-lg',
-                  title: 'font-semibold',
-                  htmlContainer: 'text-gray-600',
-                }
-              }).then((result) => {
-              if (result.isConfirmed) {
-                this.templateDashboardService.buildSampleOpenAIDashboard(this.container, this.databaseId);
-              } else {
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-              }
-            });
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+
+            // Swal.fire({
+            //     title: '✨ Ready to Build Your AI Adoption Dashboard?',
+            //     html: `
+            //       <img src="./assets/images/copilot.gif">
+            //       <p style="font-size: 16px;">Let AI turn your data into insights — instantly.</p>
+            //     `,
+            //     showCancelButton: true,
+            //     confirmButtonText: 'Yes, Generate It!',
+            //     cancelButtonText: 'Skip for Now',
+            //     confirmButtonColor: '#007bff',
+            //     cancelButtonColor: '#e0e0e0',
+            //     reverseButtons: true,
+            //     customClass: {
+            //       popup: 'rounded-lg',
+            //       title: 'font-semibold',
+            //       htmlContainer: 'text-gray-600',
+            //     }
+            //   }).then((result) => {
+            //   if (result.isConfirmed) {
+            //     this.templateDashboardService.buildSampleOpenAIDashboard(this.container, this.databaseId);
+            //   } else {
+            //     this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            //   }
+            // });
           }
         }
       }, error:(error)=>{
