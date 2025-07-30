@@ -63,6 +63,7 @@ export class WorkbenchComponent implements OnInit{
   openShopifyForm =false;
   openGoogleAnalyticsForm = false;
   openOpenAIForm = false;
+  openDeepSeekForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -363,6 +364,7 @@ export class WorkbenchComponent implements OnInit{
     shopifyName = '';
     tallyToken = '';
     openAiKey = '';
+    deepSeekKey = '';
 
     googleAnalytics: {
       type: string;
@@ -919,6 +921,27 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+
+    deepSeekUpdate(){
+      const obj = {
+        "deepseek_key": this.deepSeekKey,
+        "display_name": this.displayName,
+        "hierarchy_id": this.databaseId
+      }
+      this.workbechService.deepSeekConnectionUpdate(obj).subscribe({next:(res)=>{
+            this.modalService.dismissAll('close');
+            if(res){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error:(error)=>{
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
     googleAnalyticsUpdate(){
       const g = this.googleAnalytics;
      const obj = { type: g.type,
@@ -1120,6 +1143,12 @@ export class WorkbenchComponent implements OnInit{
     this.viewNewDbs = false;
     this.emptyVariables();
   }
+  connectDeepSeek(){
+    this.openDeepSeekForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
   companyIdError(){
       if(this.companyId){
         this.companyIDError = false;
@@ -1239,6 +1268,13 @@ export class WorkbenchComponent implements OnInit{
         this.openAiKeyError = false;
       }else{
         this.openAiKeyError = true;
+      }
+    }
+    deepSeekKeyInputError(){
+      if(this.deepSeekKey){
+        this.deepSeekKeyError = false;
+      }else{
+        this.deepSeekKeyError = true;
       }
     }
     shopfyNameError(){
@@ -1589,6 +1625,57 @@ export class WorkbenchComponent implements OnInit{
           this.modalService.dismissAll();
           if(!this.datasourceSwitchUI){
             this.openOpenAIForm = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            Swal.fire({
+                title: '✨ Ready to Build Your AI Adoption Dashboard?',
+                html: `
+                  <img src="./assets/images/copilot.gif">
+                  <p style="font-size: 16px;">Let AI turn your data into insights — instantly.</p>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Generate It!',
+                cancelButtonText: 'Skip for Now',
+                confirmButtonColor: '#007bff',
+                cancelButtonColor: '#e0e0e0',
+                reverseButtons: true,
+                customClass: {
+                  popup: 'rounded-lg',
+                  title: 'font-semibold',
+                  htmlContainer: 'text-gray-600',
+                }
+              }).then((result) => {
+              if (result.isConfirmed) {
+                this.templateDashboardService.buildSampleOpenAIDashboard(this.container, this.databaseId);
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            });
+          }
+        }
+      }, error:(error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      }});
+    }
+
+    deepSeekSignIn(){
+      const obj = {
+        "deepseek_key": this.deepSeekKey,
+        "display_name": this.displayName
+      }
+      this.workbechService.deepSeekConnection(obj).subscribe({next:(res)=>{
+        if(res){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = res?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openDeepSeekForm = false;
           }
           const encodedId = btoa(this.databaseId.toString());
           if(this.iscrossDbSelect){
@@ -2375,6 +2462,9 @@ connectGoogleSheets(){
     } else if (this.databaseType == "open_ai") {
       this.displayName = editData.display_name;
       this.openAiKey = editData.open_ai_key;
+    } else if (this.databaseType == "deepseek") {
+      this.displayName = editData.display_name;
+      this.deepSeekKey = editData.deepseek_key;
     }else if (this.databaseType === 'google_analytics') {
       this.googleAnalytics = {
         type: 'service_account',
@@ -2525,6 +2615,7 @@ connectGoogleSheets(){
   this.openShopifyForm = false;
   this.openTallyForm = false;
   this.openOpenAIForm = false;
+  this.openDeepSeekForm = false;
   this.openHubspotForm = false;
   this.openGoogleAnalyticsForm = false;
   this.openGoogleAnalyticsForm = false;
@@ -2547,6 +2638,8 @@ connectGoogleSheets(){
   this.tallyTokenError = false;
   this.openAiKey = '';
   this.openAiKeyError = false;
+  this.deepSeekKey = '';
+  this.deepSeekKeyError = false;
   this.ninjaRMMClientid = '';
   this.ninjaRMMClientSecret = '';
   this.selectedNinjaRMMScopes = [];
@@ -2577,6 +2670,7 @@ connectGoogleSheets(){
   shopifyNameError:boolean = false;
   tallyTokenError:boolean = false;
   openAiKeyError:boolean = false;
+  deepSeekKeyError:boolean = false;
 
   serverConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
@@ -2994,6 +3088,9 @@ connectGoogleSheets(){
             this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id, responce);
             break;
             case 'OPEN_AI':
+            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'DEEPSEEK':
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
         }
