@@ -1287,6 +1287,10 @@ try {
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
+        if(this.treeChart){
+          this.treeData = [];
+          this.collapseAllTreeNodes();
+        }
         this.dataExtraction(false);
       }
       this.checkDateFormatForYOY();
@@ -1368,9 +1372,24 @@ try {
       this.rowMeasuresCount(element, event.currentIndex, 'sum');
       this.rowaggregateType = 'sum'
     } else {
+      if(this.treeChart){
+        this.treeData = [];
+        this.collapseAllTreeNodes();
+      }
       this.dataExtraction(false);
     }
 
+  }
+  collapseAllTreeNodes(){
+    const collapse = (nodes: any[]) => {
+      nodes.forEach(node => {
+        node.collapsed = true;
+        if(node.children){
+          collapse(node.children);
+        }
+      });
+    };
+    collapse(this.treeData);
   }
   isDropdownVisible = false;
   rowaggregateType :any;
@@ -1628,6 +1647,7 @@ try {
   guage = false;
   calendar = false;
   treeChart = false;
+  treeData: any[] = [];
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
     horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,treeChart:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,chartId:any){
     this.table = table;
@@ -3616,6 +3636,10 @@ trackByFn(index: number, item: any): number {
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+        if(this.treeChart){
+          this.treeData = [];
+          this.collapseAllTreeNodes();
+        }
         this.dataExtraction(false);
         this.filterDataArray.clear();
         this.filterDateRange = [];
@@ -3826,6 +3850,10 @@ trackByFn(index: number, item: any): number {
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+          if(this.treeChart){
+            this.treeData = [];
+            this.collapseAllTreeNodes();
+          }
           this.dataExtraction(false);
           this.filterDataArray.clear();
           this.filterDateRange = [];
