@@ -1175,6 +1175,11 @@ try {
       }
       chartType : string ='';
       chartsOptionsSet(){
+        if(this.chartId === 16){
+          // data already extracted; just set chart type for tree chart and exit
+          this.chartType = 'tree';
+          return;
+        }
         if(this.kpi){
           this.KPIChart();
           return;
@@ -1182,6 +1187,9 @@ try {
           this.chartType = 'horizontalBar'
         }else if(this.pivotTable){
           this.chartType = 'pivotTable';
+          return;
+        } else if(this.treeChart){
+          this.chartType = 'tree';
           return;
         }
         const cfg = this.chartRenderService.getChartConfig(this.chartId);
@@ -1619,6 +1627,7 @@ try {
   funnel = false;
   guage = false;
   calendar = false;
+  treeChart = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
     horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,treeChart:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,chartId:any){
     this.table = table;
