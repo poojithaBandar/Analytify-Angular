@@ -14,6 +14,7 @@ export interface ChartFlags {
   multiLine: boolean;
   donut: boolean;
   radar: boolean;
+  treeChart: boolean;
   kpi: boolean;
   heatMap: boolean;
   funnel: boolean;
@@ -22,6 +23,7 @@ export interface ChartFlags {
   treeChart: boolean;
   calendar: boolean;
   pivotTable: boolean;
+  tree: boolean;
 }
 
 export interface ChartConfig {
@@ -45,6 +47,7 @@ export class ChartRenderService {
     multiLine: false,
     donut: false,
     radar: false,
+    treeChart: false,
     kpi: false,
     heatMap: false,
     funnel: false,
@@ -53,6 +56,7 @@ export class ChartRenderService {
     treeChart: false,
     calendar: false,
     pivotTable: false,
+    tree: false,
   };
 
   private chartConfigMap: Record<number, ChartConfig> = {
@@ -68,11 +72,13 @@ export class ChartRenderService {
     8: { chartType: 'multiline', flags: { ...this.baseFlags, multiLine: true } },
     10: { chartType: 'donut', flags: { ...this.baseFlags, donut: true } },
     12: { chartType: 'radar', flags: { ...this.baseFlags, radar: true } },
+    16: { chartType: 'treeChart', flags: { ...this.baseFlags, treeChart: true } },
     26: { chartType: 'heatmap', flags: { ...this.baseFlags, heatMap: true } },
     27: { chartType: 'funnel', flags: { ...this.baseFlags, funnel: true } },
     16: { chartType: 'treechart', flags: { ...this.baseFlags, treeChart: true } },
     28: { chartType: 'guage', flags: { ...this.baseFlags, guage: true } },
     29: { chartType: 'map', flags: { ...this.baseFlags, map: true } },
+    16: { chartType: 'tree', flags: { ...this.baseFlags, tree: true } },
     11: { chartType: 'calendar', flags: { ...this.baseFlags, calendar: true } },
   };
 

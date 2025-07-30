@@ -1175,6 +1175,11 @@ try {
       }
       chartType : string ='';
       chartsOptionsSet(){
+        if(this.chartId === 16){
+          // data already extracted; just set chart type for tree chart and exit
+          this.chartType = 'tree';
+          return;
+        }
         if(this.kpi){
           this.KPIChart();
           return;
@@ -1182,6 +1187,9 @@ try {
           this.chartType = 'horizontalBar'
         }else if(this.pivotTable){
           this.chartType = 'pivotTable';
+          return;
+        } else if(this.treeChart){
+          this.chartType = 'tree';
           return;
         }
         const cfg = this.chartRenderService.getChartConfig(this.chartId);
@@ -1279,6 +1287,10 @@ try {
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
+        if(this.treeChart){
+          this.treeData = [];
+          this.collapseAllTreeNodes();
+        }
         this.dataExtraction(false);
       }
       this.checkDateFormatForYOY();
@@ -1360,9 +1372,24 @@ try {
       this.rowMeasuresCount(element, event.currentIndex, 'sum');
       this.rowaggregateType = 'sum'
     } else {
+      if(this.treeChart){
+        this.treeData = [];
+        this.collapseAllTreeNodes();
+      }
       this.dataExtraction(false);
     }
 
+  }
+  collapseAllTreeNodes(){
+    const collapse = (nodes: any[]) => {
+      nodes.forEach(node => {
+        node.collapsed = true;
+        if(node.children){
+          collapse(node.children);
+        }
+      });
+    };
+    collapse(this.treeData);
   }
   isDropdownVisible = false;
   rowaggregateType :any;
@@ -1613,14 +1640,17 @@ try {
   grouped = false;
   multiLine = false;
   donut = false;
+  treeChart = false;
   kpi = false;
   heatMap = false;
   funnel = false;
   guage = false;
   treeChart = false;
   calendar = false;
+  treeChart = false;
+  treeData: any[] = [];
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,treeChart:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,treeChart:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,chartId:any){
     this.table = table;
     this.pivotTable = pivotTable;
     this.bar=bar;
@@ -1637,6 +1667,7 @@ try {
     this.donut = donut;
     this.chartId = chartId;
     this.radar = radar;
+    this.treeChart = treeChart;
     this.kpi = kpi;
     this.heatMap = heatMap;
     this.funnel = funnel;
@@ -3632,6 +3663,10 @@ trackByFn(index: number, item: any): number {
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+        if(this.treeChart){
+          this.treeData = [];
+          this.collapseAllTreeNodes();
+        }
         this.dataExtraction(false);
         this.filterDataArray.clear();
         this.filterDateRange = [];
@@ -3842,6 +3877,10 @@ trackByFn(index: number, item: any): number {
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+          if(this.treeChart){
+            this.treeData = [];
+            this.collapseAllTreeNodes();
+          }
           this.dataExtraction(false);
           this.filterDataArray.clear();
           this.filterDateRange = [];
@@ -4200,7 +4239,7 @@ fetchChartData(chartData: any){
           if (chartData.chart_type.toLowerCase().includes("bar")){
             this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if(chartData.chart_type.toLowerCase().includes("horizontalBar")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,2);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,2);
           }
           else if (chartData.chart_type.toLowerCase().includes("pie")){
             this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);

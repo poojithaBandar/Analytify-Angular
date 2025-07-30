@@ -2618,7 +2618,7 @@
                     <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
                 </div> -->
 
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [treeData]="treeData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor"
                 [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
                 [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
@@ -3521,7 +3521,7 @@
                                                 <div class="card-body single-axis-card">
                                                     <div class="row">
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows?.length<1 && draggedColumns?.length<1}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination(false);"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination(false);"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows?.length<1 && draggedColumns?.length<1}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Pivot Table" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,9);pivotTableDatatransform(false);"><img src="./assets/images/charts/pivot-chart.jpg" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': pivotTable}"></a>
@@ -5300,10 +5300,10 @@
                                                         <div class=""> 
                                                             <label class="mb-0">Horizontal </label>
                                                         </div>
-                                                        <div *ngIf="isHorizontalBar" class="toggle toggle-sm on mb-0" (click)="isHorizontalBar=!isHorizontalBar;chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6)">
+                                                        <div *ngIf="isHorizontalBar" class="toggle toggle-sm on mb-0" (click)="isHorizontalBar=!isHorizontalBar;chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6)">
                                                             <span></span>
                                                         </div>
-                                                        <div *ngIf="!isHorizontalBar" class="toggle toggle-sm off mb-0" (click)="isHorizontalBar=!isHorizontalBar;chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,14)">
+                                                        <div *ngIf="!isHorizontalBar" class="toggle toggle-sm off mb-0" (click)="isHorizontalBar=!isHorizontalBar;chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,14)">
                                                         <span></span>
                                                         </div>
                                                     </div>
