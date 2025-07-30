@@ -101,7 +101,7 @@ export class SheetDataTransformerService {
       chartOptions.xaxis.categories = xAxisCategories;
     }
   } else {
-    if (!['radar', 'heatmap', 'calendar', 'map', 'pie', 'donut', 'funnel'].includes(chartType)) {
+    if (!['radar', 'heatmap', 'calendar', 'map', 'pie', 'donut', 'funnel', 'treechart'].includes(chartType)) {
       chartOptions.series?.forEach((row: any, index: number) => {
         row.data = multiSeriesChartData[index]?.data || [];
       });
@@ -128,7 +128,7 @@ export class SheetDataTransformerService {
       chartOptions.yAxis?.forEach((column: any) => {
         column.data = xAxisCategories;
       });
-    } else if(['pie', 'donut', 'funnel'].includes(chartType)){
+    } else if(['pie', 'donut', 'funnel', 'treechart'].includes(chartType)){
       let data:any[] = [];
       xAxisCategories.forEach((col:any, index:any)=>{
         data.push({value: multiSeriesChartData[0].data[index], name: col})

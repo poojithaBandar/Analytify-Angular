@@ -20,6 +20,7 @@ export interface ChartFlags {
   funnel: boolean;
   guage: boolean;
   map: boolean;
+  treeChart: boolean;
   calendar: boolean;
   pivotTable: boolean;
   tree: boolean;
@@ -52,6 +53,7 @@ export class ChartRenderService {
     funnel: false,
     guage: false,
     map: false,
+    treeChart: false,
     calendar: false,
     pivotTable: false,
     tree: false,
@@ -73,6 +75,7 @@ export class ChartRenderService {
     16: { chartType: 'treeChart', flags: { ...this.baseFlags, treeChart: true } },
     26: { chartType: 'heatmap', flags: { ...this.baseFlags, heatMap: true } },
     27: { chartType: 'funnel', flags: { ...this.baseFlags, funnel: true } },
+    16: { chartType: 'treechart', flags: { ...this.baseFlags, treeChart: true } },
     28: { chartType: 'guage', flags: { ...this.baseFlags, guage: true } },
     29: { chartType: 'map', flags: { ...this.baseFlags, map: true } },
     16: { chartType: 'tree', flags: { ...this.baseFlags, tree: true } },

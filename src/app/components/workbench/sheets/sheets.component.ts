@@ -1645,6 +1645,7 @@ try {
   heatMap = false;
   funnel = false;
   guage = false;
+  treeChart = false;
   calendar = false;
   treeChart = false;
   treeData: any[] = [];
@@ -1672,6 +1673,7 @@ try {
     this.funnel = funnel;
     this.guage = guage;
     this.map = map;
+    this.treeChart = treeChart;
     this.calendar = calendar;
     if(this.bar){
       this.isHorizontalBar = false;
@@ -3232,8 +3234,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.calendar = false;
  }
- if(responce.chart_id == 27){
-  this.chartType = 'funnel';
+  if(responce.chart_id == 27){
+    this.chartType = 'funnel';
   this.bar = false;
   this.horizontalBar = false;
   this.table = false;
@@ -3255,8 +3257,33 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
- }
- if(responce.chart_id == 28){
+  }
+  if(responce.chart_id == 16){
+   this.chartType = 'treechart';
+   this.bar = false;
+   this.horizontalBar = false;
+   this.table = false;
+   this.pivotTable = false;
+     this.pie = false;
+     this.line = false;
+     this.area = false;
+     this.sidebyside = false;
+     this.stocked = false;
+     this.barLine = false;
+     this.horizentalStocked = false;
+     this.grouped = false;
+     this.multiLine = false;
+     this.donut = false;
+     this.radar = false;
+     this.kpi = false;
+     this.heatMap = false;
+     this.funnel = false;
+     this.guage = false;
+     this.map = false;
+     this.treeChart = true;
+     this.calendar = false;
+  }
+  if(responce.chart_id == 28){
   this.customMinMaxGuage();
   this.chartType = 'guage';
   this.bar = false;
