@@ -10,6 +10,7 @@ import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { lastValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { WorkbenchService } from '../workbench.service';
 import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
 import { bottom } from '@popperjs/core';
 
@@ -103,7 +104,7 @@ export class InsightEchartComponent {
 
   series: any[] = [];
   chartOptions: any = {};
-  constructor(private cdr: ChangeDetectorRef,private http: HttpClient){}
+  constructor(private cdr: ChangeDetectorRef,private http: HttpClient, private workbechService: WorkbenchService){}
 
  
   // ngAfterViewInit() {
@@ -318,7 +319,30 @@ export class InsightEchartComponent {
       colorBy: 'data',
 
     };
-    return this.chartOptions;
+return this.chartOptions;
+}
+
+treeChart(){
+  const roots = (this.chartsColumnData || []).map((name: any) => ({ name, children: [] }));
+  this.chartOptions = {
+    tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+    series: [
+      {
+        type: 'tree',
+        data: roots,
+        top: '1%',
+        left: '7%',
+        bottom: '1%',
+        right: '20%',
+        symbolSize: 10,
+        label: { position: 'left', verticalAlign: 'middle', align: 'right' },
+        leaves: { label: { position: 'right', verticalAlign: 'middle', align: 'left' } },
+        expandAndCollapse: true,
+        animationDuration: 550,
+        animationDurationUpdate: 750
+      }
+    ]
+  };
 }
 horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
   if (chartsColumnData && chartsRowData) {
@@ -2060,6 +2084,9 @@ chartInitialize(){
   }
   else if(this.chartType === 'calendar'){
     this.calendarChart();
+  }
+  else if(this.chartType === 'tree'){
+    this.treeChart();
   }
   else if(this.chartType === 'map'){
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -3969,6 +3996,18 @@ updateSeries(){
 //   }
 // }
   onChartClick(event: any) {
+    if(this.chartType === 'tree'){
+      if(event.data.children?.length){
+        return;
+      }
+      this.workbechService.getDashboardDrillDowndata({ parent: event.data.name }).subscribe((data:any)=>{
+        if(data && data.children){
+          event.data.children = data.children;
+          this.updateChartOptions();
+        }
+      });
+      return;
+    }
     if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
       console.log('X-axis value:', event.name);
       let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
