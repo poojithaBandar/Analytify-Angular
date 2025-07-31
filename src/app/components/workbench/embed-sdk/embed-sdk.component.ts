@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -13,6 +13,7 @@ import { WorkbenchService } from '../workbench.service';
   styleUrl: './embed-sdk.component.scss'
 })
 export class EmbedSdkComponent {
+  @Input() embedType: string = 'embed-sdk';
   userName!: string;
   apibaseurl!: string;
   disableSDKName : boolean = false;
@@ -27,6 +28,7 @@ export class EmbedSdkComponent {
   showNotifier: boolean = false;
   isSheetSDK: boolean = false;
   isDashboardSDK: boolean = false;
+  isProjectSDK: boolean = false;
   sheetId!: number;
   sheetName: string = "";
   sheetToken!: string;
@@ -74,6 +76,11 @@ export class EmbedSdkComponent {
   }
 
   ngOnInit(){
+    if(this.embedType === 'embed-project'){
+      this.isProjectSDK = true;
+      this.isDashboardSDK = false;
+      this.isSheetSDK = false;
+    }
     this.getAppDetails();
     if(this.isDashboardSDK){
       this.getDashboardsList();
@@ -147,23 +154,53 @@ export class EmbedSdkComponent {
   `;
   }
 
+  setProjectScriptData(){
+    this.scriptContent = `
+    <script src="https://cdn.jsdelivr.net/gh/Analytify-dev/Analytify-Angular@v2.2.0/public/analytify-sdk.js"></script>
+
+    <div id="dashboard-container"></div>
+    <script>
+      const analytify = AnalytifySDK.init({
+        appName: '${this.userName}',
+        clientId: '${this.clientId}',
+        clientSecret: '${this.clientSecret}',
+        tokenEndpoint: 'https://api.qa.insightapps.ai/v1',
+        apiBaseUrl: '${this.apibaseurl}'
+      });
+
+      analytify.loadSdkProject({
+        container: '#dashboard-container',
+      });
+    </script>`;
+  }
+
   submitSDKKeys(){
     let payload = {
       app_name: this.userName,
       redirect_uri : this.apibaseurl,
     }
-    if(this.disableSDKName && this.isDashboardSDK){ 
+    if(this.disableSDKName && this.isDashboardSDK){
        this.submitDashboardId();
-    } else if(this.disableSDKName && this.isSheetSDK){ 
+    } else if(this.disableSDKName && this.isSheetSDK){
       this.submitSheetId();
-   } else {
+    } else if(this.disableSDKName && this.isProjectSDK){
+      this.displayScript = true;
+      this.setProjectScriptData();
+    } else {
      this.workbechService.saveSDKData(payload).subscribe({
       next: (data: any) => {
         this.clientId = data.client_id;
         this.clientSecret = data.client_secret;
         this.disableSDKName = true;
         this.showNotifier = true;
-        this.submitDashboardId();
+        if(this.isDashboardSDK){
+          this.submitDashboardId();
+        } else if(this.isSheetSDK){
+          this.submitSheetId();
+        } else if(this.isProjectSDK){
+          this.displayScript = true;
+          this.setProjectScriptData();
+        }
       },
       error: (error:any) => {
         console.log(error);
