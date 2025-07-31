@@ -14,6 +14,8 @@ export const sdkAuthGuard: CanActivateFn = async (route) => {
     if (token) {
       localStorage.setItem('currentUser', JSON.stringify({ Token: token }));
       localStorage.setItem('userName', JSON.stringify({userName:userName}));
+      localStorage.setItem('isEmbedSDK', "true");
+
       // const landing = route.queryParamMap.get('route') || '/analytify/home';
       // return router.parseUrl(landing);
       try {
