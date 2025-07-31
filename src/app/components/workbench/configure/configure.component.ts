@@ -25,6 +25,7 @@ export class ConfigureComponent implements OnInit {
   errorMessage: string = '';
   showPassword: boolean = false;
   activeTab = 'configure';
+  selectedEmbedType = 'embed-sdk';
   dashboardId:any;
   sheetId:any;
   dbId:any;

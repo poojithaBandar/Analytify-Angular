@@ -6,7 +6,7 @@
     <div class="col-lg-6 mb-4">
       <div class="card shadow-sm h-100">
         <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">Configure SDK</h5>
+          <h5 class="mb-0">{{ isProjectSDK ? 'Embed Project' : 'Configure SDK' }}</h5>
         </div>
         <div class="card-body">
           <form #sdkForm="ngForm" (ngSubmit)="submitSDKKeys()">
