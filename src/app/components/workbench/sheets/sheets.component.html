@@ -2569,7 +2569,7 @@
                                     <div class="big-number-container">
                                         <!-- @for(data of tablePreviewRow;track data){ -->
                                             <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
-                                             <div *ngIf="showKpiIndicator" class="text-center text-muted" [style.color]="kpiColor" style="font-size: 13px;">
+                                             <div *ngIf="showKpiIndicator && kpiShowTrendline" class="text-center text-muted" [style.color]="kpiColor" style="font-size: 13px;">
                                                     Target: {{ kpiTarget }}
                                              </div>
                                     <apx-chart *ngIf="kpiShowTrendline === true && trendData.length > 0"
@@ -2585,7 +2585,7 @@
                             <div class="d-flex justify-content-around mt-2 flex-wrap text-center" style="font-size: 12px;">
                             <span [ngStyle]="{ color: indicatorIsIncreased === 'up' ? 'green' : 'red', fontWeight: 'bold' }">
                                 <i class="bi" [ngClass]="indicatorIsIncreased === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                                {{ indicatorValue }}% {{ getDeltaLabel() }}
+                                {{ indicatorValue }}% {{ indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
                             </span>
                             </div>
                         }
@@ -5228,7 +5228,7 @@
                                                             <!-- Save Button -->
                                                             <div class="mt-2">
                                                             <button
-                                                                [disabled]="!kpiTarget || kpiTarget <= 0 || !kpiTrendAxis"
+                                                                [disabled]="!kpiTarget || kpiTarget <= 0 || !kpiTrendAxis || !selectedDateColumn"
                                                                 class="btn btn-primary btn-sm"
                                                                 (click)="saveTrendLine()"
                                                                 style="min-width: 100px;">
