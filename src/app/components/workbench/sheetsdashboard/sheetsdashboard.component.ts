@@ -1104,6 +1104,7 @@ export class SheetsdashboardComponent implements OnDestroy {
             // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
             console.log('X-axis value:', selectedXValue);
             let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
+            nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
             sheet.drillDownIndex++;
             let obj = { [nestedKey]: selectedXValue };
             sheet.drillDownObject.push(obj);
@@ -2377,6 +2378,7 @@ allowDrop(ev : any): void {
                 // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
                 console.log('X-axis value:', selectedXValue);
                 let nestedKey = element.drillDownHierarchy[element.drillDownIndex];
+                nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
                 element.drillDownIndex++;
                 let obj = { [nestedKey]: selectedXValue };
                 element.drillDownObject.push(obj);
@@ -3817,15 +3819,16 @@ getFilteredData(){
         this.filteredRowData.push(obj);
         console.log('filterowData',this.filteredRowData)
       });
+      const kpiTrendData = item.trend_kpi_data ?? {};
       if(item.chart_id === 1){
         this.pageChangeTableDisplay(item,1,false,false,false)
         // this.tablePageNo =1;
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
+      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false,kpiTrendData);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
+          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false,false,kpiTrendData);
         })
       }
       }
@@ -3876,7 +3879,7 @@ clearAllFilters(isSwitchDb?:boolean): void {
 }
 
 
-setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean, dashboard : any[],switchDb?: boolean,isDashboardTransfer?: boolean){
+setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean, dashboard : any[],switchDb?: boolean,isDashboardTransfer?: boolean, kpiTrendData?:any){
   dashboard.forEach((item1:any) => {
     if(item1.sheetId){
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
@@ -4104,6 +4107,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
         item1['kpiData'].rows = [obj];
         item1.kpiData.kpiNumber = this.formatKPINumber(item.rows[0].result[0], item1.kpiData.kpiDecimalUnit , item1.kpiData.kpiDecimalPlaces, item1.kpiData.kpiPrefix, item1.kpiData.kpiSuffix);
+        if(item1['kpiData'].kpiShowTrendline){
+          item1['kpiData'].trendData = kpiTrendData.columns?.[0]?.result ?? [];
+          item1['kpiData'].trendLabels = kpiTrendData.rows?.[0]?.result ?? [];
+        }
       }
       if((item.chart_id == '24' || item.chartId == '24' && (isFilter || isDrillDown)) || (item1.chartId == '24' && isDrillThrough)){//pie
         if(switchDb){
@@ -5767,13 +5774,14 @@ kpiData?: KpiData;
           console.log('filterowData',this.filteredRowData)
         });
         // this.setDashboardSheetData(item, true, true);
+        const kpiTrendData = item.trend_kpi_data ?? {};
         if(item.chart_id === 1){
           this.pageChangeTableDisplayPublic(item,1)
         }else{
-        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
+        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false,kpiTrendData);
         if (this.displayTabs) {
           this.sheetTabs.forEach((tabData: any) => {
-            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
+            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false,false,kpiTrendData);
           })
         }
         }
@@ -5863,6 +5871,7 @@ kpiData?: KpiData;
 
   publicDataExtraction(item : any){
     this.extractKeysAndData();
+    const nxtDrillDown = item.drillDownHierarchy[item.drillDownIndex];
     let Obj : any = {
       "col":item.column_Data,"row":item.row_Data,
       id:this.keysArray,
@@ -5874,7 +5883,7 @@ kpiData?: KpiData;
       // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "next_drill_down":nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
   "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getPublicDashboardDrillDowndata(Obj).subscribe({
@@ -5940,6 +5949,7 @@ kpiData?: KpiData;
     } else {
       draggedColumnsObj = item.column_Data
     }
+    const nxtDrillDown = item.drillDownHierarchy[item.drillDownIndex];
     let Obj : any = {
       "col":draggedColumnsObj,"row":item.row_Data,
       id:this.keysArray,
@@ -5951,7 +5961,7 @@ kpiData?: KpiData;
       "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "next_drill_down":nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
   "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getDashboardDrillDowndata(Obj).subscribe({
@@ -6892,6 +6902,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
       console.log('X-axis value:', event.name);
       let nestedKey = item.drillDownHierarchy[item.drillDownIndex];
+      nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
       item.drillDownIndex++;
       let obj = { [nestedKey]: event.name };
       item.drillDownObject.push(obj);

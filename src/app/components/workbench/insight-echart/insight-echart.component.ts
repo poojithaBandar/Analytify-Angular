@@ -3966,6 +3966,7 @@ updateSeries(){
       console.log('X-axis value:', event.name);
       let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
       this.drillDownIndex++;
+      nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
       let obj = { [nestedKey]: event.name };
       this.drillDownObject.push(obj);
       let dObject = {
