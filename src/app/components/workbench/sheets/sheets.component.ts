@@ -752,6 +752,7 @@ try {
           this.selectedSortColumnData[0] = columnsData[0];
           this.selectedSortColumnData[1] = columnsData[1];
         }
+        const nxtDrillDown = this.draggedDrillDownColumns[this.drillDownIndex];
         const obj = {
           "hierarchy_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -764,7 +765,7 @@ try {
           "hierarchy": this.draggedDrillDownColumns,
           "is_date": this.dateDrillDownSwitch,
           "drill_down": this.drillDownObject,
-          "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
+          "next_drill_down": nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
           "parent_user":this.createdBy,
           "order_column":(!this.isTopFilter) ? null : this.selectedSortColumnData
         }
@@ -4765,7 +4766,7 @@ customizechangeChartPlugin() {
             if(this.dateDrillDownSwitch){
               this.draggedDrillDownColumns = ["year","quarter","month","weeks","date"];
               if (this.datetimeList.includes(this.draggedColumns[0].data_type)){
-                this.draggedDrillDownColumns = ["year","quarter","month","weeks","year/month/day","date"];
+                this.draggedDrillDownColumns = ["year","quarter","month","weeks","date","time"];
               }
               this.draggedDrillDownColumns.forEach((columnType:any)=>{
                 let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));

@@ -499,6 +499,7 @@ export class InsightApexComponent {
               const selectedXValue = self.chartsColumnData[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
@@ -629,6 +630,7 @@ horizontalBarChart() {
           console.log('X-axis value:', selectedXValue);
           if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
             let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+            nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
             self.drillDownIndex++;
             let obj = { [nestedKey]: selectedXValue };
             self.drillDownObject.push(obj);
@@ -939,6 +941,7 @@ xaxis: {
               const selectedXValue = self.chartOptions.labels[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
@@ -1716,6 +1719,7 @@ xaxis: {
               const selectedXValue = self.chartsColumnData[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);

@@ -1086,6 +1086,7 @@ export class SheetsdashboardComponent implements OnDestroy {
             // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
             console.log('X-axis value:', selectedXValue);
             let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
+            nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
             sheet.drillDownIndex++;
             let obj = { [nestedKey]: selectedXValue };
             sheet.drillDownObject.push(obj);
@@ -2341,6 +2342,7 @@ allowDrop(ev : any): void {
                 // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
                 console.log('X-axis value:', selectedXValue);
                 let nestedKey = element.drillDownHierarchy[element.drillDownIndex];
+                nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
                 element.drillDownIndex++;
                 let obj = { [nestedKey]: selectedXValue };
                 element.drillDownObject.push(obj);
@@ -5812,6 +5814,7 @@ kpiData?: KpiData;
 
   publicDataExtraction(item : any){
     this.extractKeysAndData();
+    const nxtDrillDown = item.drillDownHierarchy[item.drillDownIndex];
     let Obj : any = {
       "col":item.column_Data,"row":item.row_Data,
       id:this.keysArray,
@@ -5823,7 +5826,7 @@ kpiData?: KpiData;
       // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "next_drill_down":nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
   "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getPublicDashboardDrillDowndata(Obj).subscribe({
@@ -5889,6 +5892,7 @@ kpiData?: KpiData;
     } else {
       draggedColumnsObj = item.column_Data
     }
+    const nxtDrillDown = item.drillDownHierarchy[item.drillDownIndex];
     let Obj : any = {
       "col":draggedColumnsObj,"row":item.row_Data,
       id:this.keysArray,
@@ -5900,7 +5904,7 @@ kpiData?: KpiData;
       "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "next_drill_down":nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
   "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getDashboardDrillDowndata(Obj).subscribe({
@@ -6841,6 +6845,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
       console.log('X-axis value:', event.name);
       let nestedKey = item.drillDownHierarchy[item.drillDownIndex];
+      nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
       item.drillDownIndex++;
       let obj = { [nestedKey]: event.name };
       item.drillDownObject.push(obj);
