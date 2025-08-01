@@ -2498,9 +2498,10 @@
                                             <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
                                    </div>
                                     @if(drillDownObject && drillDownObject.length > 0 && drillDownIndex > 0 && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
-                                    <div class="col-lg-3 col-md-3 d-flex mt-2" >
+                                    <div class="col-lg-9 col-md-9 d-flex mt-2" >
                                         @for(column of drillDownObject;track column;let index = $index){
-                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span class="mt-1">--</span>
+                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index] === 'date' ? 'year/month/day' :  (draggedDrillDownColumns[index] === 'time' ? 'date' : draggedDrillDownColumns[index])]}}</h6> 
+                                       <span *ngIf="index !== (drillDownObject.length-1)">--</span>
                                    }
                                     </div>
                                 }

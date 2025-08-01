@@ -1374,6 +1374,18 @@
                 </div>
               </div>
                 }
+                @if(item['drillDownObject'] && item['drillDownObject'].length > 0 && item['drillDownIndex'] > 0 &&
+                item['drillDownHierarchy'] &&
+                item['drillDownHierarchy'].length > 0){
+                <div class="d-flex align-items-center justify-content-center">
+                  @for(column of item['drillDownObject'];track column;let index = $index){
+                  <h6 class="ms-1 mt-2"> {{item['drillDownObject'][index][item['drillDownHierarchy'][index] === 'date' ?
+                    'year/month/day' :
+                    (item['drillDownHierarchy'][index] === 'time' ? 'date' : item['drillDownHierarchy'][index])]}}</h6>
+                  <span *ngIf="index !== (item['drillDownObject'].length-1)">--</span>
+                  }
+                </div>
+                }
                 @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1 ||
                 item['chartId']=== 9) ){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
@@ -1873,6 +1885,17 @@
                 </div>
                 @if(item['type'] === 'image'){
                 <img [src]="item['imageData']" />
+                }
+                @if(item['drillDownObject'] && item['drillDownObject'].length > 0 && item['drillDownIndex'] > 0 && item['drillDownHierarchy'] &&
+                item['drillDownHierarchy'].length > 0){
+                <div class="col-lg-12 col-md-12 d-flex mt-2">
+                  @for(column of item['drillDownObject'];track column;let index = $index){
+                  <h6 class="ms-1 mb-0 p-1"> {{item['drillDownObject'][index][item['drillDownHierarchy'][index] === 'date' ?
+                    'year/month/day' :
+                    (item['drillDownHierarchy'][index] === 'time' ? 'date' : item['drillDownHierarchy'][index])]}}</h6>
+                  <span *ngIf="index !== (item['drillDownObject'].length-1)">--</span>
+                  }
+                </div>
                 }
                 @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1 ||
                 item['chartId']=== 9) ){
