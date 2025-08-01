@@ -2564,7 +2564,8 @@
                                   <pagination-controls *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 ) && toggleTablePagination" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(pivotTable && chartId){
-                                    <div id="pivotTableContainer" #pivotTableContainer></div>                                }
+                                    <div id="pivotTableContainer" #pivotTableContainer></div>                                
+                                }
                                 @if(kpi && chartId){
                                     <div class="big-number-container">
                                         <!-- @for(data of tablePreviewRow;track data){ -->
