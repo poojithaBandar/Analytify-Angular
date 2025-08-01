@@ -102,11 +102,22 @@
                 </li>
 
                 <li [ngbNavItem]="'embedsdk'" class="mt-2 general-tab">
-                    <a ngbNavLink><i class="fe fe-code me-1"></i> Embed SDK</a>
+                    <a ngbNavLink (click)="selectedEmbedType = 'embed-project'"><i class="fe fe-code me-1"></i> Embed Dashboard</a>
                     <ng-template ngbNavContent id="embedsdk">
                          <div class="card profile-card">
                             <div class="card-body">
-                                <app-embed-sdk></app-embed-sdk>
+                                <app-embed-sdk [embedType]="selectedEmbedType"></app-embed-sdk>
+                            </div>
+                         </div>
+                    </ng-template>
+                </li>
+
+                <li [ngbNavItem]="'embedproject'" class="mt-2 general-tab">
+                    <a ngbNavLink (click)="selectedEmbedType = 'embed-sdk'"><i class="fe fe-code me-1"></i> Embed Project</a>
+                    <ng-template ngbNavContent id="embedproject">
+                         <div class="card profile-card">
+                            <div class="card-body">
+                                <app-embed-sdk [embedType]="selectedEmbedType"></app-embed-sdk>
                             </div>
                          </div>
                     </ng-template>
