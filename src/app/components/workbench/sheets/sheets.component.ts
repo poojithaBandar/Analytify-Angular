@@ -26,7 +26,7 @@ import Swal from 'sweetalert2';
 import { NgxColorsModule } from 'ngx-colors';
 import { CommonModule } from '@angular/common';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading, FontSize } from 'ckeditor5';
+import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading, FontSize, findOptimalInsertionRange } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 import * as echarts from 'echarts';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
@@ -305,7 +305,7 @@ export class SheetsComponent{
   isDistributed : boolean = true;
   kpiFontSize: string = '3';
   kpiColor: string = '#000000';
-
+  kpiChartColor: string = '#2392c1';
   titleShow : boolean = true;
   legendsAllignment : any = 'bottom'
   donutSize:any = 50;
@@ -394,6 +394,19 @@ export class SheetsComponent{
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
   isRadarDistribution: boolean = false;
+
+  kpiShowTrendline:boolean = false;
+  kpiTarget: number = 0;
+  kpiTrendAxis: 'month' | 'day' | 'week' | 'year'= 'month';
+  showTrendlineDate: boolean = false;
+  dateTypeColumns: string[] = [];
+  selectedDateColumn: string = '';
+  trendData = [];
+  trendLabels = [];
+  indicatorIsIncreased :any;
+  indicatorValue:any;
+  showKpiIndicator:boolean = false;
+  kpiChartColorSwitch: boolean = false;
   @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChild('virtualScrollContainer', { static: false }) container!: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
@@ -683,8 +696,10 @@ try {
  
       tableDimentions = [] as any;
       tableMeasures = [] as any;
+      isLoading: boolean = false;
       columnsData(){
         this.suggestions=[];
+        this.isLoading = true;
         const obj = {
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -694,18 +709,31 @@ try {
           next: (responce: any) => {
             console.log(responce);
             if(responce.length > 0){
-            this.tableColumnsData = responce;
-            this.database_name = responce[0].database_name;
-            this.isCustomSql = responce[0].is_custom_sql;
-            this.tableDimentions = responce.dimensions;
-            this.tableMeasures = responce.measures;
-            this.buildSuggestionsForCalculations(responce);
-          }else{
-            this.tableColumnsData = responce;
-          }
-        },
+              this.tableColumnsData = responce;
+              this.database_name = responce[0].database_name;
+              this.isCustomSql = responce[0].is_custom_sql;
+              this.tableDimentions = responce.dimensions;
+              this.tableMeasures = responce.measures;
+              this.buildSuggestionsForCalculations(responce);
+              const lowerDateList = this.dateList.map(d => d.toLowerCase());
+              this.dateTypeColumns= responce
+              .flatMap((schema: { dimensions: any; }) => schema.dimensions || []) // safe in case dimensions is missing
+              .filter((dim: { data_type: string; }) =>
+                lowerDateList.some(dateType =>
+                  dim.data_type.toLowerCase().includes(dateType)
+                )
+              )
+              .map((dim: { column: any; }) => dim.column);
+              this.showTrendlineDate = this.dateTypeColumns.length > 0;
+              console.log('dateTypeColumns', this.dateTypeColumns,this.showTrendlineDate);
+            }else{
+              this.tableColumnsData = responce;
+            }
+            this.isLoading = false;
+          },
           error: (error) => {
             console.log(error);
+            this.isLoading = false;
           }
         }
         )
@@ -1159,6 +1187,9 @@ try {
         const cfg = this.chartRenderService.getChartConfig(this.chartId);
         if(cfg){
           this.chartType = cfg.chartType;
+          if(this.chartType === 'guage'){
+            this.guageChart();
+          }
           if(cfg.chartType === 'map'){
             this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
               echarts.registerMap('world', geoJson);
@@ -2040,6 +2071,9 @@ try {
     } else {
       this.suppressTabChangeEvent = false;
     }
+    if(this.kpiChartColor){
+      this.kpiChartColor = this.kpiChartColor;
+    }
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
@@ -2101,6 +2135,7 @@ try {
       this.banding = false;
       this.kpiFontSize = '3';
       this.kpiColor = '#000000';
+      this.kpiChartColor = '#2392c1';
       this.GridColor = '#089ffc';
       this.backgroundColor = '#fcfcfc';
       this.color = '#2392c1';
@@ -2138,6 +2173,7 @@ sheetSave(isDashboardTransfer?: boolean){
   let savedChartOptions ;
   let kpiData;
   let kpiColor;
+  let kpiChartColor;
   let kpiFontSize;
   let bandColor1;
   let bandColor2;
@@ -2197,6 +2233,7 @@ sheetSave(isDashboardTransfer?: boolean){
   if(this.kpi && this.chartId == 25){
     kpiData = this.tablePreviewRow;
     kpiColor = this.kpiColor;
+    kpiChartColor = this.kpiChartColor;
     kpiFontSize = this.kpiFontSize;
   }
   if(this.map && this.chartId == 29){
@@ -2257,6 +2294,7 @@ sheetSave(isDashboardTransfer?: boolean){
     color1 : this.color1,
     color2 : this.color2,
     kpiColor : this.kpiColor,
+    kpiChartColor : this.kpiChartColor,
     barColor : this.barColor,
     lineColor : this.lineColor,
     GridColor : this.GridColor,
@@ -2321,7 +2359,9 @@ sheetSave(isDashboardTransfer?: boolean){
     isHorizontalBar  : this.isHorizontalBar,
     isMeasureDistribution : this.isMeasureDistribution,
     measureColorRanges : this.measureColorRanges,
-    measureDivisions : this.measureDivisions
+    measureDivisions : this.measureDivisions,
+    kpiChartColorSwitch : this.kpiChartColorSwitch,
+    hBarHeight : this.hBarHeight
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2380,11 +2420,22 @@ let obj={
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
       "kpicolor": kpiColor,
+      "kpiChartColor" : kpiChartColor,
       "kpiNumber" : this.KPINumber,
       "kpiPrefix" : this.KPIPrefix,
       "kpiSuffix" : this.KPISuffix,
       "kpiDecimalUnit" : this.KPIDisplayUnits,
-      "kpiDecimalPlaces" : this.KPIDecimalPlaces
+      "kpiDecimalPlaces" : this.KPIDecimalPlaces,
+      "kpiShowTrendline" : this.kpiShowTrendline,
+      "selectedDateColumn": this.selectedDateColumn,
+    "kpiTarget" : this.kpiTarget,
+    "kpiTrendAxis" : this.kpiTrendAxis,
+    "trendData" : this.trendData,
+    "trendLabels" : this.trendLabels,
+
+    "indicatorIsIncreased" : this.indicatorIsIncreased,
+    "indicatorValue" : this.indicatorValue,
+    "showKpiIndicator": this.showKpiIndicator,
   },
   "isApexChart" : this.isApexCharts,
   "isEChart" : this.isEChatrts,
@@ -2638,6 +2689,9 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     console.warn('savedChartOptions missing or malformed, using legacy computation');
     this.chartsDataSet(responce);
   // }
+  if (this.sheetResponce.customizeOptions) {
+    this.setCustomizeOptions(this.sheetResponce.customizeOptions);
+  }
   if(responce.chart_id == 1){
     // this.tableData = this.sheetResponce.results.tableData;
     // this.displayedColumns = this.sheetResponce?.results.tableColumns;
@@ -2722,6 +2776,16 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.KPINumber = this.sheetResponce?.results?.kpiNumber;
     this.kpiFontSize = this.sheetResponce?.results?.kpiFontSize;
     this.kpiColor = this.sheetResponce?.results?.kpicolor;
+    this.kpiChartColor = this.sheetResponce?.results?.kpiChartColor;
+    this.trendData = this.sheetResponce?.results?.trendData ?? [];
+    this.trendLabels = this.sheetResponce?.results?.trendLabels;
+    this.kpiTrendAxis = this.sheetResponce?.results?.kpiTrendAxis;
+    this.kpiTarget = this.sheetResponce?.results?.kpiTarget;
+    this.kpiShowTrendline = this.sheetResponce?.results?.kpiShowTrendline;
+    this.indicatorIsIncreased = this.sheetResponce?.results?.indicatorIsIncreased;
+    this.indicatorValue = this.sheetResponce?.results?.indicatorValue;
+    this.showKpiIndicator = this.sheetResponce?.results?.showKpiIndicator;
+    this.selectedDateColumn = this.sheetResponce?.results?.selectedDateColumn;
     if(this.sheetResponce?.results?.kpiPrefix) {
       this.KPIPrefix = this.sheetResponce.results.kpiPrefix;
     }
@@ -3157,6 +3221,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
  }
  if(responce.chart_id == 28){
+  this.customMinMaxGuage();
   this.chartType = 'guage';
   this.bar = false;
   this.horizontalBar = false;
@@ -3203,9 +3268,6 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = true;
- }
- if(this.sheetResponce.customizeOptions){
- this.setCustomizeOptions(this.sheetResponce.customizeOptions);
  }
  this.getDimensionAndMeasures();
  this.changeSelectedColumn();
@@ -4207,6 +4269,7 @@ customizechangeChartPlugin() {
     this.color1 = data.color1 ?? undefined;
     this.color2 = data.color2 ?? undefined;
     this.kpiColor = data.kpiColor ?? '#000000';
+    this.kpiChartColor = data.kpiChartColor ?? '#2392c1';
     this.barColor = data.barColor ?? '#4382f7';
     this.lineColor = data.lineColor ?? '#38ff98';
     this.GridColor = data.GridColor ?? '#089ffc';
@@ -4273,6 +4336,18 @@ customizechangeChartPlugin() {
     this.measureColorRanges = data.measureColorRanges ?? [];
     this.isMeasureDistribution = data.isMeasureDistribution ?? false;
     this.measureDivisions = data.measureDivisions ?? 2;
+    // this.kpiShowTrendline = data.kpiShowTrendline ?? false;
+    this.kpiTarget = this.kpiTarget ?? 0;
+    this.kpiTrendAxis = this.kpiTrendAxis ?? 'month';
+    this.trendData = this.trendData ?? [];
+    this.trendLabels = this.trendLabels ?? [];
+    this.selectedDateColumn = this.selectedDateColumn ?? '';
+    // this.showKpiIndicator = this.showKpiIndicator ?? false;
+    this.indicatorValue = this.indicatorValue ?? '';
+    this.indicatorIsIncreased = this.indicatorIsIncreased ?? '';
+    this.kpiChartColorSwitch = this.kpiChartColorSwitch ?? false;
+
+    this.hBarHeight = data.hBarHeight ?? '';
   }
 
   resetCustomizations(){
@@ -4315,6 +4390,7 @@ customizechangeChartPlugin() {
     this.color1 = undefined;
     this.color2 = undefined;
     this.kpiColor = '#000000';
+    this.kpiChartColor = '#2392c1';
     this.barColor = '#4382f7';
     this.lineColor = '#38ff98';
     this.GridColor = '#089ffc';
@@ -4375,6 +4451,17 @@ customizechangeChartPlugin() {
     this.measureColorRanges = [];
     this.isMeasureDistribution = false;
     this.measureDivisions = 2;
+    this.kpiTarget = 0;
+    this.kpiShowTrendline = false;
+    this.kpiTrendAxis = 'month';
+    this.trendData = [];
+    this.trendLabels = [];
+    this.selectedDateColumn  ='';
+    this.showKpiIndicator = false;
+    this.indicatorValue = '';
+    this.indicatorIsIncreased = '';
+    this.kpiChartColorSwitch = false;
+    this.hBarHeight = '';
     // this.isHorizontalBar = false;
     // this.KPIDecimalPlaces = 0,
     // this.KPIDisplayUnits = 'none',
@@ -4978,6 +5065,9 @@ customizechangeChartPlugin() {
       }
       resetKpiColor(){
         this.kpiColor = '#0f0f0f';
+      }
+      resetKpiChartColor(){
+        this.kpiChartColor = '#2392c1';
       }
       resetEchartXGridColor(){
         this.xGridColor = '#0f0f0f';
@@ -6441,8 +6531,12 @@ customizechangeChartPlugin() {
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
+    hBarHeight : string = '';
     setChartOptions(event : any){
       this.chartOptionsSet = event.chartOptions;
+      if(this.isEChatrts && this.chartType === 'horizontalBar' && event?.height){
+        this.hBarHeight = event.height;
+      }
       this.sheetSave();
       this.isSheetSaveOrUpdate = false;
     }
@@ -7704,5 +7798,86 @@ openGenieAiQTab(){
     this.active = 1;
   }
 }
+
+  guageChart() {
+      // Clone the gauge number from the API response
+      this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+  
+      // Define thresholds and corresponding max values
+      const thresholds = [
+        { limit: 1000, max: 1000 },       // Up to 1,000
+        { limit: 10000, max: 10000 },     // Up to 10,000
+        { limit: 100000, max: 100000 },    // Up to 1 lakh
+        { limit: 500000, max: 500000 },    // Up to 5 lakhs
+        { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
+        { limit: Infinity, max: (Math.ceil(this.guageNumber / 1000000) + 1) * 1000000 } // Above 10 lakhs
+      ];
+  
+      // Determine maxValueGuage based on guageNumber
+      const determineMaxValue = (value: number) => {
+        for (const threshold of thresholds) {
+          if (value <= threshold.limit) {
+            return threshold.max;
+          }
+        }
+      };
+  
+      // Set maxValueGuage based on guageNumber
+      this.maxValueGuage = determineMaxValue(this.guageNumber)!;
+  
+      // Calculate the value to divide
+      this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+    }
+    customMinMaxGuage() {
+      this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+    }
+
+    saveTrendLine(){
+      const cleaned = this.mulRowData[0].replace(/[\[\]"]/g, '').trim();; // remove brackets
+      const object = {
+        sheet_id: this.retriveDataSheet_id,
+        measure:cleaned.trim(),
+        trend_axis:this.kpiTrendAxis,
+        target:this.kpiTarget,
+        query:this.tablePaginationCustomQuery,
+        date_column:this.selectedDateColumn,
+        hierarchy_id:this.databaseId
+      } as any;
+      if(!this.retriveDataSheet_id){
+        delete object['sheet_id'];
+      }
+      if(this.retriveDataSheet_id){
+        delete object['hierarchy_id'];
+      }
+      this.workbechService.saveTrendline(object).subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.setTrendChartData(response?.trend_kpi_data);
+          this.indicatorValue = response.difference;
+          this.indicatorIsIncreased = response?.is_increased;
+          if(response?.is_increased){
+          this.indicatorIsIncreased = 'up';
+          }else{
+            this.indicatorIsIncreased = 'down';
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
+        }
+      });
+    }
+    setTrendChartData(trend_kpi_data: any) {
+      const valueColumn = trend_kpi_data.columns?.[0];  // assumes 1 value column
+      const labelColumn = trend_kpi_data.rows?.[0];     // assumes 1 time column
+
+      this.trendData = valueColumn?.result || [];
+      this.trendLabels = labelColumn?.result || [];
+    }
+    getDeltaLabel(): string {
+      if (this.KPINumber > this.kpiTarget) return 'above target';
+      if (this.KPINumber < this.kpiTarget) return 'below target';
+      return 'on target';
+    }
 }
 
