@@ -4106,7 +4106,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.kpiData.kpiNumber = this.formatKPINumber(item.rows[0].result[0], item1.kpiData.kpiDecimalUnit , item1.kpiData.kpiDecimalPlaces, item1.kpiData.kpiPrefix, item1.kpiData.kpiSuffix);
         if(item1['kpiData'].kpiShowTrendline){
           item1['kpiData'].trendData = item?.trend_kpi_data.columns?.[0]?.result ?? [];
-          item1['kpiData'].trendLabels = item?.trend_kpi_data.rows?.[0]?.result ?? [];
+          item1['kpiData'].trendLabels = item?.trend_kpi_data.rows?.[0]?.result.map((category : any)  => category === null ? 'null' : category) ?? [];
           item1['kpiData'].indicatorValue = item?.difference;
           if(item?.is_increased){
           item1['kpiData'].indicatorIsIncreased = 'up';

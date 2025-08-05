@@ -7872,7 +7872,7 @@ openGenieAiQTab(){
       const labelColumn = trend_kpi_data.rows?.[0];     // assumes 1 time column
 
       this.trendData = valueColumn?.result || [];
-      this.trendLabels = labelColumn?.result || [];
+      this.trendLabels = labelColumn?.result.map((category : any)  => category === null ? 'null' : category) || [];
     }
     getDeltaLabel(): string {
       if (this.KPINumber > this.kpiTarget) return 'above target';
