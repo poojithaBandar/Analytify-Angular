@@ -34,6 +34,7 @@ export class InsightEchartComponent {
   @Input() dualAxisColumnData:any;
   @Input() dualAxisRowData:any;
   @Input() donutSize:any;
+  @Input() outerRadius:any;
   @Input() radarRowData:any;
   @Input() displayUnits:any;
   @Input() decimalPlaces:any;
@@ -1235,7 +1236,7 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
     series: [
       {
         type: 'pie',
-        radius: [this.donutSize+'%' , '70%'],
+        radius: [this.donutSize+'%' , this.outerRadius+'%'],
         data: combinedArray,
         avoidLabelOverlap: true,
         emphasis: {
@@ -2306,7 +2307,7 @@ chartInitialize(){
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
-    if(changes['donutSize']){
+    if(changes['donutSize'] || changes['outerRadius']){
       this.donutSizeChange();
     }
     if(changes['isBold']){
@@ -3635,11 +3636,11 @@ radarDistributionSetOptions() {
   donutSizeChange(){
     let obj ={
       series:[{
-        radius: [this.donutSize+'%' , '70%']
+        radius: [this.donutSize+'%' , this.outerRadius+'%']
       }]
     }
     this.chartInstance?.setOption(obj);
-    this.chartOptions.series[0].radius = [this.donutSize+'%' , '70%'];
+    this.chartOptions.series[0].radius = [this.donutSize+'%' , this.outerRadius+'%'];
   }
 updateNumberFormat(){
   if(this.chartType === 'bar'){
@@ -3972,7 +3973,8 @@ updateSeries(){
       let dObject = {
         drillDownIndex : this.drillDownIndex,
         draggedDrillDownColumns :this.draggedDrillDownColumns,
-        drillDownObject : this.drillDownObject
+        drillDownObject : this.drillDownObject,
+        chartOptions : JSON.parse(JSON.stringify(this.chartOptions))
       }
       this.setDrilldowns.emit(dObject);
       // this.setOriginalData();
@@ -4010,7 +4012,8 @@ updateSeries(){
       let dObject = {
         drillDownIndex : this.drillDownIndex,
         draggedDrillDownColumns :this.draggedDrillDownColumns,
-        drillDownObject : this.drillDownObject
+        drillDownObject : this.drillDownObject,
+        chartOptions : JSON.parse(JSON.stringify(this.chartOptions))
       }
       this.setDrilldowns.emit(dObject);
     }

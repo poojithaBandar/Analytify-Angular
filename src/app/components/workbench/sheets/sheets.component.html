@@ -2139,7 +2139,7 @@
                             [cdkDropListData]="draggedMeasureValues" 
                             (cdkDropListDropped)="measureValuesdrop($event)">
                                 @for(columns of draggedMeasureValues;track columns;let index = $index){
-                                <div class="example-box example-box-bg" cdkDrag >
+                                <div class="example-box example-box-bg" cdkDrag (cdkDragStarted)="removemeasureValuesRow(index,columns)">
                                     @if(columns.alias){
                                         {{ columns.alias }}
                                     }
@@ -2731,7 +2731,7 @@
             }
             @else if(donut && chartId){
                 <div class="card-body">
-                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [donutSize]="donutSize" [outerRadius]="outerRadius" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" [selectedColorScheme]="selectedColorScheme"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"
                     [donutDecimalPlaces]="donutDecimalPlaces" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
@@ -5142,9 +5142,24 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="donut" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                            <label class="mb-0">Donut Size</label>
-                                                            <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5">
+                                                        <div *ngIf="donut" class="mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                            <ng-container *ngIf="!isEChatrts">
+                                                                 <div class="d-flex align-items-center justify-content-between">
+                                                                    <label class="mb-0">Donut Size</label>
+                                                                    <input type="number" [(ngModel)]="donutSize" min="0" max="100" step="1">
+                                                                 </div>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="isEChatrts">
+                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                    <label class="mb-0">Inner Radius (%)</label>
+                                                                    <input type="number" [(ngModel)]="donutSize" min="0" max="99" step="1" class="form-control" style="width: 60px;">
+                                                                </div>
+                                                                
+                                                                <div class="d-flex align-items-center justify-content-between">
+                                                                    <label class="mb-0">Outer Radius (%)</label>
+                                                                    <input type="number" [(ngModel)]="outerRadius" min="1" max="100" step="1" class="form-control" style="width: 60px;">
+                                                                </div>
+                                                            </ng-container>
                                                         </div>
                                                         <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2 border rounded-2">
                                                             <label class="mb-0" for="decimalInput">Decimal Places: </label>
@@ -5155,7 +5170,7 @@
                                                     
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <label class="mb-0" for="font-size" step="1" >Font Size</label>
-                                                        <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;" min="0">
+                                                        <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;" min="1" max="24">
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                   <div *ngIf="kpi && showTrendlineDate"
