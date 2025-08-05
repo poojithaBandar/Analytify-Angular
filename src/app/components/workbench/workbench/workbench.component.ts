@@ -216,7 +216,7 @@ export class WorkbenchComponent implements OnInit{
     this.canUploadCsv = this.viewTemplateService.canUploadCsv();
 
     const currentUrl = this.router.url; 
-    if (currentUrl.startsWith('/analytify/datasources/')) {
+    if (currentUrl.includes('/analytify/datasources/')) {
       if (currentUrl.includes('view-connections')) {
         this.databaseconnectionsList = true;
         this.viewNewDbs = false;

@@ -158,7 +158,7 @@ export class EmbedSdkComponent {
     this.scriptContent = `
     <script src="https://cdn.jsdelivr.net/gh/Analytify-dev/Analytify-Angular@v2.2.0/public/analytify-sdk.js"></script>
 
-    <div id="dashboard-container"></div>
+    <div id="project-container"></div>
     <script>
       const analytify = AnalytifySDK.init({
         appName: '${this.userName}',
@@ -169,7 +169,7 @@ export class EmbedSdkComponent {
       });
 
       analytify.loadSdkProject({
-        container: '#dashboard-container',
+        container: '#project-container',
       });
     </script>`;
   }
