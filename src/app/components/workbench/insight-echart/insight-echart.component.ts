@@ -3920,7 +3920,8 @@ updateSeries(){
       let dObject = {
         drillDownIndex : this.drillDownIndex,
         draggedDrillDownColumns :this.draggedDrillDownColumns,
-        drillDownObject : this.drillDownObject
+        drillDownObject : this.drillDownObject,
+        chartOptions : JSON.parse(JSON.stringify(this.chartOptions))
       }
       this.setDrilldowns.emit(dObject);
       // this.setOriginalData();
@@ -3958,7 +3959,8 @@ updateSeries(){
       let dObject = {
         drillDownIndex : this.drillDownIndex,
         draggedDrillDownColumns :this.draggedDrillDownColumns,
-        drillDownObject : this.drillDownObject
+        drillDownObject : this.drillDownObject,
+        chartOptions : JSON.parse(JSON.stringify(this.chartOptions))
       }
       this.setDrilldowns.emit(dObject);
     }

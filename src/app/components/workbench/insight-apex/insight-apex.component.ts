@@ -493,7 +493,8 @@ export class InsightApexComponent {
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();
@@ -623,7 +624,8 @@ horizontalBarChart() {
             let dObject = {
               drillDownIndex: self.drillDownIndex,
               draggedDrillDownColumns: self.draggedDrillDownColumns,
-              drillDownObject: self.drillDownObject
+              drillDownObject: self.drillDownObject,
+              chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
             }
             self.setDrilldowns.emit(dObject);
           }
@@ -646,6 +648,7 @@ horizontalBarChart() {
 xaxis: {
   categories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
   labels: {
+    show: this.xLabelSwitch,
     formatter: this.formatNumber.bind(this),
     style: {
       fontSize: this.xLabelFontSize,
@@ -933,7 +936,8 @@ xaxis: {
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();
@@ -1710,7 +1714,8 @@ xaxis: {
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();

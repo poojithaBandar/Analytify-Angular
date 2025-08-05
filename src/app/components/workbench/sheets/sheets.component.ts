@@ -4857,30 +4857,30 @@ customizechangeChartPlugin() {
     }
   }
 
-  setOriginalData(){
+  setOriginalData(chartOptions: any){
         if(this.bar){//bar
           if(!this.originalData){
-            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
           }
         }
         if(this.horizontalBar){//bar
           if(!this.originalData){
-            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
           }
         }
         else if(this.pie){//pie
           if(!this.originalData){
-            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
           }
         }
         else if(this.donut){//pie
           if(!this.originalData){
-            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
           }
         }
         if(this.map){//map
           if(!this.originalData){
-            this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData }
+            this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData, chartOptions: chartOptions }
           }
         }
       }     
@@ -6440,13 +6440,19 @@ customizechangeChartPlugin() {
       //     this.isMapChartDrillDown = true;
       //   }
       // }
-      this.setOriginalData();
+      if(this.drillDownIndex === 1){
+        this.setOriginalData(event.chartOptions);
+      }
       this.dataExtraction(false);
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
     setChartOptions(event : any){
-      this.chartOptionsSet = event.chartOptions;
+      if(this.drillDownIndex !== 0 && this.draggedDrillDownColumns.length > 0 && this.originalData){
+        this.chartOptionsSet = this.originalData?.chartOptions ?? event.chartOptions;
+      } else{
+        this.chartOptionsSet = event.chartOptions;
+      }
       this.sheetSave();
       this.isSheetSaveOrUpdate = false;
     }
