@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../shared/sharedmodule';
 // import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { UsersDashboardComponent } from '../users-dashboard/users-dashboard.component';
@@ -123,6 +123,14 @@ ngOnInit(): void {
     // if(this.activateEmailTab){
     //   this.getdashboardDetails()
     // }
+}
+
+onNavChange(event: NgbNavChangeEvent) {
+  if (event.nextId === 'embedsdk') {
+    this.selectedEmbedType = 'embed-sdk';
+  } else if (event.nextId === 'embedproject') {
+    this.selectedEmbedType = 'embed-project';
+  }
 }
 selectedDatasource: any = null;
 selectedDashboard: any = null;
