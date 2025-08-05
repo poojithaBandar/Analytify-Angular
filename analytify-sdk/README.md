@@ -74,3 +74,18 @@
    // ...
  </script>
  ```
+### Full Platform Embedding
+
+To embed the entire Analytify interface into your application use `loadSdkProject`:
+
+```html
+<div id="analytify-container"></div>
+<script src="analytify-sdk.js"></script>
+<script>
+  AnalytifySDK.loadSdkProject({
+    clientId: 'your-client-id',
+    clientSecret: 'your-client-secret',
+    container: document.getElementById('analytify-container')
+  });
+</script>
+```

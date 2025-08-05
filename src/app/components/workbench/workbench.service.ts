@@ -96,6 +96,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
   }
+  deepSeekConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/deepseek_authentication/`+this.accessToken,obj);
+  }
   hubspotConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -132,6 +137,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/open_ai_authentication/`+this.accessToken,obj);
+  }
+
+  deepSeekConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/deepseek_authentication/`+this.accessToken,obj);
   }
 
   ninjaRMMConnectionUpdate(obj:any){
@@ -1293,7 +1304,11 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.put<any>(`${environment.apiUrl}/emailconformation/`+this.accessToken+'/'+emailToken,{otp: otp});
     }
-
+    saveTrendline(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/kpi_trend/`+this.accessToken, obj);
+    }
     // Airflow API
     airflowToken: string | null = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlzcyI6W10sImF1ZCI6ImFwYWNoZS1haXJmbG93IiwibmJmIjoxNzQ5MDQyOTI5LCJleHAiOjE3NDkxMjkzMjksImlhdCI6MTc0OTA0MjkyOX0.OPipRIhG-me15qyyGXRlt2xLuNWKOr2RexHtU7xc8kyXqP3dHfcNAq2t6Zf6sNiKbnb437AyKsagA9rgbKK6wg';
 

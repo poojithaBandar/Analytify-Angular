@@ -27,6 +27,7 @@ export class HeaderComponent implements OnInit {
   viewRoles = false;
   viewUsers = false;
   @Input() isPublicUrl!:boolean; 
+  isEmbedSDK: boolean = false;
   constructor(public navServices: NavService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private authService:AuthService,private router:Router,
     private elementRef: ElementRef,public renderer:Renderer2,private viewTemplateService:ViewTemplateDrivenService,private sharedService: SharedService) {
 
@@ -209,6 +210,7 @@ export class HeaderComponent implements OnInit {
   public SearchResultEmpty:boolean = false;
   profileImage: string | null = null;
   ngOnInit() {
+    this.isEmbedSDK = localStorage.getItem("isEmbedSDK") == 'true';
     if(!this.isPublicUrl){
       this.viewRoles=this.viewTemplateService.ViewRoles();
       this.viewUsers=this.viewTemplateService.viewUsers();

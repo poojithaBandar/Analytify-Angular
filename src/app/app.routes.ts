@@ -45,6 +45,10 @@ export const App_Route: Route[] = [
         loadComponent: () =>
           import('../app/components/workbench/sheet-sdk/sheet-sdk.component').then((m) => m.SheetSdkComponent)
       },
+      {
+        path: 'embed/sdk',
+        loadChildren: () => import('../app/embed/embed.module').then(m => m.EmbedModule)
+      },
       // { path: '', component: ContentLayoutComponent, children: content },
       { path: '', component: AuthenticationLayoutComponent, children: authen },
       // { path: '', component: LandingpageLayoutComponent, children: landing },
