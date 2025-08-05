@@ -1829,6 +1829,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
+        this.report_url='';
         // Swal.fire({
         //   icon: 'success',
         //   title: 'Congartualtions!',
@@ -8462,21 +8463,28 @@ excelUpload(fileInput: any){
   }
   report_url:any;
   iframeLoading = false;
+  isAnalyzedashbaordView :boolean = false;
   analyzeAndDownload(){
+    if (this.report_url){
+       this.isAnalyzedashbaordView = true
+       this.iframeLoading = true;
+      return
+    }
       const obj ={
     dashboard_id:this.dashboardId,
     }
      this.workbechService.analyzeAndDownloadDashboard(obj).subscribe({
         next:(data)=>{
           if(data){
+          this.isAnalyzedashbaordView = true
           this.iframeLoading = true; // Reset loader state
-          this.modalService.open(this.analyzeDashbaordModal, {
-              centered: true,
-              size: 'lg',
-              windowClass: 'animate__animated animate__zoomIn',
-            });
+          // this.modalService.open(this.analyzeDashbaordModal, {
+          //     centered: true,
+          //     size: 'lg',
+          //     windowClass: 'animate__animated animate__zoomIn',
+          //   });
           }
-          this.report_url = data.ui_page_url;
+          this.report_url =data.ui_page_url;
         },
         error:(error)=>{
           console.log(error);
