@@ -25,7 +25,7 @@ export class ConfigureComponent implements OnInit {
   errorMessage: string = '';
   showPassword: boolean = false;
   activeTab = 'configure';
-  selectedEmbedType = 'embed-sdk';
+  selectedEmbedType!: string;
   dashboardId:any;
   sheetId:any;
   dbId:any;
@@ -173,6 +173,13 @@ selectedSheet: any = null;
   preventSpaces(event: KeyboardEvent) {
     if (event.code === 'Space' || event.key === ' ') {
       event.preventDefault();
+    }
+  }
+  onNavChange(event: NgbNavChangeEvent) {
+    if (event.nextId === 'embedsdk') {
+      this.selectedEmbedType = 'embed-sdk';
+    } else if (event.nextId === 'embedproject') {
+      this.selectedEmbedType = 'embed-project';
     }
   }
   getDashbaordList(){

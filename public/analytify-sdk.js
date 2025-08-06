@@ -17,7 +17,7 @@
     clientId: '',
     clientSecret: '',
     apiBaseUrl: '',
-    tokenEndpoint: 'https://api.insightapps.ai/v1'
+    tokenEndpoint: 'https://api.qa.insightapps.ai/v1'
   };
   var _token = null;
   var _tokenExpiry = 0;
@@ -34,6 +34,7 @@
     _config.clientId = config.clientId;
     _config.clientSecret = config.clientSecret || '';
     _config.apiBaseUrl = config.apiBaseUrl.replace(/\/+$/, '');
+    _config.appName = config.appName;
     if (config.tokenEndpoint) {
       _config.tokenEndpoint = config.tokenEndpoint;
     }
@@ -163,7 +164,7 @@
   }
 
   function loadSdkProject(opts) {
-    if (!opts || !opts.clientId || !opts.clientSecret || !opts.container) {
+    if (!opts || !_config.clientId || !_config.clientSecret || !opts.container) {
       console.error('AnalytifySDK.loadSdkProject: Missing required options');
       return;
     }
@@ -175,11 +176,11 @@
       return;
     }
     var base = _config.apiBaseUrl || EMBED_BASE.replace(/embed\/?$/, '');
-    var endpoint = _config.tokenEndpoint + '/sdk-authenticate';
+    var endpoint = _config.tokenEndpoint + '/app_access_token/';
     return fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ clientId: opts.clientId, clientSecret: opts.clientSecret })
+      body: JSON.stringify({ client_id: _config.clientId, client_secret: _config.clientSecret })
     })
       .then(function (res) {
         if (!res.ok) {
@@ -192,7 +193,7 @@
         if (!token)
           throw new Error('Missing token in response');
         localStorage.setItem('currentUser', JSON.stringify({ Token: token }));
-        var src = base + '/embed/sdk?token=' + encodeURIComponent(token) + '&clientId=' + encodeURIComponent(opts.clientId);
+        var src = base + '/embed/sdk?token=' + encodeURIComponent(token) + '&clientId=' + encodeURIComponent(_config.clientId)+ '&appName=' + encodeURIComponent(_config.appName);
         if (opts.options && opts.options.landingRoute) {
           src += '&route=' + encodeURIComponent(opts.options.landingRoute);
         }
