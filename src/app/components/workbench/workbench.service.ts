@@ -173,22 +173,34 @@ export class WorkbenchService {
   }
 
   //Quickbooks
-  connectQuickBooks(){
+  connectQuickBooks(embedMode: boolean = false){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.get<any>(`${environment.apiUrl}/quickbooks/`+this.accessToken);
+    let url = `${environment.apiUrl}/quickbooks/`+this.accessToken;
+    if (embedMode) {
+      url += '?embedMode=true';
+    }
+    return this.http.get<any>(url);
   }
   //salesforce
-  connectSalesforce(){
+  connectSalesforce(embedMode: boolean = false){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.get<any>(`${environment.apiUrl}/salesforce/`+this.accessToken);
+    let url = `${environment.apiUrl}/salesforce/`+this.accessToken;
+    if (embedMode) {
+      url += '?embedMode=true';
+    }
+    return this.http.get<any>(url);
   }
 
-  connectGoogleSheets(){
+  connectGoogleSheets(embedMode: boolean = false){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.get<any>(`${environment.apiUrl}/auth/google/`+this.accessToken);
+    let url = `${environment.apiUrl}/auth/google/`+this.accessToken;
+    if (embedMode) {
+      url += '?embedMode=true';
+    }
+    return this.http.get<any>(url);
   }
   getGoogleSheetsDetails(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );

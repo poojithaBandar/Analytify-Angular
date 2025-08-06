@@ -99,6 +99,7 @@ export class WorkbenchComponent implements OnInit{
   selectedHirchyIdCrsDb:string | null = null;
 
   iscrossDbSelect = false;
+  isEmbedMode: boolean = localStorage.getItem('embedMode') === 'true';
   primaryHierachyId:any;
   canUploadExcel = false;
   canUploadCsv = false;
@@ -1622,19 +1623,30 @@ export class WorkbenchComponent implements OnInit{
       }});
     }
 
+    private openAuthUrl(url: string): void {
+      if (this.isEmbedMode) {
+        window.top?.open(url, '_blank');
+      } else {
+        this.document.location.href = url;
+      }
+    }
+
     hubspotSignIn(){
-      const obj = {
+      const obj: any = {
         "client_id": this.hubspotClientId,
         "client_secret": this.hubspotClientSecret,
         "redirect_uri": this.hubspotRedirectURL,
         "display_name": this.displayName,
         "scopes": this.selectedHubspotScopes
+      };
+      if (this.isEmbedMode) {
+        obj.state = 'embedMode=true';
       }
       this.workbechService.hubspotConnection(obj).subscribe({next:(data)=>{
           if(data){
             localStorage.setItem('hubspotHierarchyId', data.hierarchy_id);
             this.modalService.dismissAll();
-            this.document.location.href = data.authorisation_url;
+            this.openAuthUrl(data.authorisation_url);
           }
         },
         error:(error)=>{
@@ -2131,13 +2143,13 @@ export class WorkbenchComponent implements OnInit{
           confirmButtonText: 'Ok'
         }).then((result)=>{
           if(result.isConfirmed){
-            this.workbechService.connectQuickBooks()
+            this.workbechService.connectQuickBooks(this.isEmbedMode)
             .subscribe(
               {
                 next: (data) => {
                   console.log(data);
                   // this.routeUrl = data.redirection_url
-                  this.document.location.href = data.redirection_url;
+                  this.openAuthUrl(data.redirection_url);
                   this.loaderService.show();
                 },
                 error: (error) => {
@@ -2145,7 +2157,7 @@ export class WorkbenchComponent implements OnInit{
                 }
               }
             )
-          }}) 
+          }})
       }
       connectSalesforce(){
         Swal.fire({
@@ -2158,20 +2170,20 @@ export class WorkbenchComponent implements OnInit{
         confirmButtonText: 'Ok'
       }).then((result)=>{
         if(result.isConfirmed){
-          this.workbechService.connectSalesforce()
+          this.workbechService.connectSalesforce(this.isEmbedMode)
           .subscribe(
             {
               next: (data) => {
                 console.log(data);
                 // this.routeUrl = data.redirection_url
-                this.document.location.href = data.redirection_url;
+                this.openAuthUrl(data.redirection_url);
               },
               error: (error) => {
                 console.log(error);
               }
             }
           )
-        }}) 
+        }})
       }
 
       connectxAmplify() {
@@ -2217,13 +2229,13 @@ connectGoogleSheets(){
     confirmButtonText: 'Ok'
   }).then((result)=>{
     if(result.isConfirmed){
-      this.workbechService.connectGoogleSheets()
+      this.workbechService.connectGoogleSheets(this.isEmbedMode)
       .subscribe(
         {
           next: (data) => {
             console.log(data);
             // this.routeUrl = data.redirection_url
-            this.document.location.href = data.redirection_url;
+            this.openAuthUrl(data.redirection_url);
             this.loaderService.show();
           },
           error: (error) => {
@@ -2231,7 +2243,7 @@ connectGoogleSheets(){
           }
         }
       )
-    }}) 
+    }})
 }
 
     deleteDbConnection(id:any){
