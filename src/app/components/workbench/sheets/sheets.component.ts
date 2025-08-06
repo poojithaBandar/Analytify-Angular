@@ -309,6 +309,7 @@ export class SheetsComponent{
   titleShow : boolean = true;
   legendsAllignment : any = 'bottom'
   donutSize:any = 50;
+  outerRadius:any = 70;
   color1:any;
   color2:any;
 
@@ -776,6 +777,7 @@ try {
           this.selectedSortColumnData[0] = columnsData[0];
           this.selectedSortColumnData[1] = columnsData[1];
         }
+        const nxtDrillDown = this.draggedDrillDownColumns[this.drillDownIndex];
         const obj = {
           "hierarchy_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -788,7 +790,7 @@ try {
           "hierarchy": this.draggedDrillDownColumns,
           "is_date": this.dateDrillDownSwitch,
           "drill_down": this.drillDownObject,
-          "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
+          "next_drill_down": nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
           "parent_user":this.createdBy,
           "order_column":(!this.isTopFilter) ? null : this.selectedSortColumnData
         }
@@ -1302,7 +1304,12 @@ try {
     'nullable(timestamp without time zone)',
     'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)',
     'nullable(datetime)', 'datetime64', 'datetime32', 'date32', 'nullable(date32)', 'nullable(datetime64)', 'nullable(datetime32)', 'date', 'datetime', 'time', 'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 'nullable(date32)']
-
+  datetimeList = ['time', 'datetime', 'timestamp', 'timestamp with time zone',  'timezone', 'time zone', 'timestamptz',  'nullable(time)', 'nullable(datetime)',
+      'nullable(timestamp)',
+      'nullable(timestamp with time zone)',
+      'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)',
+      'nullable(datetime)', 'datetime64', 'datetime32',   'nullable(datetime64)', 'nullable(datetime32)',  'datetime', 'time', 'datetime64', 'datetime32',  'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 
+    ]
     rowdrop(event: CdkDragDrop<string[]>){
       // if (event.previousContainer === event.container) {
       //   moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -2302,6 +2309,7 @@ sheetSave(isDashboardTransfer?: boolean){
     dataLabels : this.dataLabels,
     label : this.label,
     donutSize : this.donutSize,
+    outerRadius : this.outerRadius,
     isDistributed : this.isDistributed,
     kpiFontSize : this.kpiFontSize,
     minValueGuage : this.minValueGuage,
@@ -4277,6 +4285,7 @@ customizechangeChartPlugin() {
     this.dataLabels = data.dataLabels ?? true;
     this.label = data.label ?? true;
     this.donutSize = data.donutSize ?? 50;
+    this.outerRadius = data.outerRadius ?? 70;
     this.isDistributed = data.isDistributed ?? true;
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
@@ -4398,6 +4407,7 @@ customizechangeChartPlugin() {
     this.dataLabels = true;
     this.label = true;
     this.donutSize = 50;
+    this.outerRadius = 70;
     this.isDistributed = true;
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
@@ -4833,7 +4843,10 @@ customizechangeChartPlugin() {
             this.dateDrillDownSwitch = !this.dateDrillDownSwitch;
             this.heirarchyColumnData = [];
             if(this.dateDrillDownSwitch){
-              this.draggedDrillDownColumns = ["year","quarter","month","date"];
+              this.draggedDrillDownColumns = ["year","quarter","month","weeks","date"];
+              if (this.datetimeList.includes(this.draggedColumns[0].data_type)){
+                this.draggedDrillDownColumns = ["year","quarter","month","weeks","date","time"];
+              }
               this.draggedDrillDownColumns.forEach((columnType:any)=>{
                 let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));
                 columnData[2] = columnType;
@@ -4940,30 +4953,50 @@ customizechangeChartPlugin() {
     }
   }
 
-  setOriginalData(){
+  setOriginalData(chartOptions: any){
         if(this.bar){//bar
           if(!this.originalData){
-            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
         if(this.horizontalBar){//bar
           if(!this.originalData){
-            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
         else if(this.pie){//pie
           if(!this.originalData){
-            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
         else if(this.donut){//pie
           if(!this.originalData){
-            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
         if(this.map){//map
           if(!this.originalData){
-            this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData }
+            this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData, chartOptions: chartOptions }
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
       }     
@@ -6526,15 +6559,21 @@ customizechangeChartPlugin() {
       //     this.isMapChartDrillDown = true;
       //   }
       // }
-      this.setOriginalData();
+      if(this.drillDownIndex === 1){
+        this.setOriginalData(event.chartOptions);
+      }
       this.dataExtraction(false);
     }
     isSheetSaveOrUpdate : boolean = false;
     chartOptionsSet : any;
     hBarHeight : string = '';
     setChartOptions(event : any){
-      this.chartOptionsSet = event.chartOptions;
-      if(this.isEChatrts && this.chartType === 'horizontalBar' && event?.height){
+      if(this.drillDownIndex > 0 && this.draggedDrillDownColumns.length > 0 && this.originalData){
+        this.chartOptionsSet = this.originalData?.chartOptions ?? event.chartOptions;
+      } else{
+        this.chartOptionsSet = event.chartOptions;
+      }
+      if(this.isEChatrts && ['horizontalBar', 'funnel'].includes(this.chartType) && event?.height){
         this.hBarHeight = event.height;
       }
       this.sheetSave();
@@ -7872,7 +7911,7 @@ openGenieAiQTab(){
       const labelColumn = trend_kpi_data.rows?.[0];     // assumes 1 time column
 
       this.trendData = valueColumn?.result || [];
-      this.trendLabels = labelColumn?.result || [];
+      this.trendLabels = labelColumn?.result.map((category : any)  => category === null ? 'null' : category) || [];
     }
     getDeltaLabel(): string {
       if (this.KPINumber > this.kpiTarget) return 'above target';

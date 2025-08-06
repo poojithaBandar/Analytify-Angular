@@ -499,13 +499,15 @@ export class InsightApexComponent {
               const selectedXValue = self.chartsColumnData[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();
@@ -629,13 +631,15 @@ horizontalBarChart() {
           console.log('X-axis value:', selectedXValue);
           if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
             let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+            nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
             self.drillDownIndex++;
             let obj = { [nestedKey]: selectedXValue };
             self.drillDownObject.push(obj);
             let dObject = {
               drillDownIndex: self.drillDownIndex,
               draggedDrillDownColumns: self.draggedDrillDownColumns,
-              drillDownObject: self.drillDownObject
+              drillDownObject: self.drillDownObject,
+              chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
             }
             self.setDrilldowns.emit(dObject);
           }
@@ -658,6 +662,7 @@ horizontalBarChart() {
 xaxis: {
   categories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
   labels: {
+    show: this.xLabelSwitch,
     formatter: this.formatNumber.bind(this),
     style: {
       fontSize: this.xLabelFontSize,
@@ -939,13 +944,15 @@ xaxis: {
               const selectedXValue = self.chartOptions.labels[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();
@@ -1716,13 +1723,15 @@ xaxis: {
               const selectedXValue = self.chartsColumnData[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();
@@ -1872,7 +1881,7 @@ xaxis: {
       series: this.dualAxisRowData,
       chart: {
         type: "bar",
-        height: 350,
+        height: this.autoAdjustChartHeightForHBar(),
         background: this.backgroundColor,
       },
       plotOptions: {

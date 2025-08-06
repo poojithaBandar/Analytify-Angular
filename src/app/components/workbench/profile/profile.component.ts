@@ -39,11 +39,14 @@ export class ProfileComponent {
   emailNeedsVerification: boolean = false;
   emailVerified: boolean = true; // Initially true, as the loaded email is already verified
   timerInterval: any;
+  isEmbedSDK: boolean = false;
+
 
   constructor(private fb: FormBuilder,private workbechService:WorkbenchService, private toasterService: ToastrService,private authService:AuthService, private router: Router,private sharedService:SharedService) {
     this.initializeForms();
   }
   ngOnInit() {
+    this.isEmbedSDK = localStorage.getItem("isEmbedSDK") == 'true';
      this.loadUserProfile();
   }
       loadUserProfile() {
