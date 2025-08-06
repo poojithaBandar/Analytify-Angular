@@ -57,30 +57,28 @@
                         <div id="pivotTableContainer" #pivotTableContainer></div>                                }
                     @if(kpi && chartId){
                         <div class="big-number-container">
-                            <!-- @for(data of tablePreviewRow;track data){ -->
-                                <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}67</h1>
-                                 <p>{{kpiShowTrendline}}</p>
-                                  <apx-chart *ngIf="kpiShowTrendline === true && trendData.length > 0"
+                                        <!-- @for(data of tablePreviewRow;track data){ -->
+                                            <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
+                                             <div *ngIf="showKpiIndicator && kpiShowTrendline" class="text-center text-muted" [style.color]="kpiColor" style="font-size: 13px;">
+                                                    Target: {{ kpiTarget }}
+                                             </div>
+                                    <apx-chart *ngIf="kpiShowTrendline === true && trendData.length > 0"
                                     [series]="[{name: 'KPI Trend', data: trendData }]"
-                                    [chart]="{ type: 'line', height: 60,sparkline: { enabled: true } }"
+                                    [chart]="{ type: 'line', height: 60, sparkline: { enabled: true } }"
                                     [stroke]="{ curve: 'smooth', width: 2 }"
-                                    [colors]="[kpiColor]"
+                                    [colors]="[kpiChartColor]"
                                     [tooltip]="{ enabled: true }"
                                     [xaxis]="{ categories: trendLabels }"
-                                ></apx-chart>
-                            <!-- } -->
-                  
-                        </div>
-                         @if(showKpiIndicator) {
+                                    ></apx-chart>
+                         @if(showKpiIndicator && kpiShowTrendline && indicatorValue) {
                             <div class="d-flex justify-content-around mt-2 flex-wrap text-center" style="font-size: 12px;">
-                            <p>Toggle is ON</p>
-                            <span class="fw-bold">{{ indicatorValue }}</span>
                             <span [ngStyle]="{ color: indicatorIsIncreased === 'up' ? 'green' : 'red', fontWeight: 'bold' }">
                                 <i class="bi" [ngClass]="indicatorIsIncreased === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                                {{ indicatorValue }}%
+                                {{ indicatorValue }}% {{ indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
                             </span>
                             </div>
                         }
+                        </div>
                     }
  </div>
 <!-- <app-custom-sheets

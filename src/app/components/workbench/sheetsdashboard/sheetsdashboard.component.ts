@@ -8197,7 +8197,12 @@ downloadAsPDF() {
           const imgWidth = pdfWidth;
           const imgHeight = (img.height * imgWidth) / img.width;
 
-          if (yOffset + imgHeight > pdfHeight) {
+          // if (yOffset + imgHeight > pdfHeight) {
+          //   pdf.addPage();
+          //   yOffset = 0;
+          // }
+
+          if (yOffset !== 0 && yOffset + imgHeight > pdfHeight) {
             pdf.addPage();
             yOffset = 0;
           }
