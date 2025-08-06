@@ -164,7 +164,6 @@ export class EmbedSdkComponent {
         appName: '${this.userName}',
         clientId: '${this.clientId}',
         clientSecret: '${this.clientSecret}',
-        tokenEndpoint: 'https://api.qa.insightapps.ai/v1',
         apiBaseUrl: '${this.apibaseurl}'
       });
 
