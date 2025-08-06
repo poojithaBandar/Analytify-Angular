@@ -807,7 +807,7 @@ export class TemplateDashboardService {
     const sheet_rows_data = data.row_data.map((item:any) => {
       return [
         item.orginal_column,
-        item.type ? "aggregate" : "",
+        item.type ? "aggregate" : item.data_type,
         item.type ? item.type : "",
         ""
       ];
