@@ -5,7 +5,7 @@ import { RolespriviledgesService } from '../components/workbench/rolespriviledge
 export const sdkAuthGuard: CanActivateFn = async (route) => {
   const router = inject(Router);
   const rolesService = inject(RolespriviledgesService);
-  const tokenEndpoint = 'https://api.qa.insightapps.ai/v1';
+  const tokenEndpoint = 'https://api.insightapps.ai/v1';
 
   let current = localStorage.getItem('currentUser');
   if (!current || !localStorage.getItem('username')) {
