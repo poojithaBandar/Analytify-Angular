@@ -891,7 +891,7 @@
        <div *ngIf="shareAsProtected" class="">
             <p class="fw-semibold mb-0 mt-3">Emails</p>
             <ng-select class="form-control p-0" [addTag]="true" [multiple]="true" [(ngModel)]="protectedEmails" placeholder="Add emails"></ng-select>
-            <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" />
+            <!-- <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" /> -->
        </div>
         <div *ngIf="publishedDashboard" class="">
             
