@@ -4957,26 +4957,46 @@ customizechangeChartPlugin() {
         if(this.bar){//bar
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
         if(this.horizontalBar){//bar
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
         else if(this.pie){//pie
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
         else if(this.donut){//pie
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
         if(this.map){//map
           if(!this.originalData){
             this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData, chartOptions: chartOptions }
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
           }
         }
       }     
@@ -6548,7 +6568,7 @@ customizechangeChartPlugin() {
     chartOptionsSet : any;
     hBarHeight : string = '';
     setChartOptions(event : any){
-      if(this.drillDownIndex !== 0 && this.draggedDrillDownColumns.length > 0 && this.originalData){
+      if(this.drillDownIndex > 0 && this.draggedDrillDownColumns.length > 0 && this.originalData){
         this.chartOptionsSet = this.originalData?.chartOptions ?? event.chartOptions;
       } else{
         this.chartOptionsSet = event.chartOptions;
