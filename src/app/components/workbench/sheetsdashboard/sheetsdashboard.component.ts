@@ -1891,7 +1891,16 @@ export class SheetsdashboardComponent implements OnDestroy {
             item1.chartOptions = item1['originalData'].chartOptions;
           }
         delete item1['originalData'];
-        }if(item1.chartId == '1' && item1['originalData']){//table
+        }
+        if(item1.chartId == '14' && item1['originalData']){//hbar
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '1' && item1['originalData']){//table
           item1['tableData'] = item1['originalData']['tableData'];
           delete item1['originalData'];
           }
@@ -1910,6 +1919,14 @@ export class SheetsdashboardComponent implements OnDestroy {
             item1.chartOptions = item1['originalData'].chartOptions;
           }
         delete item1['originalData'];
+        }
+        if(item1.chartId == '10' && item1['originalData']){//donut
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
         }
         if(item1.chartId == '13' && item1['originalData']){//line
           if(item1.isEChart){
