@@ -8,14 +8,13 @@ export const sdkAuthGuard: CanActivateFn = async (route) => {
   const tokenEndpoint = 'https://api.qa.insightapps.ai/v1';
 
   let current = localStorage.getItem('currentUser');
-  if (!current) {
+  if (!current || !localStorage.getItem('username')) {
     const token = route.queryParamMap.get('token');
     const userName = route.queryParamMap.get('appName');
     if (token) {
       localStorage.setItem('currentUser', JSON.stringify({ Token: token }));
-      localStorage.setItem('userName', JSON.stringify({userName:userName}));
+      localStorage.setItem('username', JSON.stringify({userName:userName}));
       localStorage.setItem('isEmbedSDK', "true");
-
       // const landing = route.queryParamMap.get('route') || '/analytify/home';
       // return router.parseUrl(landing);
       try {
