@@ -9,15 +9,51 @@
 </div> -->
 
 @if (loading){
-<div class="loader">
-    <!-- <div class="dimmer active">
+<!-- <div class="loader">
+    <div class="dimmer active">
         <div class="spinner2">
             <div class="cube1"></div>
             <div class="cube2"></div>
         </div>
-    </div> -->
+    </div>
     <div class="dimmer active">
         <div class="spinner"></div>
     </div>
-  </div>
+  </div> -->
+     <div class="loader-overlay">
+        <div class="loader-container">
+            <!-- Database icon -->
+            <div class="analytify-core-db">
+                <div class="db-oval top"></div>
+                <div class="db-body"></div>
+                <div class="db-oval bottom"></div>
+            </div>
+
+            <!-- Data flow beam -->
+            <div class="data-beam"></div>
+
+            <!-- The Analytify text is now the central element -->
+            <span class="analytify-text">Analytify</span>
+
+            <!-- Background charts being generated -->
+            <div class="background-chart pie"></div>
+            <div class="background-chart donut"></div>
+            
+            <!-- Redesigned bar chart with individual bars -->
+            <div class="background-chart bar">
+                <div class="bar-item"></div>
+                <div class="bar-item"></div>
+                <div class="bar-item"></div>
+            </div>
+
+            <!-- Line chart with dynamic SVG mask -->
+            <div class="background-chart line-chart"></div>
+
+            <!-- Area chart with dynamic SVG mask -->
+            <div class="background-chart area-chart"></div>
+
+            <!-- The final dashboard assembling -->
+            <div class="final-dashboard"></div>
+        </div>
+    </div>
 }

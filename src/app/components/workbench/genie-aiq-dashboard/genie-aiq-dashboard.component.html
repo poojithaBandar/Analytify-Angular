@@ -1,0 +1,86 @@
+<!-- Connect Data Source UI -->
+<div *ngIf="step === 1" class="connect-data-source-card">
+  <h5><span class="db-icon">🗄️</span> Connect Data Source</h5>
+  <form #form="ngForm" (ngSubmit)="onConnect()">
+    <label>Server Type</label>
+    <select [(ngModel)]="selectedServerType" (change)="onServerTypeSelect(selectedServerType)" name="serverType" required class="mb-2">
+    <option value="" disabled>Select server type</option>
+    <option *ngFor="let type of serverTypes" [value]="type">{{ type }}</option>
+    </select>
+
+    <div *ngIf="selectedServerType">
+    <label>Display Name</label>
+    <select [(ngModel)]="selectedConnection" name="datasourcename">
+        <option value="" disabled>Select display name</option>
+        <option *ngFor="let conn of displayNamesForType" [ngValue]="conn">{{ conn.display_name }}</option>
+    </select>
+    </div>
+
+    <div class="button-row">
+      <button [disabled]="!selectedConnection && !selectedServerType" type="submit" class="connect-btn btn-primary">Connect</button>
+      <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Table Selection UI (shown after connecting) -->
+<div *ngIf="step === 2" class="table-selection-card">
+  <h5>Select Tables</h5>
+  <div class="selected-datasource-info d-flex mb-2">
+    <div class="me-1"><strong> Server Type:</strong>{{ selectedServerType }}</div>
+    <div><strong>Display Name:</strong> {{ selectedConnection?.display_name }}</div>
+  </div>
+  <label for="tableSelect">Tables</label>
+  <ng-select
+    [items]="tables"
+    bindLabel=""
+    bindValue=""
+    [multiple]="true"
+    [(ngModel)]="selectedTables"
+    name="selectedTables"
+    placeholder="Type to search and select tables..."
+    [searchable]="true"
+    [closeOnSelect]="false"
+    >
+  </ng-select>
+  <div class="button-row mt-2" >
+      <button  type="submit" class="connect-btn btn-primary" (click)="onTableSelect()">Connect</button>
+      <button type="button" class="cancel-btn" (click)="goBack()">Back</button>
+    </div>
+</div>
+
+<!-- Suggested Insights UI -->
+<div *ngIf="step === 3" class="insights-dashboard-container">
+  <div class="insights-dashboard mt-1 p-4">
+    <div class="suggested-insights">
+      <h2>💡 Suggested Insights</h2>
+      <div class="insight-cards">
+        <div
+          class="insight-card"
+          *ngFor="let insight of suggestedInsights"
+          [class.selected]="isInsightSelected(insight)"
+          (click)="selectInsight(insight)"
+        >
+          <div class="insight-title">{{ insight.chart_title }} <span class="tag">{{ insight.chart_type }}</span></div>
+          <div class="insight-desc">{{ insight.description }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="selected-insights">
+      <h2>Selected Insights ({{ selectedInsights.length }})</h2>
+      <div class="selected-desc" *ngIf="selectedInsights.length === 0">
+        Select insights from the suggestions to build your dashboard
+      </div>
+      <ul *ngIf="selectedInsights.length > 0">
+        <li *ngFor="let insight of selectedInsights">
+          {{ insight.chart_title }}
+          <span class="remove-cross" (click)="removeSelectedInsight(insight)">&times;</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="button-group d-flex gap-2 justify-content-end mb-2 me-2">
+    <button type="button" class="cancel-btn" (click)="goBack()">Back</button>
+    <button type="button" class="connect-btn btn-primary" (click)="generateDashboard()">Generate Dashboard</button>
+  </div>
+</div>
