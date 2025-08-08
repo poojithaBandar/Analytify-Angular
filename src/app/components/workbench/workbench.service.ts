@@ -89,22 +89,22 @@ export class WorkbenchService {
   pax8Connection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.post<any>(`${environment.apiUrl}/pax8_authentication/token/`+this.accessToken,obj);
+    return this.http.post<any>(`${environment.apiUrl}/pax8_authentication/`+this.accessToken,obj);
   }
   pax8ConnectionUpdate(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.put<any>(`${environment.apiUrl}/pax8_authentication/token/`+this.accessToken,obj);
+    return this.http.put<any>(`${environment.apiUrl}/pax8_authentication/`+this.accessToken,obj);
   }
   getPax8Connection(id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.get<any>(`${environment.apiUrl}/pax8_authentication/token/`+id+'/'+this.accessToken);
+    return this.http.get<any>(`${environment.apiUrl}/pax8_authentication/`+id+'/'+this.accessToken);
   }
   deletePax8Connection(id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.delete<any>(`${environment.apiUrl}/pax8_authentication/token/`+id+'/'+this.accessToken);
+    return this.http.delete<any>(`${environment.apiUrl}/pax8_authentication/`+id+'/'+this.accessToken);
   }
   shopifyConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
