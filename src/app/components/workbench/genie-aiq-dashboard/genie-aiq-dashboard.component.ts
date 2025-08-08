@@ -1,20 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { SharedModule } from '../../../shared/sharedmodule';
+import { RouterModule } from '@angular/router';
+import { WorkbenchComponent } from '../workbench/workbench.component';
+import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 
 @Component({
   selector: 'app-genie-aiq-dashboard',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule,NgbModule,NgSelectModule],
+  imports: [FormsModule, CommonModule, ReactiveFormsModule,NgbModule,NgSelectModule,SharedModule,RouterModule],
   templateUrl: './genie-aiq-dashboard.component.html',
-  styleUrl: './genie-aiq-dashboard.component.scss'
+  styleUrl: './genie-aiq-dashboard.component.scss',
+  providers: [TemplateDashboardService]
+
 })
 export class GenieAiqDashboardComponent {
+  // @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
+  
   step: number = 1;
 
   tables: string[] = [];
@@ -26,7 +34,7 @@ export class GenieAiqDashboardComponent {
   selectedConnection: any = '';
   schematableList = [] as any;
   hierarchyId:any;
-  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService){
+  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService){
 
   }
   ngOnInit(){
@@ -210,6 +218,7 @@ isInsightSelected(insight: any): boolean {
      this.workbechService.getDashbaordSuggestions(payload).subscribe({
       next:(data)=>{
       console.log(data);
+      this.templateDashboardService.buildSampleGieneAiqDashbaord(this.hierarchyId.hierarchy_id, data);
       this.step = 3;
       },
       error:(error)=>{
