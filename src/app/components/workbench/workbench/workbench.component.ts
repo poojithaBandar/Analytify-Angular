@@ -59,6 +59,7 @@ export class WorkbenchComponent implements OnInit{
   openMySqlForm = false;
   openConnectWiseForm = false;
   openHaloPSAForm = false;
+  openPax8Form = false;
   openHubspotForm = false;
   openShopifyForm =false;
   openGoogleAnalyticsForm = false;
@@ -300,6 +301,9 @@ export class WorkbenchComponent implements OnInit{
     else if(this.databaseSwitchType === 'HALOPS'){
     this.connectHaloPSA();
     }
+    else if(this.databaseSwitchType === 'PAX8'){
+    this.connectPax8();
+    }
     else if(this.databaseSwitchType === 'TALLY'){
     this.connectTally();
     }
@@ -357,6 +361,8 @@ export class WorkbenchComponent implements OnInit{
     siteURLPSA = '';
     clientSecret = '';
     clientIdPSA = '';
+    pax8ClientId = '';
+    pax8ClientSecret = '';
     publicKey = '';
     privateKey = '';
     path='';
@@ -625,6 +631,8 @@ export class WorkbenchComponent implements OnInit{
     this.siteURLPSA = '';
     this.clientIdPSA = '';
     this.clientSecret = '';
+    this.pax8ClientId = '';
+    this.pax8ClientSecret = '';
     this.ninjaRMMClientid = '';
     this.ninjaRMMClientSecret = '';
     this.selectedNinjaRMMScopes = [];
@@ -814,6 +822,31 @@ export class WorkbenchComponent implements OnInit{
       }
 
       this.workbechService.haloPSAConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+
+    pax8Update(){
+      const obj = {
+        "client_id": this.pax8ClientId,
+        "client_secret": this.pax8ClientSecret,
+        "display_name": this.displayName,
+        "hierarchy_id":this.databaseId
+      }
+
+      this.workbechService.pax8ConnectionUpdate(obj).subscribe({next: (responce) => {
             console.log(responce);
             this.modalService.dismissAll('close');
             if(responce){
@@ -1114,6 +1147,12 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+    connectPax8(){
+      this.openPax8Form = true;
+      this.databaseconnectionsList = false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
     connectTally(){
       this.openTallyForm = true;
       this.databaseconnectionsList= false;
@@ -1199,6 +1238,22 @@ export class WorkbenchComponent implements OnInit{
         this.clientIDPSAError = false;
       }else{
         this.clientIDPSAError = true;
+      }
+    }
+
+    pax8ClientIdValidation(){
+      if(this.pax8ClientId){
+        this.pax8ClientIdError = false;
+      }else{
+        this.pax8ClientIdError = true;
+      }
+    }
+
+    pax8ClientSecretValidation(){
+      if(this.pax8ClientSecret){
+        this.pax8ClientSecretError = false;
+      }else{
+        this.pax8ClientSecretError = true;
       }
     }
 
@@ -2119,6 +2174,37 @@ export class WorkbenchComponent implements OnInit{
       }
     }
 
+    pax8SignIn(){
+      const obj = {
+        "client_id": this.pax8ClientId,
+        "client_secret": this.pax8ClientSecret,
+        "display_name": this.displayName
+      }
+      this.workbechService.pax8Connection(obj).subscribe({next: (responce) => {
+        if(responce){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = responce?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openPax8Form = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+          }
+        }
+      },
+      error:(error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }})
+    }
+
     uploadfileCsv(event:any,type:any,database:any){
       const file:File = event.target.files[0];
       this.fileData = file;
@@ -2448,6 +2534,10 @@ connectGoogleSheets(){
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
+    } else if (this.databaseType == "pax8") {
+      this.pax8ClientId = editData.client_id;
+      this.pax8ClientSecret = editData.client_secret;
+      this.displayName = editData.display_name;
     }  else if (this.databaseType == "immybot") {
       this.clientIdImmybot = editData.client_id;
       this.secretValue = editData.secret_value;
@@ -2614,6 +2704,7 @@ connectGoogleSheets(){
   this.sqlLiteForm = false;
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
+  this.openPax8Form = false;
   this.openShopifyForm = false;
   this.openTallyForm = false;
   this.openOpenAIForm = false;
@@ -2663,6 +2754,8 @@ connectGoogleSheets(){
   siteURLErrorPSA:boolean = false;
   clientIDPSAError:boolean = false;
   clientSecretError: boolean = false;
+  pax8ClientIdError:boolean = false;
+  pax8ClientSecretError:boolean = false;
   privateKeyError:boolean = false;
   publicKeyError:boolean = false;
   companyIDError:boolean = false;
@@ -3089,7 +3182,10 @@ connectGoogleSheets(){
           case 'HALOPS':
             this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id, responce);
             break;
-            case 'OPEN_AI':
+          case 'PAX8':
+            this.templateDashboardService.buildSamplePaxDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'OPEN_AI':
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
             case 'DEEPSEEK':
