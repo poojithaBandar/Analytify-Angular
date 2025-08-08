@@ -104,6 +104,14 @@ interface KpiData {
   kpiSuffix: string;
   kpiDecimalUnit : string;
   kpiDecimalPlaces: number;
+  trendData: [], 
+  trendLabels: [],
+  kpiShowTrendline : boolean,
+  showKpiIndicator : boolean,
+  indicatorIsIncreased : any,
+  indicatorValue : any,
+  kpiChartColor: string;
+  kpiTarget: any;
 }
 declare var $:any;
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -130,6 +138,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
 })
 export class SheetsdashboardComponent implements OnDestroy {
  // @HostListener('window:resize', ['$event'])
+ 
  itemsPerPage:any;
   private destroy$ = new Subject<void>();
  pageNo = 1;
@@ -233,7 +242,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   actionId : any;
   drillThroughActionList : any[] =[];
   drillThroughDatabaseName : any = '';
-
   calendarTotalHeight : string = '400px';
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
@@ -258,6 +266,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   isEmbeddedFilter : boolean = false;
   genieHover = false;
   showGenieTooltip = false;
+  trendData= [];
+  trendLabels = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -918,6 +928,14 @@ export class SheetsdashboardComponent implements OnDestroy {
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+              trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -1086,6 +1104,7 @@ export class SheetsdashboardComponent implements OnDestroy {
             // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
             console.log('X-axis value:', selectedXValue);
             let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
+            nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
             sheet.drillDownIndex++;
             let obj = { [nestedKey]: selectedXValue };
             sheet.drillDownObject.push(obj);
@@ -1810,6 +1829,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
+        this.report_url='';
         // Swal.fire({
         //   icon: 'success',
         //   title: 'Congartualtions!',
@@ -2038,6 +2058,15 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+               trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -2112,6 +2141,15 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+               trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -2341,6 +2379,7 @@ allowDrop(ev : any): void {
                 // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
                 console.log('X-axis value:', selectedXValue);
                 let nestedKey = element.drillDownHierarchy[element.drillDownIndex];
+                nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
                 element.drillDownIndex++;
                 let obj = { [nestedKey]: selectedXValue };
                 element.drillDownObject.push(obj);
@@ -3786,10 +3825,10 @@ getFilteredData(){
         // this.tablePageNo =1;
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
+      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
+          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false,false);
         })
       }
       }
@@ -4068,6 +4107,16 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
         item1['kpiData'].rows = [obj];
         item1.kpiData.kpiNumber = this.formatKPINumber(item.rows[0].result[0], item1.kpiData.kpiDecimalUnit , item1.kpiData.kpiDecimalPlaces, item1.kpiData.kpiPrefix, item1.kpiData.kpiSuffix);
+        if(item1['kpiData'].kpiShowTrendline){
+          item1['kpiData'].trendData = item?.trend_kpi_data.columns?.[0]?.result ?? [];
+          item1['kpiData'].trendLabels = item?.trend_kpi_data.rows?.[0]?.result.map((category : any)  => category === null ? 'null' : category) ?? [];
+          item1['kpiData'].indicatorValue = item?.difference;
+          if(item?.is_increased){
+          item1['kpiData'].indicatorIsIncreased = 'up';
+          }else{
+            item1['kpiData'].indicatorIsIncreased = 'down';
+          }
+        }
       }
       if((item.chart_id == '24' || item.chartId == '24' && (isFilter || isDrillDown)) || (item1.chartId == '24' && isDrillThrough)){//pie
         if(switchDb){
@@ -4481,6 +4530,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                 });
               });
             });
+            item1.customizeOptions.hBarHeight = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
             item1.echartOptions.series[0].data = combinedArray;
             item1.echartOptions = {
               ...item1.echartOptions,
@@ -4494,6 +4544,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         // if(isDrillThrough){
           item1.chartOptions = {
             ...item1.chartOptions,
+            chart: {
+              ...item1.chartOptions.chart,
+              height: this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values),
+            },
             xaxis: {
               ...item1.chartOptions.xaxis,
               categories: categories,
@@ -4616,7 +4670,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           }
         }
       }
-       if((item.chart_id == '14' || item.chartId == '14' && (isFilter || isDrillDown)) || (item1.chartId == '14' && isDrillThrough)){//bar
+       if((item.chart_id == '14' || item.chartId == '14' && (isFilter || isDrillDown)) || (item1.chartId == '14' && isDrillThrough)){//Hbar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData && !switchDb){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4628,6 +4682,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             item1.drillDownIndex = 0;
             item1.drillDownObject = [];
           }
+          item1.customizeOptions.hBarHeight = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
           item1.echartOptions.yAxis.data = this.filteredColumnData[0]?.values;
         item1.echartOptions.series[0].data = this.filteredRowData[0]?.data;
         item1.echartOptions = {
@@ -4642,6 +4697,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
+        item1.chartOptions.chart.height = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
       item1.chartOptions.xaxis.categories = this.filteredColumnData[0]?.values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData;
       }
@@ -5158,6 +5214,14 @@ kpiData?: KpiData;
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+                 trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -5719,10 +5783,10 @@ kpiData?: KpiData;
         if(item.chart_id === 1){
           this.pageChangeTableDisplayPublic(item,1)
         }else{
-        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
+        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false);
         if (this.displayTabs) {
           this.sheetTabs.forEach((tabData: any) => {
-            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
+            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false,false);
           })
         }
         }
@@ -5812,6 +5876,7 @@ kpiData?: KpiData;
 
   publicDataExtraction(item : any){
     this.extractKeysAndData();
+    const nxtDrillDown = item.drillDownHierarchy[item.drillDownIndex];
     let Obj : any = {
       "col":item.column_Data,"row":item.row_Data,
       id:this.keysArray,
@@ -5823,7 +5888,7 @@ kpiData?: KpiData;
       // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "next_drill_down":nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
   "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getPublicDashboardDrillDowndata(Obj).subscribe({
@@ -5889,6 +5954,7 @@ kpiData?: KpiData;
     } else {
       draggedColumnsObj = item.column_Data
     }
+    const nxtDrillDown = item.drillDownHierarchy[item.drillDownIndex];
     let Obj : any = {
       "col":draggedColumnsObj,"row":item.row_Data,
       id:this.keysArray,
@@ -5900,7 +5966,7 @@ kpiData?: KpiData;
       "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "next_drill_down":nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
   "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getDashboardDrillDowndata(Obj).subscribe({
@@ -6841,6 +6907,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
       console.log('X-axis value:', event.name);
       let nestedKey = item.drillDownHierarchy[item.drillDownIndex];
+      nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
       item.drillDownIndex++;
       let obj = { [nestedKey]: event.name };
       item.drillDownObject.push(obj);
@@ -8130,7 +8197,12 @@ downloadAsPDF() {
           const imgWidth = pdfWidth;
           const imgHeight = (img.height * imgWidth) / img.width;
 
-          if (yOffset + imgHeight > pdfHeight) {
+          // if (yOffset + imgHeight > pdfHeight) {
+          //   pdf.addPage();
+          //   yOffset = 0;
+          // }
+
+          if (yOffset !== 0 && yOffset + imgHeight > pdfHeight) {
             pdf.addPage();
             yOffset = 0;
           }
@@ -8400,21 +8472,28 @@ excelUpload(fileInput: any){
   }
   report_url:any;
   iframeLoading = false;
+  isAnalyzedashbaordView :boolean = false;
   analyzeAndDownload(){
+    if (this.report_url){
+       this.isAnalyzedashbaordView = true
+       this.iframeLoading = true;
+      return
+    }
       const obj ={
     dashboard_id:this.dashboardId,
     }
      this.workbechService.analyzeAndDownloadDashboard(obj).subscribe({
         next:(data)=>{
           if(data){
+          this.isAnalyzedashbaordView = true
           this.iframeLoading = true; // Reset loader state
-          this.modalService.open(this.analyzeDashbaordModal, {
-              centered: true,
-              size: 'lg',
-              windowClass: 'animate__animated animate__zoomIn',
-            });
+          // this.modalService.open(this.analyzeDashbaordModal, {
+          //     centered: true,
+          //     size: 'lg',
+          //     windowClass: 'animate__animated animate__zoomIn',
+          //   });
           }
-          this.report_url = data.ui_page_url;
+          this.report_url =data.ui_page_url;
         },
         error:(error)=>{
           console.log(error);
@@ -8731,6 +8810,20 @@ initializeTabDefaults() {
     this.MAX_FONT_SIZE
   );
 }// Default values
+
+  autoAdjustChartHeightForHBar(isEchart: boolean, chartsColumnData: any[]) {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    if(isEchart){
+      const chartHeight = Math.max(calculatedHeight, 400);
+      return chartHeight + 'px';
+    } else{
+      const chartHeight = Math.max(calculatedHeight, 320);
+      return chartHeight;
+    }
+  }
 
 }
 

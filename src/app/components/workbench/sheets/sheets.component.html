@@ -57,9 +57,27 @@
                         <div id="pivotTableContainer" #pivotTableContainer></div>                                }
                     @if(kpi && chartId){
                         <div class="big-number-container">
-                            <!-- @for(data of tablePreviewRow;track data){ -->
-                                <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
-                            <!-- } -->
+                                        <!-- @for(data of tablePreviewRow;track data){ -->
+                                            <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
+                                             <div *ngIf="showKpiIndicator && kpiShowTrendline" class="text-center text-muted" [style.color]="kpiColor" style="font-size: 13px;">
+                                                    Target: {{ kpiTarget }}
+                                             </div>
+                                    <apx-chart *ngIf="kpiShowTrendline === true && trendData.length > 0"
+                                    [series]="[{name: 'KPI Trend', data: trendData }]"
+                                    [chart]="{ type: 'line', height: 60, sparkline: { enabled: true } }"
+                                    [stroke]="{ curve: 'smooth', width: 2 }"
+                                    [colors]="[kpiChartColor]"
+                                    [tooltip]="{ enabled: true }"
+                                    [xaxis]="{ categories: trendLabels }"
+                                    ></apx-chart>
+                         @if(showKpiIndicator && kpiShowTrendline && indicatorValue) {
+                            <div class="d-flex justify-content-around mt-2 flex-wrap text-center" style="font-size: 12px;">
+                            <span [ngStyle]="{ color: indicatorIsIncreased === 'up' ? 'green' : 'red', fontWeight: 'bold' }">
+                                <i class="bi" [ngClass]="indicatorIsIncreased === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
+                                {{ indicatorValue }}% {{ indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
+                            </span>
+                            </div>
+                        }
                         </div>
                     }
  </div>
@@ -2119,7 +2137,7 @@
                             [cdkDropListData]="draggedMeasureValues" 
                             (cdkDropListDropped)="measureValuesdrop($event)">
                                 @for(columns of draggedMeasureValues;track columns;let index = $index){
-                                <div class="example-box example-box-bg" cdkDrag >
+                                <div class="example-box example-box-bg" cdkDrag (cdkDragStarted)="removemeasureValuesRow(index,columns)">
                                     @if(columns.alias){
                                         {{ columns.alias }}
                                     }
@@ -2478,9 +2496,10 @@
                                             <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
                                    </div>
                                     @if(drillDownObject && drillDownObject.length > 0 && drillDownIndex > 0 && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
-                                    <div class="col-lg-3 col-md-3 d-flex mt-2" >
+                                    <div class="col-lg-9 col-md-9 d-flex mt-2" >
                                         @for(column of drillDownObject;track column;let index = $index){
-                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span class="mt-1">--</span>
+                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index] === 'date' ? 'year/month/day' :  (draggedDrillDownColumns[index] === 'time' ? 'date' : draggedDrillDownColumns[index])]}}</h6> 
+                                       <span *ngIf="index !== (drillDownObject.length-1)">--</span>
                                    }
                                     </div>
                                 }
@@ -2544,12 +2563,32 @@
                                   <pagination-controls *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 ) && toggleTablePagination" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(pivotTable && chartId){
-                                    <div id="pivotTableContainer" #pivotTableContainer></div>                                }
+                                    <div id="pivotTableContainer" #pivotTableContainer></div>                                
+                                }
                                 @if(kpi && chartId){
                                     <div class="big-number-container">
                                         <!-- @for(data of tablePreviewRow;track data){ -->
                                             <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
+                                             <div *ngIf="showKpiIndicator && kpiShowTrendline" class="text-center text-muted" [style.color]="kpiColor" style="font-size: 13px;">
+                                                    Target: {{ kpiTarget }}
+                                             </div>
+                                    <apx-chart *ngIf="kpiShowTrendline === true && trendData.length > 0"
+                                    [series]="[{name: 'KPI Trend', data: trendData }]"
+                                    [chart]="{ type: 'line', height: 60, sparkline: { enabled: true } }"
+                                    [stroke]="{ curve: 'smooth', width: 2 }"
+                                    [colors]="[kpiChartColor]"
+                                    [tooltip]="{ enabled: true }"
+                                    [xaxis]="{ categories: trendLabels }"
+                                    ></apx-chart>
                                         <!-- } -->
+                                     @if(showKpiIndicator && kpiShowTrendline && indicatorValue) {
+                            <div class="d-flex justify-content-around mt-2 flex-wrap text-center" style="font-size: 12px;">
+                            <span [ngStyle]="{ color: indicatorIsIncreased === 'up' ? 'green' : 'red', fontWeight: 'bold' }">
+                                <i class="bi" [ngClass]="indicatorIsIncreased === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
+                                {{ indicatorValue }}% {{ indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
+                            </span>
+                            </div>
+                        }
                                     </div>
                                 }
                                 @if(isApexCharts && !table && !kpi && !pivotTable){
@@ -2690,7 +2729,7 @@
             }
             @else if(donut && chartId){
                 <div class="card-body">
-                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [donutSize]="donutSize" [outerRadius]="outerRadius" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" [selectedColorScheme]="selectedColorScheme"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"
                     [donutDecimalPlaces]="donutDecimalPlaces" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
@@ -4847,6 +4886,20 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
+                                                                   <div *ngIf="kpi && kpiShowTrendline" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                    <label for="color">Chart color</label>
+                                                                    <div *ngIf="kpiChartColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiChartColorSwitch = !kpiChartColorSwitch; resetKpiChartColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!kpiChartColorSwitch" class="toggle toggle-sm off mb-0" (click)="kpiChartColorSwitch = !kpiChartColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="kpiChartColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="kpiChartColor"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
                                                                 <div *ngIf="funnel || bar || horizontalBar" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <label>Distribution</label>
                                                                     <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed'); (isMeasureDistribution = false)">
@@ -5087,9 +5140,24 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="donut" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                            <label class="mb-0">Donut Size</label>
-                                                            <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5">
+                                                        <div *ngIf="donut" class="mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                            <ng-container *ngIf="!isEChatrts">
+                                                                 <div class="d-flex align-items-center justify-content-between">
+                                                                    <label class="mb-0">Donut Size</label>
+                                                                    <input type="number" [(ngModel)]="donutSize" min="0" max="100" step="1">
+                                                                 </div>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="isEChatrts">
+                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                    <label class="mb-0">Inner Radius (%)</label>
+                                                                    <input type="number" [(ngModel)]="donutSize" min="0" max="99" step="1" class="form-control" style="width: 60px;">
+                                                                </div>
+                                                                
+                                                                <div class="d-flex align-items-center justify-content-between">
+                                                                    <label class="mb-0">Outer Radius (%)</label>
+                                                                    <input type="number" [(ngModel)]="outerRadius" min="1" max="100" step="1" class="form-control" style="width: 60px;">
+                                                                </div>
+                                                            </ng-container>
                                                         </div>
                                                         <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2 border rounded-2">
                                                             <label class="mb-0" for="decimalInput">Decimal Places: </label>
@@ -5100,10 +5168,91 @@
                                                     
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <label class="mb-0" for="font-size" step="1" >Font Size</label>
-                                                        <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;" min="0">
+                                                        <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;" min="1" max="24">
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
-                                                   
+                                                  <div *ngIf="kpi && showTrendlineDate"
+                                                            class="mb-2 p-2 border rounded-2"
+                                                            style="display: flex; flex-direction: column; gap: 0.75rem;">
+
+                                                        <!-- Show Trendline Toggle -->
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <label class="mb-0" for="trendline-toggle">Show Trendline</label>
+                                                            <input
+                                                            id="trendline-toggle"
+                                                            type="checkbox"
+                                                            [(ngModel)]="kpiShowTrendline"
+                                                            style="width: 20px; height: 20px;" />
+                                                        </div>
+
+                                                        <!-- Trendline Config Inputs (conditionally visible) -->
+                                                        <div *ngIf="kpi && kpiShowTrendline" style="display: flex; flex-direction: column; gap: 0.75rem;">
+
+                                                            <!-- KPI Target Value -->
+                                                            <div>
+                                                            <label class="form-label d-block mb-1" for="kpi-target">Target Value</label>
+                                                            <input
+                                                                type="number"
+                                                                id="kpi-target"
+                                                                [(ngModel)]="kpiTarget"
+                                                                placeholder="Enter target"
+                                                                min="0"
+                                                                class="form-control p-1"
+                                                                style="border: 1px solid #ccc; width: 100%; max-width: 200px;" />
+                                                            </div>
+                                                            <!-- Date Column Selector -->
+                                                            <div>
+                                                            <label class="form-label d-block mb-1" for="date-column-select">Date Field</label>
+                                                            <select
+                                                                id="date-column-select"
+                                                                class="form-select p-1"
+                                                                [(ngModel)]="selectedDateColumn"
+                                                                style="border: 1px solid #ccc; width: 100%; max-width: 200px;">
+                                                                <option value="" disabled selected>Select date field</option>
+                                                                <option *ngFor="let column of dateTypeColumns" [value]="column">{{ column }}</option>
+                                                            </select>
+                                                            </div>
+                                                            <!-- Trend Axis Dropdown -->
+                                                            <div>
+                                                            <label class="form-label d-block mb-1" for="trend-axis">Trend Axis</label>
+                                                            <select
+                                                                id="trend-axis"
+                                                                class="form-select p-1"
+                                                                [(ngModel)]="kpiTrendAxis"
+                                                                style="border-bottom: 1px solid #ccc; width: 100%; max-width: 200px;">
+                                                                <option value="month">Monthly</option>
+                                                                <option value="week">Weekly</option>
+                                                                <option value="day">Daily</option>
+                                                                <option value="year">Yearly</option>
+                                                            </select>
+                                                            </div>
+                                                            <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                            <label for="color">KPI Value Indicator</label>
+                                                            <!-- <div *ngIf="showKpiIndicator" class="toggle toggle-sm on mb-0" (click)="showKpiIndicator = !showKpiIndicator;">
+                                                                <span></span>
+                                                            </div>
+                                                            <div *ngIf="!showKpiIndicator" class="toggle toggle-sm off mb-0" (click)="showKpiIndicator = !showKpiIndicator;">
+                                                                <span></span>
+                                                            </div> -->
+                                                            <div class="toggle toggle-sm mb-0"
+                                                                [ngClass]="showKpiIndicator ? 'on' : 'off'"
+                                                                (click)="showKpiIndicator = !showKpiIndicator">
+                                                                <span></span>
+                                                            </div>
+                                                            </div>
+                                                            <!-- Save Button -->
+                                                            <div class="mt-2">
+                                                            <button
+                                                                [disabled]="!kpiTarget || kpiTarget <= 0 || !kpiTrendAxis || !selectedDateColumn"
+                                                                class="btn btn-primary btn-sm"
+                                                                (click)="saveTrendLine()"
+                                                                style="min-width: 100px;">
+                                                                Apply
+                                                            </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                     <div *ngIf="((pie && chartId) || donut || bar || horizontalBar || map)  && draggedColumns && draggedColumns?.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
