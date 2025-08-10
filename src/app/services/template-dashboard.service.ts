@@ -1,6 +1,6 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { forkJoin, switchMap } from 'rxjs';
+import { forkJoin, switchMap, Observable, of, tap, shareReplay, EMPTY, finalize } from 'rxjs';
 import { InsightEchartComponent } from '../components/workbench/insight-echart/insight-echart.component';
 import { WorkbenchService } from '../components/workbench/workbench.service';
 import { uuidv4 } from '@firebase/util';
@@ -17,6 +17,8 @@ interface TableRow {
   providedIn: 'root'
 })
 export class TemplateDashboardService {
+  private building = new Set<string>();
+  private cache = new Map<string, Observable<any>>();
   customizeOptions = {GridColor
     : 
     "#089ffc",
@@ -316,6 +318,14 @@ export class TemplateDashboardService {
   dashboardQuerySetIds: number[]=[];
   sheetsData: any;
   constructor(private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService) { }
+
+  private withBuildLock<T>(key: string, work: () => Observable<T>): Observable<T> {
+    if (this.building.has(key)) {
+      return EMPTY;
+    }
+    this.building.add(key);
+    return work().pipe(finalize(() => this.building.delete(key)));
+  }
 
   buildDashboardTransfer(container: ViewContainerRef,responesData : any){
     const componentRef =container.createComponent(SheetsComponent);
@@ -639,7 +649,7 @@ export class TemplateDashboardService {
       });
     }
   }
-   buildSampleGieneAiqDashbaord(container: ViewContainerRef, databaseId: any, responceData?: any) {
+  buildSampleGieneAiqDashbaord(container: ViewContainerRef, databaseId: any, responceData?: any) {
     const componentRef = container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
 
@@ -671,6 +681,17 @@ export class TemplateDashboardService {
     } else {
      return
     }
+  }
+
+  buildSampleGieneAiqDashbaordOnce(databaseId: any, responceData?: any): Observable<any> {
+    const key = `genieaiq:${databaseId}`;
+    if (this.cache.has(key)) {
+      return this.cache.get(key)!;
+    }
+    const source$ = responceData ? of(responceData) : this.workbechService.buildSampleImmybotDashboard(databaseId);
+    const work$ = this.withBuildLock(key, () => source$.pipe(shareReplay(1)));
+    this.cache.set(key, work$);
+    return work$;
   }
   buildDashboardResponseData(responce: any){
     let dashboardData: any[] = [];

@@ -218,8 +218,9 @@ isInsightSelected(insight: any): boolean {
      this.workbechService.getDashbaordSuggestions(payload).subscribe({
       next:(data)=>{
       console.log(data);
-      this.templateDashboardService.buildSampleGieneAiqDashbaord(this.hierarchyId.hierarchy_id, data);
-      this.step = 3;
+      this.templateDashboardService.buildSampleGieneAiqDashbaordOnce(this.hierarchyId.hierarchy_id, data).subscribe(() => {
+        this.step = 3;
+      });
       },
       error:(error)=>{
         console.log(error);
