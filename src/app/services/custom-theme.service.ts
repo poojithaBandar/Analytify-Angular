@@ -8,6 +8,7 @@ export class CustomThemeService {
 
   currentTheme : any;
   apiCustomTheme : any;
+  glassBackgroundUrl: string | null = null;
 
   constructor() { }
 
@@ -40,5 +41,19 @@ export class CustomThemeService {
       return this.currentTheme;
     }
     return JSON.parse(localStorage.getItem("customTheme")!);
+  }
+
+  setGlassBackground(url: string){
+    this.glassBackgroundUrl = url;
+    localStorage.setItem('glassBgImage', url);
+    document.documentElement.style.setProperty('--glass-bg-image', `url('${url}')`);
+  }
+
+  getGlassBackground(): string | null{
+    if(this.glassBackgroundUrl){
+      return this.glassBackgroundUrl;
+    }
+    const stored = localStorage.getItem('glassBgImage');
+    return stored ? stored : null;
   }
 }

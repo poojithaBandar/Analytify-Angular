@@ -43,6 +43,16 @@
 	--input-border: 									#e9edf6;
 	--form-control-bg: 									#ffffff;
 	--fixed-white: 									    #ffffff;
+        --glass-blur: 14px;
+        --glass-opacity: 0.6;
+        --glass-border: 1px;
+        --glass-border-color: rgba(255, 255, 255, 0.25);
+        --glass-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        --glass-overlay: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15));
+        --glass-bg-image: none;
+        --glass-bg-position: center center;
+        --glass-bg-size: cover;
+        --glass-bg-attachment: fixed;
     --breakpoint-sm: 576px;
     --breakpoint-md: 768px;
     --breakpoint-lg: 992px;
@@ -268,6 +278,45 @@ $black-9:												var(--black-9);
 	--black-8:											rgba(255,255,255,0.8);
 	--black-9:											rgba(255,255,255,0.9);
     
+}
+[data-theme-mode="glass"] {
+  body,
+  .app-root {
+    background-image: var(--glass-bg-image), var(--glass-overlay);
+    background-position: var(--glass-bg-position);
+    background-size: var(--glass-bg-size);
+    background-attachment: var(--glass-bg-attachment);
+    background-repeat: no-repeat;
+    background-color: #000;
+  }
+  --default-text-color: #f5f7fa;
+  --text-muted: rgba(245,247,250,0.8);
+  --heading-color: #ffffff;
+  --link-color: #e2e8ff;
+  --surface-bg: rgba(255,255,255, var(--glass-opacity));
+  --surface-border: var(--glass-border) solid var(--glass-border-color);
+  --surface-shadow: var(--glass-shadow);
+  --custom-white: var(--surface-bg);
+  --default-background: var(--surface-bg);
+  --menu-bg: var(--surface-bg);
+  --header-bg: var(--surface-bg);
+  --menu-border-color: var(--glass-border-color);
+  --header-border-color: var(--glass-border-color);
+  --input-border: var(--glass-border-color);
+  --form-control-bg: var(--surface-bg);
+}
+
+[data-theme-mode="glass"] .glass-panel,
+[data-theme-mode="glass"] .card,
+[data-theme-mode="glass"] .modal-content,
+[data-theme-mode="glass"] .offcanvas,
+[data-theme-mode="glass"] .app-header,
+[data-theme-mode="glass"] .app-sidebar {
+  background: var(--surface-bg);
+  border: var(--surface-border);
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
 /*float variables*/

@@ -21,8 +21,7 @@
                                             Light
                                         </label>
                                         <input class="form-check-input" type="radio" name="theme-style" id="switcher-light-theme"
-                                        (click)="themeChange('light','light')" [checked]="localdata['insightappsdarktheme']!='dark'"
-                                            >
+                                        (click)="themeChange('light','light')" [checked]="localdata['insightappsdarktheme']=='light' || !localdata['insightappsdarktheme']">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -34,6 +33,20 @@
                                         (click)="themeChange('dark','dark')" [checked]="localdata['insightappsdarktheme']=='dark'">
                                     </div>
                                 </div>
+                                <div class="col-4">
+                                    <div class="form-check switch-select">
+                                        <label class="form-check-label" for="switcher-glass-theme">
+                                            Glassmorphism
+                                        </label>
+                                        <input class="form-check-input" type="radio" name="theme-style" id="switcher-glass-theme"
+                                        (click)="selectGlass()" [checked]="localdata['insightappsdarktheme']=='glass'">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-100 mt-2" *ngIf="isGlass">
+                                <input type="file" accept="image/*" (change)="onGlassFileChange($event)">
+                                <img *ngIf="glassPreview" [src]="glassPreview" class="img-fluid mt-2"/>
+                                <button class="btn btn-primary w-100 mt-2" (click)="applyGlassTheme()">Apply</button>
                             </div>
                         </div>
                         <div class="">

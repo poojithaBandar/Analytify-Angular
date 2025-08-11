@@ -32,6 +32,8 @@ export class SwitcherComponent {
 
   }
   body = document.querySelector('body');
+  isGlass: boolean = false;
+  glassPreview: string | null = null;
 
   SwitcherClose(){
   //   if (document.querySelector(".offcanvas-end")?.classList.contains("show")) {
@@ -44,6 +46,27 @@ export class SwitcherComponent {
     document.querySelector("body")!.classList.remove("padding-right:4px");
     document.querySelector(".switcher-backdrop")?.classList.remove("d-block");
     document.querySelector(".switcher-backdrop")?.classList.add("d-none");
+  }
+  selectGlass(){
+    this.isGlass = true;
+    const existing = this.themeService.getGlassBackground();
+    if(existing){
+      this.glassPreview = existing;
+    }
+  }
+
+  onGlassFileChange(event: any){
+    const file = event.target.files && event.target.files[0];
+    if(file){
+      this.glassPreview = URL.createObjectURL(file);
+    }
+  }
+
+  applyGlassTheme(){
+    if(this.glassPreview){
+      this.themeService.setGlassBackground(this.glassPreview);
+      this.themeChange('glass','dark');
+    }
   }
   themeChange(type: string, type1: string) {
     const htmlElement =
@@ -60,6 +83,9 @@ export class SwitcherComponent {
     );
     this.renderer.setAttribute(htmlElement, 'data-header-styles', type1);
     localStorage.setItem('insightappsHeader', type1);
+    if(type !== 'glass'){
+      this.isGlass = false;
+    }
     if (localStorage.getItem('insightappsdarktheme') == 'light') {
       localStorage.removeItem("insightapps-background-mode-body");
       localStorage.removeItem("insightapps-background-mode-dark");
@@ -421,6 +447,10 @@ export class SwitcherComponent {
     switcher.localStorageBackUp();
     this.closeMenu(localStorage.getItem('insightappsMenus'));
     this.setChartType();
+    if(localStorage.getItem('insightappsdarktheme') === 'glass'){
+      this.isGlass = true;
+      this.glassPreview = this.themeService.getGlassBackground();
+    }
   }
 
   public localdata = localStorage;
