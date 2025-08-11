@@ -655,7 +655,18 @@ export class TemplateDashboardService {
       chartData = this.echartInstance.mapChart(dualAxisColumnData, dualAxisRowData,chartsRowData);
     }  else if(data.chart_id == 2) {
       chartData = this.echartInstance.hstackedChart(dualAxisColumnData, dualAxisRowData);
+    } else if(data.chart_id == 13) {
+      chartData = this.echartInstance.linechartFromGenieDashboard(chartsColumnData,chartsRowData);
+    } else if(data.chart_id == 17){
+      chartData = this.echartInstance.areachartFromGenieDashboard(chartsColumnData,chartsRowData);
+    } else if(data.chart_id == 4){
+      chartData = this.echartInstance.barLinechartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+    } else if(data.chart_id == 26){
+      chartData = this.echartInstance.heatmapFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+    } else if(data.chart_id == 5){
+      chartData = this.echartInstance.stackedchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     }
+    
     const sheetRows = data.row_data.map((item:any) => {
       return {
         column: item.orginal_column,

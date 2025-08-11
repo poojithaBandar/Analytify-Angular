@@ -496,6 +496,11 @@ getLabelPosition(){
       return 'inside'; // Default position if none matches
   }
 }
+stackedchartFromGenieDashboard(dualAxisColumnData? : any ,dualAxisRowData? : any ){
+  this.dualAxisColumnData = dualAxisColumnData;
+  this.dualAxisRowData = dualAxisRowData;
+  this.stackedChart();
+}
 stackedChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
@@ -944,6 +949,11 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
   };
   return this.chartOptions;
 }
+areachartFromGenieDashboard(chartsColumnData?:any,chartsRowData?:any){
+ this.chartsColumnData = chartsColumnData;
+this.chartsRowData = chartsRowData;
+this.areaChart(); 
+}
 areaChart(){
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
@@ -1046,6 +1056,11 @@ areaChart(){
   };
 console.log(this.chartsRowData,this.chartsColumnData,'areachart')
 
+}
+linechartFromGenieDashboard(chartsColumnData?:any,chartsRowData?:any){
+this.chartsColumnData = chartsColumnData;
+this.chartsRowData = chartsRowData;
+this.lineChart();
 }
 lineChart(){
   this.chartOptions = {
@@ -1246,6 +1261,11 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
     ]
   };
   return this.chartOptions;
+}
+barLinechartFromGenieDashboard(dualAxisColumnData?:any, dualAxisRowData?:any){
+this.dualAxisColumnData = dualAxisColumnData;
+this.dualAxisRowData = dualAxisRowData;
+this.barLineChart();
 }
 barLineChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1560,6 +1580,11 @@ radarChart(){
 ]
   }
   this.radarDistributionSetOptions();
+}
+heatmapFromGenieDashboard(dualAxisColumnData? : any, dualAxisRowData? : any){
+  this.dualAxisColumnData = dualAxisColumnData;
+  this.dualAxisRowData = dualAxisRowData;
+  this.heatMapChart();
 }
 heatMapChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
