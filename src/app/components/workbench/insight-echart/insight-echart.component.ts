@@ -34,6 +34,7 @@ export class InsightEchartComponent {
   @Input() dualAxisColumnData:any;
   @Input() dualAxisRowData:any;
   @Input() donutSize:any;
+  @Input() outerRadius:any;
   @Input() radarRowData:any;
   @Input() displayUnits:any;
   @Input() decimalPlaces:any;
@@ -173,6 +174,24 @@ export class InsightEchartComponent {
     }
     return this.color;
   }
+
+  autoAdjustChartHeightForHBar() {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = this.chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    // Optional: set a minimum height
+    const chartHeight = Math.max(calculatedHeight, 400);
+
+    this.height = chartHeight + 'px';
+
+    setTimeout(() => {
+      if (this.chartInstance) {
+        this.chartInstance.resize();
+      }
+    }, 0);
+  }
+
  barChart(chartsColumnData? : any ,chartsRowData?: any ){
     if(chartsColumnData && chartsRowData){
       this.chartsColumnData = chartsColumnData;
@@ -325,9 +344,16 @@ horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
       type: 'none'
     },
     dataZoom: [
+      // {
+      //   show: this.isZoom,
+      //   type: 'slider'
+      // }
       {
         show: this.isZoom,
-        type: 'slider'
+        type: 'slider',
+        yAxisIndex: 0,
+        start: 0,
+        end: 100
       }
     ],
     grid: {
@@ -794,7 +820,7 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
       ...series,
       label:{
           show:true, // Enable data labels
-          position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+          position: this.getLabelPosition(), // Position of the labels (e.g., 'top', 'inside', etc.)
           // color:'#000', // Default label color (can be updated)
           // fontSize:this.xLabelFontSize, // Default label font size
           // fontWeight:'bold', // Default label font weight
@@ -908,7 +934,7 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
       ...series,
       label:{
           show:true, // Enable data labels
-          position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+          position: this.getLabelPosition(), // Position of the labels (e.g., 'top', 'inside', etc.)
           // color:'#000', // Default label color (can be updated)
           // fontSize:this.xLabelFontSize, // Default label font size
           // fontWeight:'bold', // Default label font weight
@@ -1210,7 +1236,7 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
     series: [
       {
         type: 'pie',
-        radius: [this.donutSize+'%' , '70%'],
+        radius: [this.donutSize+'%' , this.outerRadius+'%'],
         data: combinedArray,
         avoidLabelOverlap: true,
         emphasis: {
@@ -1986,9 +2012,11 @@ chartInitialize(){
   if(this.chartType ==='bar'){
     this.barChart();
   }else if(this.chartType ==='horizontalBar'){
-  this.horizontalBarChart();
+    this.autoAdjustChartHeightForHBar();
+    this.horizontalBarChart();
  }
   else if(this.chartType ==='funnel'){
+  this.autoAdjustChartHeightForHBar();
   this.funnelchart();
   }
   else if(this.chartType ==='stocked'){
@@ -2086,16 +2114,37 @@ chartInitialize(){
     if(changes['isZoom']){
       if (this.chartInstance) {
 
-        let obj ={
-          dataZoom: this.isZoom ? [
-            {
-              type: 'slider',
-              show: true
-            }] : [{
-              type: 'slider',
-              show: false
-            }
-          ]
+        let obj ={};
+        if (this.chartType === 'horizontalBar') {
+          obj = {
+            dataZoom: this.isZoom ? [
+              {
+                show: true,
+                type: 'slider',
+                yAxisIndex: 0,
+                start: 0,
+                end: 100
+              }] : [{
+                show: false,
+                type: 'slider',
+                yAxisIndex: 0,
+                start: 0,
+                end: 100
+              }
+            ]
+          }
+        } else {
+          obj = {
+            dataZoom: this.isZoom ? [
+              {
+                type: 'slider',
+                show: true
+              }] : [{
+                type: 'slider',
+                show: false
+              }
+            ]
+          }
         }
         this.chartInstance?.setOption(obj);
         this.chartOptions = { ...this.chartOptions, ...obj };
@@ -2258,7 +2307,7 @@ chartInitialize(){
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
-    if(changes['donutSize']){
+    if(changes['donutSize'] || changes['outerRadius']){
       this.donutSizeChange();
     }
     if(changes['isBold']){
@@ -2288,9 +2337,13 @@ chartInitialize(){
     // if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
     //   this.sortSeries(this.sortType);
     // }
+    if (['horizontalBar', 'funnel'].includes(this.chartType)) {
+      this.autoAdjustChartHeightForHBar();
+    }
     if(this.isSheetSaveOrUpdate){
       let object = {
-        chartOptions : this.chartOptions
+        chartOptions : this.chartOptions,
+        height: this.height
       }
       this.saveOrUpdateChart.emit(object);
     }
@@ -2913,12 +2966,41 @@ radarDistributionSetOptions() {
     });
        this.chartInstance?.setOption(this.chartOptions,true)
      }
-     else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
+     else if(this.chartType === 'multiline'){
       this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
         series.label.position = this.dataLabelsFontPosition; 
     });
     this.chartInstance?.setOption(this.chartOptions,true)
-     } else if(this.chartType === 'horizontalBar'){
+      } else if (this.chartType === 'stocked' || this.chartType === 'sidebyside') {
+        if (this.dataLabelsFontPosition === 'center') {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = 'inside';
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        } else {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = this.dataLabelsFontPosition;
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        }
+      } else if (this.chartType === 'hgrouped' || this.chartType === 'hstocked') {
+        if (this.dataLabelsFontPosition === 'center') {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = 'inside';
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        } else if (this.dataLabelsFontPosition === 'top') {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = 'right';
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        } else if (this.dataLabelsFontPosition === 'bottom') {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = 'insideLeft';
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        }
+      } else if(this.chartType === 'horizontalBar'){
       if(this.dataLabelsFontPosition === 'center'){
         let obj ={
           series :[
@@ -3583,11 +3665,11 @@ radarDistributionSetOptions() {
   donutSizeChange(){
     let obj ={
       series:[{
-        radius: [this.donutSize+'%' , '70%']
+        radius: [this.donutSize+'%' , this.outerRadius+'%']
       }]
     }
     this.chartInstance?.setOption(obj);
-    this.chartOptions.series[0].radius = [this.donutSize+'%' , '70%'];
+    this.chartOptions.series[0].radius = [this.donutSize+'%' , this.outerRadius+'%'];
   }
 updateNumberFormat(){
   if(this.chartType === 'bar'){
@@ -3914,12 +3996,14 @@ updateSeries(){
       console.log('X-axis value:', event.name);
       let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
       this.drillDownIndex++;
+      nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
       let obj = { [nestedKey]: event.name };
       this.drillDownObject.push(obj);
       let dObject = {
         drillDownIndex : this.drillDownIndex,
         draggedDrillDownColumns :this.draggedDrillDownColumns,
-        drillDownObject : this.drillDownObject
+        drillDownObject : this.drillDownObject,
+        chartOptions : JSON.parse(JSON.stringify(this.chartOptions))
       }
       this.setDrilldowns.emit(dObject);
       // this.setOriginalData();
@@ -3957,7 +4041,8 @@ updateSeries(){
       let dObject = {
         drillDownIndex : this.drillDownIndex,
         draggedDrillDownColumns :this.draggedDrillDownColumns,
-        drillDownObject : this.drillDownObject
+        drillDownObject : this.drillDownObject,
+        chartOptions : JSON.parse(JSON.stringify(this.chartOptions))
       }
       this.setDrilldowns.emit(dObject);
     }

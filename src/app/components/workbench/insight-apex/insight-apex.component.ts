@@ -52,6 +52,7 @@ export class InsightApexComponent {
   @Input() donutSize : any;
   @Input() isDistributed : any;
   @Input() minValueGuage : any;
+  @Input() gaugeDisplayMode :any;
   @Input() maxValueGuage : any;
   @Input() legendsAllignment: any;
   @Input() dataLabelsFontFamily : any;
@@ -76,6 +77,7 @@ export class InsightApexComponent {
   @Input() SDKChartOptions: any;
   @Input() measureColorRanges: any;
   @Input() isMeasureDistribution: any;
+  @Input() valueToDivide : any;
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   
@@ -94,11 +96,11 @@ export class InsightApexComponent {
   @ViewChild('funnelChart') funnelCharts!: ChartComponent;
   @ViewChild('guageChart') guageCharts!: ChartComponent;
   @ViewChild('heatmapchart') heatmapCharts!: ChartComponent;
+
   series: any[] = [];
   chartOptions: any = {};
-  guageNumber : any;
-  valueToDivide : any;
   formattedData : any[] = [];
+  guageNumber : any;
 
   ngOnInit(){
     // this.generateChart();
@@ -209,9 +211,22 @@ export class InsightApexComponent {
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
-    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
-      this.customMinMaxGuage();
-    }
+    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'] || changes['gaugeDisplayMode'])){
+      if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
+      if (changes['maxValueGuage']) {
+        this.maxValueGuage = changes['maxValueGuage'].currentValue;
+        this.guageChart1();
+      }
+      if (changes['minValueGuage']) {
+        this.minValueGuage = changes['minValueGuage'].currentValue;
+        this.guageChart1();
+      }
+    }else if( changes['gaugeDisplayMode']) {
+        this.gaugeDisplayMode = changes['gaugeDisplayMode'].currentValue;
+        this.guageChart1();
+      }
+     
+       }
     // if(['funnel','bar'].includes(this.chartType) && changes['sortType'] && changes['sortType']?.currentValue !== 0){
     //   this.sortSeries(this.sortType);
     // }
@@ -397,7 +412,7 @@ export class InsightApexComponent {
     } else if(this.chartType === 'funnel'){
       this.funnelChart();
     } else if(this.chartType === 'guage'){
-      this.guageChart();
+      this.guageChart1();
     }
     let isValid = this.validateSeriesData(this.chartOptions.series);
     if (!isValid) {
@@ -421,6 +436,18 @@ export class InsightApexComponent {
       );
     }
   }
+
+  autoAdjustChartHeightForHBar() {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = this.chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    // Optional: set a minimum height
+    const chartHeight = Math.max(calculatedHeight, 320); // e.g., 300px minimum
+
+    return chartHeight;
+  }
+
   barChart() {
     const self = this;
     this.chartOptions = {
@@ -472,13 +499,15 @@ export class InsightApexComponent {
               const selectedXValue = self.chartsColumnData[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();
@@ -594,7 +623,7 @@ horizontalBarChart() {
         autoSelected: 'zoom' 
       },
       type: 'bar',
-      height: 320,
+      height: this.autoAdjustChartHeightForHBar(),
       background: this.backgroundColor,
       events: {
         dataPointSelection: function (event: any, chartContext: any, config: any) {
@@ -602,13 +631,15 @@ horizontalBarChart() {
           console.log('X-axis value:', selectedXValue);
           if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
             let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+            nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
             self.drillDownIndex++;
             let obj = { [nestedKey]: selectedXValue };
             self.drillDownObject.push(obj);
             let dObject = {
               drillDownIndex: self.drillDownIndex,
               draggedDrillDownColumns: self.draggedDrillDownColumns,
-              drillDownObject: self.drillDownObject
+              drillDownObject: self.drillDownObject,
+              chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
             }
             self.setDrilldowns.emit(dObject);
           }
@@ -631,6 +662,7 @@ horizontalBarChart() {
 xaxis: {
   categories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
   labels: {
+    show: this.xLabelSwitch,
     formatter: this.formatNumber.bind(this),
     style: {
       fontSize: this.xLabelFontSize,
@@ -912,13 +944,15 @@ xaxis: {
               const selectedXValue = self.chartOptions.labels[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();
@@ -1689,13 +1723,15 @@ xaxis: {
               const selectedXValue = self.chartsColumnData[config.dataPointIndex];
               console.log('X-axis value:', selectedXValue);
               let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
               let dObject = {
                 drillDownIndex : self.drillDownIndex,
                 draggedDrillDownColumns :self.draggedDrillDownColumns,
-                drillDownObject : self.drillDownObject
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
               }
               self.setDrilldowns.emit(dObject);
               // self.setOriginalData();
@@ -1845,7 +1881,7 @@ xaxis: {
       series: this.dualAxisRowData,
       chart: {
         type: "bar",
-        height: 350,
+        height: this.autoAdjustChartHeightForHBar(),
         background: this.backgroundColor,
       },
       plotOptions: {
@@ -1885,45 +1921,46 @@ xaxis: {
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData ) : (this.isDistributed ? this.selectedColorScheme : [this.color])
     };
   }
-  guageChart() {
-    // Clone the gauge number from the API response
-    this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+  // guageChart() {
+  //   // Clone the gauge number from the API response
+  //   this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
 
-    // Define thresholds and corresponding max values
-    const thresholds = [
-      { limit: 1000, max: 1000 },       // Up to 1,000
-      { limit: 10000, max: 10000 },     // Up to 10,000
-      { limit: 100000, max: 100000 },    // Up to 1 lakh
-      { limit: 500000, max: 500000 },    // Up to 5 lakhs
-      { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
-      { limit: Infinity, max: Math.ceil(this.guageNumber / 1000000) * 1000000 } // Above 10 lakhs
-    ];
+  //   // Define thresholds and corresponding max values
+  //   const thresholds = [
+  //     { limit: 1000, max: 1000 },       // Up to 1,000
+  //     { limit: 10000, max: 10000 },     // Up to 10,000
+  //     { limit: 100000, max: 100000 },    // Up to 1 lakh
+  //     { limit: 500000, max: 500000 },    // Up to 5 lakhs
+  //     { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
+  //     { limit: Infinity, max: (Math.ceil(this.guageNumber / 1000000) + 1) * 1000000 } // Above 10 lakhs
+  //   ];
 
-    // Determine maxValueGuage based on guageNumber
-    const determineMaxValue = (value: number) => {
-      for (const threshold of thresholds) {
-        if (value <= threshold.limit) {
-          return threshold.max;
-        }
-      }
-    };
+  //   // Determine maxValueGuage based on guageNumber
+  //   const determineMaxValue = (value: number) => {
+  //     for (const threshold of thresholds) {
+  //       if (value <= threshold.limit) {
+  //         return threshold.max;
+  //       }
+  //     }
+  //   };
 
-    // Set maxValueGuage based on guageNumber
-    this.maxValueGuage = determineMaxValue(this.guageNumber)!;
+  //   // Set maxValueGuage based on guageNumber
+  //   this.maxValueGuage = determineMaxValue(this.guageNumber)!;
 
-    // Calculate the value to divide
-    this.valueToDivide = this.maxValueGuage - this.minValueGuage;
-    this.guageChart1()
-  }
-  customMinMaxGuage() {
-    this.valueToDivide = this.maxValueGuage - this.minValueGuage;
-    this.guageChart1();
-  }
+  //   // Calculate the value to divide
+  //   this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+  //   this.guageChart1()
+  // }
+  // customMinMaxGuage() {
+  //   this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+  //   this.guageChart1();
+  // }
   guageChart1() {
     // this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
     // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
     //  const valueToDivide = this.maxValueGuage-this.minValueGuage
     // Initialize the chart options
+    this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
     const self = this;
     this.chartOptions = {
       series: [((this.guageNumber / this.valueToDivide) * 100)], // Correct percentage calculation
@@ -1985,7 +2022,18 @@ xaxis: {
               fontWeight: this.isBold ? 700 : 400
             },
             value: {
-              formatter: (val: any) => `${val.toFixed(2)}%`, // Displaying percentage
+              formatter: (val: any) => {
+                switch (this.gaugeDisplayMode) {
+                  case 'percentage':
+                    return `${val.toFixed(2)}%`;
+                  case 'value':
+                    return `${this.guageNumber}`;
+                  case 'both':
+                    return `${val.toFixed(2)}% (${this.guageNumber})`;
+                  default:
+                    return `${val.toFixed(2)}%`;
+                } 
+              },
               show: true,
               color: this.dataLabelsColor,
               fontSize: this.dataLabelsFontSize,
@@ -3006,6 +3054,9 @@ xaxis: {
     }
     else if(this.chartType === 'heatmap'){
       this.heatmapCharts?.updateOptions(object);
+    }
+    else if(this.chartType === 'gauge'){
+      this.guageCharts?.updateOptions(object);
     }
   }
   gridLineColor(){

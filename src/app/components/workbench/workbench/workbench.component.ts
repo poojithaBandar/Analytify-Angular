@@ -59,10 +59,12 @@ export class WorkbenchComponent implements OnInit{
   openMySqlForm = false;
   openConnectWiseForm = false;
   openHaloPSAForm = false;
+  openPax8Form = false;
   openHubspotForm = false;
   openShopifyForm =false;
   openGoogleAnalyticsForm = false;
   openOpenAIForm = false;
+  openDeepSeekForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -216,7 +218,7 @@ export class WorkbenchComponent implements OnInit{
     this.canUploadCsv = this.viewTemplateService.canUploadCsv();
 
     const currentUrl = this.router.url; 
-    if (currentUrl.startsWith('/analytify/datasources/')) {
+    if (currentUrl.includes('/analytify/datasources/')) {
       if (currentUrl.includes('view-connections')) {
         this.databaseconnectionsList = true;
         this.viewNewDbs = false;
@@ -299,6 +301,9 @@ export class WorkbenchComponent implements OnInit{
     else if(this.databaseSwitchType === 'HALOPS'){
     this.connectHaloPSA();
     }
+    else if(this.databaseSwitchType === 'PAX8'){
+    this.connectPax8();
+    }
     else if(this.databaseSwitchType === 'TALLY'){
     this.connectTally();
     }
@@ -356,6 +361,8 @@ export class WorkbenchComponent implements OnInit{
     siteURLPSA = '';
     clientSecret = '';
     clientIdPSA = '';
+    pax8ClientId = '';
+    pax8ClientSecret = '';
     publicKey = '';
     privateKey = '';
     path='';
@@ -363,6 +370,7 @@ export class WorkbenchComponent implements OnInit{
     shopifyName = '';
     tallyToken = '';
     openAiKey = '';
+    deepSeekKey = '';
 
     googleAnalytics: {
       type: string;
@@ -623,6 +631,8 @@ export class WorkbenchComponent implements OnInit{
     this.siteURLPSA = '';
     this.clientIdPSA = '';
     this.clientSecret = '';
+    this.pax8ClientId = '';
+    this.pax8ClientSecret = '';
     this.ninjaRMMClientid = '';
     this.ninjaRMMClientSecret = '';
     this.selectedNinjaRMMScopes = [];
@@ -828,6 +838,31 @@ export class WorkbenchComponent implements OnInit{
 
     }
 
+    pax8Update(){
+      const obj = {
+        "client_id": this.pax8ClientId,
+        "client_secret": this.pax8ClientSecret,
+        "display_name": this.displayName,
+        "hierarchy_id":this.databaseId
+      }
+
+      this.workbechService.pax8ConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+
     ImmybotConnectionUpdate(){
       const obj={
         "client_id":this.clientIdImmybot,
@@ -906,6 +941,27 @@ export class WorkbenchComponent implements OnInit{
         "hierarchy_id": this.databaseId
       }
       this.workbechService.openAiConnectionUpdate(obj).subscribe({next:(res)=>{
+            this.modalService.dismissAll('close');
+            if(res){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error:(error)=>{
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+
+    deepSeekUpdate(){
+      const obj = {
+        "deepseek_key": this.deepSeekKey,
+        "display_name": this.displayName,
+        "hierarchy_id": this.databaseId
+      }
+      this.workbechService.deepSeekConnectionUpdate(obj).subscribe({next:(res)=>{
             this.modalService.dismissAll('close');
             if(res){
               this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
@@ -1091,6 +1147,12 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+    connectPax8(){
+      this.openPax8Form = true;
+      this.databaseconnectionsList = false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
     connectTally(){
       this.openTallyForm = true;
       this.databaseconnectionsList= false;
@@ -1116,6 +1178,12 @@ export class WorkbenchComponent implements OnInit{
   }
   connectOpenAI(){
     this.openOpenAIForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
+  connectDeepSeek(){
+    this.openDeepSeekForm = true;
     this.databaseconnectionsList = false;
     this.viewNewDbs = false;
     this.emptyVariables();
@@ -1170,6 +1238,22 @@ export class WorkbenchComponent implements OnInit{
         this.clientIDPSAError = false;
       }else{
         this.clientIDPSAError = true;
+      }
+    }
+
+    pax8ClientIdValidation(){
+      if(this.pax8ClientId){
+        this.pax8ClientIdError = false;
+      }else{
+        this.pax8ClientIdError = true;
+      }
+    }
+
+    pax8ClientSecretValidation(){
+      if(this.pax8ClientSecret){
+        this.pax8ClientSecretError = false;
+      }else{
+        this.pax8ClientSecretError = true;
       }
     }
 
@@ -1241,6 +1325,13 @@ export class WorkbenchComponent implements OnInit{
         this.openAiKeyError = true;
       }
     }
+    deepSeekKeyInputError(){
+      if(this.deepSeekKey){
+        this.deepSeekKeyError = false;
+      }else{
+        this.deepSeekKeyError = true;
+      }
+    }
     shopfyNameError(){
       if(this.shopifyName){
         this.shopifyNameError = false;
@@ -1281,12 +1372,30 @@ export class WorkbenchComponent implements OnInit{
               this.openShopifyForm = false;
               }
               const encodedId = btoa(this.databaseId.toString());
-              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               if(this.iscrossDbSelect){
                 this.selectedHirchyIdCrsDb = this.databaseId
                 this.connectCrossDbs();
+              }else if(this.datasourceSwitchUI){
+                this.switchDatabase();
               }else{
-              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                Swal.fire({
+                  position: "center",
+                  iconHtml: '<img src="./assets/images/copilot.gif">',
+                  title: "Create smart dashboard from your data with just one click?",
+                  showConfirmButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: 'Yes',
+                  cancelButtonText: 'Skip',
+                  customClass: {
+                    icon: 'no-icon-bg',
+                  }
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    this.templateDashboardService.buildSampleShopifyDashboard(this.container, this.databaseId);
+                  } else {
+                    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  }
+                });
               }
             }
           },
@@ -1326,7 +1435,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+              title: "Create smart dashboard from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1382,7 +1491,7 @@ export class WorkbenchComponent implements OnInit{
             Swal.fire({
               position: "center",
               iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+              title: "Create smart dashboard from your data with just one click?",
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Yes',
@@ -1437,7 +1546,7 @@ export class WorkbenchComponent implements OnInit{
                 position: "center",
                 // icon: "question",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+                title: "Create smart dashboard from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1489,7 +1598,7 @@ export class WorkbenchComponent implements OnInit{
               Swal.fire({
                 position: "center",
                 iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
+                title: "Create smart dashboard from your data with just one click?",
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
@@ -1580,23 +1689,82 @@ export class WorkbenchComponent implements OnInit{
             this.switchDatabase();
           }else{
             Swal.fire({
-              position: "center",
-              iconHtml: '<img src="./assets/images/copilot.gif">',
-              title: "Generate an <b>AI Adoption Dashboard</b> from your data with just one click?",
-              showConfirmButton: true,
-              showCancelButton: true,
-              confirmButtonText: 'Yes',
-              cancelButtonText: 'Skip',
-              customClass: {
-                icon: 'no-icon-bg',
-              }
-            }).then((result) => {
+                title: '✨ Ready to Build Your AI Adoption Dashboard?',
+                html: `
+                  <img src="./assets/images/copilot.gif">
+                  <p style="font-size: 16px;">Let AI turn your data into insights — instantly.</p>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Generate It!',
+                cancelButtonText: 'Skip for Now',
+                confirmButtonColor: '#007bff',
+                cancelButtonColor: '#e0e0e0',
+                reverseButtons: true,
+                customClass: {
+                  popup: 'rounded-lg',
+                  title: 'font-semibold',
+                  htmlContainer: 'text-gray-600',
+                }
+              }).then((result) => {
               if (result.isConfirmed) {
                 this.templateDashboardService.buildSampleOpenAIDashboard(this.container, this.databaseId);
               } else {
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             });
+          }
+        }
+      }, error:(error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      }});
+    }
+
+    deepSeekSignIn(){
+      const obj = {
+        "deepseek_key": this.deepSeekKey,
+        "display_name": this.displayName
+      }
+      this.workbechService.deepSeekConnection(obj).subscribe({next:(res)=>{
+        if(res){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = res?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openDeepSeekForm = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+
+            // Swal.fire({
+            //     title: '✨ Ready to Build Your AI Adoption Dashboard?',
+            //     html: `
+            //       <img src="./assets/images/copilot.gif">
+            //       <p style="font-size: 16px;">Let AI turn your data into insights — instantly.</p>
+            //     `,
+            //     showCancelButton: true,
+            //     confirmButtonText: 'Yes, Generate It!',
+            //     cancelButtonText: 'Skip for Now',
+            //     confirmButtonColor: '#007bff',
+            //     cancelButtonColor: '#e0e0e0',
+            //     reverseButtons: true,
+            //     customClass: {
+            //       popup: 'rounded-lg',
+            //       title: 'font-semibold',
+            //       htmlContainer: 'text-gray-600',
+            //     }
+            //   }).then((result) => {
+            //   if (result.isConfirmed) {
+            //     this.templateDashboardService.buildSampleOpenAIDashboard(this.container, this.databaseId);
+            //   } else {
+            //     this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            //   }
+            // });
           }
         }
       }, error:(error)=>{
@@ -2006,6 +2174,37 @@ export class WorkbenchComponent implements OnInit{
       }
     }
 
+    pax8SignIn(){
+      const obj = {
+        "client_id": this.pax8ClientId,
+        "client_secret": this.pax8ClientSecret,
+        "display_name": this.displayName
+      }
+      this.workbechService.pax8Connection(obj).subscribe({next: (responce) => {
+        if(responce){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = responce?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openPax8Form = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+          }
+        }
+      },
+      error:(error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }})
+    }
+
     uploadfileCsv(event:any,type:any,database:any){
       const file:File = event.target.files[0];
       this.fileData = file;
@@ -2335,6 +2534,10 @@ connectGoogleSheets(){
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
+    } else if (this.databaseType == "pax8") {
+      this.pax8ClientId = editData.client_id;
+      this.pax8ClientSecret = editData.client_secret;
+      this.displayName = editData.display_name;
     }  else if (this.databaseType == "immybot") {
       this.clientIdImmybot = editData.client_id;
       this.secretValue = editData.secret_value;
@@ -2351,6 +2554,9 @@ connectGoogleSheets(){
     } else if (this.databaseType == "open_ai") {
       this.displayName = editData.display_name;
       this.openAiKey = editData.open_ai_key;
+    } else if (this.databaseType == "deepseek") {
+      this.displayName = editData.display_name;
+      this.deepSeekKey = editData.deepseek_key;
     }else if (this.databaseType === 'google_analytics') {
       this.googleAnalytics = {
         type: 'service_account',
@@ -2498,9 +2704,11 @@ connectGoogleSheets(){
   this.sqlLiteForm = false;
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
+  this.openPax8Form = false;
   this.openShopifyForm = false;
   this.openTallyForm = false;
   this.openOpenAIForm = false;
+  this.openDeepSeekForm = false;
   this.openHubspotForm = false;
   this.openGoogleAnalyticsForm = false;
   this.openGoogleAnalyticsForm = false;
@@ -2523,6 +2731,8 @@ connectGoogleSheets(){
   this.tallyTokenError = false;
   this.openAiKey = '';
   this.openAiKeyError = false;
+  this.deepSeekKey = '';
+  this.deepSeekKeyError = false;
   this.ninjaRMMClientid = '';
   this.ninjaRMMClientSecret = '';
   this.selectedNinjaRMMScopes = [];
@@ -2544,6 +2754,8 @@ connectGoogleSheets(){
   siteURLErrorPSA:boolean = false;
   clientIDPSAError:boolean = false;
   clientSecretError: boolean = false;
+  pax8ClientIdError:boolean = false;
+  pax8ClientSecretError:boolean = false;
   privateKeyError:boolean = false;
   publicKeyError:boolean = false;
   companyIDError:boolean = false;
@@ -2553,6 +2765,7 @@ connectGoogleSheets(){
   shopifyNameError:boolean = false;
   tallyTokenError:boolean = false;
   openAiKeyError:boolean = false;
+  deepSeekKeyError:boolean = false;
 
   serverConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
@@ -2934,6 +3147,54 @@ connectGoogleSheets(){
       error:(error)=>{
         console.log(error);
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+      }
+    })
+  }
+
+  smartDashboardFromConnection(database:any){
+    this.workbechService.createSmartDashboard(database.hierarchy_id).subscribe({
+      next: (responce) => {
+        switch(database.server_type){
+          case 'TALLY':
+            this.templateDashboardService.buildSampleTallyDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'SHOPIFY':
+            this.templateDashboardService.buildSampleShopifyDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'SALESFORCE':
+            this.templateDashboardService.buildSampleSalesforceDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'QUICKBOOKS':
+            this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'IMMYBOT':
+            this.templateDashboardService.buildSampleImmybotDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'NINJA':
+            this.templateDashboardService.buildSampleNinjaRMMDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'HUBSPOT':
+            this.templateDashboardService.buildSampleHubspotDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'CONNECTWISE':
+            this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'HALOPS':
+            this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'PAX8':
+            this.templateDashboardService.buildSamplePaxDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'OPEN_AI':
+            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
+            break;
+            case 'DEEPSEEK':
+            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
+            break;
+        }
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       }
     })
   }

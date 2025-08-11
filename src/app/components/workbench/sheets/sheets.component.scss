@@ -132,12 +132,17 @@ span.abc-txt { font-size: 8px; margin-right: 5px;}
 
 .genie-aiq-text {
   text-align: center;
-  font-weight: 900;
-  background-image: linear-gradient(to right, #ff69b4, #00bfff);
+  font-weight: 500;
+  background-image: linear-gradient(to right, #0206d6, #bb01c7);
   background-size: 100% 1px;
   background-position: 0% 100%;
   color: #fff;
-  padding: 5px;
+  padding: 12px;
+}
+.light-text {
+    padding: 10px 5px;
+    text-align: center;
+    color: #afb2b6;
 }
 
 .chart-suggestions { display: grid;
@@ -188,7 +193,7 @@ button.viewQueryImg {  border: none;  background: none;}
 .show-chart-card{ height: 478px; }
 .show-chart-card-no-heirarchy{  height: 512px; }
 .sheet-table-h{ height: 475px; overflow-y: auto;}
-.panel-body-h{ height: 617px;}
+.panel-body-h{ height: 620px; }
 .chart-icon.active {  border-color:#00a2a5 !important; /* Change to the color you prefer for the active state */ opacity: 1; background-color: #ecf0f1; }
 .custom-dropdown.show { position:fixed !important;  display: flex !important; flex-direction: column !important;}
 .d-inline-block { display: inline-block !important; vertical-align: middle; /* Aligns vertically centered with text */ }
@@ -356,7 +361,17 @@ button.FaFaIconProperties { padding: 6px 8px; border-top-left-radius: 0px !impor
 }
 
 .mat-mdc-tab-group {display: flex; flex-direction: column; max-width: 100%; justify-content: flex-end; }
-
+.overlay-div{position: fixed; bottom: 32px; right: 32px; z-index: 1050; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.18); border-radius: 50%; background: #fff; padding: 8px; transition: box-shadow 0.2s;height: 60px;width: 60px;}
+.overlay-img{bottom: 20px;width: 40px;object-fit: contain;margin: 0 auto;display: block;height: 87px;position: relative;}
+.genie-animate {
+  transition: transform 0.4s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.3s;
+}
+.genie-animate.bounce {
+  animation: genieBounce 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+.hide-show-btn{ width: fit-content;  cursor: pointer;  position: relative;  right: 18px;  top: 300px;  z-index: 9;  padding: 6px 9px;}
+.sheet-card-top { position: relative; top: -26px; }
+.card-top{  margin-top: 15px; padding: 5px; }
 
 @media ( 1280px <= width <= 1422px) {
   .dropdown-menu.SelectDropDownCard.show {

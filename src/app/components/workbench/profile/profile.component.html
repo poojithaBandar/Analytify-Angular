@@ -1,0 +1,329 @@
+
+<app-page-header title="My Profile" moduleId="My Profile" title1="Home" activeitem="My Profile"></app-page-header>
+
+<div class="main-container container-fluid TopHeader">
+    <div class="main-container container-fluid">
+        <div class="row">
+            <div class="col-xxl-3 col-xl-4 col-lg-5 col-md-5">
+               <div class="card">
+                    <div class="card-body profile-card">
+                        <div class="nav-container p-0">
+                            <div class="nav-item" [class.btn-primary]="activeTab === 'profile'" [class.btn-primary-light]="activeTab !== 'profile'" (click)="setActiveTab('profile')">
+                                <i class="fe fe-user me-1"></i> My Profile
+                            </div>
+                            <div class="nav-item" [class.btn-primary]="activeTab === 'password'" [class.btn-primary-light]="activeTab !== 'password'" (click)="setActiveTab('password')">
+                                <i class="fe fe-lock me-1"></i> Update Password
+                            </div>
+                            <!-- <div class="nav-item" [class.btn-primary]="activeTab === 'settings'" [class.btn-primary-light]="activeTab !== 'settings'" (click)="setActiveTab('settings')">
+                                <i class="fe fe-settings me-1"></i> Account Settings
+                            </div> -->
+                            <div *ngIf="!isEmbedSDK" class="nav-item btn-danger-light" style="color: #ff4d4f;" (click)="signOut()">
+                                <i class="fe fe-log-out me-1"></i>Sign Out
+                            </div>
+                        </div>
+                    </div>
+               </div>
+            </div>
+            
+            <div class="col-xxl-9 col-xl-8 col-lg-7 col-md-7">
+                <div class="card profile-card" *ngIf="activeTab === 'profile'">
+                    <div class="card-body">
+                        <h5 class="mt-2"> Profile</h5>
+                        <!-- <div class="avatar">AK</div> -->
+
+                        <div class="profile-img-1">
+                            <img alt="img" id="profile-img" [src]="profileImageUrl" style="cursor: pointer;" >
+                            <a aria-label="anchor" class="rounded-pill avatar-icons bg-primary tx-fixed-white p-2">
+                                <input  #fileInput type="file"  accept="image/*" name="photo" id="profile-change" class="position-absolute w-100 h-100 op-0" (change)="onImageSelect($event)" style="display: none;">
+                                <i class="fe fe-camera lh-base" style="cursor: pointer;" (click)="fileInput.click()"></i>
+                            </a>
+                        </div>
+
+                          <div class="modal" [style.display]="showImageCropper ? 'block' : 'none'" style="background-color: rgba(0,0,0,0.5);">
+                                <div class="modal-dialog modal-lg" style="max-height: 90vh; margin: 5vh auto;">
+                                    <div class="modal-content" style="height: 100%; display: flex; flex-direction: column;">
+                                        <div class="modal-header" style="flex-shrink: 0;">
+                                            <h5 class="modal-title">Crop Profile Image</h5>
+                                        </div>
+                                        <div class="modal-body" style="flex: 1; overflow-y: auto; max-height: calc(90vh - 120px);">
+                                            <image-cropper
+                                                [imageChangedEvent]="imageChangedEvent"
+                                                [maintainAspectRatio]="true"
+                                                [aspectRatio]="1"
+                                                [resizeToWidth]="300"
+                                                format="png"
+                                                (imageCropped)="imageCropped($event)"
+                                                (imageLoaded)="imageLoaded($event)"
+                                                (cropperReady)="cropperReady()"
+                                                (loadImageFailed)="loadImageFailed()">
+                                            </image-cropper>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" (click)="cancelImageCrop()">Cancel</button>
+                                            <button type="button" class="btn btn-primary" (click)="applyCroppedImage()">Apply</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                      <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()" class="mt-5">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">First Name *</label>
+                                    <input 
+                                        class="form-control" 
+                                        id="firstName" 
+                                        type="text" 
+                                        formControlName="firstName"
+                                        [class.is-invalid]="isFieldInvalid(profileForm, 'firstName')"
+                                    />
+                                    <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'firstName')">
+                                        {{ getFieldError(profileForm, 'firstName') }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name *</label>
+                                    <input 
+                                        class="form-control" 
+                                        id="lastName" 
+                                        type="text" 
+                                        formControlName="lastName"
+                                        [class.is-invalid]="isFieldInvalid(profileForm, 'lastName')"
+                                    />
+                                    <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'lastName')">
+                                        {{ getFieldError(profileForm, 'lastName') }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group" style="position: relative;">
+                                    <label for="email">Email Address *</label>
+                                    <input 
+                                        class="form-control" 
+                                        id="email" 
+                                        type="email" 
+                                        formControlName="email"
+                                        [class.is-invalid]="isFieldInvalid(profileForm, 'email')"
+                                    />
+                                    <div *ngIf="emailNeedsVerification && !showOtpInput && profileForm.get('email')?.valid" style="float: right;" class="mt-1">
+                                    <button type="button" style="padding: 2px 10px !important;" class="btn btn-warning btn-sm" (click)="verifyEmail()">Verify</button>
+                                    </div>
+                                    <div *ngIf="emailNeedsVerification && !showOtpInput && profileForm.get('email')?.valid" style="float: right;" class="mt-1 me-1">
+                                        <span *ngIf="!emailVerified" class="text-danger small">Email not verified</span>
+                                        <span *ngIf="emailVerified" class="text-success small">Verified</span>
+                                    </div>
+                                    <!-- OTP Verification UI -->
+                                    <!-- <div *ngIf="showOtpInput" class="mt-3">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="mb-3">
+                                                    <label class="mb-2 fw-500">OTP<span class="text-danger ms-1">*</span></label>
+                                                    <ng-otp-input [config]="config" (onInputChange)="onOtpChange($event)"></ng-otp-input>
+                                                    <div *ngIf="otpError" class="text-danger small mt-1">{{ otpError }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-12">
+                                                <div class="d-grid mb-3">
+                                                    <a (click)="validateOtp()" class="btn btn-primary">Submit</a>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div style="float: right;">
+                                                        <ng-container *ngIf="displayTimer">
+                                                            <p>Didn't receive otp? Resend in {{ display }}s</p>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="resendOtp">
+                                                            <a style="cursor: pointer;" (click)="verifyEmail()">Resend OTP</a>
+                                                        </ng-container>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <!-- OTP Modal -->
+                                    <div class="modal" tabindex="-1" [ngClass]="{'show': showOtpInput}" [ngStyle]="{'display': showOtpInput ? 'block' : 'none', 'background': 'rgba(0,0,0,0.5)'}">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Verify Email OTP</h5>
+                                            <button type="button" class="btn-close" aria-label="Close" (click)="showOtpInput = false"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3 d-flex justify-content-center">
+                                            <label class="mb-2 fw-500">OTP<span class="text-danger ms-1">*</span></label>
+                                            <ng-otp-input [config]="config" (onInputChange)="onOtpChange($event)"></ng-otp-input>
+                                            <div *ngIf="otpError"  class="text-danger small mt-1 ">{{ otpError }}</div>
+                                            </div>
+                                            <div class="d-grid mb-3">
+                                            <a (click)="validateOtp()" class="btn btn-primary">Submit</a>
+                                            </div>
+                                            <div class="text-center">
+                                            <div>
+                                                <ng-container *ngIf="displayTimer">
+                                                <p>Didn't receive otp? Resend in {{ display }}s</p>
+                                                </ng-container>
+                                                <ng-container *ngIf="resendOtp">
+                                                <a style="cursor: pointer;" (click)="verifyEmail()">Resend OTP</a>
+                                                </ng-container>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'email')">
+                                        {{ getFieldError(profileForm, 'email') }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                <label for="company">Company </label>
+                                <input 
+                                    class="form-control" 
+                                    id="company" 
+                                    type="text" 
+                                    formControlName="company"
+                                    [class.is-invalid]="isFieldInvalid(profileForm, 'company')"
+                                />
+                                <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'company')">
+                                    {{ getFieldError(profileForm, 'company') }}
+                                </div>
+                              </div>
+                            </div>
+                           
+                            <div class="form-group">
+                                <label for="bio">Bio</label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="bio" 
+                                    formControlName="bio"
+                                    rows="4"
+                                    [class.is-invalid]="isFieldInvalid(profileForm, 'bio')"
+                                ></textarea>
+                                <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'bio')">
+                                    {{ getFieldError(profileForm, 'bio') }}
+                                </div>
+                                <small class="form-text text-muted">{{ profileForm.get('bio')?.value?.length || 0 }}/500 characters</small>
+                            </div>
+                            <div class="buttons">
+                                <button class="btn btn-danger" type="button" (click)="onCancel()">Cancel</button>
+                                <button class="btn btn-primary" type="submit" [disabled]="profileForm.invalid || !emailVerified">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card profile-card" *ngIf="activeTab === 'password'">
+                    <!-- <div class="card-body ">
+                        <h5 class="mt-2">Update Your Password</h5>
+                        <form class="update-password-card">
+                            <div class="form-group">
+                                <label for="current-password">Current Password *</label>
+                                <input class="form-control" type="password" id="current-password" placeholder="Current password">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">New Password *</label>
+                                <input class="form-control" type="password" id="new-password" placeholder="Create a password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirm New Password *</label>
+                                <input class="form-control" type="password" id="confirm-password" placeholder="Confirm password">
+                            </div>
+                        
+                            <div class="buttons">
+                                 <button class="btn btn-danger" type="button">Cancel</button>
+                                <button class="btn btn-primary" type="submit">Save Changes</button>
+                            </div>
+                        </form>                                       
+                     </div> -->
+                      <app-update-password></app-update-password>
+                 </div>
+                   <!-- <div class="card profile-card" *ngIf="activeTab === 'settings'">
+                    <div class="card-body ">
+                        <h5 class="mt-2">Account Settings</h5>
+                        <div class="">
+                            <div class="d-flex justify-content-between border-bottom">
+                                <div class="">
+                                    <h6 class="mb-3 mt-3">Billing Information</h6>
+                                    <p class="mb-2"><strong>Payment Method:</strong> <br> </p>
+                                    <p class="mb-0">Visa ending in 4242</p>
+                                    <p class="mb-3">Expires 12/2024</p>
+                                </div>
+                                <div class="">
+                                    <button class="button btn-primary-light">Update Payment Method</button>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-3 border-bottom">
+                                <div class="">
+                                    <h6 class="mb-3 mt-2">Billing Address</h6>
+                                    <p class="mb-0">Akshay Kumar</p>
+                                    <p class="mb-0">Analytify Inc.</p>
+                                    <p class="mb-0">123 Analytics Street</p>
+                                    <p class="mb-0">San Francisco, CA 94107</p>
+                                    <p>United States</p>
+                                </div>
+                                <div class="">
+                                    <button class="button btn-primary-light">Update Billing Address</button>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 border-bottom">
+                                 <div class="d-flex justify-content-between mt-3 ">
+                                    <div class="">
+                                        <h6 class="mb-3 mt-2">Notification Settings</h6>
+                                        <p class="mb-0"><b>Email Notifications</b></p>
+                                        <p class="mb-0">Receive weekly analytics reports</p>
+                                    </div>
+                                    <div class="">
+                                        <div  class="toggle toggle-primary on mb-3">
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="d-flex justify-content-between mt-3">
+                                    <div class="">
+                                        <p class="mb-0"><b>Weekly Reports</b></p>
+                                        <p class="">Receive emails about your account activity</p>
+                                    </div>
+                                    <div class="">
+                                        <div  class="toggle toggle-primary on mb-3">
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 border-bottom">
+                                 <div class="d-flex justify-content-between mt-3 ">
+                                    <div class="">
+                                        <h6 class="mb-3 mt-2">Data & Privacy</h6>
+                                        <p class="mb-0"><b>Data Sharing</b></p>
+                                        <p class="mb-0">Allow Analytify to use your data for service improvemnts</p>
+                                    </div>
+                                    <div class="">
+                                        <div  class="toggle toggle-primary on mb-3">
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="d-flex justify-content-between mt-3">
+                                    <div class="">
+                                        <p class="mb-0"><b>Two-Factor Authentication</b></p>
+                                        <p class="">Add an extra layer of security to your account</p>
+                                    </div>
+                                    <div class="">
+                                        <div  class="toggle toggle-primary on mb-3">
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="button-group">
+                                <button class="button btn-primary">Download My Data</button>
+                                <button class="button btn-danger">Delete Account</button>
+                            </div>
+                        </div>
+                     </div>
+                 </div> -->
+            </div>
+       </div>
+    </div>
+</div>

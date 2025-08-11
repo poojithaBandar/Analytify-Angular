@@ -42,13 +42,8 @@
                                     {{module.module_name}}
                                   </button>
                                 </h2>
-                                <div
-                                  ngbAccordionCollapse
-                                  id="collapseOne"
-                                  class="accordion-collapse collapse show"
-                                  aria-labelledby="headingOne"
-                                  data-bs-parent="#accordionExample"
-                                  >
+                                <div ngbAccordionCollapse id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" 
+                                  data-bs-parent="#accordionExample" style="max-height: 300px; overflow-y: auto;">
                                   <div class="accordion-body p-2" ngbAccordionBody>
                                     <ng-template>
                                         <ul>
@@ -65,7 +60,7 @@
                       </div>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12">
-                    <div class="card mb-0" *ngFor="let data of userGuideData">
+                    <div class="card mb-0" style="height: 100vh;" *ngFor="let data of userGuideData">
                         <div class="mail-info-header d-flex align-items-center flex-wrap">
                             <div class="flex-fill">
                                 <h6 class="mb-0">{{data.title}}</h6>

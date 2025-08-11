@@ -343,7 +343,8 @@ export class DatabaseComponent {
   getSavedQueryData(){
     const obj ={
       database_id:this.databaseId,
-      queryset_id: this.custumQuerySetid
+      queryset_id: this.custumQuerySetid,
+      offset : 0
     }
     this.workbechService.getSavedQueryData(obj).subscribe({
       next:(data:any)=>{
@@ -390,7 +391,9 @@ export class DatabaseComponent {
           this.datasourceQuerysetId = data.dragged_data.dastasource_queryset_id;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
-            this.joiningTables();
+            // this.joiningTables();
+            this.buildCustomJoin();
+            this.getJoiningTableData();
             this.dropdownOptions = this.buildDropdownOptions(this.draggedtables);
             //for custom join dropdown
             this.filterColumnsT1();
@@ -749,18 +752,48 @@ clearFiltersOnClearQuery(){
   }
 }
 checkQerynameChange:any;
+resetAndRunQuery() {
+  // If rowLimit is defined and data is already present
+  if (this.rowLimit && this.cutmquryTable?.row_data?.length) {
+    const alreadyLoaded = this.cutmquryTable.row_data.length;
+
+    if (alreadyLoaded >= this.rowLimit) {
+      // Case 1: Already loaded more than rowLimit → Trim
+      this.cutmquryTable.row_data = this.cutmquryTable.row_data.slice(0, this.rowLimit);
+      this.offset = this.rowLimit;
+      this.isLoadingResults = false; // prevent further loading
+      return;
+    } else {
+      // Case 2: Partially loaded, resume from where left off
+      this.offset = alreadyLoaded;
+    }
+  } else {
+    // No rowLimit or no data yet — start fresh
+    this.offset = 0;
+  }
+
+  this.executeQuery();
+}
+resetAndRunQueryFreshQuery(){
+  this.offset = 0;
+  this.executeQuery();
+}
 executeQuery(){
   const obj ={
     database_id: this.databaseId,
     custom_query: this.sqlQuery,
     row_limit:this.rowLimit,
     queryset_id:this.custumQuerySetid,
+    offset:this.offset
     // query_name:this.saveQueryName,
   }as any
   if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
     delete obj.query_name
   }if(this.custumQuerySetid === 0 || this.custumQuerySetid === '0'){
     delete obj.queryset_id
+  }
+  if(this.offset !== 0){
+  this.workbechService.disableLoaderForNextRequest();
   }
   this.workbechService.executeQuery(obj)
   .subscribe(
@@ -769,7 +802,20 @@ executeQuery(){
         console.log(data)
         // this.relationOfTables = data[2]?.relation?.condition
         // console.log('relation',this.relationOfTables)
-        this.cutmquryTable = data
+        // this.cutmquryTable = data
+         if (this.offset === 0) {
+            this.cutmquryTable = data;
+          } else {
+            // Append new rows
+            this.cutmquryTable.row_data = [
+              ...this.cutmquryTable.row_data,
+              ...data.row_data
+            ];
+          }
+          if (this.rowLimit && this.cutmquryTable.row_data.length > this.rowLimit) {
+          this.cutmquryTable.row_data = this.cutmquryTable.row_data.slice(0, this.rowLimit);
+          this.isLoadingResults = false;
+        }
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
         if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
@@ -784,6 +830,7 @@ executeQuery(){
         this.totalRowsCustomQuery=data.total_rows
         console.log('custumQuery Data',this.cutmquryTable)
         this.gotoSheetButtonDisable = false;
+        this.isLoadingResults = false;
       },
       error:(error:any)=>{
       console.log(error);
@@ -895,6 +942,7 @@ joiningTablesWithoutQuerySetId(){
     join_type:[],
     joining_conditions:[],
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
+    is_smart_dashboard:false
   } as any
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -908,6 +956,7 @@ joiningTablesWithoutQuerySetId(){
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
+        this.offset = 0;
         this.getJoiningTableData();
         this.buildCustomJoin();
         this.tableCustomJoinError = false;
@@ -937,6 +986,7 @@ joiningTables(){
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
+    is_smart_dashboard:false
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -953,6 +1003,7 @@ joiningTables(){
           this.getDsQuerysetId()
         }
         else{
+          this.offset = 0;
           this.getJoiningTableData();
         }
         this.buildCustomJoin();
@@ -1021,6 +1072,7 @@ joiningTablesFromDelete(){
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
+    is_smart_dashboard:false
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -1043,6 +1095,7 @@ joiningTablesFromDelete(){
           this.getDsQuerysetId()
         }
         else{
+          this.offset = 0;
           this.getJoiningTableData();
         }
         this.buildCustomJoin();
@@ -1104,6 +1157,7 @@ customTableJoin(){
     join_type:this.joinTypes,
     joining_conditions:joiningConditions,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
+    is_smart_dashboard:false
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -1119,6 +1173,7 @@ customTableJoin(){
           this.getDsQuerysetId()
         }
         else{
+          this.offset = 0;
           this.getJoiningTableData();
         }
         this.buildCustomJoin();
@@ -1200,49 +1255,126 @@ clearJoinCondns(){
   this.selectedClmnT2=null;
   this.enableJoinButton();
 }
+resetOffsetgetJoiningTableData() {
+  if (this.rowLimit && this.TabledataJoining?.row_data?.length) {
+    const alreadyLoaded = this.TabledataJoining.row_data.length;
 
-getJoiningTableData(){
-  const obj ={
-    hierarchy_id:this.databaseId,
-    query_id:this.qurtySetId,
-    datasource_queryset_id:this.datasourceQuerysetId,
-    row_limit:this.rowLimit
-  } as any
-if(obj.row_limit === null || obj.row_limit === undefined){
- delete obj.row_limit;
-}
-  this.workbechService.getTableJoiningData(obj).subscribe(
-    {
-      next:(data:any) =>{
-        console.log('qury_data/tablejoined_data',data)
-        this.TabledataJoining = data;
-        this.qryTime = data.query_exection_time;
-        this.qryRows = data.no_of_rows;
-        this.totalRows = data.total_rows;
-        this.showingRows = data.no_of_rows;
-        this.gotoSheetButtonDisable = false;
-        if(this.saveQueryName ==='' || this.saveQueryName === null || this.saveQueryName === undefined){
-        this.saveQueryName = data.queryset_name;
-        this.checkQerynameChange = data.queryset_name;
-        this.titleMarkDirty = true;
-        }
-        this.queryBuilt = data.custom_query;
-        if(this.TabledataJoining?.column_data?.length === 0){
-          this.gotoSheetButtonDisable = true;
-        }
-      },
-      error:(error:any)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-
+    if (alreadyLoaded >= this.rowLimit) {
+      // Case: Already loaded more than new rowLimit → trim data and stop
+      this.TabledataJoining.row_data = this.TabledataJoining.row_data.slice(0, this.rowLimit);
+      this.offset = this.rowLimit;
+      this.isLoadingResults = false; // Stop further fetching
+      return;
+    } else {
+      // Case: Loaded less than rowLimit → adjust offset and fetch more
+      this.offset = alreadyLoaded;
     }
-    })
+  } else {
+    this.offset = 0;
+  }
+
+  this.getJoiningTableData();
 }
+  getJoiningTableData() {
+    const obj = {
+      hierarchy_id: this.databaseId,
+      query_id: this.qurtySetId,
+      datasource_queryset_id: this.datasourceQuerysetId,
+      row_limit: this.rowLimit,
+      offset: this.offset
+    } as any
+    if (obj.row_limit === null || obj.row_limit === undefined) {
+      delete obj.row_limit;
+    }
+    if(this.offset !== 0){
+    this.workbechService.disableLoaderForNextRequest();
+    }
+    this.workbechService.getTableJoiningData(obj).subscribe(
+      {
+        next: (data: any) => {
+          console.log('qury_data/tablejoined_data', data)
+          if (this.offset === 0) {
+            this.TabledataJoining = data;
+          } else {
+            // Append new rows
+            this.TabledataJoining.row_data = [
+              ...this.TabledataJoining.row_data,
+              ...data.row_data
+            ];
+          }
+          // this.TabledataJoining = data;
+          this.qryTime = data.query_exection_time;
+          this.qryRows = data.no_of_rows;
+          this.totalRows = data.total_rows;
+          this.showingRows = data.no_of_rows;
+          this.gotoSheetButtonDisable = false;
+          if (this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined) {
+            this.saveQueryName = data.queryset_name;
+            this.checkQerynameChange = data.queryset_name;
+            this.titleMarkDirty = true;
+          }
+          this.queryBuilt = data.custom_query;
+          if (this.TabledataJoining?.column_data?.length === 0) {
+            this.gotoSheetButtonDisable = true;
+          }
+          this.isLoadingResults = false;
+
+        },
+        error: (error: any) => {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+
+        }
+      })
+  }
+  // resultOffset = 0;
+  resultLimit = 100;
+  isLoadingResults = false;
+  offset = 0;
+  lastScrollIndex = 0; // Track last scroll index
+  allLoaded = false; // Flag to stop loading when all data fetched
+
+  // Infinite scroll handler for table container (line 660)
+  onTableScroll(index: number) {
+    const buffer = Math.floor(this.resultLimit * 0.3); // fetch when 70% scrolled
+    if (
+      index > this.lastScrollIndex && // Only when scrolling down
+      !this.isLoadingResults &&
+      this.cutmquryTable.row_data &&
+      index >= this.cutmquryTable.row_data.length - buffer && 
+      this.cutmquryTable?.row_data?.length < this.totalRowsCustomQuery &&
+      !(this.rowLimit && this.cutmquryTable.row_data.length >= this.rowLimit)
+    ) {
+      this.isLoadingResults = true;
+      this.offset += this.resultLimit;
+      this.executeQuery();
+      // If API returns less than resultLimit, set allLoaded = true in getJoiningTableData()
+    }
+  }
+
+  onResultScroll(index: number) {
+    // Only trigger when scrolling down
+     const buffer = Math.floor(this.resultLimit * 0.3); // fetch when 70% scrolled
+
+    if (
+      index > this.lastScrollIndex && // Only when scrolling down
+      !this.isLoadingResults &&
+      this.TabledataJoining.row_data &&
+      index >= this.TabledataJoining.row_data.length - buffer && // Near bottom
+      this.TabledataJoining.row_data.length < this.totalRows && // Not all loaded
+      !(this.rowLimit && this.TabledataJoining.row_data.length >= this.rowLimit) 
+    ) {
+      this.isLoadingResults = true;
+      this.offset += this.resultLimit;
+      this.getJoiningTableData();
+    }
+    this.lastScrollIndex = index;
+  }
 
 downloadExcel() {
   const obj ={
@@ -1531,6 +1663,7 @@ getDsQuerysetId(){
         console.log(data)
         this.datasourceQuerysetId = data.data.datasource_queryset_id;
         if(this.tableJoiningUI){
+        this.offset=0;
         this.getJoiningTableData();
         }
         if(this.customSql){

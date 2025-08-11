@@ -61,6 +61,7 @@ import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
 import { i } from 'mathjs';
 import { SafeUrlPipe, SanitizeHtmlPipe } from '../../../shared/pipes/sanitize-html.pipe';
+import { AuthService } from '../../../shared/services/auth.service';
 
 interface TableRow {
   [key: string]: any;
@@ -103,6 +104,14 @@ interface KpiData {
   kpiSuffix: string;
   kpiDecimalUnit : string;
   kpiDecimalPlaces: number;
+  trendData: [], 
+  trendLabels: [],
+  kpiShowTrendline : boolean,
+  showKpiIndicator : boolean,
+  indicatorIsIncreased : any,
+  indicatorValue : any,
+  kpiChartColor: string;
+  kpiTarget: any;
 }
 declare var $:any;
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -129,6 +138,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
 })
 export class SheetsdashboardComponent implements OnDestroy {
  // @HostListener('window:resize', ['$event'])
+ 
  itemsPerPage:any;
   private destroy$ = new Subject<void>();
  pageNo = 1;
@@ -195,6 +205,15 @@ export class SheetsdashboardComponent implements OnDestroy {
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   isPublicUrl = false;
+  isProtectedUrl = false;
+  isProtectedValidated = false;
+  hasProtectedAccess = false;
+  protectedQuery = false;
+  isAuthenticated = false;
+  encryptedEmail: string | null = null;
+  passkey: string = '';
+  userEmail: string | null = null;
+  @ViewChild('passkeyModal') passkeyModal:any;
   publicHeader = false;
   columnSearch: any;
   rolesForUpdateDashboard:[] = [];
@@ -223,7 +242,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   actionId : any;
   drillThroughActionList : any[] =[];
   drillThroughDatabaseName : any = '';
-
   calendarTotalHeight : string = '400px';
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
@@ -232,6 +250,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   @ViewChild('analyzeDashbaordModal') analyzeDashbaordModal:any;
   @ViewChild('textEditorModal') textEditorModal!: any;
   @ViewChild('ImageUploadText') ImageUploadText!: ElementRef;
+  @ViewChild('editTabModal') editTabModal: any;
+
   textItem: any;
   textEditorContent: string = '';
   textEditorTitle: string = '';
@@ -246,12 +266,23 @@ export class SheetsdashboardComponent implements OnDestroy {
   isEmbeddedFilter : boolean = false;
   genieHover = false;
   showGenieTooltip = false;
+  trendData= [];
+  trendLabels = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
-     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef){
+     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef,private authService: AuthService){
     this.dashboard = [];
-    const currentUrl = this.router.url; 
+    if(localStorage.getItem('protected_email')){
+      this.userEmail = localStorage.getItem('protected_email');
+    }
+    if(this.isAuthenticated){
+      const u = this.authService.getCurrentUser();
+      if(u?.email){
+        this.userEmail = u.email;
+      }
+    }
+    const currentUrl = this.router.url;
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
     });
@@ -259,9 +290,23 @@ export class SheetsdashboardComponent implements OnDestroy {
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
       this.active = 2;
-      this.publicHeader = true
+      this.publicHeader = true;
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
+      }
+    }
+    if(currentUrl.includes('dashboard/share/protected')){
+      this.updateDashbpardBoolen= true;
+      this.isProtectedUrl = true;
+      // protected dashboards always use public APIs
+      this.isPublicUrl = true;
+      this.active = 2;
+      this.publicHeader = true;
+      if (route.snapshot.params['id1']) {
+        this.dashboardId = +atob(route.snapshot.params['id1']);
+      }
+      if(route.snapshot.params['id2']){
+        this.encryptedEmail = route.snapshot.params['id2'];
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
@@ -280,8 +325,18 @@ export class SheetsdashboardComponent implements OnDestroy {
     //     }
     // }
     else if(currentUrl.includes('analytify/home/sheetsdashboard')){
-      this.dashboardView = true;
-      this.updateDashbpardBoolen= true
+      this.updateDashbpardBoolen = true;
+      const isProtected = this.route.snapshot.queryParamMap.get('protected') === 'true';
+      this.protectedQuery = isProtected;
+      if (isProtected) {
+        this.isProtectedUrl = true;
+        this.isPublicUrl = true;
+        this.active = 2;
+        this.publicHeader = false;
+      } else {
+        this.dashboardView = true;
+        this.publicHeader = false;
+      }
       if (route.snapshot.params['id3']) {
         // this.databaseId = +atob(route.snapshot.params['id1']);
         // this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -296,7 +351,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         const dbcopy = navigation?.extras?.state?.['dbCopy'] ?? history.state?.['dbCopy'];
         if(dbcopy){
           this.toasterService.success('Dashboard Copied Successfully.','success',{ positionClass: 'toast-top-right'})
-        }else if (dbSwitched) {
+        }else if (dbSwitched && !isProtected) {
           this.getSavedDashboardData();
            setTimeout(() => {
             this.refreshDashboard(true);  // might run before API completes!
@@ -488,8 +543,9 @@ export class SheetsdashboardComponent implements OnDestroy {
     if(this.isPublicUrl){
       displayGrid = DisplayGrid.None;
     }
-    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
-      echarts.registerMap('world', geoJson); 
+    this.http.get('/assets/maps/world.json').subscribe({
+      next: (geoJson: any) => {
+              echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
       if(!this.isPublicUrl || !this.isEmbedDashboard){
         if(this.fileId.length > 0 || this.databaseId.length > 0){
@@ -513,6 +569,9 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         if(this.dashboardId != undefined || null){
           this.getDrillThroughActionList();
+        }},
+        error: () => {
+          this.loaderService.hide();
         }
 
     });    
@@ -549,7 +608,21 @@ export class SheetsdashboardComponent implements OnDestroy {
     })
   }
 
-  ngOnInit() {  
+  ngOnInit() {
+    this.isAuthenticated = !!localStorage.getItem('currentUser');
+    this.hasProtectedAccess = localStorage.getItem('protected_access') === 'true';
+    if(this.hasProtectedAccess){
+      this.userEmail = localStorage.getItem('protected_email') || this.userEmail;
+    }
+    if(this.isAuthenticated){
+      const u = this.authService.getCurrentUser();
+      if(u?.email){
+        this.userEmail = u.email;
+      }
+    }
+    if(this.hasProtectedAccess){
+      this.isProtectedValidated = true;
+    }
     let displayGrid = DisplayGrid.Always;
     this.options = {
       gridType: GridType.Fit,
@@ -590,6 +663,10 @@ export class SheetsdashboardComponent implements OnDestroy {
     };
     if(this.dashboardToken){
       this.fetchDashboardIdFromToken();
+    } else if(this.isProtectedUrl){
+      if(!this.encryptedEmail){
+        this.initialiserMethods();
+      }
     } else {
       this.initialiserMethods();
     }
@@ -851,6 +928,14 @@ export class SheetsdashboardComponent implements OnDestroy {
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+              trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -1019,6 +1104,7 @@ export class SheetsdashboardComponent implements OnDestroy {
             // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
             console.log('X-axis value:', selectedXValue);
             let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
+            nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
             sheet.drillDownIndex++;
             let obj = { [nestedKey]: selectedXValue };
             sheet.drillDownObject.push(obj);
@@ -1400,6 +1486,10 @@ export class SheetsdashboardComponent implements OnDestroy {
         if(this.sheetTabs && this.sheetTabs.length > 0){
           sheetTabsData.forEach((sheetData) => {
             sheetData.dashboard  = this.assignOriginalDataToDashboard(sheetData.dashboard);
+            sheetData.bgColor = sheetData.bgColor || '#ffffff';
+            sheetData.fontColor = sheetData.fontColor || '#000000';
+            sheetData.fontSize = sheetData.fontSize || 14;
+            sheetData.fontStyle = sheetData.fontStyle || 'normal';
           })
         } 
         this.setQuerySetIds();
@@ -1516,9 +1606,11 @@ export class SheetsdashboardComponent implements OnDestroy {
             .catch((error) => {
               console.error('oops, something went wrong!', error);
               reject(error); // Reject in case of error
+              this.loaderService.hide();
             });
         } else {
           reject('No element found for screenshot');
+          this.loaderService.hide();
         }
       }, 1000);
     });
@@ -1687,9 +1779,9 @@ export class SheetsdashboardComponent implements OnDestroy {
             width: '400px',
           })
         } else {
-          if(!isLiveReloadData && !isSwitchDb){
-            this.takeScreenshot();
-          }
+          // if(!isLiveReloadData && !isSwitchDb){
+          //   this.takeScreenshot();
+          // }
         const targetIds = this.switchConditions.map(c => c.targetHierarchyId).filter(id => id);
         obj ={
           grid : this.gridType,
@@ -1737,6 +1829,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
+        this.report_url='';
         // Swal.fire({
         //   icon: 'success',
         //   title: 'Congartualtions!',
@@ -1761,8 +1854,11 @@ export class SheetsdashboardComponent implements OnDestroy {
         else if(isShowpopup){
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
         }
-        if(!isLiveReloadData && !isDashboardTransfer){
-          this.saveDashboardimageUpdate();
+        if(!isLiveReloadData && !isDashboardTransfer && !isSwitchDb){
+          this.takeScreenshot().then(() => {
+            this.saveDashboardimageUpdate();
+          });
+          // this.saveDashboardimageUpdate();
         }
         this.endMethod(); 
       },
@@ -1795,7 +1891,16 @@ export class SheetsdashboardComponent implements OnDestroy {
             item1.chartOptions = item1['originalData'].chartOptions;
           }
         delete item1['originalData'];
-        }if(item1.chartId == '1' && item1['originalData']){//table
+        }
+        if(item1.chartId == '14' && item1['originalData']){//hbar
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '1' && item1['originalData']){//table
           item1['tableData'] = item1['originalData']['tableData'];
           delete item1['originalData'];
           }
@@ -1814,6 +1919,14 @@ export class SheetsdashboardComponent implements OnDestroy {
             item1.chartOptions = item1['originalData'].chartOptions;
           }
         delete item1['originalData'];
+        }
+        if(item1.chartId == '10' && item1['originalData']){//donut
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
         }
         if(item1.chartId == '13' && item1['originalData']){//line
           if(item1.isEChart){
@@ -1962,6 +2075,15 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+               trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -2036,6 +2158,15 @@ export class SheetsdashboardComponent implements OnDestroy {
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+               trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+
           };
           return this.kpiData; // Return the kpi object to kpiData
         })()
@@ -2265,6 +2396,7 @@ allowDrop(ev : any): void {
                 // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
                 console.log('X-axis value:', selectedXValue);
                 let nestedKey = element.drillDownHierarchy[element.drillDownIndex];
+                nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
                 element.drillDownIndex++;
                 let obj = { [nestedKey]: selectedXValue };
                 element.drillDownObject.push(obj);
@@ -2999,6 +3131,13 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     } else {
       console.error('Gridster element not found!');
     }
+    if(this.isProtectedUrl){
+      if(this.isProtectedValidated || !this.encryptedEmail){
+        // this.loadProtectedDashboard();
+      } else {
+        this.modalService.open(this.passkeyModal,{backdrop:'static', centered:true});
+      }
+    }
     this.cdr.detectChanges();
   }
   initializeChart(item: DashboardItem): void {
@@ -3057,6 +3196,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     // item['chartInstance'].render();
   }  
 }
+
 
   onChartInit(event: any, item: DashboardItem) {
     item['chartInstance'] = event.chart;
@@ -3702,10 +3842,10 @@ getFilteredData(){
         // this.tablePageNo =1;
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
+      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
+          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false,false);
         })
       }
       }
@@ -3984,6 +4124,16 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
         item1['kpiData'].rows = [obj];
         item1.kpiData.kpiNumber = this.formatKPINumber(item.rows[0].result[0], item1.kpiData.kpiDecimalUnit , item1.kpiData.kpiDecimalPlaces, item1.kpiData.kpiPrefix, item1.kpiData.kpiSuffix);
+        if(item1['kpiData'].kpiShowTrendline){
+          item1['kpiData'].trendData = item?.trend_kpi_data.columns?.[0]?.result ?? [];
+          item1['kpiData'].trendLabels = item?.trend_kpi_data.rows?.[0]?.result.map((category : any)  => category === null ? 'null' : category) ?? [];
+          item1['kpiData'].indicatorValue = item?.difference;
+          if(item?.is_increased){
+          item1['kpiData'].indicatorIsIncreased = 'up';
+          }else{
+            item1['kpiData'].indicatorIsIncreased = 'down';
+          }
+        }
       }
       if((item.chart_id == '24' || item.chartId == '24' && (isFilter || isDrillDown)) || (item1.chartId == '24' && isDrillThrough)){//pie
         if(switchDb){
@@ -4397,6 +4547,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                 });
               });
             });
+            item1.customizeOptions.hBarHeight = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
             item1.echartOptions.series[0].data = combinedArray;
             item1.echartOptions = {
               ...item1.echartOptions,
@@ -4410,6 +4561,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         // if(isDrillThrough){
           item1.chartOptions = {
             ...item1.chartOptions,
+            chart: {
+              ...item1.chartOptions.chart,
+              height: this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values),
+            },
             xaxis: {
               ...item1.chartOptions.xaxis,
               categories: categories,
@@ -4532,7 +4687,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           }
         }
       }
-       if((item.chart_id == '14' || item.chartId == '14' && (isFilter || isDrillDown)) || (item1.chartId == '14' && isDrillThrough)){//bar
+       if((item.chart_id == '14' || item.chartId == '14' && (isFilter || isDrillDown)) || (item1.chartId == '14' && isDrillThrough)){//Hbar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData && !switchDb){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
@@ -4544,6 +4699,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             item1.drillDownIndex = 0;
             item1.drillDownObject = [];
           }
+          item1.customizeOptions.hBarHeight = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
           item1.echartOptions.yAxis.data = this.filteredColumnData[0]?.values;
         item1.echartOptions.series[0].data = this.filteredRowData[0]?.data;
         item1.echartOptions = {
@@ -4558,6 +4714,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
+        item1.chartOptions.chart.height = this.autoAdjustChartHeightForHBar(item1.isEChart, this.filteredColumnData[0].values);
       item1.chartOptions.xaxis.categories = this.filteredColumnData[0]?.values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData;
       }
@@ -4985,11 +5142,12 @@ const obj ={
 
   addTabs() {
     this.displayTabs = true;
+    this.initializeTabDefaults();
     let id = uuidv4();
     this.selectedTab = { id: id };
     this.selectedTabIndex = this.sheetTabs.length;
     let name = this.selectedTabIndex > 0 ? "Tab Title " + this.selectedTabIndex : "Tab Title";
-    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid });
+    this.sheetTabs.push({name: name, dashboard: [] ,tabWidth : this.tabWidthGrid,tabHeight: this.tabHeightGrid,bgColor:this.selectedTab.bgColor,fontColor:this.selectedTab.fontColor,fontStyle:this.selectedTab.fontStyle,fontSize:this.selectedTab.fontSize});
     this.dashboardTest = [];
   }
   Editor = ClassicEditor;
@@ -5073,6 +5231,14 @@ kpiData?: KpiData;
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+              kpiChartColor: sheet.sheet_data?.results?.kpiChartColor || '#2392c1',    
+                 trendData: sheet.sheet_data?.results?.trendData || [], 
+              trendLabels: sheet.sheet_data?.results?.trendLabels || [],
+              kpiShowTrendline : sheet.sheet_data?.results?.kpiShowTrendline || false,
+              showKpiIndicator : sheet.sheet_data?.results?.showKpiIndicator || false,
+              indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
+              indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
+              kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -5493,7 +5659,8 @@ kpiData?: KpiData;
   //public apis
   getSavedDashboardDataPublic(){
     const obj ={
-      dashboard_id:this.dashboardId
+      dashboard_id:this.dashboardId,
+      email: this.userEmail
     }
     this.workbechService.getSavedDashboardDataPublic(obj).subscribe({
       next:(data)=>{
@@ -5633,10 +5800,10 @@ kpiData?: KpiData;
         if(item.chart_id === 1){
           this.pageChangeTableDisplayPublic(item,1)
         }else{
-        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
+        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false);
         if (this.displayTabs) {
           this.sheetTabs.forEach((tabData: any) => {
-            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
+            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false,false);
           })
         }
         }
@@ -5693,10 +5860,40 @@ kpiData?: KpiData;
       }
     })
   }
+}
+
+  validateProtectedDashboard(modal:any){
+    const obj = {
+      dashboard_id: this.dashboardId,
+      protected_key: this.passkey,
+      email: this.encryptedEmail
+    };
+    this.workbechService.validateProtectedKey(obj).subscribe({
+      next: (res: any)=>{
+        this.isProtectedValidated = true;
+        this.userEmail = res?.email || this.userEmail;
+        modal.close();
+        this.loadProtectedDashboard();
+      },
+      error: (error: any)=>{
+        this.toasterService.error(error?.error?.message,'error');
+      }
+    });
+  }
+
+  loadProtectedDashboard(){
+    this.getSavedDashboardDataPublic();
+    this.getDashboardFilterredListPublic();
+    this.getDrillThroughActionList();
+  }
+
+  goBackToProtectedHome(){
+    this.router.navigate(['/protected/home']);
   }
 
   publicDataExtraction(item : any){
     this.extractKeysAndData();
+    const nxtDrillDown = item.drillDownHierarchy[item.drillDownIndex];
     let Obj : any = {
       "col":item.column_Data,"row":item.row_Data,
       id:this.keysArray,
@@ -5708,7 +5905,7 @@ kpiData?: KpiData;
       // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "next_drill_down":nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
   "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getPublicDashboardDrillDowndata(Obj).subscribe({
@@ -5774,6 +5971,7 @@ kpiData?: KpiData;
     } else {
       draggedColumnsObj = item.column_Data
     }
+    const nxtDrillDown = item.drillDownHierarchy[item.drillDownIndex];
     let Obj : any = {
       "col":draggedColumnsObj,"row":item.row_Data,
       id:this.keysArray,
@@ -5785,7 +5983,7 @@ kpiData?: KpiData;
       "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "next_drill_down":nxtDrillDown === 'date' ? 'year/month/day' :  (nxtDrillDown === 'time' ? 'date' : nxtDrillDown),
   "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getDashboardDrillDowndata(Obj).subscribe({
@@ -6052,7 +6250,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   }
 
   updateNumberFormat(sheet : any, numberFormat : any, chartId : any, isEcharts : any){
-    if(numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix){
+    if(numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix || chartId === 28){
       if(isEcharts){
         if([2,3,14].includes(chartId)){
           if (sheet.echartOptions?.xAxis?.axisLabel) {
@@ -6140,6 +6338,22 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               const category = opts.w.config.xaxis.categories[opts.dataPointIndex];
               const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
               return `${category}: ${formattedValue}`;
+            }
+          }
+        } else if(chartId === 28){
+          if (sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value) {
+            sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: any, opts: any) => {
+              
+                switch (sheet.customizeOptions.gaugeDisplayMode) {
+                  case 'percentage':
+                    return `${val.toFixed(2)}%`;
+                  case 'value':
+                    return `${val}`;
+                  case 'both':
+                    return `${val.toFixed(2)}% (${val})`;
+                  default:
+                    return `${val.toFixed(2)}%`;
+                } 
             }
           }
         } else if(![1, 25, 10, 24, 9].includes(chartId)){
@@ -6710,6 +6924,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
       console.log('X-axis value:', event.name);
       let nestedKey = item.drillDownHierarchy[item.drillDownIndex];
+      nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
       item.drillDownIndex++;
       let obj = { [nestedKey]: event.name };
       item.drillDownObject.push(obj);
@@ -7999,7 +8214,12 @@ downloadAsPDF() {
           const imgWidth = pdfWidth;
           const imgHeight = (img.height * imgWidth) / img.width;
 
-          if (yOffset + imgHeight > pdfHeight) {
+          // if (yOffset + imgHeight > pdfHeight) {
+          //   pdf.addPage();
+          //   yOffset = 0;
+          // }
+
+          if (yOffset !== 0 && yOffset + imgHeight > pdfHeight) {
             pdf.addPage();
             yOffset = 0;
           }
@@ -8269,21 +8489,28 @@ excelUpload(fileInput: any){
   }
   report_url:any;
   iframeLoading = false;
+  isAnalyzedashbaordView :boolean = false;
   analyzeAndDownload(){
+    if (this.report_url){
+       this.isAnalyzedashbaordView = true
+       this.iframeLoading = true;
+      return
+    }
       const obj ={
     dashboard_id:this.dashboardId,
     }
      this.workbechService.analyzeAndDownloadDashboard(obj).subscribe({
         next:(data)=>{
           if(data){
+          this.isAnalyzedashbaordView = true
           this.iframeLoading = true; // Reset loader state
-          this.modalService.open(this.analyzeDashbaordModal, {
-              centered: true,
-              size: 'lg',
-              windowClass: 'animate__animated animate__zoomIn',
-            });
+          // this.modalService.open(this.analyzeDashbaordModal, {
+          //     centered: true,
+          //     size: 'lg',
+          //     windowClass: 'animate__animated animate__zoomIn',
+          //   });
           }
-          this.report_url = data.ui_page_url;
+          this.report_url =data.ui_page_url;
         },
         error:(error)=>{
           console.log(error);
@@ -8507,7 +8734,116 @@ buttonClicked = false;
             }
       }) 
   }
+  // selectedTab: any = {};
+selectedTabIndexToEdit: number = -1;
+
+openEditTabModal(tab: any, index: number) {
+  this.selectedTab = { ...tab };
+  this.selectedTab.bgColor = this.selectedTab.bgColor ?? '#FFFFFF';
+  this.selectedTab.fontColor = this.selectedTab.fontColor ?? '#2392c1';
+  this.selectedTab.fontSize = this.selectedTab.fontSize ?? this.DEFAULT_FONT_SIZE;
+  this.selectedTab.fontStyle = this.selectedTab.fontStyle ?? 'normal';
+  this.selectedTabIndexToEdit = index;
+  // this.selectedTabfontSize = this.selectedTab.fontSize;
+  this.modalService.open(this.editTabModal, { size: 'md', backdrop: 'static' });
+
 }
+
+saveTabEdit(modal: any) {
+  if (this.selectedTabIndexToEdit > -1) {
+    this.sheetTabs[this.selectedTabIndexToEdit] = {
+      ...this.sheetTabs[this.selectedTabIndexToEdit],
+      ...this.selectedTab
+    };
+  }
+console.log( this.sheetTabs);
+  modal.close();
+}
+// Default values
+private readonly DEFAULT_FONT_SIZE = 14;
+private readonly MIN_FONT_SIZE = 10;
+private readonly MAX_FONT_SIZE = 24;
+
+// Color input handling
+updateColorInput(event: Event, type: 'font' | 'bg') {
+  const color = (event.target as HTMLInputElement).value;
+  if (type === 'font') {
+    this.selectedTab.fontColor = color.toUpperCase();
+  } else {
+    this.selectedTab.bgColor = color.toUpperCase();
+  }
+}
+
+validateColorInput(event: Event, type: 'font' | 'bg') {
+  const input = event.target as HTMLInputElement;
+  const color = input.value;
+  
+  // Ensure color starts with #
+  if (!color.startsWith('#')) {
+    input.value = '#' + color;
+  }
+  
+  // Validate hex color format
+  if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+    if (type === 'font') {
+      this.selectedTab.fontColor = color.toUpperCase();
+    } else {
+      this.selectedTab.bgColor = color.toUpperCase();
+    }
+  }
+}
+
+// Font size handling
+// selectedTabfontSize=10
+fontSizes: number[] = Array.from({length: 8}, (_, i) => 10 + i * 2);
+
+validateFontSize() {
+  if (!this.selectedTab.fontSize) {
+    this.selectedTab.fontSize = this.DEFAULT_FONT_SIZE;
+  }
+}
+
+// Font style handling
+updateFontStyle() {
+  // Force update the preview
+  this.selectedTab = {...this.selectedTab};
+}
+
+// Initialize tab defaults when opening modal
+initializeTabDefaults() {
+  if (!this.selectedTab) {
+    this.selectedTab = {
+      name: '',
+      fontColor: '#000000',
+      bgColor: '#FFFFFF',
+      fontSize: this.DEFAULT_FONT_SIZE,
+      fontStyle: 'normal'
+    };
+  }
+  
+  // Ensure existing values are valid
+  this.selectedTab.fontSize = Math.min(
+    Math.max(this.selectedTab.fontSize || this.DEFAULT_FONT_SIZE, this.MIN_FONT_SIZE),
+    this.MAX_FONT_SIZE
+  );
+}// Default values
+
+  autoAdjustChartHeightForHBar(isEchart: boolean, chartsColumnData: any[]) {
+    const barHeight = 30; // You can adjust this value per bar
+    const totalBars = chartsColumnData?.length || 0;
+    const calculatedHeight = totalBars * barHeight;
+
+    if(isEchart){
+      const chartHeight = Math.max(calculatedHeight, 400);
+      return chartHeight + 'px';
+    } else{
+      const chartHeight = Math.max(calculatedHeight, 320);
+      return chartHeight;
+    }
+  }
+
+}
+
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
 //   content: string;

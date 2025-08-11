@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../shared/sharedmodule';
 // import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { UsersDashboardComponent } from '../users-dashboard/users-dashboard.component';
@@ -25,6 +25,7 @@ export class ConfigureComponent implements OnInit {
   errorMessage: string = '';
   showPassword: boolean = false;
   activeTab = 'configure';
+  selectedEmbedType!: string;
   dashboardId:any;
   sheetId:any;
   dbId:any;
@@ -164,6 +165,13 @@ selectedSheet: any = null;
   preventSpaces(event: KeyboardEvent) {
     if (event.code === 'Space' || event.key === ' ') {
       event.preventDefault();
+    }
+  }
+  onNavChange(event: NgbNavChangeEvent) {
+    if (event.nextId === 'embedsdk') {
+      this.selectedEmbedType = 'embed-sdk';
+    } else if (event.nextId === 'embedproject') {
+      this.selectedEmbedType = 'embed-project';
     }
   }
   getDashbaordList(){
@@ -587,11 +595,14 @@ openThresholdModal(editThreshold: any = null) {
   this.modalService.open(this.thresholdModal, { centered: true });
 }
 // ...existing code...
+currentValue: any = null;
   onSheetChange() {
-    this.selectedChart = this.charts.find(c => c.sheet_id == this.thresholdForm.sheet_id && c.chart_id === 25);
+    this.selectedChart = this.charts.find(c => c.sheet_id == this.thresholdForm.selectedChart.sheet_id && c.chart_id === 25);
     if (this.selectedChart) {
       this.thresholdForm.metric = this.selectedChart.column_name;
     }
+    console.log(this.selectedChart);
+    this.currentValue = this.thresholdForm.selectedChart?.current_value || null;
   }
 
   saveThreshold(modal:any) {
@@ -612,7 +623,7 @@ openThresholdModal(editThreshold: any = null) {
         this.fetchThresholds();
       },
       error: (error) => {
-        this.toasterService.error('Failed to save threshold');
+        this.toasterService.error(error.error.message);
       }
     });
   }
@@ -643,6 +654,7 @@ openThresholdModal(editThreshold: any = null) {
   }
   editThreshold(threshold:any) {
     this.openThresholdModal(threshold);
+    this.currentValue = threshold.current_value;
   }
 
   deleteThreshold(threshold:any) {

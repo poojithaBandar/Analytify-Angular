@@ -1,9 +1,23 @@
 <div class="main-container container-fluid">
-    <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius" id="home" #home>
+    <!-- <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius" id="home" #home>
         <div class="container px-sm-0">
         <div class="row justify-content-center">
             <div class="col-xl-8 col-lg-6 pb-5 text-center my-auto animation-zidex pos-relative landing-main-heading">
                 <h1 class="text-  tx-fixed-white mt-0">A quick and easy way to build your Business with <span class="tx-fixed-white fw-bold">"Analytify"</span></h1>
+            </div>
+        </div>
+        </div>
+    </div> -->
+     <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius" id="home" #home>
+        <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-12 col-lg-6 p-0">
+                <div class="card mb-0">
+                    <img src="./assets/images/backgrounds/landing-bg-header.jpg" alt="..." class="card-img">
+                    <div class="card-img-overlay d-flex justify-content-center align-items-center p-0">
+                        <h1 class="text-  tx-fixed-white mt-0 text-center">A quick and easy way to build your <br>Business with <span class="tx-fixed-white fw-bold">"Analytify"</span></h1>
+                    </div>
+                </div>
             </div>
         </div>
         </div>
@@ -27,6 +41,76 @@
             </div>
         </div>
     </div>
+    <div class="row mb-3">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xl-3">
+            <div class="card mb-0 border">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <h5 class="mb-0 500 dashboard-T-C">Dashboards</h5>
+                            <h2 class="fw-500 mb-0"><b>{{totalDashbaords}}</b></h2>
+                        </div>
+                         <div class="min-w-fit-content me-2 d-flex align-items-center">
+                            <span class="avatar rounded-circle avatar-md br-5 landing-dash-bg">
+                               <img src="./assets/images/icons/land-dashboard.png" alt="Google Sheets" class="landing-icon">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xl-3">
+            <div class="card mb-0 border">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                         <div class="">
+                            <h5 class="mb-0 fw-500 chart-T-C">Charts</h5>
+                            <h2 class="fw-500 mb-0"><b>{{totalSheets}}</b></h2>
+                        </div>
+                         <div class="min-w-fit-content me-2 d-flex align-items-center">
+                            <span class="avatar rounded-circle avatar-md br-5 landing-chart-bg">
+                               <img src="./assets/images/icons/land-chart.png" alt="Google Sheets" class="landing-icon">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xl-3">
+            <div class="card mb-0 border">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <h5 class="mb-0 fw-500 queries-T-C">Queries</h5>
+                            <h2 class="fw-500 mb-0"><b>{{totalQueries}}</b></h2>
+                        </div>
+                         <div class="min-w-fit-content me-2 d-flex align-items-center">
+                            <span class="avatar rounded-circle avatar-md br-5 landing-queries-bg">
+                               <img src="./assets/images/icons/land-queries.png" alt="Google Sheets" class="landing-icon">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xl-3">
+            <div class="card mb-0 border">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <h5 class="mb-0 fw-500 data-T-C">Data sources</h5>
+                            <h2 class="fw-500 mb-0 "><b>{{totalDatabases}}</b></h2>
+                        </div>
+                         <div class="min-w-fit-content me-2 d-flex align-items-center">
+                            <span class="avatar rounded-circle avatar-md br-5 landing-data-bg">
+                               <img src="./assets/images/icons/land-data.png" alt="Google Sheets" class="landing-icon">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
     <div class="row mt-1">
         <div class="col-xl-9">
             <div *ngIf="viewDashboardList" class="card border p-4">
@@ -525,6 +609,146 @@
                                 @for(database of connectionList;track database){
                                 <tr>
                                     <td>
+                                        <div class="d-flex align-items-center mt-0">
+                                            <!-- <span class="rounded-5  p-2 border">
+                                                <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img w-5 h-5">
+                                            </span> -->
+                                          <span class="rounded-5 p-2 border" *ngIf="database?.server_type">
+                                            <img *ngIf="database.server_type === 'POSTGRESQL'"
+                                                src="./assets/images/icons/postSQL-icon.jpg"
+                                                alt="PostgreSQL"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'SAP HANA'"
+                                                src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png"
+                                                alt="SAP HANA"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'TALLY'"
+                                                src="./assets/images/icons/TallyLogo.png"
+                                                alt="Tally"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'ORACLE'"
+                                                src="./assets/images/icons/oracle-icon.jpg"
+                                                alt="Oracle"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'NINJA'"
+                                                src="./assets/images/icons/ninjaRMMIcon.jpg"
+                                                alt="Ninja"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'HUBSPOT'"
+                                                src="./assets/images/icons/hubspotlogo.png"
+                                                alt="Hubspot"
+                                                class="card-img w-5 h-5" />
+                                                <img *ngIf="database.server_type === 'DEEPSEEK'"
+                                                src="./assets/images/icons/deepseek.svg"
+                                                alt="DeepSeek"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'OPEN_AI'"
+                                                src="https://logo.clearbit.com/openai.com"
+                                                alt="OpenAI"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'MYSQL'"
+                                                src="./assets/images/icons/MySql-icon1.jpg"
+                                                alt="MySQL"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'MONGODB'"
+                                                src="./assets/images/icons/mongodb-icon.jpg"
+                                                alt="MongoDB"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'MICROSOFTSQLSERVER'"
+                                                src="./assets/images/icons/microsoft-sql-server-icon.jpg"
+                                                alt="SQL Server"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'SQLITE'"
+                                                src="./assets/images/icons/sqlite-icon.jpg"
+                                                alt="SQLite"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'SNOWFLAKE'"
+                                                src="./assets/images/icons/snowflake-icon.png"
+                                                alt="Snowflake"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'EXCEL'"
+                                                src="./assets/images/icons/csv-icon.jpg"
+                                                alt="Excel"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'CSV'"
+                                                src="./assets/images/icons/excel-icon.jpg"
+                                                alt="CSV"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'QUICKBOOKS'"
+                                                src="./assets/images/icons/quickbooks-icon.jpg"
+                                                alt="QuickBooks"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'SALESFORCE'"
+                                                src="./assets/images/icons/salesforce-icon.jpg"
+                                                alt="Salesforce"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'CONNECTWISE'"
+                                                src="./assets/images/icons/connectwise-icon.png"
+                                                alt="Connectwise"
+                                                class="card-img w-5 h-5" />
+
+                                            <img *ngIf="database.server_type === 'HALOPS'"
+                                                src="./assets/images/icons/Halopsa-icon.png"
+                                                alt="Halops"
+                                                class="card-img w-5 h-5" />
+
+                                            <img *ngIf="database.server_type === 'PAX8'"
+                                                src="./assets/images/icons/Pax8-black.svg"
+                                                alt="Pax8"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'IMMYBOT'"
+                                                src="./assets/images/icons/immybot.png"
+                                                alt="Immybot"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'SHOPIFY'"
+                                                src="./assets/images/icons/shopify-large-1.jpg"
+                                                alt="Shopify"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'GOOGLE_SHEETS'"
+                                                src="./assets/images/icons/google-sheets.jpg"
+                                                alt="Google Sheets"
+                                                class="card-img w-5 h-5" />
+                                                
+                                            <img *ngIf="database.server_type === 'GOOGLE_ANALYTICS'"
+                                                src="./assets/images/icons/google-anaytics.jpg"
+                                                alt="Google Analytics"
+                                                class="card-img w-5 h-5" />
+                                            </span>
+                                            <div class="ms-2">
+                                                <h6 class="mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</h6>
+                                                <span class="text-muted fs-14 fw-600">{{database.server_type | lowercase}}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="text-muted">{{database.created_at | timeAgo }}</span>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                            <!-- <tbody>
+                                @for(database of connectionList;track database){
+                                <tr>
+                                    <td>
                                         <a class="card-title" 
                                             (click)="getTablesFromConnectedDb(database.hierarchy_id)"
                                             ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
@@ -602,6 +826,10 @@
                                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
+                                    <td *ngIf="database.server_type === 'PAX8'">
+                                        <img alt="product" src="./assets/images/icons/Pax8-black.svg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
                                     <td *ngIf="database.server_type === 'IMMYBOT'">
                                         <img alt="product" src="./assets/images/icons/immybot.png"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
@@ -618,10 +846,10 @@
                                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
-                                    <!-- <td>{{database.server_type}}</td> -->
+                                    <td>{{database.server_type}}</td>
                                 </tr>
                             }
-                            </tbody>
+                            </tbody> -->
                         </table>
                     </div>
                 </div>
@@ -635,7 +863,7 @@
 <ng-template #propertiesModal let-modal>
     <div class="modal-header">
         <h6 class="modal-title">Dashboard properties</h6>
-        <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+        <button type="button"class="btn-close"aria-label="Close"(click)="emptyDashboardProperties();modal.dismiss('Cross click')">
         </button>
       </div>
     
@@ -650,9 +878,10 @@
             <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="sharePublish($event)" [closeOnSelect]="true" placeholder="Share or Publish">
              <ng-option  value="public" selected>Public</ng-option>
              <ng-option  value="private" selected>Private</ng-option>
-            </ng-select>
-           </div>
-          <div *ngIf="shareAsPrivate" class="">
+             <ng-option  value="protected" selected>Protected</ng-option>
+             </ng-select>
+             </div>
+            <div *ngIf="shareAsPrivate" class="">
             
                <p class="fw-semibold mb-0 mt-3">Roles</p>
                <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="onRolesChange($event)" [closeOnSelect]="false" [(ngModel)]="selectedRoleIds"  [multiple]="true" placeholder="Select Roles">
@@ -668,7 +897,12 @@
               
             </ng-select>
        </div>
-       <div *ngIf="publishedDashboard" class="">
+       <div *ngIf="shareAsProtected" class="">
+            <p class="fw-semibold mb-0 mt-3">Emails</p>
+            <ng-select class="form-control p-0" [addTag]="true" [multiple]="true" [(ngModel)]="protectedEmails" placeholder="Add emails"></ng-select>
+            <!-- <input type="file" accept=".csv" (change)="uploadProtectedCSV($event)" class="form-control mt-2" /> -->
+       </div>
+        <div *ngIf="publishedDashboard" class="">
             
         <p class="fw-semibold mb-2 mt-3">Url</p>
         <button class="btn text-left border">{{publicUrl}}
@@ -681,13 +915,19 @@
    </div>
       </div>
       <div class="modal-footer">
-        <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl  && !applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button
+          type="button"
+          [disabled]="shareAsPrivate ? (!selectedRoleIds?.length || !selectedUserIds?.length) : (shareAsProtected ? !protectedEmails.length : false)"
+          *ngIf="!createUrl  && !applyButtonEnableOnEditUser"
+          (click)="saveDashboardProperties()"
+          class="btn ripple btn-primary"
+        >Apply</button>
         <button type="button" [disabled]="!shareAsPrivate" *ngIf="applyButtonEnableOnEditUser" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Update</button>
 
         <button
           type="button"
           class="btn ripple btn-secondary"
-          (click)="modal.close('Save click')"
+          (click)="emptyDashboardProperties();modal.close('Cross click')"
         >
           Close
         </button>
