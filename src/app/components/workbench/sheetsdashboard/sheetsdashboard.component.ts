@@ -2883,7 +2883,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       "sheet_ids": sheetIds
     }
     if(this.dashboardId && sheetIds?.length > 0){
-      this.removeFiltersandActionsBasedOnSheetIds(obj);
+      this.removeFiltersandActionsBasedOnSheetIds(obj, true);
     } else {
       this.loaderService.hide();
     }
@@ -7680,11 +7680,15 @@ validateTextEditor(): boolean {
     }
   }
 
-  removeFiltersandActionsBasedOnSheetIds(obj : any){
+  removeFiltersandActionsBasedOnSheetIds(obj : any, clearDashbaord?: boolean){
     this.workbechService.clearTabSheetFilterActions(obj).subscribe({
       next: (data: any) => {
         this.loaderService.hide();
         this.toasterService.info('Filters / Actions on Tab are deleted.','info',{ positionClass: 'toast-top-center'});
+        if(clearDashbaord){
+          this.drillThroughActionList = [];
+          this.DahboardListFilters = [];
+        }
         if(this.active == 2){
           this.getDashboardFilterredList(true);
         } else if(this.active == 3) {
