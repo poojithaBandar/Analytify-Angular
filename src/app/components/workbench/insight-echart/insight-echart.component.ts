@@ -606,8 +606,8 @@ stackedChart(){
           formatter:(params:any) => this.formatNumber(params.value) 
       }
   })),        
-
   };
+  return this.chartOptions;
 }
 sidebySide(dualAxisColumnData? : any ,dualAxisRowData? : any ){
   if(dualAxisColumnData && dualAxisRowData){
@@ -1054,6 +1054,7 @@ areaChart(){
     color: this.color
 
   };
+  return this.chartOptions;
 console.log(this.chartsRowData,this.chartsColumnData,'areachart')
 
 }
@@ -1161,6 +1162,7 @@ lineChart(){
     color: this.color
 
   };
+  return this.chartOptions;
 }
 pieChart(chartsColumnData?:any[],chartsRowData?:any[]){
   if(chartsColumnData && chartsRowData){
@@ -1418,6 +1420,7 @@ barLineChart(){
       }
     ]
   };
+  return this.chartOptions;
 }
 multiLineChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
   if(dualAxisColumnData && dualAxisRowData){
@@ -1669,6 +1672,7 @@ heatMapChart(){
 
   ],
 };
+return this.chartOptions;
 }
 calendarChart() {
   let calendarData: any[] = [];
