@@ -116,6 +116,10 @@ export function dynamicBgTrasnsparentPrimaryColor(
 
 export function localStorageBackUp() {
   let html = document.querySelector('html');
+  if (localStorage.getItem('glassBgImage')) {
+    const img: any = localStorage.getItem('glassBgImage');
+    html?.style.setProperty('--glass-bg-image', `url('${img}')`);
+  }
   if (localStorage.getItem('data-header-styles') == 'dark') {
     if (html?.setAttribute('data-theme-mode', 'dark')) {
       const light = document.getElementById(
