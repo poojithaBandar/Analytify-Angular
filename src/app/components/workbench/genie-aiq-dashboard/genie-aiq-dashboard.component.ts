@@ -32,8 +32,10 @@ export class GenieAiqDashboardComponent {
   selectedInsights: any[] = [];
   connectionList: any[] = [];
   selectedConnection: any = '';
-  schematableList = [] as any;
+  schematableList = [] as any[];
   hierarchyId:any;
+    @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
+
   constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService){
 
   }
@@ -218,7 +220,7 @@ isInsightSelected(insight: any): boolean {
      this.workbechService.getDashbaordSuggestions(payload).subscribe({
       next:(data)=>{
       console.log(data);
-      this.templateDashboardService.buildSampleGieneAiqDashbaord(this.hierarchyId.hierarchy_id, data);
+      this.templateDashboardService.buildSampleGieneAiqDashbaord(this.container,this.hierarchyId.hierarchy_id, data);
       this.step = 3;
       },
       error:(error)=>{
