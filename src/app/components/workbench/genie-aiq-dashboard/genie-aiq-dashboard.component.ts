@@ -31,7 +31,7 @@ export class GenieAiqDashboardComponent {
   suggestedInsights:any[] = [];
   selectedInsights: any[] = [];
   connectionList: any[] = [];
-  selectedConnection: any = '';
+  selectedConnection: any = null;
   schematableList = [] as any[];
   hierarchyId:any;
     @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
@@ -78,6 +78,7 @@ export class GenieAiqDashboardComponent {
 }
 onServerTypeSelect(type: string) {
   this.selectedServerType = type;
+  this.selectedConnection = null; // Clear old selection
   this.displayNamesForType = this.groupedConnections[type] || [];
 }
   onConnect() {

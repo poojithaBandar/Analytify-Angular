@@ -11,7 +11,7 @@
     <div *ngIf="selectedServerType">
     <label>Display Name</label>
     <select [(ngModel)]="selectedConnection" name="datasourcename">
-        <option value="" disabled>Select display name</option>
+        <option value=null disabled>Select display name</option>
         <option *ngFor="let conn of displayNamesForType" [ngValue]="conn">{{ conn.display_name }}</option>
     </select>
     </div>
