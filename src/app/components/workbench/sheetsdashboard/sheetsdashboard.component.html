@@ -1890,7 +1890,7 @@
                 }
                 @if(item['drillDownObject'] && item['drillDownObject'].length > 0 && item['drillDownIndex'] > 0 && item['drillDownHierarchy'] &&
                 item['drillDownHierarchy'].length > 0){
-                <div class="col-lg-12 col-md-12 d-flex mt-2">
+                <div class="d-flex align-items-center justify-content-center">
                   @for(column of item['drillDownObject'];track column;let index = $index){
                   <h6 class="ms-1 mb-0 p-1"> {{item['drillDownObject'][index][item['drillDownHierarchy'][index] === 'date' ?
                     'year/month/day' :
