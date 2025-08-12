@@ -499,7 +499,7 @@ getLabelPosition(){
 stackedchartFromGenieDashboard(dualAxisColumnData? : any ,dualAxisRowData? : any ){
   this.dualAxisColumnData = dualAxisColumnData;
   this.dualAxisRowData = dualAxisRowData;
-  this.stackedChart();
+  return this.stackedChart();
 }
 stackedChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -952,7 +952,7 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
 areachartFromGenieDashboard(chartsColumnData?:any,chartsRowData?:any){
  this.chartsColumnData = chartsColumnData;
 this.chartsRowData = chartsRowData;
-this.areaChart(); 
+return this.areaChart(); 
 }
 areaChart(){
   this.chartOptions = {
@@ -1061,7 +1061,7 @@ console.log(this.chartsRowData,this.chartsColumnData,'areachart')
 linechartFromGenieDashboard(chartsColumnData?:any,chartsRowData?:any){
 this.chartsColumnData = chartsColumnData;
 this.chartsRowData = chartsRowData;
-this.lineChart();
+return this.lineChart();
 }
 lineChart(){
   this.chartOptions = {
@@ -1267,7 +1267,7 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
 barLinechartFromGenieDashboard(dualAxisColumnData?:any, dualAxisRowData?:any){
 this.dualAxisColumnData = dualAxisColumnData;
 this.dualAxisRowData = dualAxisRowData;
-this.barLineChart();
+return this.barLineChart();
 }
 barLineChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1587,7 +1587,7 @@ radarChart(){
 heatmapFromGenieDashboard(dualAxisColumnData? : any, dualAxisRowData? : any){
   this.dualAxisColumnData = dualAxisColumnData;
   this.dualAxisRowData = dualAxisRowData;
-  this.heatMapChart();
+  return this.heatMapChart();
 }
 heatMapChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
