@@ -665,6 +665,13 @@ export class TemplateDashboardService {
       chartData = this.echartInstance.heatmapFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     } else if(data.chart_id == 5){
       chartData = this.echartInstance.stackedchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+    } else if(data.chart_id == 11){
+      chartData = this.echartInstance.calendarchartFromGenieDashboard(chartsColumnData, chartsRowData);
+    } else if(data.chart_id == 14){
+      this.echartInstance.autoAdjustChartHeightForHBar();
+      chartData = this.echartInstance.horizontalBarChart(chartsColumnData, chartsRowData);
+    } else if(data.chart_id == 12){
+      chartData = this.echartInstance.radarchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     }
     
     const sheetRows = data.row_data.map((item:any) => {
@@ -725,10 +732,11 @@ export class TemplateDashboardService {
         // "row": tablePreviewRow,
         "results": {
           "kpiData": tranformedData.rows_data,
-          "kpiFontSize": 16,
+          "kpiFontSize": 3,
           "kpiNumber": tranformedData.rows_data[0]?.result_data[0],
           "kpiPrefix": "",
           "kpiSuffix": "",
+          "KPIDecimalPlaces": 2,
           kpiDecimalUnit: "none",
           "tableData": tableDataStore,
           "tableColumns": displayedColumns,
