@@ -27,6 +27,7 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import _ from 'lodash';
 
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
+import { BambooHRIntegrationService } from '../../../services/bamboohr-integration.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -59,6 +60,7 @@ export class WorkbenchComponent implements OnInit{
   openMySqlForm = false;
   openConnectWiseForm = false;
   openHaloPSAForm = false;
+  openBambooHRForm = false;
   openHubspotForm = false;
   openShopifyForm =false;
   openGoogleAnalyticsForm = false;
@@ -120,6 +122,8 @@ export class WorkbenchComponent implements OnInit{
   ninjaRMMScopes = ['monitoring', 'management', 'control'];
   selectedNinjaRMMScopes: string[] = [];
   ninjaRMMScopeError: boolean = false;
+  bambooHrApiKey!: string;
+  bambooHrDomain!: string;
   hubspotClientId!: string;
   hubspotClientSecret!: string;
   hubspotRedirectURL!: string;
@@ -209,7 +213,7 @@ export class WorkbenchComponent implements OnInit{
   subDomainError: boolean = false;
 
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService){
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private bamboohrService:BambooHRIntegrationService){
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
 
@@ -631,8 +635,10 @@ export class WorkbenchComponent implements OnInit{
     this.hubspotClientId = '';
     this.hubspotClientSecret = '';
     this.selectedHubspotScopes = [];
-    
-  } 
+    this.bambooHrApiKey = '';
+    this.bambooHrDomain = '';
+
+  }
   googleSheetsData = [] as any;
   gsheetsParentId:any;
   gsheetprofile:any;
@@ -828,6 +834,27 @@ export class WorkbenchComponent implements OnInit{
         }
       )
 
+    }
+
+    bambooHRUpdate(){
+      const obj = {
+        "api_key": this.bambooHrApiKey,
+        "display_name": this.displayName,
+        "domain": this.bambooHrDomain,
+        "hierarchy_id": this.databaseId
+      }
+
+      this.bamboohrService.updateIntegration(obj).subscribe({next:(responce:any)=>{
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+        },error:(error)=>{
+          console.log(error);
+          this.toasterservice.error(error.error.message,'error',{ positionClass:'toast-top-right'});
+        }})
     }
 
     ImmybotConnectionUpdate(){
@@ -1114,6 +1141,12 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+    connectBambooHR(){
+      this.openBambooHRForm = true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
     connectTally(){
       this.openTallyForm = true;
       this.databaseconnectionsList= false;
@@ -1275,6 +1308,20 @@ export class WorkbenchComponent implements OnInit{
         this.deepSeekKeyError = false;
       }else{
         this.deepSeekKeyError = true;
+      }
+    }
+    bambooHrApiKeyInputError(){
+      if(this.bambooHrApiKey){
+        this.bambooHrApiKeyError = false;
+      }else{
+        this.bambooHrApiKeyError = true;
+      }
+    }
+    bambooHrDomainInputError(){
+      if(this.bambooHrDomain){
+        this.bambooHrDomainError = false;
+      }else{
+        this.bambooHrDomainError = true;
       }
     }
     shopfyNameError(){
@@ -2118,6 +2165,32 @@ export class WorkbenchComponent implements OnInit{
         this.fileInput1.nativeElement.click();
       }
     }
+    bambooHRSignIn(){
+      const obj = {
+        "api_key": this.bambooHrApiKey,
+        "display_name": this.displayName,
+        "domain": this.bambooHrDomain
+      }
+      this.bamboohrService.createIntegration(obj).subscribe({next: (responce:any) => {
+            console.log(responce);
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId = responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              if(!this.datasourceSwitchUI){
+                this.openBambooHRForm = false;
+              }
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId;
+                this.connectCrossDbs();
+              }
+            }
+            this.getDbConnectionList();
+        },error:(error)=>{
+          console.log(error);
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
+        }});
+    }
 
     uploadfileCsv(event:any,type:any,database:any){
       const file:File = event.target.files[0];
@@ -2448,6 +2521,10 @@ connectGoogleSheets(){
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
+    } else if (this.databaseType == "bamboohr") {
+      this.displayName = editData.display_name;
+      this.bambooHrApiKey = editData.api_key;
+      this.bambooHrDomain = editData.domain;
     }  else if (this.databaseType == "immybot") {
       this.clientIdImmybot = editData.client_id;
       this.secretValue = editData.secret_value;
@@ -2673,6 +2750,8 @@ connectGoogleSheets(){
   tallyTokenError:boolean = false;
   openAiKeyError:boolean = false;
   deepSeekKeyError:boolean = false;
+  bambooHrApiKeyError:boolean = false;
+  bambooHrDomainError:boolean = false;
 
   serverConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
