@@ -31,6 +31,9 @@
     <div><strong>Display Name:</strong> {{ selectedConnection?.display_name }}</div>
   </div>
   <label for="tableSelect"> <strong>Tables</strong></label>
+  <div *ngIf="selectedTables.length > 10" class="text-danger">
+    You can select a maximum of 10 Tables.
+  </div>
   <ng-select
     [items]="tables"
     bindLabel=""
@@ -44,7 +47,7 @@
     >
   </ng-select>
   <div class="button-row mt-2" >
-      <button  type="submit" class="connect-btn btn-primary" (click)="onTableSelect()">Connect</button>
+      <button class="btn btn-primary connect-btn" [disabled]="selectedTables.length > 10 || selectedTables.length < 1" (click)="onTableSelect()">Connect</button>
       <button type="button" class="cancel-btn" (click)="goBack()">Back</button>
     </div>
 </div>
