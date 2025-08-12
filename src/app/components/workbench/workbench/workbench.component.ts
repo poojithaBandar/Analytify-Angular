@@ -273,6 +273,10 @@ export class WorkbenchComponent implements OnInit{
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
+
+  buildSampleGieneAiqDashbaord(hid:any,data:any){
+  this.templateDashboardService.buildSampleGieneAiqDashbaord(this.container, hid, data);
+}
   openConnectionOnDatasourceSwitch(){
     if(this.databaseSwitchType === 'POSTGRESQL'){
     this.openPostgreSql();

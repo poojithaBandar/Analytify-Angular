@@ -62,6 +62,7 @@ import jsPDF from 'jspdf';
 import { i } from 'mathjs';
 import { SafeUrlPipe, SanitizeHtmlPipe } from '../../../shared/pipes/sanitize-html.pipe';
 import { AuthService } from '../../../shared/services/auth.service';
+import { GenieAiqDashboardComponent } from '../genie-aiq-dashboard/genie-aiq-dashboard.component';
 
 interface TableRow {
   [key: string]: any;
@@ -130,9 +131,9 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
     },
   ],
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
-    CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
+    GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe,SanitizeHtmlPipe,SafeUrlPipe],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe,SanitizeHtmlPipe,SafeUrlPipe,GenieAiqDashboardComponent],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -310,7 +311,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       }
     }
     if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
-      this.sheetsNewDashboard = true;
+      // this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId.push(+atob(route.snapshot.params['id1']));
         this.qrySetId.push(+atob(route.snapshot.params['id2']));
