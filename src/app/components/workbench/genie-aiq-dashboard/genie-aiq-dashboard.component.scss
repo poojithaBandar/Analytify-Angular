@@ -1,0 +1,230 @@
+/* Container styles */
+.connect-data-source-card, .table-selection-card, .insights-dashboard {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 2rem;
+  max-width: 480px;
+  margin: 2rem auto;
+}
+
+.connect-data-source-card h2, .table-selection-card h3, .suggested-insights h2, .selected-insights h2 {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1a2233;
+}
+
+.db-icon {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+form label {
+  display: block;
+  margin: 1rem 0 0.25rem 0;
+  font-weight: 500;
+}
+form input, form select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #dbe2ef;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+.button-row {
+  display: flex;
+  gap: 1rem;
+}
+.connect-btn {
+//   background: #1a2233;
+//   color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cancel-btn {
+  background: #fff;
+  color: #1a2233;
+  border: 1px solid #dbe2ef;
+  border-radius: 6px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Table selection */
+.table-selection-card select {
+  margin-top: 1rem;
+}
+
+/* Insights dashboard */
+.insights-dashboard {
+  display: flex;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  flex-direction: column;
+}
+.suggested-insights, .selected-insights {
+  flex: 1;
+  background: #f7f9fc;
+  border-radius: 12px;
+  padding: 2rem;
+  max-height: 601px;
+  overflow-y: auto;
+}
+.insights-dashboard .button-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+@media (min-width: 900px) {
+  .insights-dashboard {
+    flex-direction: row;
+  }
+  .insights-dashboard .button-row {
+    justify-content: flex-end;
+    margin-top: 2rem;
+  }
+}
+.insight-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.insight-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+  padding: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.insight-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  background: #eaf0fb;
+}
+.insight-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.tag {
+  background: #eaf0fb;
+  color: #1a2233;
+  border-radius: 6px;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.insight-desc {
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+.selected-insights ul {
+  margin-top: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+.selected-insights li {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #1a2233;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 2px solid #007bff;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-right: 0;
+  margin-left: 0;
+  gap: 0.5rem;
+}
+.selected-desc {
+  color: #4a5568;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+.insight-card.selected {
+  border: 2px solid #007bff;
+  background: #e6f0ff;
+}
+.remove-cross {
+  color: #d9534f;
+  cursor: pointer;
+  margin-left: 12px;
+  font-weight: bold;
+  font-size: 1.3rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .insights-dashboard {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .insight-cards {
+    grid-template-columns: 1fr;
+  }
+}
+.insights-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 70vh;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  // max-width: 1200px;
+  // margin: 2rem auto;
+  padding: 0;
+}
+
+.insights-dashboard {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  flex: 1 1 auto;
+  padding: 2rem;
+  background: transparent;
+}
+
+.suggested-insights, .selected-insights {
+  flex: 1 1 0;
+  background: #f7f9fc;
+  border-radius: 12px;
+  padding: 2rem;
+  min-width: 0;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: auto;
+  // padding: 1.5rem 2rem 2rem 2rem;
+  // background: #fff;
+  border-radius: 0 0 12px 12px;
+  // box-shadow: 0 -1px 8px rgba(0,0,0,0.03);
+}
+
+@media (max-width: 900px) {
+  .insights-dashboard {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .button-row {
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
+  }
+}
