@@ -727,6 +727,10 @@
                                                 src="./assets/images/icons/google-anaytics.jpg"
                                                 alt="Google Analytics"
                                                 class="card-img w-5 h-5" />
+                                            <img *ngIf="database.server_type === 'BAMBOOHR'"
+                                                src="https://cdn.worldvectorlogo.com/logos/bamboohr.svg"
+                                                alt="BambooHR"
+                                                class="card-img w-5 h-5" />
                                             </span>
                                             <div class="ms-2">
                                                 <h6 class="mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</h6>
@@ -835,6 +839,10 @@
                                     </td>
                                     <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
                                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'BAMBOOHR'">
+                                        <img alt="BambooHR" src="https://cdn.worldvectorlogo.com/logos/bamboohr.svg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <td>{{database.server_type}}</td>
