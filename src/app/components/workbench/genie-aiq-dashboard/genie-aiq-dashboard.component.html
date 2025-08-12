@@ -79,7 +79,23 @@
       </ul>
     </div>
   </div>
-  <div class="button-group d-flex gap-2 justify-content-end mb-2 me-2">
+  <div class="button-group d-flex gap-2 justify-content-end mb-2 me-2 align-items-center w-100">
+     <div class="d-flex" style="margin-right: 275px;"> 
+       <input
+    type="text"
+    [(ngModel)]="userPrompt"
+    placeholder="Enter your prompt..."
+    class="form-control me-2"
+    style="width: 522px;"
+    (keyup.enter)="sendPrompt()"
+  />
+
+  <!-- Send button -->
+  <button type="button" class="btn btn-success" (click)="sendPrompt()">
+    Send
+  </button>
+     </div>
+   
     <button type="button" class="cancel-btn" (click)="goBack()">Back</button>
     <button type="button" class="connect-btn btn-primary" (click)="generateDashboard()">Generate Dashboard</button>
   </div>

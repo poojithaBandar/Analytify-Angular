@@ -233,4 +233,15 @@ isInsightSelected(insight: any): boolean {
     console.log('Dashboard payload:', payload);
     // Call your API here if needed
   }
+  userPrompt: string = '';
+
+sendPrompt() {
+  if (!this.userPrompt || !this.userPrompt.trim()) {
+    this.toasterService.error('Please enter a prompt', 'Error');
+    return;
+  }
+  console.log('User prompt:', this.userPrompt);
+  // Call your API or handle the message sending logic here
+  this.userPrompt = ''; // Clear input after sending
+}
 }
