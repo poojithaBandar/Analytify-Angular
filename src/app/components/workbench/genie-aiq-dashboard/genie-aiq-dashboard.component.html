@@ -26,11 +26,11 @@
 <!-- Table Selection UI (shown after connecting) -->
 <div *ngIf="step === 2" class="table-selection-card">
   <h5>Select Tables</h5>
-  <div class="selected-datasource-info d-flex mb-2">
+  <div class="selected-datasource-info mb-2">
     <div class="me-1"><strong> Server Type:</strong>{{ selectedServerType }}</div>
     <div><strong>Display Name:</strong> {{ selectedConnection?.display_name }}</div>
   </div>
-  <label for="tableSelect">Tables</label>
+  <label for="tableSelect"> <strong>Tables</strong></label>
   <ng-select
     [items]="tables"
     bindLabel=""

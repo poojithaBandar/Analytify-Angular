@@ -736,7 +736,7 @@ export class TemplateDashboardService {
           "kpiNumber": tranformedData.rows_data[0]?.result_data[0],
           "kpiPrefix": "",
           "kpiSuffix": "",
-          "KPIDecimalPlaces": 2,
+          "kpiDecimalPlaces": 2,
           kpiDecimalUnit: "none",
           "tableData": tableDataStore,
           "tableColumns": displayedColumns,
