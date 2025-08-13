@@ -712,6 +712,11 @@
                                                 src="./assets/images/icons/Pax8-black.svg"
                                                 alt="Pax8"
                                                 class="card-img w-5 h-5" />
+
+                                            <img *ngIf="database.server_type === 'BAMBOOHR'"
+                                                src="https://logo.clearbit.com/bamboohr.com"
+                                                alt="BambooHR"
+                                                class="card-img w-5 h-5" />
                                                 
                                             <img *ngIf="database.server_type === 'IMMYBOT'"
                                                 src="./assets/images/icons/immybot.png"
@@ -828,6 +833,10 @@
                                     </td>
                                     <td *ngIf="database.server_type === 'PAX8'">
                                         <img alt="product" src="./assets/images/icons/Pax8-black.svg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'BAMBOOHR'">
+                                        <img alt="product" src="https://logo.clearbit.com/bamboohr.com"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <td *ngIf="database.server_type === 'IMMYBOT'">
