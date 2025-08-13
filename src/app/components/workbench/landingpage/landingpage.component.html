@@ -389,127 +389,15 @@
                     </a> -->
                 </div>
                   <div class="card-body mb-0 p-0 ">
-                    <div class="">
-                      <div id="featureCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                      
-                          <div class="carousel-item active">
-                            <div class="d-flex flex-column align-items-center text-center p-5">
-                              <i class="bi bi-funnel-fill fs-1 text-primary mb-3"></i>
-                              <h4>World-Class Query Builder</h4>
-                              <p class="text-muted">Drag-and-drop or SQL — build powerful queries with ease.</p>
-                            </div>
-                          </div>
-                      
-                          <div class="carousel-item">
-                            <div class="d-flex flex-column align-items-center text-center p-5">
-                              <i class="bi bi-robot fs-1 text-success mb-3"></i>
-                              <h4>AI-Enhanced Analytics</h4>
-                              <p class="text-muted">Uncover trends and anomalies with machine learning insights.</p>
-                            </div>
-                          </div>
-                      
-                          <div class="carousel-item">
-                            <div class="d-flex flex-column align-items-center text-center p-5">
-                              <i class="bi bi-bar-chart-steps fs-1 text-danger mb-3"></i>
-                              <h4>Drill Down & Through Charts</h4>
-                              <p class="text-muted">Navigate from summary to detail across datasets effortlessly.</p>
-                            </div>
-                          </div>
-                      
-                          <div class="carousel-item">
-                            <div class="d-flex flex-column align-items-center text-center p-5">
-                              <i class="bi bi-diagram-3 fs-1 text-warning mb-3"></i>
-                              <h4>Multi-Dataset Dashboards</h4>
-                              <p class="text-muted">Combine data sources in a single, unified dashboard.</p>
-                            </div>
-                          </div>
-                      
-                          <div class="carousel-item">
-                            <div class="d-flex flex-column align-items-center text-center p-5">
-                              <i class="bi bi-code-slash fs-1 text-info mb-3"></i>
-                              <h4>Open Source Flexibility</h4>
-                              <p class="text-muted">Fully customizable and transparent for dev teams.</p>
-                            </div>
-                          </div>
-                      
-                          <!-- Add more carousel-item blocks for the rest of the features -->
-                      
-                        </div>
-                      
-                        <!-- Carousel Controls -->
-                        <button class="carousel-control-prev" type="button" data-bs-target="#featureCarousel" data-bs-slide="prev">
-                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#featureCarousel" data-bs-slide="next">
-                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Next</span>
-                        </button>
-                      
-                        <!-- Optional indicators -->
-                        <div class="carousel-indicators mt-4">
-                          <button type="button" data-bs-target="#featureCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                          <button type="button" data-bs-target="#featureCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                          <button type="button" data-bs-target="#featureCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                          <button type="button" data-bs-target="#featureCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
-                          <button type="button" data-bs-target="#featureCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
-                        </div>
-                      </div>
-                      
-                        <!-- <table class="table  text-nowrap text-md-nowrap mb-0">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center mt-0">
-                                            <span class="rounded-5 p-2 border">
-                                            <img src="./assets/images/icons/google-sheets.jpg"alt="" class="card-img w-5 h-5"/>
-                                            </span>
-                                             <div class="ms-2">
-                                                <h6 class="mb-0 fw-600" style="cursor: pointer;">Monthly Reports </h6>
-                                                <span class="text-muted fs-14 fw-600">excel</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-end">
-                                        <span class="recent-text-green">Connected</span>
-                                    </td>
-                                </tr>   
-                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center mt-0">
-                                            <span class="rounded-5 p-2 border">
-                                            <img src="./assets/images/icons/google-sheets.jpg"alt="" class="card-img w-5 h-5"/>
-                                            </span>
-                                             <div class="ms-2">
-                                                <h6 class="mb-0 fw-600" style="cursor: pointer;">Monthly Reports </h6>
-                                                <span class="text-muted fs-14 fw-600">excel</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                     <td class="text-end">
-                                        <span class="recent-text-blue">Syncing</span>
-                                    </td>
-                                </tr> 
-                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center mt-0">
-                                            <span class="rounded-5 p-2 border">
-                                            <img src="./assets/images/icons/google-sheets.jpg"alt="" class="card-img w-5 h-5"/>
-                                            </span>
-                                             <div class="ms-2">
-                                                <h6 class="mb-0 fw-600" style="cursor: pointer;">Monthly Reports </h6>
-                                                <span class="text-muted fs-14 fw-600">excel</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-end">
-                                        <span class="recent-text-green">Connected</span>
-                                    </td>
-                                </tr> 
-                            </tbody>
-                        </table> -->
-                    </div>
+                    <ngb-carousel [interval]="0" [wrap]="true" [keyboard]="true">
+  <ng-template ngbSlide *ngFor="let feature of features; let i = index">
+    <div class="d-flex flex-column align-items-center text-center p-5">
+      <i [class]="'bi ' + feature.icon + ' fs-1 mb-3 text-primary'"></i>
+      <h5 class="fw-bold">{{ feature.title }}</h5>
+      <p class="text-muted">{{ feature.description }}</p>
+    </div>
+  </ng-template>
+</ngb-carousel>
                   </div>            
             </div>
         </div> 
