@@ -11,16 +11,19 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule,TimeAgoPipe],
+  imports: [NgbModule,NgApexchartsModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule,TimeAgoPipe],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
 
 export class LandingpageComponent implements OnInit {
+radialOptions : any = {};
+barOptions: any = {};
 searchDbName:any
 userSheetsList :any[] =[];
 savedDashboardList: any[] =[];
@@ -72,6 +75,10 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
 }
 
 ngOnInit(){
+  // const colors = this.normalizeColors(this.baseColors);
+
+  this.barOptions = this.buildBar();
+  this.radialOptions = this.buildRadial();
   this.loaderService.hide();
   if(this.viewDatabbses){
     this.getDbConnectionList();
@@ -84,6 +91,154 @@ ngOnInit(){
   }
   this.getHostAndPort();
 }
+
+/** RadialBar showing connections split (e.g., 20 total: 10/5/3/2) */
+private buildRadial() {
+  const labels = ['Postgres', 'QuickBooks', 'MongoDB', 'Others'];
+  const values = [50, 75, 83, 92]; // sums to 20 total connections
+
+  return {
+    series: [7, 6, 6, 9],
+    chart: {
+      height: 390,
+      type: "radialBar"
+    },
+    plotOptions: {
+      radialBar: {
+        offsetY: 0,
+        startAngle: 0,
+        endAngle: 270,
+        track: {
+          background: "#e0e0e0", // grey background for remaining arc
+          strokeWidth: "100%",
+          margin: 10 // gap between arcs
+        },
+        hollow: {
+          margin: 5,
+          size: "30%",
+          background: "transparent",
+          image: undefined
+        },
+        dataLabels: {
+          name: {
+            show: false
+          },
+          value: {
+            show: false
+          }
+        }
+      }
+    },
+    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5"],
+    labels: ["CSV", "ConnectWise", "QuickBooks", "Salesforce"],
+    legend: {
+      show: true,
+      floating: true,
+      fontSize: "16px",
+      position: "left",
+      offsetX: 50,
+      offsetY: 10,
+      labels: {
+        useSeriesColors: true
+      },
+      formatter: function(seriesName: any, opts: any) {
+        return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
+      },
+      itemMargin: {
+        horizontal: 3
+      }
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            show: false
+          }
+        }
+      }
+    ]
+  };
+  
+  
+}
+
+
+private buildBar() {
+  const weeks = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  // Example static counts; replace with real values if needed
+  const data = [3, 5, 7, 9, 4, 2, 1];
+
+  return {
+    series: [
+      {
+        name: 'Project Analytics',
+        data: [10, 70, 65, 80, 20, 30, 40] // Example values for Sun-Sat
+      }
+    ],
+    chart: {
+      type: 'bar',
+      height: 300,
+      toolbar: { show: false }
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        // columnWidth: '55%',
+        borderRadiusApplication: 'around',
+        borderRadius: 20,
+        distributed: true, 
+                // endingShape: "rounded", // Important for rounded ends
+        // dataLabels: {
+        //     position: 'top' // top, center, bottom
+        // }
+
+      }
+    },
+    colors: [
+      '#2ECC71', // Sunday - no fill (striped)
+      '#2ECC71', // Monday
+      '#58D68D', // Tuesday
+      '#145A32', // Wednesday
+      '#2ECC71', // Thursday - no fill (striped)
+      '#2ECC71', // Friday - no fill (striped)
+      '#2ECC71'  // Saturday - no fill (striped)
+    ],
+    fill: {
+      type: ['solid', 'solid', 'solid', 'solid', 'pattern', 'pattern', 'pattern'],
+      pattern: {
+        style: 'slantedLines', // Stripe pattern
+        width: 6,
+        height: 6,
+        strokeWidth: 2
+      }
+    },
+    dataLabels: { enabled: false },
+    xaxis: {
+      categories: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+      show: false,          // Hides Y-axis labels
+      axisBorder: { show: false },  // Hides Y-axis border line
+      axisTicks: { show: false }  }
+    ,
+    yaxis: {show: false,          // Hides Y-axis labels
+    axisBorder: { show: false },  // Hides Y-axis border line
+    axisTicks: { show: false } } ,
+    grid: {
+  show: false,
+  xaxis: {
+    lines: {
+      show: false
+    }
+  },
+  yaxis: {
+    lines: {
+      show: false
+    }
+  }
+}
+  };
+}
+
 getHostAndPort(): void {
   const { hostname, port } = window.location;
   this.host = hostname;
