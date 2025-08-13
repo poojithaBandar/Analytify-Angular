@@ -1476,10 +1476,20 @@
                                                 src="./assets/images/icons/connectwise-icon.png"
                                                 alt="Connectwise"
                                                 class="card-img w-5 h-5" />
-                                                
+
                                             <img *ngIf="database.server_type === 'HALOPS'"
                                                 src="./assets/images/icons/Halopsa-icon.png"
                                                 alt="Halops"
+                                                class="card-img w-5 h-5" />
+
+                                            <img *ngIf="database.server_type === 'PAX8'"
+                                                src="./assets/images/icons/Pax8-black.svg"
+                                                alt="Pax8"
+                                                class="card-img w-5 h-5" />
+
+                                            <img *ngIf="database.server_type === 'BAMBOOHR'"
+                                                src="https://logo.clearbit.com/bamboohr.com"
+                                                alt="BambooHR"
                                                 class="card-img w-5 h-5" />
                                                 
                                             <img *ngIf="database.server_type === 'IMMYBOT'"
@@ -1593,6 +1603,14 @@
                                     </td>
                                     <td *ngIf="database.server_type === 'HALOPS'">
                                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'PAX8'">
+                                        <img alt="product" src="./assets/images/icons/Pax8-black.svg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'BAMBOOHR'">
+                                        <img alt="product" src="https://logo.clearbit.com/bamboohr.com"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <td *ngIf="database.server_type === 'IMMYBOT'">

@@ -30,6 +30,7 @@ import { TemplateDashboardService } from '../../../services/template-dashboard.s
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { BambooHRIntegrationService } from '../bamboohr-integration.service';
 
 
 @Component({
@@ -59,6 +60,8 @@ export class WorkbenchComponent implements OnInit{
   openMySqlForm = false;
   openConnectWiseForm = false;
   openHaloPSAForm = false;
+  openPax8Form = false;
+  openBambooHRForm = false;
   openHubspotForm = false;
   openShopifyForm =false;
   openGoogleAnalyticsForm = false;
@@ -209,7 +212,7 @@ export class WorkbenchComponent implements OnInit{
   subDomainError: boolean = false;
 
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService){
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService){
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
 
@@ -272,6 +275,10 @@ export class WorkbenchComponent implements OnInit{
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
+
+  buildSampleGieneAiqDashbaord(hid:any,data:any){
+  this.templateDashboardService.buildSampleGieneAiqDashbaord(this.container, hid, data);
+}
   openConnectionOnDatasourceSwitch(){
     if(this.databaseSwitchType === 'POSTGRESQL'){
     this.openPostgreSql();
@@ -299,6 +306,9 @@ export class WorkbenchComponent implements OnInit{
     }
     else if(this.databaseSwitchType === 'HALOPS'){
     this.connectHaloPSA();
+    }
+    else if(this.databaseSwitchType === 'PAX8'){
+    this.connectPax8();
     }
     else if(this.databaseSwitchType === 'TALLY'){
     this.connectTally();
@@ -357,6 +367,10 @@ export class WorkbenchComponent implements OnInit{
     siteURLPSA = '';
     clientSecret = '';
     clientIdPSA = '';
+    pax8ClientId = '';
+    pax8ClientSecret = '';
+    bambooHRApiKey = '';
+    bambooHRDomain = '';
     publicKey = '';
     privateKey = '';
     path='';
@@ -625,6 +639,10 @@ export class WorkbenchComponent implements OnInit{
     this.siteURLPSA = '';
     this.clientIdPSA = '';
     this.clientSecret = '';
+    this.pax8ClientId = '';
+    this.pax8ClientSecret = '';
+    this.bambooHRApiKey = '';
+    this.bambooHRDomain = '';
     this.ninjaRMMClientid = '';
     this.ninjaRMMClientSecret = '';
     this.selectedNinjaRMMScopes = [];
@@ -814,6 +832,56 @@ export class WorkbenchComponent implements OnInit{
       }
 
       this.workbechService.haloPSAConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+
+    pax8Update(){
+      const obj = {
+        "client_id": this.pax8ClientId,
+        "client_secret": this.pax8ClientSecret,
+        "display_name": this.displayName,
+        "hierarchy_id":this.databaseId
+      }
+
+      this.workbechService.pax8ConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+
+    bambooHRUpdate(){
+      const obj = {
+        "api_key": this.bambooHRApiKey,
+        "display_name": this.displayName,
+        "domain": this.bambooHRDomain,
+        "hierarchy_id":this.databaseId
+      }
+
+      this.bambooHRService.updateIntegration(obj).subscribe({next: (responce) => {
             console.log(responce);
             this.modalService.dismissAll('close');
             if(responce){
@@ -1114,6 +1182,20 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+    connectPax8(){
+      this.openPax8Form = true;
+      this.databaseconnectionsList = false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
+    connectBambooHR(){
+      this.openBambooHRForm = true;
+      this.databaseconnectionsList = false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
     connectTally(){
       this.openTallyForm = true;
       this.databaseconnectionsList= false;
@@ -1199,6 +1281,38 @@ export class WorkbenchComponent implements OnInit{
         this.clientIDPSAError = false;
       }else{
         this.clientIDPSAError = true;
+      }
+    }
+
+    pax8ClientIdValidation(){
+      if(this.pax8ClientId){
+        this.pax8ClientIdError = false;
+      }else{
+        this.pax8ClientIdError = true;
+      }
+    }
+
+    pax8ClientSecretValidation(){
+      if(this.pax8ClientSecret){
+        this.pax8ClientSecretError = false;
+      }else{
+        this.pax8ClientSecretError = true;
+      }
+    }
+
+    bambooHRApiKeyValidation(){
+      if(this.bambooHRApiKey){
+        this.bambooHRApiKeyError = false;
+      }else{
+        this.bambooHRApiKeyError = true;
+      }
+    }
+
+    bambooHRDomainValidation(){
+      if(this.bambooHRDomain){
+        this.bambooHRDomainError = false;
+      }else{
+        this.bambooHRDomainError = true;
       }
     }
 
@@ -2119,6 +2233,68 @@ export class WorkbenchComponent implements OnInit{
       }
     }
 
+    pax8SignIn(){
+      const obj = {
+        "client_id": this.pax8ClientId,
+        "client_secret": this.pax8ClientSecret,
+        "display_name": this.displayName
+      }
+      this.workbechService.pax8Connection(obj).subscribe({next: (responce) => {
+        if(responce){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = responce?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openPax8Form = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+          }
+        }
+      },
+      error:(error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }})
+    }
+
+    bambooHRSignIn(){
+      const obj = {
+        "api_key": this.bambooHRApiKey,
+        "display_name": this.displayName,
+        "domain": this.bambooHRDomain
+      }
+      this.bambooHRService.createIntegration(obj).subscribe({next: (responce) => {
+        if(responce){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = responce?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openBambooHRForm = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+          }
+        }
+      },
+      error:(error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }})
+    }
+
     uploadfileCsv(event:any,type:any,database:any){
       const file:File = event.target.files[0];
       this.fileData = file;
@@ -2448,6 +2624,14 @@ connectGoogleSheets(){
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
+    } else if (this.databaseType == "pax8") {
+      this.pax8ClientId = editData.client_id;
+      this.pax8ClientSecret = editData.client_secret;
+      this.displayName = editData.display_name;
+    } else if (this.databaseType == "bamboohr") {
+      this.bambooHRApiKey = editData.api_key;
+      this.bambooHRDomain = editData.domain;
+      this.displayName = editData.display_name;
     }  else if (this.databaseType == "immybot") {
       this.clientIdImmybot = editData.client_id;
       this.secretValue = editData.secret_value;
@@ -2614,6 +2798,8 @@ connectGoogleSheets(){
   this.sqlLiteForm = false;
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
+  this.openPax8Form = false;
+  this.openBambooHRForm = false;
   this.openShopifyForm = false;
   this.openTallyForm = false;
   this.openOpenAIForm = false;
@@ -2663,6 +2849,10 @@ connectGoogleSheets(){
   siteURLErrorPSA:boolean = false;
   clientIDPSAError:boolean = false;
   clientSecretError: boolean = false;
+  pax8ClientIdError:boolean = false;
+  pax8ClientSecretError:boolean = false;
+  bambooHRApiKeyError:boolean = false;
+  bambooHRDomainError:boolean = false;
   privateKeyError:boolean = false;
   publicKeyError:boolean = false;
   companyIDError:boolean = false;
@@ -3089,7 +3279,10 @@ connectGoogleSheets(){
           case 'HALOPS':
             this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id, responce);
             break;
-            case 'OPEN_AI':
+          case 'PAX8':
+            this.templateDashboardService.buildSamplePaxDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'OPEN_AI':
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
             case 'DEEPSEEK':

@@ -186,7 +186,7 @@
                                                          cdkDropList
                                                          #originList="cdkDropList"
                                                         [cdkDropListData]="dashboardNew"
-                                                        [cdkDropListConnectedTo]="[destinationList1,destinationList]"
+                                                        [cdkDropListConnectedTo]="sheetsNewDashboard ? ['destinationList1'] : ['destinationList1', 'destinationList']"
                                                         (cdkDropListDropped)="drop($event,false)">
                                                            
                                                             <li *ngFor="let item of dashboardNew" ><a draggable="true" [ngClass]="{ 'sheet-bold': item['selectedSheet']}"
@@ -1173,7 +1173,7 @@
       
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
        
-        <gridster [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
+        <gridster *ngIf="!sheetsNewDashboard" [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event,false)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard">
@@ -1225,7 +1225,7 @@
                   </div>
                 </div>
                 <div class="card-header d-flex justify-content-between p-1" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
-                  @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
+                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i
@@ -1712,6 +1712,9 @@
               </div>
             </gridster-item>
           </gridster>
+          <div *ngIf="sheetsNewDashboard">
+            <app-genie-aiq-dashboard></app-genie-aiq-dashboard>
+          </div>
           </div>
           @if(displayTabs){
             <div class="d-flex p-2">
@@ -1811,7 +1814,7 @@
                           ? 'center' 
                           : ''">
                 <div class="card-header d-flex justify-content-between p-1">
-                  @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
+                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i

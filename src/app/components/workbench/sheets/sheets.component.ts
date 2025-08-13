@@ -2201,63 +2201,47 @@ sheetSave(isDashboardTransfer?: boolean){
     //  bandColor1 = this.color1;
     //  bandColor2 = this.color2;
     }
-  if(this.bar && this.chartId == 6){
-    if (this.originalData) {
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
+
+  if ([6, 14, 24, 10].includes(this.chartId) && this.originalData && this.drillDownIndex > 0 && this.drillDownObject.length > 0) {
+    tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
+    tablePreviewRow[0].result_data = this.originalData.data;
+
+    tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
+    tablePreviewCol[0].result_data = this.originalData.categories;
+
+    if (this.drillDownIndex > 0) {
+      this.chartsColumnData = this.originalData.categories;
+      this.chartsRowData = this.originalData.data;
+      this.drillDownIndex = 0;
+      this.drillDownObject = [];
     }
+
+    delete this.originalData;
   }
-   if(this.horizontalBar && this.chartId == 14){
-    if (this.originalData) {
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
-    }
-  }
-  if(this.pie && this.chartId == 24){
-    if (this.originalData) {
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
-    }
-  }
-  if(this.donut && this.chartId == 10){
-    if (this.originalData) {
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
-    }
-  }
+
   if(this.kpi && this.chartId == 25){
     kpiData = this.tablePreviewRow;
     kpiColor = this.kpiColor;
     kpiChartColor = this.kpiChartColor;
     kpiFontSize = this.kpiFontSize;
   }
-  if(this.map && this.chartId == 29){
-    if(this.originalData){
-      if(this.draggedDrillDownColumns.length > 0){
-        this.originalData.categories.forEach((column:any,index:any)=>{
-          tablePreviewCol[index].column = column.name;
-          tablePreviewCol[index].result_data = column.values;
-        });
-        this.originalData.data.forEach((column:any,index:any)=>{
-          tablePreviewRow[index].column = column.name;
-          tablePreviewRow[index].result_data = column.data;
-        });
-        this.drillDownIndex = 0;
-      }
-      delete this.originalData;
+  if (this.map && this.chartId == 29 && this.originalData && this.drillDownIndex > 0 && this.drillDownObject.length > 0) {
+    this.originalData.categories.forEach((column: any, index: any) => {
+      tablePreviewCol[index].column = column.name;
+      tablePreviewCol[index].result_data = column.values;
+    });
+    this.originalData.data.forEach((column: any, index: any) => {
+      tablePreviewRow[index].column = column.name;
+      tablePreviewRow[index].result_data = column.data;
+    });
+    if (this.drillDownIndex > 0) {
+      this.dualAxisColumnData = this.originalData.categories;
+      this.dualAxisRowData = this.originalData.data;
+      this.chartsRowData = this.dualAxisRowData[0]?.data;
+      this.drillDownIndex = 0;
+      this.drillDownObject = [];
     }
+    delete this.originalData;
   }
   savedChartOptions = this.chartOptionsSet;
   let customizeObject = {
@@ -4994,8 +4978,8 @@ customizechangeChartPlugin() {
           if(!this.originalData){
             this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData, chartOptions: chartOptions }
           } else{
-            this.originalData.categories = this.chartsColumnData;
-            this.originalData.data = this.chartsRowData;
+            this.originalData.categories = this.dualAxisColumnData;
+            this.originalData.data = this.dualAxisRowData;
             this.originalData.chartOptions = chartOptions;
           }
         }
