@@ -104,6 +104,21 @@
                   <input [ngClass]="{'error-input': pax8ClientSecretError}" type="text" class="form-control" [(ngModel)]="pax8ClientSecret" [ngModelOptions]="{standalone: true}" placeholder="Client Secret" (input)="pax8ClientSecretValidation()">
                 </div>
               </form>
+            } @else if(databaseType == 'bamboohr') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. BambooHR" (input)="displayNameIntegrationConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': bambooHRDomainError}" class="col-form-label">Domain <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': bambooHRDomainError}" type="text" class="form-control" [(ngModel)]="bambooHRDomain" [ngModelOptions]="{standalone: true}" placeholder="Domain" (input)="bambooHRDomainValidation()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': bambooHRApiKeyError}" for="recipient-name" class="col-form-label">API Key<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': bambooHRApiKeyError}" type="text" class="form-control" [(ngModel)]="bambooHRApiKey" [ngModelOptions]="{standalone: true}" placeholder="API Key" (input)="bambooHRApiKeyValidation()">
+                </div>
+              </form>
             } @else if(databaseType == 'immybot') {
               <form>
                 <div class="mb-2">
@@ -335,6 +350,10 @@
             } @else if(databaseType == 'pax8') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="pax8Update()" [disabled]="(pax8ClientIdError || pax8ClientSecretError || displayNameError) || !(pax8ClientId && pax8ClientSecret && displayName)">Update</button>
+
+            } @else if(databaseType == 'bamboohr') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="bambooHRUpdate()" [disabled]="(bambooHRApiKeyError || bambooHRDomainError || displayNameError) || !(bambooHRApiKey && bambooHRDomain && displayName)">Update</button>
 
             } @else if(databaseType == 'ninja') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
