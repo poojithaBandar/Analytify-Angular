@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselConfig, NgbCarouselModule, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
@@ -16,8 +16,9 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [NgbModule,NgApexchartsModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule,TimeAgoPipe],
+  imports: [NgbModule,NgbCarouselModule,NgApexchartsModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule,TimeAgoPipe],
   templateUrl: './landingpage.component.html',
+  providers: [NgbCarouselConfig],
   styleUrl: './landingpage.component.scss'
 })
 
@@ -61,6 +62,84 @@ totalDashbaords:any;
 totalSheets:any;
 totalQueries:any;
 totalDatabases:any;
+features = [
+  {
+    icon: 'bi-funnel-fill',
+    title: 'World-Class Query Builder',
+    description: 'Drag-and-drop or SQL — build powerful queries with ease.'
+  },
+  {
+    icon: 'bi-robot',
+    title: 'AI-Enhanced Analytics',
+    description: 'Uncover trends and anomalies with machine learning insights.'
+  },
+  {
+    icon: 'bi-bar-chart-steps',
+    title: 'Drill Down & Through Charts',
+    description: 'Navigate from summary to detail across datasets effortlessly.'
+  },
+  {
+    icon: 'bi-diagram-3',
+    title: 'Multi-Dataset Dashboards',
+    description: 'Combine multiple data sources in a single, unified dashboard.'
+  },
+  {
+    icon: 'bi-code-slash',
+    title: 'Open Source Flexibility',
+    description: 'Fully customizable and transparent for dev teams.'
+  },
+  {
+    icon: 'bi-box-arrow-in-right',
+    title: 'Embeddable Solution',
+    description: 'Seamlessly embed dashboards into your own platforms.'
+  },
+  {
+    icon: 'bi-cloud-arrow-down',
+    title: 'Cross-Data Source Connection',
+    description: 'Analyze data across SQL, NoSQL, APIs, and cloud sources.'
+  },
+  {
+    icon: 'bi-clock-history',
+    title: 'Real-Time Data Access',
+    description: 'Always stay updated with live, streaming data support.'
+  },
+  {
+    icon: 'bi-bar-chart-line',
+    title: 'Customizable Visualizations',
+    description: 'Create beautiful, themeable charts with full flexibility.'
+  },
+  {
+    icon: 'bi-graph-up-arrow',
+    title: 'AI Adoption Dashboard',
+    description: 'Track and measure the impact of AI initiatives at a glance.'
+  },
+  {
+    icon: 'bi-plug',
+    title: 'Smart Dashboards for Business Apps',
+    description: 'Dashboards that connect with your tools and enable actions.'
+  },
+  {
+    icon: 'bi-lock',
+    title: 'Passkey-Protected Sharing',
+    description: 'Securely share dashboards via protected access links.'
+  },
+  {
+    icon: 'bi-arrow-left-right',
+    title: 'Data Source Switching',
+    description: 'Easily switch between sources with zero reconfiguration.'
+  },
+  {
+    icon: 'bi-lightbulb',
+    title: 'GenBI Insights Summary',
+    description: 'AI-generated summaries provide executive-level clarity.'
+  },
+  {
+    icon: 'bi-envelope-fill',
+    title: 'Email Alerts for Key Actions',
+    description: 'Get notified instantly when critical events happen.'
+  }
+];
+
 @ViewChild('propertiesModal') propertiesModal : any;
 @ViewChild('sampleDashboardPropertiesModal') sampleDashboardPropertiesModal : any;
 
