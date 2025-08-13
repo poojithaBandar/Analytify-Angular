@@ -1188,12 +1188,14 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+
     connectBambooHR(){
       this.openBambooHRForm = true;
       this.databaseconnectionsList = false;
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+
     connectTally(){
       this.openTallyForm = true;
       this.databaseconnectionsList= false;
