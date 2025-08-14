@@ -7890,6 +7890,7 @@ fieldset:disabled .button-slide-out__above {
   position: relative;
   width: 100%;
   overflow: hidden;
+  border-radius: 0px 0px 15px 15px !important;
 }
 
 .carousel-inner::after {
@@ -19797,6 +19798,7 @@ input[type=submit].btn-block, input[type=reset].btn-block, input[type=button].bt
   position: relative;
   width: 100%;
   overflow: hidden;
+  border-radius: 0px 0px 15px 15px !important;
 }
 
 .carousel-indicators {
@@ -55470,8 +55472,16 @@ button.btn {
       margin: 0px !important;
     }
 
-    .transform-card { transition: all 1s; }
-    .transform-card:hover{transform: scale(1.05); box-shadow: 0 16px 64px #1f268740, inset 0 1px #ffffff80, inset 0 -1px #fff3;}
+    .transform-card { position: relative; /* ensures z-index works */
+  transition: transform 0.3s ease; overflow: visible;}
+
+    .transform-card:hover{ transform: scale(1.04);
+  z-index: 10; /* bring the whole card (and dropdown) to the top */}
+  
+  .transform-card .dropdown {
+  position: relative; /* or fixed if needed */
+  z-index: 20; /* higher than the card’s z-index */
+}
     .card {border: none !important; border-radius: 1rem;}
     .card .card { border: none !important; }
     .animate-button {

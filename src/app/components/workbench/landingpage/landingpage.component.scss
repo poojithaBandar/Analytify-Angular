@@ -11,7 +11,7 @@ a { cursor: pointer;}
 .header-bg-radius { border-radius: 0px 0px 15px 15px; }
 .landing-connect-search { display: flex; justify-content: flex-end; }
 .img-cursor{ cursor: pointer; }
-.table-responsive{ height: 260px; overflow: auto; }
+.table-responsive{ height: 431px; overflow: auto; }
 .overflow{ overflow: auto;}
 .card.img-shadow:hover { box-shadow: 0 16px 32px #21212126; }
 tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius: 20px; }
@@ -37,6 +37,8 @@ tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius:
 .carousel-height{height: 222px;}
 tbody, td, tfoot, th, thead, tr { border-color: inherit; border-style: none; border-width: 0; }
 .saved-hover:hover{    box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius: 20px;}
+.carousel-inner { position: relative;  width: 100%; overflow: hidden; border-radius: 0px 0px 15px 15px !important; }
+.dropdown-index{ z-index: 999 !important;}
 
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
@@ -60,7 +62,7 @@ h6 { font-size: 14px; }
 .fs-11 { font-size: 11px !important; }
 .table td{ font-size: 12px;}
 .quick-start-txt { font-size: 13px; }
-.table-responsive { height: 260px; overflow: auto;}
+.table-responsive { height: 430px; overflow: auto;}
 .text-truncate { max-width: 115px !important;}
 .card-text { font-size: 12px; }
 .h2, h2 { font-size: 2.2rem !important; }
