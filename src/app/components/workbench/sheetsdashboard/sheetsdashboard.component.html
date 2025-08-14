@@ -184,7 +184,7 @@
                                                          cdkDropList
                                                          #originList="cdkDropList"
                                                         [cdkDropListData]="dashboardNew"
-                                                        [cdkDropListConnectedTo]="sheetsNewDashboard ? ['destinationList1'] : ['destinationList1', 'destinationList']"
+                                                        [cdkDropListConnectedTo]="[destinationList1,destinationList]"
                                                         (cdkDropListDropped)="drop($event,false)">
                                                            
                                                             <li *ngFor="let item of dashboardNew" ><a draggable="true" [ngClass]="{ 'sheet-bold': item['selectedSheet']}"
@@ -1171,7 +1171,7 @@
       
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
        
-        <gridster *ngIf="!sheetsNewDashboard" [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
+        <gridster [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event,false)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard">
@@ -1672,9 +1672,9 @@
               </div>
             </gridster-item>
           </gridster>
-          <div *ngIf="sheetsNewDashboard">
+          <!-- <div *ngIf="sheetsNewDashboard">
             <app-genie-aiq-dashboard></app-genie-aiq-dashboard>
-          </div>
+          </div> -->
           </div>
           @if(displayTabs){
             <div class="d-flex p-2">
