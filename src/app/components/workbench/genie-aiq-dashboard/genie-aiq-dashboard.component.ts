@@ -153,7 +153,8 @@ onServerTypeSelect(type: string) {
     console.log('Selected table names:', selectedTableNames);
       const Obj= {
          "hierarchy_id":this.hierarchyId,
-         "table_name":selectedTableNames
+         "table_name":selectedTableNames,
+         "prompt": this.userPrompt ? this.userPrompt : null,
         }
       this.workbechService.getChartSuggestions(Obj).subscribe({
       next:(data)=>{
@@ -216,7 +217,7 @@ isInsightSelected(insight: any): boolean {
       queryset_id,
       hierarchy_id,
       sheet_data,
-      dashboard_name: 'dbcjgv'
+      dashboard_name: 'Genie AIQ Dashboard'
     };
      this.workbechService.getDashbaordSuggestions(payload).subscribe({
       next:(data)=>{
@@ -243,5 +244,6 @@ sendPrompt() {
   console.log('User prompt:', this.userPrompt);
   // Call your API or handle the message sending logic here
   this.userPrompt = ''; // Clear input after sending
+  this.onTableSelect();
 }
 }

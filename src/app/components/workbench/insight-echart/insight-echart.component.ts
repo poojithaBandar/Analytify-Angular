@@ -950,9 +950,9 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
   return this.chartOptions;
 }
 areachartFromGenieDashboard(chartsColumnData?:any,chartsRowData?:any){
- this.chartsColumnData = chartsColumnData;
-this.chartsRowData = chartsRowData;
-return this.areaChart(); 
+  this.chartsColumnData = chartsColumnData;
+  this.chartsRowData = chartsRowData;
+  return this.areaChart(); 
 }
 areaChart(){
   this.chartOptions = {
@@ -1059,9 +1059,9 @@ console.log(this.chartsRowData,this.chartsColumnData,'areachart')
 
 }
 linechartFromGenieDashboard(chartsColumnData?:any,chartsRowData?:any){
-this.chartsColumnData = chartsColumnData;
-this.chartsRowData = chartsRowData;
-return this.lineChart();
+  this.chartsColumnData = chartsColumnData;
+  this.chartsRowData = chartsRowData;
+  return this.lineChart();
 }
 lineChart(){
   this.chartOptions = {
@@ -1265,9 +1265,9 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
   return this.chartOptions;
 }
 barLinechartFromGenieDashboard(dualAxisColumnData?:any, dualAxisRowData?:any){
-this.dualAxisColumnData = dualAxisColumnData;
-this.dualAxisRowData = dualAxisRowData;
-return this.barLineChart();
+  this.dualAxisColumnData = dualAxisColumnData;
+  this.dualAxisRowData = dualAxisRowData;
+  return this.barLineChart();
 }
 barLineChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1533,6 +1533,18 @@ multiLineChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
   };
   return this.chartOptions;
 }
+radarchartFromGenieDashboard(dualAxisColumnData? : any, dualAxisRowData? : any){
+  this.dualAxisColumnData = dualAxisColumnData;
+  this.radarRowData = JSON.parse(JSON.stringify(
+    dualAxisRowData.map((data: any) => {
+      return {
+        name: data.name,
+        value: data.data
+      };
+    })
+  ));
+  return this.radarChart();
+}
 radarChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
@@ -1583,6 +1595,7 @@ radarChart(){
 ]
   }
   this.radarDistributionSetOptions();
+  return this.chartOptions;
 }
 heatmapFromGenieDashboard(dualAxisColumnData? : any, dualAxisRowData? : any){
   this.dualAxisColumnData = dualAxisColumnData;
@@ -1673,6 +1686,11 @@ heatMapChart(){
   ],
 };
 return this.chartOptions;
+}
+calendarchartFromGenieDashboard(chartsColumnData? : any, chartsRowData? : any){
+  this.chartsColumnData = chartsColumnData;
+  this.chartsRowData = chartsRowData;
+  return this.calendarChart();
 }
 calendarChart() {
   let calendarData: any[] = [];
@@ -1778,6 +1796,7 @@ calendarChart() {
 
 
   console.log(this.chartOptions,'calender');
+  return this.chartOptions;
 }
 prepareHeatmapData(rowData: any[]) {
   const heatmapData: any[][] = [];

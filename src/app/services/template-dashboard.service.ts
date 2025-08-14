@@ -634,6 +634,39 @@ export class TemplateDashboardService {
     return transformed;
   }
 
+  formatKPINumber(formattedNumber : any, KPIDecimalPlaces: number) {
+    // let formattedNumber = this.tablePreviewRow[0]?.result_data[0]+'';
+    let value = _.cloneDeep(formattedNumber);
+    if(value === null || value === undefined){
+      formattedNumber = 0;
+    } else {
+      // if (this.KPIDisplayUnits !== 'none') {
+      //   switch (this.KPIDisplayUnits) {
+      //     case 'K':
+      //       formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
+      //       break;
+      //     case 'M':
+      //       formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
+      //       break;
+      //     case 'B':
+      //       formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
+      //       break;
+      //     case 'G':
+      //       formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
+      //       break;
+      //     case '%':
+      //       this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+      //       let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+      //       formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+      //       break;
+      //   }
+      // } else {
+        return (value)?.toFixed(KPIDecimalPlaces);
+      // }
+  
+    }
+  }
+
   sheetUpdate(chartsColumnData: [], chartsRowData: [], dualAxisRowData: [], dualAxisColumnData: [],tableColumnData:[],tableRowData:[],data: any,dashboardData: any[],index : number, tranformedData:any,tableDataStore: any[],displayedColumns : string[],totalCount:number) {
     let chartData;
     if(data.chart_id == 8){
@@ -665,6 +698,13 @@ export class TemplateDashboardService {
       chartData = this.echartInstance.heatmapFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     } else if(data.chart_id == 5){
       chartData = this.echartInstance.stackedchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+    } else if(data.chart_id == 11){
+      chartData = this.echartInstance.calendarchartFromGenieDashboard(chartsColumnData, chartsRowData);
+    } else if(data.chart_id == 14){
+      this.echartInstance.autoAdjustChartHeightForHBar();
+      chartData = this.echartInstance.horizontalBarChart(chartsColumnData, chartsRowData);
+    } else if(data.chart_id == 12){
+      chartData = this.echartInstance.radarchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     }
     
     const sheetRows = data.row_data.map((item:any) => {
@@ -697,6 +737,14 @@ export class TemplateDashboardService {
         ""
       ];
     });
+    let KpidashboardData = tranformedData.rows_data;
+    let KpiNumber = tranformedData.rows_data[0]?.result_data[0];
+    if(data.chart_id == 25 && (typeof KpiNumber === 'number' || typeof KpiNumber === 'bigint')){
+      let kpiNum = this.formatKPINumber(tranformedData.rows_data[0]?.result_data[0],2);
+      KpidashboardData = _.cloneDeep(tranformedData.rows_data);
+      KpidashboardData[0].result_data[0] = kpiNum;
+      KpiNumber = kpiNum;
+    }
 
     const obj = {
       "chart_id": data.chart_id,
@@ -724,11 +772,12 @@ export class TemplateDashboardService {
         // "col": tablePreviewCol,
         // "row": tablePreviewRow,
         "results": {
-          "kpiData": tranformedData.rows_data,
-          "kpiFontSize": 16,
-          "kpiNumber": tranformedData.rows_data[0]?.result_data[0],
+          "kpiData": KpidashboardData,
+          "kpiFontSize": 3,
+          "kpiNumber": KpiNumber,
           "kpiPrefix": "",
           "kpiSuffix": "",
+          "kpiDecimalPlaces": 2,
           kpiDecimalUnit: "none",
           "tableData": tableDataStore,
           "tableColumns": displayedColumns,
@@ -745,7 +794,7 @@ export class TemplateDashboardService {
 
       }
     }
-    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": tranformedData.rows_data[0]?.result_data[0],"kpiFontSize": 16,"kpiPrefix": "","kpiSuffix": "",kpiDecimalUnit: "none",rows:tranformedData.rows_data},tableDataStore,displayedColumns,totalCount);
+    let dashbaordObj = this.updateDashboardJSONData(chartData,data,index, {"kpiNumber": KpiNumber,"fontSize": 3,"kpiPrefix": "","kpiSuffix": "",kpiDecimalUnit: "none",rows:tranformedData.rows_data},tableDataStore,displayedColumns,totalCount);
     dashboardData.push(dashbaordObj);
    return this.workbechService.sheetUpdate(obj, data.sheet_id);
 
