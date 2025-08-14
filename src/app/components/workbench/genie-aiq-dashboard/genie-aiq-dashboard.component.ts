@@ -217,7 +217,7 @@ isInsightSelected(insight: any): boolean {
       queryset_id,
       hierarchy_id,
       sheet_data,
-      dashboard_name: 'dbcjgv'
+      dashboard_name: 'Genie AIQ Dashboard'
     };
      this.workbechService.getDashbaordSuggestions(payload).subscribe({
       next:(data)=>{
