@@ -66,77 +66,92 @@ features = [
   {
     icon: 'bi-funnel-fill',
     title: 'World-Class Query Builder',
-    description: 'Drag-and-drop or SQL — build powerful queries with ease.'
+    description: 'Drag-and-drop or SQL — build powerful queries with ease.',
+    gradient: 'linear-gradient(45deg, #ff6b6b, #f7b7a3)'
   },
   {
     icon: 'bi-robot',
     title: 'AI-Enhanced Analytics',
-    description: 'Uncover trends and anomalies with machine learning insights.'
+    description: 'Uncover trends and anomalies with machine learning insights.',
+    gradient: 'linear-gradient(45deg, #4e73df, #1cc88a)' 
   },
   {
     icon: 'bi-bar-chart-steps',
     title: 'Drill Down & Through Charts',
-    description: 'Navigate from summary to detail across datasets effortlessly.'
+    description: 'Navigate from summary to detail across datasets effortlessly.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-diagram-3',
     title: 'Multi-Dataset Dashboards',
-    description: 'Combine multiple data sources in a single, unified dashboard.'
+    description: 'Combine multiple data sources in a single, unified dashboard.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-code-slash',
     title: 'Open Source Flexibility',
-    description: 'Fully customizable and transparent for dev teams.'
+    description: 'Fully customizable and transparent for dev teams.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-box-arrow-in-right',
-    title: 'Embeddable Solution',
-    description: 'Seamlessly embed dashboards into your own platforms.'
+    title: 'Embeddable SDK Solution',
+    description: 'Seamlessly embed dashboards into your own platforms.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-cloud-arrow-down',
     title: 'Cross-Data Source Connection',
-    description: 'Analyze data across SQL, NoSQL, APIs, and cloud sources.'
+    description: 'Analyze data across SQL, NoSQL, APIs, and cloud sources.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-clock-history',
     title: 'Real-Time Data Access',
-    description: 'Always stay updated with live, streaming data support.'
+    description: 'Always stay updated with live, streaming data support.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-bar-chart-line',
     title: 'Customizable Visualizations',
-    description: 'Create beautiful, themeable charts with full flexibility.'
+    description: 'Create beautiful, themeable charts with full flexibility.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-graph-up-arrow',
     title: 'AI Adoption Dashboard',
-    description: 'Track and measure the impact of AI initiatives at a glance.'
+    description: 'Track and measure the impact of AI initiatives at a glance.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-plug',
     title: 'Smart Dashboards for Business Apps',
-    description: 'Dashboards that connect with your tools and enable actions.'
+    description: 'Dashboards that connect with your tools and enable actions.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-lock',
     title: 'Passkey-Protected Sharing',
-    description: 'Securely share dashboards via protected access links.'
+    description: 'Securely share dashboards via protected access links.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-arrow-left-right',
     title: 'Data Source Switching',
-    description: 'Easily switch between sources with zero reconfiguration.'
+    description: 'Easily switch between sources with zero reconfiguration.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-lightbulb',
     title: 'GenBI Insights Summary',
-    description: 'AI-generated summaries provide executive-level clarity.'
+    description: 'AI-generated summaries provide executive-level clarity.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   },
   {
     icon: 'bi-envelope-fill',
     title: 'Email Alerts for Key Actions',
-    description: 'Get notified instantly when critical events happen.'
+    description: 'Get notified instantly when critical events happen.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
   }
 ];
 
@@ -177,9 +192,10 @@ private buildRadial() {
   const values = [50, 75, 83, 92]; // sums to 20 total connections
 
   return {
-    series: [7, 6, 6, 9],
+    series: [7, 6, 6, 9,7, 6, 6, 9],
     chart: {
-      height: 390,
+      height: 350,
+      width: '100%',
       type: "radialBar"
     },
     plotOptions: {
@@ -208,23 +224,38 @@ private buildRadial() {
         }
       }
     },
-    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5"],
-    labels: ["CSV", "ConnectWise", "QuickBooks", "Salesforce"],
-    legend: {
-      show: true,
-      floating: true,
-      fontSize: "16px",
-      position: "left",
-      offsetX: 50,
-      offsetY: 10,
-      labels: {
-        useSeriesColors: true
-      },
-      formatter: function(seriesName: any, opts: any) {
-        return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
-      },
-      itemMargin: {
-        horizontal: 3
+    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5","#1ab7ea", "#0084ff", "#39539E", "#0077B5"],
+    labels: ["CSV", "ConnectWise", "QuickBooks", "Salesforce","CSV", "ConnectWise", "QuickBooks", "Salesforce"],
+    // legend: {
+    //   show: true,
+    //   floating: true,
+    //   fontSize: "12px",
+    //   position: "left",
+    //   offsetX: 10,
+    //   offsetY: 10,
+    //   labels: {
+    //     useSeriesColors: true
+    //   },
+    //   formatter: function(seriesName: any, opts: any) {
+    //     return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
+    //   },
+    //   itemMargin: {
+    //     horizontal: 3
+    //   }
+    // },
+    tooltip: {
+      custom: function({ series, seriesIndex, w }: any) {
+        let val = series[seriesIndex];
+        let total = w.globals.series.reduce((a: any, b: any) => a + b, 0);
+        let percentage = ((val / total) * 100).toFixed(1);
+    
+        return `
+          <div style="padding:5px;">
+            <strong>${w.globals.labels[seriesIndex]}</strong><br/>
+            Value: ${val}<br/>
+            Percentage: ${percentage}%
+          </div>
+        `;
       }
     },
     responsive: [
@@ -251,14 +282,29 @@ private buildBar() {
   return {
     series: [
       {
-        name: 'Project Analytics',
+        name: 'Created Dashboards',
         data: [10, 70, 65, 80, 20, 30, 40] // Example values for Sun-Sat
       }
     ],
     chart: {
       type: 'bar',
-      height: 300,
-      toolbar: { show: false }
+      height: 350,
+      width: '100%',
+      toolbar: { show: true },
+      animations: {
+        enabled: true,  // Enable animation
+        easing: 'easeinout',  // Type of easing (easein, easeout, easeinout)
+        speed: 800,  // Duration of the animation in ms
+        animateGradually: {
+          enabled: true,
+          delay: 150  // Delay before starting the animation
+        },
+        dynamicAnimation: {
+          enabled: true,  // Enable dynamic animation
+          speed: 350  // Speed of dynamic animation for data updates
+        }
+      }
+
     },
     plotOptions: {
       bar: {
@@ -292,9 +338,9 @@ private buildBar() {
         strokeWidth: 2
       }
     },
-    dataLabels: { enabled: false },
+    dataLabels: { enabled: true },
     xaxis: {
-      categories: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July'],
       show: false,          // Hides Y-axis labels
       axisBorder: { show: false },  // Hides Y-axis border line
       axisTicks: { show: false }  }
@@ -314,7 +360,11 @@ private buildBar() {
       show: false
     }
   }
-}
+},
+legend: {
+  show: false,  // Show the legend
+
+},
   };
 }
 

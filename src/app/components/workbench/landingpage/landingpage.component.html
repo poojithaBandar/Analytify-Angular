@@ -132,8 +132,8 @@
                             <div class="card p-4 mb-0 shadow-none">
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="">
-                                        <h6 class="fw-bold mb-1">Dashboard Creation</h6>
-                                        <label>Last 6 Months</label>
+                                        <h6 class="fw-bold mb-1">Dashboard Creation - <label>Last 6 Months</label></h6>
+                                        
                                     </div>
                                     <!-- <div class="view-card">
                                         <a class="">
@@ -174,13 +174,14 @@
                                         </a>
                                     </div> -->
                                 </div>
-                                <div class="card-body p-0">
+                                <div  id="chart" class="card-body p-0">
                                   <apx-chart
                                   [series]="radialOptions.series"
                                   [chart]="radialOptions.chart"
                                   [plotOptions]="radialOptions.plotOptions"
                                   [labels]="radialOptions.labels"
                                   [legend]="radialOptions.legend"
+                                  [tooltip]="radialOptions.tooltip"
                                   [colors]="radialOptions.colors"
                                   [responsive]="radialOptions.responsive"
                                 ></apx-chart>
@@ -389,15 +390,16 @@
                     </a> -->
                 </div>
                   <div class="card-body mb-0 p-0 ">
-                    <ngb-carousel [interval]="0" [wrap]="true" [keyboard]="true">
-  <ng-template ngbSlide *ngFor="let feature of features; let i = index">
-    <div class="d-flex flex-column align-items-center text-center p-5">
-      <i [class]="'bi ' + feature.icon + ' fs-1 mb-3 text-primary'"></i>
-      <h5 class="fw-bold">{{ feature.title }}</h5>
-      <p class="text-muted">{{ feature.description }}</p>
-    </div>
-  </ng-template>
-</ngb-carousel>
+                    <ngb-carousel [interval]="1000" [showNavigationArrows]="true" [showNavigationIndicators]="false">
+                      <ng-template ngbSlide *ngFor="let feature of features; let i = index">
+                        <div class="d-flex flex-column align-items-center text-center p-5"
+                        [ngStyle]="{'background': feature.gradient}">
+                          <i [class]="'bi ' + feature.icon + ' fs-1 mb-3 text-primary'"></i>
+                          <h5 class="fw-bold">{{ feature.title }}</h5>
+                          <p >{{ feature.description }}</p>
+                        </div>
+                      </ng-template>
+                    </ngb-carousel>
                   </div>            
             </div>
         </div> 
