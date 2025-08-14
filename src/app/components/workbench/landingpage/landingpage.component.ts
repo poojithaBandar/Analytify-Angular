@@ -24,6 +24,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
 export class LandingpageComponent implements OnInit {
 radialOptions : any = {};
+treemapOptions : any = {};
 barOptions: any = {};
 searchDbName:any
 userSheetsList :any[] =[];
@@ -155,6 +156,15 @@ features = [
   }
 ];
 
+fixedColors = [
+  '#1d2e92', // darkest
+  '#007cb8',
+  '#088ed1',
+  '#36c1ce',
+  '#52c9f6',
+  '#8fe3fa'  // lightest
+];
+
 @ViewChild('propertiesModal') propertiesModal : any;
 @ViewChild('sampleDashboardPropertiesModal') sampleDashboardPropertiesModal : any;
 
@@ -172,6 +182,7 @@ ngOnInit(){
   // const colors = this.normalizeColors(this.baseColors);
 
   this.barOptions = this.buildBar();
+  this.treemapOptions = this.buildTreeMap();
   this.radialOptions = this.buildRadial();
   this.loaderService.hide();
   if(this.viewDatabbses){
@@ -185,16 +196,147 @@ ngOnInit(){
   }
   this.getHostAndPort();
 }
-
-/** RadialBar showing connections split (e.g., 20 total: 10/5/3/2) */
-private buildRadial() {
-  const labels = ['Postgres', 'QuickBooks', 'MongoDB', 'Others'];
-  const values = [50, 75, 83, 92]; // sums to 20 total connections
-
+private buildTreeMap(){
+  // return {
+  //   tooltip: {
+  //     formatter: (p: any) => {
+  //       const path = p.treePathInfo?.slice(1).map((n: any) => n.name).join(' / ');
+  //       return `${path}: <b>${p.value}</b>`;
+  //     }
+  //   },
+  //   series: [
+  //     {
+  //       name: '',
+  //       type: 'treemap',
+  //       roam: false,
+  //       nodeClick: 'zoomToNode',          // click a parent to drill in
+  //       breadcrumb: { show: true },
+  //       // Labels
+  //       label: { show: true, formatter: '{b}' },     // leaf labels
+  //       upperLabel: { show: true, height: 22 },      // parent labels
+  //       itemStyle: { borderColor: '#fff' },
+  //       // Visuals per depth
+  //       levels: [
+  //         { itemStyle: { borderWidth: 1, borderColor: '#e5e7eb', gapWidth: 6 } },                     // level 1
+  //         { colorSaturation: [0.25, 0.85], itemStyle: { gapWidth: 3, borderColorSaturation: 0.7 } },  // level 2
+  //         { itemStyle: { gapWidth: 2 } }                                                               // level 3+
+  //       ],
+  //       // ---- Hierarchical data ----
+  //       data: [
+  //         {
+  //           name: 'Postgres',
+  //           children: [
+  //             { name: 'Querysets',  value: 50 },
+  //             { name: 'Sheets',     value: 100 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'QuickBooks',
+  //           children: [
+  //             { name: 'Querysets',  value: 25 },
+  //             { name: 'Sheets',     value: 50 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'Postgres4',
+  //           children: [
+  //             { name: 'Querysets',  value: 50 },
+  //             { name: 'Sheets',     value: 100 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'QuickBooks3',
+  //           children: [
+  //             { name: 'Querysets',  value: 25 },
+  //             { name: 'Sheets',     value: 50 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },{
+  //           name: 'Postgres2',
+  //           children: [
+  //             { name: 'Querysets',  value: 50 },
+  //             { name: 'Sheets',     value: 100 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'QuickBooks1',
+  //           children: [
+  //             { name: 'Querysets',  value: 25 },
+  //             { name: 'Sheets',     value: 50 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'MongoDB',
+  //           children: [
+  //             { name: 'Querysets',  value: 30 },
+  //             { name: 'Sheets',     value: 60 },
+  //             { name: 'Dashboards', value: 5 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'Salesforce',
+  //           children: [
+  //             { name: 'Querysets',  value: 22 },
+  //             { name: 'Sheets',     value: 40 },
+  //             { name: 'Dashboards', value: 8 }
+  //           ]
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // };
+  
   return {
-    series: [7, 6, 6, 9,7, 6, 6, 9],
+    series: [
+      {
+        data: [
+          {
+            x: "Postgres",
+            y: 5
+          },
+          {
+            x: "CSV",
+            y: 15
+          },
+          {
+            x: "Excel",
+            y: 25
+          },
+          {
+            x: "QuickBooks",
+            y: 5
+          },
+          {
+            x: "MongoDB",
+            y: 1
+          }
+        ]
+      }
+    ],
+  
     chart: {
       height: 350,
+      type: "treemap"
+    },
+    title: {
+      text: "Basic Treemap"
+    }
+  };
+  }
+/** RadialBar showing connections split (e.g., 20 total: 10/5/3/2) */
+private buildRadial() {
+  const labels = ['queryset1', 'queryset2', 'query3', 'query5', 'queryset6'];
+  const values = [100, 25, 33, 42, 50];
+
+  return {
+    series: values,
+    chart: {
+      height: 310,
       width: '100%',
       type: "radialBar"
     },
@@ -210,7 +352,7 @@ private buildRadial() {
         },
         hollow: {
           margin: 5,
-          size: "30%",
+          size: "20%",
           background: "transparent",
           image: undefined
         },
@@ -224,25 +366,25 @@ private buildRadial() {
         }
       }
     },
-    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5","#1ab7ea", "#0084ff", "#39539E", "#0077B5"],
-    labels: ["CSV", "ConnectWise", "QuickBooks", "Salesforce","CSV", "ConnectWise", "QuickBooks", "Salesforce"],
-    // legend: {
-    //   show: true,
-    //   floating: true,
-    //   fontSize: "12px",
-    //   position: "left",
-    //   offsetX: 10,
-    //   offsetY: 10,
-    //   labels: {
-    //     useSeriesColors: true
-    //   },
-    //   formatter: function(seriesName: any, opts: any) {
-    //     return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
-    //   },
-    //   itemMargin: {
-    //     horizontal: 3
-    //   }
-    // },
+    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5","#1ab7ea"],
+    labels: labels,
+    legend: {
+      show: true,
+      floating: true,
+      fontSize: "12px",
+      position: "left",
+      offsetX: 10,
+      offsetY: 10,
+      labels: {
+        useSeriesColors: true
+      },
+      formatter: function(seriesName: any, opts: any) {
+        return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
+      },
+      itemMargin: {
+        horizontal: 3
+      }
+    },
     tooltip: {
       custom: function({ series, seriesIndex, w }: any) {
         let val = series[seriesIndex];
@@ -275,15 +417,12 @@ private buildRadial() {
 
 
 private buildBar() {
-  const weeks = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  // Example static counts; replace with real values if needed
-  const data = [3, 5, 7, 9, 4, 2, 1];
-
+  const rankedColors = this.getColorByValueRank([10, 70, 65, 8, 20, 30], this.fixedColors);
   return {
     series: [
       {
         name: 'Created Dashboards',
-        data: [10, 70, 65, 80, 20, 30, 40] // Example values for Sun-Sat
+        data: [10, 70, 65, 8, 20, 30] // Example values for Sun-Sat
       }
     ],
     chart: {
@@ -320,15 +459,7 @@ private buildBar() {
 
       }
     },
-    colors: [
-      '#2ECC71', // Sunday - no fill (striped)
-      '#2ECC71', // Monday
-      '#58D68D', // Tuesday
-      '#145A32', // Wednesday
-      '#2ECC71', // Thursday - no fill (striped)
-      '#2ECC71', // Friday - no fill (striped)
-      '#2ECC71'  // Saturday - no fill (striped)
-    ],
+    colors: rankedColors,
     fill: {
       type: ['solid', 'solid', 'solid', 'solid', 'pattern', 'pattern', 'pattern'],
       pattern: {
@@ -340,7 +471,7 @@ private buildBar() {
     },
     dataLabels: { enabled: true },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July'],
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
       show: false,          // Hides Y-axis labels
       axisBorder: { show: false },  // Hides Y-axis border line
       axisTicks: { show: false }  }
@@ -367,6 +498,19 @@ legend: {
 },
   };
 }
+
+getColorByValueRank(values: number[], colorPalette: string[]): string[] {
+  const sorted = [...values].map((val, index) => ({ val, index }))
+                            .sort((a, b) => b.val - a.val); // descending
+  const colorByIndex = new Array(values.length);
+
+  sorted.forEach((item, i) => {
+    colorByIndex[item.index] = colorPalette[i]; // map based on rank
+  });
+
+  return colorByIndex;
+}
+
 
 getHostAndPort(): void {
   const { hostname, port } = window.location;
