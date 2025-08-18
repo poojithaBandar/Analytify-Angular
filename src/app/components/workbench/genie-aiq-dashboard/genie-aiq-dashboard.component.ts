@@ -40,7 +40,7 @@ export class GenieAiqDashboardComponent {
 
   }
   ngOnInit(){
-    this.step = 0;
+    this.step = 1;
     console.log(this.step);
     this.getConnectionList();
   }
@@ -117,11 +117,6 @@ onServerTypeSelect(type: string) {
     this.toasterService.error('Please select a display name', 'Error');
   }
   }
-
-  onCancel() {
-    this.step = 1;
-  }
-
   onTableSelect() {
     if (this.selectedTables && this.selectedTables.length > 0) {
       // Get schema names for selected tables
@@ -161,7 +156,7 @@ onServerTypeSelect(type: string) {
       console.log(data);
       this.suggestedInsights = data.sheet_suggestions.data;
       this.selectedInsights = [];
-      this.step = 3;
+      this.step = 2;
       },
       error:(error)=>{
         console.log(error);

@@ -30,7 +30,7 @@
 
 <!-- Step 0 & Step 1 Side by Side -->
 <!-- Combined Step 0 + Step 1 Card -->
-<div *ngIf="step === 0" class="connect-data-source-card bg-white rounded-xl shadow-lg p-4 relative" style="max-width: 650px; margin: 0 auto;">
+<div *ngIf="step === 1" class="connect-data-source-card bg-white rounded-xl shadow-lg p-4 relative" style="max-width: 650px; margin: 0 auto;">
 
   <!-- Genie Animation -->
   <div id="genie-animation-container"
@@ -92,9 +92,9 @@
         </ng-select>
     </div>
 
-    <div class="button-row mt-2 d-flex gap-2 justify-content-center">
+    <div class="button-row mt-2 d-flex gap-2">
       <button [disabled]="!selectedConnection && !selectedServerType" type="submit"
-              class="connect-btn btn-primary" [disabled]="selectedTables.length > 10 || selectedTables.length < 1" (click)="onTableSelect()">Start Building Dashboard</button>
+              class="connect-btn btn-primary" [disabled]="selectedTables.length < 1" (click)="onTableSelect()">Start Building Dashboard</button>
       <button type="button" class="cancel-btn">Cancel</button>
     </div>
   </form>
@@ -102,64 +102,8 @@
 </div>
 
 
-
-
-
-<div *ngIf="step === 1" class="connect-data-source-card">
-  <h5><span class="db-icon">🗄️</span> Connect Data Source</h5>
-  <form #form="ngForm" (ngSubmit)="onConnect()">
-    <label>Server Type</label>
-    <select [(ngModel)]="selectedServerType" (change)="onServerTypeSelect(selectedServerType)" name="serverType" required class="mb-2">
-    <option value="" disabled>Select server type</option>
-    <option *ngFor="let type of serverTypes" [value]="type">{{ type }}</option>
-    </select>
-
-    <div *ngIf="selectedServerType">
-    <label>Display Name</label>
-    <select [(ngModel)]="selectedConnection" name="datasourcename">
-        <option value=null disabled>Select display name</option>
-        <option *ngFor="let conn of displayNamesForType" [ngValue]="conn">{{ conn.display_name }}</option>
-    </select>
-    </div>
-
-    <div class="button-row">
-      <button [disabled]="!selectedConnection && !selectedServerType" type="submit" class="connect-btn btn-primary">Connect</button>
-      <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
-    </div>
-  </form>
-</div>
-
-<!-- Table Selection UI (shown after connecting) -->
-<div *ngIf="step === 2" class="table-selection-card">
-  <h5>Select Tables</h5>
-  <div class="selected-datasource-info mb-2">
-    <div class="me-1"><strong> Server Type:</strong>{{ selectedServerType }}</div>
-    <div><strong>Display Name:</strong> {{ selectedConnection?.display_name }}</div>
-  </div>
-  <label for="tableSelect"> <strong>Tables</strong></label>
-  <div *ngIf="selectedTables.length > 10" class="text-danger">
-    You can select a maximum of 10 Tables.
-  </div>
-  <ng-select
-    [items]="tables"
-    bindLabel=""
-    bindValue=""
-    [multiple]="true"
-    [(ngModel)]="selectedTables"
-    name="selectedTables"
-    placeholder="Type to search and select tables..."
-    [searchable]="true"
-    [closeOnSelect]="false"
-    >
-  </ng-select>
-  <div class="button-row mt-2" >
-      <button class="btn btn-primary connect-btn" [disabled]="selectedTables.length < 1" (click)="onTableSelect()">Connect</button>
-      <button type="button" class="cancel-btn" (click)="goBack()">Back</button>
-    </div>
-</div>
-
 <!-- Suggested Insights UI -->
-<div *ngIf="step === 3" class="insights-dashboard-container">
+<div *ngIf="step === 2" class="insights-dashboard-container">
   <div class="insights-dashboard mt-1 p-4">
     <div class="suggested-insights">
       <h2>💡 Suggested Insights</h2>
