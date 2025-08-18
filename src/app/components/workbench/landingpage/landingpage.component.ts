@@ -407,10 +407,9 @@ private buildRadial() {
         let percentage = ((val / total) * 100).toFixed(1);
     
         return `
-          <div style="padding:5px;">
+          <div style="padding:5px;background:#fff;">
             <strong>${w.globals.labels[seriesIndex]}</strong><br/>
-            Value: ${val}<br/>
-            Percentage: ${percentage}%
+            Dashboards: ${val}<br/>
           </div>
         `;
       }
