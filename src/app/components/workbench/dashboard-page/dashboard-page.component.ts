@@ -13,6 +13,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
+import { DashboardTransferService } from '../../../services/dashboard-transfer.service';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -70,7 +71,7 @@ export class DashboardPageComponent implements OnInit{
   dataSources: any[] = [];
   @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   
-constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
+constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,private dashboardService: DashboardTransferService,
   private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService,private fb: FormBuilder,private templateDashboardService: TemplateDashboardService){
   this.viewDashboardList=this.templateViewService.viewDashboard()
 
@@ -634,7 +635,7 @@ importDashboard(modal: any){
   this.workbechService.importDashboard(obj).subscribe({
     next: (res: any)=>{
       modal.dismiss('Cross click');
-      this.templateDashboardService.buildDashboardTransfer(this.container,res);
+      this.dashboardService.buildDashboardTransfer(this.container,res);
     },
     error: (err)=> this.toasterservice.error(err.error?.message || 'Import failed','error')
   });

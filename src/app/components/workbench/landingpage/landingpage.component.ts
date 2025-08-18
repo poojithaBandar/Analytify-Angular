@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselConfig, NgbCarouselModule, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
@@ -11,16 +11,21 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule,TimeAgoPipe],
+  imports: [NgbModule,NgbCarouselModule,NgApexchartsModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule,TimeAgoPipe],
   templateUrl: './landingpage.component.html',
+  providers: [NgbCarouselConfig],
   styleUrl: './landingpage.component.scss'
 })
 
 export class LandingpageComponent implements OnInit {
+radialOptions : any = {};
+treemapOptions : any = {};
+barOptions: any = {};
 searchDbName:any
 userSheetsList :any[] =[];
 savedDashboardList: any[] =[];
@@ -58,6 +63,108 @@ totalDashbaords:any;
 totalSheets:any;
 totalQueries:any;
 totalDatabases:any;
+features = [
+  {
+    icon: 'bi-funnel-fill',
+    title: 'World-Class Query Builder',
+    description: 'Drag-and-drop or SQL — build powerful queries with ease.',
+    gradient: 'linear-gradient(45deg, #ff6b6b, #f7b7a3)'
+  },
+  {
+    icon: 'bi-robot',
+    title: 'AI-Enhanced Analytics',
+    description: 'Uncover trends and anomalies with machine learning insights.',
+    gradient: 'linear-gradient(45deg, #4e73df, #1cc88a)' 
+  },
+  {
+    icon: 'bi-bar-chart-steps',
+    title: 'Drill Down & Through Charts',
+    description: 'Navigate from summary to detail across datasets effortlessly.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-diagram-3',
+    title: 'Multi-Dataset Dashboards',
+    description: 'Combine multiple data sources in a single, unified dashboard.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-code-slash',
+    title: 'Open Source Flexibility',
+    description: 'Fully customizable and transparent for dev teams.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-box-arrow-in-right',
+    title: 'Embeddable SDK Solution',
+    description: 'Seamlessly embed dashboards into your own platforms.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-cloud-arrow-down',
+    title: 'Cross-Data Source Connection',
+    description: 'Analyze data across SQL, NoSQL, APIs, and cloud sources.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-clock-history',
+    title: 'Real-Time Data Access',
+    description: 'Always stay updated with live, streaming data support.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-bar-chart-line',
+    title: 'Customizable Visualizations',
+    description: 'Create beautiful, themeable charts with full flexibility.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-graph-up-arrow',
+    title: 'AI Adoption Dashboard',
+    description: 'Track and measure the impact of AI initiatives at a glance.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-plug',
+    title: 'Smart Dashboards for Business Apps',
+    description: 'Dashboards that connect with your tools and enable actions.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-lock',
+    title: 'Passkey-Protected Sharing',
+    description: 'Securely share dashboards via protected access links.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-arrow-left-right',
+    title: 'Data Source Switching',
+    description: 'Easily switch between sources with zero reconfiguration.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-lightbulb',
+    title: 'GenBI Insights Summary',
+    description: 'AI-generated summaries provide executive-level clarity.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  },
+  {
+    icon: 'bi-envelope-fill',
+    title: 'Email Alerts for Key Actions',
+    description: 'Get notified instantly when critical events happen.',
+    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+  }
+];
+
+fixedColors = [
+  '#1d2e92', // darkest
+  '#007cb8',
+  '#088ed1',
+  '#36c1ce',
+  '#52c9f6',
+  '#8fe3fa'  // lightest
+];
+
 @ViewChild('propertiesModal') propertiesModal : any;
 @ViewChild('sampleDashboardPropertiesModal') sampleDashboardPropertiesModal : any;
 
@@ -72,6 +179,8 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
 }
 
 ngOnInit(){
+  // const colors = this.normalizeColors(this.baseColors);
+
   this.loaderService.hide();
   if(this.viewDatabbses){
     this.getDbConnectionList();
@@ -83,7 +192,340 @@ ngOnInit(){
   this.getSavedQueries();
   }
   this.getHostAndPort();
+  this.getChartMetrics();
 }
+barChartData:any =[]
+heatmapData:any=[]
+radiaBarData:any=[]
+recentActivityData:any = [];
+getChartMetrics(){
+  this.workbechService.getChartMetricsLandingPage().subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.barChartData = data.bar_chart
+      this.heatmapData = data.tree_chart
+      this.radiaBarData = data.radial_bar_chart
+      this.recentActivityData = data.activity_list.slice(0, 5)
+      if(this.barChartData?.data){
+          this.barOptions = this.buildBar();
+      }
+      if(this.heatmapData){
+        this.treemapOptions = this.buildTreeMap();
+      }
+      if(this.radiaBarData){
+        this.radialOptions = this.buildRadial();
+      }
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+private buildTreeMap(){
+  // return {
+  //   tooltip: {
+  //     formatter: (p: any) => {
+  //       const path = p.treePathInfo?.slice(1).map((n: any) => n.name).join(' / ');
+  //       return `${path}: <b>${p.value}</b>`;
+  //     }
+  //   },
+  //   series: [
+  //     {
+  //       name: '',
+  //       type: 'treemap',
+  //       roam: false,
+  //       nodeClick: 'zoomToNode',          // click a parent to drill in
+  //       breadcrumb: { show: true },
+  //       // Labels
+  //       label: { show: true, formatter: '{b}' },     // leaf labels
+  //       upperLabel: { show: true, height: 22 },      // parent labels
+  //       itemStyle: { borderColor: '#fff' },
+  //       // Visuals per depth
+  //       levels: [
+  //         { itemStyle: { borderWidth: 1, borderColor: '#e5e7eb', gapWidth: 6 } },                     // level 1
+  //         { colorSaturation: [0.25, 0.85], itemStyle: { gapWidth: 3, borderColorSaturation: 0.7 } },  // level 2
+  //         { itemStyle: { gapWidth: 2 } }                                                               // level 3+
+  //       ],
+  //       // ---- Hierarchical data ----
+  //       data: [
+  //         {
+  //           name: 'Postgres',
+  //           children: [
+  //             { name: 'Querysets',  value: 50 },
+  //             { name: 'Sheets',     value: 100 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'QuickBooks',
+  //           children: [
+  //             { name: 'Querysets',  value: 25 },
+  //             { name: 'Sheets',     value: 50 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'Postgres4',
+  //           children: [
+  //             { name: 'Querysets',  value: 50 },
+  //             { name: 'Sheets',     value: 100 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'QuickBooks3',
+  //           children: [
+  //             { name: 'Querysets',  value: 25 },
+  //             { name: 'Sheets',     value: 50 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },{
+  //           name: 'Postgres2',
+  //           children: [
+  //             { name: 'Querysets',  value: 50 },
+  //             { name: 'Sheets',     value: 100 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'QuickBooks1',
+  //           children: [
+  //             { name: 'Querysets',  value: 25 },
+  //             { name: 'Sheets',     value: 50 },
+  //             { name: 'Dashboards', value: 10 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'MongoDB',
+  //           children: [
+  //             { name: 'Querysets',  value: 30 },
+  //             { name: 'Sheets',     value: 60 },
+  //             { name: 'Dashboards', value: 5 }
+  //           ]
+  //         },
+  //         {
+  //           name: 'Salesforce',
+  //           children: [
+  //             { name: 'Querysets',  value: 22 },
+  //             { name: 'Sheets',     value: 40 },
+  //             { name: 'Dashboards', value: 8 }
+  //           ]
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // };
+  
+  return {
+    series: [
+       {
+      data: this.heatmapData.map((item: { name: any; data: { connection_count: any; }; }) => ({
+        x: item.name,
+        y: item.data?.connection_count || 0   // safe fallback
+      }))
+    }
+    ],
+  
+    chart: {
+      height: 350,
+      type: "treemap"
+    },
+    title: {
+      text: "Basic Treemap"
+    }
+  };
+  }
+/** RadialBar showing connections split (e.g., 20 total: 10/5/3/2) */
+private buildRadial() {
+  const labels = this.radiaBarData?.queryset_name || [];
+  const values = this.radiaBarData?.data || [];
+
+  return {
+    series: values,
+    chart: {
+      height: 310,
+      width: '100%',
+      type: "radialBar"
+    },
+    plotOptions: {
+      radialBar: {
+        offsetY: 0,
+        startAngle: 0,
+        endAngle: 270,
+        track: {
+          background: "#e0e0e0", // grey background for remaining arc
+          strokeWidth: "100%",
+          margin: 10 // gap between arcs
+        },
+        hollow: {
+          margin: 5,
+          size: "20%",
+          background: "transparent",
+          image: undefined
+        },
+        dataLabels: {
+          name: {
+            show: false
+          },
+          value: {
+            show: false
+          }
+        }
+      }
+    },
+    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5","#1ab7ea"],
+    labels: labels,
+    legend: {
+      show: true,
+      floating: true,
+      fontSize: "12px",
+      position: "left",
+      offsetX: 10,
+      offsetY: 10,
+      labels: {
+        useSeriesColors: true
+      },
+      formatter: function(seriesName: any, opts: any) {
+        const trimmed = seriesName.length > 10 ? seriesName.substring(0, 10) + "..." : seriesName;
+        return trimmed + ":  " + opts.w.globals.series[opts.seriesIndex];
+      },
+      itemMargin: {
+        horizontal: 3
+      }
+    },
+    tooltip: {
+      enabled:true,
+      custom: function({ series, seriesIndex, w }: any) {
+        let val = series[seriesIndex];
+        let total = w.globals.series.reduce((a: any, b: any) => a + b, 0);
+        let percentage = ((val / total) * 100).toFixed(1);
+    
+        return `
+          <div style="padding:5px;background:#fff;">
+            <strong>${w.globals.labels[seriesIndex]}</strong><br/>
+            Dashboards: ${val}<br/>
+          </div>
+        `;
+      }
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            show: false
+          }
+        }
+      }
+    ]
+  };
+  
+  
+}
+
+
+private buildBar() {
+  const rankedColors = this.getColorByValueRank(this.barChartData?.data, this.fixedColors);
+  return {
+    series: [
+      {
+        name: 'Created Dashboards',
+        data: this.barChartData?.data // Example values for Sun-Sat
+      }
+    ],
+    chart: {
+      type: 'bar',
+      height: 350,
+      width: '100%',
+      toolbar: { show: true },
+      animations: {
+        enabled: true,  // Enable animation
+        easing: 'easeinout',  // Type of easing (easein, easeout, easeinout)
+        speed: 800,  // Duration of the animation in ms
+        animateGradually: {
+          enabled: true,
+          delay: 150  // Delay before starting the animation
+        },
+        dynamicAnimation: {
+          enabled: true,  // Enable dynamic animation
+          speed: 350  // Speed of dynamic animation for data updates
+        }
+      }
+
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        // columnWidth: '55%',
+        borderRadiusApplication: 'around',
+        borderRadius: 20,
+        distributed: true, 
+                // endingShape: "rounded", // Important for rounded ends
+        // dataLabels: {
+        //     position: 'top' // top, center, bottom
+        // }
+
+      }
+    },
+    colors: rankedColors,
+    fill: {
+      type: ['solid', 'solid', 'solid', 'solid', 'pattern', 'pattern', 'pattern'],
+      pattern: {
+        style: 'slantedLines', // Stripe pattern
+        width: 6,
+        height: 6,
+        strokeWidth: 2
+      }
+    },
+    dataLabels: { enabled: true },
+    xaxis: {
+      categories: this.barChartData?.months,
+      show: false,          // Hides Y-axis labels
+      axisBorder: { show: false },  // Hides Y-axis border line
+      axisTicks: { show: false }  }
+    ,
+    yaxis: {show: false,          // Hides Y-axis labels
+    axisBorder: { show: false },  // Hides Y-axis border line
+    axisTicks: { show: false } } ,
+    grid: {
+  show: false,
+  xaxis: {
+    lines: {
+      show: false
+    }
+  },
+  yaxis: {
+    lines: {
+      show: false
+    }
+  }
+},
+legend: {
+  show: false,  // Show the legend
+
+},
+  };
+}
+
+getColorByValueRank(values: number[], colorPalette: string[]): string[] {
+  const sorted = [...values].map((val, index) => ({ val, index }))
+                            .sort((a, b) => b.val - a.val); // descending
+  const colorByIndex = new Array(values.length);
+
+  sorted.forEach((item, i) => {
+    colorByIndex[item.index] = colorPalette[i]; // map based on rank
+  });
+
+  return colorByIndex;
+}
+
+
 getHostAndPort(): void {
   const { hostname, port } = window.location;
   this.host = hostname;
