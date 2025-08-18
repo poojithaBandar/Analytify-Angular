@@ -195,6 +195,23 @@ ngOnInit(){
   this.getSavedQueries();
   }
   this.getHostAndPort();
+  this.getChartMetrics();
+}
+getChartMetrics(){
+  this.workbechService.getChartMetricsLandingPage().subscribe({
+    next:(data)=>{
+      console.log(data);
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
 }
 private buildTreeMap(){
   // return {
