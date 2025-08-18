@@ -56,7 +56,7 @@
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-dash-bg">
-                               <img src="./assets/images/icons/land-dashboard1.png" alt="" class="landing-icon">
+                               <img src="./assets/images/icons/land-dashboard1.png" alt="" class="landing-icon icon-bounce">
                             </span>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-chart-bg">
-                               <img src="./assets/images/icons/land-chart1.png" alt="" class="landing-icon">
+                               <img src="./assets/images/icons/land-chart1.png" alt="" class="landing-icon icon-bounce">
                             </span>
                         </div>
                     </div>
@@ -90,7 +90,7 @@
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-queries-bg">
-                               <img src="./assets/images/icons/land-queries1.png" alt="" class="landing-icon">
+                               <img src="./assets/images/icons/land-queries1.png" alt="" class="landing-icon icon-bounce">
                             </span>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-data-bg">
-                               <img src="./assets/images/icons/land-data1.png" alt="" class="landing-icon">
+                               <img src="./assets/images/icons/land-data1.png" alt="" class="landing-icon icon-bounce">
                             </span>
                         </div>
                     </div>
@@ -295,142 +295,140 @@
                 </div>
                 <div class="card-body mb-0 p-0 ">
                     <div class="table-responsive">
-                        <table class="table  text-nowrap text-md-nowrap mb-0">
-                            <tbody>
+                        <div class="table  text-nowrap text-md-nowrap mb-0 p-2">
+                            <div>
                                 @for(database of connectionList;track database){
-                                <tr>
-                                    <td>
+                                    <div class="d-flex align-items-center mt-0 justify-content-between saved-hover bg-light rounded-4 mb-3">
                                         <div class="d-flex align-items-center mt-0">
                                             <!-- <span class="rounded-5  p-2 border">
                                                 <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img w-5 h-5">
                                             </span> -->
-                                          <span class="rounded-5 p-2 border" *ngIf="database?.server_type">
+                                          <span class="avatar avatar-sm avatar-radius w-6 h-6 me-1 bg-transparent border-0" *ngIf="database?.server_type">
                                             <img *ngIf="database.server_type === 'POSTGRESQL'"
                                                 src="./assets/images/icons/postSQL-icon.jpg"
                                                 alt="PostgreSQL"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SAP HANA'"
                                                 src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png"
                                                 alt="SAP HANA"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'TALLY'"
                                                 src="./assets/images/icons/TallyLogo.png"
                                                 alt="Tally"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'ORACLE'"
                                                 src="./assets/images/icons/oracle-icon.jpg"
                                                 alt="Oracle"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'NINJA'"
                                                 src="./assets/images/icons/ninjaRMMIcon.jpg"
                                                 alt="Ninja"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'HUBSPOT'"
                                                 src="./assets/images/icons/hubspotlogo.png"
                                                 alt="Hubspot"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 <img *ngIf="database.server_type === 'DEEPSEEK'"
                                                 src="./assets/images/icons/deepseek.svg"
                                                 alt="DeepSeek"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'OPEN_AI'"
                                                 src="https://logo.clearbit.com/openai.com"
                                                 alt="OpenAI"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'MYSQL'"
                                                 src="./assets/images/icons/MySql-icon1.jpg"
                                                 alt="MySQL"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'MONGODB'"
                                                 src="./assets/images/icons/mongodb-icon.jpg"
                                                 alt="MongoDB"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'MICROSOFTSQLSERVER'"
                                                 src="./assets/images/icons/microsoft-sql-server-icon.jpg"
                                                 alt="SQL Server"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SQLITE'"
                                                 src="./assets/images/icons/sqlite-icon.jpg"
                                                 alt="SQLite"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SNOWFLAKE'"
                                                 src="./assets/images/icons/snowflake-icon.png"
                                                 alt="Snowflake"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'EXCEL'"
                                                 src="./assets/images/icons/csv-icon.jpg"
                                                 alt="Excel"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'CSV'"
                                                 src="./assets/images/icons/excel-icon.jpg"
                                                 alt="CSV"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'QUICKBOOKS'"
                                                 src="./assets/images/icons/quickbooks-icon.jpg"
                                                 alt="QuickBooks"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SALESFORCE'"
                                                 src="./assets/images/icons/salesforce-icon.jpg"
                                                 alt="Salesforce"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'CONNECTWISE'"
                                                 src="./assets/images/icons/connectwise-icon.png"
                                                 alt="Connectwise"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'HALOPS'"
                                                 src="./assets/images/icons/Halopsa-icon.png"
                                                 alt="Halops"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'IMMYBOT'"
                                                 src="./assets/images/icons/immybot.png"
                                                 alt="Immybot"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SHOPIFY'"
                                                 src="./assets/images/icons/shopify-large-1.jpg"
                                                 alt="Shopify"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'GOOGLE_SHEETS'"
                                                 src="./assets/images/icons/google-sheets.jpg"
                                                 alt="Google Sheets"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'GOOGLE_ANALYTICS'"
                                                 src="./assets/images/icons/google-anaytics.jpg"
                                                 alt="Google Analytics"
-                                                class="card-img w-5 h-5" />
+                                                class="card-img w-5 h-5 icon-bounce" />
                                             </span>
                                             <div class="ms-2">
-                                                <h6 class="mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</h6>
+                                                <h6 class="card-title mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</h6>
                                                 <span class="text-muted fs-14 fw-600">{{database.server_type | lowercase}}</span>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td class="text-end">
-                                        <span class="text-muted">{{database.created_at | timeAgo }}</span>
-                                    </td>
-                                </tr>
+                                        <div class="text-end">
+                                            <span class="text-muted">{{database.created_at | timeAgo }}</span>
+                                        </div>
+                                    </div>
                                 }
-                            </tbody>
+                            </div>
                             <!-- <tbody>
                                 @for(database of connectionList;track database){
                                 <tr>
@@ -532,7 +530,7 @@
                                 </tr>
                             }
                             </tbody> -->
-                        </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -563,7 +561,7 @@
         <div class="col-lg-6 col-xl-3">
             <div *ngIf="viewSheets" class="card  p-4 transform-card">
                 <div class="">
-                    <div class="d-flex align-items-center justify-content-between mb-3 px-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2 px-3">
                         <div class="">
                             <h6 class="fw-bold mb-1">Saved Charts</h6>
                             <!-- <label class="mb-0">Individual chart components</label> -->
@@ -586,7 +584,7 @@
                             }
                         </div>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between mb-0 px-2">
+                    <div class="d-flex align-items-center justify-content-between mb-3 px-2">
                         <label class="mb-0 ms-1">Chart Name</label>
                         <label class="mb-0 me-2">Modified On</label>
                     </div>
@@ -597,64 +595,64 @@
                         <div *ngIf="i < 11" class="">
                             <div *ngIf="showAllSheets && i < 5" class="card  img-shadow mb-0 shadow-none">
                                 <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
-                                <div class="card-body p-2 d-flex align-items-center justify-content-between saved-hover mb-2">
+                                <div class="card-body p-2 d-flex align-items-center justify-content-between saved-hover mb-3 bg-light rounded-3">
                                     <div class="d-flex align-items-center">
-                                        <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1">
+                                        <span class="avatar avatar-sm avatar-radius w-6 h-6 me-1 bg-transparent border-0">
                                             <!-- <img  alt="product" class="avatar-radius" src="./assets/images/icons/postSQL-icon.jpg"> -->
                                             <img *ngIf="sheetlist.chart_id === 1"
                                                 src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 6"
                                                 src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 17"
                                                 src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 13"
                                                 src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 24"
                                                 src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 7"
                                                 src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 5"
                                                 src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 4"
                                                 src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 2"
                                                 src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 3"
                                                 src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 8"
                                                 src="./assets/images/Tiled view sheet icons/multi-lines-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 10"
                                                 src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 12" src="./assets/images/Tiled view sheet icons/spider-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 25" src="./assets/images/Tiled view sheet icons/kpi-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 26" src="./assets/images/Tiled view sheet icons/heatmap-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 27" src="./assets/images/Tiled view sheet icons/funnel-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 28" src="./assets/images/Tiled view sheet icons/guage-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 29" src="./assets/images/Tiled view sheet icons/worldmap-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 11" src="./assets/images/Tiled view sheet icons/calendar-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 9" src="./assets/images/Tiled view sheet icons/pivot-table.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 14" src="./assets/images/Tiled view sheet icons/horizontal-bar.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                         </span>
                                         <div class="dashboard-card-title">
                                             <h5 class="card-title   mb-0 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
@@ -691,62 +689,62 @@
                                 <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                                 <div class="card-body p-2 d-flex align-items-center justify-content-between saved-hover mb-2">
                                     <div class="d-flex align-items-center">
-                                        <span class="avatar avatar-sm avatar-radius w-6 h-6 me-1">
+                                        <span class="avatar avatar-sm avatar-radius w-6 h-6 me-1 bg-transparent border-0">
                                             <!-- <img  alt="product" class="avatar-radius" src="./assets/images/icons/postSQL-icon.jpg"> -->
                                             <img *ngIf="sheetlist.chart_id === 1"
                                                 src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 6"
                                                 src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 17"
                                                 src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 13"
                                                 src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 24"
                                                 src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 7"
                                                 src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 5"
                                                 src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 4"
                                                 src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 2"
                                                 src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 3"
                                                 src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 8"
                                                 src="./assets/images/Tiled view sheet icons/multi-lines-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 10"
                                                 src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 12" src="./assets/images/Tiled view sheet icons/spider-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 25" src="./assets/images/Tiled view sheet icons/kpi-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 26" src="./assets/images/Tiled view sheet icons/heatmap-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 27" src="./assets/images/Tiled view sheet icons/funnel-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 28" src="./assets/images/Tiled view sheet icons/guage-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 29" src="./assets/images/Tiled view sheet icons/spider-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 11" src="./assets/images/Tiled view sheet icons/calendar-bg.png" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 9" src="./assets/images/Tiled view sheet icons/pivot-table.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 14" src="./assets/images/Tiled view sheet icons/horizontal-bar.jpg" alt=""
-                                                class="avatar-radius">
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                         </span>
                                         <div class="dashboard-card-title">
                                             <h5 class="card-title   mb-0 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
@@ -797,7 +795,7 @@
         <div class="col-lg-6 col-xl-3">
             <div *ngIf="viewCustomSql" class="card border p-4 transform-card">
                 <div class="row ">
-                    <div class="d-flex align-items-center justify-content-between mb-3 px-4">
+                    <div class="d-flex align-items-center justify-content-between mb-2 px-4">
                         <div class="">
                             <h6 class="fw-bold mb-1">Saved Queries</h6>
                             <!-- <label class="mb-1">Reusable data queries</label> -->
@@ -822,15 +820,18 @@
                     <div *ngIf="savedQueryList.length === 0">
                         No queries to display!
                     </div>
-                    <div class="d-flex align-items-center justify-content-between mb-0 px-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3 px-4">
                         <label class="mb-0 ms-1">Query Name</label>
                         <label class="mb-0 me-2">Modified On</label>
                     </div>
                     <ng-container *ngFor="let savedQuery of savedQueryList;let i = index">
                         <div *ngIf="i < 11" class="">
                             <div *ngIf="showAllSavedQueries && i < 5" class="card img-shadow mb-0 shadow-none">
-                                <div class="card-body p-2 d-flex align-items-center justify-content-between saved-hover mb-2">
-                                    <div class="dashboard-card-title">
+                                <div class="card-body p-2 d-flex align-items-center justify-content-between saved-hover mb-3 bg-light rounded-3">
+                                    <div class="dashboard-card-title d-flex">
+                                        <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
+                                            <img src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="avatar-radius icon-bounce w-5 h-5">
+                                        </span>
                                         <h5 class="card-title mb-0 cursor-pointer"
                                             (click)="gotoSavedQuery(savedQuery.hierarchy_id,savedQuery.queryset_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
                                             ngbTooltip="{{savedQuery.queryset_name}}" >
@@ -861,7 +862,10 @@
                             <div *ngIf="!showAllSavedQueries && i < 11" class="card  img-shadow shadow-none mb-0">
                                 <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                                 <div class="card-body p-2 d-flex align-items-center justify-content-between saved-hover mb-2">
-                                    <div class="dashboard-card-title">
+                                    <div class="dashboard-card-title d-flex">
+                                        <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
+                                            <img src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="avatar-radius icon-bounce w-5 h-5">
+                                        </span>
                                         <h5 class="card-title mb-0 cursor-pointer"
                                             (click)="gotoSavedQuery(savedQuery.hierarchy_id,savedQuery.queryset_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
                                             ngbTooltip="{{savedQuery.queryset_name}}">
@@ -909,32 +913,53 @@
             <div *ngIf="viewCustomSql" class="card border p-4 transform-card">
                 <div class="row ">
                    <div class="">
-                        <div class="d-flex align-items-center justify-content-between mb-0 px-2">
-                                <h6 class="fw-bold mb-1">Recent Activity</h6>
-                                <!-- <label class="mb-1">Latest actions and updates</label> -->
+                        <div class="d-flex align-items-center justify-content-between mb-2 px-2">
+                            <h6 class="fw-bold mb-1">Recent Activity</h6>
                         </div>
-                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover mb-2 p-2 border-0">
-                                <h5 class="card-title mb-0 ">New Dashboard Created...</h5>
+                        <label class="mb-3">Latest actions and updates</label>
+                            <div class="card-body p-2 d-flex align-items-center justify-content-between saved-hover mb-3 bg-light rounded-3 border-0">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
+                                        <img src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt="" class="avatar-radius icon-bounce w-5 h-5">
+                                    </span>
+                                    <h5 class="card-title mb-0 ">New Dashboard..</h5>
+                                </div>
                                 <span class=" p-1">5mins ago</span>
                             </div>                         
-                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover mb-2 p-2 border-0">
-                                <h5 class="card-title mb-0 ">Chart updated...</h5>
+                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover mb-3 p-2 bg-light rounded-3 border-0">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
+                                        <img src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="avatar-radius icon-bounce w-5 h-5">
+                                    </span>
+                                    <h5 class="card-title mb-0 ">Chart updated...</h5>
+                                </div>    
                                 <span class="p-1">25mins ago</span>
                             </div>
-                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover mb-2 p-2 border-0">
-                                <h5 class="card-title mb-0 ">New sheet created...</h5>
+                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover mb-3 p-2 bg-light rounded-3 border-0">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
+                                        <img src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt="" class="avatar-radius icon-bounce w-5 h-5">
+                                    </span>
+                                    <h5 class="card-title mb-0 ">New sheet..</h5>
+                                </div>    
                                 <span class="p-1">1hr ago</span>
                             </div>
-                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover mb-2 p-2 border-0">
-                                <h5 class="card-title mb-0 ">Dashboard updated...</h5>
+                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover mb-3 p-2 bg-light rounded-3 border-0">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
+                                        <img src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="avatar-radius icon-bounce w-5 h-5">
+                                    </span>
+                                    <h5 class="card-title mb-0 ">Dashboard..</h5>
+                                </div>    
                                 <span class="p-1">5mins ago</span>
                             </div>
-                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover p-2 border-0">
-                                <h5 class="card-title mb-0 ">New Dashboard Created...</h5>
-                                <span class="p-1">50mins ago</span>
-                            </div>
-                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover p-2 border-0">
-                                <h5 class="card-title mb-0 ">New Dashboard Created...</h5>
+                            <div class="card-body  d-flex align-items-center justify-content-between saved-hover mb-3 p-2 bg-light rounded-3 border-0">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
+                                        <img src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt="" class="avatar-radius icon-bounce w-5 h-5">
+                                    </span>
+                                    <h5 class="card-title mb-0 ">New Dashboard..</h5>
+                                </div>    
                                 <span class="p-1">50mins ago</span>
                             </div>
                    </div>
@@ -973,7 +998,7 @@
                                         </a> -->
                         </div>
                     </div>
-                    
+                    <label>Get instant insights with our ready-to-use sample dashboards.</label>
                     <ng-container *ngFor="let dashboardList of demoDashboardList;let i = index">
                         <div class="col-lg-6 col-xl-3">
                             <div class=" card img-shadow mb-0 transform-card">

@@ -36,10 +36,31 @@ tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius:
 .recent-text-blue { color: #2463eb !important; background-color: #d5e1fba1;  padding: 5px 10px;  border-radius: 20px; border: 1px solid #2463eb; font-size: 12px; font-weight: 600; }
 .carousel-height{height: 222px;}
 tbody, td, tfoot, th, thead, tr { border-color: inherit; border-style: none; border-width: 0; }
-.saved-hover:hover{    box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius: 20px;}
+.saved-hover:hover{       box-shadow: 0 0px 15px rgb(48 48 48 / 16%); border-radius: 20px;}
 .carousel-inner { position: relative;  width: 100%; overflow: hidden; border-radius: 0px 0px 15px 15px !important; }
 .dropdown-index{ z-index: 999 !important;}
 
+.glass {
+    background-color: #fafafcf5;
+    border-radius: 15px;
+    border: 1px solid #e0e0e080;
+    box-shadow: 0 4px 16px #e0e0e045, inset 0 1px #ffffff4d;
+}
+
+@keyframes bounce-up-down {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px); /* Adjust height as needed */
+  }
+}
+
+.icon-bounce {
+  width: 24px;
+  height: 24px;
+  animation: bounce-up-down 2s infinite ease-in-out;
+}
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
 .h1, h1{ font-size: 16px; }
