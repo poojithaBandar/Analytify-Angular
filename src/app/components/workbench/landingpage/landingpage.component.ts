@@ -343,7 +343,7 @@ private buildTreeMap(){
   }
 /** RadialBar showing connections split (e.g., 20 total: 10/5/3/2) */
 private buildRadial() {
-  const labels = this.radiaBarData?.datasource || [];
+  const labels = this.radiaBarData?.queryset_name || [];
   const values = this.radiaBarData?.data || [];
 
   return {
@@ -392,13 +392,15 @@ private buildRadial() {
         useSeriesColors: true
       },
       formatter: function(seriesName: any, opts: any) {
-        return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
+        const trimmed = seriesName.length > 10 ? seriesName.substring(0, 10) + "..." : seriesName;
+        return trimmed + ":  " + opts.w.globals.series[opts.seriesIndex];
       },
       itemMargin: {
         horizontal: 3
       }
     },
     tooltip: {
+      enabled:true,
       custom: function({ series, seriesIndex, w }: any) {
         let val = series[seriesIndex];
         let total = w.globals.series.reduce((a: any, b: any) => a + b, 0);
