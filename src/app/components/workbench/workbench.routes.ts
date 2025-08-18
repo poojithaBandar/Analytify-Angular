@@ -443,7 +443,12 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
       },
-
+      {
+        path: 'genie-aiq-dashboard',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./genie-aiq-dashboard/genie-aiq-dashboard.component').then((m) => m.GenieAiqDashboardComponent),
+      },
       {
         path: 'etlList/dataFlow',
         canActivate: [authGuard],
@@ -485,6 +490,7 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./etl-monitor/etl-monitor.component').then((m) => m.EtlMonitorComponent),
       },
+
     ]
   }
  ];

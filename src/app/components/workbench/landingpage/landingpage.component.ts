@@ -786,4 +786,33 @@ emptyDashboardProperties(){
   this.selectedRoleIds = [];
   this.selectedUserIds = [];
 }
+  genieHover = false;
+  showGenieTooltip = false;
+playAnalyzeModalAnimation() {
+  const watermark = document.querySelector('.sticky-watermark');
+  if (watermark) {
+    watermark.classList.remove('animate');
+    // Force reflow to restart animation
+    void (watermark as HTMLElement).offsetWidth;
+    watermark.classList.add('animate');
+  }
+}
+playGenieAnimation() {
+  const el = document.querySelector('.genie-animate');
+  if (el) {
+    el.classList.remove('bounce');
+    void (el as HTMLElement).offsetWidth; // force reflow
+    el.classList.add('bounce');
+  }
+}
+
+resetGenieAnimation() {
+  const el = document.querySelector('.genie-animate');
+  if (el) {
+    el.classList.remove('bounce');
+  }
+}
+routetoGenieDashbaord(){
+this.router.navigate(['/analytify/genie-aiq-dashboard'])
+}
 }

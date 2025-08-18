@@ -31,7 +31,14 @@ tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius:
 .data-T-C { color: #D97708; font-size: 17px;}
 .h2, h2 { font-size: 2.7rem; }
 
-
+.overlay-div{position: fixed; bottom: 32px; right: 32px; z-index: 1050; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.18); border-radius: 50%; background: #fff; padding: 8px; transition: box-shadow 0.2s;height: 83px;width: 83px;}
+.overlay-img{bottom: 3px;width: 60px;object-fit: contain;margin: 0 auto;display: block;height: 87px;position: relative;}
+.genie-animate {
+  transition: transform 0.4s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.3s;
+}
+.genie-animate.bounce {
+  animation: genieBounce 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
 .h1, h1{ font-size: 16px; }

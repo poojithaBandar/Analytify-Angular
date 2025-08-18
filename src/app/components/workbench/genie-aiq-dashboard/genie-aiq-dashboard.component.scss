@@ -228,3 +228,26 @@ form input, form select {
     border-radius: 0 0 12px 12px;
   }
 }
+.blur-overlay {
+  background-color: rgba(247, 249, 252, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#step-0 {
+  position: relative;
+}
+
+#genie-animation-container {
+  transform-origin: center center;
+}
+
+@keyframes genieHover {
+  0% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+  100% { transform: translateY(0) rotate(-5deg); }
+}
+
+.animate-genieHover {
+  animation: genieHover 5s ease-in-out infinite;
+}

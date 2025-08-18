@@ -40,7 +40,7 @@ export class GenieAiqDashboardComponent {
 
   }
   ngOnInit(){
-    this.step = 1;
+    this.step = 0;
     console.log(this.step);
     this.getConnectionList();
   }
@@ -103,7 +103,7 @@ onServerTypeSelect(type: string) {
       });
       this.schematableList = allTables;
       this.tables = allTables.map(tbl => tbl.table); // Extract table names
-      this.step = 2;
+      // this.step = 2;
       console.log('All tables:', this.tables);
       console.log('schematableList:', this.schematableList);
     },
