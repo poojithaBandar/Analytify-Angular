@@ -181,9 +181,6 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
 ngOnInit(){
   // const colors = this.normalizeColors(this.baseColors);
 
-  this.barOptions = this.buildBar();
-  this.treemapOptions = this.buildTreeMap();
-  this.radialOptions = this.buildRadial();
   this.loaderService.hide();
   if(this.viewDatabbses){
     this.getDbConnectionList();
@@ -197,10 +194,27 @@ ngOnInit(){
   this.getHostAndPort();
   this.getChartMetrics();
 }
+barChartData:any =[]
+heatmapData:any=[]
+radiaBarData:any=[]
+recentActivityData:any = [];
 getChartMetrics(){
   this.workbechService.getChartMetricsLandingPage().subscribe({
     next:(data)=>{
       console.log(data);
+      this.barChartData = data.bar_chart
+      this.heatmapData = data.tree_chart
+      this.radiaBarData = data.radial_bar_chart
+      this.recentActivityData = data.activity_list.slice(0, 5)
+      if(this.barChartData?.data){
+          this.barOptions = this.buildBar();
+      }
+      if(this.heatmapData){
+        this.treemapOptions = this.buildTreeMap();
+      }
+      if(this.radiaBarData){
+        this.radialOptions = this.buildRadial();
+      }
      },
     error:(error)=>{
       console.log(error);
@@ -310,30 +324,12 @@ private buildTreeMap(){
   
   return {
     series: [
-      {
-        data: [
-          {
-            x: "Postgres",
-            y: 5
-          },
-          {
-            x: "CSV",
-            y: 15
-          },
-          {
-            x: "Excel",
-            y: 25
-          },
-          {
-            x: "QuickBooks",
-            y: 5
-          },
-          {
-            x: "MongoDB",
-            y: 1
-          }
-        ]
-      }
+       {
+      data: this.heatmapData.map((item: { name: any; data: { connection_count: any; }; }) => ({
+        x: item.name,
+        y: item.data?.connection_count || 0   // safe fallback
+      }))
+    }
     ],
   
     chart: {
@@ -347,8 +343,8 @@ private buildTreeMap(){
   }
 /** RadialBar showing connections split (e.g., 20 total: 10/5/3/2) */
 private buildRadial() {
-  const labels = ['queryset1', 'queryset2', 'query3', 'query5', 'queryset6'];
-  const values = [100, 25, 33, 42, 50];
+  const labels = this.radiaBarData?.datasource || [];
+  const values = this.radiaBarData?.data || [];
 
   return {
     series: values,
@@ -434,12 +430,12 @@ private buildRadial() {
 
 
 private buildBar() {
-  const rankedColors = this.getColorByValueRank([10, 70, 65, 8, 20, 30], this.fixedColors);
+  const rankedColors = this.getColorByValueRank(this.barChartData?.data, this.fixedColors);
   return {
     series: [
       {
         name: 'Created Dashboards',
-        data: [10, 70, 65, 8, 20, 30] // Example values for Sun-Sat
+        data: this.barChartData?.data // Example values for Sun-Sat
       }
     ],
     chart: {
@@ -488,7 +484,7 @@ private buildBar() {
     },
     dataLabels: { enabled: true },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
+      categories: this.barChartData?.months,
       show: false,          // Hides Y-axis labels
       axisBorder: { show: false },  // Hides Y-axis border line
       axisTicks: { show: false }  }
