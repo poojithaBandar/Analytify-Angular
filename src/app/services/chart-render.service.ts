@@ -21,6 +21,7 @@ export interface ChartFlags {
   map: boolean;
   calendar: boolean;
   pivotTable: boolean;
+  treemap: boolean;
 }
 
 export interface ChartConfig {
@@ -51,6 +52,7 @@ export class ChartRenderService {
     map: false,
     calendar: false,
     pivotTable: false,
+    treemap: false,
   };
 
   private chartConfigMap: Record<number, ChartConfig> = {
@@ -71,6 +73,7 @@ export class ChartRenderService {
     28: { chartType: 'guage', flags: { ...this.baseFlags, guage: true } },
     29: { chartType: 'map', flags: { ...this.baseFlags, map: true } },
     11: { chartType: 'calendar', flags: { ...this.baseFlags, calendar: true } },
+    18: { chartType: 'treemap', flags: { ...this.baseFlags, treemap: true } },
   };
 
   getChartConfig(chartId: number): ChartConfig | undefined {
