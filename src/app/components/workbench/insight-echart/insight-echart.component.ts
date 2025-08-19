@@ -1694,6 +1694,43 @@ heatMapChart(){
 };
 return this.chartOptions;
 }
+treemapFromGenieDashboard(chartsColumnData?: any, chartsRowData?: any){
+  this.chartsColumnData = chartsColumnData;
+  this.chartsRowData = chartsRowData;
+  return this.treemapChart();
+}
+treemapChart(chartsColumnData?: any, chartsRowData?: any){
+  if(chartsColumnData && chartsRowData){
+    this.chartsColumnData = chartsColumnData;
+    this.chartsRowData = chartsRowData;
+  }
+  this.chartOptions = {
+    backgroundColor: this.backgroundColor,
+    legend: {
+      show: this.legendSwitch
+    },
+    tooltip: {
+      formatter: (params: any) => `${params.name} : ${this.formatNumber(params.value)}`
+    },
+    series: [{
+      type: 'treemap',
+      data: this.chartsColumnData.map((category: any, index: number) => ({
+        name: category === null ? 'null' : category,
+        value: this.chartsRowData[index]
+      })),
+      label: {
+        show: this.dataLabels,
+        fontFamily: this.dataLabelsFontFamily,
+        fontSize: this.dataLabelsFontSize,
+        fontWeight: this.isBold ? 700 : 400,
+        color: this.dataLabelsColor,
+        formatter: (params: any) => `${params.name}: ${this.formatNumber(params.value)}`
+      }
+    }],
+    color: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme
+  };
+  return this.chartOptions;
+}
 calendarchartFromGenieDashboard(chartsColumnData? : any, chartsRowData? : any){
   this.chartsColumnData = chartsColumnData;
   this.chartsRowData = chartsRowData;
@@ -2105,6 +2142,9 @@ chartInitialize(){
   }
   else if(this.chartType === 'calendar'){
     this.calendarChart();
+  }
+  else if(this.chartType === 'treemap'){
+    this.treemapChart();
   }
   else if(this.chartType === 'map'){
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
