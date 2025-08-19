@@ -1620,6 +1620,7 @@ try {
   funnel = false;
   guage = false;
   calendar = false;
+  treemap = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
     horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,chartId:any){
     this.table = table;
@@ -3187,6 +3188,31 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+ }
+ if(responce.chart_id == 18){
+  this.chartType = 'treemap';
+  this.bar = false;
+  this.horizontalBar = false;
+  this.table = false;
+  this.pivotTable = false;
+    this.pie = false;
+    this.line = false;
+    this.area = false;
+    this.sidebyside = false;
+    this.stocked = false;
+    this.barLine = false;
+    this.horizentalStocked = false;
+    this.grouped = false;
+    this.multiLine = false;
+    this.donut = false;
+    this.radar = false;
+    this.kpi = false;
+    this.heatMap = false;
+    this.funnel = false;
+    this.guage = false;
+    this.map = false;
+    this.calendar = false;
+    this.treemap = true;
  }
  if(responce.chart_id == 27){
   this.chartType = 'funnel';

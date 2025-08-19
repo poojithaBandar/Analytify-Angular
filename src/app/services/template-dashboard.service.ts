@@ -696,6 +696,8 @@ export class TemplateDashboardService {
       chartData = this.echartInstance.barLinechartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     } else if(data.chart_id == 26){
       chartData = this.echartInstance.heatmapFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+    } else if(data.chart_id == 18){
+      chartData = this.echartInstance.treemapFromGenieDashboard(chartsColumnData, chartsRowData);
     } else if(data.chart_id == 5){
       chartData = this.echartInstance.stackedchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     } else if(data.chart_id == 11){

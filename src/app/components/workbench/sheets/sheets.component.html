@@ -2448,7 +2448,7 @@
                             
                         </div>
                     </div>
-                    <div  [ngStyle]="{'display': ((bar || horizontalBar || pie || donut || map) && draggedColumns && draggedColumns?.length > 0 ? '' : 'none')}" class="row align-items-center">
+                    <div  [ngStyle]="{'display': ((bar || horizontalBar || pie || donut || treemap || map) && draggedColumns && draggedColumns?.length > 0 ? '' : 'none')}" class="row align-items-center">
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                                                    <div class="card-area d-flex gap-2">
                                                        <label for="inputName" class="form-control mb-0 border">Hierarchy</label>
@@ -2480,7 +2480,7 @@
                 </div>
             </div>
                     
-            <div class="card mb-0 border sheet-card-top" [ngClass]="(bar || horizontalBar || pie || donut || map || pivotTable) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
+            <div class="card mb-0 border sheet-card-top" [ngClass]="(bar || horizontalBar || pie || donut || treemap || map || pivotTable) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
                 @if(!(table || kpi)){
                     <div class="input-group">
                 <!-- <div class="col-lg-3 col-md-3 p-1">
@@ -3891,7 +3891,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -4032,7 +4032,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar || treemap || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -4175,7 +4175,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || pivotTable || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || treemap || pivotTable || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -4560,7 +4560,7 @@
                                                         </div>
                                                     </div>
                                                     
-                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || treemap || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Zoom </label>
                                                         </div>
@@ -4572,7 +4572,7 @@
                                                         </div>
                                                     </div>
                                                   
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -4628,7 +4628,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -4726,7 +4726,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && !isMeasureDistribution && (bar || horizontalBar || funnel)) || area || line || (radar && !isRadarDistribution) || guage)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar || treemap) && ((!isDistributed && !isMeasureDistribution && (bar || horizontalBar || funnel)) || area || line || (radar && !isRadarDistribution) || guage)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
@@ -4820,7 +4820,7 @@
                                                                     [format]="'hex'">
                                                                     </ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage || treemap)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Grid Line</p>
                                                                     </div>
@@ -4838,7 +4838,7 @@
                                                                 </div>
 
                                                                 
-                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || treemap || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >X-Grid Line Color </p>
                                                                     </div>
@@ -4855,7 +4855,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
                                                                
-                                                                <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar || kpi || radar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || treemap || calendar || kpi || radar)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <div class=""> 
                                                                         <p >Y-Grid Line Color </p>
                                                                     </div>
@@ -5005,7 +5005,7 @@
 
 
 
-                                                                  <div *ngIf="pie || donut || ((bar || horizontalBar || funnel) && !isDistributed)" class="d-flex flex-column gap-2 mt-2">
+                                                                  <div *ngIf="pie || donut || treemap || ((bar || horizontalBar || funnel) && !isDistributed)" class="d-flex flex-column gap-2 mt-2">
                                                                 <div class="d-flex align-items-center justify-content-between">
                                                                     <label class="mb-0">Measure Distribution</label>
                                                                     <div *ngIf="isMeasureDistribution" class="toggle toggle-sm on mb-0" (click)="isMeasureDistribution = !isMeasureDistribution; (isDistributed = isMeasureDistribution ? false : true); updateMeasureColorRanges()">
@@ -5092,7 +5092,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((pie && chartId) || donut || radar)">
+                                                    <div *ngIf="((pie && chartId) || donut || radar || treemap)">
                                                         <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                             <div class=""> 
                                                                 <label class="mb-0">Legends </label>
@@ -5253,7 +5253,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((pie && chartId) || donut || bar || horizontalBar || map)  && draggedColumns && draggedColumns?.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="((pie && chartId) || donut || bar || horizontalBar || map || treemap)  && draggedColumns && draggedColumns?.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton

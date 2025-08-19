@@ -197,13 +197,24 @@
     <div id="chart">
         <apx-chart #heatmapchart
         [series]="chartOptions.series"
-        [chart]="chartOptions.chart"   
+        [chart]="chartOptions.chart"
         [xaxis]="chartOptions.xaxis"
         [yaxis]="chartOptions.yaxis"
         [plotOptions]="chartOptions.plotOptions"
         [dataLabels]="chartOptions.dataLabels"
         [legend]="chartOptions.legend"
         [grid]="chartOptions.grid"
+        [colors]="chartOptions.colors">
+        </apx-chart>
+    </div>
+} @else if(chartType === 'treemap'){
+    <div id="chart">
+        <apx-chart #treemapchart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [plotOptions]="chartOptions.plotOptions"
+        [dataLabels]="chartOptions.dataLabels"
+        [legend]="chartOptions.legend"
         [colors]="chartOptions.colors">
         </apx-chart>
     </div>

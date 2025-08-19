@@ -1,0 +1,18 @@
+import { TestBed } from '@angular/core/testing';
+import { ChartRenderService } from './chart-render.service';
+
+describe('ChartRenderService', () => {
+  let service: ChartRenderService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(ChartRenderService);
+  });
+
+  it('should map chart id 18 to treemap', () => {
+    const config = service.getChartConfig(18);
+    expect(config).toBeTruthy();
+    expect(config?.chartType).toBe('treemap');
+    expect(config?.flags.treemap).toBeTrue();
+  });
+});

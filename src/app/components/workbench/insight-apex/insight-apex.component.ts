@@ -96,6 +96,7 @@ export class InsightApexComponent {
   @ViewChild('funnelChart') funnelCharts!: ChartComponent;
   @ViewChild('guageChart') guageCharts!: ChartComponent;
   @ViewChild('heatmapchart') heatmapCharts!: ChartComponent;
+  @ViewChild('treemapchart') treemapCharts!: ChartComponent;
 
   series: any[] = [];
   chartOptions: any = {};
@@ -413,6 +414,8 @@ export class InsightApexComponent {
       this.funnelChart();
     } else if(this.chartType === 'guage'){
       this.guageChart1();
+    } else if(this.chartType === 'treemap'){
+      this.treeMapChart();
     }
     let isValid = this.validateSeriesData(this.chartOptions.series);
     if (!isValid) {
@@ -1871,6 +1874,43 @@ xaxis: {
           lines:false
         }
       }
+    };
+  }
+  treeMapChart(){
+    this.chartOptions = {
+      series: [
+        {
+          data: this.chartsColumnData.map((category: any, index: number) => ({
+            x: category === null ? 'null' : category,
+            y: this.chartsRowData[index]
+          }))
+        }
+      ],
+      chart: {
+        height: 350,
+        type: 'treemap',
+        background: this.backgroundColor,
+      },
+      plotOptions: {
+        treemap: {
+          distributed: this.isDistributed,
+        }
+      },
+      dataLabels: {
+        enabled: this.dataLabels,
+        style: {
+          fontSize: this.dataLabelsFontSize,
+          fontFamily: this.dataLabelsFontFamily,
+          fontWeight: this.isBold ? 700 : 400,
+          colors: [this.dataLabelsColor],
+        },
+        formatter: (val: any) => this.formatNumber(val)
+      },
+      legend: {
+        show: this.legendSwitch,
+        position: this.legendsAllignment,
+      },
+      colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme
     };
   }
   funnelChart(){
