@@ -1643,6 +1643,7 @@ try {
     this.heatMap = heatMap;
     this.funnel = funnel;
     this.guage = guage;
+    this.treemap = (chartId === 18);
     this.map = map;
     this.calendar = calendar;
     if(this.bar){
@@ -4250,6 +4251,10 @@ routeConfigure(){
   } else if (chartType.includes("kpi")) {
     // KPI
     this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,25);
+
+  } else if (chartType.includes("treemap")) {
+    // Treemap
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18);
 
   } else if (chartType.includes("heat map")) {
     // Heat Map
