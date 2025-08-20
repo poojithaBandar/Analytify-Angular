@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { offset } from '@popperjs/core';
 import { text } from 'd3';
+import { CommonModule } from '@angular/common';
 
 interface Dimension {
   name: string;
@@ -17,7 +18,7 @@ interface Dimension {
 @Component({
   selector: 'app-insight-apex',
   standalone: true,
-  imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,
+  imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,CommonModule,
     NgApexchartsModule
     ],
   templateUrl: './insight-apex.component.html',
@@ -433,10 +434,14 @@ export class InsightApexComponent {
   validateSeriesData(series: any[]): boolean {
     if(['pie', 'donut', 'guage'].includes(this.chartType)) {
       return series?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null);
+    } else if(['treemap'].includes(this.chartType)){
+      return series[0]?.data.every((set: { y: any[]; }) =>
+      set?.y?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null)
+    );
     } else {
       return series?.every((set) =>
-        set?.data?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null)
-      );
+      set?.data?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null)
+    );
     }
   }
 

@@ -2705,6 +2705,16 @@
                 [ylabelFontWeight]="ylabelFontWeight"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
             </div>
             }
+            @else if(treemap && chartId){
+                <div class="card-body">
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"  [dataLabelsFontFamily]="dataLabelsFontFamily" [selectedColorScheme]="selectedColorScheme"
+                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                    [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
+                    (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)" [leftLegend]="leftLegend" [topLegend]="topLegend" [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient" [isMeasureDistribution]="isMeasureDistribution"
+                    [measureColorRanges]="measureColorRanges"></app-insight-echart>
+                </div>
+                }
             @else if(line && chartId){
             <div class="card-body">
                 <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"

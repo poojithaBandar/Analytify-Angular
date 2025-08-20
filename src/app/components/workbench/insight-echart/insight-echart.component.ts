@@ -1714,6 +1714,7 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
     },
     series: [{
       type: 'treemap',
+      roam :  this.isZoom,
       data: this.chartsColumnData.map((category: any, index: number) => ({
         name: category === null ? 'null' : category,
         value: this.chartsRowData[index]
