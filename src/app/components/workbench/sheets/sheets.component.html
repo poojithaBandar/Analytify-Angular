@@ -70,7 +70,7 @@
                                     [tooltip]="{ enabled: true }"
                                     [xaxis]="{ categories: trendLabels }"
                                     ></apx-chart>
-                         @if(showKpiIndicator && kpiShowTrendline && indicatorValue) {
+                         @if(showKpiIndicator && kpiShowTrendline && indicatorValue !== null && indicatorValue !== undefined) {
                             <div class="d-flex justify-content-around mt-2 flex-wrap text-center" style="font-size: 12px;">
                             <span [ngStyle]="{ color: indicatorIsIncreased === 'up' ? 'green' : 'red', fontWeight: 'bold' }">
                                 <i class="bi" [ngClass]="indicatorIsIncreased === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>

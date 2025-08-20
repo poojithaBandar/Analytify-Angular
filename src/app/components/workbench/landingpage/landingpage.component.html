@@ -123,6 +123,7 @@
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="card-header d-flex justify-content-between border-0">
                                         <h6 class="fw-bold mb-1">Dashboards Created - <label>Last 6 Months</label></h6>
+
                                         
                                     </div>
                                     <!-- <div class="view-card">
@@ -132,7 +133,9 @@
                                     </div> -->
                                 </div>
                                 <div class="card-body p-0">
-                                
+                                   <div  *ngIf="loading" class="card-body p-0 px-3">
+                                 <div  class="skeleton-loader"></div>
+                                 </div>
                                 <apx-chart
                                   [chart]="barOptions.chart"
                                   [series]="barOptions.series"
@@ -165,6 +168,7 @@
                                     </div> -->
                                 </div>
                                 <div  id="chart" class="card-body p-0 px-3">
+                                         <div *ngIf="loading" class="skeleton-loader"></div>
                                  <apx-chart [series]="treemapOptions.series" [chart]="treemapOptions.chart" [dataLabels]="treemapOptions.dataLabels" [colors]="treemapOptions.colors"
                                   [tooltip]="treemapOptions.tooltip" [plotOptions]="treemapOptions.plotOptions" [legend]="treemapOptions.legend"></apx-chart>
                                 </div>
@@ -195,8 +199,8 @@
                     <!-- <div *ngIf="savedDashboardList.length === 0">
                         No dashboards to display!
                     </div> -->
-                   <div *ngIf="savedDashboardList.length === 0" class="row g-3 justify-content-center">
-                    <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6" *ngFor="let i of [1,2,3,4]">
+                   <div *ngIf="savedDashboardList.length === 0" class="row g-3 justify-content-center mt-0">
+                    <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 mt-0" *ngFor="let i of [1,2,3,4]">
                         <div class="card img-shadow mb-0 p-3 text-center skeleton-card d-flex flex-column justify-content-center align-items-center">
                         <div class="placeholder-image mb-3"></div>
                         <div class="placeholder-title mb-2"></div>
@@ -298,13 +302,19 @@
                 <div class="card-header d-flex justify-content-between border-0">
                     <h6 class="fw-bold mb-1">Recent Connections</h6>
                     <a class="">
-                        <span class="add-txt me-2" (click)="goToConnections()">View All <i class="fa fa-angle-double-right"> </i></span>
+                        <span *ngIf="connectionList.length > 0" class="add-txt me-2" (click)="goToConnections()">View All <i class="fa fa-angle-double-right"> </i></span>
                     </a>
                 </div>
                 <div class="card-body mb-0 p-0 ">
                     <div class="table-responsive">
                         <div class="table  text-nowrap text-md-nowrap mb-0 p-2">
-                            <div>
+                              <div *ngIf="connectionList.length === 0" class="d-flex justify-content-center align-items-center w-100" style="min-height: 355px;">
+                                <div class="p-4 text-center w-100" style="max-width: 250px;">
+                                    <img src="/assets/images/icons/Empty-charts.png" alt="No Saved Charts" class="img-fluid mb-3" style="height: 80px;">
+                                    <p class="mb-0 fw-semibold text-muted">No Connections to Preview</p>
+                                </div>
+                                </div>
+                                <div *ngIf="connectionList.length > 0">
                                 @for(database of connectionList;track database){
                                     <div class="d-flex align-items-center mt-0 justify-content-between saved-hover bg-light rounded-4 mb-3">
                                         <div class="d-flex align-items-center mt-0">
@@ -436,7 +446,7 @@
                                         </div>
                                     </div>
                                 }
-                            </div>
+                                </div>
                             <!-- <tbody>
                                 @for(database of connectionList;track database){
                                 <tr>
@@ -587,7 +597,7 @@
                         <label class="mb-0 ms-1">Chart Name</label>
                         <label class="mb-0 me-2">Modified On</label>
                     </div>
-                    <div *ngIf="userSheetsList.length === 0" class="d-flex justify-content-center align-items-center w-100" style="min-height: 267px;">
+                    <div *ngIf="userSheetsList.length === 0" class="d-flex justify-content-center align-items-center w-100" style="min-height: 355px;">
                     <div class="p-4 text-center w-100" style="max-width: 250px;">
                         <img src="/assets/images/icons/Empty-charts.png" alt="No Saved Charts" class="img-fluid mb-3" style="height: 80px;">
                         <p class="mb-0 fw-semibold text-muted">No Saved Charts to Preview</p>
@@ -661,7 +671,7 @@
                                         <div class="dashboard-card-title">
                                             <h5 class="card-title   mb-0 pb-1 cursor-pointer saved-chart-name" ngbTooltip="{{sheetlist.sheet_name}}"
                                                 (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
-                                                >{{sheetlist.sheet_name.length > 15 ? (sheetlist.sheet_name | slice:0:15) + '..' : sheetlist.sheet_name }}</h5>
+                                                >{{sheetlist.sheet_name.length > 10 ? (sheetlist.sheet_name | slice:0:10) + '..' : sheetlist.sheet_name }}</h5>
                                             
                                         </div>
                                     </div>
@@ -722,7 +732,7 @@
                         <label class="mb-0 ms-3">Query Name</label>
                         <label class="mb-0 me-4">Modified On</label>
                     </div>
-                     <div *ngIf="savedQueryList.length === 0" class="d-flex justify-content-center align-items-center w-100" style="min-height: 267px;">
+                     <div *ngIf="savedQueryList.length === 0" class="d-flex justify-content-center align-items-center w-100" style="min-height: 355px;">
                     <div class="p-4 text-center w-100" style="max-width: 250px;">
                         <img src="/assets/images/icons/saved-queries-empty.png" alt="No Saved Queries" class="img-fluid mb-3" style="height: 80px;">
                         <p class="mb-0 fw-semibold text-muted">No Saved Queries to Preview</p>
@@ -851,7 +861,7 @@
                                         <h5 class="card-title mb-0 cursor-pointer pt-2 saved-chart-name"
                                             (click)="gotoSavedQuery(savedQuery.hierarchy_id,savedQuery.queryset_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
                                             ngbTooltip="{{savedQuery.queryset_name}}" >
-                                            {{savedQuery.queryset_name | slice:0:15}}</h5>
+                                            {{savedQuery.queryset_name | slice:0:10}}</h5>
                                         
                                     </div>
                                     <div class="dashboard-option">
@@ -886,7 +896,7 @@
                         <div class="d-flex align-items-center justify-content-between mb-2 px-1">
                             <h6 class="fw-bold mb-1">Recent Activity</h6>
                         </div>
-                        <div *ngIf="recentActivityData.length === 0" class="d-flex justify-content-center align-items-center w-100" style="min-height: 267px;">
+                        <div *ngIf="recentActivityData.length === 0" class="d-flex justify-content-center align-items-center w-100" style="min-height: 356px;">
                             <div class="p-4 text-center w-100" style="max-width: 250px;">
                                 <img src="/assets/images/icons/recent-activity-empty.png" alt="No activity" class="img-fluid mb-3" style="height: 80px;">
                                 <p class="mb-0 fw-semibold text-muted">No Recent Activity to Display</p>
@@ -896,21 +906,21 @@
                             <div *ngFor="let recent of recentActivityData" class="card-body p-2 d-flex align-items-center justify-content-between saved-hover mb-3 bg-light rounded-3 border-0">
                                 <div class="d-flex align-items-center">
                                     <span  class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
-                                        <img *ngIf="recent.action === 'DELETE'" src="./assets/images/Tiled view sheet icons/Delete.svg" alt="" class="avatar-radius icon-float w-5 h-5">
-                                        <img *ngIf="recent.action === 'UPDATE'" src="./assets/images/Tiled view sheet icons/Update.svg" alt="" class="avatar-radius icon-float w-5 h-5">
-                                        <img *ngIf="recent.action === 'CREATE'" src="./assets/images/Tiled view sheet icons/Create.svg" alt="" class="avatar-radius icon-float w-5 h-5">
-                                        <img *ngIf="recent.action === 'VIEW'" src="./assets/images/Tiled view sheet icons/View.svg" alt="" class="avatar-radius icon-float w-5 h-5">
+                                        <img *ngIf="recent.action === 'Deleted'" src="./assets/images/Tiled view sheet icons/Delete.svg" alt="" class="avatar-radius icon-float w-5 h-5">
+                                        <img *ngIf="recent.action === 'Updated'" src="./assets/images/Tiled view sheet icons/Update.svg" alt="" class="avatar-radius icon-float w-5 h-5">
+                                        <img *ngIf="recent.action === 'Created'" src="./assets/images/Tiled view sheet icons/Create.svg" alt="" class="avatar-radius icon-float w-5 h-5">
+                                        <img *ngIf="recent.action === 'Viewed'" src="./assets/images/Tiled view sheet icons/View.svg" alt="" class="avatar-radius icon-float w-5 h-5">
                                     </span>
-                                    <h5 class="card-title mb-0 activity-title saved-chart-name">{{ (recent.action + ' ' + recent.entity) | titlecase }}</h5>
+                                    <h5 class="card-title mb-0 activity-title saved-chart-name">{{ (recent.action + ' ' + recent.entity) | titlecase | slice:0:10}}</h5>
                                 </div>
-                                <span class=" p-1">{{recent.timestamp}}</span>
+                                <span class="p-1 text-nowrap">{{recent.timestamp}}</span>
                             </div>                         
                    </div>
                 </div>
             </div>
         </div>   
         <div class="col-lg-6 col-xl-3">
-            <div class="card border p-4 transform-card">
+            <div class="card border p-4 transform-card" style="min-height: 416px;max-height:416px">
                 <div class="d-flex align-items-center justify-content-between mb-0 px-2">
                     <div class="">
                        <h6 class="fw-bold mb-1"># Dashboards - SavedQueries</h6>
@@ -927,6 +937,21 @@
                 [colors]="radialOptions.colors"
                 [responsive]="radialOptions.responsive"
               ></apx-chart>
+                  <div class="px-2 mt-3">
+                    <!-- Total summary -->
+                    <p class="fw-bold text-center mb-2 small text-primary">
+                        {{ getTotalSummary() }}
+                    </p>
+
+                    <!-- Dataset breakdown -->
+                    <!-- <ul class="list-unstyled small mb-0">
+                        <li *ngFor="let item of getDatasetBreakdown()"
+                            class="d-flex justify-content-between align-items-center border-bottom py-1">
+                        <span class="text-truncate" [title]="item.name">{{ item.name }}</span>
+                        <span class="fw-bold">{{ item.count }}</span>
+                        </li>
+                    </ul> -->
+                    </div>
             </div>
         </div>            
     </div>
