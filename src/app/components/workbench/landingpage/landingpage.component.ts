@@ -211,6 +211,7 @@ getChartMetrics(){
       }
       if(this.heatmapData){
         this.treemapOptions = this.buildTreeMap();
+          console.log('treemap',this.treemapOptions);
       }
       if(this.radiaBarData){
         this.radialOptions = this.buildRadial();
@@ -321,16 +322,22 @@ private buildTreeMap(){
   //     }
   //   ]
   // };
-  
-  return {
-    series: [
-       {
-      data: this.heatmapData.map((item: { name: any; data: { connection_count: any; }; }) => ({
+  const hasData = this.heatmapData && this.heatmapData.length > 0;
+  const seriesData =
+  this.heatmapData && this.heatmapData.length
+    ? this.heatmapData.map((item: any) => ({
         x: item.name,
-        y: item.data?.connection_count || 0   // safe fallback
+        y: item.data?.connection_count || 0
       }))
-    }
-    ],
+    : [
+        { x: "No Data ", y: 20 },
+        { x: "No Data ", y: 10 },
+        { x: "No Data ", y: 15 },
+        { x: "No Data ", y: 25 },
+        { x: "No Data ", y: 10 }
+      ];
+  return {
+   series: [{ data: seriesData }],
   
     chart: {
       height: 350,
@@ -338,16 +345,59 @@ private buildTreeMap(){
     },
     title: {
       text: "Basic Treemap"
+    },tooltip: {
+    enabled: true,
+    custom: function({ series, seriesIndex, dataPointIndex, w }: any) {
+      const point = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+
+        if (!hasData || point?.x === "Empty") {
+        return "";
+      }
+
+      return `
+        <div style="padding:5px;">
+          <strong>${point.x}</strong><br/>
+          Connected: ${point.y}<br/>
+        </div>
+      `;
     }
+  },
+
+  noData: {
+    text: "No Data to Display",
+    align: "center",
+    verticalAlign: "middle",
+    style: {
+      color: "#999",
+      fontSize: "16px",
+      fontFamily: "Arial, sans-serif"
+    }
+  },
+    colors: this.heatmapData && this.heatmapData.length > 0
+    ? ["#1ab7ea", "#0084ff", "#39539E", "#0077B5", "#1ab7ea"] // normal colors
+    : ["#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3"],
   };
   }
 /** RadialBar showing connections split (e.g., 20 total: 10/5/3/2) */
 private buildRadial() {
-  const labels = this.radiaBarData?.datasource || [];
-  const values = this.radiaBarData?.data || [];
+
+
+    const hasData = this.radiaBarData && this.radiaBarData.data && this.radiaBarData.data.length > 0;
+
+  const labels = hasData
+    ? this.radiaBarData.queryset_name || []
+    : ["No Data", "No Data", "No Data", "No Data"];
+  // const labels = this.radiaBarData?.datasource || [];
+  // const values = this.radiaBarData?.data || [];
+
+  const values = hasData
+    ? this.radiaBarData.data
+    : [0, 0, 0, 0];
+    const total = values.reduce((a: any, b: any) => a + b, 0);
+    const normalizedValues = values.map((val:any) => Math.ceil((val / total) * 100));
 
   return {
-    series: values,
+    series: normalizedValues,
     chart: {
       height: 310,
       width: '100%',
@@ -379,7 +429,7 @@ private buildRadial() {
         }
       }
     },
-    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5","#1ab7ea"],
+    colors:hasData ? ["#1ab7ea", "#0084ff", "#39539E", "#0077B5","#1ab7ea"] :["#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3"] ,
     labels: labels,
     legend: {
       show: true,
@@ -392,25 +442,39 @@ private buildRadial() {
         useSeriesColors: true
       },
       formatter: function(seriesName: any, opts: any) {
-        return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
+        const trimmed = seriesName.length > 10 ? seriesName.substring(0, 10) + "..." : seriesName;
+        return trimmed + ":  " + opts.w.globals.series[opts.seriesIndex];
       },
       itemMargin: {
         horizontal: 3
       }
     },
-    tooltip: {
-      custom: function({ series, seriesIndex, w }: any) {
-        let val = series[seriesIndex];
-        let total = w.globals.series.reduce((a: any, b: any) => a + b, 0);
-        let percentage = ((val / total) * 100).toFixed(1);
-    
+      tooltip: {
+      enabled: true,
+      custom: function ({ series, seriesIndex, w }: any) {
+        const val = series[seriesIndex];
+        const label = w.globals.labels[seriesIndex];
+
+        if (!hasData || val === 0) {
+          return "";
+        }
+
         return `
           <div style="padding:5px;">
-            <strong>${w.globals.labels[seriesIndex]}</strong><br/>
-            Value: ${val}<br/>
-            Percentage: ${percentage}%
+            <strong>${label}</strong><br/>
+            Dashboards: ${val}<br/>
           </div>
         `;
+      }
+    },
+    noData: {
+      text: "No Data to Display",
+      align: "center",
+      verticalAlign: "middle",
+      style: {
+        color: "#999",
+        fontSize: "16px",
+        fontFamily: "Arial, sans-serif"
       }
     },
     responsive: [
@@ -430,12 +494,24 @@ private buildRadial() {
 
 
 private buildBar() {
-  const rankedColors = this.getColorByValueRank(this.barChartData?.data, this.fixedColors);
+  const allZero =
+    this.barChartData?.data &&
+    this.barChartData.data.every((val: number) => val === 0);
+  const rankedColors = !allZero ? this.getColorByValueRank(this.barChartData?.data, this.fixedColors) :  ["#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3"];
+
+  // ✅ If all values are 0 → use dummy grey bars
+  const seriesData = allZero
+    ? [10, 15, 10, 19, 14, 12] // dummy values to render outline
+    : this.barChartData.data;
+
+  const categories = this.barChartData?.months || [];
+
+  
   return {
     series: [
       {
-        name: 'Created Dashboards',
-        data: this.barChartData?.data // Example values for Sun-Sat
+        name: "Created Dashboards",
+        data: seriesData
       }
     ],
     chart: {
@@ -457,6 +533,15 @@ private buildBar() {
         }
       }
 
+    },
+    tooltip: {
+      enabled: true,
+      y: {
+        formatter: (val: number) => allZero ? "" : val
+      },
+      x: {
+        formatter: (val: string) => allZero ? "No Data" : val
+      }
     },
     plotOptions: {
       bar: {
@@ -482,9 +567,9 @@ private buildBar() {
         strokeWidth: 2
       }
     },
-    dataLabels: { enabled: true },
+    dataLabels: { enabled: !allZero },
     xaxis: {
-      categories: this.barChartData?.months,
+      categories: categories,
       show: false,          // Hides Y-axis labels
       axisBorder: { show: false },  // Hides Y-axis border line
       axisTicks: { show: false }  }
@@ -547,7 +632,7 @@ getDbConnectionList(){
     next:(data)=>{
       this.connectionList = data.sheets
       console.log('jdhcvjsh',this.connectionList);
-      this.totalDatabases = data.total_items
+      this.totalDatabases = data.connection_count
      },
     error:(error)=>{
       console.log(error);
