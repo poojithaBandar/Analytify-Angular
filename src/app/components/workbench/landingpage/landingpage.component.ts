@@ -362,7 +362,7 @@ private buildTreeMap(){
       }
 
       return `
-        <div style="padding:5px;background:#fff">
+        <div style="padding:5px;">
           <strong>${point.x}</strong><br/>
           Connected: ${point.y}<br/>
         </div>
@@ -475,7 +475,7 @@ private buildRadial() {
         }
 
         return `
-          <div style="padding:5px;background:#fff">
+          <div style="padding:5px;">
             <strong>${label}</strong><br/>
             Dashboards: ${original}<br/>
           </div>
