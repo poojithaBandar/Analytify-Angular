@@ -962,6 +962,46 @@ export class TemplateDashboardService {
       })
     }
   }
+
+  buildSampleBambooHRDashboard(container: ViewContainerRef , databaseId: any, responceData?: any){
+    const componentRef =container.createComponent(InsightEchartComponent);
+    this.echartInstance = componentRef.instance;
+
+    const handleResponse = (responce: any) => {
+      const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+      queries.forEach((query: any) => {
+        const obj ={
+          query_set_id:query.queryset_id,
+          hierarchy_id:query.hierarchy_id,
+          joining_tables: query.joining_tables,
+          join_type:query.join_type,
+          joining_conditions:query.joining_conditions,
+          dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+          is_smart_dashboard:true
+        } as any;
+          this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
+              error: (error) => {
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+                console.log(error);
+              }
+            }
+          )
+      });
+      this.buildDashboardResponseData(responce);
+    };
+
+    if(responceData){
+      handleResponse(responceData);
+    } else {
+      this.workbechService.buildSampleBambooHRDashboard(databaseId).subscribe({
+        next: handleResponse,
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      })
+    }
+  }
   buildSampleSalesforceDashboard(container: ViewContainerRef , databaseId: any, responceData?: any){
     const componentRef =container.createComponent(InsightEchartComponent);
     this.echartInstance = componentRef.instance;
@@ -1166,7 +1206,7 @@ buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any, respon
 
   private readonly TABLE_MAX     = 1;
   private readonly TABLE_PER_ROW = 1;
-  private readonly TABLE_SIZE    = { cols: 20, rows: 15 };
+  private readonly TABLE_SIZE    = { cols: 20, rows: 12 };
 
   private readonly MIDDLE_PER_ROW = 2;
   private readonly MIDDLE_SIZE    = { cols: 10, rows: 8 };
