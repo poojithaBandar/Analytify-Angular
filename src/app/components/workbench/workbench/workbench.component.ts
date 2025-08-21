@@ -2256,9 +2256,16 @@ export class WorkbenchComponent implements OnInit{
             this.switchDatabase();
           }else{
             Swal.fire({
-              icon: 'success',
-              title: 'Pax8 signed in successfully',
-              confirmButtonText: 'OK'
+              position: "center",
+              iconHtml: '<img src="./assets/images/copilot.gif">',
+              title: "Create smart dashboard from your data with just one click?",
+              showConfirmButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'Skip',
+              customClass: {
+                icon: 'no-icon-bg',
+              }
             }).then((result) => {
               if (result.isConfirmed) {
                 this.workbechService.buildSamplePaxDashboard(this.databaseId).subscribe({
@@ -2269,6 +2276,8 @@ export class WorkbenchComponent implements OnInit{
                     this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'});
                   }
                 });
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             });
           }
@@ -2302,9 +2311,16 @@ export class WorkbenchComponent implements OnInit{
             this.switchDatabase();
           }else{
             Swal.fire({
-              icon: 'success',
-              title: 'BambooHR signed in successfully',
-              confirmButtonText: 'OK'
+              position: "center",
+              iconHtml: '<img src="./assets/images/copilot.gif">',
+              title: "Create smart dashboard from your data with just one click?",
+              showConfirmButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'Skip',
+              customClass: {
+                icon: 'no-icon-bg',
+              }
             }).then((result) => {
               if (result.isConfirmed) {
                 this.workbechService.buildSampleBambooHRDashboard(this.databaseId).subscribe({
@@ -2315,6 +2331,8 @@ export class WorkbenchComponent implements OnInit{
                     this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'});
                   }
                 });
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             });
           }
