@@ -93,6 +93,11 @@ onOtpChange(value:any){
   this.otp=value;
 }
 validateOtp(){
+   this.activatedRoute.queryParams.subscribe(params => {
+    this.emailActivationToken = this.activatedRoute.snapshot.params['token'];
+        this.authService.emailActivationToken = this.emailActivationToken;
+    // console.log(this.token);
+  });
   const obj ={
     otp:this.otp
   }
