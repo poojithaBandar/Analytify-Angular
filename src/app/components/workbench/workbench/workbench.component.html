@@ -211,6 +211,17 @@
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. DeepSeek" (input)="displayNameIntegrationConditionError()">
                 </div>
               </form>
+            } @else if(databaseType == 'gemini') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': geminiKeyError}" class="col-form-label">Gemini Key <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': geminiKeyError}" type="text" class="form-control" [(ngModel)]="geminiKey" [ngModelOptions]="{standalone: true}" (input)="geminiKeyInputError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Gemini" (input)="displayNameIntegrationConditionError()">
+                </div>
+              </form>
             }@else if(databaseType == 'google_analytics') {
               <form>
                 <div class="mb-2">
@@ -372,6 +383,9 @@
             } @else if(databaseType == 'deepseek') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="deepSeekUpdate()" [disabled]="(deepSeekKeyError || displayNameError) || !(deepSeekKey && displayName)">Update</button>
+            } @else if(databaseType == 'gemini') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="geminiUpdate()" [disabled]="(geminiKeyError || displayNameError) || !(geminiKey && displayName)">Update</button>
             } @else if(databaseType == 'google_analytics') {
               <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary"
@@ -534,6 +548,9 @@
                       <td *ngIf="database.server_type === 'DEEPSEEK'">
                         <img alt="product" src="./assets/images/icons/deepseek.svg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'GEMINI'">
+                        <img alt="product" src="/assets/images/Db_server_images/gemini-color.svg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                       <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
@@ -547,7 +564,7 @@
                                   aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
-                                <button *ngIf="!database.is_cross_db && (database.server_type === 'CONNECTWISE' || database.server_type === 'SHOPIFY' || database.server_type === 'HALOPS' || database.server_type === 'OPEN_AI' || database.server_type === 'HUBSPOT' || database.server_type === 'NINJA'
+                                <button *ngIf="!database.is_cross_db && (database.server_type === 'CONNECTWISE' || database.server_type === 'SHOPIFY' || database.server_type === 'HALOPS' || database.server_type === 'OPEN_AI' || database.server_type === 'HUBSPOT' || database.server_type === 'NINJA' || database.server_type === 'GEMINI'
                                 || database.server_type === 'IMMYBOT' || database.server_type === 'QUICKBOOKS' || database.server_type === 'SALESFORCE' || database.server_type === 'TALLY' || database.server_type === 'PAX8' || database.server_type === 'BAMBOOHR')" class="btn btn-icon btn-sm btn-primary-light btn-wave waves-effect waves-light" (click)="smartDashboardFromConnection(database)">
                                   <i class="fe fe-zap" ngbTooltip="Smart Dashboard"></i>
                                 </button>
@@ -639,6 +656,8 @@
                                               <img src="https://logo.clearbit.com/openai.com" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'DEEPSEEK'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/deepseek.svg" alt="" class="rounded-circle"></span>
+                                              <span *ngIf="database.server_type === 'GEMINI'" class="avatar avatar rounded-circle">
+                                                <img src="/assets/images/Db_server_images/gemini-color.svg" alt="" class="rounded-circle"></span>
                                             <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
@@ -686,7 +705,7 @@
                             <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS' ||database.server_type ==='HUBSPOT')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                            <a *ngIf="!database.is_cross_db && (database.server_type === 'CONNECTWISE' || database.server_type === 'SHOPIFY' || database.server_type === 'HALOPS' || database.server_type === 'OPEN_AI' || database.server_type === 'HUBSPOT' || database.server_type === 'NINJA'
+                            <a *ngIf="!database.is_cross_db && (database.server_type === 'CONNECTWISE' || database.server_type === 'SHOPIFY' || database.server_type === 'HALOPS' || database.server_type === 'OPEN_AI' || database.server_type === 'HUBSPOT' || database.server_type === 'NINJA' || database.server_type === 'GEMINI'
                             || database.server_type === 'IMMYBOT' || database.server_type === 'QUICKBOOKS' || database.server_type === 'SALESFORCE' || database.server_type === 'TALLY' || database.server_type === 'PAX8' || database.server_type === 'BAMBOOHR')" class="dropdown-item" (click)="smartDashboardFromConnection(database)"><i class='fe fe-zap me-2 d-inline-flex'></i> Smart Dashboard</a>
                             <a *ngIf="database?.transformation && !database.is_cross_db" class="dropdown-item" (click)="goToTransformationLayer(database?.hierarchy_id)" ngbTooltip="Edit Transformation"><img src="./assets/images/icons/transformation_blue.png" class="avatar-databse-sm d-inline-flex me-2"> Edit Transforma...</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
@@ -1850,6 +1869,53 @@
           </div>
         }
 
+        @if(openGeminiForm){
+          <div class="main-container container-fluid px-4 TopHeader">
+            <div class="row">
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card Relational-database-height">
+                  <div class="card-header">
+                    <h4 class="card-title">Connect To Gemini</h4>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': geminiKeyError}" class="col-form-label">Gemini Key <span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': geminiKeyError}" type="text" class="form-control" [(ngModel)]="geminiKey" [ngModelOptions]="{standalone: true}" (input)="geminiKeyInputError()">
+                      </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="geminiSignIn()" [disabled]="(geminiKeyError || displayNameError) || !(geminiKey && displayName)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card user-card border Relational-database-height">
+                  <div class="user-image">
+                    <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                      <img src="/assets/images/Db_server_images/gemini-color.svg" alt="" class="rounded-circle bg-white user-image-border-color">
+                    </span>
+                  </div>
+                  <div class="card-body server-content-card">
+                    <ul class="">
+                      <li><span class="mt-1">Gemini integration allows access to advanced language models for generating insights and automations.</span></li>
+                      <li><h6 class=" mt-3"><strong>Inputs to connect</strong></h6></li>
+                      <li><span class="mb-0"><strong>Gemini Key:</strong> API key from your Gemini account.</span></li>
+                      <li><span class="mb-0"><strong>Display Name:</strong> Friendly name to identify this connection.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
         @if(openOracleForm){
         <div class="main-container container-fluid px-4 TopHeader">
           <div class="row">
@@ -2545,28 +2611,28 @@
                         </div>
                       </div> -->
                     <div class="database-logo">
-                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectOpenAI()">
-                          <img src="https://logo.clearbit.com/openai.com"alt="Image" class="card-img">
-                        </div>
-                        <div class="logo-txt mt-2 text-center fw-600">
-                          <span>OpenAI</span>
+                      <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectOpenAI()">
+                        <img src="https://logo.clearbit.com/openai.com"alt="Image" class="card-img">
                       </div>
+                      <div class="logo-txt mt-2 text-center fw-600">
+                        <span>OpenAI</span>
                     </div>
-                    <div class="database-logo">
-                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectDeepSeek()">
-                          <img src="./assets/images/icons/deepseek.svg"alt="Image" class="card-img">
-                        </div>
-                        <div class="logo-txt mt-2 text-center fw-600">
-                          <span>DeepSeek</span>
+                  </div>
+                  <div class="database-logo">
+                      <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectDeepSeek()">
+                        <img src="./assets/images/icons/deepseek.svg"alt="Image" class="card-img">
                       </div>
+                      <div class="logo-txt mt-2 text-center fw-600">
+                        <span>DeepSeek</span>
                     </div>
+                  </div>
                     <div class="database-logo">
-                      <div class="imgcard p-4 op-4">
+                      <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectGemini()">
                         <img src="/assets/images/Db_server_images/gemini-color.svg"alt="Image" class="card-img">
                       </div>
                       <div class="logo-txt mt-2 text-center fw-600">
                         <span>Gemini</span>
-                    </div>        
+                    </div>
                   </div>
                 <div class="database-logo">
                   <div class="imgcard p-4 op-4">
