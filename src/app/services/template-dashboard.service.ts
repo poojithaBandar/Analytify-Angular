@@ -1206,7 +1206,7 @@ buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any, respon
 
   private readonly TABLE_MAX     = 1;
   private readonly TABLE_PER_ROW = 1;
-  private readonly TABLE_SIZE    = { cols: 20, rows: 15 };
+  private readonly TABLE_SIZE    = { cols: 20, rows: 12 };
 
   private readonly MIDDLE_PER_ROW = 2;
   private readonly MIDDLE_SIZE    = { cols: 10, rows: 8 };
