@@ -35,10 +35,10 @@
             (btnClickEvent)="loadNewDashboard()" [isIcon]="true" [faIconList]="'fa fa-plus me-1'"></app-insights-button>
             <app-insights-button [buttonName]="'Connect To Datasource'" [classesList]="'btn btn-primary me-3 animate-button'" [isIcon]="false" [previledgeId]="1" [isBtn]="true"
             (btnClickEvent)="newConnections()"></app-insights-button>
-            <div class="view-card">
+            <div class="view-card mt-1">
                 <div class="input-group">
-                    <input type="text" class="form-control border" [(ngModel)]="wholeSearch" (keyup)="totalSearch()" placeholder="Search ...">
-                    <button type="button"  aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0 ">
+                    <input type="text" class="form-control rounded-start-pill border-primary shadow-sm" [(ngModel)]="wholeSearch" (keyup)="totalSearch()" placeholder="Search ...">
+                    <button type="button"  aria-label="button" class="btn btn-primary rounded-end-pill">
                         <i class="fe fe-search" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -119,7 +119,7 @@
         <div class="col-xl-9">
                     <div class="row">
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
-                            <div class="card transform-card">
+                            <div class="card">
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="card-header d-flex justify-content-between border-0">
                                         <h6 class="fw-bold mb-1">Dashboards Created - <label>Last 6 Months</label></h6>
@@ -155,7 +155,7 @@
                             </div>
                         </div>
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
-                            <div class="card transform-card pb-2">
+                            <div class="card pb-2">
                                 <div class="d-flex align-items-center justify-content-between mb-3">
                                     <div class="card-header d-flex justify-content-between border-0">
                                         <h6 class="fw-bold mb-1">Data Source Insights</h6>
@@ -211,7 +211,7 @@
                     </div>
 
                     <ng-container *ngFor="let dashboardList of savedDashboardList;let i = index">
-                        <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                        <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
                             <div *ngIf="showAllDasboards && i < 4" class="card img-shadow mb-0 transform-card" >
                                 <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
                                     [src]="dashboardList.dashboard_image ? dashboardList.dashboard_image : '/assets/images/Db_server_images/smartdashboard.jpg'" class="card-img-top-dashboard card-img-top-dashboard-shadow img-cursor" alt="img">
@@ -223,7 +223,7 @@
                                         <p class="card-text">Modified on {{dashboardList.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
-                                        <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                        <div class="d-flex justify-content-end p-1" ngbDropdown container="body">
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -247,53 +247,8 @@
                                     </div>
                                 </div>            
                             </div>
-                            <div *ngIf="!showAllDasboards && i < 11" class="card  img-shadow transform-card">
-                                <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
-                                    src="{{dashboardList.dashboard_image}}" class="card-img-top-dashboard img-cursor" alt="img">
-                                <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                                    <div class="dashboard-card-title">
-                                        <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{dashboardList.dashboard_name}}"
-                                            (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)">
-                                            {{ dashboardList.dashboard_name.length > 18 ? (dashboardList.dashboard_name | slice:0:18) + '..' : dashboardList.dashboard_name }}</h5>
-                                        <p class="card-text">Modified on {{dashboardList.Modified}} </p>
-                                    </div>
-                                    <div class="dashboard-option">
-                                        <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                                aria-haspopup="true" aria-expanded="false" class=""><i
-                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                            </a>
-                                            <div class="dropdown-menu" ngbDropdownMenu>
-                                                <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="36"
-                                                    [isBtn]="false" [buttonName]="' View Dashboard'"
-                                                    (btnClickEvent)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
-                                                    [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
-                                                <app-insights-button [classesList]="'dropdown-item'"
-                                                    [previledgeId]="43" [isBtn]="false"  [buttonName]="' Properties'"
-                                                    (btnClickEvent)="viewPropertiesTab(dashboardList.dashboard_name,dashboardList.dashboard_id)"
-                                                    [faIconList]="'fa fa-sliders me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                                                <a (click)="gotoConfigureEmailAlertsDashbaord(dashboardList.dashboard_id)" tabindex="0" class="dropdown-item btn btn-orange-light" style="cursor: pointer;"><i class="fa fa-bell me-2 d-inline-flex" data-bs-toggle="tooltip" ></i>Set Alerts</a>
-
-                                                <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
-                                                    [previledgeId]="35" [isBtn]="false" [buttonName]="' Delete'"
-                                                    (btnClickEvent)="deleteDashboard(dashboardList.dashboard_id)"
-                                                    [faIconList]="'fe fe-trash'" [isIcon]="true"></app-insights-button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </ng-container>
-                    <div *ngIf="!showAllDasboards && savedDashboardList.length > 10" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
-                        <div class="p-5 d-flex align-items-center justify-content-start">
-                            <div class="dashboard-card-title">
-                                <h5 (click)="viewAllDashboards()" class="card-title mb-1 cursor-pointer border-bottom"> View All <i
-                                        class="fa fa-angle-double-right"></i> </h5>
-                                <p class="card-text"></p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>  
@@ -328,7 +283,7 @@
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SAP HANA'"
-                                                src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png"
+                                                src="./assets/images/icons/sap-hana-icon.png"
                                                 alt="SAP HANA"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
@@ -417,7 +372,7 @@
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'IMMYBOT'"
-                                                src="./assets/images/icons/immybot.png"
+                                                src="./assets/images/icons/immybot.svg"
                                                 alt="Immybot"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
@@ -435,6 +390,14 @@
                                                 src="./assets/images/icons/google-anaytics.jpg"
                                                 alt="Google Analytics"
                                                 class="card-img w-5 h-5 icon-bounce" />
+                                            <img *ngIf="database.server_type === 'BAMBOOHR'"
+                                                src="./assets/images/icons/bamboohr.png"
+                                                alt="Google Analytics"
+                                                class="card-img w-5 h-5 icon-bounce" />
+                                             <img *ngIf="database.server_type === 'PAX8'"
+                                                src="./assets/images/icons/pax8.png"
+                                                alt="PAX8"
+                                                class="card-img w-5 h-5 icon-bounce" />    
                                             </span>
                                             <div class="ms-2">
                                                 <h6 class="card-title mb-0 fw-600" style="cursor: pointer;" (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}">{{database.display_name | slice:0:10}}</h6>
@@ -676,7 +639,7 @@
                                         </div>
                                     </div>
                                     <div class="dashboard-option">
-                                        <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                        <div class="d-flex justify-content-end p-1" ngbDropdown container="body">
                                             <p class="card-text text-truncate mb-0">{{sheetlist.Modified}} </p>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i
@@ -749,7 +712,7 @@
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'SAP HANA'"
-                                                src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png"
+                                                src="./assets/images/icons/sap-hana-icon.png"
                                                 alt="SAP HANA"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
@@ -857,6 +820,14 @@
                                                 src="./assets/images/icons/google-anaytics.jpg"
                                                 alt="Google Analytics"
                                                 class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'BAMBOOHR'"
+                                                src="./assets/images/icons/bamboohr.png"
+                                                alt="BambooHR"
+                                                class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'PAX8'"
+                                                src="./assets/images/icons/pax8.png"
+                                                alt="PAX8"
+                                                class="avatar-radius icon-pulse w-5 h-5">
                                         </span>
                                         <h5 class="card-title mb-0 cursor-pointer pt-2 saved-chart-name"
                                             (click)="gotoSavedQuery(savedQuery.hierarchy_id,savedQuery.queryset_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
@@ -865,7 +836,7 @@
                                         
                                     </div>
                                     <div class="dashboard-option">
-                                        <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                        <div class="d-flex justify-content-end p-1" ngbDropdown container="body">
                                             <p class="card-text mb-0">{{savedQuery.modified}} </p>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i
@@ -967,16 +938,16 @@
                         </div>
                     </div>
                     <label>Get instant insights with our ready-to-use sample dashboards.</label>
-                    <ng-container *ngFor="let dashboardList of demoDashboardList;let i = index">
+                    <!-- <ng-container *ngFor="let dashboardList of demoDashboardList;let i = index">
                         <div class="col-lg-6 col-xl-3">
                             <div class=" card img-shadow mb-0 transform-card">
                                 <div class="card overflow-hidden mb-0 cursor-pointer">
-                                    <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" src="{{dashboardList.dashboard_image}}" alt="img" class="card-img-top">
+                                    <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" src="{{dashboardList.dashboard_image}}" alt="img" class="card-img-top sample-dashboard-img">
                                 </div>
                                 <div class="card-body p-2 d-flex justify-content-between ">
                                     <h5 (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" class="card-title mb-0 cursor-pointer">{{dashboardList.dashboard_name}}</h5>
                                     <div class="dashboard-option">
-                                        <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                        <div class="d-flex justify-content-end p-1" ngbDropdown container="body">
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button"  ngbDropdownToggle
                                             aria-haspopup="true" aria-expanded="false" class="">
                                                 <i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -995,7 +966,49 @@
                                 </div>
                             </div>
                         </div>
+                    </ng-container> -->
+
+                    <ng-container *ngFor="let dashboardList of demoDashboardList; let i = index">
+                        <div class="col-lg-6 col-xl-3 mb-4">
+                            <div class="card img-shadow transform-card h-100">
+                    
+                                <!-- Image with overlay buttons on hover -->
+                                <div class="card-img-container position-relative overflow-hidden cursor-pointer">
+                                    <img *ngIf="dashboardList.dashboard_name === 'Supply Chain Dashboard'" (click)="viewDashboard(dashboardList.server_id, dashboardList.queryset_id, dashboardList.dashboard_id)"
+                                        src="./assets/images/supplychain-sampledashboard.png" alt="Dashboard Image"
+                                        class="card-img-top sample-dashboard-img">
+                                    <img *ngIf="dashboardList.dashboard_name === 'Sales Analysis Dashboard'" (click)="viewDashboard(dashboardList.server_id, dashboardList.queryset_id, dashboardList.dashboard_id)"
+                                        src="./assets/images/sales-sampledashboard.png" alt="Dashboard Image"
+                                        class="card-img-top sample-dashboard-img">
+                                    <img *ngIf="dashboardList.dashboard_name === 'HR INSIGHTS: Employee Profiles and Trends'" (click)="viewDashboard(dashboardList.server_id, dashboardList.queryset_id, dashboardList.dashboard_id)"
+                                        src="./assets/images/hr-analytics-sampledashboard.png" alt="Dashboard Image"
+                                        class="card-img-top sample-dashboard-img">
+                    
+                                    <!-- Hover buttons -->
+                                   <button class="icon-btn-top-right"
+                                            (click)="viewDashboard(dashboardList.server_id, dashboardList.queryset_id, dashboardList.dashboard_id)">
+                                        <i class="fe fe-eye"></i>
+                                    </button>
+                                </div>
+                    
+                                <!-- Card Body -->
+                                <div class="card-body p-3">
+                                    <h5 class="card-title mb-1">{{dashboardList.dashboard_name}}</h5>
+                                    <p *ngIf="dashboardList.dashboard_name === 'Supply Chain Dashboard'" class="text-muted small mb-0">
+                                        Analyzes orders, costs, suppliers, and warehouses.
+                                    </p>
+                                     <p *ngIf="dashboardList.dashboard_name === 'Sales Analysis Dashboard'" class="text-muted small mb-0">
+                                        Monitors revenue, orders, returns, and product/region performance.
+                                    </p>
+                                     <p *ngIf="dashboardList.dashboard_name === 'HR INSIGHTS: Employee Profiles and Trends'" class="text-muted small mb-0">
+                                        Reviews attrition by roles, departments, and demographics.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </ng-container>
+
+
                 </div>
             </div>
     </div>

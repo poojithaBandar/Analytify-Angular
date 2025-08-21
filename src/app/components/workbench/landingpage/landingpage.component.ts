@@ -362,7 +362,7 @@ private buildTreeMap(){
       }
 
       return `
-        <div style="padding:5px;">
+        <div style="padding:5px;background:#fff">
           <strong>${point.x}</strong><br/>
           Connected: ${point.y}<br/>
         </div>
@@ -389,7 +389,7 @@ private buildTreeMap(){
 private buildRadial() {
 
 
-    const hasData = this.radiaBarData && this.radiaBarData.data && this.radiaBarData.data.length > 0;
+  const hasData = this.radiaBarData && this.radiaBarData.data && this.radiaBarData.data.length > 0;
   const originalValues = hasData ? this.radiaBarData.data : [0, 0, 0, 0];
 
   let labels = hasData
@@ -403,7 +403,10 @@ private buildRadial() {
     ? this.radiaBarData.data
     : [0, 0, 0, 0];
     const total = values.reduce((a: any, b: any) => a + b, 0);
-    let normalizedValues = values.map((val:any) => Math.ceil((val / total) * 100));
+
+    const maxVal = Math.max(...values);
+
+    let normalizedValues = values.map((val: number) => maxVal > 0 ? Math.ceil((val / maxVal) * 100) : 0);
     normalizedValues = normalizedValues.slice(0,3)
   return {
     series: normalizedValues,
@@ -548,6 +551,10 @@ private buildBar() {
     },
     tooltip: {
       enabled: true,
+       style: {
+        fontSize: '12px',
+        background:'#fff'
+      },
       y: {
         formatter: (val: number) => allZero ? "" : val
       },
