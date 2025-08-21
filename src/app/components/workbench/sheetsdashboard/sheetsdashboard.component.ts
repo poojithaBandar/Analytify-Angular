@@ -1858,10 +1858,12 @@ export class SheetsdashboardComponent implements OnDestroy {
         if(!isLiveReloadData && !isDashboardTransfer && !isSwitchDb){
           this.takeScreenshot().then(() => {
             this.saveDashboardimageUpdate();
+            this.endMethod();
           });
           // this.saveDashboardimageUpdate();
-        }
+        }else{
         this.endMethod(); 
+        }
       },
       error:(error)=>{
         console.log(error);
