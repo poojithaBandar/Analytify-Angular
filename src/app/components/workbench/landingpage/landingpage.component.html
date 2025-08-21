@@ -370,16 +370,6 @@
                                                 src="./assets/images/icons/Halopsa-icon.png"
                                                 alt="Halops"
                                                 class="card-img w-5 h-5" />
-
-                                            <img *ngIf="database.server_type === 'PAX8'"
-                                                src="./assets/images/icons/Pax8-black.svg"
-                                                alt="Pax8"
-                                                class="card-img w-5 h-5" />
-
-                                            <img *ngIf="database.server_type === 'BAMBOOHR'"
-                                                src="https://logo.clearbit.com/bamboohr.com"
-                                                alt="BambooHR"
-                                                class="card-img w-5 h-5" />
                                                 
                                             <img *ngIf="database.server_type === 'IMMYBOT'"
                                                 src="./assets/images/icons/immybot.svg"
@@ -400,7 +390,7 @@
                                                 src="./assets/images/icons/google-anaytics.jpg"
                                                 alt="Google Analytics"
                                                 class="card-img w-5 h-5 icon-bounce" />
-                                            <img *ngIf="database.server_type === 'BAMBOOHR'"
+                                            <img *ngIf="database.server_type === 'BAMBOOHR'" 
                                                 src="./assets/images/icons/bamboohr.png"
                                                 alt="Google Analytics"
                                                 class="card-img w-5 h-5 icon-bounce" />
@@ -558,7 +548,7 @@
 
     <div class="row">
         <div class="col-lg-6 col-xl-3">
-            <div *ngIf="viewSheets" class="card  p-4 transform-card">
+            <div *ngIf="viewSheets" class="card  p-4 transform-card" style="min-height: 418px;">
                 <div class="">
                     <div class="d-flex align-items-center justify-content-between mb-2 px-1">
                         <div class="">
@@ -685,7 +675,7 @@
             </div>
         </div>
         <div class="col-lg-6 col-xl-3">
-            <div *ngIf="viewCustomSql" class="card border p-4 transform-card">
+            <div *ngIf="viewCustomSql" class="card border p-4 transform-card" style="min-height: 418px;">
                 <div class="row ">
                     <div class="d-flex align-items-center justify-content-between mb-2 px-4">
                         <div class="">
@@ -879,7 +869,7 @@
             </div>
         </div>
         <div class="col-lg-6 col-xl-3">
-            <div *ngIf="viewCustomSql" class="card border p-4 transform-card">
+            <div *ngIf="viewCustomSql" class="card border p-4 transform-card" style="min-height: 418px;">
                 <div class="row ">
                    <div class="">
                         <div class="d-flex align-items-center justify-content-between mb-2 px-1">

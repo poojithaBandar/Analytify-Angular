@@ -1961,9 +1961,10 @@ xaxis: {
     //  const valueToDivide = this.maxValueGuage-this.minValueGuage
     // Initialize the chart options
     this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+    this.guageNumber = ((this.guageNumber / this.valueToDivide) * 100);
     const self = this;
     this.chartOptions = {
-      series: [((this.guageNumber / this.valueToDivide) * 100)], // Correct percentage calculation
+      series: [this.guageNumber], // Correct percentage calculation
       chart: {
         height: 350,
         type: 'radialBar',
