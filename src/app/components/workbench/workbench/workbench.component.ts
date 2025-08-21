@@ -67,6 +67,7 @@ export class WorkbenchComponent implements OnInit{
   openGoogleAnalyticsForm = false;
   openOpenAIForm = false;
   openDeepSeekForm = false;
+  openGeminiForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -379,6 +380,7 @@ export class WorkbenchComponent implements OnInit{
     tallyToken = '';
     openAiKey = '';
     deepSeekKey = '';
+    geminiKey = '';
 
     googleAnalytics: {
       type: string;
@@ -1010,6 +1012,26 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+    geminiUpdate(){
+      const obj = {
+        "gemini_key": this.geminiKey,
+        "display_name": this.displayName,
+        "hierarchy_id": this.databaseId
+      }
+      this.workbechService.geminiConnectionUpdate(obj).subscribe({next:(res)=>{
+            this.modalService.dismissAll('close');
+            if(res){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error:(error)=>{
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
     googleAnalyticsUpdate(){
       const g = this.googleAnalytics;
      const obj = { type: g.type,
@@ -1231,6 +1253,12 @@ export class WorkbenchComponent implements OnInit{
     this.viewNewDbs = false;
     this.emptyVariables();
   }
+  connectGemini(){
+    this.openGeminiForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
   companyIdError(){
       if(this.companyId){
         this.companyIDError = false;
@@ -1389,6 +1417,13 @@ export class WorkbenchComponent implements OnInit{
         this.deepSeekKeyError = false;
       }else{
         this.deepSeekKeyError = true;
+      }
+    }
+    geminiKeyInputError(){
+      if(this.geminiKey){
+        this.geminiKeyError = false;
+      }else{
+        this.geminiKeyError = true;
       }
     }
     shopfyNameError(){
@@ -1824,6 +1859,34 @@ export class WorkbenchComponent implements OnInit{
             //     this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
             //   }
             // });
+          }
+        }
+      }, error:(error)=>{
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      }});
+    }
+
+    geminiSignIn(){
+      const obj = {
+        "gemini_key": this.geminiKey,
+        "display_name": this.displayName
+      }
+      this.workbechService.geminiConnection(obj).subscribe({next:(res)=>{
+        if(res){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = res?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.openGeminiForm = false;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else if(this.datasourceSwitchUI){
+            this.switchDatabase();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
           }
         }
       }, error:(error)=>{
@@ -2651,6 +2714,9 @@ connectGoogleSheets(){
     } else if (this.databaseType == "deepseek") {
       this.displayName = editData.display_name;
       this.deepSeekKey = editData.deepseek_key;
+    } else if (this.databaseType == "gemini") {
+      this.displayName = editData.display_name;
+      this.geminiKey = editData.gemini_key;
     }else if (this.databaseType === 'google_analytics') {
       this.googleAnalytics = {
         type: 'service_account',
@@ -2804,6 +2870,7 @@ connectGoogleSheets(){
   this.openTallyForm = false;
   this.openOpenAIForm = false;
   this.openDeepSeekForm = false;
+  this.openGeminiForm = false;
   this.openHubspotForm = false;
   this.openGoogleAnalyticsForm = false;
   this.openGoogleAnalyticsForm = false;
@@ -2828,6 +2895,8 @@ connectGoogleSheets(){
   this.openAiKeyError = false;
   this.deepSeekKey = '';
   this.deepSeekKeyError = false;
+  this.geminiKey = '';
+  this.geminiKeyError = false;
   this.ninjaRMMClientid = '';
   this.ninjaRMMClientSecret = '';
   this.selectedNinjaRMMScopes = [];
@@ -2863,6 +2932,7 @@ connectGoogleSheets(){
   tallyTokenError:boolean = false;
   openAiKeyError:boolean = false;
   deepSeekKeyError:boolean = false;
+  geminiKeyError:boolean = false;
 
   serverConditionError(){
     if(this.schemaList && this.schemaList.length > 0){
@@ -3286,6 +3356,9 @@ connectGoogleSheets(){
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
             case 'DEEPSEEK':
+            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'GEMINI':
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
         }
