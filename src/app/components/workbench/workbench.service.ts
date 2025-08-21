@@ -1092,13 +1092,13 @@ deleteUser(id:any){
     buildSamplePaxDashboard(id: number) {
       const currentUser = localStorage.getItem('currentUser');
       this.accessToken = JSON.parse(currentUser!)['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/pax8_dashboard/` + id + '/' + this.accessToken);
+      return this.http.get<any>(`${environment.apiUrl}/pax8_dashbaord/` + id + '/' + this.accessToken);
     }
 
     buildSampleBambooHRDashboard(id: number) {
       const currentUser = localStorage.getItem('currentUser');
       this.accessToken = JSON.parse(currentUser!)['Token'];
-      return this.http.get<any>(`${environment.apiUrl}/bamboohr_dashboard/` + id + '/' + this.accessToken);
+      return this.http.get<any>(`${environment.apiUrl}/bamboohr_dashbaord/` + id + '/' + this.accessToken);
     }
     createSmartDashboard(hierarchyId: number){
       const currentUser = localStorage.getItem('currentUser');
