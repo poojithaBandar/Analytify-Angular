@@ -7,11 +7,13 @@ a { cursor: pointer;}
 .card-title{ font-size: 15px; }
 .card-text{ font-size: 14px; }
 .card-img-top{ width: 100%; height: 150px; object-fit: fill; border-start-start-radius: 0.375rem; border-start-end-radius: 0.375rem; }
-.card-img-top-dashboard{ width: 100%; height: 110px; object-fit: fill; border-start-start-radius: 0.375rem; border-start-end-radius: 0.375rem;  }
+.card-img-top-dashboard{ width: 350px !important;min-width:212px; height: 108px; object-fit: cover;object-position: top; border-start-start-radius: 0.375rem; border-start-end-radius: 0.375rem;image-rendering: -webkit-optimize-contrast; /* Chrome / Safari */
+  image-rendering: crisp-edges;               /* Firefox */
+  image-rendering: pixelated;                 /* fallback */}
 .header-bg-radius { border-radius: 0px 0px 15px 15px; }
 .landing-connect-search { display: flex; justify-content: flex-end; }
 .img-cursor{ cursor: pointer; }
-.table-responsive{ height: 431px; overflow: auto; }
+.table-responsive{ height: 390px; overflow: auto; }
 .overflow{ overflow: auto;}
 .card.img-shadow:hover { box-shadow: 0 16px 32px #21212126; }
 tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius: 20px; }
@@ -34,19 +36,37 @@ tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius:
 .header-circle { position: absolute; top: 53px; bottom: 30px; width: 350px;  left: 220px; }
 .recent-text-green { color: #1dd871 !important; background-color: #e5f5eb;  padding: 5px 10px;  border-radius: 20px; border: 1px solid #1dd871; font-size: 12px; font-weight: 600; }
 .recent-text-blue { color: #2463eb !important; background-color: #d5e1fba1;  padding: 5px 10px;  border-radius: 20px; border: 1px solid #2463eb; font-size: 12px; font-weight: 600; }
-.carousel-height{height: 222px;}
+.carousel-height{height: 190px;}
 tbody, td, tfoot, th, thead, tr { border-color: inherit; border-style: none; border-width: 0; }
 .saved-hover:hover{       box-shadow: 0 0px 15px rgb(48 48 48 / 16%); border-radius: 20px;}
 .carousel-inner { position: relative;  width: 100%; overflow: hidden; border-radius: 0px 0px 15px 15px !important; }
 .dropdown-index{ z-index: 999 !important;}
-
+.carousel-item-content {
+  height: 190px !important; /* adjust based on design */
+  max-height: 190px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .glass {
     background-color: #fafafcf5;
     border-radius: 15px;
     border: 1px solid #e0e0e080;
     box-shadow: 0 4px 16px #e0e0e045, inset 0 1px #ffffff4d;
 }
-
+.activity-title {
+  white-space: nowrap;       /* don’t wrap to next line */
+  overflow: hidden;          /* hide overflow */
+  text-overflow: ellipsis;   /* show "..." if too long */
+  max-width: 200px;          /* adjust based on your design */
+  display: inline-block;     /* required for ellipsis */
+}
+.saved-chart-name {
+  flex: 1;                /* takes remaining space */
+  overflow: hidden;
+  text-overflow: ellipsis; /* add ... for overflow */
+  white-space: nowrap;
+}
 @keyframes bounce-up-down {
   0%, 100% {
     transform: translateY(0);
@@ -60,6 +80,36 @@ tbody, td, tfoot, th, thead, tr { border-color: inherit; border-style: none; bor
   width: 24px;
   height: 24px;
   animation: bounce-up-down 2s infinite ease-in-out;
+}
+
+::ng-deep .apexcharts-treemap-rect {
+  rx: 10px !important;
+  ry: 10px !important;
+}
+.icon-float {
+  animation: float 4s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.icon-pulse {
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0px rgba(0, 123, 255, 0.6);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.8);
+  }
+}
+@keyframes bounce-up-down {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
@@ -83,7 +133,7 @@ h6 { font-size: 14px; }
 .fs-11 { font-size: 11px !important; }
 .table td{ font-size: 12px;}
 .quick-start-txt { font-size: 13px; }
-.table-responsive { height: 430px; overflow: auto;}
+.table-responsive { height: 387px; overflow: auto;}
 .text-truncate { max-width: 115px !important;}
 .card-text { font-size: 12px; }
 .h2, h2 { font-size: 2.2rem !important; }
@@ -103,7 +153,7 @@ h1, h1 { font-size: 37px; }
 .new-chart-btn { font-size: 11px; }
 .form-control{ padding: 0.275rem 0.75rem; }
 .input-group-text{ padding: 0.275rem 0.75rem; }
-.table-responsive{ height: 200px; overflow: auto; }
+.table-responsive{ height: 387px; overflow: auto; }
 .text-truncate { max-width: 90px !important;}
 .card-text{ font-size: 11px;}
 .h2, h2 { font-size: 2rem !important; }
@@ -122,3 +172,142 @@ h6.fw-bold.mb-1 { font-size: 13px; }
 h1.text-.fw-bold.tx-fixed-white.mt-0 { font-size: 25px; }
 h6.fw-bold.mb-1 { font-size: 13px; }
 }
+.skeleton-card {
+  background: #f8f9fa;
+  border: 1px dashed #ccc;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.placeholder-image {
+  width: 100%;
+  height: 100px;
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+
+.placeholder-title {
+  width: 60%;
+  height: 16px;
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+
+.placeholder-text {
+  width: 40%;
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+.card-img-top-dashboard-shadow {
+  border: 1px solid #e0e0e0; /* light gray border */
+  border-radius: 12px;        /* rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* subtle shadow */
+  cursor: pointer;            /* pointer on hover */
+  transition: transform 0.2s, box-shadow 0.2s; /* smooth hover effect */
+}
+
+.card-img-top-dashboard-shadow:hover {
+  transform: translateY(-2px);      /* small lift on hover */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* stronger shadow on hover */
+}
+.skeleton-loader {
+  width: 100%;
+  height: 360px; /* same height as chart */
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.sample-dashboard-img {
+  border-radius: 12px;
+  border: 1px solid #d3d3d3; /* light grey border */
+  padding: 2px; /* spacing between image & border */
+  background: #f8f9fa; /* subtle background */
+  height: 150px;
+  width: 450px;
+  object-fit: cover;
+  object-position: top;
+  image-rendering: -webkit-optimize-contrast; /* Chrome / Safari */
+  image-rendering: crisp-edges;               /* Firefox */
+  image-rendering: pixelated;                 /* fallback */
+}
+.card-img-container {
+  position: relative;
+}
+
+.overlay-buttons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* subtle dark overlay */
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.card-img-container:hover .overlay-buttons {
+  opacity: 1;
+  transform: translateY(0);
+}
+.card-img-container:hover .sample-dashboard-img {
+  border-radius: 16px;     /* More rounded on hover */
+  transform: scale(1.02) ease ;  /* Subtle zoom for effect */
+}
+.overlay-buttons button {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.card-img-container:hover .overlay-buttons button {
+  opacity: 1;
+  transform: translateY(0);
+}
+.icon-btn-top-right {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.5); /* semi-transparent black bg */
+  border: none;
+  color: #fff;                   /* white icon */
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;            /* circular */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;                    /* hidden by default */
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+
+.card-img-container:hover .icon-btn-top-right {
+  opacity: 1;                    /* show on hover */
+  transform: scale(1.05);
+}
+
+.icon-btn-top-right:hover {
+  background: rgba(0, 0, 0, 0.7); /* darker on hover */
+  transform: scale(1.15);
+}
+
