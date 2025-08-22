@@ -449,10 +449,13 @@ private buildRadial() {
       position: "left",
       offsetX: 10,
       offsetY: 10,
-      markers: { show: false },
+      // markers: { show: false },
       labels: {
         useSeriesColors: true
       },
+       onItemClick: {
+    toggleDataSeries: false  // ✅ prevents hide/show issue
+     },
       formatter: function(seriesName: any, opts: any) {
         const idx = opts.seriesIndex;
         const original = originalValues[idx] ?? 0;

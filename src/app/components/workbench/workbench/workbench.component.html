@@ -537,9 +537,9 @@
                       <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
-                            <td>{{database.created_at}}</td>
+                            <td>{{database.created_at | date:'mediumDate'}}</td>
                             <td>{{database.created_by}}</td>
-                            <td>{{database.updated_at}}</td>
+                            <td>{{database.updated_at | date:'mediumDate'}}</td>
                             <td  *ngIf="!iscrossDbSelect">
                               <div class="hstack gap-2 fs-1">
                                 <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL') && (!database?.transformation || database.is_cross_db)"
@@ -716,7 +716,7 @@
                                         <span class="fw-semibold fs-14">Created on:</span>
                                     </div>
                                     <div class="col-md-6">
-                                        <span class="fs-14">{{database.created_at}}</span>
+                                        <span class="fs-14">{{database.created_at | date:'mediumDate'}}</span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -724,7 +724,7 @@
                                       <span class="fw-semibold fs-14">Last Modified: </span>
                                   </div>
                                   <div class="col-md-6">
-                                      <span class="fs-14">{{database.updated_at}}</span>
+                                      <span class="fs-14">{{database.updated_at | date:'mediumDate'}}</span>
                                   </div>
                               </div>
                             
