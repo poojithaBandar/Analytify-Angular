@@ -68,6 +68,7 @@ export class WorkbenchComponent implements OnInit{
   openOpenAIForm = false;
   openDeepSeekForm = false;
   openGeminiForm = false;
+  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR'];
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -2317,7 +2318,31 @@ export class WorkbenchComponent implements OnInit{
           }else if(this.datasourceSwitchUI){
             this.switchDatabase();
           }else{
-            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            Swal.fire({
+              position: "center",
+              iconHtml: '<img src="./assets/images/copilot.gif">',
+              title: "Create smart dashboard from your data with just one click?",
+              showConfirmButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'Skip',
+              customClass: {
+                icon: 'no-icon-bg',
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.workbechService.buildSamplePaxDashboard(this.databaseId).subscribe({
+                  next: (dashboardData) => {
+                    this.createSmartDashboard(dashboardData,'pax8');
+                  },
+                  error: (error) => {
+                    this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'});
+                  }
+                });
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            });
           }
         }
       },
@@ -2348,7 +2373,31 @@ export class WorkbenchComponent implements OnInit{
           }else if(this.datasourceSwitchUI){
             this.switchDatabase();
           }else{
-            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            Swal.fire({
+              position: "center",
+              iconHtml: '<img src="./assets/images/copilot.gif">',
+              title: "Create smart dashboard from your data with just one click?",
+              showConfirmButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'Skip',
+              customClass: {
+                icon: 'no-icon-bg',
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.workbechService.buildSampleBambooHRDashboard(this.databaseId).subscribe({
+                  next: (dashboardData) => {
+                    this.createSmartDashboard(dashboardData,'bamboohr');
+                  },
+                  error: (error) => {
+                    this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'});
+                  }
+                });
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            });
           }
         }
       },
@@ -2356,6 +2405,20 @@ export class WorkbenchComponent implements OnInit{
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
         console.log(error);
       }})
+    }
+
+    createSmartDashboard(dashboardData:any, source:string){
+      switch(source){
+        case 'pax8':
+          this.templateDashboardService.buildSamplePaxDashboard(this.container, this.databaseId, dashboardData);
+          break;
+        case 'bamboohr':
+          this.templateDashboardService.buildSampleBambooHRDashboard(this.container, this.databaseId, dashboardData);
+          break;
+        case 'connectwise':
+          this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, this.databaseId, dashboardData);
+          break;
+      }
     }
 
     uploadfileCsv(event:any,type:any,database:any){
@@ -3319,13 +3382,21 @@ connectGoogleSheets(){
   }
 
   smartDashboardFromConnection(database:any){
-    this.workbechService.createSmartDashboard(database.hierarchy_id).subscribe({
+    let request$;
+    if(database.server_type === 'PAX8'){
+      request$ = this.workbechService.buildSamplePaxDashboard(database.hierarchy_id);
+    }else if(database.server_type === 'BAMBOOHR'){
+      request$ = this.workbechService.buildSampleBambooHRDashboard(database.hierarchy_id);
+    }else{
+      request$ = this.workbechService.createSmartDashboard(database.hierarchy_id);
+    }
+    request$.subscribe({
       next: (responce) => {
         switch(database.server_type){
           case 'TALLY':
             this.templateDashboardService.buildSampleTallyDashboard(this.container, database.hierarchy_id, responce);
             break;
-            case 'SHOPIFY':
+          case 'SHOPIFY':
             this.templateDashboardService.buildSampleShopifyDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'SALESFORCE':
@@ -3337,25 +3408,28 @@ connectGoogleSheets(){
           case 'IMMYBOT':
             this.templateDashboardService.buildSampleImmybotDashboard(this.container, database.hierarchy_id, responce);
             break;
-            case 'NINJA':
+          case 'NINJA':
             this.templateDashboardService.buildSampleNinjaRMMDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'HUBSPOT':
             this.templateDashboardService.buildSampleHubspotDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'CONNECTWISE':
-            this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, database.hierarchy_id, responce);
+            this.createSmartDashboard(responce,'connectwise');
             break;
           case 'HALOPS':
             this.templateDashboardService.buildSampleHALOPSADashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'PAX8':
-            this.templateDashboardService.buildSamplePaxDashboard(this.container, database.hierarchy_id, responce);
+            this.createSmartDashboard(responce,'pax8');
+            break;
+          case 'BAMBOOHR':
+            this.createSmartDashboard(responce,'bamboohr');
             break;
           case 'OPEN_AI':
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
-            case 'DEEPSEEK':
+          case 'DEEPSEEK':
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'GEMINI':

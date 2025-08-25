@@ -684,7 +684,7 @@
                 <div class="row ">
                     <div class="d-flex align-items-center justify-content-between mb-2 px-4">
                         <div class="">
-                            <h6 class="fw-bold mb-1">Saved Queries</h6>
+                            <h6 class="fw-bold mb-1">Semantic Layer</h6>
                             <!-- <label class="mb-1">Reusable data queries</label> -->
                         </div>
                         <div class="view-card">
@@ -900,7 +900,7 @@
                                         <img *ngIf="recent.action === 'Created'" src="./assets/images/Tiled view sheet icons/Create.svg" alt="" class="avatar-radius icon-float w-5 h-5">
                                         <img *ngIf="recent.action === 'Viewed'" src="./assets/images/Tiled view sheet icons/View.svg" alt="" class="avatar-radius icon-float w-5 h-5">
                                     </span>
-                                    <h5 class="card-title mb-0 activity-title saved-chart-name">{{ (recent.action + ' ' + recent.entity) | titlecase | slice:0:10}}</h5>
+                                    <h5 class="card-title mb-0 activity-title saved-chart-name" ngbTooltip="{{ recent.action + ' ' + recent.entity}}">{{ (recent.action + ' ' + recent.entity) | titlecase | slice:0:10}}</h5>
                                 </div>
                                 <span class="p-1 text-nowrap">{{recent.timestamp}}</span>
                             </div>                         
@@ -912,7 +912,7 @@
             <div class="card border p-4 transform-card" style="min-height: 416px;max-height:416px">
                 <div class="d-flex align-items-center justify-content-between mb-0 px-2">
                     <div class="">
-                       <h6 class="fw-bold mb-1"># Dashboards - SavedQueries</h6>
+                       <h6 class="fw-bold mb-1"># Dashboards - Semantic Layer</h6>
                        <!-- <label class="mb-1">Latest actions and updates</label> -->
                    </div>
                </div>
@@ -1012,13 +1012,13 @@
                                 <!-- Card Body -->
                                 <div class="card-body p-3">
                                     <h5 class="card-title mb-1">{{dashboardList.dashboard_name}}</h5>
-                                    <p *ngIf="dashboardList.dashboard_name === 'Supply Chain Dashboard'" class="text-muted small mb-0">
+                                    <p *ngIf="dashboardList.dashboard_name === 'Supply Chain Dashboard'" class="small mb-0">
                                         Analyzes orders, costs, suppliers, and warehouses.
                                     </p>
-                                     <p *ngIf="dashboardList.dashboard_name === 'Sales Analysis Dashboard'" class="text-muted small mb-0">
+                                     <p *ngIf="dashboardList.dashboard_name === 'Sales Analysis Dashboard'" class="small mb-0">
                                         Monitors revenue, orders, returns, and product/region performance.
                                     </p>
-                                     <p *ngIf="dashboardList.dashboard_name === 'HR INSIGHTS: Employee Profiles and Trends'" class="text-muted small mb-0">
+                                     <p *ngIf="dashboardList.dashboard_name === 'HR INSIGHTS: Employee Profiles and Trends'" class="small mb-0">
                                         Reviews attrition by roles, departments, and demographics.
                                     </p>
                                 </div>
