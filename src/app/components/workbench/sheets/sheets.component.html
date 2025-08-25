@@ -70,7 +70,7 @@
                                     [tooltip]="{ enabled: true }"
                                     [xaxis]="{ categories: trendLabels }"
                                     ></apx-chart>
-                         @if(showKpiIndicator && kpiShowTrendline && indicatorValue) {
+                         @if(showKpiIndicator && kpiShowTrendline && indicatorValue !== null && indicatorValue !== undefined) {
                             <div class="d-flex justify-content-around mt-2 flex-wrap text-center" style="font-size: 12px;">
                             <span [ngStyle]="{ color: indicatorIsIncreased === 'up' ? 'green' : 'red', fontWeight: 'bold' }">
                                 <i class="bi" [ngClass]="indicatorIsIncreased === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
@@ -2058,7 +2058,7 @@
                                             } <i (click)="isDimensionEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                             <li  *ngIf="isDimensionEdit"><input (blur)="onColumnAliasChange(columns, index)" type="text" placeholder="Enter Alias Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
                                             </li>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center p-0" ngbDropdown placement="auto">
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
@@ -5413,6 +5413,33 @@
                                                                 class="rounded-circle-copilot">
                                                             <img *ngIf="chart.chart_id === 10"
                                                                 src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 12"
+                                                                src="./assets/images/Tiled view sheet icons/spider-bg.png" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 25"
+                                                                src="./assets/images/Tiled view sheet icons/kpi-bg.png" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 26"
+                                                                src="./assets/images/Tiled view sheet icons/heatmap-bg.png" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 27"
+                                                                src="./assets/images/Tiled view sheet icons/funnel-bg.png" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 28"
+                                                                src="./assets/images/Tiled view sheet icons/guage-bg.png" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 29"
+                                                                src="./assets/images/Tiled view sheet icons/spider-bg.png" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 11"
+                                                                src="./assets/images/Tiled view sheet icons/calendar-bg.png" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 9"
+                                                                src="./assets/images/Tiled view sheet icons/pivot-table.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 14"
+                                                                src="./assets/images/Tiled view sheet icons/horizontal-bar.jpg" alt=""
                                                                 class="rounded-circle-copilot">
                                                         </span>
                                                         <span>{{ chart.chart_title }}</span>

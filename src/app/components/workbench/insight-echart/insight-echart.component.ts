@@ -503,6 +503,11 @@ getLabelPosition(){
       return 'inside'; // Default position if none matches
   }
 }
+stackedchartFromGenieDashboard(dualAxisColumnData? : any ,dualAxisRowData? : any ){
+  this.dualAxisColumnData = dualAxisColumnData;
+  this.dualAxisRowData = dualAxisRowData;
+  return this.stackedChart();
+}
 stackedChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
@@ -608,8 +613,8 @@ stackedChart(){
           formatter:(params:any) => this.formatNumber(params.value) 
       }
   })),        
-
   };
+  return this.chartOptions;
 }
 sidebySide(dualAxisColumnData? : any ,dualAxisRowData? : any ){
   if(dualAxisColumnData && dualAxisRowData){
@@ -820,7 +825,7 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
       ...series,
       label:{
           show:true, // Enable data labels
-          position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+          position: this.getLabelPosition(), // Position of the labels (e.g., 'top', 'inside', etc.)
           // color:'#000', // Default label color (can be updated)
           // fontSize:this.xLabelFontSize, // Default label font size
           // fontWeight:'bold', // Default label font weight
@@ -934,7 +939,7 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
       ...series,
       label:{
           show:true, // Enable data labels
-          position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+          position: this.getLabelPosition(), // Position of the labels (e.g., 'top', 'inside', etc.)
           // color:'#000', // Default label color (can be updated)
           // fontSize:this.xLabelFontSize, // Default label font size
           // fontWeight:'bold', // Default label font weight
@@ -950,6 +955,11 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
 
   };
   return this.chartOptions;
+}
+areachartFromGenieDashboard(chartsColumnData?:any,chartsRowData?:any){
+  this.chartsColumnData = chartsColumnData;
+  this.chartsRowData = chartsRowData;
+  return this.areaChart(); 
 }
 areaChart(){
   this.chartOptions = {
@@ -1051,8 +1061,14 @@ areaChart(){
     color: this.color
 
   };
+  return this.chartOptions;
 console.log(this.chartsRowData,this.chartsColumnData,'areachart')
 
+}
+linechartFromGenieDashboard(chartsColumnData?:any,chartsRowData?:any){
+  this.chartsColumnData = chartsColumnData;
+  this.chartsRowData = chartsRowData;
+  return this.lineChart();
 }
 lineChart(){
   this.chartOptions = {
@@ -1153,6 +1169,7 @@ lineChart(){
     color: this.color
 
   };
+  return this.chartOptions;
 }
 pieChart(chartsColumnData?:any[],chartsRowData?:any[]){
   if(chartsColumnData && chartsRowData){
@@ -1253,6 +1270,11 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
     ]
   };
   return this.chartOptions;
+}
+barLinechartFromGenieDashboard(dualAxisColumnData?:any, dualAxisRowData?:any){
+  this.dualAxisColumnData = dualAxisColumnData;
+  this.dualAxisRowData = dualAxisRowData;
+  return this.barLineChart();
 }
 barLineChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1405,6 +1427,7 @@ barLineChart(){
       }
     ]
   };
+  return this.chartOptions;
 }
 multiLineChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
   if(dualAxisColumnData && dualAxisRowData){
@@ -1517,6 +1540,18 @@ multiLineChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
   };
   return this.chartOptions;
 }
+radarchartFromGenieDashboard(dualAxisColumnData? : any, dualAxisRowData? : any){
+  this.dualAxisColumnData = dualAxisColumnData;
+  this.radarRowData = JSON.parse(JSON.stringify(
+    dualAxisRowData.map((data: any) => {
+      return {
+        name: data.name,
+        value: data.data
+      };
+    })
+  ));
+  return this.radarChart();
+}
 radarChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
@@ -1567,6 +1602,12 @@ radarChart(){
 ]
   }
   this.radarDistributionSetOptions();
+  return this.chartOptions;
+}
+heatmapFromGenieDashboard(dualAxisColumnData? : any, dualAxisRowData? : any){
+  this.dualAxisColumnData = dualAxisColumnData;
+  this.dualAxisRowData = dualAxisRowData;
+  return this.heatMapChart();
 }
 heatMapChart(){
   const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -1651,6 +1692,12 @@ heatMapChart(){
 
   ],
 };
+return this.chartOptions;
+}
+calendarchartFromGenieDashboard(chartsColumnData? : any, chartsRowData? : any){
+  this.chartsColumnData = chartsColumnData;
+  this.chartsRowData = chartsRowData;
+  return this.calendarChart();
 }
 calendarChart() {
   let calendarData: any[] = [];
@@ -1756,6 +1803,7 @@ calendarChart() {
 
 
   console.log(this.chartOptions,'calender');
+  return this.chartOptions;
 }
 prepareHeatmapData(rowData: any[]) {
   const heatmapData: any[][] = [];
@@ -2966,12 +3014,41 @@ radarDistributionSetOptions() {
     });
        this.chartInstance?.setOption(this.chartOptions,true)
      }
-     else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
+     else if(this.chartType === 'multiline'){
       this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
         series.label.position = this.dataLabelsFontPosition; 
     });
     this.chartInstance?.setOption(this.chartOptions,true)
-     } else if(this.chartType === 'horizontalBar'){
+      } else if (this.chartType === 'stocked' || this.chartType === 'sidebyside') {
+        if (this.dataLabelsFontPosition === 'center') {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = 'inside';
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        } else {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = this.dataLabelsFontPosition;
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        }
+      } else if (this.chartType === 'hgrouped' || this.chartType === 'hstocked') {
+        if (this.dataLabelsFontPosition === 'center') {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = 'inside';
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        } else if (this.dataLabelsFontPosition === 'top') {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = 'right';
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        } else if (this.dataLabelsFontPosition === 'bottom') {
+          this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+            series.label.position = 'insideLeft';
+          });
+          this.chartInstance?.setOption(this.chartOptions, true);
+        }
+      } else if(this.chartType === 'horizontalBar'){
       if(this.dataLabelsFontPosition === 'center'){
         let obj ={
           series :[

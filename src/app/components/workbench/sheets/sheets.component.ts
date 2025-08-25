@@ -2201,63 +2201,47 @@ sheetSave(isDashboardTransfer?: boolean){
     //  bandColor1 = this.color1;
     //  bandColor2 = this.color2;
     }
-  if(this.bar && this.chartId == 6){
-    if (this.originalData) {
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
+
+  if ([6, 14, 24, 10].includes(this.chartId) && this.originalData && this.drillDownIndex > 0 && this.drillDownObject.length > 0) {
+    tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
+    tablePreviewRow[0].result_data = this.originalData.data;
+
+    tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
+    tablePreviewCol[0].result_data = this.originalData.categories;
+
+    if (this.drillDownIndex > 0) {
+      this.chartsColumnData = this.originalData.categories;
+      this.chartsRowData = this.originalData.data;
+      this.drillDownIndex = 0;
+      this.drillDownObject = [];
     }
+
+    delete this.originalData;
   }
-   if(this.horizontalBar && this.chartId == 14){
-    if (this.originalData) {
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
-    }
-  }
-  if(this.pie && this.chartId == 24){
-    if (this.originalData) {
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
-    }
-  }
-  if(this.donut && this.chartId == 10){
-    if (this.originalData) {
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
-    }
-  }
+
   if(this.kpi && this.chartId == 25){
     kpiData = this.tablePreviewRow;
     kpiColor = this.kpiColor;
     kpiChartColor = this.kpiChartColor;
     kpiFontSize = this.kpiFontSize;
   }
-  if(this.map && this.chartId == 29){
-    if(this.originalData){
-      if(this.draggedDrillDownColumns.length > 0){
-        this.originalData.categories.forEach((column:any,index:any)=>{
-          tablePreviewCol[index].column = column.name;
-          tablePreviewCol[index].result_data = column.values;
-        });
-        this.originalData.data.forEach((column:any,index:any)=>{
-          tablePreviewRow[index].column = column.name;
-          tablePreviewRow[index].result_data = column.data;
-        });
-        this.drillDownIndex = 0;
-      }
-      delete this.originalData;
+  if (this.map && this.chartId == 29 && this.originalData && this.drillDownIndex > 0 && this.drillDownObject.length > 0) {
+    this.originalData.categories.forEach((column: any, index: any) => {
+      tablePreviewCol[index].column = column.name;
+      tablePreviewCol[index].result_data = column.values;
+    });
+    this.originalData.data.forEach((column: any, index: any) => {
+      tablePreviewRow[index].column = column.name;
+      tablePreviewRow[index].result_data = column.data;
+    });
+    if (this.drillDownIndex > 0) {
+      this.dualAxisColumnData = this.originalData.categories;
+      this.dualAxisRowData = this.originalData.data;
+      this.chartsRowData = this.dualAxisRowData[0]?.data;
+      this.drillDownIndex = 0;
+      this.drillDownObject = [];
     }
+    delete this.originalData;
   }
   savedChartOptions = this.chartOptionsSet;
   let customizeObject = {
@@ -4104,92 +4088,162 @@ console.log(reName.split(',')[0])
 
   }
 
- getChartSuggestions() {
-  
-  const obj ={
-    id:this.qrySetId
+  getChartSuggestions() {
+
+    const obj = {
+      id: this.qrySetId
+    }
+
+    this.workbechService.getServerTablesList(obj).subscribe(
+      data => {
+        console.log(data);
+        if (Array.isArray(data.data)) {
+          this.chartSuggestions = data.data;
+          this.errorMessage = '';
+        } else if (typeof data.data === 'string') {
+          this.chartSuggestions = [];
+          this.errorMessage = data.data;
+        } else {
+          this.chartSuggestions = [];
+          this.errorMessage = 'Unexpected data format';
+        }
+      },
+      error => {
+        const apiKey = localStorage.getItem('API_KEY');
+        let backendMsg = '';
+        if (error && error.error) {
+          if (typeof error.error === 'string') {
+            backendMsg = error.error;
+          } else if (typeof error.error.message === 'string') {
+            backendMsg = error.error.message;
+          }
+        }
+        if (backendMsg === 'Queryset ID is required') {
+          this.chartSuggestions = null;
+          this.errorMessage = '';
+        } else if (backendMsg) {
+          this.chartSuggestions = null;
+          this.errorMessage = backendMsg;
+        } else if (!apiKey || apiKey.trim() === '') {
+          localStorage.setItem('previousUrl', this.router.url);
+          this.chartSuggestions = null;
+          this.errorMessage1 = 'The GPT API key is missing. Please';
+        } else {
+          this.chartSuggestions = null;
+          this.errorMessage = `We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`;
+          console.error(error);
+        }
+      }
+    );
   }
 
-  this.workbechService.getServerTablesList(obj).subscribe(
-    data => {
-      console.log(data)
-      if (Array.isArray(data.data)) {
-        // Handle the case where data.data is an array
-        console.log(data.data.length);
-        this.chartSuggestions = data.data;
-        this.errorMessage = '';
-      } else if (typeof data.data === 'string') {
-        // Handle the case where data.data is a message
-        console.log('Message:', data.data);
-        // Optionally handle the message case, for example by showing it to the user
-        this.chartSuggestions = [];
-        this.errorMessage = data.data;
-      } else {
-        // Handle unexpected data format
-        console.error('Unexpected data format:', data.data);
-        this.chartSuggestions = [];
-        this.errorMessage = 'Unexpected data format';
-      }
-
-    },
-    error => {
-      const apiKey = localStorage.getItem('API_KEY');
-      if (error.error.message === 'Queryset ID is required'){
-        this.chartSuggestions = null;
-        this.errorMessage = ""
-      }
-      else if  (!apiKey || apiKey.trim() === '') {
-        // Store the current URL before navigating to the configure page
-        localStorage.setItem('previousUrl', this.router.url);
-        this.chartSuggestions = null;
-        // API Key is missing or empty, show the message and navigate to the configure page on click
-        // this.errorMessage = `The GPT API Key is missing. Please <a href="/insights/configure-page/configure">add the GPT API Key</a> to proceed.`;
-        this.errorMessage1 = 'the GPT API key is missing. Please'
-        // this.router.navigate(['/insights/configure-page/configure']);
-      } else {
-        // Handle other errors
-        console.log("Error:", error.message);
-        this.chartSuggestions = null;
-        this.errorMessage = `We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`;
-        console.error(error);
-      }
-    }
-  );
-}
 routeConfigure(){
   this.router.navigate(['/analytify/configure-page/configure'])
 }
-fetchChartData(chartData: any){
+  fetchChartData(chartData: any) {
   this.databaseId = chartData.hierarchy_id;
-          this.qrySetId = chartData.queryset_id;
-          this.draggedColumnsData = chartData.col;
-          this.draggedRowsData = chartData.row;
-          this.draggedColumns = chartData.columns;
-          this.draggedRows = chartData.rows;
-          this.filterId =[];
-          this.filterQuerySetId = chartData.datasource_quertsetid,
-          // this.sheetfilter_querysets_id = null;
-          
-          console.log("This is ShaetData",chartData)
-          this.sheetTitle = chartData.chart_title;
-          this.sheetTagName = chartData.chart_title;
-          if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
-          }else if(chartData.chart_type.toLowerCase().includes("horizontalBar")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,2);
-          }
-          else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
-          }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
-          }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
-          }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,10);
-          }
-          this.dataExtraction(false);
+  this.qrySetId = chartData.queryset_id;
+  this.draggedColumnsData = chartData.col;
+  this.draggedRowsData = chartData.row;
+  this.draggedColumns = chartData.columns;
+  this.draggedRows = chartData.rows;
+  this.filterId = [];
+  this.filterQuerySetId = chartData.datasource_quertsetid;
 
+  console.log("This is SheetData", chartData);
+  this.sheetTitle = chartData.chart_title;
+  this.sheetTagName = chartData.chart_title;
+
+  const chartType = (chartData.chart_type || '').toLowerCase();
+
+  const chartTypeRaw = chartData.chart_type || "";
+
+  if (chartType.includes("table")) {
+    // Table
+    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
+
+  } else if (chartType.includes("horizontal stacked bar")) {
+    // Horizontal Stacked Bar => horizontalBar + horizentalStocked
+    this.chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,true,2);
+
+  } else if (chartType.includes("horizontal side by side")) {
+    // Horizontal Side by Side => horizontalBar + sideBySide
+    this.chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,3);
+
+  } else if (chartType.includes("dual combination")) {
+    // Dual Combination => barLine
+    this.chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,4);
+
+  } else if (chartType.includes("stacked bar")) {
+    // Stacked Bar (vertical) => bar + stocked
+    this.chartDisplay(false,true,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,5);
+
+  } else if (chartType.includes("side by side")) {
+    // Side by Side (vertical) => bar + sideBySide
+    this.chartDisplay(false,true,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,7);
+
+  } else if (chartType.includes("bar")) {
+    // Plain Bar (vertical)
+    this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+
+  } else if (chartType.includes("dual line")) {
+    // Dual Line => multiLine
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,8);
+
+  } else if (chartType.includes("donut")) {
+    // Donut
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,10);
+
+  } else if (
+    chartType.includes("calendar") ||        // correct spelling
+    chartType.includes("calender")   
+  ) {
+    // Calendar
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,11);
+
+  } else if (chartType.includes("radar")) {
+    // Radar
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,12);
+
+  } else if (chartType.includes("line")) {
+    // Line
+    this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+
+  } else if (chartType.includes("hbar")) {
+    // HBar (generic horizontal bar)
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,14);
+
+  } else if (chartType.includes("area")) {
+    // Area
+    this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+
+  } else if (chartType.includes("pie")) {
+    // Pie
+    this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+
+  } else if (chartType.includes("kpi")) {
+    // KPI
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,25);
+
+  } else if (chartType.includes("heat map")) {
+    // Heat Map
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,26);
+
+  } else if (chartType.includes("funnel")) {
+    // Funnel
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,27);
+
+  } else if (chartType.includes("world map")) {
+    // World Map
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,29);
+  } else {
+    console.warn("[Chart] Unrecognized chart_type:", chartTypeRaw, "— defaulting to table");
+    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
+  }
+
+  this.dataExtraction(false);
 }
+
 customizechangeChartPlugin() {
   if (this.selectedChartPlugin == 'apex') {
     this.isApexCharts = true;
@@ -4994,8 +5048,8 @@ customizechangeChartPlugin() {
           if(!this.originalData){
             this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData, chartOptions: chartOptions }
           } else{
-            this.originalData.categories = this.chartsColumnData;
-            this.originalData.data = this.chartsRowData;
+            this.originalData.categories = this.dualAxisColumnData;
+            this.originalData.data = this.dualAxisRowData;
             this.originalData.chartOptions = chartOptions;
           }
         }

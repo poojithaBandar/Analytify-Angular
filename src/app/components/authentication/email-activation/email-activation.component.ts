@@ -33,7 +33,10 @@ export class EmailActivationComponent {
   otp:any;
   emailActivationToken:any;
 constructor( @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private authService:AuthService,private router:Router,private toasterService:ToastrService,
-private renderer: Renderer2,private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute){}
+private renderer: Renderer2,private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute){
+      this.emailActivationToken = this.activatedRoute.snapshot.params['token'];
+
+}
 
 ngOnInit(): void {
  
@@ -90,6 +93,11 @@ onOtpChange(value:any){
   this.otp=value;
 }
 validateOtp(){
+   this.activatedRoute.queryParams.subscribe(params => {
+    this.emailActivationToken = this.activatedRoute.snapshot.params['token'];
+        this.authService.emailActivationToken = this.emailActivationToken;
+    // console.log(this.token);
+  });
   const obj ={
     otp:this.otp
   }

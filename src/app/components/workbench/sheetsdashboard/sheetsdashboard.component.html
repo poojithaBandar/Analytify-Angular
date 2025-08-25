@@ -1174,7 +1174,7 @@
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
        
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
-        [cdkDropListData]="dashboard" style="margin: 0px;"
+        [cdkDropListData]="dashboard" style="margin: 0px;" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
        (cdkDropListDropped)="drop($event,false)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard">
               <div class="card mb-0 grid-item-border card-panel" style="height: 100%;" [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
@@ -1225,7 +1225,7 @@
                   </div>
                 </div>
                 <div class="card-header d-flex justify-content-between p-1" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
-                  @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
+                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i
@@ -1712,6 +1712,9 @@
               </div>
             </gridster-item>
           </gridster>
+          <!-- <div *ngIf="sheetsNewDashboard">
+            <app-genie-aiq-dashboard></app-genie-aiq-dashboard>
+          </div> -->
           </div>
           @if(displayTabs){
             <div class="d-flex p-2">
@@ -1811,7 +1814,7 @@
                           ? 'center' 
                           : ''">
                 <div class="card-header d-flex justify-content-between p-1">
-                  @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
+                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i
@@ -1890,7 +1893,7 @@
                 }
                 @if(item['drillDownObject'] && item['drillDownObject'].length > 0 && item['drillDownIndex'] > 0 && item['drillDownHierarchy'] &&
                 item['drillDownHierarchy'].length > 0){
-                <div class="col-lg-12 col-md-12 d-flex mt-2">
+                <div class="d-flex align-items-center justify-content-center">
                   @for(column of item['drillDownObject'];track column;let index = $index){
                   <h6 class="ms-1 mb-0 p-1"> {{item['drillDownObject'][index][item['drillDownHierarchy'][index] === 'date' ?
                     'year/month/day' :
