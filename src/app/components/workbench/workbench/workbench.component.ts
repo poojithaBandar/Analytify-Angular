@@ -211,7 +211,7 @@ export class WorkbenchComponent implements OnInit{
   tenantId!: string
   subDomain!: string;
   subDomainError: boolean = false;
-
+  viewNewDbsOld: boolean = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService){
     localStorage.setItem('QuerySetId', '0');
@@ -3376,5 +3376,166 @@ connectGoogleSheets(){
   gotoConfigureEmailAlerts(id:any){
     const encodedId = btoa(id.toString());
     this.router.navigate(['/analytify/configure-page/email/datasource/' + encodedId]);
+  }
+
+
+
+
+
+  searchQuery: string = '';
+  showNewConnection: boolean = false;
+  selectedCategory: string | null = null;
+  selectedConnectionType: string | null = null;
+
+  connections = [
+    {
+      id: 1,
+      name: 'PostgreSQL Production',
+      type: 'Database',
+      subType: 'PostgreSQL',
+      host: 'prod-db.company.com',
+      port: 5432,
+      status: 'connected',
+      lastSync: '2 minutes ago',
+      tables: 147,
+      size: '2.4 GB',
+      icon: '🐘',
+      description: 'Main production database'
+    },
+    {
+      id: 2,
+      name: 'MySQL Analytics',
+      type: 'Database',
+      subType: 'MySQL',
+      host: 'analytics-db.company.com',
+      port: 3306,
+      status: 'connected',
+      lastSync: '5 minutes ago',
+      tables: 89,
+      size: '1.8 GB',
+      icon: '🐬',
+      description: 'Analytics and reporting database'
+    },
+       {
+      id: 1,
+      name: 'PostgreSQL Production',
+      type: 'Database',
+      subType: 'PostgreSQL',
+      host: 'prod-db.company.com',
+      port: 5432,
+      status: 'connected',
+      lastSync: '2 minutes ago',
+      tables: 147,
+      size: '2.4 GB',
+      icon: '🐘',
+      description: 'Main production database'
+    },
+    {
+      id: 2,
+      name: 'MySQL Analytics',
+      type: 'Database',
+      subType: 'MySQL',
+      host: 'analytics-db.company.com',
+      port: 3306,
+      status: 'connected',
+      lastSync: '5 minutes ago',
+      tables: 89,
+      size: '1.8 GB',
+      icon: '🐬',
+      description: 'Analytics and reporting database'
+    },
+       {
+      id: 1,
+      name: 'PostgreSQL Production',
+      type: 'Database',
+      subType: 'PostgreSQL',
+      host: 'prod-db.company.com',
+      port: 5432,
+      status: 'connected',
+      lastSync: '2 minutes ago',
+      tables: 147,
+      size: '2.4 GB',
+      icon: '🐘',
+      description: 'Main production database'
+    },
+    {
+      id: 2,
+      name: 'MySQL Analytics',
+      type: 'Database',
+      subType: 'MySQL',
+      host: 'analytics-db.company.com',
+      port: 3306,
+      status: 'connected',
+      lastSync: '5 minutes ago',
+      tables: 89,
+      size: '1.8 GB',
+      icon: '🐬',
+      description: 'Analytics and reporting database'
+    },
+       {
+      id: 1,
+      name: 'PostgreSQL Production',
+      type: 'Database',
+      subType: 'PostgreSQL',
+      host: 'prod-db.company.com',
+      port: 5432,
+      status: 'connected',
+      lastSync: '2 minutes ago',
+      tables: 147,
+      size: '2.4 GB',
+      icon: '🐘',
+      description: 'Main production database'
+    },
+    {
+      id: 2,
+      name: 'MySQL Analytics',
+      type: 'Database',
+      subType: 'MySQL',
+      host: 'analytics-db.company.com',
+      port: 3306,
+      status: 'connected',
+      lastSync: '5 minutes ago',
+      tables: 89,
+      size: '1.8 GB',
+      icon: '🐬',
+      description: 'Analytics and reporting database'
+    }
+    // ... add the rest
+  ];
+ get filteredConnections() {
+    return this.connections.filter(conn =>
+      conn.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+      conn.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+      conn.subType.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+  }
+
+  handleCategoryClick(category: string) {
+    this.selectedCategory = category;
+  }
+
+  handleBackToCategories() {
+    this.selectedCategory = null;
+    this.selectedConnectionType = null;
+  }
+
+  handleBackToConnections() {
+    this.showNewConnection = false;
+    this.selectedCategory = null;
+    this.selectedConnectionType = null;
+  }
+
+  handleConnectionTypeSelect(type: string) {
+    this.selectedConnectionType = type;
+  }
+
+ categories = [
+    { name: 'Databases', icon: '🗄️', description: 'SQL, NoSQL & Cloud databases' },
+    { name: 'Files', icon: '📂', description: 'CSV, Excel & JSON files' },
+    { name: 'Integrations', icon: '🔗', description: 'Third-party services' }
+  ];
+  categorySelect(categoryName: string){
+    this.selectedCategory = categoryName;
+    console.log(this.selectedCategory)
   }
 }
