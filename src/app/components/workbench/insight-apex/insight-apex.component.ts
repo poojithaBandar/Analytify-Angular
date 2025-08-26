@@ -183,19 +183,19 @@ export class InsightApexComponent {
     if(changes['yGridSwitch']){
       this.yGridShowOrHide();
     }
-    if(['donut','pie'].includes(this.chartType) && changes['legendSwitch']){
+    if(['donut','pie','treemap'].includes(this.chartType) && changes['legendSwitch']){
       this.legendsShowOrHide();
     }
-    if(['donut','pie'].includes(this.chartType) && changes['dataLabels']){
+    if(['donut','pie','treemap'].includes(this.chartType) && changes['dataLabels']){
       this.dataLabelsShowOrHide();
     }
     if(this.chartType == 'donut' && changes['label']){
       this.labelsShowOrHide();
     }
-    if(['bar','funnel','horizontalBar'].includes(this.chartType) && changes['isDistributed']){
+    if(['bar','funnel','horizontalBar','treemap'].includes(this.chartType) && changes['isDistributed']){
       this.colorDistribution();
     }
-    if(['donut','pie'].includes(this.chartType) && changes['legendsAllignment']){
+    if(['donut','pie','treemap'].includes(this.chartType) && changes['legendsAllignment']){
       this.legendPositionChange();
     }
     if(this.chartType == 'donut' && changes['donutSize']){
@@ -1915,6 +1915,11 @@ xaxis: {
         show: this.legendSwitch,
         position: this.legendsAllignment,
       },
+      tooltip: {
+        y: {
+          formatter: (val: any) => this.formatNumber(val)
+        }
+      },
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme
     };
   }
@@ -2495,9 +2500,12 @@ xaxis: {
     }
     else if (this.heatmapCharts) {
       this.heatmapCharts.updateOptions(object);
-    } 
+    }
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.treemapCharts){
+      this.treemapCharts.updateOptions(object);
     }
     else if(this.guageCharts){
       this.guageCharts.updateOptions(object);
@@ -2546,9 +2554,12 @@ xaxis: {
     }
     else if (this.heatmapCharts) {
       this.heatmapCharts.updateOptions(object);
-    } 
+    }
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.treemapCharts){
+      this.treemapCharts.updateOptions(object);
     }
     else if(this.guageCharts){
       this.guageCharts.updateOptions(object);
@@ -2645,9 +2656,12 @@ xaxis: {
     }
     else if (this.heatmapCharts) {
       this.heatmapCharts.updateOptions(object);
-    } 
+    }
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.treemapCharts){
+      this.treemapCharts.updateOptions(object);
     }
     else if(this.guageCharts){
       this.guageCharts.updateOptions(object);
@@ -2696,9 +2710,12 @@ xaxis: {
     }
     else if (this.heatmapCharts) {
       this.heatmapCharts.updateOptions(object);
-    } 
+    }
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.treemapCharts){
+      this.treemapCharts.updateOptions(object);
     }
     else if(this.guageCharts){
       this.guageCharts.updateOptions(object);
@@ -2915,7 +2932,7 @@ xaxis: {
   legendsShowOrHide(){
     if(this.chartOptions?.legend){
       this.chartOptions.legend.show = this.legendSwitch;
-    
+
     let object = { legend:  this.chartOptions.legend };
     if (this.pieCharts) {
       this.pieCharts.updateOptions(object);
@@ -2923,18 +2940,24 @@ xaxis: {
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
     }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
+    }
   }
   }
   dataLabelsShowOrHide(){
     if(this.chartOptions?.dataLabels){
       this.chartOptions.dataLabels.enabled = this.dataLabels;
-    
+
     let object = { dataLabels:  this.chartOptions.dataLabels };
     if (this.pieCharts) {
       this.pieCharts.updateOptions(object);
     }
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
+    }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
     }
   }
   }
@@ -2956,18 +2979,26 @@ xaxis: {
       this.chartOptions.plotOptions.bar.distributed = this.isDistributed;
       let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
       this.barCharts?.updateOptions(object);
+    } else if(this.chartType === 'treemap'){
+      this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
+      this.chartOptions.plotOptions.treemap.distributed = this.isDistributed;
+      let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
+      this.treemapCharts?.updateOptions(object);
     }
   }
   legendPositionChange(){
     if(this.chartOptions?.legend?.position){
       this.chartOptions.legend.position = this.legendsAllignment;
-    
+
     let object = { legend:  this.chartOptions.legend };
     if (this.pieCharts) {
       this.pieCharts.updateOptions(object);
     }
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
+    }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
     }
   }
   }
@@ -3023,6 +3054,9 @@ xaxis: {
     else if (this.guageCharts) {
       this.guageCharts.updateOptions(object);
     }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
+    }
 
   }
   }
@@ -3035,7 +3069,7 @@ xaxis: {
       }
       object = { series: this.chartOptions.series };
     }
-    else if(['bar','funnel','horizontalBar'].includes(this.chartType)){
+    else if(['bar','funnel','horizontalBar','treemap'].includes(this.chartType)){
       if(this.chartOptions?.colors){
         this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
       }
@@ -3102,6 +3136,9 @@ xaxis: {
     }
     else if(this.chartType === 'gauge'){
       this.guageCharts?.updateOptions(object);
+    }
+    else if(this.chartType === 'treemap'){
+      this.treemapCharts?.updateOptions(object);
     }
   }
   gridLineColor(){
