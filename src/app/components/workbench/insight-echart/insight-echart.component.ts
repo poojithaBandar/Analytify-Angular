@@ -1707,9 +1707,16 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
     legend: {
+      bottom: this.bottomLegend,
+      left: this.leftLegend,
+      orient: this.legendOrient,
+      right: this.rightLegend,
+      top: this.topLegend,
+      type: 'scroll',
       show: this.legendSwitch
     },
     tooltip: {
+      show: true,
       formatter: (params: any) => `${params.name} : ${this.formatNumber(params.value)}`
     },
     series: [{
@@ -1721,6 +1728,7 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
       })),
       label: {
         show: this.dataLabels,
+        position: this.dataLabelsFontPosition,
         fontFamily: this.dataLabelsFontFamily,
         fontSize: this.dataLabelsFontSize,
         fontWeight: this.isBold ? 700 : 400,
