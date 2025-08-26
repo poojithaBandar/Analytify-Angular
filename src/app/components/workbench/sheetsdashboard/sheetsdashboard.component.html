@@ -1174,7 +1174,7 @@
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
        
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
-        [cdkDropListData]="dashboard" style="margin: 0px;"
+        [cdkDropListData]="dashboard" style="margin: 0px;" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
        (cdkDropListDropped)="drop($event,false)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard">
               <div class="card mb-0 grid-item-border card-panel" style="height: 100%;" [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
@@ -1712,6 +1712,9 @@
               </div>
             </gridster-item>
           </gridster>
+          <!-- <div *ngIf="sheetsNewDashboard">
+            <app-genie-aiq-dashboard></app-genie-aiq-dashboard>
+          </div> -->
           </div>
           @if(displayTabs){
             <div class="d-flex p-2">

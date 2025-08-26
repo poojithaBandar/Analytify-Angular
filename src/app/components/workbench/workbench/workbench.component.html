@@ -89,6 +89,36 @@
                     (input)="siteUrlPSAError()">
                    </div>
               </form>
+            } @else if(databaseType == 'pax8') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': pax8ClientIdError}" class="col-form-label">Client Id <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': pax8ClientIdError}" type="text" class="form-control" [(ngModel)]="pax8ClientId" [ngModelOptions]="{standalone: true}" placeholder="Client Id" (input)="pax8ClientIdValidation()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': pax8ClientSecretError}" for="recipient-name" class="col-form-label">Client Secret<span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': pax8ClientSecretError}" type="text" class="form-control" [(ngModel)]="pax8ClientSecret" [ngModelOptions]="{standalone: true}" placeholder="Client Secret" (input)="pax8ClientSecretValidation()">
+                </div>
+              </form>
+            } @else if(databaseType == 'bamboohr') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. BambooHR" (input)="displayNameIntegrationConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': bambooHRDomainError}" class="col-form-label">Domain <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': bambooHRDomainError}" type="text" class="form-control" [(ngModel)]="bambooHRDomain" [ngModelOptions]="{standalone: true}" placeholder="Domain" (input)="bambooHRDomainValidation()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': bambooHRApiKeyError}" for="recipient-name" class="col-form-label">API Key<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': bambooHRApiKeyError}" type="text" class="form-control" [(ngModel)]="bambooHRApiKey" [ngModelOptions]="{standalone: true}" placeholder="API Key" (input)="bambooHRApiKeyValidation()">
+                </div>
+              </form>
             } @else if(databaseType == 'immybot') {
               <form>
                 <div class="mb-2">
@@ -312,16 +342,24 @@
             @if(databaseType == 'connectwise') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">Update</button>
-      
+
             } @else if(databaseType == 'halops') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName )">Update</button>
-      
+
+            } @else if(databaseType == 'pax8') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="pax8Update()" [disabled]="(pax8ClientIdError || pax8ClientSecretError || displayNameError) || !(pax8ClientId && pax8ClientSecret && displayName)">Update</button>
+
+            } @else if(databaseType == 'bamboohr') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="bambooHRUpdate()" [disabled]="(bambooHRApiKeyError || bambooHRDomainError || displayNameError) || !(bambooHRApiKey && bambooHRDomain && displayName)">Update</button>
+
             } @else if(databaseType == 'ninja') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="ninjaRMMUpdate()"  [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName) ">Update</button>
-      
-            } 
+
+            }
              @else if(databaseType == 'shopify') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
@@ -457,7 +495,7 @@
                         <img alt="product" src="./assets/images/icons/salesforce-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'SAP HANA'">
-                        <img alt="product" src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                        <img alt="product" src="./assets/images/icons/sap-hana-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       
                       <td *ngIf="database.server_type === 'CONNECTWISE'">
@@ -465,6 +503,12 @@
                       </td>
                       <td *ngIf="database.server_type === 'HALOPS'">
                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      <td *ngIf="database.server_type === 'PAX8'">
+                        <img alt="product" src="./assets/images/icons/Pax8-black.svg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      <td *ngIf="database.server_type === 'BAMBOOHR'">
+                        <img alt="product" src="https://logo.clearbit.com/bamboohr.com" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'TALLY'">
                         <img alt="product" src="./assets/images/icons/TallyLogo.png" class="w-5 h-5 border me-2">{{database.server_type}}
@@ -493,9 +537,9 @@
                       <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
                         <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
-                            <td>{{database.created_at}}</td>
+                            <td>{{database.created_at | date:'mediumDate'}}</td>
                             <td>{{database.created_by}}</td>
-                            <td>{{database.updated_at}}</td>
+                            <td>{{database.updated_at | date:'mediumDate'}}</td>
                             <td  *ngIf="!iscrossDbSelect">
                               <div class="hstack gap-2 fs-1">
                                 <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL') && (!database?.transformation || database.is_cross_db)"
@@ -503,8 +547,7 @@
                                   aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
-                                <button *ngIf="!database.is_cross_db && (database.server_type === 'CONNECTWISE' || database.server_type === 'SHOPIFY' || database.server_type === 'HALOPS' || database.server_type === 'OPEN_AI' || database.server_type === 'HUBSPOT' || database.server_type === 'NINJA'
-                                || database.server_type === 'IMMYBOT' || database.server_type === 'QUICKBOOKS' || database.server_type === 'SALESFORCE' || database.server_type === 'TALLY')" class="btn btn-icon btn-sm btn-primary-light btn-wave waves-effect waves-light" (click)="smartDashboardFromConnection(database)">
+                                <button *ngIf="!database.is_cross_db && smartDashboardSources.includes(database.server_type)" class="btn btn-icon btn-sm btn-primary-light btn-wave waves-effect waves-light" (click)="smartDashboardFromConnection(database)">
                                   <i class="fe fe-zap" ngbTooltip="Smart Dashboard"></i>
                                 </button>
                                 <div *ngIf="database?.transformation && !database.is_cross_db" class="d-flex justify-content-end" ngbDropdown>
@@ -588,7 +631,7 @@
                                         <span *ngIf="database.server_type === 'SALESFORCE'" class="avatar avatar rounded-circle">
                                           <img src="./assets/images/icons/salesforce-icon.jpg" alt="" class="rounded-circle"></span>
                                           <span *ngIf="database.server_type === 'SAP HANA'" class="avatar avatar rounded-circle">
-                                            <img src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png" alt="" class="rounded-circle"></span>
+                                            <img src="./assets/images/icons/sap-hana-icon.png" alt="" class="rounded-circle"></span>
                                           <span *ngIf="database.server_type === 'QUICKBOOKS'" class="avatar avatar rounded-circle">
                                             <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
                                             <span *ngIf="database.server_type === 'OPEN_AI'" class="avatar avatar rounded-circle">
@@ -599,6 +642,10 @@
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
+                                              <span *ngIf="database.server_type === 'PAX8'" class="avatar avatar rounded-circle">
+                                                <img src="./assets/images/icons/Pax8-black.svg" alt="" class="rounded-circle"></span>
+                                              <span *ngIf="database.server_type === 'BAMBOOHR'" class="avatar avatar rounded-circle">
+                                                <img src="https://logo.clearbit.com/bamboohr.com" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'TALLY'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/TallyLogo.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'IMMYBOT'" class="avatar avatar rounded-circle">
@@ -638,8 +685,7 @@
                             <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS' ||database.server_type ==='HUBSPOT')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                            <a *ngIf="!database.is_cross_db && (database.server_type === 'CONNECTWISE' || database.server_type === 'SHOPIFY' || database.server_type === 'HALOPS' || database.server_type === 'OPEN_AI' || database.server_type === 'HUBSPOT' || database.server_type === 'NINJA'
-                            || database.server_type === 'IMMYBOT' || database.server_type === 'QUICKBOOKS' || database.server_type === 'SALESFORCE' || database.server_type === 'TALLY')" class="dropdown-item" (click)="smartDashboardFromConnection(database)"><i class='fe fe-zap me-2 d-inline-flex'></i> Smart Dashboard</a>
+                            <a *ngIf="!database.is_cross_db && smartDashboardSources.includes(database.server_type)" class="dropdown-item" (click)="smartDashboardFromConnection(database)"><i class='fe fe-zap me-2 d-inline-flex'></i> Smart Dashboard</a>
                             <a *ngIf="database?.transformation && !database.is_cross_db" class="dropdown-item" (click)="goToTransformationLayer(database?.hierarchy_id)" ngbTooltip="Edit Transformation"><img src="./assets/images/icons/transformation_blue.png" class="avatar-databse-sm d-inline-flex me-2"> Edit Transforma...</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
@@ -670,7 +716,7 @@
                                         <span class="fw-semibold fs-14">Created on:</span>
                                     </div>
                                     <div class="col-md-6">
-                                        <span class="fs-14">{{database.created_at}}</span>
+                                        <span class="fs-14">{{database.created_at | date:'mediumDate'}}</span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -678,7 +724,7 @@
                                       <span class="fw-semibold fs-14">Last Modified: </span>
                                   </div>
                                   <div class="col-md-6">
-                                      <span class="fs-14">{{database.updated_at}}</span>
+                                      <span class="fs-14">{{database.updated_at | date:'mediumDate'}}</span>
                                   </div>
                               </div>
                             
@@ -1146,10 +1192,106 @@
                   </div>
                 </div>
               </div>
+          </div>
+      </div>
+        }
+        @if(openPax8Form){
+          <div class="main-container container-fluid px-4 TopHeader" >
+            <div class="row">
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card Relational-database-height">
+                  <div class="card-header">
+                    <h4 class="card-title">Connect To Pax8</h4>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                        <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                      </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': pax8ClientIdError}" class="col-form-label">Client Id <span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': pax8ClientIdError}" type="text" class="form-control" [(ngModel)]="pax8ClientId" [ngModelOptions]="{standalone: true}" placeholder="Client Id" (input)="pax8ClientIdValidation()">
+                      </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': pax8ClientSecretError}" for="recipient-name" class="col-form-label">Client Secret<span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': pax8ClientSecretError}" type="text" class="form-control" [(ngModel)]="pax8ClientSecret" [ngModelOptions]="{standalone: true}" placeholder="Client Secret" (input)="pax8ClientSecretValidation()">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="pax8SignIn()" [disabled]="(pax8ClientIdError || pax8ClientSecretError || displayNameError) || !(pax8ClientId && pax8ClientSecret && displayName)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card user-card border Relational-database-height">
+                  <div class="user-image">
+                    <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                      <img src="./assets/images/icons/Pax8-black.svg" alt="" class="rounded-circle bg-white user-image-border-color">
+                    </span>
+                  </div>
+                  <div class="card-body server-content-card">
+                    <ul class="">
+                      <li><span class="mb-0"><strong>Client Id:</strong> Identifier provided by Pax8 for API access.</span></li>
+                      <li><span class="mb-0"><strong>Client Secret:</strong> Secret key used with the Client Id to authenticate requests.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          }
-          @if(openImmybot){
+        }
+        @if(openBambooHRForm){
+          <div class="main-container container-fluid px-4 TopHeader" >
+            <div class="row">
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card Relational-database-height">
+                  <div class="card-header">
+                    <h4 class="card-title">Connect To BambooHR</h4>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                        <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. BambooHR" (input)="displayNameIntegrationConditionError()">
+                      </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': bambooHRDomainError}" class="col-form-label">Domain <span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': bambooHRDomainError}" type="text" class="form-control" [(ngModel)]="bambooHRDomain" [ngModelOptions]="{standalone: true}" placeholder="Domain" (input)="bambooHRDomainValidation()">
+                      </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': bambooHRApiKeyError}" for="recipient-name" class="col-form-label">API Key<span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': bambooHRApiKeyError}" type="text" class="form-control" [(ngModel)]="bambooHRApiKey" [ngModelOptions]="{standalone: true}" placeholder="API Key" (input)="bambooHRApiKeyValidation()">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="bambooHRSignIn()" [disabled]="(bambooHRApiKeyError || bambooHRDomainError || displayNameError) || !(bambooHRApiKey && bambooHRDomain && displayName)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card user-card border Relational-database-height">
+                  <div class="user-image">
+                    <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                      <img src="https://logo.clearbit.com/bamboohr.com" alt="" class="rounded-circle bg-white user-image-border-color">
+                    </span>
+                  </div>
+                  <div class="card-body server-content-card">
+                    <ul class="">
+                      <li><span class="mb-0"><strong>API Key:</strong> Key generated from BambooHR account.</span></li>
+                      <li><span class="mb-0"><strong>Domain:</strong> Your BambooHR domain.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        @if(openImmybot){
             <div class="main-container container-fluid px-4 TopHeader" >
               <div class="row">
                 <div class="col-md-12 col-xl-6 p-1 mb-0">
@@ -2084,7 +2226,7 @@
                       <div class="card user-card border Relational-database-height">
                         <div class="user-image" >
                             <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline" >
-                              <img src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png" alt="" class="rounded-circle bg-white user-image-border-color" >
+                              <img src="./assets/images/icons/sap-hana-icon.png" alt="" class="rounded-circle bg-white user-image-border-color" >
                             </span>
                         </div>
                         <div class="card-body server-content-card">
@@ -2587,6 +2729,22 @@
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" >
                           <span >HaloPSA</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
+                        <div class="imgcard p-4" (click)="connectPax8()">
+                          <img src="./assets/images/icons/Pax8-black.svg" alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600" >
+                          <span >Pax8</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
+                        <div class="imgcard p-4" (click)="connectBambooHR()">
+                          <img src="https://logo.clearbit.com/bamboohr.com" alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600" >
+                          <span >BambooHR</span>
                         </div>
                       </div>
                       <div class="database-logo">
