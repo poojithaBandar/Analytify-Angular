@@ -35,6 +35,7 @@ export class InsightEchartComponent {
   @Input() dualAxisRowData:any;
   @Input() donutSize:any;
   @Input() outerRadius:any;
+  @Input() chartBorderWidth:any = 0;
   @Input() radarRowData:any;
   @Input() displayUnits:any;
   @Input() decimalPlaces:any;
@@ -96,6 +97,7 @@ export class InsightEchartComponent {
   @Input() measureColorRanges: { min: number, max: number, color: string }[] = [];
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
+  chartContainerStyles:any = {};
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
   private chartInstance!: echarts.ECharts;
   // @ViewChild('NgxEchartsDirective', { static: true }) chartDirective!: NgxEchartsDirective; 
@@ -2400,6 +2402,13 @@ chartInitialize(){
     }
     if(changes['donutSize'] || changes['outerRadius']){
       this.donutSizeChange();
+    }
+    if(changes['chartBorderWidth']){
+      if(['bar','horizontalBar','treemap'].includes(this.chartType)){
+        this.chartContainerStyles = this.chartBorderWidth ? { 'border': `${this.chartBorderWidth}px solid #000` } : {};
+      } else {
+        this.chartContainerStyles = {};
+      }
     }
     if(changes['isBold']){
       this.setDatalabelsFontWeight();
