@@ -183,7 +183,7 @@ export class InsightApexComponent {
     if(changes['yGridSwitch']){
       this.yGridShowOrHide();
     }
-    if(['donut','pie'].includes(this.chartType) && changes['legendSwitch']){
+    if(['donut','pie','treemap'].includes(this.chartType) && changes['legendSwitch']){
       this.legendsShowOrHide();
     }
     if(['donut','pie','treemap'].includes(this.chartType) && changes['dataLabels']){
@@ -195,7 +195,7 @@ export class InsightApexComponent {
     if(['bar','funnel','horizontalBar','treemap'].includes(this.chartType) && changes['isDistributed']){
       this.colorDistribution();
     }
-    if(['donut','pie'].includes(this.chartType) && changes['legendsAllignment']){
+    if(['donut','pie','treemap'].includes(this.chartType) && changes['legendsAllignment']){
       this.legendPositionChange();
     }
     if(this.chartType == 'donut' && changes['donutSize']){
@@ -1919,6 +1919,11 @@ xaxis: {
           formatter: (val: any) => this.formatNumber(val)
         }
       },
+      tooltip: {
+        y: {
+          formatter: (val: any) => this.formatNumber(val)
+        }
+      },
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme
     };
   }
@@ -2939,6 +2944,9 @@ xaxis: {
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
     }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
+    }
   }
   }
   dataLabelsShowOrHide(){
@@ -2951,6 +2959,9 @@ xaxis: {
     }
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
+    }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
     }
   }
   }
