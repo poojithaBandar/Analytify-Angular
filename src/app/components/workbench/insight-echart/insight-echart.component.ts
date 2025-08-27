@@ -1707,13 +1707,7 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
     legend: {
-      bottom: this.bottomLegend,
-      left: this.leftLegend,
-      orient: this.legendOrient,
-      right: this.rightLegend,
-      top: this.topLegend,
-      type: 'scroll',
-      show: this.legendSwitch
+      show: false
     },
     tooltip: {
       show: true,
@@ -2355,7 +2349,7 @@ chartInitialize(){
       }
     }
     if(changes['legendSwitch']){
-      if(this.chartInstance){
+      if(this.chartInstance && this.chartType !== 'treemap'){
         this.legendSwitchSetOptions();
       }
     }
@@ -2392,7 +2386,7 @@ chartInitialize(){
       }
     }
     if(changes['legendsAllignment']){
-      if(this.chartInstance){
+      if(this.chartInstance && this.chartType !== 'treemap'){
         this.legendsAllignmentSetOptions()
       }
     }
