@@ -183,7 +183,7 @@ export class InsightApexComponent {
     if(changes['yGridSwitch']){
       this.yGridShowOrHide();
     }
-    if(['donut','pie','treemap'].includes(this.chartType) && changes['legendSwitch']){
+    if(['donut','pie'].includes(this.chartType) && changes['legendSwitch']){
       this.legendsShowOrHide();
     }
     if(['donut','pie','treemap'].includes(this.chartType) && changes['dataLabels']){
@@ -192,10 +192,10 @@ export class InsightApexComponent {
     if(this.chartType == 'donut' && changes['label']){
       this.labelsShowOrHide();
     }
-    if(['bar','funnel','horizontalBar','treemap'].includes(this.chartType) && changes['isDistributed']){
+    if(['bar','funnel','horizontalBar'].includes(this.chartType) && changes['isDistributed']){
       this.colorDistribution();
     }
-    if(['donut','pie','treemap'].includes(this.chartType) && changes['legendsAllignment']){
+    if(['donut','pie'].includes(this.chartType) && changes['legendsAllignment']){
       this.legendPositionChange();
     }
     if(this.chartType == 'donut' && changes['donutSize']){
@@ -233,7 +233,7 @@ export class InsightApexComponent {
     //   this.sortSeries(this.sortType);
     // }
     if (changes['isMeasureDistribution'] || changes['measureColorRanges']) {
-      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar'].includes(this.chartType)) {
+      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar','treemap'].includes(this.chartType)) {
         this.setMeasureRangeColors();
       }
     }
@@ -435,8 +435,15 @@ export class InsightApexComponent {
     if(['pie', 'donut', 'guage'].includes(this.chartType)) {
       return series?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null);
     } else if(['treemap'].includes(this.chartType)){
-      return series[0]?.data.every((set: { y: any[]; }) =>
-      set?.y?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null)
+      return series?.every((set) =>
+      set?.data?.every((value: any) =>
+        value && typeof value === 'object' &&
+        (
+          typeof value.y === 'number' ||
+          (!isNaN(value.y) && !isNaN(parseFloat(value.y))) ||
+          value.y === null
+        )
+      )
     );
     } else {
       return series?.every((set) =>
@@ -1882,6 +1889,7 @@ xaxis: {
     };
   }
   treeMapChart(){
+    let self = this;
     this.chartOptions = {
       series: [
         {
@@ -1909,15 +1917,15 @@ xaxis: {
           fontWeight: this.isBold ? 700 : 400,
           colors: [this.dataLabelsColor],
         },
-        formatter: (val: any) => this.formatNumber(val)
-      },
+        formatter: function (val:any, opts:any) {
+          const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+    const label = dataPoint.x;
+    const value = dataPoint.y;
+    return `${label}: ${self.formatNumber(value)}`;
+  }.bind(this)
+            },
       legend: {
         show: false,
-      },
-      tooltip: {
-        y: {
-          formatter: (val: any) => this.formatNumber(val)
-        }
       },
       tooltip: {
         y: {
@@ -3297,6 +3305,15 @@ xaxis: {
     else if (this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
     }
+    else if (this.treemapCharts) {
+      if (this.chartOptions?.dataLabels?.formatter) {
+        this.chartOptions.dataLabels.formatter = (val: any, opts: any) => {
+          const point = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+          return `${point.x}: ${this.formatNumber(point.y)}`;
+        };
+      }
+      object = { dataLabels: this.chartOptions.dataLabels };
+    }
   }
   updateDrilldowns(){
     const self = this;
@@ -3418,6 +3435,14 @@ xaxis: {
         }
         object = { colors: this.chartOptions.colors};
         this.donutCharts?.updateOptions(object);
+      } else if (this.chartType === 'treemap') {
+        const data = this.chartOptions?.series?.[0]?.data;
+        if (this.chartOptions?.colors && data) {
+          const values = data.map((item: any) => item.y); // extract y values
+          this.chartOptions.colors = this.setColorsOnRanges(values); // get colors based on values
+        }
+        const object = { colors: this.chartOptions.colors };
+        this.treemapCharts?.updateOptions(object);
       }
     }
   }

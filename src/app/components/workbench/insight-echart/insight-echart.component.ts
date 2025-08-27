@@ -2349,7 +2349,7 @@ chartInitialize(){
       }
     }
     if(changes['legendSwitch']){
-      if(this.chartInstance && this.chartType !== 'treemap'){
+      if(this.chartInstance){
         this.legendSwitchSetOptions();
       }
     }
@@ -2386,7 +2386,7 @@ chartInitialize(){
       }
     }
     if(changes['legendsAllignment']){
-      if(this.chartInstance && this.chartType !== 'treemap'){
+      if(this.chartInstance){
         this.legendsAllignmentSetOptions()
       }
     }
@@ -2420,7 +2420,7 @@ chartInitialize(){
     // }
 
     if (changes['isMeasureDistribution'] || changes['measureColorRanges']) {
-      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar'].includes(this.chartType)) {
+      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar','treemap'].includes(this.chartType)) {
         this.setMeasureRangeColors();
       }
     }
@@ -2517,6 +2517,28 @@ setColorsOnRanges(data: any): string[] {
         }
         this.chartInstance?.setOption(obj);
         this.chartOptions.color = obj.color;
+      }  else if (this.chartType === 'treemap') {
+        // For treemap, set colors per data item
+        const series = this.chartOptions.series?.[0];
+        if (series?.data) {
+          const values = series.data.map((item: any) => item.value);
+          const colors = this.setColorsOnRanges(values);
+  
+          // Inject itemStyle.color into each data item
+          series.data = series.data.map((item: any, index: number) => ({
+            ...item,
+            itemStyle: {
+              ...(item.itemStyle || {}),
+              color: colors[index]
+            }
+          }));
+  
+          // Apply to live chart
+          this.chartInstance?.setOption({ series: [{ data: series.data }] });
+  
+          // Update stored chartOptions
+          this.chartOptions.series[0].data = series.data;
+        }
       } else {
         let data = this.chartOptions.series[0].data.map((item: any) => item.value);
         let obj = {
@@ -3433,7 +3455,7 @@ radarDistributionSetOptions() {
     }
   }
   dataLabelsSetOptions(){
-    if(this.chartType === 'donut' || this.chartType === 'pie'){
+    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'treemap'){
       let obj ={
         series :[{
           label:{
