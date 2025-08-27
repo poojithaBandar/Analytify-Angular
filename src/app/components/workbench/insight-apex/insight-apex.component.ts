@@ -1912,8 +1912,12 @@ xaxis: {
         formatter: (val: any) => this.formatNumber(val)
       },
       legend: {
-        show: this.legendSwitch,
-        position: this.legendsAllignment,
+        show: false,
+      },
+      tooltip: {
+        y: {
+          formatter: (val: any) => this.formatNumber(val)
+        }
       },
       tooltip: {
         y: {
