@@ -51,6 +51,7 @@ export class InsightApexComponent {
   @Input() dataLabels: any;
   @Input() label : any;
   @Input() donutSize : any;
+  @Input() chartBorderWidth : any = 0;
   @Input() isDistributed : any;
   @Input() minValueGuage : any;
   @Input() gaugeDisplayMode :any;
@@ -101,6 +102,7 @@ export class InsightApexComponent {
 
   series: any[] = [];
   chartOptions: any = {};
+  chartContainerStyles: any = {};
   formattedData : any[] = [];
   guageNumber : any;
 
@@ -212,6 +214,13 @@ export class InsightApexComponent {
     }
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
+    }
+    if(changes['chartBorderWidth']){
+      if(['bar','horizontalBar','treemap'].includes(this.chartType)){
+        this.chartContainerStyles = this.chartBorderWidth ? { 'border': `${this.chartBorderWidth}px solid #000` } : {};
+      } else {
+        this.chartContainerStyles = {};
+      }
     }
     if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'] || changes['gaugeDisplayMode'])){
       if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){

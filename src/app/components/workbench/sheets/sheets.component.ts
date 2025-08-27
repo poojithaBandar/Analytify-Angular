@@ -310,6 +310,7 @@ export class SheetsComponent{
   legendsAllignment : any = 'bottom'
   donutSize:any = 50;
   outerRadius:any = 70;
+  chartBorderWidth: number = 0;
   color1:any;
   color2:any;
 
@@ -2296,6 +2297,7 @@ sheetSave(isDashboardTransfer?: boolean){
     label : this.label,
     donutSize : this.donutSize,
     outerRadius : this.outerRadius,
+    chartBorderWidth : Number(this.chartBorderWidth),
     isDistributed : this.isDistributed,
     kpiFontSize : this.kpiFontSize,
     minValueGuage : this.minValueGuage,
@@ -4371,6 +4373,7 @@ customizechangeChartPlugin() {
     this.label = data.label ?? true;
     this.donutSize = data.donutSize ?? 50;
     this.outerRadius = data.outerRadius ?? 70;
+    this.chartBorderWidth = Number(data.chartBorderWidth ?? 0);
     this.isDistributed = data.isDistributed ?? true;
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
@@ -4493,6 +4496,7 @@ customizechangeChartPlugin() {
     this.label = true;
     this.donutSize = 50;
     this.outerRadius = 70;
+    this.chartBorderWidth = 0;
     this.isDistributed = true;
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
