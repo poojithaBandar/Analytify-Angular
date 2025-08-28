@@ -1,7 +1,7 @@
 @if(chartType === 'bar'){
     <div class="card-body">
         <div id="bar-chart" class="chartfit">
-            <apx-chart #barChart 
+            <apx-chart #barChart
             [series]="chartOptions.series"
             [chart]="chartOptions.chart"
             [xaxis]="chartOptions.xaxis"
@@ -17,7 +17,7 @@
 }  @else if(chartType === 'horizontalBar'){
     <div class="card-body">
         <div id="horizontal-bar-chart" class="chartfit">
-            <apx-chart #horizontalBarChart 
+            <apx-chart #horizontalBarChart
             [series]="chartOptions.series"
             [chart]="chartOptions.chart"
             [xaxis]="chartOptions.xaxis"
@@ -197,13 +197,24 @@
     <div id="chart">
         <apx-chart #heatmapchart
         [series]="chartOptions.series"
-        [chart]="chartOptions.chart"   
+        [chart]="chartOptions.chart"
         [xaxis]="chartOptions.xaxis"
         [yaxis]="chartOptions.yaxis"
         [plotOptions]="chartOptions.plotOptions"
         [dataLabels]="chartOptions.dataLabels"
         [legend]="chartOptions.legend"
         [grid]="chartOptions.grid"
+        [colors]="chartOptions.colors">
+        </apx-chart>
+    </div>
+} @else if(chartType === 'treemap'){
+    <div id="chart">
+        <apx-chart #treemapchart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [plotOptions]="chartOptions.plotOptions"
+        [dataLabels]="chartOptions.dataLabels"
+        [legend]="chartOptions.legend"
         [colors]="chartOptions.colors">
         </apx-chart>
     </div>

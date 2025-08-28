@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { offset } from '@popperjs/core';
 import { text } from 'd3';
+import { CommonModule } from '@angular/common';
 
 interface Dimension {
   name: string;
@@ -17,7 +18,7 @@ interface Dimension {
 @Component({
   selector: 'app-insight-apex',
   standalone: true,
-  imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,
+  imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,CommonModule,
     NgApexchartsModule
     ],
   templateUrl: './insight-apex.component.html',
@@ -50,6 +51,7 @@ export class InsightApexComponent {
   @Input() dataLabels: any;
   @Input() label : any;
   @Input() donutSize : any;
+  @Input() barCornerRadius = 0;
   @Input() isDistributed : any;
   @Input() minValueGuage : any;
   @Input() gaugeDisplayMode :any;
@@ -96,6 +98,7 @@ export class InsightApexComponent {
   @ViewChild('funnelChart') funnelCharts!: ChartComponent;
   @ViewChild('guageChart') guageCharts!: ChartComponent;
   @ViewChild('heatmapchart') heatmapCharts!: ChartComponent;
+  @ViewChild('treemapchart') treemapCharts!: ChartComponent;
 
   series: any[] = [];
   chartOptions: any = {};
@@ -184,7 +187,7 @@ export class InsightApexComponent {
     if(['donut','pie'].includes(this.chartType) && changes['legendSwitch']){
       this.legendsShowOrHide();
     }
-    if(['donut','pie'].includes(this.chartType) && changes['dataLabels']){
+    if(['donut','pie','treemap'].includes(this.chartType) && changes['dataLabels']){
       this.dataLabelsShowOrHide();
     }
     if(this.chartType == 'donut' && changes['label']){
@@ -211,6 +214,19 @@ export class InsightApexComponent {
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
+    if (changes['barCornerRadius'] && ['bar','horizontalBar','treemap'].includes(this.chartType)) {
+      this.chartOptions.plotOptions = this.chartOptions.plotOptions || {};
+      if (['bar','horizontalBar'].includes(this.chartType)) {
+        this.chartOptions.plotOptions.bar = this.chartOptions.plotOptions.bar || {};
+        this.chartOptions.plotOptions.bar.borderRadius = this.barCornerRadius;
+      }
+      if (this.chartType === 'treemap') {
+        this.chartOptions.plotOptions.treemap = this.chartOptions.plotOptions.treemap || {};
+        this.chartOptions.plotOptions.treemap.borderRadius = this.barCornerRadius;
+      }
+      const chartRef = this.chartType === 'bar' ? this.barCharts : (this.chartType === 'horizontalBar' ? this.horizontalBarCharts : this.treemapCharts);
+      chartRef?.updateOptions({ plotOptions: this.chartOptions.plotOptions, series: this.chartOptions.series });
+    }
     if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'] || changes['gaugeDisplayMode'])){
       if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
       if (changes['maxValueGuage']) {
@@ -231,7 +247,7 @@ export class InsightApexComponent {
     //   this.sortSeries(this.sortType);
     // }
     if (changes['isMeasureDistribution'] || changes['measureColorRanges']) {
-      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar'].includes(this.chartType)) {
+      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar','treemap'].includes(this.chartType)) {
         this.setMeasureRangeColors();
       }
     }
@@ -413,6 +429,8 @@ export class InsightApexComponent {
       this.funnelChart();
     } else if(this.chartType === 'guage'){
       this.guageChart1();
+    } else if(this.chartType === 'treemap'){
+      this.treeMapChart();
     }
     let isValid = this.validateSeriesData(this.chartOptions.series);
     if (!isValid) {
@@ -430,10 +448,21 @@ export class InsightApexComponent {
   validateSeriesData(series: any[]): boolean {
     if(['pie', 'donut', 'guage'].includes(this.chartType)) {
       return series?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null);
+    } else if(['treemap'].includes(this.chartType)){
+      return series?.every((set) =>
+      set?.data?.every((value: any) =>
+        value && typeof value === 'object' &&
+        (
+          typeof value.y === 'number' ||
+          (!isNaN(value.y) && !isNaN(parseFloat(value.y))) ||
+          value.y === null
+        )
+      )
+    );
     } else {
       return series?.every((set) =>
-        set?.data?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null)
-      );
+      set?.data?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null)
+    );
     }
   }
 
@@ -565,6 +594,7 @@ export class InsightApexComponent {
           dataLabels: {
             position:this.dataLabelsFontPosition,
           },
+          borderRadius: this.barCornerRadius,
         },
       },
       dataLabels: {
@@ -692,6 +722,7 @@ xaxis: {
         dataLabels: {
           position: this.dataLabelsFontPosition,
         },
+        borderRadius: this.barCornerRadius,
       },
     },
     dataLabels: {
@@ -1873,6 +1904,59 @@ xaxis: {
       }
     };
   }
+  treeMapChart(){
+    let self = this;
+    this.chartOptions = {
+      series: [
+        {
+          data: this.chartsColumnData.map((category: any, index: number) => ({
+            x: category === null ? 'null' : category,
+            y: this.chartsRowData[index]
+          }))
+        }
+      ],
+      chart: {
+        height: 350,
+        type: 'treemap',
+        background: this.backgroundColor,
+      },
+      plotOptions: {
+        treemap: {
+          distributed: this.isDistributed,
+          borderRadius: this.barCornerRadius,
+        }
+      },
+      dataLabels: {
+        enabled: this.dataLabels,
+        style: {
+          fontSize: this.dataLabelsFontSize,
+          fontFamily: this.dataLabelsFontFamily,
+          fontWeight: this.isBold ? 700 : 400,
+          colors: [this.dataLabelsColor],
+        },
+        formatter: function (val:any, opts:any) {
+          const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+    const label = dataPoint.x;
+    const value = dataPoint.y;
+    return `${label}: ${self.formatNumber(value)}`;
+  }.bind(this)
+            },
+      legend: {
+        show: false,
+      },
+      tooltip: {
+        y: {
+          formatter: function (val: any, opts: any) {
+            const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+            const label = dataPoint.x;
+            const value = dataPoint.y;
+            return `${label}: ${self.formatNumber(value)}`;
+          }.bind(this)
+        }
+      },
+      colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme
+    };
+  }
   funnelChart(){
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
@@ -2451,9 +2535,12 @@ xaxis: {
     }
     else if (this.heatmapCharts) {
       this.heatmapCharts.updateOptions(object);
-    } 
+    }
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.treemapCharts){
+      this.treemapCharts.updateOptions(object);
     }
     else if(this.guageCharts){
       this.guageCharts.updateOptions(object);
@@ -2502,9 +2589,12 @@ xaxis: {
     }
     else if (this.heatmapCharts) {
       this.heatmapCharts.updateOptions(object);
-    } 
+    }
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.treemapCharts){
+      this.treemapCharts.updateOptions(object);
     }
     else if(this.guageCharts){
       this.guageCharts.updateOptions(object);
@@ -2601,9 +2691,12 @@ xaxis: {
     }
     else if (this.heatmapCharts) {
       this.heatmapCharts.updateOptions(object);
-    } 
+    }
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.treemapCharts){
+      this.treemapCharts.updateOptions(object);
     }
     else if(this.guageCharts){
       this.guageCharts.updateOptions(object);
@@ -2652,9 +2745,12 @@ xaxis: {
     }
     else if (this.heatmapCharts) {
       this.heatmapCharts.updateOptions(object);
-    } 
+    }
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.treemapCharts){
+      this.treemapCharts.updateOptions(object);
     }
     else if(this.guageCharts){
       this.guageCharts.updateOptions(object);
@@ -2871,7 +2967,7 @@ xaxis: {
   legendsShowOrHide(){
     if(this.chartOptions?.legend){
       this.chartOptions.legend.show = this.legendSwitch;
-    
+
     let object = { legend:  this.chartOptions.legend };
     if (this.pieCharts) {
       this.pieCharts.updateOptions(object);
@@ -2879,18 +2975,24 @@ xaxis: {
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
     }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
+    }
   }
   }
   dataLabelsShowOrHide(){
     if(this.chartOptions?.dataLabels){
       this.chartOptions.dataLabels.enabled = this.dataLabels;
-    
+
     let object = { dataLabels:  this.chartOptions.dataLabels };
     if (this.pieCharts) {
       this.pieCharts.updateOptions(object);
     }
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
+    }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
     }
   }
   }
@@ -2912,18 +3014,26 @@ xaxis: {
       this.chartOptions.plotOptions.bar.distributed = this.isDistributed;
       let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
       this.barCharts?.updateOptions(object);
+    } else if(this.chartType === 'treemap'){
+      this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
+      this.chartOptions.plotOptions.treemap.distributed = this.isDistributed;
+      let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
+      this.treemapCharts?.updateOptions(object);
     }
   }
   legendPositionChange(){
     if(this.chartOptions?.legend?.position){
       this.chartOptions.legend.position = this.legendsAllignment;
-    
+
     let object = { legend:  this.chartOptions.legend };
     if (this.pieCharts) {
       this.pieCharts.updateOptions(object);
     }
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
+    }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
     }
   }
   }
@@ -2979,6 +3089,9 @@ xaxis: {
     else if (this.guageCharts) {
       this.guageCharts.updateOptions(object);
     }
+    else if (this.treemapCharts) {
+      this.treemapCharts.updateOptions(object);
+    }
 
   }
   }
@@ -2991,7 +3104,7 @@ xaxis: {
       }
       object = { series: this.chartOptions.series };
     }
-    else if(['bar','funnel','horizontalBar'].includes(this.chartType)){
+    else if(['bar','funnel','horizontalBar','treemap'].includes(this.chartType)){
       if(this.chartOptions?.colors){
         this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
       }
@@ -3058,6 +3171,9 @@ xaxis: {
     }
     else if(this.chartType === 'gauge'){
       this.guageCharts?.updateOptions(object);
+    }
+    else if(this.chartType === 'treemap'){
+      this.treemapCharts?.updateOptions(object);
     }
   }
   gridLineColor(){
@@ -3212,6 +3328,15 @@ xaxis: {
     else if (this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
     }
+    else if (this.treemapCharts) {
+      if (this.chartOptions?.dataLabels?.formatter) {
+        this.chartOptions.dataLabels.formatter = (val: any, opts: any) => {
+          const point = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+          return `${point.x}: ${this.formatNumber(point.y)}`;
+        };
+      }
+      object = { dataLabels: this.chartOptions.dataLabels };
+    }
   }
   updateDrilldowns(){
     const self = this;
@@ -3333,6 +3458,14 @@ xaxis: {
         }
         object = { colors: this.chartOptions.colors};
         this.donutCharts?.updateOptions(object);
+      } else if (this.chartType === 'treemap') {
+        const data = this.chartOptions?.series?.[0]?.data;
+        if (this.chartOptions?.colors && data) {
+          const values = data.map((item: any) => item.y); // extract y values
+          this.chartOptions.colors = this.setColorsOnRanges(values); // get colors based on values
+        }
+        const object = { colors: this.chartOptions.colors };
+        this.treemapCharts?.updateOptions(object);
       }
     }
   }
