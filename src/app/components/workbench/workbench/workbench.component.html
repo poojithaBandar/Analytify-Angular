@@ -2926,7 +2926,7 @@
                 </div>
                 <div class="d-flex ms-auto">
                 <app-insights-button 
-                  [buttonName]="' View Connection'" 
+                  [buttonName]="' View Connected Datasources'" 
                   [classesList]="'btn btn-primary me-3 animate-button'" 
                   [isIcon]="true" 
                   [previledgeId]="4" 
@@ -2939,15 +2939,209 @@
 
 <div class="row g-4">
   <div class="col-md-4" *ngFor="let cat of categories">
-    <div class="glass-card shadow-sm h-100 p-3 hoverable" (click)="categorySelect(cat.name)" >
-      <div class="fs-2 mb-2">{{ cat.icon }}</div>
+    <div class="glass-card  h-100 p-3 hoverable d-flex flex-column align-items-center justify-content-center text-center" (click)="categorySelect(cat.name)" >
+      <div class="fs-2 mb-2 card-icon">{{ cat.icon }}</div>
       <h5>{{ cat.name }}</h5>
       <small class="text-muted">{{ cat.description }}</small>
+      <span class="mb-3">
+          {{ cat.count || 0 }} options  
+         <i class="bi bi-arrow-right text-primary ms-2 arrow-icon"></i>
+        </span>
     </div>
   </div>
 </div>
 </div>
+
+
+
+
+
     }
+
+<div class="main-container container-fluid TopHeader" *ngIf="selectedCategory">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center mb-4">
+    <button class="btn btn-light rounded-3 hoverable me-2" (click)="goBackToCategories()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+
+    <!-- Title + Subtitle -->
+    <div>
+      <h4 class="mb-0">{{ selectedCategory }}</h4>
+      <small class="text-muted">
+        Choose a {{ selectedCategory | lowercase }} type
+      </small>
+    </div>
+
+    <!-- Right side button: only for Relational -->
+    <div class="d-flex ms-auto" *ngIf="selectedCategory">
+      <app-insights-button 
+        [buttonName]="' View Connected Datasources'" 
+        [classesList]="'btn btn-primary me-3 animate-button'" 
+        [isIcon]="true" 
+        [previledgeId]="4" 
+        [faIconList]="'fa fa-eye'" 
+        [isBtn]="true"
+        (click)="routeViewDatabase()">
+      </app-insights-button>
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="row g-3">
+    <div class="col-md-4" *ngFor="let type of connectionTypes[selectedCategory]">
+      <div class="glass-card h-100 p-3 hoverable d-flex justify-content-between text-center">
+        <div class="d-flex align-items-start gap-3">
+          <!-- <div class="fs-3 card-icon">{{ type.icon }}</div> -->
+          <div class="fs-3 card-icon ">
+
+          <img *ngIf="type.image" [src]="type.image" [alt]="type.name" class="db-icon">
+
+          <span class="fs-3 card-icon" *ngIf="!type.image && type.icon">{{ type.icon }}</span>
+
+          <div  *ngIf="!type.image && !type.icon && type.svg" 
+              [innerHTML]="getSafeSvg(type.svg)">
+          </div>
+          </div>
+          <div>
+            <h6 class="mb-1 d-flex align-items-center">{{ type.name }}</h6>
+            <small class="text-muted">{{ type.description }}</small>
+          </div>
+        </div>
+        <i class="bi bi-chevron-right fs-10 text-primary mt-3 arrow-icon"></i>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+    <!-- <div class="main-container container-fluid TopHeader" *ngIf="showRelational">
+<div class="d-flex align-items-center mb-4">
+  <button class="btn btn-light rounded-3 hoverable  me-2" (click)="goBackToCategories()">
+    <i class="bi bi-arrow-left"></i>
+  </button>
+  <div>
+    <h4 class="mb-0">Databases</h4>
+    <small class="text-muted">Choose a database type</small>
+  </div>
+  <div class="d-flex ms-auto">
+   <app-insights-button 
+                  [buttonName]="' View Connected Datasources'" 
+                  [classesList]="'btn btn-primary me-3 animate-button'" 
+                  [isIcon]="true" 
+                  [previledgeId]="4" 
+                  [faIconList]="'fa fa-eye'" 
+                  [isBtn]="true"
+                  (click)="routeViewDatabase()">
+   </app-insights-button>
+   </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4" *ngFor="let type of connectionTypes['Relational Database']">
+    <div class="glass-card h-100 p-3 hoverable d-flex  justify-content-between text-center" >
+        <div class="d-flex align-items-start gap-3">
+        <div class="fs-3 card-icon">{{ type.icon }}</div>
+        
+        <div>
+          <h6 class="mb-1 d-flex align-items-center">
+            {{ type.name }}
+          </h6>
+          <small class="text-muted">{{ type.description }}</small>
+        </div>
+      </div>
+           <i class="bi bi-chevron-right fs-10 text-primary mt-3 arrow-icon"></i>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="main-container container-fluid TopHeader" *ngIf="showLLM">
+<div class="mb-4 d-flex justify-content-between align-items-center">
+  <button class="btn btn-link text-muted">⬅ Back</button>
+  <h4 class="mb-0">Choose a LLM connection</h4>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4" *ngFor="let type of connectionTypes['LLM Integrations']">
+    <div class="glass-card h-100 p-3 hoverable" >
+      <div class="fs-2 mb-2">{{ type.icon }}</div>
+      <h5>{{ type.name }}</h5>
+      <small class="text-muted">{{ type.description }}</small>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="main-container container-fluid TopHeader" *ngIf="showMultiDim">
+ <div class="mb-4 d-flex justify-content-between align-items-center">
+  <button class="btn btn-link text-muted">⬅ Back</button>
+  <h4 class="mb-0">Choose a Multi-dimensional Database connection</h4>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4" *ngFor="let type of connectionTypes['Multi-dimensional Database']">
+    <div class="glass-card h-100 p-3 hoverable" >
+      <div class="fs-2 mb-2">{{ type.icon }}</div>
+      <h5>{{ type.name }}</h5>
+      <small class="text-muted">{{ type.description }}</small>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="main-container container-fluid TopHeader" *ngIf="showNoSQL">
+  <div class="mb-4 d-flex justify-content-between align-items-center">
+  <button class="btn btn-link text-muted">⬅ Back</button>
+  <h4 class="mb-0">Choose a NoSQL Database connection</h4>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4" *ngFor="let type of connectionTypes['NoSQL Database']">
+    <div class="glass-card h-100 p-3 hoverable" >
+      <div class="fs-2 mb-2">{{ type.icon }}</div>
+      <h5>{{ type.name }}</h5>
+      <small class="text-muted">{{ type.description }}</small>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="main-container container-fluid TopHeader" *ngIf="showFiles">
+  <div class="mb-4 d-flex justify-content-between align-items-center">
+  <button class="btn btn-link text-muted">⬅ Back</button>
+  <h4 class="mb-0">Choose a File Source connection</h4>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4" *ngFor="let type of connectionTypes['File Source']">
+    <div class="glass-card h-100 p-3 hoverable" >
+      <div class="fs-2 mb-2">{{ type.icon }}</div>
+      <h5>{{ type.name }}</h5>
+      <small class="text-muted">{{ type.description }}</small>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="main-container container-fluid TopHeader" *ngIf="showIntegrations">
+  <div class="mb-4 d-flex justify-content-between align-items-center">
+  <button class="btn btn-link text-muted">⬅ Back</button>
+  <h4 class="mb-0">Choose an Integration</h4>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4" *ngFor="let type of connectionTypes['Integrations']">
+    <div class="glass-card h-100 p-3 hoverable" >
+      <div class="fs-2 mb-2">{{ type.icon }}</div>
+      <h5>{{ type.name }}</h5>
+      <small class="text-muted">{{ type.description }}</small>
+    </div>
+  </div>
+</div>
+</div> -->
  <!-- @if(viewNewDbs){
 <div class="main-container container-fluid TopHeader">
   <div class="d-flex align-items-center justify-content-between mb-4">

@@ -414,3 +414,18 @@ span { font-size: 11px;}
 h2.fw-500 {
   font-weight: 600 !important;
 }
+.card-icon {
+  transition: transform 0.4s ease;
+}
+.hoverable:hover .card-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Right arrow animation */
+.arrow-icon {
+  display: inline-block;  
+  transition: transform 0.3s ease;
+}
+.hoverable:hover .arrow-icon {
+  transform: scale(1.5) translateX(5px); /* slides slightly to the right */
+}

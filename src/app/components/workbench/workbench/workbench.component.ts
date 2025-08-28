@@ -31,6 +31,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BambooHRIntegrationService } from '../bamboohr-integration.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 
 @Component({
@@ -213,7 +214,7 @@ export class WorkbenchComponent implements OnInit{
   subDomainError: boolean = false;
   viewNewDbsOld: boolean = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService){
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer){
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
 
@@ -3530,12 +3531,132 @@ connectGoogleSheets(){
   }
 
  categories = [
-    { name: 'Databases', icon: '🗄️', description: 'SQL, NoSQL & Cloud databases' },
-    { name: 'Files', icon: '📂', description: 'CSV, Excel & JSON files' },
-    { name: 'Integrations', icon: '🔗', description: 'Third-party services' }
+    { name: 'Relational Database', icon: '🛢️', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
+    { name: 'LLM Integrations', icon: '🤖', description: 'AI & Large Language Model integrations',count:'6' },
+    { name: 'Multi-dimensional Database', icon: '📊', description: 'OLAP & analytical data stores',count:'2' },
+    { name: 'NoSQL Database', icon: '📡', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
+    { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
+    { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'15' }
   ];
+  showRelational = false;
+  showLLM = false;
+  showMultiDim = false;
+  showNoSQL = false;
+  showFiles = false;
+  showIntegrations = false;
   categorySelect(categoryName: string){
     this.selectedCategory = categoryName;
-    console.log(this.selectedCategory)
+    console.log(this.selectedCategory);
+      this.viewNewDbs = false;
+      this.showRelational = false;
+      this.showLLM = false;
+      this.showMultiDim = false;
+      this.showNoSQL = false;
+      this.showFiles = false;
+      this.showIntegrations = false;
+        switch (categoryName) {
+          case 'Relational Database':
+            this.showRelational = true;
+            break;
+          case 'LLM Integrations':
+            this.showLLM = true;
+            break;
+          case 'Multi-dimensional Database':
+            this.showMultiDim = true;
+            break;
+          case 'NoSQL Database':
+            this.showNoSQL = true;
+            break;
+          case 'Files Source':
+            this.showFiles = true;
+            break;
+          case 'Integrations':
+            this.showIntegrations = true;
+            break;
   }
+  }
+  getSafeSvg(svg: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(svg);
+  }
+connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string}[] } = {
+  "Relational Database": [
+    { name: "MySQL", icon: "🐬", description: "Relational database" },
+    { name: "ORACLE", icon: "🏺", description: "Enterprise relational database" },
+    { name: "PostgreSQL", icon: "🐘", description: "Advanced open-source relational database" },
+    { name: "Microsoft SQL SERVER", icon: "🖥️", description: "Microsoft relational database" },
+    { name: "Snow Flake", icon: "❄️", description: "Cloud data warehouse" }
+  ],
+  "LLM Integrations": [
+    { name: "OpenAI", icon: "🤖", description: "AI & language models by OpenAI" },
+    { name: "DeepSeek", icon: "🔍", description: "Deep learning & LLM platform" },
+    { name: "Gemini", icon: "♊", description: "Google DeepMind Gemini models" },
+    { name: "Anthropic", icon: "🌐", description: "Claude AI models" },
+    { name: "Azure OpenAI", icon: "☁️", description: "Azure-hosted OpenAI models" },
+    { name: "Meta LLaMA", icon: "🦙", description: "Meta’s LLaMA family of LLMs" }
+  ],
+  "NoSQL Database": [
+    { name: "Cassandra", icon: "🌌", description: "Highly scalable NoSQL database" },
+    { name: "SQLite", icon: "💾", description: "Lightweight embedded database" },
+    { name: "MongoDB", icon: "🍃", description: "Document-oriented NoSQL database" }
+  ],
+  "Multi-dimensional Database": [
+    { name: "SAP", icon: "🏢", description: "Enterprise resource planning & database" },
+    { name: "SAP HANA", icon: "⚡", description: "In-memory, column-oriented database" }
+  ],
+  "File Source": [
+    { name: "CSV File", icon: "📑", description: "Comma-separated values file" },
+    { name: "Excel File", icon: "📊", description: "Spreadsheet file format" }
+  ],
+  "Integrations": [
+    { name: "xAmplify",icon:"🔗", description: "Business automation platform" },
+    { name: "QuickBooks", icon: "💵", description: "Accounting software" },
+    { name: "Salesforce", icon: "☁️", description: "CRM platform" },
+    { name: "ConnectWise", icon: "🔧", description: "IT management software" },
+    { name: "HaloPSA", icon: "🛡️", description: "PSA platform for IT providers" },
+    { name: "Pax8", icon: "🌍", description: "Cloud commerce marketplace" },
+    { name: "BambooHR", icon: "👥", description: "HR management system" },
+    { name: "Jira", icon: "📌", description: "Project management software" },
+    { name: "Shopify", icon: "🛍️", description: "E-commerce platform" },
+    { name: "Tally", icon: "📒", description: "Accounting & ERP software" },
+    { name: "Google Sheets", icon: "📄", description: "Online spreadsheets" },
+    { name: "NinjaOne", icon: "🐱‍👤", description: "IT management & automation tool" },
+    { name: "Google Analytics", icon: "📈", description: "Web analytics service" },
+    { name: "HubSpot", icon: "📢", description: "Marketing & CRM platform" },
+    { name: "Immybot", description: "IT automation tool",svg:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot icon" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient for bot body -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5fd4ff"/>
+      <stop offset="1" stop-color="#7b6cff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Bot head -->
+  <rect x="3" y="5" width="18" height="15" rx="7" fill="url(#g)"/>
+  <!-- Antenna nub -->
+  <rect x="16.6" y="3" width="2.8" height="4" rx="1.4" fill="url(#g)"/>
+
+  <!-- Visor -->
+  <rect x="6.8" y="9" width="10.4" height="7" rx="3.5" fill="#0b0b0e" opacity="0.9"/>
+
+  <!-- Eyes -->
+  <circle cx="10" cy="12.5" r="0.9" fill="#ffffff"/>
+  <circle cx="14" cy="12.5" r="0.9" fill="#ffffff"/>
+
+  <!-- Smile -->
+  <path d="M10.1 14.3c.5.5 1.2.8 1.9.8s1.4-.3 1.9-.8" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
+</svg>`  }
+  ]
+};
+goBackToCategories(){
+  this.showRelational = false;
+  this.showLLM = false;
+  this.showMultiDim = false;
+  this.showNoSQL = false;
+  this.showFiles = false;
+  this.showIntegrations = false;
+  this.viewNewDbs = true;
+  this.selectedCategory = null;
+
+}
 }
