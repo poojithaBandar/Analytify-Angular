@@ -1946,7 +1946,12 @@ xaxis: {
       },
       tooltip: {
         y: {
-          formatter: (val: any) => this.formatNumber(val)
+          formatter: function (val: any, opts: any) {
+            const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+            const label = dataPoint.x;
+            const value = dataPoint.y;
+            return `${label}: ${self.formatNumber(value)}`;
+          }.bind(this)
         }
       },
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme

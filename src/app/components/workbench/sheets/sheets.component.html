@@ -3567,7 +3567,7 @@
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
-                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Treemap" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18)"><img src="./assets/images/charts/heatmap-new.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': treemap}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Treemap" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18)"><img src="./assets/images/charts/treemap.svg" class="rounded-2 w-90 mrk-t border p-2 chart-icon" [ngClass]="{'active': treemap}"></a>
                                                         </div>
                                                         <div class="card-title fs-12 mt-2 mb-1 border bg-light p-1 ">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
@@ -4573,7 +4573,7 @@
                                                         </div>
                                                     </div>
                                                     
-                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || treemap || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Zoom </label>
                                                         </div>
@@ -5182,7 +5182,7 @@
 
                                                     
                                                     <div *ngIf="bar || horizontalBar || treemap" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <label class="mb-0">Bar Corner Radius (px)</label>
+                                                        <label class="mb-0">Corner Radius</label>
                                                         <input type="number" [(ngModel)]="barCornerRadius" min="0" step="1" class="form-control" style="width: 60px;">
                                                     </div>
         
