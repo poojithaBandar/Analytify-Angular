@@ -1082,7 +1082,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       sheet.chartOptions.chart.events = {
         markerClick: (event: any, chartContext: any, config: any) => {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 18){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -1093,7 +1093,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         },
         dataPointSelection: function (event: any, chartContext: any, config: any) {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 18){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -1929,6 +1929,14 @@ export class SheetsdashboardComponent implements OnDestroy {
           }
           delete item1['originalData'];
         }
+        if(item1.chartId == '18' && item1['originalData']){//treemap
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
+        }
         if(item1.chartId == '13' && item1['originalData']){//line
           if(item1.isEChart){
             item1.echartOptions = item1['originalData'].chartOptions;
@@ -2374,7 +2382,7 @@ allowDrop(ev : any): void {
           element.chartOptions.chart.events = {
             markerClick: (event: any, chartContext: any, config: any) => {
               let selectedXValue;
-              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4) {
+              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4 || element.chartId == 18) {
                 selectedXValue = element.chartOptions.labels[config.dataPointIndex];
               } else {
                 selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -2385,7 +2393,7 @@ allowDrop(ev : any): void {
             },
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               let selectedXValue;
-              if (element.chartId == 24 || element.chartId == 10) {
+              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 18) {
                 selectedXValue = element.chartOptions.labels[config.dataPointIndex];
               } else {
                 selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -4172,7 +4180,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         if(switchDb){
           item1.databaseId = item.databaseId;
        }
-        if(item1.isEChart){ 
+        if(item1.isEChart){
           if(!item1.originalData && !isLiveReloadData && !switchDb){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
@@ -4198,8 +4206,42 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         }
         item1.chartOptions.labels = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData[0].data;
+        }
       }
-    }
+      if((item.chart_id == '18' || item.chartId == '18' && (isFilter || isDrillDown)) || (item1.chartId == '18' && isDrillThrough)){//treemap
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+       }
+        if(item1.isEChart){
+          if(!item1.originalData && !isLiveReloadData && !switchDb){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          let combinedArray = this.filteredColumnData[0].values.map((value : any, index : number) => ({
+            name: value === null ? 'null' : value,
+            value: this.filteredRowData[0].data[index]
+          }));
+          item1.echartOptions.series[0].data = combinedArray;
+          item1.echartOptions = {
+            ...item1.echartOptions,
+          };
+        } else {
+          if(!item1.originalData && !isLiveReloadData && !switchDb){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          item1.chartOptions.series[0].data = this.filteredColumnData[0].values.map((value : any, index : number) => ({
+            x: value === null ? 'null' : value,
+            y: this.filteredRowData[0].data[index]
+          }));
+        }
+      }
       if((item.chart_id == '13'|| item.chartId == '13' && (isFilter || isDrillDown)) || (item1.chartId == '13' && isDrillThrough)){//line
         if(switchDb){
           item1.databaseId = item.databaseId;
