@@ -4236,10 +4236,17 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             item1.drillDownIndex = 0;
             item1.drillDownObject = [];
           }
-          item1.chartOptions.series[0].data = this.filteredColumnData[0].values.map((value : any, index : number) => ({
+          const treemapData = this.filteredColumnData[0].values.map((value: any, index: number) => ({
             x: value === null ? 'null' : value,
             y: this.filteredRowData[0].data[index]
           }));
+          item1.chartOptions.series = [
+            { ...item1.chartOptions.series[0], data: treemapData }
+          ];
+          item1.chartOptions = {
+            ...item1.chartOptions,
+            series: item1.chartOptions.series
+          };
         }
       }
       if((item.chart_id == '13'|| item.chartId == '13' && (isFilter || isDrillDown)) || (item1.chartId == '13' && isDrillThrough)){//line
