@@ -1224,8 +1224,8 @@
                             accept="image/*">
                   </div>
                 </div>
-                <div class="card-header d-flex justify-content-between p-1" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
-                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
+                 <div class="card-header d-flex justify-content-between p-1" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
+                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i
@@ -1389,14 +1389,22 @@
                 </div>
                 }
                 @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1 ||
-                item['chartId']=== 9) ){
+                item['chartId']=== 9 || item['chartId']=== 18) ){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
                   [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
                   <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
                     (chartClick)="onEChartClick($event,item)" class="echart-charts"
                     [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
                 </div>
-            
+
+                } @else if(item['isEChart'] && item['chartId']=== 18){
+                <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
+                  [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
+                  <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
+                    (chartClick)="onEChartClick($event,item)" class="echart-charts"
+                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
+                </div>
+
                 } @else if(item['isEChart'] && item['chartId']=== 29){
                 <div class="card-body p-1"
                   [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
@@ -1513,6 +1521,12 @@
                       [legend]="item.chartOptions.legend!" [labels]="item.chartOptions.labels!"
                       [responsive]="item.chartOptions.responsive!" [colors]="item.chartOptions.colors!"
                       [dataLabels]="item.chartOptions.dataLabels!" (chartInit)="onChartInit($event, item)"></apx-chart>
+                  </div>
+                  <div *ngIf="item.chartOptions && item['chartId'] === 18">
+                    <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
+                      [plotOptions]="item.chartOptions.plotOptions!" [dataLabels]="item.chartOptions.dataLabels!"
+                      [legend]="item.chartOptions.legend!" [colors]="item.chartOptions.colors!"
+                      (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 7">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
@@ -1814,7 +1828,7 @@
                           ? 'center' 
                           : ''">
                 <div class="card-header d-flex justify-content-between p-1">
-                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) &&
+                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i
@@ -1902,16 +1916,24 @@
                   }
                 </div>
                 }
-                @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1 ||
-                item['chartId']=== 9) ){
-                <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
-                  [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
-                  <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
-                    (chartClick)="onEChartClick($event,item)" class="echart-charts"
-                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
-                </div>
-            
-                } @else if(item['isEChart'] && item['chartId']=== 29){
+                  @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1 ||
+                  item['chartId']=== 9 || item['chartId']=== 18) ){
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
+                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
+                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
+                      (chartClick)="onEChartClick($event,item)" class="echart-charts"
+                      [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
+                  </div>
+
+                  } @else if(item['isEChart'] && item['chartId']=== 18){
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
+                    [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
+                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
+                      (chartClick)="onEChartClick($event,item)" class="echart-charts"
+                      [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
+                  </div>
+
+                  } @else if(item['isEChart'] && item['chartId']=== 29){
                 <div class="card-body p-1"
                   [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
                   @if(chartType == 'map') {
@@ -2027,6 +2049,12 @@
                       [legend]="item.chartOptions.legend!" [labels]="item.chartOptions.labels!"
                       [responsive]="item.chartOptions.responsive!" [colors]="item.chartOptions.colors!"
                       [dataLabels]="item.chartOptions.dataLabels!" (chartInit)="onChartInit($event, item)"></apx-chart>
+                  </div>
+                  <div *ngIf="item.chartOptions && item['chartId'] === 18">
+                    <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
+                      [plotOptions]="item.chartOptions.plotOptions!" [dataLabels]="item.chartOptions.dataLabels!"
+                      [legend]="item.chartOptions.legend!" [colors]="item.chartOptions.colors!"
+                      (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 7">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
