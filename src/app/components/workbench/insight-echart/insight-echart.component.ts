@@ -36,6 +36,7 @@ export class InsightEchartComponent {
   @Input() donutSize:any;
   @Input() outerRadius:any;
   @Input() chartBorderWidth:any = 0;
+  @Input() barCornerRadius = 0;
   @Input() radarRowData:any;
   @Input() displayUnits:any;
   @Input() decimalPlaces:any;
@@ -97,7 +98,6 @@ export class InsightEchartComponent {
   @Input() measureColorRanges: { min: number, max: number, color: string }[] = [];
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
-  chartContainerStyles:any = {};
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
   private chartInstance!: echarts.ECharts;
   // @ViewChild('NgxEchartsDirective', { static: true }) chartDirective!: NgxEchartsDirective; 
@@ -293,7 +293,7 @@ export class InsightEchartComponent {
       series: [
         {
           itemStyle: {
-            borderRadius: 5
+            borderRadius: [this.barCornerRadius, this.barCornerRadius, 0, 0]
           },
           label: { show: true,
             position: this.dataLabelsFontPosition,
@@ -422,6 +422,9 @@ horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
       {
         type: 'bar',
         data: this.chartsRowData,
+        itemStyle: {
+          borderRadius: [0, this.barCornerRadius, this.barCornerRadius, 0]
+        },
         label: {
           show: true,
           position: this.getLabelPosition(),
@@ -1718,6 +1721,9 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
     series: [{
       type: 'treemap',
       roam :  this.isZoom,
+      itemStyle: {
+        borderRadius: this.barCornerRadius
+      },
       data: this.chartsColumnData.map((category: any, index: number) => ({
         name: category === null ? 'null' : category,
         value: this.chartsRowData[index]
@@ -2037,7 +2043,7 @@ let barChartOptions = {
   series: [
     {
       itemStyle: {
-        borderRadius: 5
+        borderRadius: [this.barCornerRadius, this.barCornerRadius, 0, 0]
       },
       label: { show: true,
         position: this.dataLabelsFontPosition,
@@ -2403,12 +2409,26 @@ chartInitialize(){
     if(changes['donutSize'] || changes['outerRadius']){
       this.donutSizeChange();
     }
-    if(changes['chartBorderWidth']){
-      if(['bar','horizontalBar','treemap'].includes(this.chartType)){
-        this.chartContainerStyles = this.chartBorderWidth ? { 'border': `${this.chartBorderWidth}px solid #000` } : {};
-      } else {
-        this.chartContainerStyles = {};
+    if (changes['barCornerRadius'] && this.chartInstance && ['bar','horizontalBar','treemap'].includes(this.chartType)) {
+      const radius = this.barCornerRadius;
+      if (this.chartType === 'treemap') {
+        if (this.chartOptions.series?.[0]) {
+          this.chartOptions.series[0].itemStyle = {
+            ...(this.chartOptions.series[0].itemStyle || {}),
+            borderRadius: radius
+          };
+        }
+      } else if (Array.isArray(this.chartOptions.series)) {
+        this.chartOptions.series.forEach((s: any) => {
+          s.itemStyle = {
+            ...(s.itemStyle || {}),
+            borderRadius: this.chartType === 'bar'
+              ? [radius, radius, 0, 0]
+              : [0, radius, radius, 0]
+          };
+        });
       }
+      this.chartInstance.setOption(this.chartOptions, true);
     }
     if(changes['isBold']){
       this.setDatalabelsFontWeight();
