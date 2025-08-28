@@ -4913,7 +4913,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="funnel || bar || horizontalBar" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="funnel || bar || horizontalBar || treemap" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <label>Distribution</label>
                                                                     <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed'); (isMeasureDistribution = false)">
                                                                         <span></span>
@@ -4933,7 +4933,7 @@
                                                                     <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'">
                                                                     </ngx-colors>
                                                                 </div> -->
-                                                                <div *ngIf="(pie && !isMeasureDistribution) || (donut && !isMeasureDistribution) || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || ((funnel || bar || horizontalBar) && isDistributed || (radar && isRadarDistribution ))" class="p-2">
+                                                                <div *ngIf="(pie && !isMeasureDistribution) || (donut && !isMeasureDistribution) || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || ((funnel || bar || horizontalBar || treemap) && isDistributed || (radar && isRadarDistribution ))" class="p-2">
                                                                     <div class="d-flex justify-content-between p-1 border rounded-3">
                                                                         <div class="colors-card">
                                                                             <ul class="d-flex flex-wrap">
@@ -5018,7 +5018,7 @@
 
 
 
-                                                                  <div *ngIf="pie || donut || treemap || ((bar || horizontalBar || funnel) && !isDistributed)" class="d-flex flex-column gap-2 mt-2">
+                                                                  <div *ngIf="pie || donut || ((bar || horizontalBar || funnel || treemap) && !isDistributed)" class="d-flex flex-column gap-2 mt-2">
                                                                 <div class="d-flex align-items-center justify-content-between">
                                                                     <label class="mb-0">Measure Distribution</label>
                                                                     <div *ngIf="isMeasureDistribution" class="toggle toggle-sm on mb-0" (click)="isMeasureDistribution = !isMeasureDistribution; (isDistributed = isMeasureDistribution ? false : true); updateMeasureColorRanges()">
