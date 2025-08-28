@@ -3459,7 +3459,13 @@ xaxis: {
           const values = data.map((item: any) => item.y); // extract y values
           this.chartOptions.colors = this.setColorsOnRanges(values); // get colors based on values
         }
-        const object = { colors: this.chartOptions.colors };
+        this.chartOptions.plotOptions = {
+          ...this.chartOptions.plotOptions,
+          treemap: {
+            distributed: true
+          }
+        };
+        const object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
         this.treemapCharts?.updateOptions(object);
       }
     }
