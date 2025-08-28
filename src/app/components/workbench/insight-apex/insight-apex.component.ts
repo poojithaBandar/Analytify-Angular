@@ -51,7 +51,6 @@ export class InsightApexComponent {
   @Input() dataLabels: any;
   @Input() label : any;
   @Input() donutSize : any;
-  @Input() chartBorderWidth : any = 0;
   @Input() barCornerRadius = 0;
   @Input() isDistributed : any;
   @Input() minValueGuage : any;
