@@ -35,7 +35,6 @@ export class InsightEchartComponent {
   @Input() dualAxisRowData:any;
   @Input() donutSize:any;
   @Input() outerRadius:any;
-  @Input() chartBorderWidth:any = 0;
   @Input() barCornerRadius = 0;
   @Input() radarRowData:any;
   @Input() displayUnits:any;
