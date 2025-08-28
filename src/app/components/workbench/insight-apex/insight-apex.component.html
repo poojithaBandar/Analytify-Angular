@@ -1,6 +1,6 @@
 @if(chartType === 'bar'){
     <div class="card-body">
-        <div id="bar-chart" class="chartfit" [ngStyle]="chartContainerStyles">
+        <div id="bar-chart" class="chartfit">
             <apx-chart #barChart
             [series]="chartOptions.series"
             [chart]="chartOptions.chart"
@@ -16,7 +16,7 @@
     </div>
 }  @else if(chartType === 'horizontalBar'){
     <div class="card-body">
-        <div id="horizontal-bar-chart" class="chartfit" [ngStyle]="chartContainerStyles">
+        <div id="horizontal-bar-chart" class="chartfit">
             <apx-chart #horizontalBarChart
             [series]="chartOptions.series"
             [chart]="chartOptions.chart"
@@ -208,7 +208,7 @@
         </apx-chart>
     </div>
 } @else if(chartType === 'treemap'){
-    <div id="chart" [ngStyle]="chartContainerStyles">
+    <div id="chart">
         <apx-chart #treemapchart
         [series]="chartOptions.series"
         [chart]="chartOptions.chart"
