@@ -4657,6 +4657,15 @@ customizechangeChartPlugin() {
     // this.KPISuffix = ''
   }
 
+  validateBarCornerRadius(event: KeyboardEvent): void {
+    const invalidKeys = ['e', 'E', '+', '-'];
+    if (invalidKeys.includes(event.key)) event.preventDefault();
+    setTimeout(() => {
+      if (this.barCornerRadius < 0) this.barCornerRadius = 0;
+      if (this.barCornerRadius > 100) this.barCornerRadius = 100;
+    });
+  }
+
   sendPrompt() {
     if (this.userPrompt.trim()) {
       const obj = {

@@ -5186,7 +5186,11 @@
                                                     
                                                     <div *ngIf="bar || horizontalBar || treemap" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <label class="mb-0">Corner Radius</label>
-                                                        <input type="number" [(ngModel)]="barCornerRadius" min="0" step="1" class="form-control" style="width: 60px;">
+                                                        <input type="number"
+                                                               [(ngModel)]="barCornerRadius"
+                                                               min="0" max="100" step="1"
+                                                               (keydown)="validateBarCornerRadius($event)"
+                                                               class="form-control" style="width:60px;">
                                                     </div>
         
 
