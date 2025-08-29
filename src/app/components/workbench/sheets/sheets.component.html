@@ -3904,7 +3904,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable || radial)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -4045,7 +4045,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar || treemap || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar || treemap || pivotTable || radial)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -4188,7 +4188,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || pivotTable || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || pivotTable || radial || (table && draggedRows?.length === 0))" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -4585,7 +4585,7 @@
                                                         </div>
                                                     </div>
                                                   
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable || radial)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -4641,7 +4641,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar || treemap || pivotTable || radial)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -5050,7 +5050,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="(draggedColumns?.length !== 0 || draggedRows?.length !==0) && !(kpi || guage || calendar ||pivotTable || treemap || (!isApexCharts && funnel))" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="(draggedColumns?.length !== 0 || draggedRows?.length !==0) && !(kpi || guage || calendar || pivotTable || treemap || radial || (!isApexCharts && funnel))" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -5356,7 +5356,19 @@
                                                             <option value="value">Value</option>
                                                             <option value="both">Both</option>
                                                             </select>
-                                                        
+
+                                                    </div>
+                                                    <div *ngIf="radial" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2">
+                                                        <div>
+                                                            <label for="radialStartAngle">Start Angle:</label>
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialStartAngle" id="radialStartAngle"/>
+
+                                                            <label for="radialEndAngle">End Angle:</label>
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialEndAngle" id="radialEndAngle"/>
+
+                                                            <label for="maxValueRadial">Max Value:</label>
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="maxValueRadial" id="maxValueRadial"/>
+                                                        </div>
                                                     </div>
                                                     <!-- <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="sorting">Sort by: </label>
