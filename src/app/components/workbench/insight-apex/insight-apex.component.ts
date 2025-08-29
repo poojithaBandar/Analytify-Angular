@@ -1859,6 +1859,7 @@ xaxis: {
       series: series,
       chart: {
         type: 'radialBar',
+        height: 350,
         background: this.backgroundColor,
       },
       plotOptions: {
@@ -1871,14 +1872,13 @@ xaxis: {
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
       legend: {
         show: this.legendSwitch,
-        position: this.legendsAllignment
+        position: this.legendsAllignment,
+        floating: true,
+      fontSize: "12px",
+      offsetX: 10,
+      offsetY: 10,
       },
       colors: this.isDistributed ? this.selectedColorScheme : [this.color],
-      tooltip: {
-        y: {
-          formatter: (_: any, opts: any) => this.radialRawValues[opts.seriesIndex]
-        }
-      }
     };
   }
   heatMapChart(){

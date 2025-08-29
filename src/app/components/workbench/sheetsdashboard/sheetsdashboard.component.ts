@@ -4218,7 +4218,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       item1.chartOptions.series = this.filteredRowData[0].data;
         }
       }
-      if((item.chart_id == '20' && (isFilter || isDrillDown)) || (item1.chartId == '20' && isDrillThrough)){
+      if((item.chart_id == '20' || item.chartId == '18' && (isFilter || isDrillDown)) || (item1.chartId == '20' && isDrillThrough)){
         if(switchDb){
           item1.databaseId = item.databaseId;
         }
@@ -4232,19 +4232,8 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.labels = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
         const values = this.filteredRowData[0].data;
         const maxVal = item1.chartOptions?.plotOptions?.radialBar?.max;
-        const normalizedValues = values.map((v: any) => maxVal ? Math.round((v / maxVal) * 100) : 0);
+        const normalizedValues = values.map((v: any) => maxVal ? (v / maxVal) * 100 : 0);
         item1.chartOptions.series = normalizedValues;
-        if(item1.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
-          item1.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (_: any, opts: any) => values[opts.seriesIndex];
-        }
-        if(item1.chartOptions?.tooltip){
-          item1.chartOptions.tooltip = {
-            ...item1.chartOptions.tooltip,
-            y: {
-              formatter: (_: any, opts: any) => values[opts.seriesIndex]
-            }
-          };
-        }
       }
       if((item.chart_id == '18' || item.chartId == '18' && (isFilter || isDrillDown)) || (item1.chartId == '18' && isDrillThrough)){//treemap
         if(switchDb){

@@ -2307,8 +2307,10 @@ sheetSave(isDashboardTransfer?: boolean){
     kpiFontSize : this.kpiFontSize,
     minValueGuage : this.minValueGuage,
     gaugeDisplayMode: this.gaugeDisplayMode,
+    maxValueGuage : this.maxValueGuage,
     startAngle: this.radialStartAngle,
     endAngle: this.radialEndAngle,
+    maxValueRadial: this.maxValueRadial,
     donutDecimalPlaces : this.donutDecimalPlaces,
     decimalPlaces : this.decimalPlaces,
     legendsAllignment : this.legendsAllignment,
@@ -2721,6 +2723,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.funnel = false;
     this.guage = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
     this.itemsPerPage = this.sheetResponce?.results?.items_per_page;
     if (isDashboardTransfer) {
       let rowCountData: any;
@@ -2771,6 +2775,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.funnel = false;
     this.guage = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
     this.pivotTableDatatransform(false);
   }
   if(responce.chart_id == 25){
@@ -2817,6 +2823,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
   }
   if(responce.chart_id == 29){
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -2843,6 +2851,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = true;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
     this.chartType = 'map';
   }
  if(responce.chart_id == 6){
@@ -2871,6 +2881,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
   if(responce.chart_id == 14){
   // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -2898,6 +2910,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 24){
   this.chartType = 'pie';
@@ -2923,6 +2937,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.guage = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 13){
   this.chartType = 'line';
@@ -2948,6 +2964,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 17){
   this.chartType = 'area';
@@ -2973,6 +2991,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 7){
   this.chartType = 'sidebyside';
@@ -2997,6 +3017,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.funnel = false;
     this.guage = false;
     this.map = false;
+    this.treemap = false;
+    this.radial = false;
     this.calendar = false;
  }
  if(responce.chart_id == 5){
@@ -3023,6 +3045,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.guage = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 4){
   this.chartType = 'barline';
@@ -3047,6 +3071,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.funnel = false;
     this.map = false;
     this.guage = false;
+    this.treemap = false;
+    this.radial = false;
     this.calendar = false;
  }
  if(responce.chart_id == 12){
@@ -3073,6 +3099,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 2){
   this.chartType = 'hstocked';
@@ -3098,6 +3126,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.guage = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 3){
   this.chartType = 'hgrouped';
@@ -3123,6 +3153,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 8){
   this.chartType = 'multiline';
@@ -3148,6 +3180,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 10){
   this.chartType = 'donut';
@@ -3173,6 +3207,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 26){
   this.chartType = 'heatmap';
@@ -3197,6 +3233,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 18){
   this.chartType = 'treemap';
@@ -3222,6 +3260,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.calendar = false;
     this.treemap = true;
+    this.radial = false;
  }
  if(responce.chart_id == 27){
   this.chartType = 'funnel';
@@ -3246,6 +3285,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 28){
   this.customMinMaxGuage();
@@ -3271,6 +3312,8 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = true;
     this.map = false;
     this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
  }
  if(responce.chart_id == 11){
   this.chartType = 'calendar';
@@ -3295,6 +3338,34 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.guage = false;
     this.map = false;
     this.calendar = true;
+    this.treemap = false;
+    this.radial = false;
+ }
+ if(responce.chart_id == 20){
+  this.chartType = 'radial';
+  this.bar = false;
+  this.horizontalBar = false;
+  this.table = false;
+  this.pivotTable = false;
+    this.pie = false;
+    this.line = false;
+    this.area = false;
+    this.sidebyside = false;
+    this.stocked = false;
+    this.barLine = false;
+    this.horizentalStocked = false;
+    this.grouped = false;
+    this.multiLine = false;
+    this.donut = false;
+    this.radar = false;
+    this.kpi = false;
+    this.heatMap = false;
+    this.funnel = false;
+    this.guage = false;
+    this.map = false;
+    this.calendar = false;
+    this.radial = true;
+    this.treemap = false;
  }
  this.getDimensionAndMeasures();
  this.changeSelectedColumn();
