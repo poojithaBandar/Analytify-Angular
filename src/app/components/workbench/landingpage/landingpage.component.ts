@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-landingpage',
@@ -63,6 +64,8 @@ totalDashbaords:any;
 totalSheets:any;
 totalQueries:any;
 totalDatabases:any;
+private searchSubject = new Subject<string>();
+
 features = [
   {
     icon: 'bi-funnel-fill',
@@ -176,8 +179,17 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
   this.viewSheets = this.templateService.viewSheets();
   this.viewDashboardList = this.templateService.viewDashboard();
   this.viewCustomSql = this.templateService.viewCustomSql();
-}
 
+
+    this.searchSubject
+      .pipe(debounceTime(400)) // wait 400ms after typing stops
+      .subscribe((query) => {
+        this.totalSearch(query);
+      });
+}
+ onSearchChange(query: string) {
+    this.searchSubject.next(query);
+  }
 ngOnInit(){
   // const colors = this.normalizeColors(this.baseColors);
 
@@ -206,6 +218,10 @@ getChartMetrics(){
       this.barChartData = data.bar_chart
       this.heatmapData = data.tree_chart
       this.radiaBarData = data.radial_bar_chart
+      this.totalDatabases = data?.connection_count
+      this.totalSheets = data?.sheet_count
+      this.totalQueries = data?.query_count
+      this.totalDashbaords = data?.dashboard_count
       this.recentActivityData = data.activity_list.slice(0, 5)
       if(this.barChartData?.data){
           setTimeout(() => {
@@ -638,14 +654,15 @@ getHostAndPort(): void {
   this.port = port;
   console.log('port',this.port,'host',this.host)
 }
-totalSearch(){
+totalSearch(query?:string){
   this.getuserSheets();
   this.getuserDashboardsList();
   this.getSavedQueries();
+  this.getDbConnectionList();
 }
 getDbConnectionList(){
   const Obj ={
-    search : this.searchDbName
+    search : this.wholeSearch
   }
   if(Obj.search === '' || Obj.search === null){
     delete Obj.search;
@@ -654,7 +671,7 @@ getDbConnectionList(){
     next:(data)=>{
       this.connectionList = data.sheets
       console.log('jdhcvjsh',this.connectionList);
-      this.totalDatabases = data.connection_count
+      // this.totalDatabases = data.connection_count
      },
     error:(error)=>{
       console.log(error);
@@ -680,7 +697,7 @@ getuserSheets(){
       next:(data:any) =>{
         this.userSheetsList=data?.sheets
         console.log(this.userSheetsList)
-        this.totalSheets = data.total_items;
+        // this.totalSheets = data.total_items;
       },
       error:(error:any)=>{
       console.log(error);
@@ -708,7 +725,7 @@ getuserDashboardsList(){
         this.savedDashboardList=data.sheets;
         this.demoDashboardList = data.sample_dashboards;
         console.log(this.savedDashboardList)
-        this.totalDashbaords = data.total_items;
+        // this.totalDashbaords = data.total_items;
       },
       error:(error:any)=>{
       console.log(error);
@@ -734,7 +751,7 @@ getSavedQueries(){
     next:(data)=>{
       console.log(data);
       this.savedQueryList = data?.sheets;
-      this.totalQueries = data.total_items;
+      // this.totalQueries = data.total_items;
      },
     error:(error)=>{
       console.log(error);
