@@ -3657,6 +3657,122 @@ goBackToCategories(){
   this.showIntegrations = false;
   this.viewNewDbs = true;
   this.selectedCategory = null;
+}
 
+selectedConnection: string | null = null;
+
+selectConnection(connName: string) {
+  this.selectedConnection = connName;
+  console.log('selected sub category:', this.selectedConnection);
+}
+model = {
+    name: '',
+    host: '',
+    port: '',
+    username: '',
+    password: ''
+  };
+  existingConnections = [  {
+    id: 1,
+    name: "mysql",
+    displayName: "MySql Production",
+    type: "mysql",
+    status: "Connected",
+    lastUpdated: "2 minutes ago",
+    description: "Main production database",
+    host: "prod-db.company.com",
+    size: "2.4 GB",
+    icon: "🐬"
+  },
+  {
+    id: 2,
+    name: "MySQL",
+    displayName: "MySQL Analytics",
+    type: "MySQL",
+    status: "Connected",
+    lastUpdated: "10 minutes ago",
+    description: "Analytics DB for reports",
+    host: "analytics.company.com",
+    size: "850 MB",
+    icon: "🐬"
+  },]as any;
+   saveConnection() {
+    console.log('Saving connection:', this.model);
+    alert('Connection saved!');
+  }
+
+  goBackToSubCategories(){
+  this.showRelational = false;
+  this.showLLM = false;
+  this.showMultiDim = false;
+  this.showNoSQL = false;
+  this.showFiles = false;
+  this.showIntegrations = false;
+  this.viewNewDbs = false;
+  this.selectedConnection = null;
+//old
+  this.postGreServerName = '';
+  this.schemaList = [];
+  this.selectedSchema = 'public';
+  this.postGrePortName = '';
+  this.postGreDatabaseName = '';
+  this.postGreUserName = '';
+  this.PostGrePassword = '';
+  this.OracleServiceName = '';
+  this.displayName ='';
+  this.fileData = '';
+  this.privateKey = '';
+  this.publicKey = '';
+  this.siteURL = '';
+  this.companyId = '';
+  this.siteURLPSA = '';
+  this.tallyToken = '';
+  this.tallyTokenError = false;
+  this.openAiKey = '';
+  this.openAiKeyError = false;
+  this.deepSeekKey = '';
+  this.deepSeekKeyError = false;
+  this.ninjaRMMClientid = '';
+  this.ninjaRMMClientSecret = '';
+  this.selectedNinjaRMMScopes = [];
+  this.hubspotClientId = '';
+  this.hubspotClientSecret = '';
+  this.selectedHubspotScopes = [];
+  this.hubspotRedirectURL = '';
+  this.hubspotRedirectURLError = false;
+//
+     switch (this.selectedCategory) {
+          case 'Relational Database':
+            this.showRelational = true;
+            break;
+          case 'LLM Integrations':
+            this.showLLM = true;
+            break;
+          case 'Multi-dimensional Database':
+            this.showMultiDim = true;
+            break;
+          case 'NoSQL Database':
+            this.showNoSQL = true;
+            break;
+          case 'Files Source':
+            this.showFiles = true;
+            break;
+          case 'Integrations':
+            this.showIntegrations = true;
+            break;
+  }
+  }
+  getConnectionAsset(connName: string) {
+  // Find the connection object from connectionTypes
+  for (const category in this.connectionTypes) {
+    const found = this.connectionTypes[category].find(c => c.name === connName);
+    if (found) {
+      if (found.icon) return { type: 'icon', value: found.icon };
+      if (found.image) return { type: 'image', value: found.image };
+      if (found.svg) return { type: 'svg', value: this.sanitizer.bypassSecurityTrustHtml(found.svg) };
+    }
+  }
+  // fallback
+  return { type: 'icon', value: '🔗' }; 
 }
 }

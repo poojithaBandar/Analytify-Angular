@@ -264,9 +264,9 @@ span { font-size: 11px;}
 //   transition: border-color 0.2s ease, transform 0.2s ease;
 
     background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(var(--bs-primary-rgb, 13, 110, 253), 0.4); /* lighter primary */
+  border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4); /* lighter primary */
   border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15); /* soft primary shadow */
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb, 13, 110, 253), 0.15); /* soft primary shadow */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -276,12 +276,35 @@ span { font-size: 11px;}
  transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(var(--bs-primary-rgb, 13, 110, 253), 0.25); /* slightly stronger on hover */
 }
+.form-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4); /* lighter primary */
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb, 13, 110, 253), 0.15); /* soft primary shadow */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
+.form-card:hover {
+//  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(var(--primary-rgb, 13, 110, 253), 0.25); /* slightly stronger on hover */
+}
+.form-card-height{
+min-height: 475px;
+max-height: 475px;
+overflow: auto;
+}
+.form-height{
+min-height: 415px;
+max-height: 415px;
+overflow: auto;
+}
 /* Input with glass effect */
 .glass-light {
-  background: 0 4px 12px rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15);
-  border: 1px solid rgba(var(--bs-primary-rgb, 13, 110, 253), 0.4);
-  border-radius: 0.5rem;
+  background: 0 4px 12px rgba(var(--primary-rgb, 13, 110, 253), 0.15)!important;
+  border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4) !important;
+  border-radius: 0.5rem !important;
 }
 
 .glass-light:focus {
@@ -314,12 +337,12 @@ span { font-size: 11px;}
 }
 /* Light outline buttons */
 .btn-outline-primary-light {
-  border: 1px solid rgba(var(--bs-primary-rgb, 13, 110, 253), 0.4);
+  border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4);
   color: var(--bs-primary);
-  background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.05);
+  background: rgba(var(--primary-rgb, 13, 110, 253), 0.05);
 }
 .btn-outline-primary-light:hover {
-  background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15);
+  background: rgba(var(--primary-rgb, 13, 110, 253), 0.15);
 }
 
 .btn-outline-danger-light {
@@ -428,4 +451,49 @@ h2.fw-500 {
 }
 .hoverable:hover .arrow-icon {
   transform: scale(1.5) translateX(5px); /* slides slightly to the right */
+}
+.form-control.forms-light {
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 10px 14px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+  background: #f9fafb;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-control.forms-light:focus {
+//   border-color: #3b82f6;
+//   background: #fff;
+//   box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+ border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+}
+
+.form-label {
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Chrome, Edge, Safari */
+.form-height::-webkit-scrollbar {
+  width: 6px;            /* thin scrollbar */
+}
+
+.form-height::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.form-height::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);  /* light thumb */
+  border-radius: 4px;
+}
+
+.form-height::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.4);
+}
+
+/* Firefox */
+.form-height {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.3) transparent;
 }
