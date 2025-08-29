@@ -80,6 +80,9 @@ export class InsightApexComponent {
   @Input() measureColorRanges: any;
   @Input() isMeasureDistribution: any;
   @Input() valueToDivide : any;
+  @Input() maxValueRadial: any;
+  @Input() startAngle: any;
+  @Input() endAngle: any;
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   
@@ -99,11 +102,13 @@ export class InsightApexComponent {
   @ViewChild('guageChart') guageCharts!: ChartComponent;
   @ViewChild('heatmapchart') heatmapCharts!: ChartComponent;
   @ViewChild('treemapchart') treemapCharts!: ChartComponent;
+  @ViewChild('radialchart') radialCharts!: ChartComponent;
 
   series: any[] = [];
   chartOptions: any = {};
   formattedData : any[] = [];
   guageNumber : any;
+  radialRawValues: any[] = [];
 
   ngOnInit(){
     // this.generateChart();
@@ -184,7 +189,7 @@ export class InsightApexComponent {
     if(changes['yGridSwitch']){
       this.yGridShowOrHide();
     }
-    if(['donut','pie'].includes(this.chartType) && changes['legendSwitch']){
+    if(['donut','pie','radial'].includes(this.chartType) && changes['legendSwitch']){
       this.legendsShowOrHide();
     }
     if(['donut','pie','treemap'].includes(this.chartType) && changes['dataLabels']){
@@ -193,10 +198,10 @@ export class InsightApexComponent {
     if(this.chartType == 'donut' && changes['label']){
       this.labelsShowOrHide();
     }
-    if(['bar','funnel','horizontalBar'].includes(this.chartType) && changes['isDistributed']){
+    if(['bar','funnel','horizontalBar','radial'].includes(this.chartType) && changes['isDistributed']){
       this.colorDistribution();
     }
-    if(['donut','pie'].includes(this.chartType) && changes['legendsAllignment']){
+    if(['donut','pie','radial'].includes(this.chartType) && changes['legendsAllignment']){
       this.legendPositionChange();
     }
     if(this.chartType == 'donut' && changes['donutSize']){
@@ -210,6 +215,12 @@ export class InsightApexComponent {
     }
     if(changes['gridColor']){
       this.gridLineColor();
+    }
+    if(this.chartType === 'radial' && (changes['startAngle'] || changes['endAngle'])){
+      this.updateRadialAngles();
+    }
+    if(this.chartType === 'radial' && changes['maxValueRadial']){
+      this.updateSeries();
     }
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
@@ -301,10 +312,23 @@ export class InsightApexComponent {
     } else if (this.chartType === 'donut') {
       this.chartOptions.series = this.chartsRowData;
       this.donutCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'radial') {
+      const max = this.maxValueRadial || Math.max(...this.chartsRowData);
+      this.radialRawValues = [...this.chartsRowData];
+      this.chartOptions.series = this.chartsRowData.map((v: any) => max ? (v / max) * 100 : 0);
+      this.chartOptions.plotOptions = this.chartOptions.plotOptions || {};
+      this.chartOptions.plotOptions.radialBar = this.chartOptions.plotOptions.radialBar || {};
+      this.chartOptions.plotOptions.radialBar.max = max;
+      this.chartOptions.tooltip = {
+        y: {
+          formatter: (_: any, opts: any) => this.radialRawValues[opts.seriesIndex]
+        }
+      };
+      this.radialCharts?.updateOptions({ series: this.chartOptions.series, tooltip: this.chartOptions.tooltip, plotOptions: this.chartOptions.plotOptions });
     } else if (this.chartType === 'funnel') {
       this.chartOptions.series = this.dualAxisRowData;
       this.funnelCharts?.updateOptions({ series: this.chartOptions.series });
-    } 
+    }
     else if (this.chartType === 'heatmap') {
       this.chartOptions.series = this.dualAxisRowData;
       this.heatmapCharts?.updateOptions({ series: this.chartOptions.series });
@@ -351,6 +375,9 @@ export class InsightApexComponent {
     } else if(this.donutCharts){
       this.chartOptions.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
       this.donutCharts.updateOptions({ labels: this.chartOptions.labels });
+    } else if(this.radialCharts){
+      this.chartOptions.labels = this.chartsColumnData.map((category: any) => category === null ? 'null' : category);
+      this.radialCharts.updateOptions({ labels: this.chartOptions.labels });
     } else if(this.funnelCharts){
       this.chartOptions.xaxis.categories = categories;
       this.funnelCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
@@ -393,6 +420,8 @@ export class InsightApexComponent {
       this.funnelCharts.destroy();
     } else if(this.guageCharts){
       this.guageCharts.destroy();
+    } else if(this.radialCharts){
+      this.radialCharts.destroy();
     } else if(this.heatmapCharts){
       this.heatmapCharts.destroy();
     }
@@ -423,6 +452,8 @@ export class InsightApexComponent {
       this.multiLineChart();
     } else if(this.chartType === 'donut'){
       this.donutChart();
+    } else if(this.chartType === 'radial'){
+      this.radialChart();
     } else if(this.chartType === 'heatmap'){
       this.heatMapChart();
     } else if(this.chartType === 'funnel'){
@@ -446,7 +477,7 @@ export class InsightApexComponent {
     });
   }
   validateSeriesData(series: any[]): boolean {
-    if(['pie', 'donut', 'guage'].includes(this.chartType)) {
+    if(['pie', 'donut', 'guage', 'radial'].includes(this.chartType)) {
       return series?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null);
     } else if(['treemap'].includes(this.chartType)){
       return series?.every((set) =>
@@ -1820,6 +1851,36 @@ xaxis: {
       },
     };
   }
+  radialChart(){
+    const max = this.maxValueRadial || Math.max(...this.chartsRowData);
+    this.radialRawValues = [...this.chartsRowData];
+    const series = this.chartsRowData.map((v: any) => max ? (v / max) * 100 : 0);
+    this.chartOptions = {
+      series: series,
+      chart: {
+        type: 'radialBar',
+        height: 350,
+        background: this.backgroundColor,
+      },
+      plotOptions: {
+        radialBar: {
+          startAngle: this.startAngle,
+          endAngle: this.endAngle,
+          max: max,
+        }
+      },
+      labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
+      legend: {
+        show: this.legendSwitch,
+        position: this.legendsAllignment,
+        floating: true,
+      fontSize: "12px",
+      offsetX: 10,
+      offsetY: 10,
+      },
+      colors: this.isDistributed ? this.selectedColorScheme : [this.color],
+    };
+  }
   heatMapChart(){
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
@@ -2975,6 +3036,9 @@ xaxis: {
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
     }
+    else if (this.radialCharts) {
+      this.radialCharts.updateOptions(object);
+    }
     else if (this.treemapCharts) {
       this.treemapCharts.updateOptions(object);
     }
@@ -3019,6 +3083,18 @@ xaxis: {
       this.chartOptions.plotOptions.treemap.distributed = this.isDistributed;
       let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
       this.treemapCharts?.updateOptions(object);
+    } else if(this.chartType === 'radial'){
+      this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
+      let object = { colors: this.chartOptions.colors };
+      this.radialCharts?.updateOptions(object);
+    }
+  }
+  updateRadialAngles(){
+    if(this.chartOptions?.plotOptions?.radialBar){
+      this.chartOptions.plotOptions.radialBar.startAngle = this.startAngle;
+      this.chartOptions.plotOptions.radialBar.endAngle = this.endAngle;
+      const object = { plotOptions: this.chartOptions.plotOptions };
+      this.radialCharts?.updateOptions(object);
     }
   }
   legendPositionChange(){
@@ -3031,6 +3107,9 @@ xaxis: {
     }
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
+    }
+    else if (this.radialCharts) {
+      this.radialCharts.updateOptions(object);
     }
     else if (this.treemapCharts) {
       this.treemapCharts.updateOptions(object);
@@ -3086,6 +3165,9 @@ xaxis: {
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
     }
+    else if (this.radialCharts) {
+      this.radialCharts.updateOptions(object);
+    }
     else if (this.guageCharts) {
       this.guageCharts.updateOptions(object);
     }
@@ -3104,7 +3186,7 @@ xaxis: {
       }
       object = { series: this.chartOptions.series };
     }
-    else if(['bar','funnel','horizontalBar','treemap'].includes(this.chartType)){
+    else if(['bar','funnel','horizontalBar','treemap','radial'].includes(this.chartType)){
       if(this.chartOptions?.colors){
         this.chartOptions.colors = this.isDistributed ? this.selectedColorScheme : [this.color];
       }
@@ -3174,6 +3256,9 @@ xaxis: {
     }
     else if(this.chartType === 'treemap'){
       this.treemapCharts?.updateOptions(object);
+    }
+    else if(this.chartType === 'radial'){
+      this.radialCharts?.updateOptions(object);
     }
   }
   gridLineColor(){
