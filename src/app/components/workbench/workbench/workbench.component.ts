@@ -2769,11 +2769,12 @@ connectGoogleSheets(){
     //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
     // }
     this.loaderService.hide();
-    if (this.viewDatasourceList) {
-      if (this.databaseconnectionsList) {
-        this.getDbConnectionList();
-      }
-    }
+    // if (this.viewDatasourceList) {
+    //   if (this.databaseconnectionsList) {
+    //     this.getDbConnectionList();
+    //   }
+    // }
+    this.getDbConnectionList();
     this.errorCheck();
   }
 
@@ -3403,7 +3404,39 @@ connectGoogleSheets(){
     excel: {type: 'emoji', value: '📊'},
     google_analytics: {type: 'emoji', value: '📈'},
     halops: {type: 'emoji', value: '🛡️'},
+    pax8: {type: 'emoji', value: '🌍'},
+    connectwise: {type: 'emoji', value: '🔧'},
+    shopify: {type: 'emoji', value: '🛍️'},
+    open_ai: {type: 'emoji', value: '🤖'},
+    immybot: {type: 'svg', value: `<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot icon" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient for bot body -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5fd4ff"/>
+      <stop offset="1" stop-color="#7b6cff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Bot head -->
+  <rect x="3" y="5" width="18" height="15" rx="7" fill="url(#g)"/>
+  <!-- Antenna nub -->
+  <rect x="16.6" y="3" width="2.8" height="4" rx="1.4" fill="url(#g)"/>
+
+  <!-- Visor -->
+  <rect x="6.8" y="9" width="10.4" height="7" rx="3.5" fill="#0b0b0e" opacity="0.9"/>
+
+  <!-- Eyes -->
+  <circle cx="10" cy="12.5" r="0.9" fill="#ffffff"/>
+  <circle cx="14" cy="12.5" r="0.9" fill="#ffffff"/>
+
+  <!-- Smile -->
+  <path d="M10.1 14.3c.5.5 1.2.8 1.9.8s1.4-.3 1.9-.8" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
+</svg>`},
   };
+  existingConnections: any = [];
+  getSpecificConnections(){
+    this.existingConnections = this.connectionList.filter((connection:any) => connection.database_type === (this.selectedConnection?.toLocaleLowerCase() || ''));
+  }
   connections = [
     {
       id: 1,
@@ -3679,6 +3712,7 @@ selectedConnection: string | null = null;
 
 selectConnection(connName: string) {
   this.selectedConnection = connName;
+  this.getSpecificConnections();
   console.log('selected sub category:', this.selectedConnection);
 }
 model = {
@@ -3688,30 +3722,30 @@ model = {
     username: '',
     password: ''
   };
-  existingConnections = [  {
-    id: 1,
-    name: "mysql",
-    displayName: "MySql Production",
-    type: "mysql",
-    status: "Connected",
-    lastUpdated: "2 minutes ago",
-    description: "Main production database",
-    host: "prod-db.company.com",
-    size: "2.4 GB",
-    icon: "🐬"
-  },
-  {
-    id: 2,
-    name: "MySQL",
-    displayName: "MySQL Analytics",
-    type: "MySQL",
-    status: "Connected",
-    lastUpdated: "10 minutes ago",
-    description: "Analytics DB for reports",
-    host: "analytics.company.com",
-    size: "850 MB",
-    icon: "🐬"
-  },]as any;
+  // existingConnections = [  {
+  //   id: 1,
+  //   name: "mysql",
+  //   displayName: "MySql Production",
+  //   type: "mysql",
+  //   status: "Connected",
+  //   lastUpdated: "2 minutes ago",
+  //   description: "Main production database",
+  //   host: "prod-db.company.com",
+  //   size: "2.4 GB",
+  //   icon: "🐬"
+  // },
+  // {
+  //   id: 2,
+  //   name: "MySQL",
+  //   displayName: "MySQL Analytics",
+  //   type: "MySQL",
+  //   status: "Connected",
+  //   lastUpdated: "10 minutes ago",
+  //   description: "Analytics DB for reports",
+  //   host: "analytics.company.com",
+  //   size: "850 MB",
+  //   icon: "🐬"
+  // },]as any;
    saveConnection() {
     console.log('Saving connection:', this.model);
     alert('Connection saved!');

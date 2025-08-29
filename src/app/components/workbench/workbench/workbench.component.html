@@ -846,19 +846,30 @@
                       <div class="d-flex align-items-start justify-content-between mb-3">
                         <div class="d-flex align-items-center">
                           <!-- <div class="fs-2 me-3 icon-bounce">{{ connectionListIcons[connection.database_type] }}</div> -->
-                          <div class="fs-2 me-3 icon-bounce">
+                          <div class="fs-3 me-3 icon-bounce">
                             <!-- Emoji -->
-                            <span *ngIf="connectionListIcons[connection.database_type]?.type === 'emoji'">
+                             @if(connectionListIcons[connection.database_type]?.type === 'emoji'){
                               {{ connectionListIcons[connection.database_type]?.value }}
-                            </span>
+                             }
+
+                             @if(connectionListIcons[connection.database_type]?.type === 'fa'){
+                              <i [ngClass]="connectionListIcons[connection.database_type]?.value"></i>
+                             }
+
+                             @if(connectionListIcons[connection.database_type]?.type === 'svg'){
+                              <div [innerHTML]="getSafeSvg(connectionListIcons[connection.database_type]?.value)"></div>
+                             }
+                            <!-- <span *ngIf="connectionListIcons[connection.database_type]?.type === 'emoji'">
+                              {{ connectionListIcons[connection.database_type]?.value }}
+                            </span> -->
                           
                             <!-- FontAwesome -->
-                            <i *ngIf="connectionListIcons[connection.database_type]?.type === 'fa'"
-                              [ngClass]="connectionListIcons[connection.database_type]?.value"></i>
+                            <!-- <i *ngIf="connectionListIcons[connection.database_type]?.type === 'fa'"
+                              [ngClass]="connectionListIcons[connection.database_type]?.value"></i> -->
                           
                             <!-- SVG -->
-                            <img *ngIf="connectionListIcons[connection.database_type]?.type === 'svg'"
-                              [src]="connectionListIcons[connection.database_type]?.value" alt="icon" width="24" height="24" />
+                            <!-- <img *ngIf="connectionListIcons[connection.database_type]?.type === 'svg'"
+                              [src]="connectionListIcons[connection.database_type]?.value" alt="icon" width="24" height="24" /> -->
                           </div>
                           <div>
                             <h5 class="fw-semibold mb-1" style="cursor: pointer;" ngbTooltip="{{connection.display_name}}" triggers="hover"
@@ -3125,7 +3136,7 @@
   <div class="col-md-6">
     <div class="form-card form-card-height p-3">
       <h5>Existing Connections
-              <span class="badge bg-primary">2 connected</span>
+              <span class="badge bg-primary"> {{ existingConnections.length }} connected </span>
       </h5>
            <div *ngIf="existingConnections.length > 0; else noConnections">
         <div *ngFor="let conn of existingConnections" 
@@ -3134,42 +3145,75 @@
           <div class="d-flex justify-content-between align-items-start">
             <!-- Icon + Name -->
             <div class="d-flex align-items-center">
-              <ng-container *ngIf="getConnectionAsset(conn.name) as asset">
+              <!-- <ng-container *ngIf="getConnectionAsset(conn.name) as asset">
                 <span *ngIf="asset.type === 'icon'" class="fs-3 me-2">{{ asset.value }}</span>
                 <img *ngIf="asset.type === 'image'" [src]="asset.value" class="me-2" width="32" height="32">
                 <span *ngIf="asset.type === 'svg'" class="me-2" [innerHTML]="asset.value"></span>
-              </ng-container>
+              </ng-container> -->
+              <div class="fs-3 me-3">
+                @if(connectionListIcons[conn.database_type]?.type === 'emoji'){
+                {{ connectionListIcons[conn.database_type]?.value }}
+                }
+              
+                @if(connectionListIcons[conn.database_type]?.type === 'fa'){
+                <i [ngClass]="connectionListIcons[conn.database_type]?.value"></i>
+                }
+              
+                @if(connectionListIcons[conn.database_type]?.type === 'svg'){
+                <div [innerHTML]="getSafeSvg(connectionListIcons[conn.database_type]?.value)"></div>
+                }
+              </div>
               <div>
-                <h6 class="mb-0">{{ conn.displayName }}</h6>
-                <small class="text-muted">{{ conn.type }}</small>
+                <h6 class="mb-0">{{ conn.display_name }}</h6>
+                <small class="text-muted">{{ conn.database_type }}</small>
               </div>
             </div>
-            <i class="bi bi-gear text-muted"></i>
+            <!-- <i class="bi bi-gear text-muted"></i> -->
           </div>
 
           <!-- Status + Last updated -->
           <div class="d-flex justify-content-between align-items-center mt-2">
-            <span class="badge bg-success">{{ conn.status }}</span>
+            <!-- <span class="badge bg-success">{{ conn.status }}</span>
             <small class="text-muted">
               <i class="bi bi-clock me-1"></i>{{ conn.lastUpdated }}
-            </small>
+            </small> -->
+            <div class="mb-3 d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-graph-up me-1"></i>
+                <span class="small text-muted me-2">Connection Health</span>
+            
+                <!-- Small + Narrow progress bar inline -->
+                <div class="progress" style="height: 4px; width: 100px;">
+                  <div class="progress-bar bg-success" role="progressbar" [style.width.%]="91" [attr.aria-valuenow]="91"
+                    aria-valuemin="0" aria-valuemax="100">
+                  </div>
+                </div>
+                <span class="small fw-semibold ms-2">91%</span>
+            
+              </div>
+            
+              <!-- Percentage aligned right -->
+            </div>
           </div>
 
           <!-- Description + Details -->
-          <p class="mt-2 mb-1 small text-muted">{{ conn.description }}</p>
+          <p class="mt-2 mb-1 small text-muted">{{ conn?.description }}</p>
           <div class="d-flex justify-content-between small">
-            <div><strong>Host:</strong> {{ conn.host }}</div>
-            <div><strong>Size:</strong> {{ conn.size }}</div>
+            <div><strong>Created By:</strong> {{ conn.created_by }}</div>
+            <div><strong>Last Modified:</strong> {{ conn.updated_at | date: 'mediumDate' }}</div>
           </div>
 
           <!-- Actions -->
           <div class="d-flex justify-content-between mt-3 gap-2">
-            <button class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill">
-                <i class="bi bi-pencil me-1"></i> Edit
-              </button>
-              <button class="btn btn-outline-danger-light rounded-2 btn-sm flex-fill">
-                <i class="bi bi-trash me-1"></i> Delete
-              </button>
+            <button [disabled]="(conn.server_type === 'CSV' || conn.server_type ==='EXCEL' || conn.server_type ==='SQLITE' || conn.server_type ==='QUICKBOOKS' || conn.server_type ==='SALESFORCE' || conn.server_type ==='GOOGLE_SHEETS' ||conn.server_type ==='HUBSPOT')"
+              class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill"
+              (click)="editDbDetails(conn.hierarchy_id);editDbConnectionModal(EditDbCon);">
+              <i class="bi bi-pencil me-1"></i> Edit
+            </button>
+            <button class="btn btn-outline-danger-light rounded-2 btn-sm flex-fill"
+              (click)="deleteDbConnection(conn.is_cross_db ? conn?.cross_db_id : conn.hierarchy_id)">
+              <i class="bi bi-trash me-1"></i> Delete
+            </button>
           </div>
         </div>
       </div>
