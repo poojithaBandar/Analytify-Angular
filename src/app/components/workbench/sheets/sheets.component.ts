@@ -854,7 +854,7 @@ try {
               this.calendar = false;
               this.map=false;
               // this.tableDisplayPagination();
-            } else if(((this.pie || this.bar || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
+            } else if(((this.pie || this.bar || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar || this.radial || this.treemap) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
               this.pivotTable = false;
               this.bar = false;
@@ -2144,6 +2144,8 @@ try {
       this.kpi = false;
       this.map = false;
       this.heatMap = false;
+      this.radial = false;
+      this.treemap = false;
       this.funnel = false;
       this.calendar = false;
       this.guage = false;
