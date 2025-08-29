@@ -2,16 +2,11 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, input, Input, O
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
-import { NgxEchartsDirective } from 'ngx-echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SharedModule } from '../../../shared/sharedmodule';
 import _, { inRange } from 'lodash';
-import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
-import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { lastValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
-import { bottom } from '@popperjs/core';
 
 interface Dimension {
   name: string;
@@ -1719,9 +1714,10 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
     },
     series: [{
       type: 'treemap',
-      roam :  this.isZoom,
+      roam: this.isZoom ? true : false,
+      nodeClick: this.isZoom ? 'zoomToNode' : false,
       breadcrumb: {
-        show: false 
+        show: this.isZoom
       },
       itemStyle: {
         borderRadius: this.barCornerRadius
