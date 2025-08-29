@@ -3104,6 +3104,9 @@ xaxis: {
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
     }
+    else if (this.radialCharts) {
+      this.radialCharts.updateOptions(object);
+    }
     else if (this.treemapCharts) {
       this.treemapCharts.updateOptions(object);
     }
