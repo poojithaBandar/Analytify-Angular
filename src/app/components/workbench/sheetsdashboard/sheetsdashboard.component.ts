@@ -1082,7 +1082,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       sheet.chartOptions.chart.events = {
         markerClick: (event: any, chartContext: any, config: any) => {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 18){
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 ){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -1093,7 +1093,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         },
         dataPointSelection: function (event: any, chartContext: any, config: any) {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 18){
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];

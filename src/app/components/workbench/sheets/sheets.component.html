@@ -2448,7 +2448,7 @@
                             
                         </div>
                     </div>
-                    <div  [ngStyle]="{'display': ((bar || horizontalBar || pie || donut || treemap || map) && draggedColumns && draggedColumns?.length > 0 ? '' : 'none')}" class="row align-items-center">
+                    <div  [ngStyle]="{'display': ((bar || horizontalBar || pie || donut  || map) && draggedColumns && draggedColumns?.length > 0 ? '' : 'none')}" class="row align-items-center">
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                                                    <div class="card-area d-flex gap-2">
                                                        <label for="inputName" class="form-control mb-0 border">Hierarchy</label>
@@ -3567,7 +3567,7 @@
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
-                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Treemap" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18)"><img src="./assets/images/charts/heatmap-new.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': treemap}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Treemap" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18)"><img src="./assets/images/charts/treemap.svg" class="rounded-2 w-90 mrk-t border p-2 chart-icon" [ngClass]="{'active': treemap}"></a>
                                                         </div>
                                                         <div class="card-title fs-12 mt-2 mb-1 border bg-light p-1 ">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
@@ -4573,7 +4573,7 @@
                                                         </div>
                                                     </div>
                                                     
-                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || treemap || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                    <div *ngIf="!isApexCharts && isEChatrts && !(pie || donut || funnel || calendar || radar || kpi || table || pivotTable)" class="d-flex align-items-center justify-content-between  mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0">Zoom </label>
                                                         </div>
@@ -4913,7 +4913,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="funnel || bar || horizontalBar" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                                                                <div *ngIf="funnel || bar || horizontalBar || treemap" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                                                                     <label>Distribution</label>
                                                                     <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed'); (isMeasureDistribution = false)">
                                                                         <span></span>
@@ -4933,7 +4933,7 @@
                                                                     <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'">
                                                                     </ngx-colors>
                                                                 </div> -->
-                                                                <div *ngIf="(pie && !isMeasureDistribution) || (donut && !isMeasureDistribution) || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || ((funnel || bar || horizontalBar) && isDistributed || (radar && isRadarDistribution ))" class="p-2">
+                                                                <div *ngIf="(pie && !isMeasureDistribution) || (donut && !isMeasureDistribution) || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || ((funnel || bar || horizontalBar || treemap) && isDistributed || (radar && isRadarDistribution ))" class="p-2">
                                                                     <div class="d-flex justify-content-between p-1 border rounded-3">
                                                                         <div class="colors-card">
                                                                             <ul class="d-flex flex-wrap">
@@ -5018,7 +5018,7 @@
 
 
 
-                                                                  <div *ngIf="pie || donut || treemap || ((bar || horizontalBar || funnel) && !isDistributed)" class="d-flex flex-column gap-2 mt-2">
+                                                                  <div *ngIf="pie || donut || ((bar || horizontalBar || funnel || treemap) && !isDistributed)" class="d-flex flex-column gap-2 mt-2">
                                                                 <div class="d-flex align-items-center justify-content-between">
                                                                     <label class="mb-0">Measure Distribution</label>
                                                                     <div *ngIf="isMeasureDistribution" class="toggle toggle-sm on mb-0" (click)="isMeasureDistribution = !isMeasureDistribution; (isDistributed = isMeasureDistribution ? false : true); updateMeasureColorRanges()">
@@ -5182,7 +5182,7 @@
 
                                                     
                                                     <div *ngIf="bar || horizontalBar || treemap" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <label class="mb-0">Bar Corner Radius (px)</label>
+                                                        <label class="mb-0">Corner Radius</label>
                                                         <input type="number"
                                                                [(ngModel)]="barCornerRadius"
                                                                min="0" max="100" step="1"

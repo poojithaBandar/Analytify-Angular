@@ -5,10 +5,6 @@ import { ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SharedModule } from '../../../shared/sharedmodule';
 import _ from 'lodash';
-import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
-import { offset } from '@popperjs/core';
-import { text } from 'd3';
-import { CommonModule } from '@angular/common';
 
 interface Dimension {
   name: string;
@@ -18,7 +14,7 @@ interface Dimension {
 @Component({
   selector: 'app-insight-apex',
   standalone: true,
-  imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,CommonModule,
+  imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,
     NgApexchartsModule
     ],
   templateUrl: './insight-apex.component.html',
@@ -1946,7 +1942,12 @@ xaxis: {
       },
       tooltip: {
         y: {
-          formatter: (val: any) => this.formatNumber(val)
+          formatter: function (val: any, opts: any) {
+            const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+            const label = dataPoint.x;
+            const value = dataPoint.y;
+            return `${label}: ${self.formatNumber(value)}`;
+          }.bind(this)
         }
       },
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme
@@ -3458,7 +3459,13 @@ xaxis: {
           const values = data.map((item: any) => item.y); // extract y values
           this.chartOptions.colors = this.setColorsOnRanges(values); // get colors based on values
         }
-        const object = { colors: this.chartOptions.colors };
+        this.chartOptions.plotOptions = {
+          ...this.chartOptions.plotOptions,
+          treemap: {
+            distributed: true
+          }
+        };
+        const object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
         this.treemapCharts?.updateOptions(object);
       }
     }
