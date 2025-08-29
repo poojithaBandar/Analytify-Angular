@@ -297,6 +297,9 @@ export class SheetsComponent{
   guageNumber:any;
   eFunnelChartOptions: any;
   valueToDivide:any;
+  radialStartAngle: number = 0;
+  radialEndAngle: number = 360;
+  maxValueRadial: number = 100;
 
   barColor : any = '#4382f7';
   lineColor : any = '#38ff98';
@@ -1616,6 +1619,7 @@ try {
   grouped = false;
   multiLine = false;
   donut = false;
+  radial = false;
   kpi = false;
   heatMap = false;
   funnel = false;
@@ -1644,6 +1648,7 @@ try {
     this.heatMap = heatMap;
     this.funnel = funnel;
     this.guage = guage;
+    this.radial = (chartId === 20);
     this.treemap = (chartId === 18);
     this.map = map;
     this.calendar = calendar;
@@ -2303,6 +2308,9 @@ sheetSave(isDashboardTransfer?: boolean){
     minValueGuage : this.minValueGuage,
     gaugeDisplayMode: this.gaugeDisplayMode,
     maxValueGuage : this.maxValueGuage,
+    startAngle: this.radialStartAngle,
+    endAngle: this.radialEndAngle,
+    maxValueRadial: this.maxValueRadial,
     donutDecimalPlaces : this.donutDecimalPlaces,
     decimalPlaces : this.decimalPlaces,
     legendsAllignment : this.legendsAllignment,
@@ -4262,6 +4270,10 @@ routeConfigure(){
     // Heat Map
     this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,26);
 
+  } else if (chartType.includes("radial")) {
+    // Radial
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,20);
+
   } else if (chartType.includes("funnel")) {
     // Funnel
     this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,27);
@@ -4379,6 +4391,9 @@ customizechangeChartPlugin() {
     this.minValueGuage = data.minValueGuage ?? 0;
     this.gaugeDisplayMode = data.gaugeDisplayMode ?? 'both';
     this.maxValueGuage = data.maxValueGuage ?? 100;
+    this.radialStartAngle = data.startAngle ?? 0;
+    this.radialEndAngle = data.endAngle ?? 360;
+    this.maxValueRadial = data.maxValueRadial ?? 100;
     this.donutDecimalPlaces = data.donutDecimalPlaces ?? 2;
     this.decimalPlaces = data.decimalPlaces ?? 2;
     this.legendsAllignment = data.legendsAllignment ?? 'bottom';
@@ -4505,6 +4520,9 @@ customizechangeChartPlugin() {
     this.donutDecimalPlaces = 2;
     // this.decimalPlaces = 0;
     this.legendsAllignment = 'bottom';
+    this.radialStartAngle = 0;
+    this.radialEndAngle = 360;
+    this.maxValueRadial = 100;
     // this.displayUnits = 'none';
     // this.suffix = '';
     // this.prefix = '';
