@@ -112,6 +112,7 @@ sheetToggles = {
 };
 datasourceToggles = {
   datasource_update: false,
+  datasource_renewal: false
 };
 dashboards :any=[];
 sheets :any=[];
@@ -280,13 +281,22 @@ selectedSheet: any = null;
     });
 
   }
-  getDatasourceDetails(id:any){
+  isPax8 = false;
+  getDatasourceDetails(id:any,serverType?:any){
+    if(serverType === 'PAX8'){
+      this.isPax8 = true
+    }else{
+      this.isPax8 = false;
+    }
     this.dbId = id;
     this.workbechService.getMailAlertsDatasourceData(id).subscribe({
       next: (data: any) => {
         if (data) {
           console.log(data);
           this.datasourceName = data.data?.datasource_name;
+          if(data.data?.server_type === 'PAX8'){
+            this.isPax8 = true
+          }
           this.updateDatasourceTogglesFromApi(data.data?.mail_action);
           this.userId =data.data?.id;
           this.enabledEmail=data.data?.is_enabled;
@@ -371,6 +381,7 @@ updateDatasourceTogglesFromApi(mailAction: any) {
   }
   this.datasourceToggles = {
     datasource_update: actions.includes('datasource_update'),
+    datasource_renewal: actions.includes('renewal'),
   };
 }
   onDashboardSelect(dashboard:any){
@@ -549,6 +560,7 @@ getSelectedSheetMailActions(): string[] {
 getSelectedDatasourceMailActions(): string[] {
   const actions = [];
   if (this.datasourceToggles.datasource_update) actions.push('datasource_update');
+  if (this.datasourceToggles.datasource_renewal) actions.push('renewal');
   return actions;
 }
 
