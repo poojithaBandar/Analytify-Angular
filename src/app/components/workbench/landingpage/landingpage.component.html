@@ -37,7 +37,7 @@
             (btnClickEvent)="newConnections()"></app-insights-button>
             <div class="view-card mt-1">
                 <div class="input-group">
-                    <input type="text" class="form-control rounded-start-pill border-primary shadow-sm" [(ngModel)]="wholeSearch" (keyup)="totalSearch()" placeholder="Search ...">
+                    <input type="text" class="form-control rounded-start-pill border-primary shadow-sm" [(ngModel)]="wholeSearch" (ngModelChange)="onSearchChange($event)" placeholder="Search ...">
                     <button type="button"  aria-label="button" class="btn btn-primary rounded-end-pill">
                         <i class="fe fe-search" aria-hidden="true"></i>
                     </button>
