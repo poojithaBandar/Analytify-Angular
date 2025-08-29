@@ -316,12 +316,15 @@ export class InsightApexComponent {
       const max = this.maxValueRadial || Math.max(...this.chartsRowData);
       this.radialRawValues = [...this.chartsRowData];
       this.chartOptions.series = this.chartsRowData.map((v: any) => max ? (v / max) * 100 : 0);
+      this.chartOptions.plotOptions = this.chartOptions.plotOptions || {};
+      this.chartOptions.plotOptions.radialBar = this.chartOptions.plotOptions.radialBar || {};
+      this.chartOptions.plotOptions.radialBar.max = max;
       this.chartOptions.tooltip = {
         y: {
           formatter: (_: any, opts: any) => this.radialRawValues[opts.seriesIndex]
         }
       };
-      this.radialCharts?.updateOptions({ series: this.chartOptions.series, tooltip: this.chartOptions.tooltip });
+      this.radialCharts?.updateOptions({ series: this.chartOptions.series, tooltip: this.chartOptions.tooltip, plotOptions: this.chartOptions.plotOptions });
     } else if (this.chartType === 'funnel') {
       this.chartOptions.series = this.dualAxisRowData;
       this.funnelCharts?.updateOptions({ series: this.chartOptions.series });
@@ -1862,6 +1865,7 @@ xaxis: {
         radialBar: {
           startAngle: this.startAngle,
           endAngle: this.endAngle,
+          max: max,
         }
       },
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
