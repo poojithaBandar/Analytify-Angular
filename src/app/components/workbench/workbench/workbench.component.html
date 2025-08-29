@@ -422,9 +422,9 @@
           </div>
         </div>
     </div> -->
-    <div *ngIf="viewDatasourceList && connectionList?.length === 0">
+    <!-- <div *ngIf="viewDatasourceList && connectionList?.length === 0">
       Connect to new Datasource!
-    </div>
+    </div> -->
     <div *ngIf="!viewDatasourceList">
       you don't have permission to view!
     </div>
@@ -840,46 +840,121 @@
             
             
               <div class="row g-4">
-                <div class="col-12 col-md-6 col-lg-4" *ngFor="let connection of filteredConnections">
+                <div class="col-12 col-md-6 col-lg-4" *ngFor="let connection of connectionList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }">
                   <div class="glass-card h-100">
                     <div class="p-4">
                       <div class="d-flex align-items-start justify-content-between mb-3">
                         <div class="d-flex align-items-center">
-                          <div class="fs-2 me-3 icon-bounce">{{ connection.icon }}</div>
+                          <!-- <div class="fs-2 me-3 icon-bounce">{{ connectionListIcons[connection.database_type] }}</div> -->
+                          <div class="fs-2 me-3 icon-bounce">
+                            <!-- Emoji -->
+                            <span *ngIf="connectionListIcons[connection.database_type]?.type === 'emoji'">
+                              {{ connectionListIcons[connection.database_type]?.value }}
+                            </span>
+                          
+                            <!-- FontAwesome -->
+                            <i *ngIf="connectionListIcons[connection.database_type]?.type === 'fa'"
+                              [ngClass]="connectionListIcons[connection.database_type]?.value"></i>
+                          
+                            <!-- SVG -->
+                            <img *ngIf="connectionListIcons[connection.database_type]?.type === 'svg'"
+                              [src]="connectionListIcons[connection.database_type]?.value" alt="icon" width="24" height="24" />
+                          </div>
                           <div>
-                            <h5 class="fw-semibold mb-1">{{ connection.name }}</h5>
-                            <p class="text-muted small mb-0">{{ connection.subType }}</p>
+                            <h5 class="fw-semibold mb-1" style="cursor: pointer;" ngbTooltip="{{connection.display_name}}" triggers="hover"
+                              (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(connection.hierarchy_id,connection.cross_db_id)">{{ connection.display_name | slice:0:15 }}</h5>
+                            <p class="text-muted small mb-0">{{ connection.database_type }}</p>
+                          </div>
+                        </div>  
+                        <div ngbDropdown container="body" class="d-inline-block">
+                          <button class="btn btn-sm" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
+                            aria-expanded="false">
+                            <i class="bi bi-gear"></i>
+                          </button>
+                          <div class="dropdown-menu" ngbDropdownMenu>
+                            <a *ngIf="!connection.is_cross_db && smartDashboardSources.includes(connection.server_type)" class="dropdown-item"
+                              (click)="smartDashboardFromConnection(connection)"><i class='fe fe-zap me-2 d-inline-flex'></i> Smart
+                              Dashboard</a>
+                            <a *ngIf="connection?.transformation && !connection.is_cross_db" class="dropdown-item"
+                              (click)="goToTransformationLayer(connection?.hierarchy_id)" ngbTooltip="Edit Transformation"><img
+                                src="./assets/images/icons/transformation_blue.png" class="avatar-databse-sm d-inline-flex me-2"> Edit
+                              Transforma...</a>
+                            <a *ngIf="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL')" class="dropdown-item"
+                              (click)="fileInput.click()"><input type="file"
+                                (change)="connection.server_type === 'CSV' ? uploadfileCsv($event,'replace',connection) : uploadfileExcel($event,'replace',connection)"
+                                [attr.accept]="connection.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                class="fe fe-repeat"></i> Replace</a>
+                            <a *ngIf="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL')" class="dropdown-item"
+                              (click)="fileInput.click()"><input type="file"
+                                (change)="connection.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',connection) : uploadfileExcel($event, 'upsert',connection)"
+                                [attr.accept]="connection.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                class="fe fe-upload"></i> Upsert</a>
+                            <a *ngIf="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL')" class="dropdown-item"
+                              (click)="fileInput.click()"><input type="file"
+                                (change)="connection.server_type === 'CSV' ? uploadfileCsv($event, 'append',connection) : uploadfileExcel($event, 'append',connection)"
+                                [attr.accept]="connection.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                class="fe fe-plus"></i> Append</a>
+                            <a (click)="gotoConfigureEmailAlerts(connection.hierarchy_id)" tabindex="0" class="dropdown-item"
+                              style="cursor: pointer;"><i class="fa fa-bell me-2 d-inline-flex" data-bs-toggle="tooltip"></i>Set Alerts</a>
                           </div>
                         </div>
-                        <button class="btn btn-sm ">
-                          <i class="bi bi-gear"></i>
-                        </button>
                       </div>
             
-                      <div class="d-flex align-items-center justify-content-between mb-3">
-                        <span class="status-badge"><i class="bi bi-wifi me-1"></i>{{ connection.status }}</span>
-                        <span class="time-text"><i class="bi bi-clock me-1"></i>{{ connection.lastSync }}</span>
-                      </div>
+                      <!-- <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="status-badge"><i class="bi bi-wifi me-1"></i>{{ connection?.status }}</span>
+                        <span class="time-text"><i class="bi bi-clock me-1"></i>{{ connection?.lastSync }}</span>
+                      </div> -->
             
-                      <p class="large mb-0">{{ connection.description }}</p>
+                      <p class="large mb-0">{{ connection?.description }}</p>
             
                       <div class="d-flex align-items-center justify-content-between">
                         <span class="small text-muted"> Created By</span>
-                        <span class="small  text-capitalize"> Analytify </span>
+                        <span class="small  text-capitalize"> {{ connection?.created_by }} </span>
                       </div>
                       <div class="d-flex align-items-center justify-content-between mb-3">
                         <span class="small text-muted">Last Modified</span>
-                        <span class="small text-capitalize">Aug 25, 2025</span>
+                        <span class="small text-capitalize"> {{ connection?.updated_at | date: 'mediumDate' }} </span>
+                      </div>
+                      
+                      <div class="mb-3 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-graph-up me-1"></i>
+                          <span class="small text-muted me-2">Connection Health</span>
+                      
+                          <!-- Small + Narrow progress bar inline -->
+                          <div class="progress" style="height: 4px; width: 100px;">
+                            <div class="progress-bar bg-success" role="progressbar" [style.width.%]="91"
+                              [attr.aria-valuenow]="91" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                          </div>
+                          <span class="small fw-semibold ms-2">91%</span>
+                      
+                        </div>
+                      
+                        <!-- Percentage aligned right -->
                       </div>
             
-            
                       <div class="d-flex gap-2">
-                        <button class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill">
+                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT')"
+                          class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill" (click)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);">
                           <i class="bi bi-pencil me-1"></i> Edit
                         </button>
-                        <button class="btn btn-outline-danger-light rounded-2 btn-sm flex-fill">
+
+                        <!-- <app-insights-button
+                              *ngIf="!(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT')"
+                              [buttonName]="' Edit'" [classesList]="'btn btn-outline-primary-light rounded-2 btn-sm flex-fill'" [previledgeId]="2" [isBtn]="true"
+                              (btnClickEvent)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);"
+                              [faIconList]="'fe fe-edit me-2'" [isIcon]="true"></app-insights-button> -->
+
+                        <button class="btn btn-outline-danger-light rounded-2 btn-sm flex-fill"
+                          (click)="deleteDbConnection(connection.is_cross_db ? connection?.cross_db_id : connection.hierarchy_id)">
                           <i class="bi bi-trash me-1"></i> Delete
                         </button>
+
+                        <!-- <app-insights-button [buttonName]="' Delete'" [classesList]="'btn btn-outline-danger-light rounded-2 btn-sm flex-fill'"
+                              [previledgeId]="3" [isBtn]="true"
+                              (btnClickEvent)="deleteDbConnection(connection.is_cross_db ? connection?.cross_db_id : connection.hierarchy_id)"
+                              [faIconList]="'fe fe-trash me-2'" [isIcon]="true"></app-insights-button> -->
                       </div>
                     </div>
             

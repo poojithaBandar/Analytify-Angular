@@ -3388,6 +3388,22 @@ connectGoogleSheets(){
   selectedCategory: string | null = null;
   selectedConnectionType: string | null = null;
 
+  connectionListIcons: any = {
+    postgresql: { type: 'emoji', value: '🐘' },
+    oracle: { type: 'emoji', value: '🏺' },
+    mysql: { type: 'emoji', value: '🐬' },
+    microsoftsqlserver: { type: 'emoji', value: '🖥️' },
+    snowflake: { type: 'emoji', value: '❄️' },
+    mongodb: { type: 'emoji', value: '🍃' },
+    'sap hana': { type: 'emoji', value: '⚡' },
+    quickbooks: { type: 'emoji', value: '💵' },
+    ninja: { type: 'emoji', value: '🐱‍👤' },
+    tally: { type: 'emoji', value: '📒' },
+    csv: {type: 'emoji', value: '📑'},
+    excel: {type: 'emoji', value: '📊'},
+    google_analytics: {type: 'emoji', value: '📈'},
+    halops: {type: 'emoji', value: '🛡️'},
+  };
   connections = [
     {
       id: 1,
