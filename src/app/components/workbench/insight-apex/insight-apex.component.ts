@@ -321,7 +321,19 @@ export class InsightApexComponent {
           formatter: (_: any, opts: any) => this.radialRawValues[opts.seriesIndex]
         }
       };
-      this.radialCharts?.updateOptions({ series: this.chartOptions.series, tooltip: this.chartOptions.tooltip });
+      if (!this.chartOptions.plotOptions) {
+        this.chartOptions.plotOptions = { radialBar: {} } as any;
+      }
+      if (!this.chartOptions.plotOptions.radialBar) {
+        this.chartOptions.plotOptions.radialBar = {} as any;
+      }
+      this.chartOptions.plotOptions.radialBar.dataLabels = {
+        ...(this.chartOptions.plotOptions.radialBar.dataLabels || {}),
+        value: {
+          formatter: (val: number) => `${val.toFixed(2)}%`
+        }
+      };
+      this.radialCharts?.updateOptions({ series: this.chartOptions.series, tooltip: this.chartOptions.tooltip, plotOptions: this.chartOptions.plotOptions });
     } else if (this.chartType === 'funnel') {
       this.chartOptions.series = this.dualAxisRowData;
       this.funnelCharts?.updateOptions({ series: this.chartOptions.series });
@@ -1862,6 +1874,11 @@ xaxis: {
         radialBar: {
           startAngle: this.startAngle,
           endAngle: this.endAngle,
+          dataLabels: {
+            value: {
+              formatter: (val: number) => `${val.toFixed(2)}%`
+            }
+          }
         }
       },
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
@@ -3103,6 +3120,9 @@ xaxis: {
     }
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(object);
+    }
+    else if (this.radialCharts) {
+      this.radialCharts.updateOptions(object);
     }
     else if (this.treemapCharts) {
       this.treemapCharts.updateOptions(object);
