@@ -3711,9 +3711,19 @@ goBackToCategories(){
 selectedConnection: string | null = null;
 
 selectConnection(connName: string) {
-  this.selectedConnection = connName;
-  this.getSpecificConnections();
-  console.log('selected sub category:', this.selectedConnection);
+  if(connName === 'xAmplify'){
+    !this.iscrossDbSelect ? this.connectxAmplify() : null;
+  } else if(connName === 'QuickBooks'){
+    !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+  } else if(connName === 'Salesforce'){
+    !this.iscrossDbSelect ? this.connectSalesforce() : null;
+  } else if(connName === 'Jira'){
+    !this.iscrossDbSelect ? this.connectJira() : null;
+  } else{
+    this.selectedConnection = connName;
+    this.getSpecificConnections();
+    console.log('selected sub category:', this.selectedConnection);
+  }
 }
 model = {
     name: '',

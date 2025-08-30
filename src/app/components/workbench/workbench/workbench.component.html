@@ -3138,7 +3138,7 @@
       <h5>Existing Connections
               <span class="badge bg-primary"> {{ existingConnections.length }} connected </span>
       </h5>
-           <div *ngIf="existingConnections.length > 0; else noConnections">
+           <div *ngIf="existingConnections.length > 0; else noConnections" class="form-height">
         <div *ngFor="let conn of existingConnections" 
              class="glass-card  mb-3 p-3 rounded-3 border-light">
 
@@ -3242,101 +3242,1596 @@
       </ng-container>
         Create New {{ selectedConnection }}</h5>
       <form class="form-height" (ngSubmit)="mySqlSignIn()" style="overflow-x: hidden;">
-
-    <!-- Connection Name -->
-    <div class="mb-3">
-      <label [ngClass]="{'error-label': displayNameError}" class="form-label">
-        Connection Name <span class="text-danger">*</span>
-      </label>
-      <input [ngClass]="{'error-input': displayNameError}" type="text"
-             class="form-control forms-light w-100"
-             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}"
-             placeholder="My PostgreSQL Connection"
-             (input)="displayNameConditionError()">
-    </div>
-
-    <!-- Host / Port Row -->
-    <div class="row g-3">
-      <div class="col-md-6 mb-3">
-        <label [ngClass]="{'error-label': serverError}" class="form-label">
-          Host <span class="text-danger">*</span>
-        </label>
-        <input [ngClass]="{'error-input': serverError}" type="text"
-               class="form-control forms-light w-100"
-               [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}"
-               placeholder="localhost"
-               (input)="serverConditionError()">
-      </div>
-      <div class="col-md-6 mb-3">
-        <label [ngClass]="{'error-label': portError}" class="form-label">
-          Port <span class="text-danger">*</span>
-        </label>
-        <input [ngClass]="{'error-input': portError}" type="text"
-               class="form-control forms-light w-100"
-               [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}"
-               placeholder="5432"
-               (input)="portConditionError()">
-      </div>
-    </div>
-
-    <!-- Database Name -->
-    <div class="mb-3">
-      <label [ngClass]="{'error-label': databaseError}" class="form-label">
-        Database Name <span class="text-danger">*</span>
-      </label>
-      <input [ngClass]="{'error-input': databaseError}" type="text"
-             class="form-control forms-light w-100"
-             [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}"
-             placeholder="database_name"
-             (input)="databaseConditionError()">
-    </div>
-
-    <!-- Username / Password Row -->
-    <div class="row g-3">
-      <div class="col-md-6 mb-3">
-        <label [ngClass]="{'error-label': userNameError}" class="form-label">
-          Username <span class="text-danger">*</span>
-        </label>
-        <input [ngClass]="{'error-input': userNameError}" type="text"
-               class="form-control forms-light w-100"
-               [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}"
-               placeholder="username"
-               autocomplete="new-myname"
-               (input)="userNameConditionError()">
-      </div>
-      <div class="col-md-6 mb-3">
-        <label [ngClass]="{'error-label': passwordError}" class="form-label">
-          Password <span class="text-danger">*</span>
-        </label>
-        <div class="d-flex">
-          <input [ngClass]="{'error-input': passwordError}"
-                 [type]="showPassword1 ? 'text' : 'password'"
-                 class="form-control forms-light w-100"
-                 [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
-                 placeholder="password"
-                 autocomplete="new-password"
-                 (input)="passwordConditionError()">
-          <button class="btn btn-light ms-2" type="button" (click)="toggleVisibility1()">
-            <i class="ri-eye-{{toggleClass1}} align-middle"></i>
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My PostgreSQL Connection"
+            (input)="displayNameConditionError()">
+        </div>
+      
+        <!-- Host / Port Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label">
+              Host <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="localhost"
+              (input)="serverConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': portError}" class="form-label">
+              Port <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="5432"
+              (input)="portConditionError()">
+          </div>
+        </div>
+      
+        <!-- Database Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+            Database Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="database_name"
+            (input)="databaseConditionError()">
+        </div>
+      
+        <!-- Username / Password Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+              Username <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="username"
+              autocomplete="new-myname" (input)="userNameConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+              Password <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+              <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
+                class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
+                placeholder="password" autocomplete="new-password" (input)="passwordConditionError()">
+              <button class="btn btn-light ms-2" type="button" (click)="toggleVisibility1()">
+                <i class="ri-eye-{{toggleClass1}} align-middle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
           </button>
         </div>
-      </div>
-    </div>
-
-    <!-- Footer Buttons -->
-    <div class="d-flex justify-content-end gap-2 mt-3">
-      <button type="button" class="btn btn-secondary animate-button"
-              (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
-        Close
-      </button>
-      <button type="submit" class="btn btn-primary me-3 animate-button"
-              [disabled]="disableConnectBtn">
-        {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
-      </button>
-    </div>
-  </form>
+      </form>
     </div>
   </div>
+
+  <div *ngSwitchCase="'ORACLE'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="OracleSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My Oracle Connection"
+            (input)="displayNameConditionError()">
+        </div>
+      
+        <!-- Host / Port Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label">
+              Host <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name / Host URL"
+              (input)="serverConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': portError}" class="form-label">
+              Port <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1521"
+              (input)="portConditionError()">
+          </div>
+        </div>
+      
+        <!-- Service Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+            Service Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. orcl"
+            (input)="databaseConditionError()">
+        </div>
+      
+        <!-- Username / Password Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+              Username <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
+              autocomplete="new-myname" (input)="userNameConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+              Password <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+              <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
+                class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
+                placeholder="e.g. ******" autocomplete="new-password" (input)="passwordConditionError()">
+              <button class="btn btn-light ms-2" type="button" (click)="toggleVisibility1()">
+                <i class="ri-eye-{{toggleClass1}} align-middle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'PostgreSQL'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="postgreSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My PostgreSQL Connection"
+            (input)="displayNameConditionError()">
+        </div>
+      
+        <!-- Host / Port Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label">
+              Host <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name / Host URL"
+              (input)="serverConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': portError}" class="form-label">
+              Port <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="5432"
+              (input)="portConditionError()">
+          </div>
+        </div>
+      
+        <!-- Database Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+            Database Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. postgres"
+            (input)="databaseConditionError()">
+        </div>
+      
+        <!-- Username / Password Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+              Username <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="username"
+              autocomplete="new-myname" (input)="userNameConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+              Password <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+              <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
+                class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
+                placeholder="password" autocomplete="new-password" (input)="passwordConditionError()">
+              <button class="btn btn-light ms-2" type="button" (click)="toggleVisibility1()">
+                <i class="ri-eye-{{toggleClass1}} align-middle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Schema Selection (Optional) -->
+        @if(schemaList && schemaList.length > 0) {
+        <div class="mb-3">
+          <label class="form-label">
+            Select Schema
+            <i ngbTooltip="By default public schema will be selected, if no schema is chosen."
+              class="icon icon-info ms-1 cursor-pointer"></i>
+          </label>
+          <select id="schemaupdateSelect" [(ngModel)]="selectedSchema" [ngModelOptions]="{standalone: true}"
+            class="form-select forms-light">
+            <option value="public" disabled selected>Select Schema</option>
+            <option *ngFor="let schema of schemaList" [value]="schema">{{ schema }}</option>
+          </select>
+        </div>
+        }
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-primary animate-button" (click)="fetchSchemaList()"
+            [disabled]="disableConnectBtn">
+            Fetch Schema
+          </button>
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" *ngIf="!datasourceSwitchUI" class="btn btn-primary me-3 animate-button"
+            [disabled]="disableConnectBtn">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+          <button type="submit" *ngIf="datasourceSwitchUI" class="btn btn-primary me-3 animate-button"
+            [disabled]="disableConnectBtn">
+            Connect & Switch
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'Microsoft SQL SERVER'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="microsoftSqlSignIn()" style="overflow-x: hidden;">
+  
+        <!-- Authentication Type -->
+        <div class="mb-3">
+          <label for="authType" class="form-label">
+            Authentication Type <span class="text-danger">*</span>
+          </label>
+          <select id="authType" class="form-select forms-light w-100" aria-label="Authentication Type"
+            [(ngModel)]="selectedMicroSoftAuthType" (change)="errorCheck()" [ngModelOptions]="{ standalone: true }">
+            <option value='null' disabled selected>Select Authentication Type</option>
+            <option value="Windows Authentication">Windows Authentication</option>
+            <option value="SQL Server Authentication">SQL Server Authentication</option>
+          </select>
+        </div>
+  
+        <!-- Show rest of form only if auth type is selected -->
+        <div *ngIf="selectedMicroSoftAuthType">
+  
+          <!-- Connection Name -->
+          <div class="mb-3">
+            <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+              Connection Name <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My SQL Server Connection"
+              (input)="displayNameConditionError()">
+          </div>
+  
+          <!-- Host / Port Row -->
+          <div class="row g-3">
+            <div class="col-md-6 mb-3">
+              <label [ngClass]="{'error-label': serverError}" class="form-label">
+                Server <span class="text-danger">*</span>
+              </label>
+              <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
+                [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name / Host URL"
+                (input)="serverConditionError()">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label [ngClass]="{'error-label': portError}" class="form-label">
+                Port <span class="text-danger">*</span>
+              </label>
+              <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
+                [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1433"
+                (input)="portConditionError()">
+            </div>
+          </div>
+  
+          <!-- Database -->
+          <div class="mb-3">
+            <label [ngClass]="{'error-label': databaseError}" class="form-label">
+              Database <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. sqlserver"
+              (input)="databaseConditionError()">
+          </div>
+  
+          <!-- Username / Password Row (only for SQL Auth) -->
+          <div *ngIf="selectedMicroSoftAuthType === 'SQL Server Authentication'" class="row g-3">
+            <div class="col-md-6 mb-3">
+              <label [ngClass]="{'error-label': userNameError}" class="form-label">
+                Username <span class="text-danger">*</span>
+              </label>
+              <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
+                [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
+                autocomplete="new-myname" (input)="userNameConditionError()">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label [ngClass]="{'error-label': passwordError}" class="form-label">
+                Password <span class="text-danger">*</span>
+              </label>
+              <div class="d-flex">
+                <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
+                  class="form-control forms-light w-100" [(ngModel)]="PostGrePassword"
+                  [ngModelOptions]="{standalone: true}" placeholder="e.g. ******" autocomplete="new-password"
+                  (input)="passwordConditionError()">
+                <button class="btn btn-light ms-2" type="button" (click)="toggleVisibility1()">
+                  <i class="ri-eye-{{toggleClass1}} align-middle"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+  
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'Snow Flake'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="snowflakeSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My Snowflake Connection"
+            (input)="displayNameConditionError()">
+        </div>
+      
+        <!-- Host / Port Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label">
+              Server <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name / Host URL"
+              (input)="serverConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': portError}" class="form-label">
+              Port <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="443"
+              (input)="portConditionError()">
+          </div>
+        </div>
+      
+        <!-- Database Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+            Database <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. snowflake_db"
+            (input)="databaseConditionError()">
+        </div>
+      
+        <!-- Username / Password Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+              Username <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
+              autocomplete="new-myname" (input)="userNameConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+              Password <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+              <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
+                class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
+                placeholder="e.g. ******" autocomplete="new-password" (input)="passwordConditionError()">
+              <button class="btn btn-light ms-2" type="button" (click)="toggleVisibility1()">
+                <i class="ri-eye-{{toggleClass1}} align-middle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'OpenAI'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+          <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+        <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+        <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+             class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+
+      </ng-container>
+        Create New {{ selectedConnection }}</h5>
+      <form class="form-height" (ngSubmit)="openAISignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+            placeholder="e.g. My OpenAI Connection" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- OpenAI Key -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': openAiKeyError}" class="form-label">
+            OpenAI Key <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': openAiKeyError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="openAiKey" [ngModelOptions]="{standalone: true}" placeholder="Enter your OpenAI API key"
+            (input)="openAiKeyInputError()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="(openAiKeyError || displayNameError) || !(openAiKey && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'DeepSeek'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="deepSeekSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+            placeholder="e.g. My DeepSeek Connection" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- DeepSeek Key -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': deepSeekKeyError}" class="form-label">
+            DeepSeek Key <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': deepSeekKeyError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="deepSeekKey" [ngModelOptions]="{standalone: true}" placeholder="Enter your DeepSeek API key"
+            (input)="deepSeekKeyInputError()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="(deepSeekKeyError || displayNameError) || !(deepSeekKey && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'SAP HANA'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+          <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+        <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+        <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+             class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+
+      </ng-container>
+        Create New {{ selectedConnection }}</h5>
+      <form class="form-height" (ngSubmit)="sapHanaSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. SAP HANA Connection"
+            (input)="displayNameConditionError()">
+        </div>
+      
+        <!-- Host / Port Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label">
+              Host <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/URL"
+              (input)="serverConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': portError}" class="form-label">
+              Port <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="443"
+              (input)="portConditionError()">
+          </div>
+        </div>
+      
+        <!-- Database Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+            Database Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="SAPHDB"
+            (input)="databaseConditionError()">
+        </div>
+      
+        <!-- Username / Password Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+              Username <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="Admin"
+              autocomplete="new-myname" (input)="userNameConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+              Password <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+              <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
+                class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
+                placeholder="******" autocomplete="new-password" (input)="passwordConditionError()">
+              <button class="btn btn-light ms-2" type="button" (click)="toggleVisibility1()">
+                <i class="ri-eye-{{toggleClass1}} align-middle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Schema Selection -->
+        <div *ngIf="schemaList && schemaList.length > 0" class="mb-3">
+          <label class="form-label">Select Schema</label>
+          <select id="schemaupdateSelect" [(ngModel)]="selectedSchema" [ngModelOptions]="{standalone: true}"
+            class="form-select">
+            <option value="" disabled selected>Select Schema</option>
+            <option *ngFor="let schema of schemaList" [value]="schema">{{ schema }}</option>
+          </select>
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-primary animate-button" (click)="fetchSchemaList()"
+            [disabled]="disableConnectBtn">
+            Fetch Schema
+          </button>
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" *ngIf="!datasourceSwitchUI" class="btn btn-primary animate-button"
+            [disabled]="disableConnectBtn">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+          <button type="submit" *ngIf="datasourceSwitchUI" class="btn btn-primary animate-button"
+            [disabled]="disableConnectBtn">
+            Connect & Switch
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'SQLite'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="sqLiteSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. SQLite Connection"
+            (input)="displayNameConditionError()">
+        </div>
+      
+        <!-- File Path -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': pathError}" class="form-label">
+            Database File Path <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': pathError}" type="file" class="form-control forms-light w-100" [(ngModel)]="path"
+            [ngModelOptions]="{standalone: true}" (change)="uploadfile($event)" placeholder="Select SQLite file"
+            (input)="pathConditionError()" autocomplete="off">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary animate-button"
+            [disabled]="pathError || displayNameError">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'MongoDB'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="mongoDbSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. MongoDB Connection"
+            (input)="displayNameConditionError()">
+        </div>
+      
+        <!-- Host / Port Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label">
+              Host <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="localhost"
+              (input)="serverConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': portError}" class="form-label">
+              Port <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="27017"
+              (input)="portConditionError()">
+          </div>
+        </div>
+      
+        <!-- Database Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+            Database Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. myMongoDb"
+            (input)="databaseConditionError()">
+        </div>
+      
+        <!-- Username / Password Row -->
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+              Username <span class="text-danger">*</span>
+            </label>
+            <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
+              [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g. admin"
+              autocomplete="new-myname" (input)="userNameConditionError()">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+              Password <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+              <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
+                class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
+                placeholder="******" autocomplete="new-password" (input)="passwordConditionError()">
+              <button class="btn btn-light ms-2" type="button" (click)="toggleVisibility1()">
+                <i class="ri-eye-{{toggleClass1}} align-middle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'ConnectWise'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="connectWiseSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Company Id -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': companyIDError}" class="form-label">
+            Company Id <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': companyIDError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="companyId" [ngModelOptions]="{standalone: true}" placeholder="Company Id" (input)="companyIdError()">
+        </div>
+      
+        <!-- Site URL -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': siteURLError}" class="form-label">
+            Site URL <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': siteURLError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="siteURL" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://connectwise.com"
+            (input)="siteUrlError()">
+        </div>
+      
+        <!-- Public Key -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': publicKeyError}" class="form-label">
+            Public Key <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': publicKeyError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="publicKey" [ngModelOptions]="{standalone: true}" placeholder="e.g. F3SlPrE4ajaCYI8S"
+            (input)="publicConnectWiseError()">
+        </div>
+      
+        <!-- Private Key -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': privateKeyError}" class="form-label">
+            Private Key <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" placeholder="e.g. hE1k84ArEoQWZVgb"
+            autocomplete="new-myname" (input)="privateConnectWiseError()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError || !(companyId && siteURL && privateKey && publicKey && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'HaloPSA'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="haloPSASignIn()" style="overflow-x: hidden;">
+      
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Client Id -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': clientIDPSAError}" class="form-label">
+            Client Id <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': clientIDPSAError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="clientIdPSA" [ngModelOptions]="{standalone: true}"
+            placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" autocomplete="new-myname" (input)="clientIdErrorPSA()">
+        </div>
+      
+        <!-- Client Secret -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': clientSecretError}" class="form-label">
+            Client Secret <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': clientSecretError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="clientSecret" [ngModelOptions]="{standalone: true}"
+            placeholder="12fgbcbb-9876-2345-asdf-218541bcf2d1-d1f8a3f7-34gf-45hj-78jh-295142fas34e"
+            (input)="clientSecretsError()">
+        </div>
+      
+        <!-- Site URL -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': siteURLErrorPSA}" class="form-label">
+            Site URL <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': siteURLErrorPSA}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="siteURLPSA" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://HaloPSA.com"
+            (input)="siteUrlPSAError()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError || !(clientSecret && clientIdPSA && siteURLPSA && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'Pax8'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="pax8SignIn()" style="overflow-x: hidden;">
+      
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Client Id -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': pax8ClientIdError}" class="form-label">
+            Client Id <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': pax8ClientIdError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="pax8ClientId" [ngModelOptions]="{standalone: true}" placeholder="e.g. your-client-id-here"
+            autocomplete="new-myname" (input)="pax8ClientIdValidation()">
+        </div>
+      
+        <!-- Client Secret -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': pax8ClientSecretError}" class="form-label">
+            Client Secret <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': pax8ClientSecretError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="pax8ClientSecret" [ngModelOptions]="{standalone: true}" placeholder="e.g. your-client-secret-here"
+            (input)="pax8ClientSecretValidation()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="pax8ClientIdError || pax8ClientSecretError || displayNameError || !(pax8ClientId && pax8ClientSecret && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'BambooHR'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="bambooHRSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. BambooHR"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Domain -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': bambooHRDomainError}" class="form-label">
+            Domain <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': bambooHRDomainError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="bambooHRDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. company.bamboohr.com"
+            (input)="bambooHRDomainValidation()">
+        </div>
+      
+        <!-- API Key -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': bambooHRApiKeyError}" class="form-label">
+            API Key <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': bambooHRApiKeyError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="bambooHRApiKey" [ngModelOptions]="{standalone: true}" placeholder="Enter your BambooHR API Key"
+            (input)="bambooHRApiKeyValidation()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="bambooHRApiKeyError || bambooHRDomainError || displayNameError || !(bambooHRApiKey && bambooHRDomain && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'Shopify'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="shopifySignIn()" style="overflow-x: hidden;">
+      
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Analytify"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Shop Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': shopifyNameError}" class="form-label">
+            Shop Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': shopifyNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="shopifyName" [ngModelOptions]="{standalone: true}" placeholder="shop name"
+            (input)="shopfyNameError()">
+        </div>
+      
+        <!-- API Token -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': shopifyApiTokenError}" class="form-label">
+            API Token <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': shopifyApiTokenError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="shopifyToken" [ngModelOptions]="{standalone: true}"
+            placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" autocomplete="new-myname" (input)="shopifyapiTokenError()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="shopifyApiTokenError || shopifyNameError || displayNameError || !(shopifyToken && shopifyName && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'Tally'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="tallySignIn()" style="overflow-x: hidden;">
+      
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Tally" autocomplete="new-myname"
+            (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Token Key -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': tallyTokenError}" class="form-label">
+            Token Key <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': tallyTokenError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="tallyToken" [ngModelOptions]="{standalone: true}" placeholder="Enter your Tally Token"
+            (input)="tallyTokenInputError()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="tallyTokenError || displayNameError || !(tallyToken && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'NinjaOne'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="ninjaRMMSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Client Id -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': ninjaRMMClientIdError}" class="form-label">
+            Client Id <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': ninjaRMMClientIdError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="ninjaRMMClientid" [ngModelOptions]="{standalone: true}" placeholder="Client Id"
+            (input)="ninjaRMMClient()">
+        </div>
+      
+        <!-- Client Secret -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': ninjaRMMClientSecretError}" class="form-label">
+            Client Secret <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': ninjaRMMClientSecretError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="ninjaRMMClientSecret" [ngModelOptions]="{standalone: true}" placeholder="Client Secret"
+            (input)="ninjaRMMClientSecretData()">
+        </div>
+      
+        <!-- Scopes -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': ninjaRMMScopeError}" class="form-label">
+            Scopes <span class="text-danger">*</span>
+          </label>
+          <ng-select [items]="ninjaRMMScopes" bindLabel="" placeholder="Select Scopes" [(ngModel)]="selectedNinjaRMMScopes"
+            [multiple]="true" (change)="onNinjaRMMScopeChange($event)">
+          </ng-select>
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'Google Analytics'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="connectToGoogleAnalytics()" style="overflow-x: hidden;">
+      
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.displayname"
+            [ngModelOptions]="{standalone: true}" placeholder="display name" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Type -->
+        <div class="mb-3">
+          <label class="form-label">
+            Type <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.type"
+            [ngModelOptions]="{standalone: true}" placeholder="service_account">
+        </div>
+      
+        <!-- Project ID -->
+        <div class="mb-3">
+          <label class="form-label">
+            Project ID <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.project_id"
+            [ngModelOptions]="{standalone: true}" placeholder="analytify-access-data">
+        </div>
+      
+        <!-- Private Key ID -->
+        <div class="mb-3">
+          <label class="form-label">
+            Private Key ID <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.private_key_id"
+            [ngModelOptions]="{standalone: true}">
+        </div>
+      
+        <!-- Private Key -->
+        <div class="mb-3">
+          <label class="form-label">
+            Private Key <span class="text-danger">*</span>
+          </label>
+          <textarea class="form-control forms-light w-100" rows="5" [(ngModel)]="googleAnalytics.private_key"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"></textarea>
+        </div>
+      
+        <!-- Client Email -->
+        <div class="mb-3">
+          <label class="form-label">
+            Client Email <span class="text-danger">*</span>
+          </label>
+          <input type="email" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.client_email"
+            [ngModelOptions]="{standalone: true}">
+        </div>
+      
+        <!-- Client ID -->
+        <div class="mb-3">
+          <label class="form-label">
+            Client ID <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.client_id"
+            [ngModelOptions]="{standalone: true}">
+        </div>
+      
+        <!-- Client X.509 Cert URL -->
+        <div class="mb-3">
+          <label class="form-label">
+            Client X.509 Cert URL <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.client_x509_cert_url"
+            [ngModelOptions]="{standalone: true}">
+        </div>
+      
+        <!-- Property ID -->
+        <div class="mb-3">
+          <label class="form-label">
+            Property ID <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.property_id"
+            [ngModelOptions]="{standalone: true}">
+        </div>
+      
+        <!-- Dimensions -->
+        <div class="mb-3">
+          <label class="form-label">
+            Dimensions <span class="text-danger">*</span>
+          </label>
+          <ng-select [items]="availableDimensions" [multiple]="true" bindLabel="label" bindValue="value"
+            [(ngModel)]="googleAnalytics.dimensions" [ngModelOptions]="{standalone: true}" placeholder="Select dimensions">
+          </ng-select>
+        </div>
+      
+        <!-- Metrics -->
+        <div class="mb-3">
+          <label class="form-label">
+            Metrics <span class="text-danger">*</span>
+          </label>
+          <ng-select [items]="availableMetrics" [multiple]="true" bindLabel="label" bindValue="value"
+            [(ngModel)]="googleAnalytics.metrics" [ngModelOptions]="{standalone: true}" placeholder="Select metrics">
+          </ng-select>
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button" (click)="gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="!isGoogleAnalyticsFormValid()">
+            Connect
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'HubSpot'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="hubspotSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. HubSpot"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Client Id -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': hubspotClientIdError}" class="form-label">
+            Client Id <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': hubspotClientIdError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="hubspotClientId" [ngModelOptions]="{standalone: true}" (input)="hubspotClientIdInput()"
+            placeholder="Client Id">
+        </div>
+      
+        <!-- Client Secret -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': hubspotClientSecretError}" class="form-label">
+            Client Secret <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': hubspotClientSecretError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="hubspotClientSecret" [ngModelOptions]="{standalone: true}" (input)="hubspotClientSecretInput()"
+            placeholder="Client Secret">
+        </div>
+      
+        <!-- Redirect URL -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': hubspotRedirectURLError}" class="form-label">
+            Redirect URL <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': hubspotRedirectURLError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="hubspotRedirectURL" [ngModelOptions]="{standalone: true}" (input)="hubspotRedirectURLInput()"
+            placeholder="Redirect URL">
+        </div>
+      
+        <!-- Scopes -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': hubspotScopeError}" class="form-label">
+            Scopes <span class="text-danger">*</span>
+          </label>
+          <ng-multiselect-dropdown [data]="hubspotScopes" [(ngModel)]="selectedHubspotScopes"
+            [ngModelOptions]="{standalone: true}" [settings]="hubspotDropdownSettings" (onSelect)="onHubspotScopeChange()"
+            (onDeSelect)="onHubspotScopeChange()" (onSelectAll)="onHubspotScopeChange()"
+            (onDeSelectAll)="onHubspotScopeChange()">
+          </ng-multiselect-dropdown>
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button" (click)="gotoNewConnections()">Close</button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="(hubspotScopeError || hubspotClientSecretError || displayNameError || hubspotClientIdError || hubspotRedirectURLError) || !(selectedHubspotScopes.length>0 && hubspotClientSecret && hubspotClientId && displayName && hubspotRedirectURL)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'Immybot'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="ImmybotSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. ImmyBot"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Client Id -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': clientIDImmyBotError}" class="form-label">
+            Client Id <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': clientIDImmyBotError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="clientIdImmybot" [ngModelOptions]="{standalone: true}" placeholder="Client Id"
+            autocomplete="new-myname" (input)="clientIdErrorImmyBot()">
+        </div>
+      
+        <!-- Secret Value -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': secretValueError}" class="form-label">
+            Secret Value <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': secretValueError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="secretValue" [ngModelOptions]="{standalone: true}" placeholder="Secret Value"
+            (input)="secretValueImmybotError()">
+        </div>
+      
+        <!-- Azure Domain -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': tenantIdError}" class="form-label">
+            Azure Domain <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': tenantIdError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="tenantId" [ngModelOptions]="{standalone: true}"
+            placeholder="e.g. http://yourcompany.onmicrosoft.com/" (input)="tenantIdImmyBotError()">
+        </div>
+      
+        <!-- Instance Subdomain -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': subDomainError}" class="form-label">
+            Instance Subdomain <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': subDomainError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="subDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. analytify"
+            (input)="subDomainImmyBotError()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
+
 </div>
 
 
