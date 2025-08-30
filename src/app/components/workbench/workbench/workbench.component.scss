@@ -497,3 +497,63 @@ h2.fw-500 {
   scrollbar-width: thin;
   scrollbar-color: rgba(0,0,0,0.3) transparent;
 }
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e2e2e2 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+@keyframes bell-ring {
+  0% { transform: rotate(0deg); }
+  10% { transform: rotate(15deg); }
+  20% { transform: rotate(-10deg); }
+  30% { transform: rotate(15deg); }
+  40% { transform: rotate(-10deg); }
+  50% { transform: rotate(15deg); }
+  60% { transform: rotate(-10deg); }
+  70% { transform: rotate(15deg); }
+  80% { transform: rotate(-10deg); }
+  90% { transform: rotate(15deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Trigger animation on hover of card */
+.bell-card:hover .bell-icon i {
+  animation: bell-ring 0.8s ease-in-out;
+  transform-origin: top center; /* makes it swing from top */
+  display: inline-block; /* ensure transform works */
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* On hover, rotate the sync icon */
+.sync-card:hover .sync-icon i {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+/* 🔹 Pulse effect for connections */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* 🔹 Bounce effect for datasets */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Apply on hover */
+.connections-card:hover .connections-icon i {
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+.datasets-card:hover .datasets-icon i {
+  animation: bounce 0.8s ease-in-out infinite;
+}

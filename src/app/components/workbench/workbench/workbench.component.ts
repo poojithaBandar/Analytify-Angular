@@ -213,6 +213,12 @@ export class WorkbenchComponent implements OnInit{
   subDomain!: string;
   subDomainError: boolean = false;
   viewNewDbsOld: boolean = false;
+
+  alertsCount:any;
+  recentSyncCount:any;
+  datasetsCount:any;
+  connectionsCount:any;
+
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer){
     localStorage.setItem('QuerySetId', '0');
@@ -2816,7 +2822,11 @@ connectGoogleSheets(){
         console.log(data);
         this.connectionList = data.sheets;
         this.itemsPerPage = data.items_per_page;
-        this.totalItems = data.total_items
+        this.totalItems = data.total_items;
+        this.connectionsCount = data.connection_count;
+        this.datasetsCount = data.queries_count;
+        this.recentSyncCount = data.recent_count;
+        this.alertsCount = data.alerts_count;
         console.log('connectionlist',data)
        },
       error:(error)=>{
@@ -3383,7 +3393,7 @@ connectGoogleSheets(){
 
 
 
-
+skeletons = Array(6); // show 3 skeleton cards while loading
   searchQuery: string = '';
   showNewConnection: boolean = false;
   selectedCategory: string | null = null;
@@ -3437,129 +3447,6 @@ connectGoogleSheets(){
   getSpecificConnections(){
     this.existingConnections = this.connectionList.filter((connection:any) => connection.database_type === (this.selectedConnection?.toLocaleLowerCase() || ''));
   }
-  connections = [
-    {
-      id: 1,
-      name: 'PostgreSQL Production',
-      type: 'Database',
-      subType: 'PostgreSQL',
-      host: 'prod-db.company.com',
-      port: 5432,
-      status: 'connected',
-      lastSync: '2 minutes ago',
-      tables: 147,
-      size: '2.4 GB',
-      icon: '🐘',
-      description: 'Main production database'
-    },
-    {
-      id: 2,
-      name: 'MySQL Analytics',
-      type: 'Database',
-      subType: 'MySQL',
-      host: 'analytics-db.company.com',
-      port: 3306,
-      status: 'connected',
-      lastSync: '5 minutes ago',
-      tables: 89,
-      size: '1.8 GB',
-      icon: '🐬',
-      description: 'Analytics and reporting database'
-    },
-       {
-      id: 1,
-      name: 'PostgreSQL Production',
-      type: 'Database',
-      subType: 'PostgreSQL',
-      host: 'prod-db.company.com',
-      port: 5432,
-      status: 'connected',
-      lastSync: '2 minutes ago',
-      tables: 147,
-      size: '2.4 GB',
-      icon: '🐘',
-      description: 'Main production database'
-    },
-    {
-      id: 2,
-      name: 'MySQL Analytics',
-      type: 'Database',
-      subType: 'MySQL',
-      host: 'analytics-db.company.com',
-      port: 3306,
-      status: 'connected',
-      lastSync: '5 minutes ago',
-      tables: 89,
-      size: '1.8 GB',
-      icon: '🐬',
-      description: 'Analytics and reporting database'
-    },
-       {
-      id: 1,
-      name: 'PostgreSQL Production',
-      type: 'Database',
-      subType: 'PostgreSQL',
-      host: 'prod-db.company.com',
-      port: 5432,
-      status: 'connected',
-      lastSync: '2 minutes ago',
-      tables: 147,
-      size: '2.4 GB',
-      icon: '🐘',
-      description: 'Main production database'
-    },
-    {
-      id: 2,
-      name: 'MySQL Analytics',
-      type: 'Database',
-      subType: 'MySQL',
-      host: 'analytics-db.company.com',
-      port: 3306,
-      status: 'connected',
-      lastSync: '5 minutes ago',
-      tables: 89,
-      size: '1.8 GB',
-      icon: '🐬',
-      description: 'Analytics and reporting database'
-    },
-       {
-      id: 1,
-      name: 'PostgreSQL Production',
-      type: 'Database',
-      subType: 'PostgreSQL',
-      host: 'prod-db.company.com',
-      port: 5432,
-      status: 'connected',
-      lastSync: '2 minutes ago',
-      tables: 147,
-      size: '2.4 GB',
-      icon: '🐘',
-      description: 'Main production database'
-    },
-    {
-      id: 2,
-      name: 'MySQL Analytics',
-      type: 'Database',
-      subType: 'MySQL',
-      host: 'analytics-db.company.com',
-      port: 3306,
-      status: 'connected',
-      lastSync: '5 minutes ago',
-      tables: 89,
-      size: '1.8 GB',
-      icon: '🐬',
-      description: 'Analytics and reporting database'
-    }
-    // ... add the rest
-  ];
- get filteredConnections() {
-    return this.connections.filter(conn =>
-      conn.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      conn.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      conn.subType.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-  }
-
   handleCategoryClick(category: string) {
     this.selectedCategory = category;
   }
