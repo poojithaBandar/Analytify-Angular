@@ -5364,10 +5364,10 @@
                                                     <div *ngIf="radial" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2">
                                                         <div>
                                                             <label for="radialStartAngle">Start Angle:</label>
-                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialStartAngle" id="radialStartAngle"/>
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialStartAngle" (ngModelChange)="validateRadialAngles()" (keydown)="preventInvalidAngleInput($event)" id="radialStartAngle" min="0" max="180"/>
 
                                                             <label for="radialEndAngle">End Angle:</label>
-                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialEndAngle" id="radialEndAngle"/>
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialEndAngle" (ngModelChange)="validateRadialAngles()" (keydown)="preventInvalidAngleInput($event)" id="radialEndAngle" min="0" max="360"/>
 
                                                             <label for="maxValueRadial">Max Value:</label>
                                                             <input type="number" class="form-control fs-14" [(ngModel)]="maxValueRadial" id="maxValueRadial"/>

@@ -547,9 +547,36 @@ isSidebarCollapsed: boolean = false;
    this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
    this.canEditDashbaordInSheet = this.templateService.editDashboard();
    this.canAddDashbaordInSheet = this.templateService.addDashboard();
-   this.canEditDb = this.templateService.addDatasource();
-   this.canDrop = !this.canEditDb
-   }
+  this.canEditDb = this.templateService.addDatasource();
+  this.canDrop = !this.canEditDb
+  }
+  }
+
+  validateRadialAngles(): void {
+    this.radialStartAngle = Number(this.radialStartAngle);
+    this.radialEndAngle = Number(this.radialEndAngle);
+
+    if (isNaN(this.radialStartAngle) || this.radialStartAngle < 0) {
+      this.radialStartAngle = 0;
+    } else if (this.radialStartAngle > 180) {
+      this.radialStartAngle = 180;
+    }
+
+    if (isNaN(this.radialEndAngle) || this.radialEndAngle < 0) {
+      this.radialEndAngle = 0;
+    } else if (this.radialEndAngle > 360) {
+      this.radialEndAngle = 360;
+    }
+
+    if (this.radialEndAngle <= this.radialStartAngle) {
+      this.radialEndAngle = Math.min(360, this.radialStartAngle + 1);
+    }
+  }
+
+  preventInvalidAngleInput(event: KeyboardEvent): void {
+    if (['e', 'E', '+', '-', '.'].includes(event.key)) {
+      event.preventDefault();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -2251,6 +2278,7 @@ sheetSave(isDashboardTransfer?: boolean){
     }
     delete this.originalData;
   }
+  this.validateRadialAngles();
   savedChartOptions = this.chartOptionsSet;
   let customizeObject = {
     isZoom : this.isZoom,
@@ -4462,6 +4490,7 @@ customizechangeChartPlugin() {
     this.maxValueGuage = data.maxValueGuage ?? 100;
     this.radialStartAngle = data.startAngle ?? 0;
     this.radialEndAngle = data.endAngle ?? 360;
+    this.validateRadialAngles();
     this.maxValueRadial = data.maxValueRadial ?? 100;
     this.donutDecimalPlaces = data.donutDecimalPlaces ?? 2;
     this.decimalPlaces = data.decimalPlaces ?? 2;
