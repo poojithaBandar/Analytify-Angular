@@ -1728,7 +1728,7 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
       })),
       label: {
         show: this.dataLabels,
-        position: this.dataLabelsFontPosition,
+        position: this.dataLabelsFontPosition == 'center' ? this.getLabelPosition() : this.dataLabelsFontPosition,
         fontFamily: this.dataLabelsFontFamily,
         fontSize: this.dataLabelsFontSize,
         fontWeight: this.isBold ? 700 : 400,
@@ -2570,9 +2570,16 @@ setColorsOnRanges(data: any): string[] {
               color: colors[index]
             }
           }));
-  
+          this.chartInstance?.setOption({
+            series: [
+              {
+                type: 'treemap', // must include the type to help identify the series
+                data: series.data // your new data array
+              }
+            ]
+          });
           // Apply to live chart
-          this.chartInstance?.setOption({ series: [{ data: series.data }] });
+          // this.chartInstance?.setOption({ series: [{ data: series.data }] });
   
           // Update stored chartOptions
           this.chartOptions.series[0].data = series.data;

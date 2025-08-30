@@ -3570,7 +3570,7 @@
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Treemap" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18)"><img src="./assets/images/charts/treemap.svg" class="rounded-2 w-90 mrk-t border p-2 chart-icon" [ngClass]="{'active': treemap}"></a>
                                                         </div>
                                                         <div *ngIf="isApexCharts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
-                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Radial" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,20)"><img src="./assets/images/charts/radial.svg" class="rounded-2 w-90 mrk-t border p-2 chart-icon" [ngClass]="{'active': treemap}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Radial" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,20)"><img src="./assets/images/charts/radial.svg" class="rounded-2 w-90 mrk-t border p-2 chart-icon" [ngClass]="{'active': radial}"></a>
                                                         </div>
                                                         <div class="card-title fs-12 mt-2 mb-1 border bg-light p-1 ">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows?.length<1 || draggedColumns?.length<1)}">
@@ -5368,10 +5368,10 @@
                                                     <div *ngIf="radial" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2">
                                                         <div>
                                                             <label for="radialStartAngle">Start Angle:</label>
-                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialStartAngle" (ngModelChange)="validateRadialAngles()" (keydown)="preventInvalidAngleInput($event)" id="radialStartAngle" min="0" max="180"/>
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialStartAngle" (keydown)="preventInvalidStartAngleInput($event)" id="radialStartAngle" min="0" max="180"/>
 
                                                             <label for="radialEndAngle">End Angle:</label>
-                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialEndAngle" (ngModelChange)="validateRadialAngles()" (keydown)="preventInvalidAngleInput($event)" id="radialEndAngle" min="0" max="360"/>
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="radialEndAngle" (keydown)="preventInvalidEndAngleInput($event)" id="radialEndAngle" min="0" max="360"/>
 
                                                             <label for="maxValueRadial">Max Value:</label>
                                                             <input type="number" class="form-control fs-14" [(ngModel)]="maxValueRadial" id="maxValueRadial"/>

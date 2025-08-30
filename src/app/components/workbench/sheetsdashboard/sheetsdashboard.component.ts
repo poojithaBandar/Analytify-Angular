@@ -1095,7 +1095,10 @@ export class SheetsdashboardComponent implements OnDestroy {
           let selectedXValue;
           if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
-          } else {
+          } else if(sheet.chartId == 18){
+            const selectedNode = sheet.chartOptions.series[0].data[config.dataPointIndex];
+            selectedXValue = selectedNode.x;
+        } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
           }
           if(self.actionId && sheet.sheetId === self.sourceSheetId){
@@ -2357,6 +2360,31 @@ allowDrop(ev : any): void {
         customizeOptions: copy.customizeOptions,
         pivotData: copy.pivotData
       };
+      if (element.chartId == '18' && element.echartOptions) {
+        const nf = element.numberFormat || {};
+        element.echartOptions.tooltip = element.echartOptions.tooltip || {};
+        element.echartOptions.tooltip.formatter = (params: any) =>
+          `${params.name} : ${this.formatNumber(
+            params.value,
+            nf.decimalPlaces ?? 0,
+            nf.displayUnits ?? 'none',
+            nf.prefix ?? '',
+            nf.suffix ?? ''
+          )}`;
+
+        if (element.echartOptions.series && element.echartOptions.series[0]) {
+          element.echartOptions.series[0].label =
+            element.echartOptions.series[0].label || {};
+          element.echartOptions.series[0].label.formatter = (params: any) =>
+            `${params.name}: ${this.formatNumber(
+              params.value,
+              nf.decimalPlaces ?? 0,
+              nf.displayUnits ?? 'none',
+              nf.prefix ?? '',
+              nf.suffix ?? ''
+            )}`;
+        }
+      }
       // this.qrySetId.push(copy.qrySetId);
       // if(copy.fileId){
       //   this.fileId.push(copy.fileId);
@@ -2403,8 +2431,11 @@ allowDrop(ev : any): void {
             },
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               let selectedXValue;
-              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 18 || element.chartId == 20 || element.chartId == 28) {
+              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 20 || element.chartId == 4 || element.chartId == 17 || element.chartId == 28) {
                 selectedXValue = element.chartOptions.labels[config.dataPointIndex];
+              } else if(element.chartId == 18){
+                  const selectedNode = element.chartOptions.series[0].data[config.dataPointIndex];
+                  selectedXValue = selectedNode.x;
               } else {
                 selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
               }
@@ -4218,7 +4249,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       item1.chartOptions.series = this.filteredRowData[0].data;
         }
       }
-      if((item.chart_id == '20' || item.chartId == '18' && (isFilter || isDrillDown)) || (item1.chartId == '20' && isDrillThrough)){
+      if((item.chart_id == '20' || item.chartId == '20' && (isFilter || isDrillDown)) || (item1.chartId == '20' && isDrillThrough)){
         if(switchDb){
           item1.databaseId = item.databaseId;
         }
