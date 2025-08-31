@@ -87,6 +87,7 @@ export class WorkbenchComponent implements OnInit{
   custmT1Data = [] as any;
   custmT2Data = [] as any;
   connectionList =[] as any;
+  existingConnectionListWithoutFilter = [] as any;
   searchDbName :any;
   viewNewDbs!:boolean;
   showPassword1 = false;
@@ -218,7 +219,7 @@ export class WorkbenchComponent implements OnInit{
   recentSyncCount:any;
   datasetsCount:any;
   connectionsCount:any;
-
+  callAllConnectionsExistingList: boolean = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer){
     localStorage.setItem('QuerySetId', '0');
@@ -235,6 +236,7 @@ export class WorkbenchComponent implements OnInit{
         this.isGoogleSheetsPage = false;
         // this.iscrossDbSelect = false;
       } else if (currentUrl.includes('new-connections')) {
+        this.callAllConnectionsExistingList = true;
         this.viewNewDbs = true;
         this.databaseconnectionsList = false;
         this.isGoogleSheetsPage = false;
@@ -2775,12 +2777,15 @@ connectGoogleSheets(){
     //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
     // }
     this.loaderService.hide();
-    // if (this.viewDatasourceList) {
-    //   if (this.databaseconnectionsList) {
-    //     this.getDbConnectionList();
-    //   }
-    // }
-    this.getDbConnectionList();
+    if (this.viewDatasourceList) {
+      if (this.databaseconnectionsList) {
+        this.getDbConnectionList();
+      }
+    }
+    if(this.callAllConnectionsExistingList){
+      this.connectionListWithOutPagination();
+    }
+    // this.getDbConnectionList();
     this.errorCheck();
   }
 
@@ -2827,6 +2832,27 @@ connectGoogleSheets(){
         this.datasetsCount = data.queries_count;
         this.recentSyncCount = data.recent_count;
         this.alertsCount = data.alerts_count;
+        console.log('connectionlist',data)
+       },
+      error:(error)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
+  }
+  connectionListWithOutPagination(){
+      const Obj ={
+        need_pagination:false
+    }
+     this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.existingConnectionListWithoutFilter = data;
         console.log('connectionlist',data)
        },
       error:(error)=>{
@@ -3445,7 +3471,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   };
   existingConnections: any = [];
   getSpecificConnections(){
-    this.existingConnections = this.connectionList.filter((connection:any) => connection.database_type === (this.selectedConnection?.toLocaleLowerCase() || ''));
+    this.existingConnections = this.existingConnectionListWithoutFilter.filter((connection:any) => connection.database_type === (this.selectedConnection?.toLocaleLowerCase() || ''));
   }
   handleCategoryClick(category: string) {
     this.selectedCategory = category;
@@ -3514,7 +3540,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   getSafeSvg(svg: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(svg);
   }
-connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string}[] } = {
+connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string,disabled?:boolean}[] } = {
   "Relational Database": [
     { name: "MySQL", icon: "🐬", description: "Relational database" },
     { name: "ORACLE", icon: "🏺", description: "Enterprise relational database" },
@@ -3525,18 +3551,18 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
   "LLM Integrations": [
     { name: "OpenAI", icon: "🤖", description: "AI & language models by OpenAI" },
     { name: "DeepSeek", icon: "🔍", description: "Deep learning & LLM platform" },
-    { name: "Gemini", icon: "♊", description: "Google DeepMind Gemini models" },
-    { name: "Anthropic", icon: "🌐", description: "Claude AI models" },
-    { name: "Azure OpenAI", icon: "☁️", description: "Azure-hosted OpenAI models" },
-    { name: "Meta LLaMA", icon: "🦙", description: "Meta’s LLaMA family of LLMs" }
+    { name: "Gemini", icon: "♊", description: "Google DeepMind Gemini models", disabled: true },
+    { name: "Anthropic", icon: "🌐", description: "Claude AI models", disabled: true },
+    { name: "Azure OpenAI", icon: "☁️", description: "Azure-hosted OpenAI models", disabled: true },
+    { name: "Meta LLaMA", icon: "🦙", description: "Meta’s LLaMA family of LLMs", disabled: true }
   ],
   "NoSQL Database": [
-    { name: "Cassandra", icon: "🌌", description: "Highly scalable NoSQL database" },
+    { name: "Cassandra", icon: "🌌", description: "Highly scalable NoSQL database", disabled: true },
     { name: "SQLite", icon: "💾", description: "Lightweight embedded database" },
-    { name: "MongoDB", icon: "🍃", description: "Document-oriented NoSQL database" }
+    { name: "MongoDB", icon: "🍃", description: "Document-oriented NoSQL database", disabled: true }
   ],
   "Multi-dimensional Database": [
-    { name: "SAP", icon: "🏢", description: "Enterprise resource planning & database" },
+    { name: "SAP", icon: "🏢", description: "Enterprise resource planning & database", disabled: true },
     { name: "SAP HANA", icon: "⚡", description: "In-memory, column-oriented database" }
   ],
   "File Source": [

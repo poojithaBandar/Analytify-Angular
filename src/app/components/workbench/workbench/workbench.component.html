@@ -929,15 +929,15 @@
                       <div class="mb-3 d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
                           <i class="bi bi-graph-up me-1"></i>
-                          <span class="small text-muted me-2">Connection Health</span>
+                          <span class="small text-muted me-2">Connection Usage</span>
                       
                           <!-- Small + Narrow progress bar inline -->
                           <div class="progress" style="height: 4px; width: 100px;">
-                            <div class="progress-bar bg-success" role="progressbar" [style.width.%]="91"
-                              [attr.aria-valuenow]="91" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar bg-success" role="progressbar" [style.width.%]="connection?.health_percentage "
+                              [attr.aria-valuenow]="connection?.health_percentage" aria-valuemin="0" aria-valuemax="100">
                             </div>
                           </div>
-                          <span class="small fw-semibold ms-2">91%</span>
+                          <span class="small fw-semibold ms-2">{{connection?.health_percentage }}%</span>
                       
                         </div>
                       
@@ -3110,7 +3110,7 @@
 
   <!-- Header -->
   <div class="d-flex align-items-center mb-4">
-    <button class="btn btn-light rounded-3 hoverable me-2" (click)="goBackToCategories()">
+    <button class="btn glass-light rounded-3 hoverable me-2" style="height: 40px;" (click)="goBackToCategories()">
       <i class="bi bi-arrow-left"></i>
     </button>
 
@@ -3139,7 +3139,7 @@
   <!-- Cards -->
   <div class="row g-3" *ngIf="!selectedConnection">
     <div class="col-md-4" *ngFor="let type of connectionTypes[selectedCategory]">
-      <div class="glass-card h-100 p-3 hoverable d-flex justify-content-between text-center" (click)="selectConnection(type.name)">
+      <div class="glass-card h-100 p-3 hoverable d-flex justify-content-between text-center" [class.disabled-card]="type.disabled" (click)="selectConnection(type.name)">
         <div class="d-flex align-items-start gap-3">
           <!-- <div class="fs-3 card-icon">{{ type.icon }}</div> -->
           <div class="fs-3 card-icon ">
@@ -3205,7 +3205,7 @@
       </h5>
            <div *ngIf="existingConnections.length > 0; else noConnections" class="form-height">
         <div *ngFor="let conn of existingConnections" 
-             class="glass-card  mb-3 p-3 rounded-3 border-light">
+             class="form-card  mb-3 p-3 rounded-3">
 
           <div class="d-flex justify-content-between align-items-start">
             <!-- Icon + Name -->
@@ -3229,7 +3229,7 @@
                 }
               </div>
               <div>
-                <h6 class="mb-0">{{ conn.display_name }}</h6>
+                <h6 class="mb-0" style="cursor: pointer;" (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(conn.hierarchy_id,conn.cross_db_id)">{{ conn.display_name }}</h6>
                 <small class="text-muted">{{ conn.database_type }}</small>
               </div>
             </div>
@@ -3245,15 +3245,15 @@
             <div class="mb-3 d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center">
                 <i class="bi bi-graph-up me-1"></i>
-                <span class="small text-muted me-2">Connection Health</span>
+                <span class="small text-muted me-2">Connection Usage</span>
             
                 <!-- Small + Narrow progress bar inline -->
                 <div class="progress" style="height: 4px; width: 100px;">
-                  <div class="progress-bar bg-success" role="progressbar" [style.width.%]="91" [attr.aria-valuenow]="91"
+                  <div class="progress-bar bg-success" role="progressbar" [style.width.%]="conn?.health_percentage " [attr.aria-valuenow]="conn?.health_percentage "
                     aria-valuemin="0" aria-valuemax="100">
                   </div>
                 </div>
-                <span class="small fw-semibold ms-2">91%</span>
+                <span class="small fw-semibold ms-2">{{conn?.health_percentage }}%</span>
             
               </div>
             
@@ -3469,7 +3469,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
@@ -3583,7 +3583,7 @@
             Fetch Schema
           </button>
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" *ngIf="!datasourceSwitchUI" class="btn btn-primary me-3 animate-button"
@@ -3700,7 +3700,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
@@ -3794,7 +3794,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
@@ -3841,7 +3841,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -3891,7 +3891,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -3999,7 +3999,7 @@
             Fetch Schema
           </button>
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" *ngIf="!datasourceSwitchUI" class="btn btn-primary animate-button"
@@ -4053,7 +4053,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary animate-button"
@@ -4148,7 +4148,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="disableConnectBtn">
@@ -4226,7 +4226,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -4297,7 +4297,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -4357,7 +4357,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -4417,7 +4417,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -4477,7 +4477,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -4527,7 +4527,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -4597,7 +4597,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
@@ -4728,7 +4728,7 @@
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
-          <button type="button" class="btn btn-secondary animate-button" (click)="gotoNewConnections()">
+          <button type="button" class="btn btn-secondary animate-button" (click)="goBackToSubCategories()">
             Close
           </button>
           <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="!isGoogleAnalyticsFormValid()">
@@ -4808,7 +4808,7 @@
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
-          <button type="button" class="btn btn-secondary animate-button" (click)="gotoNewConnections()">Close</button>
+          <button type="button" class="btn btn-secondary animate-button" (click)="goBackToSubCategories()">Close</button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
             [disabled]="(hubspotScopeError || hubspotClientSecretError || displayNameError || hubspotClientIdError || hubspotRedirectURLError) || !(selectedHubspotScopes.length>0 && hubspotClientSecret && hubspotClientId && displayName && hubspotRedirectURL)">
             {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
@@ -4886,7 +4886,7 @@
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
-            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">Close</button>
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">Close</button>
           <button type="submit" class="btn btn-primary me-3 animate-button"
             [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot)">
             {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}

@@ -557,3 +557,8 @@ h2.fw-500 {
 .datasets-card:hover .datasets-icon i {
   animation: bounce 0.8s ease-in-out infinite;
 }
+.disabled-card {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none; /* prevents click */
+}
