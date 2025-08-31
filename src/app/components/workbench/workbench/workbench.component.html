@@ -4996,6 +4996,56 @@
 </form>
   </div>
 </div>
+
+  <div *ngSwitchCase="'Gemini'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="geminiSignIn()" style="overflow-x: hidden;">
+      
+        <!-- Connection Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span><small class="text-muted">(Friendly name for your Gemini connection)</small>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+            placeholder="e.g. My Gemini Connection" (input)="displayNameIntegrationConditionError()">
+        </div>
+      
+        <!-- Gemini Key -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': geminiKeyError}" class="form-label">
+            Gemini Key <span class="text-danger">*</span><small class="text-muted">(Secure key from Google Cloud Console for authentication)</small>
+          </label>
+          <input [ngClass]="{'error-input': geminiKeyError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="geminiKey" [ngModelOptions]="{standalone: true}" placeholder="Enter your Gemini API key"
+            (input)="geminiKeyInputError()">
+        </div>
+      
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : gotoNewConnections()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="(geminiKeyError || displayNameError) || !(geminiKey && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+      
+      </form>
+    </div>
+  </div>
 </div>
 
 

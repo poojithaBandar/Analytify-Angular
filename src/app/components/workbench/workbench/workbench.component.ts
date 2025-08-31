@@ -3587,7 +3587,7 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
   "LLM Integrations": [
     { name: "OpenAI", icon: "🤖", description: "AI & language models by OpenAI" },
     { name: "DeepSeek", icon: "🔍", description: "Deep learning & LLM platform" },
-    { name: "Gemini", icon: "♊", description: "Google DeepMind Gemini models", disabled: true },
+    { name: "Gemini", icon: "♊", description: "Google DeepMind Gemini models" },
     { name: "Anthropic", icon: "🌐", description: "Claude AI models", disabled: true },
     { name: "Azure OpenAI", icon: "☁️", description: "Azure-hosted OpenAI models", disabled: true },
     { name: "Meta LLaMA", icon: "🦙", description: "Meta’s LLaMA family of LLMs", disabled: true }
