@@ -2007,7 +2007,8 @@ xaxis: {
             const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
             const label = dataPoint.x;
             const value = dataPoint.y;
-            return `${label}: ${self.formatNumber(value)}`;
+            return self.formatNumber(value);
+            // return `${label}: ${self.formatNumber(value)}`;
           }.bind(this)
         }
       },

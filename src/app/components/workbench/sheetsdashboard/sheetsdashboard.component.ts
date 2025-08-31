@@ -1365,6 +1365,20 @@ export class SheetsdashboardComponent implements OnDestroy {
           sheet.tableData.tablePage = 1;
         }
       }
+      if (chartId == 18) {
+        if (isEcharts) {
+          sheet.echartOptions.tooltip.formatter = (params: any) =>
+            `${params.name} : ${this.formatNumber(
+              params.value,
+              numberFormat.decimalPlaces ?? 0,
+              numberFormat.displayUnits ?? 'none',
+              numberFormat.prefix ?? '',
+              numberFormat.suffix ?? ''
+            )}`;
+        } else {
+          sheet.chartOptions.tooltip.y.formatter = (val: any, opts: any) => this.formatNumber(val, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '');
+        }
+      }
     })
   }
 
@@ -2360,31 +2374,31 @@ allowDrop(ev : any): void {
         customizeOptions: copy.customizeOptions,
         pivotData: copy.pivotData
       };
-      if (element.chartId == '18' && element.echartOptions) {
-        const nf = element.numberFormat || {};
-        element.echartOptions.tooltip = element.echartOptions.tooltip || {};
-        element.echartOptions.tooltip.formatter = (params: any) =>
-          `${params.name} : ${this.formatNumber(
-            params.value,
-            nf.decimalPlaces ?? 0,
-            nf.displayUnits ?? 'none',
-            nf.prefix ?? '',
-            nf.suffix ?? ''
-          )}`;
+      // if (element.chartId == '18' && element.echartOptions) {
+      //   const nf = element.numberFormat || {};
+      //   element.echartOptions.tooltip = element.echartOptions.tooltip || {};
+      //   element.echartOptions.tooltip.formatter = (params: any) =>
+      //     `${params.name} : ${this.formatNumber(
+      //       params.value,
+      //       nf.decimalPlaces ?? 0,
+      //       nf.displayUnits ?? 'none',
+      //       nf.prefix ?? '',
+      //       nf.suffix ?? ''
+      //     )}`;
 
-        if (element.echartOptions.series && element.echartOptions.series[0]) {
-          element.echartOptions.series[0].label =
-            element.echartOptions.series[0].label || {};
-          element.echartOptions.series[0].label.formatter = (params: any) =>
-            `${params.name}: ${this.formatNumber(
-              params.value,
-              nf.decimalPlaces ?? 0,
-              nf.displayUnits ?? 'none',
-              nf.prefix ?? '',
-              nf.suffix ?? ''
-            )}`;
-        }
-      }
+      //   if (element.echartOptions.series && element.echartOptions.series[0]) {
+      //     element.echartOptions.series[0].label =
+      //       element.echartOptions.series[0].label || {};
+      //     element.echartOptions.series[0].label.formatter = (params: any) =>
+      //       `${params.name}: ${this.formatNumber(
+      //         params.value,
+      //         nf.decimalPlaces ?? 0,
+      //         nf.displayUnits ?? 'none',
+      //         nf.prefix ?? '',
+      //         nf.suffix ?? ''
+      //       )}`;
+      //   }
+      // }
       // this.qrySetId.push(copy.qrySetId);
       // if(copy.fileId){
       //   this.fileId.push(copy.fileId);
@@ -2756,6 +2770,20 @@ allowDrop(ev : any): void {
           }
           if (sheet?.tableData?.tablePage) {
             sheet.tableData.tablePage = 1;
+          }
+        }
+        if (chartId == 18){
+          if (isEcharts) {
+            sheet.echartOptions.tooltip.formatter = (params: any) =>
+              `${params.name} : ${this.formatNumber(
+                params.value,
+                numberFormat.decimalPlaces ?? 0,
+                numberFormat.displayUnits ?? 'none',
+                numberFormat.prefix ?? '',
+                numberFormat.suffix ?? ''
+              )}`;
+          } else {
+            sheet.chartOptions.tooltip.y.formatter = (val: any, opts: any) => this.formatNumber(val, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '');
           }
         }
       });
@@ -6408,6 +6436,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               })
             })
           }
+        } else if(chartId === 18){
+          if (sheet.echartOptions.series && sheet.echartOptions.series[0]) {
+            sheet.echartOptions.series[0].label.formatter = (params: any) =>
+              `${params.name}: ${
+                this.formatNumber(params.value, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '')
+              }`;
+          }
         } else if(![1, 25, 10, 24, 11, 29, 9].includes(chartId)){
           if (sheet.echartOptions?.yAxis?.axisLabel) {
             sheet.echartOptions.yAxis.axisLabel.formatter = (val: any) => {
@@ -6464,6 +6499,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
                 } 
             }
           }
+        } else if(chartId === 18){
+          sheet.chartOptions.dataLabels.formatter = (val: number) => {
+            return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          };
         } else if(![1, 25, 10, 24, 9].includes(chartId)){
           if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
             sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: number) => {
