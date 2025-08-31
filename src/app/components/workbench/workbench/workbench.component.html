@@ -3168,7 +3168,7 @@
 <div class="main-container container-fluid TopHeader" *ngIf="selectedConnection">
    <!-- Header -->
   <div class="d-flex align-items-center mb-4">
-    <button class="glass-light btn btn-light rounded-3 hoverable me-2" (click)="goBackToSubCategories()">
+    <button class="glass-light btn btn-light rounded-3 hoverable me-2" style="height: 40px;" (click)="goBackToSubCategories()">
       <i class="bi bi-arrow-left"></i>
     </button>
 
@@ -4897,6 +4897,105 @@
     </div>
   </div>
 
+   <div *ngSwitchCase="'CSV File'" class="col-md-6">
+  <div class="form-card p-3">
+    <h5 class="d-flex align-items-center">
+      <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+        <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+        <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+          class="me-2 card-icon" width="24" height="24">
+        <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+      </ng-container>
+      Upload New {{ selectedConnection }}
+    </h5>
+
+   <form class="form-height" (ngSubmit)="uploadfileCsv(fileInput, 'upload', {})">
+    <div class="mb-3">
+    <!-- <label class="form-label">Select CSV</label> -->
+    <!-- Drop Zone Box -->
+    <div
+      class="drop-zone"
+      [class.disabled]="!canUploadCsv"
+      (click)="canUploadCsv && fileInput.click()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDropCsv($event)"
+      style="cursor:pointer; border:2px dashed #00b3b3; border-radius:8px; padding:32px; text-align:center; transition: border 0.2s; background:#f9f9f9;"
+    >
+      <div>
+        <i class="bi bi-folder2-open" style="font-size:40px; color:#FDB813"></i><br />
+        Drop file here or <span style="text-decoration: underline; color:#00b3b3;">click to upload</span>
+      </div>
+      <div class="text-muted small mt-2">
+        Support for CSV files
+      </div>
+    </div>
+    <!-- Invisible File Input -->
+    <input
+      type="file"
+      #fileInput
+      style="display: none;"
+      accept=".csv"
+      (change)="uploadfileCsv($event, 'upload', {})"
+      [disabled]="!canUploadCsv"
+    />
+    <div *ngIf="!canUploadCsv" class="text-muted small mt-1">
+      You don’t have privilege to upload.
+    </div>
+  </div>
+</form>
+  </div>
+</div>
+
+<div *ngSwitchCase="'Excel File'" class="col-md-6">
+  <div class="form-card p-3">
+    <h5 class="d-flex align-items-center">
+      <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+        <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+        <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+          class="me-2 card-icon" width="24" height="24">
+        <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+      </ng-container>
+      Upload New {{ selectedConnection }}
+    </h5>
+
+   <form class="form-height" (ngSubmit)="uploadfileCsv(fileInput, 'upload', {})">
+    <div class="mb-3">
+    <!-- <label class="form-label">Select CSV</label> -->
+    <!-- Drop Zone Box -->
+    <div
+      class="drop-zone"
+      [class.disabled]="!canUploadExcel"
+      (click)="canUploadExcel && fileInput1.click()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDropExcel($event)"
+      style="cursor:pointer; border:2px dashed #00b3b3; border-radius:8px; padding:32px; text-align:center; transition: border 0.2s; background:#f9f9f9;"
+    >
+      <div>
+        <i class="bi bi-folder2-open" style="font-size:40px; color:#FDB813"></i><br />
+        Drop file here or <span style="text-decoration: underline; color:#00b3b3;">click to upload</span>
+      </div>
+      <div class="text-muted small mt-2">
+        Support for Excel files
+      </div>
+    </div>
+    <!-- Invisible File Input -->
+    <input
+      type="file"
+      #fileInput1
+      style="display: none;"
+      accept=".xlsx, .xls"
+      (change)="uploadfileExcel($event, 'upload', {})"
+      [disabled]="!canUploadCsv"
+    />
+    <div *ngIf="!canUploadCsv" class="text-muted small mt-1">
+      You don’t have privilege to upload.
+    </div>
+  </div>
+</form>
+  </div>
+</div>
 </div>
 
 

@@ -2463,6 +2463,42 @@ export class WorkbenchComponent implements OnInit{
           }
         )
       }
+
+
+      onDragOver(event: DragEvent) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        onDragLeave(event: DragEvent) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        onDropCsv(event: DragEvent) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (!this.canUploadCsv) return;
+
+          const files = event.dataTransfer?.files;
+          if (files && files.length) {
+            // Create a mock event to reuse uploadfileCsv logic
+            const fileEvent = { target: { files } };
+            this.uploadfileCsv(fileEvent, 'upload', {});
+          }
+        }
+         onDropExcel(event: DragEvent) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (!this.canUploadExcel) return;
+
+          const files = event.dataTransfer?.files;
+          if (files && files.length) {
+            // Create a mock event to reuse uploadfileExcel logic
+            const fileEvent = { target: { files } };
+            this.uploadfileExcel(fileEvent, 'upload', {});
+          }
+        }
       // quickbooks Connection
       connectQuickBooks(){
         Swal.fire({
