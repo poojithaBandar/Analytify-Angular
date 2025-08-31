@@ -287,7 +287,12 @@ export class InsightEchartComponent {
       series: [
         {
           itemStyle: {
-            borderRadius: [this.barCornerRadius, this.barCornerRadius, 0, 0]
+            borderRadius: [
+              this.barCornerRadius,
+              this.barCornerRadius,
+              this.barCornerRadius,
+              this.barCornerRadius
+            ]
           },
           label: { show: true,
             position: this.dataLabelsFontPosition,
@@ -417,7 +422,12 @@ horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
         type: 'bar',
         data: this.chartsRowData,
         itemStyle: {
-          borderRadius: [0, this.barCornerRadius, this.barCornerRadius, 0]
+          borderRadius: [
+            this.barCornerRadius,
+            this.barCornerRadius,
+            this.barCornerRadius,
+            this.barCornerRadius
+          ]
         },
         label: {
           show: true,
@@ -1728,7 +1738,7 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
       })),
       label: {
         show: this.dataLabels,
-        position: this.dataLabelsFontPosition,
+        position: this.dataLabelsFontPosition == 'center' ? this.getLabelPosition() : this.dataLabelsFontPosition,
         fontFamily: this.dataLabelsFontFamily,
         fontSize: this.dataLabelsFontSize,
         fontWeight: this.isBold ? 700 : 400,
@@ -2041,7 +2051,12 @@ let barChartOptions = {
   series: [
     {
       itemStyle: {
-        borderRadius: [this.barCornerRadius, this.barCornerRadius, 0, 0]
+        borderRadius: [
+          this.barCornerRadius,
+          this.barCornerRadius,
+          this.barCornerRadius,
+          this.barCornerRadius
+        ]
       },
       label: { show: true,
         position: this.dataLabelsFontPosition,
@@ -2431,9 +2446,7 @@ chartInitialize(){
         this.chartOptions.series.forEach((s: any) => {
           s.itemStyle = {
             ...(s.itemStyle || {}),
-            borderRadius: this.chartType === 'bar'
-              ? [radius, radius, 0, 0]
-              : [0, radius, radius, 0]
+            borderRadius: [radius, radius, radius, radius]
           };
         });
       }
@@ -2570,9 +2583,16 @@ setColorsOnRanges(data: any): string[] {
               color: colors[index]
             }
           }));
-  
+          this.chartInstance?.setOption({
+            series: [
+              {
+                type: 'treemap', // must include the type to help identify the series
+                data: series.data // your new data array
+              }
+            ]
+          });
           // Apply to live chart
-          this.chartInstance?.setOption({ series: [{ data: series.data }] });
+          // this.chartInstance?.setOption({ series: [{ data: series.data }] });
   
           // Update stored chartOptions
           this.chartOptions.series[0].data = series.data;

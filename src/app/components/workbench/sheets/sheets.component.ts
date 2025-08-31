@@ -547,9 +547,27 @@ isSidebarCollapsed: boolean = false;
    this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
    this.canEditDashbaordInSheet = this.templateService.editDashboard();
    this.canAddDashbaordInSheet = this.templateService.addDashboard();
-   this.canEditDb = this.templateService.addDatasource();
-   this.canDrop = !this.canEditDb
-   }
+  this.canEditDb = this.templateService.addDatasource();
+  this.canDrop = !this.canEditDb
+  }
+  }
+
+  preventInvalidStartAngleInput(event: KeyboardEvent): void {
+    const invalidKeys = ['e', 'E', '+', '-'];
+    if (invalidKeys.includes(event.key)) event.preventDefault();
+    setTimeout(() => {
+      if (this.radialStartAngle < 0) this.radialStartAngle = 0;
+      if (this.radialStartAngle > 180) this.radialStartAngle = 180;
+    });
+  }
+
+  preventInvalidEndAngleInput(event: KeyboardEvent): void {
+    const invalidKeys = ['e', 'E', '+', '-'];
+    if (invalidKeys.includes(event.key)) event.preventDefault();
+    setTimeout(() => {
+      if (this.radialEndAngle < 0) this.radialEndAngle = 0;
+      if (this.radialEndAngle > 360) this.radialEndAngle = 360;
+    });
   }
 
   ngAfterViewInit(): void {
