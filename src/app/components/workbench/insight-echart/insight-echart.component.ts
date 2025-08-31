@@ -287,7 +287,12 @@ export class InsightEchartComponent {
       series: [
         {
           itemStyle: {
-            borderRadius: [this.barCornerRadius, this.barCornerRadius, 0, 0]
+            borderRadius: [
+              this.barCornerRadius,
+              this.barCornerRadius,
+              this.barCornerRadius,
+              this.barCornerRadius
+            ]
           },
           label: { show: true,
             position: this.dataLabelsFontPosition,
@@ -417,7 +422,12 @@ horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
         type: 'bar',
         data: this.chartsRowData,
         itemStyle: {
-          borderRadius: [0, this.barCornerRadius, this.barCornerRadius, 0]
+          borderRadius: [
+            this.barCornerRadius,
+            this.barCornerRadius,
+            this.barCornerRadius,
+            this.barCornerRadius
+          ]
         },
         label: {
           show: true,
@@ -2041,7 +2051,12 @@ let barChartOptions = {
   series: [
     {
       itemStyle: {
-        borderRadius: [this.barCornerRadius, this.barCornerRadius, 0, 0]
+        borderRadius: [
+          this.barCornerRadius,
+          this.barCornerRadius,
+          this.barCornerRadius,
+          this.barCornerRadius
+        ]
       },
       label: { show: true,
         position: this.dataLabelsFontPosition,
@@ -2431,9 +2446,7 @@ chartInitialize(){
         this.chartOptions.series.forEach((s: any) => {
           s.itemStyle = {
             ...(s.itemStyle || {}),
-            borderRadius: this.chartType === 'bar'
-              ? [radius, radius, 0, 0]
-              : [0, radius, radius, 0]
+            borderRadius: [radius, radius, radius, radius]
           };
         });
       }
