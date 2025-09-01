@@ -1724,6 +1724,7 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
     },
     series: [{
       type: 'treemap',
+      roam: false,
       breadcrumb: {
         show: false
       },
