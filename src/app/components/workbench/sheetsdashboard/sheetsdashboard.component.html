@@ -1517,7 +1517,7 @@
                   <div *ngIf="item.chartOptions && item['chartId'] === 18">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
                       [plotOptions]="item.chartOptions.plotOptions!" [dataLabels]="item.chartOptions.dataLabels!"
-                      [legend]="item.chartOptions.legend!" [colors]="item.chartOptions.colors!"
+                      [legend]="item.chartOptions.legend!" [colors]="item.chartOptions.colors!" [tooltip]="item.chartOptions.tooltip!"
                       (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 7">
@@ -2044,7 +2044,7 @@
                   <div *ngIf="item.chartOptions && item['chartId'] === 18">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
                       [plotOptions]="item.chartOptions.plotOptions!" [dataLabels]="item.chartOptions.dataLabels!"
-                      [legend]="item.chartOptions.legend!" [colors]="item.chartOptions.colors!"
+                      [legend]="item.chartOptions.legend!" [colors]="item.chartOptions.colors!" [tooltip]="item.chartOptions.tooltip!"
                       (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 7">

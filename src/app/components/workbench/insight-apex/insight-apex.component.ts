@@ -320,7 +320,10 @@ export class InsightApexComponent {
           formatter: (_: any, opts: any) => this.radialRawValues[opts.seriesIndex]
         }
       };
-      this.radialCharts?.updateOptions({ series: this.chartOptions.series, tooltip: this.chartOptions.tooltip, plotOptions: this.chartOptions.plotOptions });
+      this.chartOptions.legend = this.chartOptions.legend || {};
+      this.chartOptions.legend.formatter = (seriesName: string, opts: any) =>
+        `${seriesName}: ${this.formatNumber(this.radialRawValues[opts.seriesIndex])}`;
+      this.radialCharts?.updateOptions({ series: this.chartOptions.series, tooltip: this.chartOptions.tooltip, plotOptions: this.chartOptions.plotOptions, legend: this.chartOptions.legend });
     } else if (this.chartType === 'funnel') {
       this.chartOptions.series = this.dualAxisRowData;
       this.funnelCharts?.updateOptions({ series: this.chartOptions.series });
@@ -1873,6 +1876,8 @@ xaxis: {
       fontSize: "12px",
       offsetX: 10,
       offsetY: 10,
+      formatter: (seriesName: string, opts: any) =>
+        `${seriesName}: ${this.formatNumber(this.radialRawValues[opts.seriesIndex])}`
       },
       colors: this.isDistributed ? this.selectedColorScheme : [this.color],
     };
@@ -2007,7 +2012,8 @@ xaxis: {
             const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
             const label = dataPoint.x;
             const value = dataPoint.y;
-            return `${label}: ${self.formatNumber(value)}`;
+            return self.formatNumber(value);
+            // return `${label}: ${self.formatNumber(value)}`;
           }.bind(this)
         }
       },

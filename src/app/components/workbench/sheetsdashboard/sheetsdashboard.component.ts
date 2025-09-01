@@ -1178,6 +1178,23 @@ export class SheetsdashboardComponent implements OnDestroy {
           }
         }
       };
+      if (sheet.chartId === 20) {
+        const maxVal = sheet.chartOptions?.plotOptions?.radialBar?.max;
+        const rawValues = (sheet.chartOptions.series || []).map((p: number) =>
+          maxVal ? (p * maxVal) / 100 : 0
+        );
+        sheet.chartOptions.legend = {
+          ...(sheet.chartOptions.legend || {}),
+          formatter: (seriesName: string, opts: any) =>
+            `${seriesName}: ${this.formatNumber(
+              rawValues[opts.seriesIndex],
+              sheet.numberFormat?.decimalPlaces ?? 0,
+              sheet.numberFormat?.displayUnits ?? 'none',
+              sheet.numberFormat?.prefix ?? '',
+              sheet.numberFormat?.suffix ?? ''
+            )}`
+        };
+      }
       } else if (sheet.chartId == 29) {
         this.chartType = 'map';
         sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
@@ -1363,6 +1380,20 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         if(sheet?.tableData?.tablePage){
           sheet.tableData.tablePage = 1;
+        }
+      }
+      if (chartId == 18) {
+        if (isEcharts) {
+          sheet.echartOptions.tooltip.formatter = (params: any) =>
+            `${params.name} : ${this.formatNumber(
+              params.value,
+              numberFormat.decimalPlaces ?? 0,
+              numberFormat.displayUnits ?? 'none',
+              numberFormat.prefix ?? '',
+              numberFormat.suffix ?? ''
+            )}`;
+        } else {
+          sheet.chartOptions.tooltip.y.formatter = (val: any, opts: any) => this.formatNumber(val, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '');
         }
       }
     })
@@ -2360,31 +2391,31 @@ allowDrop(ev : any): void {
         customizeOptions: copy.customizeOptions,
         pivotData: copy.pivotData
       };
-      if (element.chartId == '18' && element.echartOptions) {
-        const nf = element.numberFormat || {};
-        element.echartOptions.tooltip = element.echartOptions.tooltip || {};
-        element.echartOptions.tooltip.formatter = (params: any) =>
-          `${params.name} : ${this.formatNumber(
-            params.value,
-            nf.decimalPlaces ?? 0,
-            nf.displayUnits ?? 'none',
-            nf.prefix ?? '',
-            nf.suffix ?? ''
-          )}`;
+      // if (element.chartId == '18' && element.echartOptions) {
+      //   const nf = element.numberFormat || {};
+      //   element.echartOptions.tooltip = element.echartOptions.tooltip || {};
+      //   element.echartOptions.tooltip.formatter = (params: any) =>
+      //     `${params.name} : ${this.formatNumber(
+      //       params.value,
+      //       nf.decimalPlaces ?? 0,
+      //       nf.displayUnits ?? 'none',
+      //       nf.prefix ?? '',
+      //       nf.suffix ?? ''
+      //     )}`;
 
-        if (element.echartOptions.series && element.echartOptions.series[0]) {
-          element.echartOptions.series[0].label =
-            element.echartOptions.series[0].label || {};
-          element.echartOptions.series[0].label.formatter = (params: any) =>
-            `${params.name}: ${this.formatNumber(
-              params.value,
-              nf.decimalPlaces ?? 0,
-              nf.displayUnits ?? 'none',
-              nf.prefix ?? '',
-              nf.suffix ?? ''
-            )}`;
-        }
-      }
+      //   if (element.echartOptions.series && element.echartOptions.series[0]) {
+      //     element.echartOptions.series[0].label =
+      //       element.echartOptions.series[0].label || {};
+      //     element.echartOptions.series[0].label.formatter = (params: any) =>
+      //       `${params.name}: ${this.formatNumber(
+      //         params.value,
+      //         nf.decimalPlaces ?? 0,
+      //         nf.displayUnits ?? 'none',
+      //         nf.prefix ?? '',
+      //         nf.suffix ?? ''
+      //       )}`;
+      //   }
+      // }
       // this.qrySetId.push(copy.qrySetId);
       // if(copy.fileId){
       //   this.fileId.push(copy.fileId);
@@ -2756,6 +2787,20 @@ allowDrop(ev : any): void {
           }
           if (sheet?.tableData?.tablePage) {
             sheet.tableData.tablePage = 1;
+          }
+        }
+        if (chartId == 18){
+          if (isEcharts) {
+            sheet.echartOptions.tooltip.formatter = (params: any) =>
+              `${params.name} : ${this.formatNumber(
+                params.value,
+                numberFormat.decimalPlaces ?? 0,
+                numberFormat.displayUnits ?? 'none',
+                numberFormat.prefix ?? '',
+                numberFormat.suffix ?? ''
+              )}`;
+          } else {
+            sheet.chartOptions.tooltip.y.formatter = (val: any, opts: any) => this.formatNumber(val, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '');
           }
         }
       });
@@ -4265,6 +4310,17 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const maxVal = item1.chartOptions?.plotOptions?.radialBar?.max;
         const normalizedValues = values.map((v: any) => maxVal ? (v / maxVal) * 100 : 0);
         item1.chartOptions.series = normalizedValues;
+        item1.chartOptions.legend = {
+          ...(item1.chartOptions.legend || {}),
+          formatter: (seriesName: string, opts: any) =>
+            `${seriesName}: ${this.formatNumber(
+              values[opts.seriesIndex],
+              item1.numberFormat?.decimalPlaces ?? 0,
+              item1.numberFormat?.displayUnits ?? 'none',
+              item1.numberFormat?.prefix ?? '',
+              item1.numberFormat?.suffix ?? ''
+            )}`
+        };
       }
       if((item.chart_id == '18' || item.chartId == '18' && (isFilter || isDrillDown)) || (item1.chartId == '18' && isDrillThrough)){//treemap
         if(switchDb){
@@ -6408,6 +6464,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               })
             })
           }
+        } else if(chartId === 18){
+          if (sheet.echartOptions.series && sheet.echartOptions.series[0]) {
+            sheet.echartOptions.series[0].label.formatter = (params: any) =>
+              `${params.name}: ${
+                this.formatNumber(params.value, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '')
+              }`;
+          }
         } else if(![1, 25, 10, 24, 11, 29, 9].includes(chartId)){
           if (sheet.echartOptions?.yAxis?.axisLabel) {
             sheet.echartOptions.yAxis.axisLabel.formatter = (val: any) => {
@@ -6448,10 +6511,17 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               return `${category}: ${formattedValue}`;
             }
           }
+        } else if(chartId === 20){
+          if (sheet.chartOptions?.legend) {
+            const maxVal = sheet.chartOptions?.plotOptions?.radialBar?.max;
+            const rawValues = (sheet.chartOptions.series || []).map((p: number) => maxVal ? (p * maxVal) / 100 : 0);
+            sheet.chartOptions.legend.formatter = (seriesName: string, opts: any) =>
+              `${seriesName}: ${this.formatNumber(rawValues[opts.seriesIndex], numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix)}`;
+          }
         } else if(chartId === 28){
           if (sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value) {
             sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: any, opts: any) => {
-              
+
                 switch (sheet.customizeOptions.gaugeDisplayMode) {
                   case 'percentage':
                     return `${val.toFixed(2)}%`;
@@ -6464,7 +6534,14 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
                 } 
             }
           }
-        } else if(![1, 25, 10, 24, 9].includes(chartId)){
+        } else if(chartId === 18){
+          sheet.chartOptions.dataLabels.formatter = (val: number, opts:any) => {
+            const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+            const label = dataPoint.x;
+            const value = dataPoint.y;
+            return `${label}: `+ this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          };
+        } else if(![1, 25, 10, 24, 9, 18, 20].includes(chartId)){
           if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
             sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: number) => {
               const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);

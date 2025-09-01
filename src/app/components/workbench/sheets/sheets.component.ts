@@ -2273,7 +2273,7 @@ sheetSave(isDashboardTransfer?: boolean){
   }
   savedChartOptions = this.chartOptionsSet;
   let customizeObject = {
-    isZoom : this.isZoom,
+    ...(this.treemap ? {} : { isZoom: this.isZoom }),
     xGridColor : this.xGridColor,
     xGridSwitch : this.xGridSwitch,
     xLabelSwitch : this.xLabelSwitch,
@@ -4426,7 +4426,9 @@ customizechangeChartPlugin() {
   }
 
   setCustomizeOptions(data: any) {
-    this.isZoom = data.isZoom ?? true;
+    if (!this.treemap) {
+      this.isZoom = data.isZoom ?? true;
+    }
     this.xGridColor = data.xGridColor ?? '#2392c1';
     this.xGridSwitch = data.xGridSwitch ?? false;
     this.xLabelSwitch = data.xLabelSwitch ?? true;
