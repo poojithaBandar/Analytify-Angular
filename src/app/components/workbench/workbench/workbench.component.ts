@@ -3789,7 +3789,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
 
   quickbooks: { type: 'image', value: './assets/images/icons/quickbooks.png' },
   ninja: { type: 'svg', value: this.SVGICONS.ninjaOne },
-  tally: { type: 'svg', value: this.SVGICONS.tally },
+  tally: { type: 'image', value: './assets/images/icons/tally-icon.svg' },
   csv: { type: 'emoji', value: '📑' },
   excel: { type: 'emoji', value: '📊' },
   google_analytics: { type: 'svg', value: this.SVGICONS.googleAnalytics },
@@ -3924,7 +3924,7 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
     { name: "BambooHR", description: "HR management system", svg:this.SVGICONS.bambooHr },
     { name: "Jira", description: "Project management software",svg:this.SVGICONS.jira },
     { name: "Shopify", description: "E-commerce platform",svg:this.SVGICONS.shopify },
-    { name: "Tally", description: "Accounting & ERP software",svg:this.SVGICONS.tally },
+    { name: "Tally", description: "Accounting & ERP software",image:'./assets/images/icons/tally-icon.svg' },
     { name: "Google Sheets", description: "Online spreadsheets", svg:this.SVGICONS.googleSheets },
     { name: "NinjaOne", description: "IT management & automation tool", svg:this.SVGICONS.ninjaOne },
     { name: "Google Analytics", description: "Web analytics service", svg:this.SVGICONS.googleAnalytics },

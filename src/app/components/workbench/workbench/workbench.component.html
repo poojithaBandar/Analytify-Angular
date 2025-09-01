@@ -859,6 +859,7 @@
             
             
               <div class="row g-4">
+                @if(!isLoadingConnectionsList && connectionList.length > 0){
                 <div class="col-12 col-md-6 col-lg-4" *ngFor="let connection of connectionList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }">
                   <div class="glass-card h-100" [ngClass]="iscrossDbSelect ? 'selectable-card' : ''" [class.selected]="iscrossDbSelect && selectedHirchyIdCrsDb === connection.hierarchy_id"
                          (click)="iscrossDbSelect ? onSelectedHIDCrsDb(connection.hierarchy_id) : null">
@@ -1003,7 +1004,7 @@
             
                   </div>
                 </div>
-
+              }
                 <ng-container *ngIf="isLoadingConnectionsList">
                 <div class="col-12 col-md-6 col-lg-4" *ngFor="let sk of skeletons">
                   <div class="glass-card h-100">
@@ -1036,10 +1037,18 @@
               </ng-container>
 
                <ng-container *ngIf="!isLoadingConnectionsList && connectionList.length === 0">
-                <div class="col-12 text-center py-4">
-                  <p class="text-muted">No data to display</p>
-                </div>
-              </ng-container>
+                  <div class="col-12 d-flex justify-content-center py-4">
+                    <div class="glass-card  text-center w-100 p-4" >
+                      <div class="card-body">
+                        <i class="bi bi-database fs-1 text-secondary mb-3"></i>
+                        <h5 class="card-title text-muted">No Connections Found</h5>
+                        <!-- <p class="card-text small text-muted">
+                          You don’t have any database connections yet.
+                        </p> -->
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
               </div>
             </div>
           }
@@ -1054,7 +1063,7 @@
          </div> -->
 
 
-         <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2 px-5">
+         <div *ngIf="!isLoadingConnectionsList && connectionList.length > 0" class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2 px-5">
 
             <!-- Pagination Controls with padding -->
             <pagination-controls
