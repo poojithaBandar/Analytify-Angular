@@ -6500,8 +6500,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
           }
         } else if(chartId === 18){
-          sheet.chartOptions.dataLabels.formatter = (val: number) => {
-            return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          sheet.chartOptions.dataLabels.formatter = (val: number, opts:any) => {
+            const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+            const label = dataPoint.x;
+            const value = dataPoint.y;
+            return `${label}: `+ this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
           };
         } else if(![1, 25, 10, 24, 9].includes(chartId)){
           if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
