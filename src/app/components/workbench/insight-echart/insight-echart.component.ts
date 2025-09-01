@@ -1724,10 +1724,8 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
     },
     series: [{
       type: 'treemap',
-      roam: this.isZoom ? true : false,
-      nodeClick: this.isZoom ? 'zoomToNode' : false,
       breadcrumb: {
-        show: this.isZoom
+        show: false
       },
       itemStyle: {
         borderRadius: this.barCornerRadius
@@ -2227,18 +2225,7 @@ chartInitialize(){
       if (this.chartInstance) {
 
         let obj ={};
-        if (this.chartType === 'treemap') {
-          obj = {
-            series: [{
-              type: 'treemap',
-              roam: this.isZoom ? true : false,
-              nodeClick: this.isZoom ? 'zoomToNode' : false,
-              breadcrumb: {
-                show: this.isZoom
-              }
-            }]
-          };
-        } else if (this.chartType === 'horizontalBar') {
+        if (this.chartType === 'horizontalBar') {
           obj = {
             dataZoom: this.isZoom ? [
               {
