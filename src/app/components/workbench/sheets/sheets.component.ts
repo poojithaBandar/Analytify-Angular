@@ -871,6 +871,8 @@ try {
               this.funnel = false;
               this.calendar = false;
               this.map=false;
+              this.treemap = false;
+              this.radial = false;
               // this.tableDisplayPagination();
             } else if(((this.pie || this.bar || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar || this.radial || this.treemap) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
@@ -895,6 +897,8 @@ try {
               this.guage = false;
               this.calendar = false;
               this.map = false;
+              this.treemap = false;
+              this.radial = false;
               // this.sidebysideBar();
               this.resetCustomizations();
               this.chartType = 'sidebyside';
@@ -6843,6 +6847,8 @@ customizechangeChartPlugin() {
       this.funnel = false;
       this.calendar = false;
       this.map = false;
+      this.treemap = false;
+      this.radial = false;
     }
     sortColumn : any = 'select';
     columnNamesForSort : any [] = [];
