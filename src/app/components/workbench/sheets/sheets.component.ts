@@ -57,6 +57,8 @@ import { saveAs } from 'file-saver';
 import 'pivottable';
 // import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/sortable';
+import 'jquery-ui/ui/widgets/draggable';
+import 'jquery-ui/ui/widgets/droppable';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TestPipe } from '../../../test.pipe';
 
@@ -1067,28 +1069,43 @@ try {
 
         renderPivotTable(isSyncData: boolean) {
           setTimeout(() => {
-
             if (this.pivotContainer && this.pivotContainer.nativeElement) {
-              ($(this.pivotContainer.nativeElement) as any).pivot(this.transformedData, {
+              const options: any = {
                 rows: this.columnKeys,
                 cols: this.valueKeys,
-                // vals: this.valueKeys, 
-                aggregator: $.pivotUtilities.aggregators["Sum"](this.rowKeys),
+                vals: this.rowKeys,
+                aggregators: $.pivotUtilities.aggregators,
+                renderers: $.pivotUtilities.renderers,
+                aggregatorName: "Sum",
                 rendererName: "Table",
-                rendererOptions:{
-                  table:{
-                    rowTotals:this.pivotRowTotals,
-                    colTotals:this.pivotColumnTotals
-                  }
-                }
-              });
-              if (isSyncData) {
-                this.sheetSave();
-              }
-            }
-            this.applyDynamicStylesToPivot()
-          }, 1000);
+                rendererOptions: {
+                  table: {
+                    rowTotals: this.pivotRowTotals,
+                    colTotals: this.pivotColumnTotals,
+                  },
+                },
+                onRefresh: (config: any) => {
+                  this.columnKeys = config.rows ? config.rows.slice() : [];
+                  this.valueKeys = config.cols ? config.cols.slice() : [];
+                  this.rowKeys = config.vals ? config.vals.slice() : [];
+                  this.applyDynamicStylesToPivot();
+                },
+              };
 
+                ($(this.pivotContainer.nativeElement) as any).pivotUI(
+                  this.transformedData,
+                  options,
+                  true
+                );
+
+                // ensure custom styles are applied after initial render
+                setTimeout(() => this.applyDynamicStylesToPivot(), 0);
+
+                if (isSyncData) {
+                  this.sheetSave();
+                }
+            }
+          }, 1000);
         }
 
 
