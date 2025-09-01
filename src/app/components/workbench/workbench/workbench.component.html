@@ -3276,7 +3276,7 @@
               <i class="bi bi-pencil me-1"></i> Edit
             </button>
             <button class="btn btn-outline-danger-light rounded-2 btn-sm flex-fill"
-              (click)="deleteDbConnection(conn.is_cross_db ? conn?.cross_db_id : conn.hierarchy_id)">
+              (click)="deleteDbConnection(conn.is_cross_db ? conn?.cross_db_id : conn.hierarchy_id);">
               <i class="bi bi-trash me-1"></i> Delete
             </button>
           </div>
@@ -4239,7 +4239,7 @@
     </div>
   </div>
 
-  <div *ngSwitchCase="'HaloPSA'" class="col-md-6">
+  <div *ngSwitchCase="'HaloPS'" class="col-md-6">
     <div class="form-card p-3">
       <h5 class="d-flex align-items-center">
         <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
@@ -4897,7 +4897,7 @@
     </div>
   </div>
 
-   <div *ngSwitchCase="'CSV File'" class="col-md-6">
+   <div *ngSwitchCase="'CSV'" class="col-md-6">
   <div class="form-card p-3">
     <h5 class="d-flex align-items-center">
       <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
@@ -4947,7 +4947,7 @@
   </div>
 </div>
 
-<div *ngSwitchCase="'Excel File'" class="col-md-6">
+<div *ngSwitchCase="'Excel'" class="col-md-6">
   <div class="form-card p-3">
     <h5 class="d-flex align-items-center">
       <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
