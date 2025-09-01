@@ -221,6 +221,7 @@ export class WorkbenchComponent implements OnInit{
   datasetsCount:any;
   connectionsCount:any;
   callAllConnectionsExistingList: boolean = false;
+  isLoadingConnectionsList: boolean = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer){
     localStorage.setItem('QuerySetId', '0');
@@ -254,12 +255,14 @@ export class WorkbenchComponent implements OnInit{
           this.isCustomSql = true;
           this.iscrossDbSelect = true;
           this.viewNewDbs = currentUrl.includes('newconnection');
+          this.callAllConnectionsExistingList = this.viewNewDbs;
           this.databaseconnectionsList = !this.viewNewDbs;
           this.isGoogleSheetsPage = false;
         } else if (currentUrl.includes('crossdatabase')) {
           this.isCustomSql = false;
           this.iscrossDbSelect = true;
           this.viewNewDbs = currentUrl.includes('newconnection');
+          this.callAllConnectionsExistingList = this.viewNewDbs;
           this.databaseconnectionsList = !this.viewNewDbs;
           this.isGoogleSheetsPage = false;
         }
@@ -3161,6 +3164,7 @@ connectGoogleSheets(){
     if(this.iscrossDbSelect){
       Obj.remove_hierarchy_id = this.primaryHierachyId
     }
+    this.isLoadingConnectionsList = true;
     this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
       next:(data)=>{
         console.log(data);
@@ -3171,9 +3175,11 @@ connectGoogleSheets(){
         this.datasetsCount = data.queries_count;
         this.recentSyncCount = data.recent_count;
         this.alertsCount = data.alerts_count;
-        console.log('connectionlist',data)
+        console.log('connectionlist',data);
+        this.isLoadingConnectionsList = false
        },
       error:(error)=>{
+        this.isLoadingConnectionsList = false
         console.log(error);
         Swal.fire({
           icon: 'error',
@@ -3948,6 +3954,8 @@ selectConnection(connName: string) {
     !this.iscrossDbSelect ? this.connectSalesforce() : null;
   } else if(connName === 'Jira'){
     !this.iscrossDbSelect ? this.connectJira() : null;
+  } else if(connName === 'Google Sheets'){
+    !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
   } else{
     this.selectedConnection = connName;
     this.getSpecificConnections();
