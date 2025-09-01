@@ -2,16 +2,11 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, input, Input, O
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
-import { NgxEchartsDirective } from 'ngx-echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SharedModule } from '../../../shared/sharedmodule';
 import _, { inRange } from 'lodash';
-import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
-import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { lastValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
-import { bottom } from '@popperjs/core';
 
 interface Dimension {
   name: string;
@@ -1741,7 +1736,7 @@ treemapChart(chartsColumnData?: any, chartsRowData?: any){
       })),
       label: {
         show: this.dataLabels,
-        position: this.dataLabelsFontPosition,
+        position: this.dataLabelsFontPosition == 'center' ? this.getLabelPosition() : this.dataLabelsFontPosition,
         fontFamily: this.dataLabelsFontFamily,
         fontSize: this.dataLabelsFontSize,
         fontWeight: this.isBold ? 700 : 400,
@@ -2575,9 +2570,16 @@ setColorsOnRanges(data: any): string[] {
               color: colors[index]
             }
           }));
-  
+          this.chartInstance?.setOption({
+            series: [
+              {
+                type: 'treemap', // must include the type to help identify the series
+                data: series.data // your new data array
+              }
+            ]
+          });
           // Apply to live chart
-          this.chartInstance?.setOption({ series: [{ data: series.data }] });
+          // this.chartInstance?.setOption({ series: [{ data: series.data }] });
   
           // Update stored chartOptions
           this.chartOptions.series[0].data = series.data;
