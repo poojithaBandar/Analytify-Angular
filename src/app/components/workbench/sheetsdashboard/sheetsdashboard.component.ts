@@ -1178,6 +1178,23 @@ export class SheetsdashboardComponent implements OnDestroy {
           }
         }
       };
+      if (sheet.chartId === 20) {
+        const maxVal = sheet.chartOptions?.plotOptions?.radialBar?.max;
+        const rawValues = (sheet.chartOptions.series || []).map((p: number) =>
+          maxVal ? (p * maxVal) / 100 : 0
+        );
+        sheet.chartOptions.legend = {
+          ...(sheet.chartOptions.legend || {}),
+          formatter: (seriesName: string, opts: any) =>
+            `${seriesName}: ${this.formatNumber(
+              rawValues[opts.seriesIndex],
+              sheet.numberFormat?.decimalPlaces ?? 0,
+              sheet.numberFormat?.displayUnits ?? 'none',
+              sheet.numberFormat?.prefix ?? '',
+              sheet.numberFormat?.suffix ?? ''
+            )}`
+        };
+      }
       } else if (sheet.chartId == 29) {
         this.chartType = 'map';
         sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
@@ -4293,6 +4310,17 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const maxVal = item1.chartOptions?.plotOptions?.radialBar?.max;
         const normalizedValues = values.map((v: any) => maxVal ? (v / maxVal) * 100 : 0);
         item1.chartOptions.series = normalizedValues;
+        item1.chartOptions.legend = {
+          ...(item1.chartOptions.legend || {}),
+          formatter: (seriesName: string, opts: any) =>
+            `${seriesName}: ${this.formatNumber(
+              values[opts.seriesIndex],
+              item1.numberFormat?.decimalPlaces ?? 0,
+              item1.numberFormat?.displayUnits ?? 'none',
+              item1.numberFormat?.prefix ?? '',
+              item1.numberFormat?.suffix ?? ''
+            )}`
+        };
       }
       if((item.chart_id == '18' || item.chartId == '18' && (isFilter || isDrillDown)) || (item1.chartId == '18' && isDrillThrough)){//treemap
         if(switchDb){
@@ -6483,10 +6511,17 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               return `${category}: ${formattedValue}`;
             }
           }
+        } else if(chartId === 20){
+          if (sheet.chartOptions?.legend) {
+            const maxVal = sheet.chartOptions?.plotOptions?.radialBar?.max;
+            const rawValues = (sheet.chartOptions.series || []).map((p: number) => maxVal ? (p * maxVal) / 100 : 0);
+            sheet.chartOptions.legend.formatter = (seriesName: string, opts: any) =>
+              `${seriesName}: ${this.formatNumber(rawValues[opts.seriesIndex], numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix)}`;
+          }
         } else if(chartId === 28){
           if (sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value) {
             sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: any, opts: any) => {
-              
+
                 switch (sheet.customizeOptions.gaugeDisplayMode) {
                   case 'percentage':
                     return `${val.toFixed(2)}%`;
