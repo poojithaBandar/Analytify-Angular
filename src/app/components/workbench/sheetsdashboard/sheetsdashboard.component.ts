@@ -6506,7 +6506,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             const value = dataPoint.y;
             return `${label}: `+ this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
           };
-        } else if(![1, 25, 10, 24, 9].includes(chartId)){
+        } else if(![1, 25, 10, 24, 9, 18, 20].includes(chartId)){
           if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
             sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: number) => {
               const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
