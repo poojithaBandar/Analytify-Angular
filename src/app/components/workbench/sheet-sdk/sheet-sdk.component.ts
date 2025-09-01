@@ -7,6 +7,7 @@ import { WorkbenchService } from '../workbench.service';
 import { CustomSheetsComponent } from '../custom-sheets/custom-sheets.component';
 import { SheetsComponent } from '../sheets/sheets.component';
 import { SheetDataTransformerService } from '../../../services/sheet-data-transformer.service';
+import { ChartRenderService } from '../../../services/chart-render.service';
 
 @Component({
   selector: 'app-sheet-sdk',
@@ -64,7 +65,8 @@ export class SheetSdkComponent {
       constructor(                                                                                                        
         private route: ActivatedRoute,                                                                                    
         private workbenchService: WorkbenchService,
-         private transformer: SheetDataTransformerService                                                                             
+         private transformer: SheetDataTransformerService  ,
+         private chartRenderService: ChartRenderService                                                                           
       ) {}                                                                                                                
                                                                                                                           
     ngOnInit(): void {                                                                                                 
@@ -108,72 +110,9 @@ export class SheetSdkComponent {
       }  
       
       setChartType(chartId: number){
-        switch (chartId) {
-          case 9:
-            this.chartType = 'pivot';
-            break;
-          case 1: 
-          this.chartType = 'table';
-          break;
-          case 25:
-            this.chartType = 'kpi';
-            break;
-          case 6:
-            this.chartType = 'bar';
-            break;
-          case 24:
-            this.chartType = 'pie';
-            break;
-          case 13:
-            this.chartType = 'line';
-            break;
-          case 17:
-            this.chartType = 'area';
-            break;
-          case 7:
-            this.chartType = 'sidebyside';
-            break;
-          case 5:
-            this.chartType = 'stocked';
-            break;
-          case 2:
-            this.chartType = 'hstocked';
-            break;
-          case 3:
-            this.chartType = 'hgrouped';
-            break;
-          case 8:
-            this.chartType = 'multiline';
-            break;
-          case 10:
-            this.chartType = 'donut';
-            break;
-          case 27:
-            this.chartType = 'funnel';
-            break;
-          case 28:
-            this.chartType = 'guage';
-            break;
-
-          case 4:
-            this.chartType = 'barline';
-            break;
-
-          case 26:
-            this.chartType = 'heatmap';
-            break;
-
-          case 29:
-            this.chartType = 'map';
-            break;
-            case 11:
-            this.chartType = 'calendar';
-            break;
-             case 12:
-            this.chartType = 'radar';
-            break;
-
-
+        const cfg = this.chartRenderService.getChartConfig(chartId);
+        if(cfg){
+          this.chartType = cfg.chartType;
         }
       }
   // fetchDataProxy(){

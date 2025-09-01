@@ -121,6 +121,21 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/deepseek_authentication/`+this.accessToken,obj);
   }
+  geminiConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/gemini_authentication/`+this.accessToken,obj);
+  }
+  getGeminiConnection(id:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/gemini_authentication/`+id+'/'+this.accessToken);
+  }
+  deleteGeminiConnection(id:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/gemini_authentication/`+id+'/'+this.accessToken);
+  }
   hubspotConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -163,6 +178,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/deepseek_authentication/`+this.accessToken,obj);
+  }
+
+  geminiConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/gemini_authentication/`+this.accessToken,obj);
   }
 
   ninjaRMMConnectionUpdate(obj:any){
@@ -1093,6 +1114,12 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem('currentUser');
       this.accessToken = JSON.parse(currentUser!)['Token'];
       return this.http.get<any>(`${environment.apiUrl}/pax8_dashbaord/` + id + '/' + this.accessToken);
+    }
+
+    buildSampleBambooHRDashboard(id: number) {
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/bamboohr_dashbaord/` + id + '/' + this.accessToken);
     }
     createSmartDashboard(hierarchyId: number){
       const currentUser = localStorage.getItem('currentUser');

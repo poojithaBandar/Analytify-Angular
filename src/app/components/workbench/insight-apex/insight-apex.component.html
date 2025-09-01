@@ -188,10 +188,22 @@
             [labels]="chartOptions.labels"
             [plotOptions] = "chartOptions.plotOptions"
             [dataLabels]="chartOptions.dataLabels"
-            [legend]="chartOptions.legend" 
+            [legend]="chartOptions.legend"
             [colors]="chartOptions.colors">
             </apx-chart>
         </div>
+    </div>
+} @else if(chartType === 'radial'){
+    <div id="radialchart">
+        <apx-chart #radialchart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [labels]="chartOptions.labels"
+        [plotOptions]="chartOptions.plotOptions"
+        [legend]="chartOptions.legend"
+        [colors]="chartOptions.colors"
+        [tooltip]="chartOptions.tooltip">
+        </apx-chart>
     </div>
 } @else if(chartType === 'heatmap'){
     <div id="chart">
@@ -215,7 +227,8 @@
         [plotOptions]="chartOptions.plotOptions"
         [dataLabels]="chartOptions.dataLabels"
         [legend]="chartOptions.legend"
-        [colors]="chartOptions.colors">
+        [colors]="chartOptions.colors"
+        [tooltip]="chartOptions.tooltip">
         </apx-chart>
     </div>
 } @else if(chartType === 'funnel'){

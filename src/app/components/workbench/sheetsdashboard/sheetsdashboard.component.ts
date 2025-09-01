@@ -1082,25 +1082,28 @@ export class SheetsdashboardComponent implements OnDestroy {
       sheet.chartOptions.chart.events = {
         markerClick: (event: any, chartContext: any, config: any) => {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 ){
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
           }
           if(self.actionId && sheet.sheetId === self.sourceSheetId){
-            self.setDrillThrough(selectedXValue, sheet);  
+            self.setDrillThrough(selectedXValue, sheet);
           }
         },
         dataPointSelection: function (event: any, chartContext: any, config: any) {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
-          } else {
+          } else if(sheet.chartId == 18){
+            const selectedNode = sheet.chartOptions.series[0].data[config.dataPointIndex];
+            selectedXValue = selectedNode.x;
+        } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
           }
           if(self.actionId && sheet.sheetId === self.sourceSheetId){
-            self.setDrillThrough(selectedXValue, sheet);  
-          }            
+            self.setDrillThrough(selectedXValue, sheet);
+          }
           if (sheet.drillDownIndex < sheet.drillDownHierarchy?.length - 1) {
             // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
             console.log('X-axis value:', selectedXValue);
@@ -1360,6 +1363,20 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         if(sheet?.tableData?.tablePage){
           sheet.tableData.tablePage = 1;
+        }
+      }
+      if (chartId == 18) {
+        if (isEcharts) {
+          sheet.echartOptions.tooltip.formatter = (params: any) =>
+            `${params.name} : ${this.formatNumber(
+              params.value,
+              numberFormat.decimalPlaces ?? 0,
+              numberFormat.displayUnits ?? 'none',
+              numberFormat.prefix ?? '',
+              numberFormat.suffix ?? ''
+            )}`;
+        } else {
+          sheet.chartOptions.tooltip.y.formatter = (val: any, opts: any) => this.formatNumber(val, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '');
         }
       }
     })
@@ -1858,10 +1875,12 @@ export class SheetsdashboardComponent implements OnDestroy {
         if(!isLiveReloadData && !isDashboardTransfer && !isSwitchDb){
           this.takeScreenshot().then(() => {
             this.saveDashboardimageUpdate();
+            this.endMethod();
           });
           // this.saveDashboardimageUpdate();
-        }
+        }else{
         this.endMethod(); 
+        }
       },
       error:(error)=>{
         console.log(error);
@@ -1927,6 +1946,10 @@ export class SheetsdashboardComponent implements OnDestroy {
           } else {
             item1.chartOptions = item1['originalData'].chartOptions;
           }
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '20' && item1['originalData']){//radial
+          item1.chartOptions = item1['originalData'].chartOptions;
           delete item1['originalData'];
         }
         if(item1.chartId == '18' && item1['originalData']){//treemap
@@ -2029,6 +2052,10 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
         delete item1['originalData'];
       }
+        if(item1.chartId == '28' && item1['originalData']){//guage
+          item1.chartOptions = item1['originalData'].chartOptions;
+          delete item1['originalData'];
+        }
         if(item1.chartId == '11' && item1['originalData']){//calendar
           if(item1.isEChart){
             item1.echartOptions = item1['originalData'].chartOptions;
@@ -2347,6 +2374,31 @@ allowDrop(ev : any): void {
         customizeOptions: copy.customizeOptions,
         pivotData: copy.pivotData
       };
+      // if (element.chartId == '18' && element.echartOptions) {
+      //   const nf = element.numberFormat || {};
+      //   element.echartOptions.tooltip = element.echartOptions.tooltip || {};
+      //   element.echartOptions.tooltip.formatter = (params: any) =>
+      //     `${params.name} : ${this.formatNumber(
+      //       params.value,
+      //       nf.decimalPlaces ?? 0,
+      //       nf.displayUnits ?? 'none',
+      //       nf.prefix ?? '',
+      //       nf.suffix ?? ''
+      //     )}`;
+
+      //   if (element.echartOptions.series && element.echartOptions.series[0]) {
+      //     element.echartOptions.series[0].label =
+      //       element.echartOptions.series[0].label || {};
+      //     element.echartOptions.series[0].label.formatter = (params: any) =>
+      //       `${params.name}: ${this.formatNumber(
+      //         params.value,
+      //         nf.decimalPlaces ?? 0,
+      //         nf.displayUnits ?? 'none',
+      //         nf.prefix ?? '',
+      //         nf.suffix ?? ''
+      //       )}`;
+      //   }
+      // }
       // this.qrySetId.push(copy.qrySetId);
       // if(copy.fileId){
       //   this.fileId.push(copy.fileId);
@@ -2382,7 +2434,7 @@ allowDrop(ev : any): void {
           element.chartOptions.chart.events = {
             markerClick: (event: any, chartContext: any, config: any) => {
               let selectedXValue;
-              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4 || element.chartId == 18) {
+              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4 || element.chartId == 18 || element.chartId == 20 || element.chartId == 28) {
                 selectedXValue = element.chartOptions.labels[config.dataPointIndex];
               } else {
                 selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -2393,8 +2445,11 @@ allowDrop(ev : any): void {
             },
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               let selectedXValue;
-              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 18) {
+              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 20 || element.chartId == 4 || element.chartId == 17 || element.chartId == 28) {
                 selectedXValue = element.chartOptions.labels[config.dataPointIndex];
+              } else if(element.chartId == 18){
+                  const selectedNode = element.chartOptions.series[0].data[config.dataPointIndex];
+                  selectedXValue = selectedNode.x;
               } else {
                 selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
               }
@@ -2715,6 +2770,20 @@ allowDrop(ev : any): void {
           }
           if (sheet?.tableData?.tablePage) {
             sheet.tableData.tablePage = 1;
+          }
+        }
+        if (chartId == 18){
+          if (isEcharts) {
+            sheet.echartOptions.tooltip.formatter = (params: any) =>
+              `${params.name} : ${this.formatNumber(
+                params.value,
+                numberFormat.decimalPlaces ?? 0,
+                numberFormat.displayUnits ?? 'none',
+                numberFormat.prefix ?? '',
+                numberFormat.suffix ?? ''
+              )}`;
+          } else {
+            sheet.chartOptions.tooltip.y.formatter = (val: any, opts: any) => this.formatNumber(val, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '');
           }
         }
       });
@@ -4207,6 +4276,23 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.labels = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData[0].data;
         }
+      }
+      if((item.chart_id == '20' || item.chartId == '20' && (isFilter || isDrillDown)) || (item1.chartId == '20' && isDrillThrough)){
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+        }
+        if(!item1.originalData && !isLiveReloadData && !switchDb){
+          item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+        }
+        if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+          item1.drillDownIndex = 0;
+          item1.drillDownObject = [];
+        }
+        item1.chartOptions.labels = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
+        const values = this.filteredRowData[0].data;
+        const maxVal = item1.chartOptions?.plotOptions?.radialBar?.max;
+        const normalizedValues = values.map((v: any) => maxVal ? (v / maxVal) * 100 : 0);
+        item1.chartOptions.series = normalizedValues;
       }
       if((item.chart_id == '18' || item.chartId == '18' && (isFilter || isDrillDown)) || (item1.chartId == '18' && isDrillThrough)){//treemap
         if(switchDb){
@@ -6350,6 +6436,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               })
             })
           }
+        } else if(chartId === 18){
+          if (sheet.echartOptions.series && sheet.echartOptions.series[0]) {
+            sheet.echartOptions.series[0].label.formatter = (params: any) =>
+              `${params.name}: ${
+                this.formatNumber(params.value, numberFormat.decimalPlaces ?? 0, numberFormat.displayUnits ?? 'none', numberFormat.prefix ?? '', numberFormat.suffix ?? '')
+              }`;
+          }
         } else if(![1, 25, 10, 24, 11, 29, 9].includes(chartId)){
           if (sheet.echartOptions?.yAxis?.axisLabel) {
             sheet.echartOptions.yAxis.axisLabel.formatter = (val: any) => {
@@ -6406,6 +6499,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
                 } 
             }
           }
+        } else if(chartId === 18){
+          sheet.chartOptions.dataLabels.formatter = (val: number, opts:any) => {
+            const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+            const label = dataPoint.x;
+            const value = dataPoint.y;
+            return `${label}: `+ this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          };
         } else if(![1, 25, 10, 24, 9].includes(chartId)){
           if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
             sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: number) => {

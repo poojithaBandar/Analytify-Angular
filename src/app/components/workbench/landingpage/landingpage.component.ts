@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-landingpage',
@@ -63,96 +64,98 @@ totalDashbaords:any;
 totalSheets:any;
 totalQueries:any;
 totalDatabases:any;
+private searchSubject = new Subject<string>();
+
 features = [
   {
     icon: 'bi-funnel-fill',
     title: 'World-Class Query Builder',
     description: 'Drag-and-drop or SQL — build powerful queries with ease.',
-    gradient: 'linear-gradient(45deg, #ff6b6b, #f7b7a3)'
+    gradient: 'linear-gradient(135deg, #a1c4fd, #c2e9fb)' // Light blue to pale blue
   },
   {
     icon: 'bi-robot',
     title: 'AI-Enhanced Analytics',
     description: 'Uncover trends and anomalies with machine learning insights.',
-    gradient: 'linear-gradient(45deg, #4e73df, #1cc88a)' 
+    gradient: 'linear-gradient(135deg, #f6d365, #fda085)' // Yellow to coral
   },
   {
     icon: 'bi-bar-chart-steps',
     title: 'Drill Down & Through Charts',
     description: 'Navigate from summary to detail across datasets effortlessly.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #fbc2eb, #a6c1ee)' // Pink to light blue
   },
   {
     icon: 'bi-diagram-3',
     title: 'Multi-Dataset Dashboards',
     description: 'Combine multiple data sources in a single, unified dashboard.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #ffecd2, #fcb69f)' // Cream to peach
   },
   {
     icon: 'bi-code-slash',
     title: 'Open Source Flexibility',
     description: 'Fully customizable and transparent for dev teams.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #fddb92, #d1fdff)' // Light yellow to cyan
   },
   {
     icon: 'bi-box-arrow-in-right',
     title: 'Embeddable SDK Solution',
     description: 'Seamlessly embed dashboards into your own platforms.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #cfd9df, #e2ebf0)' // Light gray to pale blue
   },
   {
     icon: 'bi-cloud-arrow-down',
     title: 'Cross-Data Source Connection',
     description: 'Analyze data across SQL, NoSQL, APIs, and cloud sources.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #f6d365, #fda085)' // Yellow to coral
   },
   {
     icon: 'bi-clock-history',
     title: 'Real-Time Data Access',
     description: 'Always stay updated with live, streaming data support.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #84fab0, #8fd3f4)' // Mint green to sky blue
   },
   {
     icon: 'bi-bar-chart-line',
     title: 'Customizable Visualizations',
     description: 'Create beautiful, themeable charts with full flexibility.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #fccb90, #d57eeb)' // Peach to purple
   },
   {
     icon: 'bi-graph-up-arrow',
     title: 'AI Adoption Dashboard',
     description: 'Track and measure the impact of AI initiatives at a glance.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #a1c4fd, #c2e9fb)' // Light blue to pale blue
   },
   {
     icon: 'bi-plug',
     title: 'Smart Dashboards for Business Apps',
     description: 'Dashboards that connect with your tools and enable actions.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #fbc2eb, #a6c1ee)' // Pink to light blue
   },
   {
     icon: 'bi-lock',
     title: 'Passkey-Protected Sharing',
     description: 'Securely share dashboards via protected access links.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #ffecd2, #fcb69f)' // Cream to peach
   },
   {
     icon: 'bi-arrow-left-right',
     title: 'Data Source Switching',
     description: 'Easily switch between sources with zero reconfiguration.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #fddb92, #d1fdff)' // Light yellow to cyan
   },
   {
     icon: 'bi-lightbulb',
     title: 'GenBI Insights Summary',
     description: 'AI-generated summaries provide executive-level clarity.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #cfd9df, #e2ebf0)' // Light gray to pale blue
   },
   {
     icon: 'bi-envelope-fill',
     title: 'Email Alerts for Key Actions',
     description: 'Get notified instantly when critical events happen.',
-    gradient: 'linear-gradient(45deg, #36b9cc, #f8d210)'
+    gradient: 'linear-gradient(135deg, #84fab0, #8fd3f4)' // Mint green to sky blue
   }
 ];
 
@@ -176,8 +179,17 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
   this.viewSheets = this.templateService.viewSheets();
   this.viewDashboardList = this.templateService.viewDashboard();
   this.viewCustomSql = this.templateService.viewCustomSql();
-}
 
+
+    this.searchSubject
+      .pipe(debounceTime(400)) // wait 400ms after typing stops
+      .subscribe((query) => {
+        this.totalSearch(query);
+      });
+}
+ onSearchChange(query: string) {
+    this.searchSubject.next(query);
+  }
 ngOnInit(){
   // const colors = this.normalizeColors(this.baseColors);
 
@@ -198,6 +210,7 @@ barChartData:any =[]
 heatmapData:any=[]
 radiaBarData:any=[]
 recentActivityData:any = [];
+loading = true;
 getChartMetrics(){
   this.workbechService.getChartMetricsLandingPage().subscribe({
     next:(data)=>{
@@ -205,12 +218,23 @@ getChartMetrics(){
       this.barChartData = data.bar_chart
       this.heatmapData = data.tree_chart
       this.radiaBarData = data.radial_bar_chart
+      this.totalDatabases = data?.connection_count
+      this.totalSheets = data?.sheet_count
+      this.totalQueries = data?.query_count
+      this.totalDashbaords = data?.dashboard_count
       this.recentActivityData = data.activity_list.slice(0, 5)
       if(this.barChartData?.data){
+          setTimeout(() => {
           this.barOptions = this.buildBar();
+          this.loading = false; // hide skeleton after chart data ready
+        }, 1500);
       }
       if(this.heatmapData){
+        setTimeout(() => {
         this.treemapOptions = this.buildTreeMap();
+          this.loading = false; // hide skeleton after chart data ready
+        }, 1500);
+          console.log('treemap',this.treemapOptions);
       }
       if(this.radiaBarData){
         this.radialOptions = this.buildRadial();
@@ -321,16 +345,22 @@ private buildTreeMap(){
   //     }
   //   ]
   // };
-  
-  return {
-    series: [
-       {
-      data: this.heatmapData.map((item: { name: any; data: { connection_count: any; }; }) => ({
+  const hasData = this.heatmapData && this.heatmapData.length > 0;
+  const seriesData =
+  this.heatmapData && this.heatmapData.length
+    ? this.heatmapData.map((item: any) => ({
         x: item.name,
-        y: item.data?.connection_count || 0   // safe fallback
+        y: item.data?.connection_count || 0
       }))
-    }
-    ],
+    : [
+        { x: "No Data ", y: 20 },
+        { x: "No Data ", y: 10 },
+        { x: "No Data ", y: 15 },
+        { x: "No Data ", y: 25 },
+        { x: "No Data ", y: 10 }
+      ];
+  return {
+   series: [{ data: seriesData }],
   
     chart: {
       height: 350,
@@ -338,16 +368,63 @@ private buildTreeMap(){
     },
     title: {
       text: "Basic Treemap"
+    },tooltip: {
+    enabled: true,
+    custom: function({ series, seriesIndex, dataPointIndex, w }: any) {
+      const point = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+
+        if (!hasData || point?.x === "Empty") {
+        return "";
+      }
+
+      return `
+        <div style="padding:5px;">
+          <strong>${point.x}</strong><br/>
+          Connected: ${point.y}<br/>
+        </div>
+      `;
     }
+  },
+
+  noData: {
+    text: "No Data to Display",
+    align: "center",
+    verticalAlign: "middle",
+    style: {
+      color: "#999",
+      fontSize: "16px",
+      fontFamily: "Arial, sans-serif"
+    }
+  },
+    colors: this.heatmapData && this.heatmapData.length > 0
+    ? ["#1ab7ea", "#0084ff", "#39539E", "#0077B5", "#1ab7ea"] // normal colors
+    : ["#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3"],
   };
   }
 /** RadialBar showing connections split (e.g., 20 total: 10/5/3/2) */
 private buildRadial() {
-  const labels = this.radiaBarData?.queryset_name || [];
-  const values = this.radiaBarData?.data || [];
 
+  const hasData = this.radiaBarData && this.radiaBarData.data && this.radiaBarData.data.length > 0;
+  const originalValues = hasData ? this.radiaBarData.data : [0, 0, 0, 0];
+
+  let labels = hasData
+    ? this.radiaBarData.queryset_name || []
+    : ["No Data", "No Data", "No Data", "No Data"];
+    labels = labels.slice(0,3)
+  // const labels = this.radiaBarData?.datasource || [];
+  // const values = this.radiaBarData?.data || [];
+
+  const values = hasData
+    ? this.radiaBarData.data
+    : [0, 0, 0, 0];
+    const total = values.reduce((a: any, b: any) => a + b, 0);
+
+    const maxVal = Math.max(...values);
+
+    let normalizedValues = values.map((val: number) => maxVal > 0 ? Math.ceil((val / maxVal) * 100) : 0);
+    normalizedValues = normalizedValues.slice(0,3)
   return {
-    series: values,
+    series: normalizedValues,
     chart: {
       height: 310,
       width: '100%',
@@ -379,7 +456,7 @@ private buildRadial() {
         }
       }
     },
-    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5","#1ab7ea"],
+    colors:hasData ? ["#1ab7ea", "#0084ff", "#39539E", "#0077B5","#1ab7ea"] :["#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3"] ,
     labels: labels,
     legend: {
       show: true,
@@ -388,30 +465,49 @@ private buildRadial() {
       position: "left",
       offsetX: 10,
       offsetY: 10,
+      // markers: { show: false },
       labels: {
         useSeriesColors: true
       },
+       onItemClick: {
+    toggleDataSeries: false  // ✅ prevents hide/show issue
+     },
       formatter: function(seriesName: any, opts: any) {
-        const trimmed = seriesName.length > 10 ? seriesName.substring(0, 10) + "..." : seriesName;
-        return trimmed + ":  " + opts.w.globals.series[opts.seriesIndex];
+        const idx = opts.seriesIndex;
+        const original = originalValues[idx] ?? 0;
+        const trimmed = seriesName.length > 6 ? seriesName.substring(0, 6) + ".." : seriesName;
+        return `${trimmed}: ${original}`;
       },
       itemMargin: {
         horizontal: 3
       }
     },
-    tooltip: {
-      enabled:true,
-      custom: function({ series, seriesIndex, w }: any) {
-        let val = series[seriesIndex];
-        let total = w.globals.series.reduce((a: any, b: any) => a + b, 0);
-        let percentage = ((val / total) * 100).toFixed(1);
-    
+      tooltip: {
+      enabled: true,
+      custom: function ({ series, seriesIndex, w }: any) {
+        // const val = series[seriesIndex];
+        const label = w.globals.labels[seriesIndex];
+        const original = originalValues[seriesIndex] ?? 0;
+        if (!hasData || original   === 0) {
+          return "";
+        }
+
         return `
-          <div style="padding:5px;background:#fff;">
-            <strong>${w.globals.labels[seriesIndex]}</strong><br/>
-            Dashboards: ${val}<br/>
+          <div style="padding:5px;">
+            <strong>${label}</strong><br/>
+            Dashboards: ${original}<br/>
           </div>
         `;
+      }
+    },
+    noData: {
+      text: "No Data to Display",
+      align: "center",
+      verticalAlign: "middle",
+      style: {
+        color: "#999",
+        fontSize: "16px",
+        fontFamily: "Arial, sans-serif"
       }
     },
     responsive: [
@@ -431,12 +527,24 @@ private buildRadial() {
 
 
 private buildBar() {
-  const rankedColors = this.getColorByValueRank(this.barChartData?.data, this.fixedColors);
+  const allZero =
+    this.barChartData?.data &&
+    this.barChartData.data.every((val: number) => val === 0);
+  const rankedColors = !allZero ? this.getColorByValueRank(this.barChartData?.data, this.fixedColors) :  ["#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3"];
+
+  // ✅ If all values are 0 → use dummy grey bars
+  const seriesData = allZero
+    ? [10, 15, 10, 19, 14, 12] // dummy values to render outline
+    : this.barChartData.data;
+
+  const categories = this.barChartData?.months || [];
+
+  
   return {
     series: [
       {
-        name: 'Created Dashboards',
-        data: this.barChartData?.data // Example values for Sun-Sat
+        name: "Created Dashboards",
+        data: seriesData
       }
     ],
     chart: {
@@ -458,6 +566,19 @@ private buildBar() {
         }
       }
 
+    },
+    tooltip: {
+      enabled: true,
+       style: {
+        fontSize: '12px',
+        background:'#fff'
+      },
+      y: {
+        formatter: (val: number) => allZero ? "" : val
+      },
+      x: {
+        formatter: (val: string) => allZero ? "No Data" : val
+      }
     },
     plotOptions: {
       bar: {
@@ -483,9 +604,9 @@ private buildBar() {
         strokeWidth: 2
       }
     },
-    dataLabels: { enabled: true },
+    dataLabels: { enabled: !allZero },
     xaxis: {
-      categories: this.barChartData?.months,
+      categories: categories,
       show: false,          // Hides Y-axis labels
       axisBorder: { show: false },  // Hides Y-axis border line
       axisTicks: { show: false }  }
@@ -532,14 +653,15 @@ getHostAndPort(): void {
   this.port = port;
   console.log('port',this.port,'host',this.host)
 }
-totalSearch(){
+totalSearch(query?:string){
   this.getuserSheets();
   this.getuserDashboardsList();
   this.getSavedQueries();
+  this.getDbConnectionList();
 }
 getDbConnectionList(){
   const Obj ={
-    search : this.searchDbName
+    search : this.wholeSearch
   }
   if(Obj.search === '' || Obj.search === null){
     delete Obj.search;
@@ -548,7 +670,7 @@ getDbConnectionList(){
     next:(data)=>{
       this.connectionList = data.sheets
       console.log('jdhcvjsh',this.connectionList);
-      this.totalDatabases = data.total_items
+      // this.totalDatabases = data.connection_count
      },
     error:(error)=>{
       console.log(error);
@@ -574,7 +696,7 @@ getuserSheets(){
       next:(data:any) =>{
         this.userSheetsList=data?.sheets
         console.log(this.userSheetsList)
-        this.totalSheets = data.total_items;
+        // this.totalSheets = data.total_items;
       },
       error:(error:any)=>{
       console.log(error);
@@ -602,7 +724,7 @@ getuserDashboardsList(){
         this.savedDashboardList=data.sheets;
         this.demoDashboardList = data.sample_dashboards;
         console.log(this.savedDashboardList)
-        this.totalDashbaords = data.total_items;
+        // this.totalDashbaords = data.total_items;
       },
       error:(error:any)=>{
       console.log(error);
@@ -628,7 +750,7 @@ getSavedQueries(){
     next:(data)=>{
       console.log(data);
       this.savedQueryList = data?.sheets;
-      this.totalQueries = data.total_items;
+      // this.totalQueries = data.total_items;
      },
     error:(error)=>{
       console.log(error);
@@ -1227,5 +1349,28 @@ emptyDashboardProperties(){
   this.protectedEmails = [];
   this.selectedRoleIds = [];
   this.selectedUserIds = [];
+}
+getTotalSummary(): string {
+  if (!this.radiaBarData || !this.radiaBarData.data) {
+    return "No dashboards created";
+  }
+  const bardata = this.radiaBarData.data.slice(0,3);
+  const lablename = this.radiaBarData.queryset_name.slice(0,3);
+
+  const total = bardata.reduce((a: number, b: number) => a + b, 0);
+  const datasets = lablename.length || 0;
+
+  return `${total} dashboards created across ${datasets} dataset${datasets > 1 ? 's' : ''}`;
+}
+getDatasetBreakdown() {
+  if (!this.radiaBarData || !this.radiaBarData.data) {
+    return [];
+  }
+  const bardata = this.radiaBarData.data.slice(0,3);
+  const lablename = this.radiaBarData.queryset_name.slice(0,3);
+  return lablename.map((name: string, i: number) => ({
+    name,
+    count: bardata[i] ?? 0
+  }));
 }
 }

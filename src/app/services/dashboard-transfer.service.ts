@@ -217,9 +217,34 @@ export class DashboardTransferService {
     if ([24, 10].includes(chartId)) {
       chartOptions.series = multiSeriesChartData[0]?.data || [];
       chartOptions.labels = xAxisCategories;
-    } else if(chartId == 28){
+    } else if (chartId == 28) {
       chartOptions.series = multiSeriesChartData[0]?.data || [];
       chartOptions.labels = [multiSeriesChartData[0]?.name];
+    } else if (chartId == 20) {
+      const rawValues = multiSeriesChartData[0]?.data || [];
+      const maxVal = chartOptions?.plotOptions?.radialBar?.max || Math.max(...rawValues, 0);
+      chartOptions.series = rawValues.map((val: number) => maxVal ? (val / maxVal) * 100 : 0);
+      chartOptions.labels = xAxisCategories;
+      chartOptions.plotOptions = chartOptions.plotOptions || {};
+      chartOptions.plotOptions.radialBar = chartOptions.plotOptions.radialBar || {};
+      chartOptions.plotOptions.radialBar.max = maxVal;
+      const radialRaw = rawValues;
+      chartOptions.tooltip = {
+        ...(chartOptions.tooltip || {}),
+        y: {
+          formatter: (_: any, opts: any) => radialRaw[opts.seriesIndex]
+        }
+      };
+    } else if (chartId == 18) {
+      const data = xAxisCategories.map((name, index) => ({
+        x: name,
+        y: multiSeriesChartData[0]?.data[index]
+      }));
+      if (chartOptions.series && chartOptions.series[0]) {
+        chartOptions.series[0].data = data;
+      } else {
+        chartOptions.series = [{ data }];
+      }
     } else {
       chartOptions.series?.forEach((row: any, index: number) => {
         row.data = multiSeriesChartData[index]?.data || [];
@@ -228,7 +253,7 @@ export class DashboardTransferService {
       chartOptions.xaxis.categories = xAxisCategories;
     }
   } else {
-    if (![12, 26, 11, 29, 24, 10, 27].includes(chartId)) {
+    if (![12, 26, 11, 29, 24, 10, 27, 18].includes(chartId)) {
       chartOptions.series?.forEach((row: any, index: number) => {
         row.data = multiSeriesChartData[index]?.data || [];
       });
@@ -245,6 +270,14 @@ export class DashboardTransferService {
       chartOptions.series.forEach((row: any, index: any) => {
         row.data = heatmapData;
       });
+    } else if (chartId == 18) {
+      const data: any[] = [];
+      xAxisCategories.forEach((col: any, index: any) => {
+        data.push({ name: col, value: multiSeriesChartData[0].data[index] });
+      });
+      if (chartOptions.series && chartOptions.series[0]) {
+        chartOptions.series[0].data = data;
+      }
     }
 
     if (chartId == 4) {
@@ -375,6 +408,8 @@ export class DashboardTransferService {
         data.push({ value: multiSeriesChartData[0].data[index], name: col })
       });
       chartOptions.series[0].data = data;
+    } else if (chartId == 18) {
+      // Treemap does not use xAxis configuration
     } else {
       chartOptions.xAxis = {
         ...(chartOptions.xAxis || {}),
