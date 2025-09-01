@@ -879,6 +879,9 @@
                              @if(connectionListIcons[connection.database_type]?.type === 'svg'){
                               <div [innerHTML]="getSafeSvg(connectionListIcons[connection.database_type]?.value)"></div>
                              }
+                             @if(connectionListIcons[connection.database_type]?.type === 'image'){
+                              <img [src]="connectionListIcons[connection.database_type]?.value" alt="connection.database_type">
+                             }
                             <!-- <span *ngIf="connectionListIcons[connection.database_type]?.type === 'emoji'">
                               {{ connectionListIcons[connection.database_type]?.value }}
                             </span> -->
@@ -902,10 +905,10 @@
                             <img src="./assets/images/icons/crossdatabase-icon.png" class="avatar avatar-radius avatar-databse-sm cover-image">
                           </span>
                           <span  *ngIf="connection?.transformation && !connection.is_cross_db" ngbTooltip="Transformed Datasource">
-                            <img src="./assets/images/icons/transformation_white.png" class="avatar avatar-radius avatar-databse-sm cover-image">
+                            <img src="./assets/images/icons/transformation_black.png" class="avatar avatar-radius avatar-databse-sm cover-image">
                           </span>
                           
-                          <button class="btn btn-sm" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
+                          <button *ngIf="!iscrossDbSelect" class="btn btn-sm" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                             aria-expanded="false">
                             <i class="bi bi-gear"></i>
                           </button>
@@ -974,7 +977,7 @@
                 
             
                       <div class="d-flex gap-2">
-                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT')"
+                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT' || iscrossDbSelect)"
                           class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill" (click)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);"
                           [ngClass]="{'transform-card': !['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT'].includes(connection.server_type)}">
                          
@@ -986,7 +989,7 @@
                               (btnClickEvent)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2'" [isIcon]="true"></app-insights-button> -->
 
-                        <button class="btn btn-outline-danger-light rounded-2 btn-sm flex-fill transform-card"
+                        <button class="btn btn-outline-danger-light rounded-2 btn-sm flex-fill transform-card" [disabled]="iscrossDbSelect"
                           (click)="deleteDbConnection(connection.is_cross_db ? connection?.cross_db_id : connection.hierarchy_id)">
                           <i class="bi bi-trash me-1"></i> Delete
                         </button>
@@ -3292,6 +3295,9 @@
               
                 @if(connectionListIcons[conn.database_type]?.type === 'svg'){
                 <div [innerHTML]="getSafeSvg(connectionListIcons[conn.database_type]?.value)"></div>
+                }
+                @if(connectionListIcons[conn.database_type]?.type === 'image'){
+                <img [src]="connectionListIcons[conn.database_type]?.value" alt="conn.database_type">
                 }
               </div>
               <div>
