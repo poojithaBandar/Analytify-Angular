@@ -1004,7 +1004,7 @@
                   </div>
                 </div>
 
-                <ng-container *ngIf="connectionList.length === 0">
+                <ng-container *ngIf="isLoadingConnectionsList">
                 <div class="col-12 col-md-6 col-lg-4" *ngFor="let sk of skeletons">
                   <div class="glass-card h-100">
                     <div class="p-4">
@@ -1032,6 +1032,12 @@
                       </div>
                     </div>
                   </div>
+                </div>
+              </ng-container>
+
+               <ng-container *ngIf="!isLoadingConnectionsList && connectionList.length === 0">
+                <div class="col-12 text-center py-4">
+                  <p class="text-muted">No data to display</p>
                 </div>
               </ng-container>
               </div>
