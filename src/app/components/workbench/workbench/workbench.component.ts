@@ -2713,7 +2713,12 @@ connectGoogleSheets(){
                         if(data){
                           this.toasterservice.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                         }
+                        if(!this.callAllConnectionsExistingList){
                         this.getDbConnectionList();
+                        }
+                        if(this.callAllConnectionsExistingList){
+                          this.connectionListWithOutPagination();
+                        }
                       },
                       error:(error:any)=>{
                         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -2773,7 +2778,12 @@ connectGoogleSheets(){
       this.modalService.open(OpenmdoModal);
     }
   editDbDetails(id: any) {
-    const editDataArray = this.connectionList.filter((item: { hierarchy_id: number; }) => item.hierarchy_id == id);
+    let editDataArray;
+    if(this.callAllConnectionsExistingList){
+      editDataArray = this.existingConnectionListWithoutFilter.filter((item: { hierarchy_id: number; }) => item.hierarchy_id == id);
+    }else{
+      editDataArray = this.connectionList.filter((item: { hierarchy_id: number; }) => item.hierarchy_id == id);
+    }
     console.log(editDataArray)
     const editData = editDataArray[0]
     this.databaseType = editData.database_type;
@@ -2955,6 +2965,7 @@ connectGoogleSheets(){
       next:(data)=>{
         console.log(data);
         this.existingConnectionListWithoutFilter = data;
+        this.getSpecificConnections();
         console.log('connectionlist',data)
        },
       error:(error)=>{
@@ -3675,15 +3686,15 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
     { name: "SAP HANA", icon: "⚡", description: "In-memory, column-oriented database" }
   ],
   "File Source": [
-    { name: "CSV File", icon: "📑", description: "Comma-separated values file" },
-    { name: "Excel File", icon: "📊", description: "Spreadsheet file format" }
+    { name: "CSV", icon: "📑", description: "Comma-separated values file" },
+    { name: "Excel", icon: "📊", description: "Spreadsheet file format" }
   ],
   "Integrations": [
     { name: "xAmplify",icon:"🔗", description: "Business automation platform" },
     { name: "QuickBooks", icon: "💵", description: "Accounting software" },
     { name: "Salesforce", icon: "☁️", description: "CRM platform" },
     { name: "ConnectWise", icon: "🔧", description: "IT management software" },
-    { name: "HaloPSA", icon: "🛡️", description: "PSA platform for IT providers" },
+    { name: "HaloPS", icon: "🛡️", description: "PSA platform for IT providers" },
     { name: "Pax8", icon: "🌍", description: "Cloud commerce marketplace" },
     { name: "BambooHR", icon: "👥", description: "HR management system" },
     { name: "Jira", icon: "📌", description: "Project management software" },
