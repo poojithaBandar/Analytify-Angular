@@ -4549,101 +4549,92 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <div class="">
-                                                            <label class="mb-0">Row Total Font Color</label>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button">Row Totals</button>
+                                                        </h6>
+                                                        <div ngbAccordionCollapse class="accordion-collapse collapse customize-accordion-h">
+                                                            <div class="accordion-body p-0 database-dropdown" ngbAccordionBody>
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Font Color</label>
+                                                                            </div>
+                                                                            <div *ngIf="rowTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="rowTotalFontColorSwitch = !rowTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!rowTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="rowTotalFontColorSwitch = !rowTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="rowTotalFontColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="rowTotalFontColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Background</label>
+                                                                            </div>
+                                                                            <div *ngIf="rowTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="rowTotalBgColorSwitch = !rowTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!rowTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="rowTotalBgColorSwitch = !rowTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="rowTotalBgColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="rowTotalBgColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
                                                         </div>
-                                                        <div *ngIf="rowTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="rowTotalFontColorSwitch = !rowTotalFontColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <div *ngIf="!rowTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="rowTotalFontColorSwitch = !rowTotalFontColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <ngx-colors *ngIf="rowTotalFontColorSwitch && pivotTable"
-                                                                    ngx-colors-trigger
-                                                                    [(ngModel)]="rowTotalFontColor"
-                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
-                                                                    [format]="'hex'"></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <div class="">
-                                                            <label class="mb-0">Row Total Background</label>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button">Column Totals</button>
+                                                        </h6>
+                                                        <div ngbAccordionCollapse class="accordion-collapse collapse customize-accordion-h">
+                                                            <div class="accordion-body p-0 database-dropdown" ngbAccordionBody>
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Font Color</label>
+                                                                            </div>
+                                                                            <div *ngIf="colTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="colTotalFontColorSwitch = !colTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!colTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="colTotalFontColorSwitch = !colTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="colTotalFontColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="colTotalFontColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Background</label>
+                                                                            </div>
+                                                                            <div *ngIf="colTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="colTotalBgColorSwitch = !colTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!colTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="colTotalBgColorSwitch = !colTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="colTotalBgColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="colTotalBgColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
                                                         </div>
-                                                        <div *ngIf="rowTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="rowTotalBgColorSwitch = !rowTotalBgColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <div *ngIf="!rowTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="rowTotalBgColorSwitch = !rowTotalBgColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <ngx-colors *ngIf="rowTotalBgColorSwitch && pivotTable"
-                                                                    ngx-colors-trigger
-                                                                    [(ngModel)]="rowTotalBgColor"
-                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
-                                                                    [format]="'hex'"></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <div class="">
-                                                            <label class="mb-0">Column Total Font Color</label>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button">Grand Totals</button>
+                                                        </h6>
+                                                        <div ngbAccordionCollapse class="accordion-collapse collapse customize-accordion-h">
+                                                            <div class="accordion-body p-0 database-dropdown" ngbAccordionBody>
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Font Color</label>
+                                                                            </div>
+                                                                            <div *ngIf="grandTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="grandTotalFontColorSwitch = !grandTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!grandTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="grandTotalFontColorSwitch = !grandTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="grandTotalFontColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="grandTotalFontColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Background</label>
+                                                                            </div>
+                                                                            <div *ngIf="grandTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="grandTotalBgColorSwitch = !grandTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!grandTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="grandTotalBgColorSwitch = !grandTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="grandTotalBgColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="grandTotalBgColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
                                                         </div>
-                                                        <div *ngIf="colTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="colTotalFontColorSwitch = !colTotalFontColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <div *ngIf="!colTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="colTotalFontColorSwitch = !colTotalFontColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <ngx-colors *ngIf="colTotalFontColorSwitch && pivotTable"
-                                                                    ngx-colors-trigger
-                                                                    [(ngModel)]="colTotalFontColor"
-                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
-                                                                    [format]="'hex'"></ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <div class="">
-                                                            <label class="mb-0">Column Total Background</label>
-                                                        </div>
-                                                        <div *ngIf="colTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="colTotalBgColorSwitch = !colTotalBgColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <div *ngIf="!colTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="colTotalBgColorSwitch = !colTotalBgColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <ngx-colors *ngIf="colTotalBgColorSwitch && pivotTable"
-                                                                    ngx-colors-trigger
-                                                                    [(ngModel)]="colTotalBgColor"
-                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
-                                                                    [format]="'hex'"></ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <div class="">
-                                                            <label class="mb-0">Grand Total Font Color</label>
-                                                        </div>
-                                                        <div *ngIf="grandTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="grandTotalFontColorSwitch = !grandTotalFontColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <div *ngIf="!grandTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="grandTotalFontColorSwitch = !grandTotalFontColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <ngx-colors *ngIf="grandTotalFontColorSwitch && pivotTable"
-                                                                    ngx-colors-trigger
-                                                                    [(ngModel)]="grandTotalFontColor"
-                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
-                                                                    [format]="'hex'"></ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <div class="">
-                                                            <label class="mb-0">Grand Total Background</label>
-                                                        </div>
-                                                        <div *ngIf="grandTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="grandTotalBgColorSwitch = !grandTotalBgColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <div *ngIf="!grandTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="grandTotalBgColorSwitch = !grandTotalBgColorSwitch; applyDynamicStylesToPivot()">
-                                                            <span></span>
-                                                        </div>
-                                                        <ngx-colors *ngIf="grandTotalBgColorSwitch && pivotTable"
-                                                                    ngx-colors-trigger
-                                                                    [(ngModel)]="grandTotalBgColor"
-                                                                    (ngModelChange)="applyDynamicStylesToPivot()"
-                                                                    [format]="'hex'"></ngx-colors>
                                                     </div>
                                                     <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                              <div class="">
