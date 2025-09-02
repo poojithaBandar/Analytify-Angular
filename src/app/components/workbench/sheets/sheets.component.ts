@@ -425,9 +425,22 @@ export class SheetsComponent{
   rowKeys: string[] = [];
   valueKeys: string[] = [];
   rawData: any = {};
-  
-  bandingEvenColor= '#ffffff' 
-  bandingOddColor= '#f5f7fa' 
+
+  bandingEvenColor= '#ffffff'
+  bandingOddColor= '#f5f7fa'
+
+  rowTotalFontColor: string = '#000000';
+  rowTotalFontColorSwitch: boolean = false;
+  rowTotalBgColor: string = '#f2f2f2';
+  rowTotalBgColorSwitch: boolean = false;
+  colTotalFontColor: string = '#000000';
+  colTotalFontColorSwitch: boolean = false;
+  colTotalBgColor: string = '#e6f7ff';
+  colTotalBgColorSwitch: boolean = false;
+  grandTotalFontColor: string = '#000000';
+  grandTotalFontColorSwitch: boolean = false;
+  grandTotalBgColor: string = '#ffe7cc';
+  grandTotalBgColorSwitch: boolean = false;
   // colorSchemes = [
   //   ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
   //   ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -2394,6 +2407,18 @@ sheetSave(isDashboardTransfer?: boolean){
     pivotColumnTotals : this.pivotColumnTotals,
     bandingOddColor :this.bandingOddColor,
     bandingEvenColor:this.bandingEvenColor,
+    rowTotalFontColor: this.rowTotalFontColor,
+    rowTotalFontColorSwitch: this.rowTotalFontColorSwitch,
+    rowTotalBgColor: this.rowTotalBgColor,
+    rowTotalBgColorSwitch: this.rowTotalBgColorSwitch,
+    colTotalFontColor: this.colTotalFontColor,
+    colTotalFontColorSwitch: this.colTotalFontColorSwitch,
+    colTotalBgColor: this.colTotalBgColor,
+    colTotalBgColorSwitch: this.colTotalBgColorSwitch,
+    grandTotalFontColor: this.grandTotalFontColor,
+    grandTotalFontColorSwitch: this.grandTotalFontColorSwitch,
+    grandTotalBgColor: this.grandTotalBgColor,
+    grandTotalBgColorSwitch: this.grandTotalBgColorSwitch,
     toggleTableSearch:this.toggleTableSearch,
     toggleTablePagination:this.toggleTablePagination,
     isRadarDistribution:this.isRadarDistribution,
@@ -4546,12 +4571,23 @@ customizechangeChartPlugin() {
     this.KPISuffix = data.KPISuffix ?? '',
     this.pivotRowTotals = data.pivotRowTotals ?? true,
     this.pivotColumnTotals = data.pivotColumnTotals ?? true,
-    this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff' 
+    this.bandingEvenColor= data.bandingEvenColor ?? '#ffffff'
     this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa',
-    this.toggleTableSearch = data.toggleTableSearch ?? true,
-    this.toggleTablePagination = data.toggleTablePagination ?? true
-    this.bandingOddColor= data.bandingOddColor ?? '#f5f7fa'
-    this.isRadarDistribution = data.isRadarDistribution ?? false; 
+    this.rowTotalFontColor = data.rowTotalFontColor ?? '#000000';
+    this.rowTotalFontColorSwitch = data.rowTotalFontColorSwitch ?? false;
+    this.rowTotalBgColor = data.rowTotalBgColor ?? '#f2f2f2';
+    this.rowTotalBgColorSwitch = data.rowTotalBgColorSwitch ?? false;
+    this.colTotalFontColor = data.colTotalFontColor ?? '#000000';
+    this.colTotalFontColorSwitch = data.colTotalFontColorSwitch ?? false;
+    this.colTotalBgColor = data.colTotalBgColor ?? '#e6f7ff';
+    this.colTotalBgColorSwitch = data.colTotalBgColorSwitch ?? false;
+    this.grandTotalFontColor = data.grandTotalFontColor ?? '#000000';
+    this.grandTotalFontColorSwitch = data.grandTotalFontColorSwitch ?? false;
+    this.grandTotalBgColor = data.grandTotalBgColor ?? '#ffe7cc';
+    this.grandTotalBgColorSwitch = data.grandTotalBgColorSwitch ?? false;
+    this.toggleTableSearch = data.toggleTableSearch ?? true;
+    this.toggleTablePagination = data.toggleTablePagination ?? true;
+    this.isRadarDistribution = data.isRadarDistribution ?? false;
     this.isHorizontalBar = data.isHorizontalBar ?? false;
     this.measureColorRanges = data.measureColorRanges ?? [];
     this.isMeasureDistribution = data.isMeasureDistribution ?? false;
@@ -4669,8 +4705,20 @@ customizechangeChartPlugin() {
 
     this.pivotColumnTotals = true;
     this.pivotRowTotals = true;
-    this.bandingEvenColor= '#ffffff' 
+    this.bandingEvenColor= '#ffffff'
     this.bandingOddColor= '#f5f7fa'
+    this.rowTotalFontColor = '#000000';
+    this.rowTotalFontColorSwitch = false;
+    this.rowTotalBgColor = '#f2f2f2';
+    this.rowTotalBgColorSwitch = false;
+    this.colTotalFontColor = '#000000';
+    this.colTotalFontColorSwitch = false;
+    this.colTotalBgColor = '#e6f7ff';
+    this.colTotalBgColorSwitch = false;
+    this.grandTotalFontColor = '#000000';
+    this.grandTotalFontColorSwitch = false;
+    this.grandTotalBgColor = '#ffe7cc';
+    this.grandTotalBgColorSwitch = false;
     this.toggleTableSearch = true;
     this.toggleTablePagination = true;
     this.measureColorRanges = [];
@@ -7887,32 +7935,67 @@ applyDynamicStylesToPivot() {
   });
 
   // ——— totals LAST so they win (and force with !important just in case)
-  const setBgImportant = (el: Element, color: string) =>
-    (el as HTMLElement).style.setProperty('background-color', color, 'important');
+  const setBgImportant = (el: HTMLElement, color: string, enabled: boolean) => {
+    if (enabled) {
+      el.style.setProperty('background-color', color, 'important');
+    } else {
+      el.style.removeProperty('background-color');
+    }
+  };
+
+  const setFontColor = (el: HTMLElement, color: string, enabled: boolean) => {
+    if (enabled) {
+      el.style.color = color;
+    } else {
+      el.style.removeProperty('color');
+    }
+  };
+
+  const applyTotals = (
+    selector: string,
+    fontColor: string,
+    fontSwitch: boolean,
+    bgColor: string,
+    bgSwitch: boolean,
+    weight: string
+  ) => {
+    document.querySelectorAll(selector).forEach(td => {
+      const el = td as HTMLElement;
+      setBgImportant(el, bgColor, bgSwitch);
+      setFontColor(el, fontColor, fontSwitch);
+      el.style.fontWeight = weight;
+    });
+  };
 
   // Row totals (rightmost cells in each row)
-  document.querySelectorAll('.pvtTable td.pvtTotal.rowTotal, .pvtTable th.pvtTotal.rowTotal')
-    .forEach(td => {
-      setBgImportant(td,  '#f2f2f2');
-      (td as HTMLElement).style.color =  '#000';
-      (td as HTMLElement).style.fontWeight = '700';
-    });
+  applyTotals(
+    '.pvtTable td.pvtTotal.rowTotal, .pvtTable th.pvtTotal.rowTotal',
+    this.rowTotalFontColor,
+    this.rowTotalFontColorSwitch,
+    this.rowTotalBgColor,
+    this.rowTotalBgColorSwitch,
+    '700'
+  );
 
   // Column totals (bottom row)
-  document.querySelectorAll('.pvtTable td.pvtTotal.colTotal, .pvtTable th.pvtTotal.colTotal')
-    .forEach(td => {
-      setBgImportant(td,  '#e6f7ff');
-      (td as HTMLElement).style.color =  '#000';
-      (td as HTMLElement).style.fontWeight = '700';
-    });
+  applyTotals(
+    '.pvtTable td.pvtTotal.colTotal, .pvtTable th.pvtTotal.colTotal',
+    this.colTotalFontColor,
+    this.colTotalFontColorSwitch,
+    this.colTotalBgColor,
+    this.colTotalBgColorSwitch,
+    '700'
+  );
 
   // Grand total (bottom-right + its labels, if present)
-  document.querySelectorAll('.pvtTable td.pvtGrandTotal, .pvtTable th.pvtGrandTotal')
-    .forEach(td => {
-      setBgImportant(td,  '#ffe7cc');
-      (td as HTMLElement).style.color =  '#000';
-      (td as HTMLElement).style.fontWeight = '800';
-    });
+  applyTotals(
+    '.pvtTable td.pvtGrandTotal, .pvtTable th.pvtGrandTotal',
+    this.grandTotalFontColor,
+    this.grandTotalFontColorSwitch,
+    this.grandTotalBgColor,
+    this.grandTotalBgColorSwitch,
+    '800'
+  );
 
 //   const rowTotals = document.querySelectorAll('.pvtTotal.rowTotal');
 //   rowTotals.forEach(td => {
