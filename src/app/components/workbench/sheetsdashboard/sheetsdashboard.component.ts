@@ -1306,72 +1306,28 @@ export class SheetsdashboardComponent implements OnDestroy {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
             const nativeEl = pivotContainer.nativeElement;
-            ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-              rows: pivotData['columnKeys'],  
-              cols: pivotData['valueKeys'], 
-                  aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table",
-                  rendererOptions:{
-                    table:{
-                      rowTotals:pivotData.customizeOptions?.pivotRowTotals,
-                      colTotals:pivotData.customizeOptions?.pivotColumnTotals
-                    }
+            ($(pivotContainer.nativeElement) as any).pivotUI(
+              pivotData['transformedData'],
+              {
+                rows: pivotData['columnKeys'],
+                cols: pivotData['valueKeys'],
+                vals: pivotData['rowKeys'],
+                aggregators: $.pivotUtilities.aggregators,
+                renderers: $.pivotUtilities.renderers,
+                aggregatorName: 'Sum',
+                rendererName: 'Table',
+                rendererOptions: {
+                  table: {
+                    rowTotals: pivotData.customizeOptions?.pivotRowTotals,
+                    colTotals: pivotData.customizeOptions?.pivotColumnTotals
                   }
-                });
-                const styleConfig = pivotData.customizeOptions;
-            if (styleConfig) {
-              const table = nativeEl.querySelector('table.pvtTable');
-              if (table) {
-                const headers = table.querySelectorAll('th');
-                  headers.forEach((th: HTMLElement) => {
-                    th.style.backgroundColor = styleConfig.backgroundColor;
-                    th.style.fontSize = styleConfig.headerFontSize;
-                    th.style.color = styleConfig.headerFontColor;
-                    th.style.fontFamily = styleConfig.headerFontFamily;
-                    th.style.fontWeight = styleConfig.headerFontWeight;
-                    th.style.fontStyle = styleConfig.headerFontStyle;
-                    th.style.textDecoration = styleConfig.headerFontDecoration;
-                    th.style.textAlign = styleConfig.headerFontAlignment;
-                    th.style.verticalAlign = 'middle';
-                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
-                  });
-                  // Apply styles to data cells <td>
-                  const cells = table.querySelectorAll('td');
-                  cells.forEach((td: HTMLElement) => {
-                    td.style.fontSize = styleConfig.tableDataFontSize;
-                    td.style.color = styleConfig.tableDataFontColor;
-                    td.style.fontFamily = styleConfig.tableDataFontFamily;
-                    td.style.fontWeight = styleConfig.tableDataFontWeight;
-                    td.style.fontStyle = styleConfig.tableDataFontStyle;
-                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
-                    td.style.textAlign = styleConfig.tableDataFontAlignment;
-                    td.style.verticalAlign = 'middle';
-                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
-                  });
-                  const rows = table.querySelectorAll('tr');
-                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
-                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
-}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
-                    const hasDataCells = row.querySelectorAll('td').length > 0;
-                    row.classList.remove('even-row', 'odd-row');
-              
-                    // if (styleConfig.bandingSwitch) {
-                    //   row.classList.add(rowIndex % 2 === 0 ? styleConfig.bandingEvenColor : styleConfig.bandingOddColor);
-                    // }
-                    if (styleConfig.bandingSwitch) {
-                      const tds = row.querySelectorAll('td');
-                      const bgColor = (rowIndex % 2 === 0) 
-                        ? styleConfig.bandingEvenColor 
-                        : styleConfig.bandingOddColor;
-                      tds.forEach((td: HTMLElement) => {
-                        td.style.backgroundColor = bgColor;
-                      });                   
-                     }
-                  });
-                  }
-            }
-        }   
-      });     
+                },
+                onRefresh: () => this.applyPivotStyles(nativeEl, pivotData.customizeOptions)
+              },
+              true
+            );
+        }
+      });
       }, 1000);
     }
       if(chartId == 1){
@@ -2642,69 +2598,26 @@ allowDrop(ev : any): void {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
             const nativeEl = pivotContainer.nativeElement;
-                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-            rows: pivotData['columnKeys'],  
-            cols: pivotData['valueKeys'], 
-                aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                rendererName: "Table",
-                rendererOptions:{
-                  table:{
-                    rowTotals:pivotData.customizeOptions.pivotRowTotals,
-                    colTotals:pivotData.customizeOptions.pivotColumnTotals
+            ($(pivotContainer.nativeElement) as any).pivotUI(
+              pivotData['transformedData'],
+              {
+                rows: pivotData['columnKeys'],
+                cols: pivotData['valueKeys'],
+                vals: pivotData['rowKeys'],
+                aggregators: $.pivotUtilities.aggregators,
+                renderers: $.pivotUtilities.renderers,
+                aggregatorName: 'Sum',
+                rendererName: 'Table',
+                rendererOptions: {
+                  table: {
+                    rowTotals: pivotData.customizeOptions.pivotRowTotals,
+                    colTotals: pivotData.customizeOptions.pivotColumnTotals
                   }
-                }
-              });
-            // }
-            const styleConfig = pivotData.customizeOptions;
-            if (styleConfig) {
-              const table = nativeEl.querySelector('table.pvtTable');
-              if (table) {
-                const headers = table.querySelectorAll('th');
-                  headers.forEach((th: HTMLElement) => {
-                    th.style.backgroundColor = styleConfig.backgroundColor;
-                    th.style.fontSize = styleConfig.headerFontSize;
-                    th.style.color = styleConfig.headerFontColor;
-                    th.style.fontFamily = styleConfig.headerFontFamily;
-                    th.style.fontWeight = styleConfig.headerFontWeight;
-                    th.style.fontStyle = styleConfig.headerFontStyle;
-                    th.style.textDecoration = styleConfig.headerFontDecoration;
-                    th.style.textAlign = styleConfig.headerFontAlignment;
-                    th.style.verticalAlign = 'middle';
-                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
-                  });
-                  // Apply styles to data cells <td>
-                  const cells = table.querySelectorAll('td');
-                  cells.forEach((td: HTMLElement) => {
-                    td.style.fontSize = styleConfig.tableDataFontSize;
-                    td.style.color = styleConfig.tableDataFontColor;
-                    td.style.fontFamily = styleConfig.tableDataFontFamily;
-                    td.style.fontWeight = styleConfig.tableDataFontWeight;
-                    td.style.fontStyle = styleConfig.tableDataFontStyle;
-                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
-                    td.style.textAlign = styleConfig.tableDataFontAlignment;
-                    td.style.verticalAlign = 'middle';
-                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
-                  });
-
-                  const rows = table.querySelectorAll('tr');
-                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
-                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
-}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
-                    const hasDataCells = row.querySelectorAll('td').length > 0;
-                    row.classList.remove('even-row', 'odd-row');
-              
-                    if (styleConfig.bandingSwitch) {
-                      const tds = row.querySelectorAll('td');
-                      const bgColor = (rowIndex % 2 === 0) 
-                        ? styleConfig.bandingEvenColor 
-                        : styleConfig.bandingOddColor;
-                      tds.forEach((td: HTMLElement) => {
-                        td.style.backgroundColor = bgColor;
-                      });                   
-                     }
-                  });
-                  }
-            }
+                },
+                onRefresh: () => this.applyPivotStyles(nativeEl, pivotData.customizeOptions)
+              },
+              true
+            );
           }
         });
       }, 1000);
@@ -4103,75 +4016,31 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
       }
       this.pivotContainers.forEach((pivotContainer, index) => {
-      if (pivotContainer && pivotContainer.nativeElement) {
-        const pivotData = pivotTables[index]; // Get the corresponding pivot data
-        const nativeEl = pivotContainer.nativeElement;
-        ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-          rows: pivotData['columnKeys'],  
-          cols: pivotData['valueKeys'], 
-              aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-              rendererName: "Table",
-              rendererOptions:{
-                table:{
-                  rowTotals:pivotData.customizeOptions.pivotRowTotals,
-                  colTotals:pivotData.customizeOptions.pivotColumnTotals
+        if (pivotContainer && pivotContainer.nativeElement) {
+          const pivotData = pivotTables[index]; // Get the corresponding pivot data
+          const nativeEl = pivotContainer.nativeElement;
+          ($(pivotContainer.nativeElement) as any).pivotUI(
+            pivotData['transformedData'],
+            {
+              rows: pivotData['columnKeys'],
+              cols: pivotData['valueKeys'],
+              vals: pivotData['rowKeys'],
+              aggregators: $.pivotUtilities.aggregators,
+              renderers: $.pivotUtilities.renderers,
+              aggregatorName: 'Sum',
+              rendererName: 'Table',
+              rendererOptions: {
+                table: {
+                  rowTotals: pivotData.customizeOptions.pivotRowTotals,
+                  colTotals: pivotData.customizeOptions.pivotColumnTotals
                 }
-              }
-            });
-            const styleConfig = pivotData.customizeOptions;
-            if (styleConfig) {
-              const table = nativeEl.querySelector('table.pvtTable');
-              if (table) {
-                const headers = table.querySelectorAll('th');
-                  headers.forEach((th: HTMLElement) => {
-                    th.style.backgroundColor = styleConfig.backgroundColor;
-                    th.style.fontSize = styleConfig.headerFontSize;
-                    th.style.color = styleConfig.headerFontColor;
-                    th.style.fontFamily = styleConfig.headerFontFamily;
-                    th.style.fontWeight = styleConfig.headerFontWeight;
-                    th.style.fontStyle = styleConfig.headerFontStyle;
-                    th.style.textDecoration = styleConfig.headerFontDecoration;
-                    th.style.textAlign = styleConfig.headerFontAlignment;
-                    th.style.verticalAlign = 'middle';
-                    th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
-                  });
-                  // Apply styles to data cells <td>
-                  const cells = table.querySelectorAll('td');
-                  cells.forEach((td: HTMLElement) => {
-                    td.style.fontSize = styleConfig.tableDataFontSize;
-                    td.style.color = styleConfig.tableDataFontColor;
-                    td.style.fontFamily = styleConfig.tableDataFontFamily;
-                    td.style.fontWeight = styleConfig.tableDataFontWeight;
-                    td.style.fontStyle = styleConfig.tableDataFontStyle;
-                    td.style.textDecoration = styleConfig.tableDataFontDecoration;
-                    td.style.textAlign = styleConfig.tableDataFontAlignment;
-                    td.style.verticalAlign = 'middle';
-                    td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
-                  });
-                  const rows = table.querySelectorAll('tr');
-                  rows.forEach((row: { querySelectorAll: (arg0: string) => {
-                    forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
-}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
-                    const hasDataCells = row.querySelectorAll('td').length > 0;
-                    row.classList.remove('even-row', 'odd-row');
-              
-                    // if (styleConfig.bandingSwitch) {
-                    //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-                    // }
-                    if (styleConfig.bandingSwitch) {
-                      const tds = row.querySelectorAll('td');
-                      const bgColor = (rowIndex % 2 === 0) 
-                        ? styleConfig.bandingEvenColor 
-                        : styleConfig.bandingOddColor;
-                      tds.forEach((td: HTMLElement) => {
-                        td.style.backgroundColor = bgColor;
-                      });                   
-                     }
-                  });
-                  }
-            }
-      }      
-    });  
+              },
+              onRefresh: () => this.applyPivotStyles(nativeEl, pivotData.customizeOptions)
+            },
+            true
+          );
+        }
+      });
     if (switchDb && isLastIndex) {
       this.updateDashboard(false, false, false, switchDb);
     } else if (isLiveReloadData && isLastIndex) {
@@ -5504,70 +5373,27 @@ kpiData?: KpiData;
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
                 const nativeEl = pivotContainer.nativeElement;
-                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-                  rows: pivotData['columnKeys'],
-                  cols: pivotData['valueKeys'],
-                  aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table",
-                  rendererOptions:{
-                    table:{
-                      rowTotals:pivotData['customizeOptions'].pivotRowTotals,
-                      colTotals:pivotData['customizeOptions'].pivotColumnTotals
-                    }
-                  }
-                });
-                const styleConfig = pivotData['customizeOptions'];
-                if (styleConfig) {
-                  const table = nativeEl.querySelector('table.pvtTable');
-                  if (table) {
-                    const headers = table.querySelectorAll('th');
-                      headers.forEach((th: HTMLElement) => {
-                        th.style.backgroundColor = styleConfig.backgroundColor;
-                        th.style.fontSize = styleConfig.headerFontSize;
-                        th.style.color = styleConfig.headerFontColor;
-                        th.style.fontFamily = styleConfig.headerFontFamily;
-                        th.style.fontWeight = styleConfig.headerFontWeight;
-                        th.style.fontStyle = styleConfig.headerFontStyle;
-                        th.style.textDecoration = styleConfig.headerFontDecoration;
-                        th.style.textAlign = styleConfig.headerFontAlignment;
-                        th.style.verticalAlign = 'middle';
-                        th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
-                      });
-                      // Apply styles to data cells <td>
-                      const cells = table.querySelectorAll('td');
-                      cells.forEach((td: HTMLElement) => {
-                        td.style.fontSize = styleConfig.tableDataFontSize;
-                        td.style.color = styleConfig.tableDataFontColor;
-                        td.style.fontFamily = styleConfig.tableDataFontFamily;
-                        td.style.fontWeight = styleConfig.tableDataFontWeight;
-                        td.style.fontStyle = styleConfig.tableDataFontStyle;
-                        td.style.textDecoration = styleConfig.tableDataFontDecoration;
-                        td.style.textAlign = styleConfig.tableDataFontAlignment;
-                        td.style.verticalAlign = 'middle';
-                        td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
-                      });
-                      const rows = table.querySelectorAll('tr');
-                      rows.forEach((row: { querySelectorAll: (arg0: string) => {
-                        forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
-}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
-                        const hasDataCells = row.querySelectorAll('td').length > 0;
-                        row.classList.remove('even-row', 'odd-row');
-                  
-                        // if (styleConfig.bandingSwitch) {
-                        //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-                        // }
-                        if (styleConfig.bandingSwitch) {
-                          const tds = row.querySelectorAll('td');
-                          const bgColor = (rowIndex % 2 === 0) 
-                            ? styleConfig.bandingEvenColor 
-                            : styleConfig.bandingOddColor;
-                          tds.forEach((td: HTMLElement) => {
-                            td.style.backgroundColor = bgColor;
-                          });                   
-                         }
-                      });
+                ($(pivotContainer.nativeElement) as any).pivotUI(
+                  pivotData['transformedData'],
+                  {
+                    rows: pivotData['columnKeys'],
+                    cols: pivotData['valueKeys'],
+                    vals: pivotData['rowKeys'],
+                    aggregators: $.pivotUtilities.aggregators,
+                    renderers: $.pivotUtilities.renderers,
+                    aggregatorName: 'Sum',
+                    rendererName: 'Table',
+                    rendererOptions: {
+                      table: {
+                        rowTotals: pivotData['customizeOptions'].pivotRowTotals,
+                        colTotals: pivotData['customizeOptions'].pivotColumnTotals
                       }
-                }              }
+                    },
+                    onRefresh: () => this.applyPivotStyles(nativeEl, pivotData['customizeOptions'])
+                  },
+                  true
+                );
+                // styles are applied in onRefresh
             });
           }, 1000);
         }
@@ -5634,71 +5460,27 @@ kpiData?: KpiData;
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
                 const nativeEl = pivotContainer.nativeElement;
-                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
-                  rows: pivotData['columnKeys'],
-                  cols: pivotData['valueKeys'],
-                  aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
-                  rendererName: "Table",
-                  rendererOptions:{
-                    table:{
-                      rowTotals:pivotData['customizeOptions'].pivotRowTotals,
-                      colTotals:pivotData['customizeOptions'].pivotColumnTotals
-                    }
-                  }
-                });
-                const styleConfig = pivotData['customizeOptions'];
-                if (styleConfig) {
-                  const table = nativeEl.querySelector('table.pvtTable');
-                  if (table) {
-                    const headers = table.querySelectorAll('th');
-                      headers.forEach((th: HTMLElement) => {
-                        th.style.backgroundColor = styleConfig.backgroundColor;
-                        th.style.fontSize = styleConfig.headerFontSize;
-                        th.style.color = styleConfig.headerFontColor;
-                        th.style.fontFamily = styleConfig.headerFontFamily;
-                        th.style.fontWeight = styleConfig.headerFontWeight;
-                        th.style.fontStyle = styleConfig.headerFontStyle;
-                        th.style.textDecoration = styleConfig.headerFontDecoration;
-                        th.style.textAlign = styleConfig.headerFontAlignment;
-                        th.style.verticalAlign = 'middle';
-                        th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
-                      });
-                      // Apply styles to data cells <td>
-                      const cells = table.querySelectorAll('td');
-                      cells.forEach((td: HTMLElement) => {
-                        td.style.fontSize = styleConfig.tableDataFontSize;
-                        td.style.color = styleConfig.tableDataFontColor;
-                        td.style.fontFamily = styleConfig.tableDataFontFamily;
-                        td.style.fontWeight = styleConfig.tableDataFontWeight;
-                        td.style.fontStyle = styleConfig.tableDataFontStyle;
-                        td.style.textDecoration = styleConfig.tableDataFontDecoration;
-                        td.style.textAlign = styleConfig.tableDataFontAlignment;
-                        td.style.verticalAlign = 'middle';
-                        td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
-                      });
-
-                      const rows = table.querySelectorAll('tr');
-                      rows.forEach((row: { querySelectorAll: (arg0: string) => {
-                        forEach(arg0: (td: HTMLElement) => void): unknown; (): any; new(): any; length: number; 
-}; classList: { remove: (arg0: string, arg1: string) => void; add: (arg0: string) => void; }; }, rowIndex: number) => {
-                        const hasDataCells = row.querySelectorAll('td').length > 0;
-                        row.classList.remove('even-row', 'odd-row');
-                  
-                        // if (styleConfig.bandingSwitch) {
-                        //   row.classList.add(rowIndex % 2 === 0 ? 'even-row' : 'odd-row');
-                        // }
-                        if (styleConfig.bandingSwitch) {
-                          const tds = row.querySelectorAll('td');
-                          const bgColor = (rowIndex % 2 === 0) 
-                            ? styleConfig.bandingEvenColor 
-                            : styleConfig.bandingOddColor;
-                          tds.forEach((td: HTMLElement) => {
-                            td.style.backgroundColor = bgColor;
-                          });                   
-                         }
-                      });
+                ($(pivotContainer.nativeElement) as any).pivotUI(
+                  pivotData['transformedData'],
+                  {
+                    rows: pivotData['columnKeys'],
+                    cols: pivotData['valueKeys'],
+                    vals: pivotData['rowKeys'],
+                    aggregators: $.pivotUtilities.aggregators,
+                    renderers: $.pivotUtilities.renderers,
+                    aggregatorName: 'Sum',
+                    rendererName: 'Table',
+                    rendererOptions: {
+                      table: {
+                        rowTotals: pivotData['customizeOptions'].pivotRowTotals,
+                        colTotals: pivotData['customizeOptions'].pivotColumnTotals
                       }
-                }
+                    },
+                    onRefresh: () => this.applyPivotStyles(nativeEl, pivotData['customizeOptions'])
+                  },
+                  true
+                );
+                // styles are applied in onRefresh
               }
             });
           }, 1000);
@@ -9016,6 +8798,53 @@ initializeTabDefaults() {
     this.MAX_FONT_SIZE
   );
 }// Default values
+
+  // Apply custom styling to PivotTable.js output
+  applyPivotStyles(nativeEl: HTMLElement, styleConfig: any): void {
+    if (styleConfig) {
+      const table = nativeEl.querySelector('table.pvtTable');
+      if (table) {
+        const headers = table.querySelectorAll('th');
+        headers.forEach((th: HTMLElement) => {
+          th.style.backgroundColor = styleConfig.backgroundColor;
+          th.style.fontSize = styleConfig.headerFontSize;
+          th.style.color = styleConfig.headerFontColor;
+          th.style.fontFamily = styleConfig.headerFontFamily;
+          th.style.fontWeight = styleConfig.headerFontWeight;
+          th.style.fontStyle = styleConfig.headerFontStyle;
+          th.style.textDecoration = styleConfig.headerFontDecoration;
+          th.style.textAlign = styleConfig.headerFontAlignment;
+          th.style.verticalAlign = 'middle';
+          th.style.lineHeight = styleConfig.headerLineHeight || '1.4';
+        });
+
+        const cells = table.querySelectorAll('td');
+        cells.forEach((td: HTMLElement) => {
+          td.style.fontSize = styleConfig.tableDataFontSize;
+          td.style.color = styleConfig.tableDataFontColor;
+          td.style.fontFamily = styleConfig.tableDataFontFamily;
+          td.style.fontWeight = styleConfig.tableDataFontWeight;
+          td.style.fontStyle = styleConfig.tableDataFontStyle;
+          td.style.textDecoration = styleConfig.tableDataFontDecoration;
+          td.style.textAlign = styleConfig.tableDataFontAlignment;
+          td.style.verticalAlign = 'middle';
+          td.style.lineHeight = styleConfig.tableDataLineHeight || '1.4';
+        });
+
+        const rows = table.querySelectorAll('tr');
+        rows.forEach((row: any, rowIndex: number) => {
+          row.classList.remove('even-row', 'odd-row');
+          if (styleConfig.bandingSwitch) {
+            const tds = row.querySelectorAll('td');
+            const bgColor = rowIndex % 2 === 0 ? styleConfig.bandingEvenColor : styleConfig.bandingOddColor;
+            tds.forEach((td: HTMLElement) => {
+              td.style.backgroundColor = bgColor;
+            });
+          }
+        });
+      }
+    }
+  }
 
   autoAdjustChartHeightForHBar(isEchart: boolean, chartsColumnData: any[]) {
     const barHeight = 30; // You can adjust this value per bar
