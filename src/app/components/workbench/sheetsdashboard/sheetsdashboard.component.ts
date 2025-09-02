@@ -652,6 +652,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard && !this.isDraggingDisabled,
+            ignoreContentClass: 'pivot-drag-zone',
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -8845,6 +8846,9 @@ initializeTabDefaults() {
         });
       }
     }
+    $(document).on('mousedown', '.pvtAxisContainer, .pvtVals, .pvtRendererArea', function(e: { stopPropagation: () => void; }) {
+    e.stopPropagation();
+});
   }
 
   autoAdjustChartHeightForHBar(isEchart: boolean, chartsColumnData: any[]) {
