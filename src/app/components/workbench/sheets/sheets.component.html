@@ -691,7 +691,7 @@
                             <div cdkDropList
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.measures"
-                            [cdkDropListConnectedTo]="[calculatedfields,columnList,drilldownList]"
+                            [cdkDropListConnectedTo]="[calculatedfields,columnList,drilldownList,measureValuelist]"
                             (cdkDropListDropped)="rowdrop($event)"
                             [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                             
@@ -745,7 +745,7 @@
                                   <div cdkDropList
                                   #originList="cdkDropList"
                                   [cdkDropListData]="columns.calculated_fields"
-                                  [cdkDropListConnectedTo]="[calculatedfields,columnList,rowList,drilldownList]"
+                                  [cdkDropListConnectedTo]="[calculatedfields,columnList,rowList,drilldownList,measureValuelist]"
                                   (cdkDropListDropped)="rowdrop($event)"
                                   >  
                                   @if(columns.expanded){    
@@ -2031,7 +2031,7 @@
                                 (cdkDropListDropped)="columndrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(columns of draggedColumns;track columns;let index = $index){
-                                    <div class="example-box  example-box-bg" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
+                                    <div class="example-box  example-box-bg cursor-pointer" (cdkDragStarted)="dragStartedColumn(index,columns.column)" triggers="hover" [ngbTooltip]="columns.alias ? columns.column : null" cdkDrag >
                                         @if(columns.alias){
                                             {{ columns.alias }}
                                         } @else if(columns.type){
@@ -2137,7 +2137,7 @@
                             [cdkDropListData]="draggedMeasureValues" 
                             (cdkDropListDropped)="measureValuesdrop($event)">
                                 @for(columns of draggedMeasureValues;track columns;let index = $index){
-                                <div class="example-box example-box-bg" cdkDrag (cdkDragStarted)="removemeasureValuesRow(index,columns)">
+                                <div class="example-box example-box-bg cursor-pointer" cdkDrag triggers="hover" [ngbTooltip]="columns.alias ? columns.column : null" (cdkDragStarted)="removemeasureValuesRow(index,columns)">
                                     @if(columns.alias){
                                         {{ columns.alias }}
                                     }
@@ -2222,7 +2222,7 @@
                                 (cdkDropListDropped)="rowdrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1  example-box1-bg cursor-pointer" [ngbTooltip]="rows.alias ? rows.column : null"  (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
+                                    <div class="example-box1  example-box1-bg cursor-pointer" triggers="hover" [ngbTooltip]="rows.alias ? rows.column : null"  (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.alias){
                                             {{ rows.alias }}
                                         } @else if(rows.field_name){
