@@ -37,7 +37,7 @@
             (btnClickEvent)="newConnections()"></app-insights-button>
             <div class="view-card mt-1">
                 <div class="input-group">
-                    <input type="text" class="form-control rounded-start-pill border-primary shadow-sm" [(ngModel)]="wholeSearch" (keyup)="totalSearch()" placeholder="Search ...">
+                    <input type="text" class="form-control rounded-start-pill border-primary shadow-sm" [(ngModel)]="wholeSearch" (ngModelChange)="onSearchChange($event)" placeholder="Search ...">
                     <button type="button"  aria-label="button" class="btn btn-primary rounded-end-pill">
                         <i class="fe fe-search" aria-hidden="true"></i>
                     </button>
@@ -306,14 +306,19 @@
                                                 src="./assets/images/icons/hubspotlogo.png"
                                                 alt="Hubspot"
                                                 class="card-img w-5 h-5 icon-bounce" />
-                                                <img *ngIf="database.server_type === 'DEEPSEEK'"
+                                            <img *ngIf="database.server_type === 'DEEPSEEK'"
                                                 src="./assets/images/icons/deepseek.svg"
                                                 alt="DeepSeek"
                                                 class="card-img w-5 h-5 icon-bounce" />
-                                                
+
                                             <img *ngIf="database.server_type === 'OPEN_AI'"
                                                 src="https://logo.clearbit.com/openai.com"
                                                 alt="OpenAI"
+                                                class="card-img w-5 h-5 icon-bounce" />
+
+                                            <img *ngIf="database.server_type === 'GEMINI'"
+                                                src="/assets/images/Db_server_images/geminiLLm.svg"
+                                                alt="Gemini"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'MYSQL'"
@@ -638,6 +643,10 @@
                                                 class="avatar-radius icon-bounce w-5 h-5">
                                             <img *ngIf="sheetlist.chart_id === 14" src="./assets/images/Tiled view sheet icons/horizontal-bar.jpg" alt=""
                                                 class="avatar-radius icon-bounce w-5 h-5">
+                                                <img *ngIf="sheetlist.chart_id === 18" src="./assets/images/Tiled view sheet icons/treemap-bg.svg" alt=""
+                                                class="avatar-radius icon-bounce w-5 h-5">
+                                                <img *ngIf="sheetlist.chart_id === 20" src="./assets/images/Tiled view sheet icons/radial-bg.png" alt=""
+                                                class="avatar-radius icon-bounce w-5 h-5">
                                         </span>
                                         <div class="dashboard-card-title">
                                             <h5 class="card-title   mb-0 pb-1 cursor-pointer saved-chart-name" ngbTooltip="{{sheetlist.sheet_name}}"
@@ -752,6 +761,11 @@
                                             <img *ngIf="savedQuery.server_type === 'OPEN_AI'"
                                                 src="https://logo.clearbit.com/openai.com"
                                                 alt="OpenAI"
+                                                class="avatar-radius icon-pulse w-5 h-5">
+
+                                            <img *ngIf="savedQuery.server_type === 'GEMINI'"
+                                                src="/assets/images/Db_server_images/geminiLLm.svg"
+                                                alt="Gemini"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'MYSQL'"

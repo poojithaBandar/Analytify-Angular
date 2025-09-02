@@ -2,16 +2,11 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, input, Input, O
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
-import { NgxEchartsDirective } from 'ngx-echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SharedModule } from '../../../shared/sharedmodule';
 import _, { inRange } from 'lodash';
-import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
-import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { lastValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
-import { bottom } from '@popperjs/core';
 
 interface Dimension {
   name: string;
@@ -35,6 +30,7 @@ export class InsightEchartComponent {
   @Input() dualAxisRowData:any;
   @Input() donutSize:any;
   @Input() outerRadius:any;
+  @Input() barCornerRadius = 0;
   @Input() radarRowData:any;
   @Input() displayUnits:any;
   @Input() decimalPlaces:any;
@@ -291,7 +287,12 @@ export class InsightEchartComponent {
       series: [
         {
           itemStyle: {
-            borderRadius: 5
+            borderRadius: [
+              this.barCornerRadius,
+              this.barCornerRadius,
+              this.barCornerRadius,
+              this.barCornerRadius
+            ]
           },
           label: { show: true,
             position: this.dataLabelsFontPosition,
@@ -420,6 +421,14 @@ horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
       {
         type: 'bar',
         data: this.chartsRowData,
+        itemStyle: {
+          borderRadius: [
+            this.barCornerRadius,
+            this.barCornerRadius,
+            this.barCornerRadius,
+            this.barCornerRadius
+          ]
+        },
         label: {
           show: true,
           position: this.getLabelPosition(),
@@ -1694,6 +1703,52 @@ heatMapChart(){
 };
 return this.chartOptions;
 }
+treemapFromGenieDashboard(chartsColumnData?: any, chartsRowData?: any){
+  this.chartsColumnData = chartsColumnData;
+  this.chartsRowData = chartsRowData;
+  return this.treemapChart();
+}
+treemapChart(chartsColumnData?: any, chartsRowData?: any){
+  if(chartsColumnData && chartsRowData){
+    this.chartsColumnData = chartsColumnData;
+    this.chartsRowData = chartsRowData;
+  }
+  this.chartOptions = {
+    backgroundColor: this.backgroundColor,
+    legend: {
+      show: false
+    },
+    tooltip: {
+      show: true,
+      formatter: (params: any) => `${params.name} : ${this.formatNumber(params.value)}`
+    },
+    series: [{
+      type: 'treemap',
+      roam: false,
+      breadcrumb: {
+        show: false
+      },
+      itemStyle: {
+        borderRadius: this.barCornerRadius
+      },
+      data: this.chartsColumnData.map((category: any, index: number) => ({
+        name: category === null ? 'null' : category,
+        value: this.chartsRowData[index]
+      })),
+      label: {
+        show: this.dataLabels,
+        position: this.dataLabelsFontPosition == 'center' ? this.getLabelPosition() : this.dataLabelsFontPosition,
+        fontFamily: this.dataLabelsFontFamily,
+        fontSize: this.dataLabelsFontSize,
+        fontWeight: this.isBold ? 700 : 400,
+        color: this.dataLabelsColor,
+        formatter: (params: any) => `${params.name}: ${this.formatNumber(params.value)}`
+      }
+    }],
+    color: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme
+  };
+  return this.chartOptions;
+}
 calendarchartFromGenieDashboard(chartsColumnData? : any, chartsRowData? : any){
   this.chartsColumnData = chartsColumnData;
   this.chartsRowData = chartsRowData;
@@ -1995,7 +2050,12 @@ let barChartOptions = {
   series: [
     {
       itemStyle: {
-        borderRadius: 5
+        borderRadius: [
+          this.barCornerRadius,
+          this.barCornerRadius,
+          this.barCornerRadius,
+          this.barCornerRadius
+        ]
       },
       label: { show: true,
         position: this.dataLabelsFontPosition,
@@ -2105,6 +2165,9 @@ chartInitialize(){
   }
   else if(this.chartType === 'calendar'){
     this.calendarChart();
+  }
+  else if(this.chartType === 'treemap'){
+    this.treemapChart();
   }
   else if(this.chartType === 'map'){
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -2358,6 +2421,25 @@ chartInitialize(){
     if(changes['donutSize'] || changes['outerRadius']){
       this.donutSizeChange();
     }
+    if (changes['barCornerRadius'] && this.chartInstance && ['bar','horizontalBar','treemap'].includes(this.chartType)) {
+      const radius = this.barCornerRadius;
+      if (this.chartType === 'treemap') {
+        if (this.chartOptions.series?.[0]) {
+          this.chartOptions.series[0].itemStyle = {
+            ...(this.chartOptions.series[0].itemStyle || {}),
+            borderRadius: radius
+          };
+        }
+      } else if (Array.isArray(this.chartOptions.series)) {
+        this.chartOptions.series.forEach((s: any) => {
+          s.itemStyle = {
+            ...(s.itemStyle || {}),
+            borderRadius: [radius, radius, radius, radius]
+          };
+        });
+      }
+      this.chartInstance.setOption(this.chartOptions, true);
+    }
     if(changes['isBold']){
       this.setDatalabelsFontWeight();
     }
@@ -2377,7 +2459,7 @@ chartInitialize(){
     // }
 
     if (changes['isMeasureDistribution'] || changes['measureColorRanges']) {
-      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar'].includes(this.chartType)) {
+      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar','treemap'].includes(this.chartType)) {
         this.setMeasureRangeColors();
       }
     }
@@ -2474,6 +2556,35 @@ setColorsOnRanges(data: any): string[] {
         }
         this.chartInstance?.setOption(obj);
         this.chartOptions.color = obj.color;
+      }  else if (this.chartType === 'treemap') {
+        // For treemap, set colors per data item
+        const series = this.chartOptions.series?.[0];
+        if (series?.data) {
+          const values = series.data.map((item: any) => item.value);
+          const colors = this.setColorsOnRanges(values);
+  
+          // Inject itemStyle.color into each data item
+          series.data = series.data.map((item: any, index: number) => ({
+            ...item,
+            itemStyle: {
+              ...(item.itemStyle || {}),
+              color: colors[index]
+            }
+          }));
+          this.chartInstance?.setOption({
+            series: [
+              {
+                type: 'treemap', // must include the type to help identify the series
+                data: series.data // your new data array
+              }
+            ]
+          });
+          // Apply to live chart
+          // this.chartInstance?.setOption({ series: [{ data: series.data }] });
+  
+          // Update stored chartOptions
+          this.chartOptions.series[0].data = series.data;
+        }
       } else {
         let data = this.chartOptions.series[0].data.map((item: any) => item.value);
         let obj = {
@@ -3390,7 +3501,7 @@ radarDistributionSetOptions() {
     }
   }
   dataLabelsSetOptions(){
-    if(this.chartType === 'donut' || this.chartType === 'pie'){
+    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'treemap'){
       let obj ={
         series :[{
           label:{
