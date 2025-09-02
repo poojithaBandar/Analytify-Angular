@@ -5394,6 +5394,7 @@ kpiData?: KpiData;
                   true
                 );
                 // styles are applied in onRefresh
+              }
             });
           }, 1000);
         }
