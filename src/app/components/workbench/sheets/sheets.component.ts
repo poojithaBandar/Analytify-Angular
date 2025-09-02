@@ -1077,7 +1077,7 @@ try {
                 aggregators: $.pivotUtilities.aggregators,
                 renderers: $.pivotUtilities.renderers,
                 aggregatorName: "Sum",
-                rendererName: "Table",
+                rendererName: "Heatmap",
                 rendererOptions: {
                   table: {
                     rowTotals: this.pivotRowTotals,
@@ -7869,39 +7869,97 @@ applyDynamicStylesToPivot() {
     (cell as HTMLElement).style.textAlign = this.tableDataFontAlignment;
 
   });
-  const rows = document.querySelectorAll('.pvtTable tr');
-//   rows.forEach((row, rowIndex) => {
-//     // Only apply to rows that contain data cells
-//     if (row.querySelectorAll('td').length > 0) {
-//       row.classList.remove('even-row', 'odd-row');
+ document.querySelectorAll('.pvtTable tr').forEach((row, rowIndex) => {
+    const hasDataCells = row.querySelectorAll('td').length > 0;
+    if (!hasDataCells) return;
 
-//       if (this.bandingSwitch) {
-//         row.classList.add(rowIndex % 2 === 0 ? this.bandingEvenColor : this.bandingOddColor);
-//       }
-//     }
-// });
-rows.forEach((row, rowIndex) => {
-  const hasDataCells = row.querySelectorAll('td').length > 0;
-  
-  if (hasDataCells) {
-    row.classList.remove('even-row', 'odd-row');
-
+    const tds = row.querySelectorAll('td');
     if (this.bandingSwitch) {
-      const tds = row.querySelectorAll('td');
-      const bgColor = (rowIndex % 2 === 0) 
-        ? this.bandingEvenColor 
-        : this.bandingOddColor;
+      const bg = rowIndex % 2 === 0 ? this.bandingEvenColor : this.bandingOddColor;
       tds.forEach((td: HTMLElement) => {
-        td.style.backgroundColor = bgColor;
+        if (!td.classList.contains('pvtTotal') && !td.classList.contains('pvtGrandTotal')) {
+          td.style.backgroundColor = bg;
+        }
       });
     } else {
-      const tds = row.querySelectorAll('td');
-      tds.forEach((td: HTMLElement) => {
-        td.style.backgroundColor = ''; // Reset
-      });
+      tds.forEach((td: HTMLElement) => (td.style.backgroundColor = ''));
     }
-  }
-});
+  });
+
+  // ——— totals LAST so they win (and force with !important just in case)
+  const setBgImportant = (el: Element, color: string) =>
+    (el as HTMLElement).style.setProperty('background-color', color, 'important');
+
+  // Row totals (rightmost cells in each row)
+  document.querySelectorAll('.pvtTable td.pvtTotal.rowTotal, .pvtTable th.pvtTotal.rowTotal')
+    .forEach(td => {
+      setBgImportant(td,  '#f2f2f2');
+      (td as HTMLElement).style.color =  '#000';
+      (td as HTMLElement).style.fontWeight = '700';
+    });
+
+  // Column totals (bottom row)
+  document.querySelectorAll('.pvtTable td.pvtTotal.colTotal, .pvtTable th.pvtTotal.colTotal')
+    .forEach(td => {
+      setBgImportant(td,  '#e6f7ff');
+      (td as HTMLElement).style.color =  '#000';
+      (td as HTMLElement).style.fontWeight = '700';
+    });
+
+  // Grand total (bottom-right + its labels, if present)
+  document.querySelectorAll('.pvtTable td.pvtGrandTotal, .pvtTable th.pvtGrandTotal')
+    .forEach(td => {
+      setBgImportant(td,  '#ffe7cc');
+      (td as HTMLElement).style.color =  '#000';
+      (td as HTMLElement).style.fontWeight = '800';
+    });
+
+//   const rowTotals = document.querySelectorAll('.pvtTotal.rowTotal');
+//   rowTotals.forEach(td => {
+//     (td as HTMLElement).style.backgroundColor =  '#1a1283ff';
+//     (td as HTMLElement).style.color = '#cdbcbcff';
+//     (td as HTMLElement).style.fontWeight = 'bold';
+//   });
+
+//   const colTotals = document.querySelectorAll('.pvtTotal.colTotal');
+//   colTotals.forEach(td => {
+//     (td as HTMLElement).style.backgroundColor = '#0c4b67ff';
+//     (td as HTMLElement).style.color = '#881616ff';
+//     (td as HTMLElement).style.fontWeight = 'bold';
+//   });
+//   const rows = document.querySelectorAll('.pvtTable tr');
+// //   rows.forEach((row, rowIndex) => {
+// //     // Only apply to rows that contain data cells
+// //     if (row.querySelectorAll('td').length > 0) {
+// //       row.classList.remove('even-row', 'odd-row');
+
+// //       if (this.bandingSwitch) {
+// //         row.classList.add(rowIndex % 2 === 0 ? this.bandingEvenColor : this.bandingOddColor);
+// //       }
+// //     }
+// // });
+// rows.forEach((row, rowIndex) => {
+//   const hasDataCells = row.querySelectorAll('td').length > 0;
+  
+//   if (hasDataCells) {
+//     row.classList.remove('even-row', 'odd-row');
+
+//     if (this.bandingSwitch) {
+//       const tds = row.querySelectorAll('td');
+//       const bgColor = (rowIndex % 2 === 0) 
+//         ? this.bandingEvenColor 
+//         : this.bandingOddColor;
+//       tds.forEach((td: HTMLElement) => {
+//         td.style.backgroundColor = bgColor;
+//       });
+//     } else {
+//       const tds = row.querySelectorAll('td');
+//       tds.forEach((td: HTMLElement) => {
+//         td.style.backgroundColor = ''; // Reset
+//       });
+//     }
+//   }
+// });
 }
 
 changeDimensionDatatype(dim:any, newType:any) {
