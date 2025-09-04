@@ -1911,7 +1911,7 @@
                   <h6 class="ms-1 mb-0 p-1"> {{item['drillDownObject'][index][item['drillDownHierarchy'][index] === 'date' ?
                     'year/month/day' :
                     (item['drillDownHierarchy'][index] === 'time' ? 'date' : item['drillDownHierarchy'][index])]}}</h6>
-                  <span *ngIf="index !== (item['drillDownObject'].length-1)">--</span>
+                  <span *ngIf="index !== (item['drillDownObject'].length-1)">_</span>
                   }
                 </div>
                 }
