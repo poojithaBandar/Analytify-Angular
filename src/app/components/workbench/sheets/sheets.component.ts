@@ -2234,7 +2234,7 @@ sheetSave(isDashboardTransfer?: boolean){
     //  bandColor2 = this.color2;
     }
 
-  if ([6, 14, 24, 10].includes(this.chartId) && this.originalData && this.drillDownIndex > 0 && this.drillDownObject.length > 0) {
+  if ([6, 14, 24, 10, 18].includes(this.chartId) && this.originalData && this.drillDownIndex > 0 && this.drillDownObject.length > 0) {
     tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
     tablePreviewRow[0].result_data = this.originalData.data;
 
@@ -5193,6 +5193,15 @@ customizechangeChartPlugin() {
           }
         }
         else if(this.donut){//pie
+          if(!this.originalData){
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
+          } else{
+            this.originalData.categories = this.chartsColumnData;
+            this.originalData.data = this.chartsRowData;
+            this.originalData.chartOptions = chartOptions;
+          }
+        }
+        else if(this.treemap){//treemap
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData, chartOptions: chartOptions };
           } else{
