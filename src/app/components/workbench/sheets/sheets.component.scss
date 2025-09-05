@@ -765,9 +765,10 @@ table.pvtUi {
   border: 1px solid #f0f0f0;
   border-radius: 10px;
 }
-.pvtVals .pvtUiCell{
-display: flex;
-justify-content: space-between;
+.pvtVals.pvtUiCell {
+  display: flex;
+  align-items: flex-start;  /* left align */
+  gap: 8px;                 /* space between dropdowns */
 }
 /* Dragging state */
 .pvtAxisContainer li.ui-sortable-helper,
