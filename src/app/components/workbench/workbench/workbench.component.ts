@@ -599,6 +599,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     postGreServerName = '';
     postGrePortName = '';
     postGreDatabaseName = '';
+    connectionDescription = '';
     postGreUserName = '';
     PostGrePassword = '';
     OracleServiceName = '';
@@ -634,6 +635,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       dimensions: string[];  // <-- Explicitly typed
       metrics: string[];     // <-- Explicitly typed
       displayname: string;
+      connectiondescription?: string;
     } = {
       type: 'service_account',
       project_id: '',
@@ -867,6 +869,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.postGrePortName = '';
     this.postGreDatabaseName = '';
     this.postGreServerName = '';
+    this.connectionDescription = '';
     this.schemaList = [];
     this.selectedSchema = 'public';
     this.postGreUserName = '';
@@ -962,7 +965,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.openPostgreSqlForm=true;
     this.databaseconnectionsList= false;
     this.viewNewDbs = false;
-      this.emptyVariables();
+    this.emptyVariables();
     }
     postgreSignIn(){
       const obj={
@@ -972,6 +975,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "database": this.postGreDatabaseName,
+          "description":this.connectionDescription,
           "display_name":this.displayName,
           "schema": this.selectedSchema
       }
@@ -1375,6 +1379,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "description":this.connectionDescription,
           "service_name":this.postGreDatabaseName
 
       }
@@ -1694,6 +1699,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj={
         "api_token":this.shopifyToken,
         "shop_name": this.shopifyName,
+        "description":this.connectionDescription,
         "display_name": this.displayName
     }
       this.workbechService.shopifyConnection(obj).subscribe({next: (data) => {
@@ -1746,6 +1752,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "client_id": this.ninjaRMMClientid,
         "client_secret": this.ninjaRMMClientSecret,
         "display_name": this.displayName,
+        "description":this.connectionDescription,
         "scopes": this.selectedNinjaRMMScopes
       }
       this.workbechService.ninjaRMMConnection(obj).subscribe({next: (responce) => {
@@ -1802,6 +1809,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "secret_value":this.secretValue,
         "azure_domain":this.tenantId,
         "instance_subdomain":this.subDomain,
+        "description":this.connectionDescription,
         "display_name":this.displayName
     }
       this.workbechService.immyBotConnection(obj).subscribe({next: (responce) => {
@@ -1858,6 +1866,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "site_url": this.siteURL,
         "public_key":this.publicKey,
         "private_key": this.privateKey,
+        "description":this.connectionDescription,
         "display_name": this.displayName
     }
       this.workbechService.connectWiseConnection(obj).subscribe({next: (responce) => {
@@ -1911,6 +1920,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "site_url": this.siteURLPSA,
         "client_id": this.clientIdPSA,
         "client_secret": this.clientSecret,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.haloPSAConnection(obj).subscribe({next: (responce) => {
@@ -1961,6 +1971,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     tallySignIn(){
       const obj = {
         "token_key": this.tallyToken,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.createTally(obj).subscribe({next: (res)=>{
@@ -2005,7 +2016,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     openAISignIn(){
       const obj = {
         "open_ai_key": this.openAiKey,
-        "display_name": this.displayName
+        "display_name": this.displayName,
+        "description":this.connectionDescription,
       }
       this.workbechService.openAiConnection(obj).subscribe({next:(res)=>{
         if(res){
@@ -2056,6 +2068,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     deepSeekSignIn(){
       const obj = {
         "deepseek_key": this.deepSeekKey,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.deepSeekConnection(obj).subscribe({next:(res)=>{
@@ -2109,6 +2122,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     geminiSignIn(){
       const obj = {
         "gemini_key": this.geminiKey,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.geminiConnection(obj).subscribe({next:(res)=>{
@@ -2140,6 +2154,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "client_secret": this.hubspotClientSecret,
         "redirect_uri": this.hubspotRedirectURL,
         "display_name": this.displayName,
+        "description":this.connectionDescription,
         "scopes": this.selectedHubspotScopes
       }
       this.workbechService.hubspotConnection(obj).subscribe({next:(data)=>{
@@ -2162,6 +2177,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "description":this.connectionDescription,
           "database": this.postGreDatabaseName,
 
       }
@@ -2210,6 +2226,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "description":this.connectionDescription,
           "database": this.postGreDatabaseName,
           "authentication_type":this.selectedMicroSoftAuthType
       }
@@ -2259,6 +2276,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "password":this.PostGrePassword,
           "display_name":this.displayName,
           "database": this.postGreDatabaseName,
+          "description":this.connectionDescription,
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
         if (isSkip === true) {
@@ -2392,6 +2410,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "port":this.postGrePortName,
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
+          "description":this.connectionDescription,
           "display_name":this.displayName,
       };
       if(this.postGreDatabaseName){
@@ -2441,6 +2460,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       formData.append('path', this.fileData,this.fileData.name); 
       formData.append('database_type','sqlite');
       formData.append('display_name',this.displayName);
+      formData.append('description',this.connectionDescription);
+      
 
       this.confirmPopupForDataTransformation().then((isSkip) => {
         if (isSkip === true) {
@@ -2492,7 +2513,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       property_id: g.property_id,
       dimensions: g.dimensions, // Array of strings
       metrics: g.metrics,
-      display_name:g.displayname
+      display_name:g.displayname,
+      description :g.connectiondescription
      }
         this.workbechService.googleAnalyticsConnectionApi(obj).subscribe({next: (responce) => {
           console.log(responce)
@@ -2540,6 +2562,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "client_id": this.pax8ClientId,
         "client_secret": this.pax8ClientSecret,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.pax8Connection(obj).subscribe({next: (responce) => {
@@ -2595,6 +2618,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "api_key": this.bambooHRApiKey,
         "display_name": this.displayName,
+        "description":this.connectionDescription,
         "domain": this.bambooHRDomain
       }
       this.bambooHRService.createIntegration(obj).subscribe({next: (responce) => {
@@ -2660,6 +2684,16 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       }
     }
 
+     onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.fileData = file;
+      // console.log('File ready:', file.name);
+    }
+  }
+
+
+
     uploadfileCsv(event:any,type:any,database:any){
       const file:File = event.target.files[0];
       this.fileData = file;
@@ -2681,6 +2715,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     const formData: FormData = new FormData();
       formData.append('file_path', this.fileData,this.fileData.name); 
       formData.append('file_type','csv');
+      formData.append('description',this.connectionDescription);
       this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
         console.log(responce)
             if(responce){
@@ -2729,6 +2764,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const formData: FormData = new FormData();
         formData.append('file_path', this.fileData,this.fileData.name); 
         formData.append('file_type','excel');
+        formData.append('description',this.connectionDescription);
         this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
@@ -4013,6 +4049,9 @@ model = {
   this.selectedSchema = 'public';
   this.postGrePortName = '';
   this.postGreDatabaseName = '';
+  this.connectionDescription = '';
+  
+
   this.postGreUserName = '';
   this.PostGrePassword = '';
   this.OracleServiceName = '';
