@@ -3926,7 +3926,7 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
     { name: "Shopify", description: "E-commerce platform",svg:this.SVGICONS.shopify },
     { name: "Tally", description: "Accounting & ERP software",image:'./assets/images/icons/tally-icon.svg' },
     { name: "Google Sheets", description: "Online spreadsheets", svg:this.SVGICONS.googleSheets },
-    { name: "NinjaOne", description: "IT management & automation tool", svg:this.SVGICONS.ninjaOne },
+    { name: "Ninja", description: "IT management & automation tool", svg:this.SVGICONS.ninjaOne },
     { name: "Google Analytics", description: "Web analytics service", svg:this.SVGICONS.googleAnalytics },
     { name: "HubSpot", description: "Marketing & CRM platform",svg:this.SVGICONS.hubspot },
     { name: "Immybot", description: "IT automation tool",svg:this.SVGICONS.immybot }
