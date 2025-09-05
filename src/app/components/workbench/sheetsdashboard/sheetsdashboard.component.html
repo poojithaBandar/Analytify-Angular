@@ -1704,7 +1704,7 @@
               <!-- </div> -->
               @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
                 <!-- <div [id]="'pivotTableContainer' + item.id" #pivotTableContainer></div> -->
-                <div #pivotTableContainer [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"></div>
+                <div #pivotTableContainer class="pivot-drag-zone" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"></div>
               }
               </div>
               <!-- <div *ngIf="item['chartType'] === PIVOT">
@@ -2239,7 +2239,7 @@
                     <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
                   <!-- </div> -->
                   @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
-                    <div #pivotTableContainer [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"></div>
+                    <div #pivotTableContainer class="pivot-drag-zone" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"></div>
             
                   }
                 </div>
