@@ -122,7 +122,7 @@ export class DashboardTransferService {
           "items_per_page":this.sheetsInstance.itemsPerPage,
           "total_items":this.sheetsInstance.tableDataStore.length}
         } else if(chart_id == 9){
-          this.sheetsInstance.pivotTableDatatransform(false);
+          this.sheetsInstance.pivotTableDatatransform(false, true);
           sheet.sheet_data = {
             ...sheet.sheet_data,
             pivotMeasure_Data: this.sheetsInstance.pivotMeasureData.map((data:any)=>{

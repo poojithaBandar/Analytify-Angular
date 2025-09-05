@@ -1255,9 +1255,14 @@ export class SheetsdashboardComponent implements OnDestroy {
         let transformedData :any =[];
         let headers: string[] = [];
 
-       let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
-       let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
-      let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+      //  let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
+      //  let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+      // let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+
+      let columnKeys = sheet.customizeOptions?.pivotConfig.rows;
+      let rowKeys = sheet.customizeOptions?.pivotConfig.vals;
+      let valueKeys = sheet.customizeOptions?.pivotConfig.cols;
+
       sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
         headers.push(colObj.column);
       });
@@ -1315,8 +1320,8 @@ export class SheetsdashboardComponent implements OnDestroy {
                 vals: pivotData['rowKeys'],
                 aggregators: $.pivotUtilities.aggregators,
                 renderers: $.pivotUtilities.renderers,
-                aggregatorName: 'Sum',
-                rendererName: 'Table',
+                aggregatorName: sheet.customizeOptions?.pivotConfig.aggregatorName ?? 'Sum',
+                rendererName: sheet.customizeOptions?.pivotConfig.rendererName ?? 'Table',
                 rendererOptions: {
                   table: {
                     rowTotals: pivotData.customizeOptions?.pivotRowTotals,
@@ -2538,9 +2543,14 @@ allowDrop(ev : any): void {
           let transformedData :any =[];
           let headers: string[] = [];
     
-         let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
-         let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
-        let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+        //  let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
+        //  let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
+        // let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+
+        let columnKeys = element.customizeOptions?.pivotConfig.rows;
+        let rowKeys = element.customizeOptions?.pivotConfig.vals;
+        let valueKeys = element.customizeOptions?.pivotConfig.cols;
+
         element.pivotData?.pivotColData?.forEach((colObj: any) => {
           headers.push(colObj.column);
         });
@@ -2607,8 +2617,8 @@ allowDrop(ev : any): void {
                 vals: pivotData['rowKeys'],
                 aggregators: $.pivotUtilities.aggregators,
                 renderers: $.pivotUtilities.renderers,
-                aggregatorName: 'Sum',
-                rendererName: 'Table',
+                aggregatorName: element.customizeOptions?.pivotConfig.aggregatorName ?? 'Sum',
+                rendererName: element.customizeOptions?.pivotConfig.rendererName ?? 'Table',
                 rendererOptions: {
                   table: {
                     rowTotals: pivotData.customizeOptions.pivotRowTotals,
@@ -5322,9 +5332,14 @@ kpiData?: KpiData;
           let transformedData: any = [];
           let headers: string[] = [];
 
-          let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column);
-          let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
-          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col: any) => col.col)
+          // let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column);
+          // let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          // let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col: any) => col.col)
+
+          let columnKeys = sheet.customizeOptions?.pivotConfig.rows;
+          let rowKeys = sheet.customizeOptions?.pivotConfig.vals;
+          let valueKeys = sheet.customizeOptions?.pivotConfig.cols;
+
           sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
             headers.push(colObj.column);
           });
@@ -5382,8 +5397,8 @@ kpiData?: KpiData;
                     vals: pivotData['rowKeys'],
                     aggregators: $.pivotUtilities.aggregators,
                     renderers: $.pivotUtilities.renderers,
-                    aggregatorName: 'Sum',
-                    rendererName: 'Table',
+                    aggregatorName: sheet.customizeOptions?.pivotConfig.aggregatorName ?? 'Sum',
+                    rendererName: sheet.customizeOptions?.pivotConfig.rendererName ?? 'Table',
                     rendererOptions: {
                       table: {
                         rowTotals: pivotData['customizeOptions'].pivotRowTotals,
@@ -5410,9 +5425,14 @@ kpiData?: KpiData;
           let transformedData: any = [];
           let headers: string[] = [];
 
-          let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column);
-          let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
-          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col: any) => col.col)
+          // let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column);
+          // let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          // let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col: any) => col.col)
+
+          let columnKeys = sheet.customizeOptions?.pivotConfig.rows;
+          let rowKeys = sheet.customizeOptions?.pivotConfig.vals;
+          let valueKeys = sheet.customizeOptions?.pivotConfig.cols;
+
           sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
             headers.push(colObj.column);
           });
@@ -5470,8 +5490,8 @@ kpiData?: KpiData;
                     vals: pivotData['rowKeys'],
                     aggregators: $.pivotUtilities.aggregators,
                     renderers: $.pivotUtilities.renderers,
-                    aggregatorName: 'Sum',
-                    rendererName: 'Table',
+                    aggregatorName: sheet.customizeOptions?.pivotConfig.aggregatorName ?? 'Sum',
+                    rendererName: sheet.customizeOptions?.pivotConfig.rendererName ?? 'Table',
                     rendererOptions: {
                       table: {
                         rowTotals: pivotData['customizeOptions'].pivotRowTotals,

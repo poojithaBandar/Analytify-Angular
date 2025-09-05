@@ -919,7 +919,7 @@ try {
               this.chartType = 'sidebyside'
             }
             if(this.pivotTable){
-              this.pivotTableDatatransform(isSyncData);
+              this.pivotTableDatatransform(isSyncData, true);
             }
             if(this.table){
               this.page = 1;
@@ -1035,14 +1035,21 @@ try {
       pivotRowData = [] as any;
       pivotColumnData = [] as any;
       pivotMeasureData = [] as any;
-        pivotTableDatatransform(isSyncData : boolean) {
+        pivotTableDatatransform(isSyncData : boolean, isExtraction: boolean, pivotConfig?: any) {
           if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
             this.transformedData =[];
           let headers: string[] = [];
 
-          this.columnKeys = this.pivotColumnData?.map((col: any) => col.column); 
-          this.rowKeys = this.pivotRowData?.map((row: any) => row.col);
-          this.valueKeys = this.pivotMeasureData?.map((col:any) =>col.col)
+          if(isExtraction){
+            this.columnKeys = this.pivotColumnData?.map((col: any) => col.column);
+            this.rowKeys = this.pivotRowData?.map((row: any) => row.col);
+            this.valueKeys = this.pivotMeasureData?.map((col: any) => col.col)
+          } else{
+            this.columnKeys = pivotConfig.rows;
+            this.rowKeys = pivotConfig.vals;
+            this.valueKeys = pivotConfig.cols;
+          }
+          
           this.pivotColumnData.forEach((colObj: any) => {
             headers.push(colObj.column);
           });
@@ -1078,11 +1085,11 @@ try {
 
             this.transformedData.push(rowArray);
           }
-          this.renderPivotTable(isSyncData);        
+          this.renderPivotTable(isSyncData, pivotConfig);        
         }
         }
 
-        renderPivotTable(isSyncData: boolean) {
+        renderPivotTable(isSyncData: boolean, pivotConfig?:any) {
           setTimeout(() => {
             if (this.pivotContainer && this.pivotContainer.nativeElement) {
               const options: any = {
@@ -1091,8 +1098,8 @@ try {
                 vals: this.rowKeys,
                 aggregators: $.pivotUtilities.aggregators,
                 renderers: $.pivotUtilities.renderers,
-                aggregatorName: "Sum",
-                rendererName: "Heatmap",
+                aggregatorName: pivotConfig?.aggregatorName ?? "Sum",
+                rendererName: pivotConfig?.rendererName ?? "Heatmap",
                 rendererOptions: {
                   table: {
                     rowTotals: this.pivotRowTotals,
@@ -1108,16 +1115,16 @@ try {
                   this.aggregatorName = config.aggregatorName;
 
                   this.applyDynamicStylesToPivot();
-                    localStorage.setItem(
-                        'pivotConfig',
-                        JSON.stringify({
-                            rows: this.columnKeys,
-                            cols: this.valueKeys,
-                            vals: this.rowKeys,
-                            renderer: this.rendererName,
-                            aggregator: this.aggregatorName
-                        })
-                    );
+                    // localStorage.setItem(
+                    //     'pivotConfig',
+                    //     JSON.stringify({
+                    //         rows: this.columnKeys,
+                    //         cols: this.valueKeys,
+                    //         vals: this.rowKeys,
+                    //         renderer: this.rendererName,
+                    //         aggregator: this.aggregatorName
+                    //     })
+                    // );
                     },
               };
 
@@ -2443,7 +2450,14 @@ sheetSave(isDashboardTransfer?: boolean){
     measureColorRanges : this.measureColorRanges,
     measureDivisions : this.measureDivisions,
     kpiChartColorSwitch : this.kpiChartColorSwitch,
-    hBarHeight : this.hBarHeight
+    hBarHeight : this.hBarHeight,
+    pivotConfig: {
+      rows: this.columnKeys,
+      cols: this.valueKeys,
+      vals: this.rowKeys,
+      rendererName: this.rendererName,
+      aggregatorName: this.aggregatorName
+    },
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2855,7 +2869,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
-    this.pivotTableDatatransform(false);
+    this.pivotTableDatatransform(false, false, this.sheetResponce?.customizeOptions?.pivotConfig);
   }
   if(responce.chart_id == 25){
     this.tablePreviewRow = this.sheetResponce?.results?.kpiData;
