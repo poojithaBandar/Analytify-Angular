@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -98,6 +98,7 @@ declare var $:any;
 @Component({
   selector: 'app-sheets',
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
   // changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -425,7 +426,8 @@ export class SheetsComponent{
   rowKeys: string[] = [];
   valueKeys: string[] = [];
   rawData: any = {};
-
+  aggregatorName:any;
+  rendererName:any;
   bandingEvenColor= '#ffffff'
   bandingOddColor= '#f5f7fa'
 
@@ -1101,8 +1103,22 @@ try {
                   this.columnKeys = config.rows ? config.rows.slice() : [];
                   this.valueKeys = config.cols ? config.cols.slice() : [];
                   this.rowKeys = config.vals ? config.vals.slice() : [];
+
+                  this.rendererName = config.rendererName;
+                  this.aggregatorName = config.aggregatorName;
+
                   this.applyDynamicStylesToPivot();
-                },
+                    localStorage.setItem(
+                        'pivotConfig',
+                        JSON.stringify({
+                            rows: this.columnKeys,
+                            cols: this.valueKeys,
+                            vals: this.rowKeys,
+                            renderer: this.rendererName,
+                            aggregator: this.aggregatorName
+                        })
+                    );
+                    },
               };
 
                 ($(this.pivotContainer.nativeElement) as any).pivotUI(

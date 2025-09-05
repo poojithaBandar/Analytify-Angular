@@ -135,7 +135,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
     NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe,SanitizeHtmlPipe,SafeUrlPipe,GenieAiqDashboardComponent],
   templateUrl: './sheetsdashboard.component.html',
-  styleUrl: './sheetsdashboard.component.scss'
+  styleUrl: './sheetsdashboard.component.scss',
 })
 export class SheetsdashboardComponent implements OnDestroy {
  // @HostListener('window:resize', ['$event'])
@@ -8844,6 +8844,76 @@ initializeTabDefaults() {
             });
           }
         });
+
+        const setBgImportant = (
+        el: HTMLElement,
+        color: string,
+        enabled: boolean
+      ) => {
+        if (enabled) {
+          el.style.setProperty('background-color', color, 'important');
+        } else {
+          el.style.removeProperty('background-color');
+        }
+      };
+
+      const setFontColor = (
+        el: HTMLElement,
+        color: string,
+        enabled: boolean
+      ) => {
+        if (enabled) {
+          el.style.color = color;
+        } else {
+          el.style.removeProperty('color');
+        }
+      };
+
+      const applyTotals = (
+        selector: string,
+        fontColor: string,
+        fontSwitch: boolean,
+        bgColor: string,
+        bgSwitch: boolean,
+        weight: string
+      ) => {
+        table.querySelectorAll(selector).forEach(td => {
+          const el = td as HTMLElement;
+          setBgImportant(el, bgColor, bgSwitch);
+          setFontColor(el, fontColor, fontSwitch);
+          el.style.fontWeight = weight;
+        });
+      };
+
+      // Row totals (right side)
+      applyTotals(
+        'td.pvtTotal.rowTotal, th.pvtTotal.rowTotal',
+        styleConfig.rowTotalFontColor,
+        styleConfig.rowTotalFontColorSwitch,
+        styleConfig.rowTotalBgColor,
+        styleConfig.rowTotalBgColorSwitch,
+        '700'
+      );
+
+      // Column totals (bottom row)
+      applyTotals(
+        'td.pvtTotal.colTotal, th.pvtTotal.colTotal',
+        styleConfig.colTotalFontColor,
+        styleConfig.colTotalFontColorSwitch,
+        styleConfig.colTotalBgColor,
+        styleConfig.colTotalBgColorSwitch,
+        '700'
+      );
+
+      // Grand totals (bottom-right)
+      applyTotals(
+        'td.pvtGrandTotal, th.pvtGrandTotal',
+        styleConfig.grandTotalFontColor,
+        styleConfig.grandTotalFontColorSwitch,
+        styleConfig.grandTotalBgColor,
+        styleConfig.grandTotalBgColorSwitch,
+        '800'
+      );
       }
     }
     $(document).on('mousedown', '.pvtAxisContainer, .pvtVals, .pvtRendererArea', function(e: { stopPropagation: () => void; }) {

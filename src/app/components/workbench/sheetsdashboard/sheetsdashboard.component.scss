@@ -828,3 +828,138 @@ p { font-size: 12px;}
     padding: 10px 4px 8px 4px;
   }
 }
+
+:host ::ng-deep .pvtUi {
+  border: 1px solid #e5e7eb;       /* soft gray border */
+  border-radius: 12px;             /* ✅ outer curve */
+  padding: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease;
+}
+:host ::ng-deep table.pvtUi {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;      /* ✅ rounded edges */
+  overflow: hidden;         /* clips inner content */
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  width: 100%;
+  border-collapse: separate !important; /* allow radius */
+  border-spacing: 0; 
+}
+.pvtUi:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+/* === Axis containers === */
+:host ::ng-deep .pvtAxisContainer,
+.pvtVals,
+.pvtRendererArea {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fafafa;
+  padding: 8px;
+  min-height: 40px;
+  margin-bottom: 8px;
+}
+
+.pvtUi select {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 4px 8px;
+  font-size: 13px;
+  background: #fff;
+}
+:host ::ng-deep .pvtAxisContainer li {
+  border-radius: 20px !important;    /* pill shape */
+  background: #f9fafb !important;    /* ✅ no grey */
+  border: 1px solid #e5e7eb !important;
+  padding: 4px 10px !important;
+  font-size: 13px;
+  color: #374151 !important;         /* dark grey text */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  cursor: grab;
+}
+:host ::ng-deep .pvtAxisContainer li:active {
+  cursor: grabbing;
+}
+/* Hover effect */
+:host ::ng-deep .pvtAxisContainer li:hover,
+.pvtVals li:hover {
+  background: #f0f9ff !important;
+  border-color: #3b82f6 !important;
+  color: #1d4ed8 !important;
+  box-shadow: 0 2px 5px rgba(59,130,246,0.2);
+}
+/* Round the outer Heatmap (renderer) cell */
+.pvtUi > tbody > tr:first-child > td:first-child {
+  border-top-left-radius: 12px;
+  overflow: hidden;
+}
+
+/* Round the top-right (next to Heatmap cell) */
+.pvtUi > tbody > tr:first-child > td:last-child {
+  border-top-right-radius: 12px;
+  overflow: hidden;
+}
+
+/* Dragging state */
+:host ::ng-deep .pvtAxisContainer li.ui-sortable-helper,
+.pvtVals li.ui-sortable-helper {
+  background: #3b82f6 !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 3px 8px rgba(59,130,246,0.35);
+  cursor: grabbing;
+}
+
+
+/* === Dropdowns (aggregator, renderer, attributes) === */
+:host ::ng-deep .pvtRenderer,
+.pvtAggregator,
+.pvtAttrDropdown {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 6px 10px;
+  font-size: 13px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+:host ::ng-deep .pvtRenderer:focus,
+.pvtAggregator:focus,
+.pvtAttrDropdown:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+  outline: none;
+}
+:host ::ng-deep .pvtUi > tbody > tr:first-child {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  overflow: hidden;
+}
+/* === Pivot table === */
+:host ::ng-deep .pvtTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;             /* ✅ rounded table */
+  overflow: hidden;                /* ensures radius applies */
+  margin-top: 12px;
+}
+
+:host ::ng-deep .pvtTable th,
+.pvtTable td {
+  border: 1px solid #f0f0f0;
+  padding: 8px 12px;
+  font-size: 13px;
+  background: #fff;
+}
+
+:host ::ng-deep .pvtTable th {
+  background: #f9fafb;
+  font-weight: 600;
+}
