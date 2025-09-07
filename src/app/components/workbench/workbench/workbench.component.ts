@@ -56,6 +56,19 @@ export class WorkbenchComponent implements OnInit{
   relationOfTables = [] as any;
   databaseId:any;
   fileId:any;
+geminiDescription: string = '';
+connectwisedescription: string = '';
+ninjadescription: string = '';
+halopsdescription: string = '';
+pax8Description: string = '';
+bamboohrDescription: string = '';
+immybotDescription: string = '';
+shopifyDescription: string = '';
+tallyDescription: string = '';
+openaiDescription: string = '';
+deepseekDescription: string = '';
+googleanalyticsDescription: string = '';
+saphanaDescription: string = '';
   databaseType:any;
   openPostgreSqlForm= false;
   openMySqlForm = false;
@@ -600,6 +613,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     postGrePortName = '';
     postGreDatabaseName = '';
     connectionDescription = '';
+
     postGreUserName = '';
     PostGrePassword = '';
     OracleServiceName = '';
@@ -635,6 +649,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       dimensions: string[];  // <-- Explicitly typed
       metrics: string[];     // <-- Explicitly typed
       displayname: string;
+      
       connectiondescription?: string;
     } = {
       type: 'service_account',
@@ -1023,6 +1038,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "public_key":this.publicKey,
         "private_key": this.privateKey,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id":this.databaseId
     }
 
@@ -1048,6 +1064,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "client_id": this.ninjaRMMClientid,
         "client_secret": this.ninjaRMMClientSecret,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "scopes": this.selectedNinjaRMMScopes,
         "hierarchy_id":this.databaseId
       }
@@ -1073,6 +1090,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "site_url": this.siteURLPSA,
         "client_id": this.clientIdPSA,
         "client_secret": this.clientSecret,
+        "description": this.connectionDescription,
         "display_name": this.displayName,
         "hierarchy_id":this.databaseId
       }
@@ -1099,6 +1117,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "client_id": this.pax8ClientId,
         "client_secret": this.pax8ClientSecret,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id":this.databaseId
       }
 
@@ -1124,6 +1143,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "api_key": this.bambooHRApiKey,
         "display_name": this.displayName,
         "domain": this.bambooHRDomain,
+        "description": this.connectionDescription,
         "hierarchy_id":this.databaseId
       }
 
@@ -1151,6 +1171,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "azure_domain":this.tenantId,
         "instance_subdomain":this.subDomain,
         "display_name":this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id": this.databaseId
     }
       this.workbechService.immyBotConnectionUpdate(obj).subscribe({next: (responce) => {
@@ -1173,6 +1194,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "api_token": this.shopifyToken,
         "shop_name": this.shopifyName,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id":this.databaseId
       }
 
@@ -1197,6 +1219,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "token_key": this.tallyToken,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id": this.databaseId
       }
 
@@ -1219,6 +1242,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "open_ai_key": this.openAiKey,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id": this.databaseId
       }
       this.workbechService.openAiConnectionUpdate(obj).subscribe({next:(res)=>{
@@ -1240,6 +1264,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "deepseek_key": this.deepSeekKey,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id": this.databaseId
       }
       this.workbechService.deepSeekConnectionUpdate(obj).subscribe({next:(res)=>{
@@ -1260,7 +1285,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "gemini_key": this.geminiKey,
         "display_name": this.displayName,
-        "hierarchy_id": this.databaseId
+        "hierarchy_id": this.databaseId,
+        "description": this.connectionDescription
       }
       this.workbechService.geminiConnectionUpdate(obj).subscribe({next:(res)=>{
             this.modalService.dismissAll('close');
@@ -1288,6 +1314,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       property_id: g.property_id,
       dimensions: g.dimensions, // Array of strings
       metrics: g.metrics,
+      description: g.connectiondescription,
       display_name:g.displayname
      }
 
@@ -1330,6 +1357,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "description":this.connectionDescription,
           "database_id":this.databaseId,
       };
       if(this.databaseType === 'oracle'){
@@ -3060,47 +3088,58 @@ connectGoogleSheets(){
         this.publicKey = editData.public_key;
         this.privateKey = editData.private_key;
         this.displayName = editData.display_name;
+        this.connectionDescription = editData.description;
     } else if (this.databaseType == "ninja") {
        this.displayName = editData.display_name;
        this.ninjaRMMClientid = editData.client_id;
        this.ninjaRMMClientSecret = editData.client_secret;
        this.selectedNinjaRMMScopes = editData.scopes;
+        this.connectionDescription = editData.description;
     }
     else if (this.databaseType == "halops") {
       this.siteURLPSA = editData.site_url;
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "pax8") {
       this.pax8ClientId = editData.client_id;
       this.pax8ClientSecret = editData.client_secret;
       this.displayName = editData.display_name;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "bamboohr") {
       this.bambooHRApiKey = editData.api_key;
       this.bambooHRDomain = editData.domain;
       this.displayName = editData.display_name;
+      this.connectionDescription = editData.description;
     }  else if (this.databaseType == "immybot") {
       this.clientIdImmybot = editData.client_id;
       this.secretValue = editData.secret_value;
       this.tenantId = editData.azure_domain;
       this.subDomain = editData.instance_subdomain;
       this.displayName = editData.display_name;
+      this.connectionDescription = editData.description;
     } else if(this.databaseType == "shopify"){
       this.displayName = editData.display_name;
       this.shopifyName = editData.shop_name;
       this.shopifyToken = editData.api_token;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "tally") {
       this.displayName = editData.display_name;
       this.tallyToken = editData.token_key;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "open_ai") {
       this.displayName = editData.display_name;
       this.openAiKey = editData.open_ai_key;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "deepseek") {
       this.displayName = editData.display_name;
       this.deepSeekKey = editData.deepseek_key;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "gemini") {
       this.displayName = editData.display_name;
       this.geminiKey = editData.gemini_key;
+      this.connectionDescription = editData.description;
     }else if (this.databaseType === 'google_analytics') {
       this.googleAnalytics = {
         type: 'service_account',
@@ -3111,6 +3150,7 @@ connectGoogleSheets(){
         client_id: editData.client_id || '',
         client_x509_cert_url: editData.client_x509_cert_url || '',
         property_id: editData.property_id || '',
+        connectiondescription: editData.description || '',
         dimensions: [...editData.dimensions],
         metrics: [...editData.metrics],
         displayname: editData.display_name || ''
@@ -3122,6 +3162,7 @@ connectGoogleSheets(){
       this.postGreUserName = editData.username;
       this.PostGrePassword = '';
       this.OracleServiceName = '';
+      this.connectionDescription = editData.description;
       this.displayName = editData.display_name;
       if (this.databaseType === 'oracle') {
         this.postGreDatabaseName = editData.service_name;
@@ -3609,6 +3650,7 @@ connectGoogleSheets(){
       "username": this.postGreUserName,
       "password": this.PostGrePassword,
       "display_name": this.displayName
+      
     };
     if(this.postGreDatabaseName){
       obj.database = this.postGreDatabaseName;
