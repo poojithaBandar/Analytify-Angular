@@ -71,6 +71,11 @@ export const admin: Routes = [
     loadComponent: () =>
       import('./hubspot/hubspot.component').then((m) => m.HubspotComponent),
   },
+  {
+    path: 'zoho',
+    loadComponent: () =>
+      import('./zoho/zoho.component').then((m) => m.ZohoComponent),
+  },
 ]}
 ];
 @NgModule({
