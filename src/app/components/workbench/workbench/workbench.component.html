@@ -31,7 +31,11 @@
                           <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
                           <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                       </div>
-              </form>
+                      <div class="mb-2">
+                         <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                         <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+                      </div>
+                     </form>
             } @else if(databaseType == 'ninja') {
               <form>
                 <div class="mb-2">
@@ -56,6 +60,10 @@
                           [multiple]="true"
                           (change)="onNinjaRMMScopeChange($event)">
                         </ng-select>
+                      </div>
+                      <div class="mb-2">
+                         <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                         <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
                       </div>
               </form>
             }
@@ -88,6 +96,10 @@
                     [(ngModel)]="siteURLPSA" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://HaloPSA.com"
                     (input)="siteUrlPSAError()">
                    </div>
+                   <div class="mb-2">
+                         <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                         <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+                      </div>
               </form>
             } @else if(databaseType == 'pax8') {
               <form>
@@ -103,6 +115,10 @@
                   <label [ngClass]="{'error-label': pax8ClientSecretError}" for="recipient-name" class="col-form-label">Client Secret<span class="text-danger ms-1" >*</span></label>
                   <input [ngClass]="{'error-input': pax8ClientSecretError}" type="text" class="form-control" [(ngModel)]="pax8ClientSecret" [ngModelOptions]="{standalone: true}" placeholder="Client Secret" (input)="pax8ClientSecretValidation()">
                 </div>
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             } @else if(databaseType == 'bamboohr') {
               <form>
@@ -118,6 +134,10 @@
                   <label [ngClass]="{'error-label': bambooHRApiKeyError}" for="recipient-name" class="col-form-label">API Key<span class="text-danger ms-1">*</span></label>
                   <input [ngClass]="{'error-input': bambooHRApiKeyError}" type="text" class="form-control" [(ngModel)]="bambooHRApiKey" [ngModelOptions]="{standalone: true}" placeholder="API Key" (input)="bambooHRApiKeyValidation()">
                 </div>
+                 <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             } @else if(databaseType == 'immybot') {
               <form>
@@ -154,6 +174,10 @@
                     [(ngModel)]="subDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. analytify"
                     (input)="subDomainImmyBotError()">
                 </div>
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             }
             @else if(databaseType == 'shopify') {
@@ -177,6 +201,10 @@
                       <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
                             <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
                 </div>
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             } @else if(databaseType == 'tally') {
               <form>
@@ -188,6 +216,10 @@
                   <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Tally" (input)="displayNameIntegrationConditionError()">
                 </div>
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             } @else if(databaseType == 'open_ai') {
               <form>
@@ -199,6 +231,10 @@
                   <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. OpenAI" (input)="displayNameIntegrationConditionError()">
                 </div>
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             } @else if(databaseType == 'deepseek') {
               <form>
@@ -210,6 +246,10 @@
                   <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. DeepSeek" (input)="displayNameIntegrationConditionError()">
                 </div>
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             } @else if(databaseType == 'gemini') {
               <form>
@@ -221,6 +261,10 @@
                   <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Gemini" (input)="displayNameIntegrationConditionError()">
                 </div>
+              <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             }@else if(databaseType == 'google_analytics') {
               <form>
@@ -256,6 +300,10 @@
                     placeholder="Select metrics">
                   </ng-select>
                 </div>
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             } 
             @else if(databaseType == 'sap hana') {
@@ -286,6 +334,7 @@
                     <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
                     <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>
                   </div>
+                  
                 </div>
                 @if(schemaList && schemaList.length > 0) {
                 <div class="mb-2">
@@ -296,6 +345,10 @@
                   </select>
                 </div>
                 }
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
               </form>
             }
 
@@ -346,46 +399,50 @@
                   </select>
                 } -->
                 </div>
+                <div class="mb-2">
+              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+             <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+            </div>
             </form>
           }
           </div>
           <div class="modal-footer">
             @if(databaseType == 'connectwise') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">Update</button>
+              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName && !connectionDescription) ">Update</button>
 
             } @else if(databaseType == 'halops') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName )">Update</button>
+              <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName &&!connectionDescription )">Update</button>
 
             } @else if(databaseType == 'pax8') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="pax8Update()" [disabled]="(pax8ClientIdError || pax8ClientSecretError || displayNameError) || !(pax8ClientId && pax8ClientSecret && displayName)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="pax8Update()" [disabled]="(pax8ClientIdError || pax8ClientSecretError || displayNameError) || !(pax8ClientId && pax8ClientSecret && displayName &&!connectionDescription)">Update</button>
 
             } @else if(databaseType == 'bamboohr') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="bambooHRUpdate()" [disabled]="(bambooHRApiKeyError || bambooHRDomainError || displayNameError) || !(bambooHRApiKey && bambooHRDomain && displayName)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="bambooHRUpdate()" [disabled]="(bambooHRApiKeyError || bambooHRDomainError || displayNameError) || !(bambooHRApiKey && bambooHRDomain && displayName &&!connectionDescription)">Update</button>
 
             } @else if(databaseType == 'ninja') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="ninjaRMMUpdate()"  [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName) ">Update</button>
+              <button type="button" class="btn btn-primary" (click)="ninjaRMMUpdate()"  [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName &&!connectionDescription) ">Update</button>
 
             }
              @else if(databaseType == 'shopify') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName &&!connectionDescription)">Update</button>
             } @else if(databaseType == 'tally') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="tallyUpdate()" [disabled]="(tallyTokenError || displayNameError) || !(tallyToken && displayName)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="tallyUpdate()" [disabled]="(tallyTokenError || displayNameError) || !(tallyToken && displayName &&!connectionDescription)">Update</button>
             } @else if(databaseType == 'open_ai') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="openAIUpdate()" [disabled]="(openAiKeyError || displayNameError) || !(openAiKey && displayName)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="openAIUpdate()" [disabled]="(openAiKeyError || displayNameError) || !(openAiKey && displayName &&!connectionDescription)">Update</button>
             } @else if(databaseType == 'deepseek') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="deepSeekUpdate()" [disabled]="(deepSeekKeyError || displayNameError) || !(deepSeekKey && displayName)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="deepSeekUpdate()" [disabled]="(deepSeekKeyError || displayNameError) || !(deepSeekKey && displayName &&!connectionDescription)">Update</button>
             } @else if(databaseType == 'gemini') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="geminiUpdate()" [disabled]="(geminiKeyError || displayNameError) || !(geminiKey && displayName)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="geminiUpdate()" [disabled]="(geminiKeyError || displayNameError) || !(geminiKey && displayName)||!connectionDescription">Update</button>
             } @else if(databaseType == 'google_analytics') {
               <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary"
@@ -395,7 +452,7 @@
               </button>
             } @else if(databaseType == 'immybot') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="ImmybotConnectionUpdate()" [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot ) ">Update</button>
+              <button type="button" class="btn btn-primary" (click)="ImmybotConnectionUpdate()" [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot &&!connectionDescription ) ">Update</button>
             } @else if(databaseType == 'sap hana') {
               <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
               <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
@@ -403,7 +460,7 @@
             }
             @else {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
+            <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn||!connectionDescription">Update</button>
             }
           </div>
         </div>
@@ -952,7 +1009,7 @@
                         <span class="time-text"><i class="bi bi-clock me-1"></i>{{ connection?.lastSync }}</span>
                       </div> -->
             
-                      <p class="large mb-0">{{ connection?.description }}</p>
+                      <p class="large mb-0"><strong>{{ connection?.description | slice:0:30 }}{{ connection?.description?.length > 30 ? '...': '' }} </strong></p> 
                   
                       <div class="mb-3 d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
@@ -3354,7 +3411,10 @@
           </div>
 
           <!-- Description + Details -->
-          <p class="mt-2 mb-1 small text-muted">{{ conn?.description }}</p>
+          <p class="mt-2 mb-1 small  d-inline-block"
+         ngbTooltip="{{ conn?.description }}">
+            <strong> {{ conn?.description | slice:0:30 }}{{ conn?.description?.length > 30 ? '...': '' }} </strong></p>
+
           <div class="d-flex justify-content-between small">
             <div><strong>Created By:</strong> {{ conn.created_by }}</div>
             <div><strong>Last Modified:</strong> {{ conn.updated_at | date: 'mediumDate' }}</div>
@@ -3402,58 +3462,74 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
-            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My PostgreSQL Connection"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My MySQL Connection"
             (input)="displayNameConditionError()">
         </div>
       
-        <!-- Host / Port Row -->
-        <div class="row g-3">
-          <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': serverError}" class="form-label">
+        <!-- Host  Row -->
+       
+          <div class="mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label d-inline-block me-1">
               Host <span class="text-danger">*</span>
             </label>
+            <span class="text-muted" style="display:inline-block;">(Place your host url or host name)</span>
             <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="localhost"
               (input)="serverConditionError()">
           </div>
+          <!-- port/Database Name -->
+           <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': portError}" class="form-label">
+            <label [ngClass]="{'error-label': portError}" class="form-label d-inline-block me-1">
               Port <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted" style="font-size: 8px; ">(Example port number for MySQL is 5432)</span>
             <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="5432"
               (input)="portConditionError()">
           </div>
-        </div>
-      
-        <!-- Database Name -->
-        <div class="mb-3">
-          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+          
+        
+        <div class=" col-md-6 mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label d-inline-block me-1">
             Database Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="font-size: 8px; ">(Please give database name )</span>
           <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="database_name"
             (input)="databaseConditionError()">
         </div>
+        </div>
+        <!-- description -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
       
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label d-inline-block me-1">
               Username <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted"style="font-size: 10px;">(Enter your username in this field)</span>
             <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="username"
               autocomplete="new-myname" (input)="userNameConditionError()">
           </div>
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label d-inline-block me-1">
               Password <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted"style="font-size: 8px;">(Enter your password in this field)</span>
             <div class="d-flex">
               <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
                 class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
@@ -3495,58 +3571,77 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My Oracle Connection"
             (input)="displayNameConditionError()">
         </div>
       
-        <!-- Host / Port Row -->
-        <div class="row g-3">
-          <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': serverError}" class="form-label">
+        <!-- Host  Row -->
+        
+          <div class="mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label d-inline-block me-1">
               Host <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted" style="display:inline-block;">( Place your host url or host name)</span>
             <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name / Host URL"
               (input)="serverConditionError()">
           </div>
+          <!-- port/server Name -->
+          <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': portError}" class="form-label">
+            <label [ngClass]="{'error-label': portError}" class="form-label d-inline-block me-1">
               Port <span class="text-danger">*</span>
             </label>
+               <span  class="text-muted" style="font-size: 8px; ">(Example port number for oracle is 1521)</span>
             <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1521"
               (input)="portConditionError()">
           </div>
-        </div>
+        
       
-        <!-- Service Name -->
-        <div class="mb-3">
-          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+       
+        <div class="col-md-6 mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label d-inline-block me-1">
             Service Name <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="font-size: 8px; ">( Place give your servername)</span>
           <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. orcl"
             (input)="databaseConditionError()">
         </div>
+        </div>
+        <!-- New Description  -->
+        <!--  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label d-inline-block me-1">
               Username <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted" style="font-size: 8px; ">(Enter your username in this field)</span>
             <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
               autocomplete="new-myname" (input)="userNameConditionError()">
           </div>
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label d-inline-block me-1">
               Password <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted" style="font-size: 8px; ">(Please give your password in this field)</span>
             <div class="d-flex">
               <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
                 class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
@@ -3589,58 +3684,76 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My PostgreSQL Connection"
             (input)="displayNameConditionError()">
         </div>
       
-        <!-- Host / Port Row -->
-        <div class="row g-3">
-          <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': serverError}" class="form-label">
+        <!-- Host  Row -->
+        
+          <div class=" mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label d-inline-block me-1">
               Host <span class="text-danger">*</span>
             </label>
+             <span class="text-muted" style="display:inline-block;">(Place your host url or host name)</span>
             <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name / Host URL"
               (input)="serverConditionError()">
           </div>
+          <!-- port/Database Name -->
+          <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': portError}" class="form-label">
+            <label [ngClass]="{'error-label': portError}" class="form-label   d-inline-block me-1">
               Port <span class="text-danger">*</span>
             </label>
+              <span  class="text-muted" style="font-size: 8px; ">(Example port number for MySQL is 5432)</span>
             <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="5432"
               (input)="portConditionError()">
           </div>
-        </div>
+        
       
-        <!-- Database Name -->
-        <div class="mb-3">
-          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+        
+        <div class="col-md-6 mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label d-inline-block me-1">
             Database Name <span class="text-danger">*</span>
-          </label>
+          </label> 
+          <span  class="text-muted" style="font-size: 8px; ">(Please give database name )</span>
           <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. postgres"
             (input)="databaseConditionError()">
         </div>
+        </div>
+        <!-- Description Field -->
+      
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label  d-inline-block me-1">
               Username <span class="text-danger">*</span>
-            </label>
+            </label>  <span  class="text-muted"style="font-size: 8px;">(Enter your username in this field)</span>
             <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="username"
               autocomplete="new-myname" (input)="userNameConditionError()">
           </div>
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label d-inline-block me-1">
               Password <span class="text-danger">*</span>
             </label>
+             <span  class="text-muted"style="font-size: 8px;">(Enter your password in this field)</span>
             <div class="d-flex">
               <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
                 class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
@@ -3708,9 +3821,10 @@
   
         <!-- Authentication Type -->
         <div class="mb-3">
-          <label for="authType" class="form-label">
+          <label for="authType" class="form-label d-inline-block me-1">
             Authentication Type <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Authentication type Name in this field)</span>
           <select id="authType" class="form-select forms-light w-100" aria-label="Authentication Type"
             [(ngModel)]="selectedMicroSoftAuthType" (change)="errorCheck()" [ngModelOptions]="{ standalone: true }">
             <option value='null' disabled selected>Select Authentication Type</option>
@@ -3724,43 +3838,55 @@
   
           <!-- Connection Name -->
           <div class="mb-3">
-            <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
               Connection Name <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
             <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My SQL Server Connection"
               (input)="displayNameConditionError()">
           </div>
   
-          <!-- Host / Port Row -->
-          <div class="row g-3">
-            <div class="col-md-6 mb-3">
-              <label [ngClass]="{'error-label': serverError}" class="form-label">
+          <!-- Host Row -->
+          
+            <div class="mb-3">
+              <label [ngClass]="{'error-label': serverError}" class="form-label d-inline-block me-1">
                 Server <span class="text-danger">*</span>
               </label>
+              <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
               <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
                 [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name / Host URL"
                 (input)="serverConditionError()">
             </div>
+          <!-- port/Database Name -->
+          <div class="row g-3">
             <div class="col-md-6 mb-3">
-              <label [ngClass]="{'error-label': portError}" class="form-label">
+              <label [ngClass]="{'error-label': portError}" class="form-label d-inline-block me-1">
                 Port <span class="text-danger">*</span>
               </label>
+               <span  class="text-muted" style="font-size: 8px; ">(Example port number for MySQL is 1433)</span>
               <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
                 [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1433"
                 (input)="portConditionError()">
             </div>
-          </div>
-  
-          <!-- Database -->
-          <div class="mb-3">
-            <label [ngClass]="{'error-label': databaseError}" class="form-label">
+        
+          <div class="col-md-6 mb-3">
+            <label [ngClass]="{'error-label': databaseError}" class="form-label d-inline-block me-1">
               Database <span class="text-danger">*</span>
-            </label>
+            </label> <span  class="text-muted" style="font-size: 8px; ">(Please give database name )</span>
             <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. sqlserver"
               (input)="databaseConditionError()">
           </div>
+          </div>
+          <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
   
           <!-- Username / Password Row (only for SQL Auth) -->
           <div *ngIf="selectedMicroSoftAuthType === 'SQL Server Authentication'" class="row g-3">
@@ -3768,6 +3894,7 @@
               <label [ngClass]="{'error-label': userNameError}" class="form-label">
                 Username <span class="text-danger">*</span>
               </label>
+              <span  class="text-muted"style="font-size: 10px;">(Enter your username in this field)</span>
               <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
                 [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
                 autocomplete="new-myname" (input)="userNameConditionError()">
@@ -3776,6 +3903,7 @@
               <label [ngClass]="{'error-label': passwordError}" class="form-label">
                 Password <span class="text-danger">*</span>
               </label>
+              <span  class="text-muted"style="font-size: 8px;">(Enter your password in this field)</span>
               <div class="d-flex">
                 <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
                   class="form-control forms-light w-100" [(ngModel)]="PostGrePassword"
@@ -3820,58 +3948,71 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="My Snowflake Connection"
             (input)="displayNameConditionError()">
         </div>
       
-        <!-- Host / Port Row -->
-        <div class="row g-3">
-          <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': serverError}" class="form-label">
+        <!-- Host  Row -->
+        
+          <div class= "mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label d-inline-block me-1">
               Server <span class="text-danger">*</span>
             </label>
+              <span class="text-muted" style="display:inline-block;">(Place your host url or host name)</span>
             <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name / Host URL"
               (input)="serverConditionError()">
           </div>
+          <!-- port/Database Name -->
+            <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': portError}" class="form-label">
+            <label [ngClass]="{'error-label': portError}" class="form-label d-inline-block me-1">
               Port <span class="text-danger">*</span>
             </label>
-            <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
+              <span  class="text-muted" style="font-size: 8px; ">(Example port number for MySQL is 5432)</span>
+             <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="443"
               (input)="portConditionError()">
           </div>
-        </div>
-      
-        <!-- Database Name -->
-        <div class="mb-3">
-          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+        <div class="col-md-6 mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label d-inline-block me-1">
             Database <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="font-size: 8px; ">(Please give database name )</span>
           <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. snowflake_db"
             (input)="databaseConditionError()">
         </div>
-      
+      </div>
+      <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label   d-inline-block me-1">
               Username <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted"style="font-size: 10px;">(Enter your username in this field)</span>
             <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
               autocomplete="new-myname" (input)="userNameConditionError()">
           </div>
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label d-inline-block me-1">
               Password <span class="text-danger">*</span>
             </label>
+             <span  class="text-muted"style="font-size: 8px;">(Enter your password in this field)</span>
             <div class="d-flex">
               <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
                 class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
@@ -3912,9 +4053,10 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
             placeholder="e.g. My OpenAI Connection" (input)="displayNameIntegrationConditionError()">
@@ -3922,14 +4064,22 @@
       
         <!-- OpenAI Key -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': openAiKeyError}" class="form-label">
+          <label [ngClass]="{'error-label': openAiKeyError}" class="form-label d-inline-block me-1">
             OpenAI Key <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="display:inline-block;">(Enter your OpenAI key in this field)</span>
           <input [ngClass]="{'error-input': openAiKeyError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="openAiKey" [ngModelOptions]="{standalone: true}" placeholder="Enter your OpenAI API key"
             (input)="openAiKeyInputError()">
         </div>
-      
+      <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
           <button type="button" class="btn btn-secondary animate-button"
@@ -3962,9 +4112,10 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
             placeholder="e.g. My DeepSeek Connection" (input)="displayNameIntegrationConditionError()">
@@ -3972,13 +4123,22 @@
       
         <!-- DeepSeek Key -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': deepSeekKeyError}" class="form-label">
+          <label [ngClass]="{'error-label': deepSeekKeyError}" class="form-label d-inline-block me-1">
             DeepSeek Key <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="display:inline-block;">(Enter your DeepSeek key in this field)</span>
           <input [ngClass]="{'error-input': deepSeekKeyError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="deepSeekKey" [ngModelOptions]="{standalone: true}" placeholder="Enter your DeepSeek API key"
             (input)="deepSeekKeyInputError()">
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
@@ -4011,58 +4171,75 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. SAP HANA Connection"
             (input)="displayNameConditionError()">
         </div>
       
-        <!-- Host / Port Row -->
-        <div class="row g-3">
-          <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': serverError}" class="form-label">
+        <!-- Host  Row -->
+        
+          <div class=" mb-3">
+            <label [ngClass]="{'error-label': serverError}" class="form-label d-inline-block me-1">
               Host <span class="text-danger">*</span>
             </label>
+              <span  class="text-muted" style="display:inline-block;">(Place your host url or host name)</span>
             <input [ngClass]="{'error-input': serverError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/URL"
               (input)="serverConditionError()">
           </div>
+          <!-- port/Database Name -->
+          <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': portError}" class="form-label">
+            <label [ngClass]="{'error-label': portError}" class="form-label d-inline-block me-1">
               Port <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted" style="font-size: 8px; ">(Example port number for MySQL is 5432)</span>
             <input [ngClass]="{'error-input': portError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="443"
               (input)="portConditionError()">
           </div>
-        </div>
+        
       
-        <!-- Database Name -->
-        <div class="mb-3">
-          <label [ngClass]="{'error-label': databaseError}" class="form-label">
+        
+        <div class=" col-md-6 mb-3">
+          <label [ngClass]="{'error-label': databaseError}" class="form-label d-inline-block me-1">
             Database Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="font-size: 8px; ">(Please give database name)</span>
           <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="SAPHDB"
             (input)="databaseConditionError()">
         </div>
-      
+          </div>
+        
+      <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': userNameError}" class="form-label">
+            <label [ngClass]="{'error-label': userNameError}" class="form-label   d-inline-block me-1">
               Username <span class="text-danger">*</span>
             </label>
+               <span  class="text-muted"style="font-size: 10px;">(Enter your username in this field)</span>
             <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control forms-light w-100"
               [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="Admin"
               autocomplete="new-myname" (input)="userNameConditionError()">
           </div>
           <div class="col-md-6 mb-3">
-            <label [ngClass]="{'error-label': passwordError}" class="form-label">
+            <label [ngClass]="{'error-label': passwordError}" class="form-label d-inline-block me-1">
               Password <span class="text-danger">*</span>
             </label>
+            <span  class="text-muted"style="font-size: 8px;">(Enter your password in this field)</span>
             <div class="d-flex">
               <input [ngClass]="{'error-input': passwordError}" [type]="showPassword1 ? 'text' : 'password'"
                 class="form-control forms-light w-100" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"
@@ -4124,9 +4301,10 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. SQLite Connection"
             (input)="displayNameConditionError()">
@@ -4134,14 +4312,22 @@
       
         <!-- File Path -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': pathError}" class="form-label">
+          <label [ngClass]="{'error-label': pathError}" class="form-label d-inline-block me-1">
             Database File Path <span class="text-danger">*</span>
           </label>
+            <span  class="text-muted" style="display:inline-block;">(Database File Path)</span>
           <input [ngClass]="{'error-input': pathError}" type="file" class="form-control forms-light w-100" [(ngModel)]="path"
             [ngModelOptions]="{standalone: true}" (change)="uploadfile($event)" placeholder="Select SQLite file"
             (input)="pathConditionError()" autocomplete="off">
         </div>
-      
+      <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
           <button type="button" class="btn btn-secondary animate-button"
@@ -4268,9 +4454,10 @@
       
         <!-- Display Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4278,18 +4465,20 @@
       
         <!-- Company Id -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': companyIDError}" class="form-label">
+          <label [ngClass]="{'error-label': companyIDError}" class="form-label d-inline-block me-1">
             Company Id <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your CompanyId in this field)</span>
           <input [ngClass]="{'error-input': companyIDError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="companyId" [ngModelOptions]="{standalone: true}" placeholder="Company Id" (input)="companyIdError()">
         </div>
       
         <!-- Site URL -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': siteURLError}" class="form-label">
+          <label [ngClass]="{'error-label': siteURLError}" class="form-label d-inline-block me-1">
             Site URL <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Site URL in this field)</span>
           <input [ngClass]="{'error-input': siteURLError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="siteURL" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://connectwise.com"
             (input)="siteUrlError()">
@@ -4297,9 +4486,10 @@
       
         <!-- Public Key -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': publicKeyError}" class="form-label">
+          <label [ngClass]="{'error-label': publicKeyError}" class="form-label d-inline-block me-1">
             Public Key <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Public key in this field)</span>
           <input [ngClass]="{'error-input': publicKeyError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="publicKey" [ngModelOptions]="{standalone: true}" placeholder="e.g. F3SlPrE4ajaCYI8S"
             (input)="publicConnectWiseError()">
@@ -4307,14 +4497,22 @@
       
         <!-- Private Key -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': privateKeyError}" class="form-label">
+          <label [ngClass]="{'error-label': privateKeyError}" class="form-label d-inline-block me-1">
             Private Key <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Private key in this field)</span>
           <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" placeholder="e.g. hE1k84ArEoQWZVgb"
             autocomplete="new-myname" (input)="privateConnectWiseError()">
         </div>
-      
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
@@ -4347,9 +4545,10 @@
       
         <!-- Display Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connnection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4357,9 +4556,10 @@
       
         <!-- Client Id -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': clientIDPSAError}" class="form-label">
+          <label [ngClass]="{'error-label': clientIDPSAError}" class="form-label d-inline-block me-1">
             Client Id <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your ClientId in this field)</span>
           <input [ngClass]="{'error-input': clientIDPSAError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="clientIdPSA" [ngModelOptions]="{standalone: true}"
             placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" autocomplete="new-myname" (input)="clientIdErrorPSA()">
@@ -4367,9 +4567,10 @@
       
         <!-- Client Secret -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': clientSecretError}" class="form-label">
+          <label [ngClass]="{'error-label': clientSecretError}" class="form-label d-inline-block me-1">
             Client Secret <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client  Secret in this field)</span>
           <input [ngClass]="{'error-input': clientSecretError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="clientSecret" [ngModelOptions]="{standalone: true}"
             placeholder="12fgbcbb-9876-2345-asdf-218541bcf2d1-d1f8a3f7-34gf-45hj-78jh-295142fas34e"
@@ -4378,13 +4579,24 @@
       
         <!-- Site URL -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': siteURLErrorPSA}" class="form-label">
+          <label [ngClass]="{'error-label': siteURLErrorPSA}" class="form-label d-inline-block me-1">
             Site URL <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Site URL in this field)</span>
           <input [ngClass]="{'error-input': siteURLErrorPSA}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="siteURLPSA" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://HaloPSA.com"
             (input)="siteUrlPSAError()">
         </div>
+
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -4418,9 +4630,11 @@
       
         <!-- Display Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection name in this field)</span>
+
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4428,9 +4642,10 @@
       
         <!-- Client Id -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': pax8ClientIdError}" class="form-label">
+          <label [ngClass]="{'error-label': pax8ClientIdError}" class="form-label d-inline-block me-1">
             Client Id <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your ClientId in this field)</span>
           <input [ngClass]="{'error-input': pax8ClientIdError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="pax8ClientId" [ngModelOptions]="{standalone: true}" placeholder="e.g. your-client-id-here"
             autocomplete="new-myname" (input)="pax8ClientIdValidation()">
@@ -4438,13 +4653,23 @@
       
         <!-- Client Secret -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': pax8ClientSecretError}" class="form-label">
+          <label [ngClass]="{'error-label': pax8ClientSecretError}" class="form-label d-inline-block me-1">
             Client Secret <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client Secret in this field)</span>
           <input [ngClass]="{'error-input': pax8ClientSecretError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="pax8ClientSecret" [ngModelOptions]="{standalone: true}" placeholder="e.g. your-client-secret-here"
             (input)="pax8ClientSecretValidation()">
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
@@ -4478,9 +4703,10 @@
       
         <!-- Display Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. BambooHR"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4488,9 +4714,10 @@
       
         <!-- Domain -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': bambooHRDomainError}" class="form-label">
+          <label [ngClass]="{'error-label': bambooHRDomainError}" class="form-label d-inline-block me-1">
             Domain <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Domain  in this field)</span>
           <input [ngClass]="{'error-input': bambooHRDomainError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="bambooHRDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. company.bamboohr.com"
             (input)="bambooHRDomainValidation()">
@@ -4498,13 +4725,23 @@
       
         <!-- API Key -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': bambooHRApiKeyError}" class="form-label">
+          <label [ngClass]="{'error-label': bambooHRApiKeyError}" class="form-label d-inline-block me-1">
             API Key <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your API key in this field)</span>
           <input [ngClass]="{'error-input': bambooHRApiKeyError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="bambooHRApiKey" [ngModelOptions]="{standalone: true}" placeholder="Enter your BambooHR API Key"
             (input)="bambooHRApiKeyValidation()">
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
@@ -4538,9 +4775,10 @@
       
         <!-- Display Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Analytify"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4548,9 +4786,10 @@
       
         <!-- Shop Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': shopifyNameError}" class="form-label">
+          <label [ngClass]="{'error-label': shopifyNameError}" class="form-label d-inline-block me-1">
             Shop Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Shop Name in this field)</span>
           <input [ngClass]="{'error-input': shopifyNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="shopifyName" [ngModelOptions]="{standalone: true}" placeholder="shop name"
             (input)="shopfyNameError()">
@@ -4558,13 +4797,23 @@
       
         <!-- API Token -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': shopifyApiTokenError}" class="form-label">
+          <label [ngClass]="{'error-label': shopifyApiTokenError}" class="form-label d-inline-block me-1">
             API Token <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your API keyin this field)</span>
           <input [ngClass]="{'error-input': shopifyApiTokenError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="shopifyToken" [ngModelOptions]="{standalone: true}"
             placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" autocomplete="new-myname" (input)="shopifyapiTokenError()">
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 120px;">
@@ -4598,9 +4847,10 @@
       
         <!-- Display Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Tally" autocomplete="new-myname"
             (input)="displayNameIntegrationConditionError()">
@@ -4608,13 +4858,23 @@
       
         <!-- Token Key -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': tallyTokenError}" class="form-label">
+          <label [ngClass]="{'error-label': tallyTokenError}" class="form-label d-inline-block me-1">
             Token Key <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Tokenkey in this field)</span>
           <input [ngClass]="{'error-input': tallyTokenError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="tallyToken" [ngModelOptions]="{standalone: true}" placeholder="Enter your Tally Token"
             (input)="tallyTokenInputError()">
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
@@ -4648,9 +4908,10 @@
       
         <!-- Display Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4658,9 +4919,10 @@
       
         <!-- Client Id -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': ninjaRMMClientIdError}" class="form-label">
+          <label [ngClass]="{'error-label': ninjaRMMClientIdError}" class="form-label   d-inline-block me-1">
             Client Id <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your ClientId in this field)</span>
           <input [ngClass]="{'error-input': ninjaRMMClientIdError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="ninjaRMMClientid" [ngModelOptions]="{standalone: true}" placeholder="Client Id"
             (input)="ninjaRMMClient()">
@@ -4668,9 +4930,10 @@
       
         <!-- Client Secret -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': ninjaRMMClientSecretError}" class="form-label">
+          <label [ngClass]="{'error-label': ninjaRMMClientSecretError}" class="form-label d-inline-block me-1">
             Client Secret <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client Secret in this field)</span>
           <input [ngClass]="{'error-input': ninjaRMMClientSecretError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="ninjaRMMClientSecret" [ngModelOptions]="{standalone: true}" placeholder="Client Secret"
             (input)="ninjaRMMClientSecretData()">
@@ -4678,13 +4941,23 @@
       
         <!-- Scopes -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': ninjaRMMScopeError}" class="form-label">
+          <label [ngClass]="{'error-label': ninjaRMMScopeError}" class="form-label d-inline-block me-1">
             Scopes <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Select your Scopes in this field)</span>
           <ng-select [items]="ninjaRMMScopes" bindLabel="" placeholder="Select Scopes" [(ngModel)]="selectedNinjaRMMScopes"
             [multiple]="true" (change)="onNinjaRMMScopeChange($event)">
           </ng-select>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -4718,45 +4991,50 @@
       
         <!-- Display Name -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.displayname"
             [ngModelOptions]="{standalone: true}" placeholder="display name" (input)="displayNameIntegrationConditionError()">
         </div>
       
         <!-- Type -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Type <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Type in this field)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.type"
             [ngModelOptions]="{standalone: true}" placeholder="service_account">
         </div>
       
         <!-- Project ID -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Project ID <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Project ID in this field)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.project_id"
             [ngModelOptions]="{standalone: true}" placeholder="analytify-access-data">
         </div>
       
         <!-- Private Key ID -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Private Key ID <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Private Key ID in this field)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.private_key_id"
             [ngModelOptions]="{standalone: true}">
         </div>
       
         <!-- Private Key -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Private Key <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Private Key in this field)</span>
           <textarea class="form-control forms-light w-100" rows="5" [(ngModel)]="googleAnalytics.private_key"
             [ngModelOptions]="{standalone: true}"
             placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"></textarea>
@@ -4764,45 +5042,50 @@
       
         <!-- Client Email -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Client Email <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client Email in this field)</span>
           <input type="email" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.client_email"
             [ngModelOptions]="{standalone: true}">
         </div>
       
         <!-- Client ID -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Client ID <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client ID in this field)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.client_id"
             [ngModelOptions]="{standalone: true}">
         </div>
       
         <!-- Client X.509 Cert URL -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Client X.509 Cert URL <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client X.509 Cert URL in this field)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.client_x509_cert_url"
             [ngModelOptions]="{standalone: true}">
         </div>
       
         <!-- Property ID -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Property ID <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Property ID in this field)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="googleAnalytics.property_id"
             [ngModelOptions]="{standalone: true}">
         </div>
       
         <!-- Dimensions -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Dimensions <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Select your Dimensions in this field)</span>
           <ng-select [items]="availableDimensions" [multiple]="true" bindLabel="label" bindValue="value"
             [(ngModel)]="googleAnalytics.dimensions" [ngModelOptions]="{standalone: true}" placeholder="Select dimensions">
           </ng-select>
@@ -4810,13 +5093,23 @@
       
         <!-- Metrics -->
         <div class="mb-3">
-          <label class="form-label">
+          <label class="form-label d-inline-block me-1">
             Metrics <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Select your Metrics in this field)</span>
           <ng-select [items]="availableMetrics" [multiple]="true" bindLabel="label" bindValue="value"
             [(ngModel)]="googleAnalytics.metrics" [ngModelOptions]="{standalone: true}" placeholder="Select metrics">
           </ng-select>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -4848,9 +5141,10 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. HubSpot"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4858,9 +5152,10 @@
       
         <!-- Client Id -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': hubspotClientIdError}" class="form-label">
+          <label [ngClass]="{'error-label': hubspotClientIdError}" class="form-label d-inline-block me-1">
             Client Id <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client Id in this field)</span>
           <input [ngClass]="{'error-input': hubspotClientIdError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="hubspotClientId" [ngModelOptions]="{standalone: true}" (input)="hubspotClientIdInput()"
             placeholder="Client Id">
@@ -4868,9 +5163,10 @@
       
         <!-- Client Secret -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': hubspotClientSecretError}" class="form-label">
+          <label [ngClass]="{'error-label': hubspotClientSecretError}" class="form-label  d-inline-block me-1">
             Client Secret <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client Secret in this field)</span>
           <input [ngClass]="{'error-input': hubspotClientSecretError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="hubspotClientSecret" [ngModelOptions]="{standalone: true}" (input)="hubspotClientSecretInput()"
             placeholder="Client Secret">
@@ -4878,9 +5174,10 @@
       
         <!-- Redirect URL -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': hubspotRedirectURLError}" class="form-label">
+          <label [ngClass]="{'error-label': hubspotRedirectURLError}" class="form-label d-inline-block me-1">
             Redirect URL <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Redirect URL in this field)</span>
           <input [ngClass]="{'error-input': hubspotRedirectURLError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="hubspotRedirectURL" [ngModelOptions]="{standalone: true}" (input)="hubspotRedirectURLInput()"
             placeholder="Redirect URL">
@@ -4888,15 +5185,25 @@
       
         <!-- Scopes -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': hubspotScopeError}" class="form-label">
+          <label [ngClass]="{'error-label': hubspotScopeError}" class="form-label d-inline-block me-1">
             Scopes <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Select your Scopes in this field)</span>
           <ng-multiselect-dropdown [data]="hubspotScopes" [(ngModel)]="selectedHubspotScopes"
             [ngModelOptions]="{standalone: true}" [settings]="hubspotDropdownSettings" (onSelect)="onHubspotScopeChange()"
             (onDeSelect)="onHubspotScopeChange()" (onSelectAll)="onHubspotScopeChange()"
             (onDeSelectAll)="onHubspotScopeChange()">
           </ng-multiselect-dropdown>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -4994,9 +5301,10 @@
       
         <!-- Connection Name -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. ImmyBot"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -5004,9 +5312,10 @@
       
         <!-- Client Id -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': clientIDImmyBotError}" class="form-label">
+          <label [ngClass]="{'error-label': clientIDImmyBotError}" class="form-label d-inline-block me-1">
             Client Id <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Client Id in this field)</span>
           <input [ngClass]="{'error-input': clientIDImmyBotError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="clientIdImmybot" [ngModelOptions]="{standalone: true}" placeholder="Client Id"
             autocomplete="new-myname" (input)="clientIdErrorImmyBot()">
@@ -5014,9 +5323,10 @@
       
         <!-- Secret Value -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': secretValueError}" class="form-label">
+          <label [ngClass]="{'error-label': secretValueError}" class="form-label d-inline-block me-1">
             Secret Value <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Secret Value in this field)</span>
           <input [ngClass]="{'error-input': secretValueError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="secretValue" [ngModelOptions]="{standalone: true}" placeholder="Secret Value"
             (input)="secretValueImmybotError()">
@@ -5024,9 +5334,10 @@
       
         <!-- Azure Domain -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': tenantIdError}" class="form-label">
+          <label [ngClass]="{'error-label': tenantIdError}" class="form-label d-inline-block me-1">
             Azure Domain <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Azure Domain in this field)</span>
           <input [ngClass]="{'error-input': tenantIdError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="tenantId" [ngModelOptions]="{standalone: true}"
             placeholder="e.g. http://yourcompany.onmicrosoft.com/" (input)="tenantIdImmyBotError()">
@@ -5034,13 +5345,23 @@
       
         <!-- Instance Subdomain -->
         <div class="mb-3">
-          <label [ngClass]="{'error-label': subDomainError}" class="form-label">
+          <label [ngClass]="{'error-label': subDomainError}" class="form-label d-inline-block me-1">
             Instance Subdomain <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Instance Subdomain in this field)</span>
           <input [ngClass]="{'error-input': subDomainError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="subDomain" [ngModelOptions]="{standalone: true}" placeholder="e.g. analytify"
             (input)="subDomainImmyBotError()">
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+      
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -5081,6 +5402,7 @@
       (drop)="onDropCsv($event)"
       style="cursor:pointer; border:2px dashed #00b3b3; border-radius:8px; padding:32px; text-align:center; transition: border 0.2s; background:#f9f9f9;"
     >
+    <ng-container *ngIf="!fileData; else fileInfo">
       <div>
         <i class="bi bi-folder2-open" style="font-size:40px; color:#FDB813"></i><br />
         Drop file here or <span style="text-decoration: underline; color:#00b3b3;">click to upload</span>
@@ -5088,16 +5410,48 @@
       <div class="text-muted small mt-2">
         Support for CSV files
       </div>
+      </ng-container>
+      <ng-template #fileInfo>
+        <div>
+          
+           
+        </div>
+        <div>
+        <i class="bi bi-folder2-open" style="font-size:40px; color:#FDB813"></i><br />
+        <strong>{{ fileData.name }}</strong> or <span style="text-decoration: underline; color:#00b3b3;">change to upload</span>
+      </div>
+      <div class="text-muted small mt-2">
+        Support for CSV files
+      </div>
+      </ng-template>
     </div>
+    <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description<span class="text-danger">*</span>
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+           
+  
+         </div>
     <!-- Invisible File Input -->
     <input
       type="file"
       #fileInput
       style="display: none;"
       accept=".csv"
-      (change)="uploadfileCsv($event, 'upload', {})"
+      (change)="onFileSelected($event)"
       [disabled]="!canUploadCsv"
-    />
+      />
+      
+       <!-- Footer Buttons --> 
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">Close</button>
+            <button type="button" class="btn btn-primary me-3 animate-button"
+           [disabled]="!canUploadCsv || !fileData || !connectionDescription" (click)="uploadfileCsv({ target: { files: [fileData] } }, 'upload', {})">upload</button>
+    </div>  
     <div *ngIf="!canUploadCsv" class="text-muted small mt-1">
       You don’t have privilege to upload.
     </div>
@@ -5131,6 +5485,7 @@
       (drop)="onDropExcel($event)"
       style="cursor:pointer; border:2px dashed #00b3b3; border-radius:8px; padding:32px; text-align:center; transition: border 0.2s; background:#f9f9f9;"
     >
+    <ng-container *ngIf="!fileData; else fileInfo">
       <div>
         <i class="bi bi-folder2-open" style="font-size:40px; color:#FDB813"></i><br />
         Drop file here or <span style="text-decoration: underline; color:#00b3b3;">click to upload</span>
@@ -5138,6 +5493,20 @@
       <div class="text-muted small mt-2">
         Support for Excel files
       </div>
+      </ng-container>
+      <ng-template #fileInfo>
+        <div>
+         
+          
+        </div>
+        <div>
+        <i class="bi bi-folder2-open" style="font-size:40px; color:#FDB813"></i><br />
+       <strong>{{ fileData.name }}</strong> or <span style="text-decoration: underline; color:#00b3b3;">change to upload</span>
+      </div>
+      <div class="text-muted small mt-2">
+        Support for Excel files
+      </div>
+      </ng-template>
     </div>
     <!-- Invisible File Input -->
     <input
@@ -5145,12 +5514,30 @@
       #fileInput1
       style="display: none;"
       accept=".xlsx, .xls"
-      (change)="uploadfileExcel($event, 'upload', {})"
+      (change)="onFileSelected($event)"
       [disabled]="!canUploadCsv"
     />
     <div *ngIf="!canUploadCsv" class="text-muted small mt-1">
       You don’t have privilege to upload.
     </div>
+      <!--  Description  -->
+          <div class="mb-3">
+            <label class="form-label d-inline-block me-1"> Description <span class="text-danger">*</span>
+            </label>
+            <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+            <input type="text" class="form-control forms-light w-100"
+              [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+               
+            
+  
+          </div>
+    <!-- Footer Buttons --> 
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">Close</button>
+            <button type="button" class="btn btn-primary me-3 animate-button"
+           [disabled]="!uploadfileExcel || !fileData || !connectionDescription" (click)="uploadfileExcel({ target: { files: [fileData] } }, 'upload', {})">upload</button>
+    </div>  
   </div>
 </form>
   </div>
@@ -5189,7 +5576,14 @@
             [(ngModel)]="geminiKey" [ngModelOptions]="{standalone: true}" placeholder="Enter your Gemini API key"
             (input)="geminiKeyInputError()">
         </div>
-      
+      <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2" style="margin-top: 200px;">
           <button type="button" class="btn btn-secondary animate-button"
