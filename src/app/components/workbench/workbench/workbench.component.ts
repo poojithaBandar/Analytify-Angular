@@ -57,6 +57,7 @@ export class WorkbenchComponent implements OnInit{
   databaseId:any;
   fileId:any;
   databaseType:any;
+  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR','GEMINI'];
   openPostgreSqlForm= false;
   openMySqlForm = false;
   openConnectWiseForm = false;
