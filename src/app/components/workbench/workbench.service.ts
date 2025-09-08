@@ -1095,6 +1095,11 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.get<any>(`${environment.apiUrl}/open_ai_dashbaord/`+id+'/'+this.accessToken);
     }
+    buildSampleGeminiDashboard(id: number){
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/gemini_dashbaord/`+id+'/'+this.accessToken);
+    }
     buildSampleSalesforceDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
