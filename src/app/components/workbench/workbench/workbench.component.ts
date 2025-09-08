@@ -69,7 +69,8 @@ export class WorkbenchComponent implements OnInit{
   openOpenAIForm = false;
   openDeepSeekForm = false;
   openGeminiForm = false;
-  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR'];
+  openZohoForm = false;
+  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR','ZOHO'];
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -205,6 +206,17 @@ export class WorkbenchComponent implements OnInit{
   hubspotClientSecretError = false;
   hubspotRedirectURLError = false;
   hubspotScopeError = false;
+  zohoClientId!: string;
+  zohoClientSecret!: string;
+  zohoRedirectURL!: string;
+  zohoCountry: string = '';
+  zohoScopes: string[] = ['CRM','BOOKS'];
+  selectedZohoScopes: string[] = ['CRM'];
+  zohoDescription: string = '';
+  zohoClientIdError = false;
+  zohoClientSecretError = false;
+  zohoRedirectURLError = false;
+  zohoScopeError = false;
   openImmybot: boolean = false;
   clientIDImmyBotError: boolean = false;
   clientIdImmybot! : string ;
@@ -891,6 +903,12 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.hubspotClientId = '';
     this.hubspotClientSecret = '';
     this.selectedHubspotScopes = [];
+    this.zohoClientId = '';
+    this.zohoClientSecret = '';
+    this.selectedZohoScopes = ['CRM'];
+    this.zohoRedirectURL = '';
+    this.zohoCountry = '';
+    this.zohoDescription = '';
     
   } 
   googleSheetsData = [] as any;
@@ -1481,6 +1499,12 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.viewNewDbs = false;
     this.emptyVariables();
   }
+  connectZoho(){
+    this.openZohoForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
   connectOpenAI(){
     this.openOpenAIForm = true;
     this.databaseconnectionsList = false;
@@ -1688,6 +1712,22 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
 
   onHubspotScopeChange(): void {
     this.hubspotScopeError = this.selectedHubspotScopes.length <= 0;
+  }
+
+  zohoClientIdInput(){
+    this.zohoClientIdError = !this.zohoClientId;
+  }
+
+  zohoClientSecretInput(){
+    this.zohoClientSecretError = !this.zohoClientSecret;
+  }
+
+  zohoRedirectURLInput(){
+    this.zohoRedirectURLError = !this.zohoRedirectURL;
+  }
+
+  onZohoScopeChange(): void {
+    this.zohoScopeError = this.selectedZohoScopes.length <= 0;
   }
   
     shopifySignIn(){
@@ -2147,6 +2187,31 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
             localStorage.setItem('hubspotHierarchyId', data.hierarchy_id);
             this.modalService.dismissAll();
             this.document.location.href = data.authorisation_url;
+          }
+        },
+        error:(error)=>{
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        }});
+    }
+
+    zohoSignIn(){
+      const obj = {
+        "client_id": this.zohoClientId,
+        "client_secret": this.zohoClientSecret,
+        "redirect_uri": this.zohoRedirectURL,
+        "display_name": this.displayName,
+        "country": this.zohoCountry,
+        "scopes": this.selectedZohoScopes,
+        "description": this.zohoDescription
+      }
+      this.workbechService.zohoConnection(obj).subscribe({next:(data)=>{
+          if(data){
+            localStorage.setItem('zohoHierarchyId', data.hierarchy_id);
+            this.modalService.dismissAll();
+            const url = data.authorisation_url || data.authorization_url || data.redirection_url;
+            if(url){
+              this.document.location.href = url;
+            }
           }
         },
         error:(error)=>{
@@ -3255,6 +3320,7 @@ connectGoogleSheets(){
   this.openHubspotForm = false;
   this.openGoogleAnalyticsForm = false;
   this.openGoogleAnalyticsForm = false;
+  this.openZohoForm = false;
   this.postGreServerName = '';
   this.schemaList = [];
   this.selectedSchema = 'public';
@@ -3269,6 +3335,12 @@ connectGoogleSheets(){
   this.publicKey = '';
   this.siteURL = '';
   this.companyId = '';
+  this.zohoClientId = '';
+  this.zohoClientSecret = '';
+  this.zohoRedirectURL = '';
+  this.zohoCountry = '';
+  this.selectedZohoScopes = ['CRM'];
+  this.zohoDescription = '';
   this.siteURLPSA = '';
   this.tallyToken = '';
   this.tallyTokenError = false;
@@ -3806,6 +3878,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   google_sheets: { type: 'svg', value: this.SVGICONS.googleSheets },
   hubspot: { type: 'svg', value: this.SVGICONS.hubspot },
   xAmplify: { type: 'image', value: './assets/images/icons/Xamplify.png' },
+  zoho: { type: 'image', value: './assets/images/icons/zoho.svg' },
   sap: { type: 'emoji', value: '🏢' },
   cassandra: { type: 'emoji', value: '🌌' },
   sqlite: { type: 'emoji', value: '💾' },
@@ -3843,7 +3916,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: 'Multi-dimensional Database', icon: '📊', description: 'OLAP & analytical data stores',count:'2' },
     { name: 'NoSQL Database', icon: '📡', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
-    { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'15' }
+    { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
   showRelational = false;
   showLLM = false;
@@ -3929,7 +4002,8 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
     { name: "Ninja", description: "IT management & automation tool", svg:this.SVGICONS.ninjaOne },
     { name: "Google Analytics", description: "Web analytics service", svg:this.SVGICONS.googleAnalytics },
     { name: "HubSpot", description: "Marketing & CRM platform",svg:this.SVGICONS.hubspot },
-    { name: "Immybot", description: "IT automation tool",svg:this.SVGICONS.immybot }
+    { name: "Immybot", description: "IT automation tool",svg:this.SVGICONS.immybot },
+    { name: "Zoho", description: "Zoho CRM platform", image:'./assets/images/icons/zoho.svg' }
   ]
 };
 goBackToCategories(){
@@ -4037,6 +4111,16 @@ model = {
   this.selectedHubspotScopes = [];
   this.hubspotRedirectURL = '';
   this.hubspotRedirectURLError = false;
+  this.zohoClientId = '';
+  this.zohoClientSecret = '';
+  this.zohoRedirectURL = '';
+  this.zohoCountry = '';
+  this.selectedZohoScopes = ['CRM'];
+  this.zohoDescription = '';
+  this.zohoClientIdError = false;
+  this.zohoClientSecretError = false;
+  this.zohoRedirectURLError = false;
+  this.zohoScopeError = false;
 //
      switch (this.selectedCategory) {
           case 'Relational Database':

@@ -134,6 +134,13 @@ export const admin: Routes = [
           import('./database/database.component').then((m) => m.DatabaseComponent)
       },
       {
+        path: 'database-connection/zoho/:id',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
         path: 'database-connection/tables/:id1/:id2',
         canActivate: [authGuard],
         canDeactivate: [canDeactivateGuard],
