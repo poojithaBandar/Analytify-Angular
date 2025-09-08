@@ -1280,6 +1280,45 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
   };
   return this.chartOptions;
 }
+
+sunburstChart(chartsColumnData?: any[], chartsRowData?: any[]) {
+  if (chartsColumnData && chartsRowData) {
+    this.chartsColumnData = chartsColumnData;
+    this.chartsRowData = chartsRowData;
+  }
+  const combinedArray = this.chartsRowData.map((value: any, index: number) => ({
+    value: value,
+    name: this.chartsColumnData[index]
+  }));
+  this.chartOptions = {
+    backgroundColor: this.backgroundColor,
+    color: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme,
+    tooltip: {
+      trigger: 'item',
+      formatter: (params: any) => params.name + ' : ' + this.formatNumber(params.value)
+    },
+    legend: {
+      bottom: this.bottomLegend,
+      left: this.leftLegend,
+      orient: this.legendOrient,
+      right: this.rightLegend,
+      top: this.topLegend,
+      type: 'scroll',
+      show: this.legendSwitch
+    },
+    series: [
+      {
+        type: 'sunburst',
+        radius: [0, '90%'],
+        data: combinedArray,
+        label: {
+          show: this.dataLabels
+        }
+      }
+    ]
+  };
+  return this.chartOptions;
+}
 barLinechartFromGenieDashboard(dualAxisColumnData?:any, dualAxisRowData?:any){
   this.dualAxisColumnData = dualAxisColumnData;
   this.dualAxisRowData = dualAxisRowData;
@@ -2152,6 +2191,9 @@ chartInitialize(){
   else if(this.chartType === 'donut'){
     this.donutChart();
   }
+  else if(this.chartType === 'sunburst'){
+    this.sunburstChart();
+  }
   else if(this.chartType === 'barline'){
     this.barLineChart();
   }
@@ -2460,7 +2502,7 @@ chartInitialize(){
     // }
 
     if (changes['isMeasureDistribution'] || changes['measureColorRanges']) {
-      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar','treemap'].includes(this.chartType)) {
+      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar','treemap','sunburst'].includes(this.chartType)) {
         this.setMeasureRangeColors();
       }
     }
@@ -3491,7 +3533,7 @@ radarDistributionSetOptions() {
   }
   }
   legendSwitchSetOptions(){
-    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'radar'){
+    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'radar' || this.chartType === 'sunburst'){
       let obj ={
         legend :{
             show: this.legendSwitch
@@ -3502,7 +3544,7 @@ radarDistributionSetOptions() {
     }
   }
   dataLabelsSetOptions(){
-    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'treemap'){
+    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'treemap' || this.chartType === 'sunburst'){
       let obj ={
         series :[{
           label:{
@@ -3546,8 +3588,8 @@ radarDistributionSetOptions() {
        this.chartOptions.color = this.isDistributed ? this.selectedColorScheme : this.color;
     } else if(this.chartType === 'stocked'
        || this.chartType === 'sidebyside' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' ||  
-       this.chartType === 'multiline' || this.chartType === 'pie' || this.chartType === 'donut' || 
-       this.chartType === 'calendar'){
+       this.chartType === 'multiline' || this.chartType === 'pie' || this.chartType === 'donut' ||
+       this.chartType === 'sunburst' || this.chartType === 'calendar'){
       let obj ={
         color:this.selectedColorScheme
        }
@@ -3724,7 +3766,7 @@ radarDistributionSetOptions() {
       this.chartOptions = { ...this.chartOptions, ...obj };
   }
   legendsAllignmentSetOptions(){
-    if(this.chartType === 'pie' || this.chartType === 'donut'){
+    if(this.chartType === 'pie' || this.chartType === 'donut' || this.chartType === 'sunburst'){
     if(this.legendsAllignment === 'top'){
     let obj ={
       legend :{

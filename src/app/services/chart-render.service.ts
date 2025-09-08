@@ -23,6 +23,7 @@ export interface ChartFlags {
   pivotTable: boolean;
   treemap: boolean;
   radial: boolean;
+  sunburst: boolean;
 }
 
 export interface ChartConfig {
@@ -55,6 +56,7 @@ export class ChartRenderService {
     pivotTable: false,
     treemap: false,
     radial: false,
+    sunburst: false,
   };
 
   private chartConfigMap: Record<number, ChartConfig> = {
@@ -77,6 +79,7 @@ export class ChartRenderService {
     11: { chartType: 'calendar', flags: { ...this.baseFlags, calendar: true } },
     18: { chartType: 'treemap', flags: { ...this.baseFlags, treemap: true } },
     20: { chartType: 'radial', flags: { ...this.baseFlags, radial: true } },
+    19: { chartType: 'sunburst', flags: { ...this.baseFlags, sunburst: true } },
   };
 
   getChartConfig(chartId: number): ChartConfig | undefined {
