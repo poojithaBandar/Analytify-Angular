@@ -1004,7 +1004,7 @@
                         <span class="time-text"><i class="bi bi-clock me-1"></i>{{ connection?.lastSync }}</span>
                       </div> -->
             
-                      <p class="large mb-0">{{ connection?.description }}</p>
+                      <p class="large mb-0"><strong>{{ connection?.description | slice:0:30 }}{{ connection?.description?.length > 30 ? '...': '' }} </strong></p> 
                   
                       <div class="mb-3 d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
@@ -3406,9 +3406,9 @@
           </div>
 
           <!-- Description + Details -->
-          <a class="mt-2 mb-1 small text-muted d-inline-block"
+          <p class="mt-2 mb-1 small  d-inline-block"
          ngbTooltip="{{ conn?.description }}">
-             {{ conn?.description | slice:0:30 }}{{ conn?.description?.length > 30 ? '...': '' }}</a>
+            <strong> {{ conn?.description | slice:0:30 }}{{ conn?.description?.length > 30 ? '...': '' }} </strong></p>
 
           <div class="d-flex justify-content-between small">
             <div><strong>Created By:</strong> {{ conn.created_by }}</div>
