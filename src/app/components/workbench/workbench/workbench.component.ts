@@ -70,7 +70,6 @@ export class WorkbenchComponent implements OnInit{
   openDeepSeekForm = false;
   openGeminiForm = false;
   openZohoForm = false;
-  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR','ZOHO'];
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -2166,7 +2165,24 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           }else if(this.datasourceSwitchUI){
             this.switchDatabase();
           }else{
-            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            Swal.fire({
+              position: "center",
+              iconHtml: '<img src="./assets/images/copilot.gif">',
+              title: "Create smart dashboard from your data with just one click?",
+              showConfirmButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'Skip',
+              customClass: {
+                icon: 'no-icon-bg',
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.templateDashboardService.buildSampleGeminiDashboard(this.container, this.databaseId);
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            });
           }
         }
       }, error:(error)=>{
@@ -2721,6 +2737,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           break;
         case 'connectwise':
           this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, this.databaseId, dashboardData);
+          break;
+        case 'gemini':
+          this.templateDashboardService.buildSampleGeminiDashboard(this.container, this.databaseId, dashboardData);
           break;
       }
     }
@@ -3777,6 +3796,8 @@ connectGoogleSheets(){
       request$ = this.workbechService.buildSamplePaxDashboard(database.hierarchy_id);
     }else if(database.server_type === 'BAMBOOHR'){
       request$ = this.workbechService.buildSampleBambooHRDashboard(database.hierarchy_id);
+    }else if(database.server_type === 'GEMINI'){
+      request$ = this.workbechService.buildSampleGeminiDashboard(database.hierarchy_id);
     }else{
       request$ = this.workbechService.createSmartDashboard(database.hierarchy_id);
     }
@@ -3823,7 +3844,7 @@ connectGoogleSheets(){
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'GEMINI':
-            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
+            this.createSmartDashboard(responce,'gemini');
             break;
         }
       },
