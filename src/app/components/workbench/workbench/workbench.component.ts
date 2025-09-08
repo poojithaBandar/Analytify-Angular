@@ -69,7 +69,7 @@ export class WorkbenchComponent implements OnInit{
   openOpenAIForm = false;
   openDeepSeekForm = false;
   openGeminiForm = false;
-  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR'];
+  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR','GEMINI'];
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
