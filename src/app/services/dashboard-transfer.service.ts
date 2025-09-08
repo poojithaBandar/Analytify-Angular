@@ -214,7 +214,7 @@ export class DashboardTransferService {
      if (!chartOptions) chartOptions = {};
 
   if (isApexChart) {
-    if ([24, 10].includes(chartId)) {
+    if ([24, 10, 19].includes(chartId)) {
       chartOptions.series = multiSeriesChartData[0]?.data || [];
       chartOptions.labels = xAxisCategories;
     } else if (chartId == 28) {
@@ -402,7 +402,7 @@ export class DashboardTransferService {
 
       chartOptions.series[0].data = result;
       chartOptions = {...chartOptions};
-    } else if([24, 10, 27].includes(chartId)){
+    } else if([24, 10, 27, 19].includes(chartId)){
       let data: any[] = [];
       xAxisCategories.forEach((col: any, index: any) => {
         data.push({ value: multiSeriesChartData[0].data[index], name: col })
