@@ -523,6 +523,9 @@
                       <td *ngIf="database.server_type === 'BAMBOOHR'">
                         <img alt="product" src="https://logo.clearbit.com/bamboohr.com" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'ZOHO'">
+                        <img alt="product" src="./assets/images/icons/zoho.svg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                       <td *ngIf="database.server_type === 'TALLY'">
                         <img alt="product" src="./assets/images/icons/TallyLogo.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
@@ -664,6 +667,8 @@
                                                 <img src="./assets/images/icons/Pax8-black.svg" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'BAMBOOHR'" class="avatar avatar rounded-circle">
                                                 <img src="https://logo.clearbit.com/bamboohr.com" alt="" class="rounded-circle"></span>
+                                              <span *ngIf="database.server_type === 'ZOHO'" class="avatar avatar rounded-circle">
+                                                <img src="./assets/images/icons/zoho.svg" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'TALLY'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/TallyLogo.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'IMMYBOT'" class="avatar avatar rounded-circle">
@@ -4902,6 +4907,73 @@
           </button>
         </div>
       
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'Zoho'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo" class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="zohoSignIn()" style="overflow-x: hidden;">
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Zoho" autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoClientIdError}" class="form-label">
+            Client Id <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': zohoClientIdError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoClientId" [ngModelOptions]="{standalone: true}" (input)="zohoClientIdInput()" placeholder="Client Id">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoClientSecretError}" class="form-label">
+            Client Secret <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': zohoClientSecretError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoClientSecret" [ngModelOptions]="{standalone: true}" (input)="zohoClientSecretInput()" placeholder="Client Secret">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoRedirectURLError}" class="form-label">
+            Redirect URL <span class="text-danger">*</span>
+          </label>
+          <input [ngClass]="{'error-input': zohoRedirectURLError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoRedirectURL" [ngModelOptions]="{standalone: true}" (input)="zohoRedirectURLInput()" placeholder="Redirect URL">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Country</label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="zohoCountry" [ngModelOptions]="{standalone: true}" placeholder="Country">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoScopeError}" class="form-label">
+            Scopes <span class="text-danger">*</span>
+          </label>
+          <ng-multiselect-dropdown [data]="zohoScopes" [(ngModel)]="selectedZohoScopes" [ngModelOptions]="{standalone: true}" [settings]="hubspotDropdownSettings" (onSelect)="onZohoScopeChange()" (onDeSelect)="onZohoScopeChange()" (onSelectAll)="onZohoScopeChange()" (onDeSelectAll)="onZohoScopeChange()">
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="zohoDescription" [ngModelOptions]="{standalone: true}" placeholder="Description">
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button" (click)="goBackToSubCategories()">Close</button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(zohoScopeError || zohoClientSecretError || displayNameError || zohoClientIdError || zohoRedirectURLError) || !(selectedZohoScopes.length>0 && zohoClientSecret && zohoClientId && displayName && zohoRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+        </div>
+
       </form>
     </div>
   </div>
