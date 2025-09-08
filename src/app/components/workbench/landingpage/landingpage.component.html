@@ -296,6 +296,10 @@
                                                 src="./assets/images/icons/oracle-icon.jpg"
                                                 alt="Oracle"
                                                 class="card-img w-5 h-5 icon-bounce" />
+                                            <img *ngIf="database.server_type === 'ZOHO'"
+                                                src="./assets/images/icons/zoho.svg"
+                                                alt="Zoho"
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'NINJA'"
                                                 src="./assets/images/icons/ninjaRMMIcon.jpg"
@@ -742,6 +746,10 @@
                                                 src="./assets/images/icons/oracle-icon.jpg"
                                                 alt="Oracle"
                                                 class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'ZOHO'"
+                                                src="./assets/images/icons/zoho.svg"
+                                                alt="Oracle"
+                                                class="avatar-radius icon-pulse w-5 h-5">   
 
                                             <img *ngIf="savedQuery.server_type === 'NINJA'"
                                                 src="./assets/images/icons/ninjaRMMIcon.jpg"
