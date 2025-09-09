@@ -5342,6 +5342,7 @@
           <label [ngClass]="{'error-label': displayNameError}" class="form-label">
             Connection Name <span class="text-danger">*</span>
           </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Zoho" autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
         </div>
 
@@ -5349,6 +5350,7 @@
           <label [ngClass]="{'error-label': zohoClientIdError}" class="form-label">
             Client Id <span class="text-danger">*</span>
           </label>
+          <span class="text-muted" style="display:inline-block;">(Enter your Zoho Client ID in this field)</span>
           <input [ngClass]="{'error-input': zohoClientIdError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoClientId" [ngModelOptions]="{standalone: true}" (input)="zohoClientIdInput()" placeholder="Client Id">
         </div>
 
@@ -5356,6 +5358,7 @@
           <label [ngClass]="{'error-label': zohoClientSecretError}" class="form-label">
             Client Secret <span class="text-danger">*</span>
           </label>
+          <span class="text-muted" style="display:inline-block;">(Enter your Zoho Client Secret in this field)</span>
           <input [ngClass]="{'error-input': zohoClientSecretError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoClientSecret" [ngModelOptions]="{standalone: true}" (input)="zohoClientSecretInput()" placeholder="Client Secret">
         </div>
 
@@ -5363,11 +5366,13 @@
           <label [ngClass]="{'error-label': zohoRedirectURLError}" class="form-label">
             Redirect URL <span class="text-danger">*</span>
           </label>
+          <span class="text-muted" style="display:inline-block;">(Enter the redirect URL configured in your Zoho app)</span>
           <input [ngClass]="{'error-input': zohoRedirectURLError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoRedirectURL" [ngModelOptions]="{standalone: true}" (input)="zohoRedirectURLInput()" placeholder="Redirect URL">
         </div>
 
         <div class="mb-3">
           <label class="form-label">Country</label>
+          <span class="text-muted" style="display:inline-block;">(Enter your country)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="zohoCountry" [ngModelOptions]="{standalone: true}" placeholder="Country">
         </div>
 
@@ -5375,12 +5380,14 @@
           <label [ngClass]="{'error-label': zohoScopeError}" class="form-label">
             Scopes <span class="text-danger">*</span>
           </label>
+          <span class="text-muted" style="display:inline-block;">(Select the required scopes for this connection)</span>
           <ng-multiselect-dropdown [data]="zohoScopes" [(ngModel)]="selectedZohoScopes" [ngModelOptions]="{standalone: true}" [settings]="hubspotDropdownSettings" (onSelect)="onZohoScopeChange()" (onDeSelect)="onZohoScopeChange()" (onSelectAll)="onZohoScopeChange()" (onDeSelectAll)="onZohoScopeChange()">
           </ng-multiselect-dropdown>
         </div>
 
         <div class="mb-3">
           <label class="form-label">Description</label>
+          <span class="text-muted" style="display:inline-block;">(Optional description for this connection)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="zohoDescription" [ngModelOptions]="{standalone: true}" placeholder="Description">
         </div>
 
