@@ -599,7 +599,7 @@
                         <img alt="product" src="./assets/images/icons/connectwise-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'DBT'">
-                        <img alt="product" src="./assets/images/icons/dbt.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                        <img alt="product" src="./assets/images/icons/dbt.svg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'HALOPS'">
                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
@@ -749,7 +749,7 @@
                                             <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'DBT'" class="avatar avatar rounded-circle">
-                                                <img src="./assets/images/icons/dbt.png" alt="" class="rounded-circle"></span>
+                                                <img src="./assets/images/icons/dbt.svg" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'PAX8'" class="avatar avatar rounded-circle">
@@ -975,7 +975,7 @@
                               <div [innerHTML]="getSafeSvg(connectionListIcons[connection.database_type]?.value)"></div>
                              }
                              @if(connectionListIcons[connection.database_type]?.type === 'image'){
-                              <img [src]="connectionListIcons[connection.database_type]?.value" alt="connection.database_type">
+                              <img [src]="connectionListIcons[connection.database_type]?.value" alt="{{connection.database_type}}">
                              }
                             <!-- <span *ngIf="connectionListIcons[connection.database_type]?.type === 'emoji'">
                               {{ connectionListIcons[connection.database_type]?.value }}
@@ -3406,7 +3406,7 @@
                 <div [innerHTML]="getSafeSvg(connectionListIcons[conn.database_type]?.value)"></div>
                 }
                 @if(connectionListIcons[conn.database_type]?.type === 'image'){
-                <img [src]="connectionListIcons[conn.database_type]?.value" alt="conn.database_type">
+                <img [src]="connectionListIcons[conn.database_type]?.value" alt="{{conn.database_type}}">
                 }
               </div>
               <div>
