@@ -177,6 +177,11 @@ zohoCallBack(data:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/zoho_callback/`+this.accessToken,data);
 }
+jiraCallBack(data:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/jira_callback/`+this.accessToken,data);
+}
 resetPassword(token:any,data:any){
   return this.http.put<any>(`${environment.apiUrl}/reset_password/confirm`+'/'+token,data);
 }
