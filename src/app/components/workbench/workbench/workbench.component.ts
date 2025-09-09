@@ -628,6 +628,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     bambooHRDomain = '';
     publicKey = '';
     privateKey = '';
+    dbtAccountId = '';
+    dbtDomainUrl = '';
+    dbtToken = '';
     path='';
     shopifyToken = '';
     shopifyName = '';
@@ -895,6 +898,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.publicKey = '';
     this.siteURL = '';
     this.companyId = '';
+    this.dbtAccountId = '';
+    this.dbtDomainUrl = '';
+    this.dbtToken = '';
     this.siteURLPSA = '';
     this.clientIdPSA = '';
     this.clientSecret = '';
@@ -1049,6 +1055,31 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
 
       this.workbechService.connectWiseConnectionUpdate(obj).subscribe({next: (responce) => {
             console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+
+    dbtUpdate(){
+      const obj = {
+        "account_id": this.dbtAccountId,
+        "domain_url": this.dbtDomainUrl,
+        "display_name": this.displayName,
+        "token": this.dbtToken,
+        "description": this.connectionDescription,
+        "hierarchy_id": this.databaseId
+      }
+      this.workbechService.dbtConnectionUpdate(obj).subscribe({next: (responce) => {
             this.modalService.dismissAll('close');
             if(responce){
               this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
@@ -1675,6 +1706,30 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       }
     }
 
+    dbtAccountIdInputError(){
+      if(this.dbtAccountId){
+        this.dbtAccountIdError = false;
+      }else{
+        this.dbtAccountIdError = true;
+      }
+    }
+
+    dbtDomainUrlInputError(){
+      if(this.dbtDomainUrl){
+        this.dbtDomainUrlError = false;
+      }else{
+        this.dbtDomainUrlError = true;
+      }
+    }
+
+    dbtTokenInputError(){
+      if(this.dbtToken){
+        this.dbtTokenError = false;
+      }else{
+        this.dbtTokenError = true;
+      }
+    }
+
     shopifyapiTokenError(){
       if(this.shopifyToken){
         this.shopifyApiTokenError = false;
@@ -1968,6 +2023,38 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           }
         }
       )
+    }
+
+    dbtSignIn(){
+      const obj = {
+        "account_id": this.dbtAccountId,
+        "domain_url": this.dbtDomainUrl,
+        "display_name": this.displayName,
+        "token": this.dbtToken,
+        "description": this.connectionDescription
+      }
+      this.workbechService.dbtConnection(obj).subscribe({next: (responce) => {
+        if(responce){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = responce?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.selectedConnection = null;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+          }
+        }
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }
+    })
     }
 
     haloPSASignIn(){
@@ -3161,6 +3248,12 @@ connectGoogleSheets(){
         this.privateKey = editData.private_key;
         this.displayName = editData.display_name;
         this.connectionDescription = editData.description;
+    } else if (this.databaseType == "dbt") {
+      this.dbtAccountId = editData.account_id;
+      this.dbtDomainUrl = editData.domain_url;
+      this.displayName = editData.display_name;
+      this.dbtToken = editData.token;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "ninja") {
        this.displayName = editData.display_name;
        this.ninjaRMMClientid = editData.client_id;
@@ -3462,6 +3555,9 @@ connectGoogleSheets(){
   privateKeyError:boolean = false;
   publicKeyError:boolean = false;
   companyIDError:boolean = false;
+  dbtAccountIdError:boolean = false;
+  dbtDomainUrlError:boolean = false;
+  dbtTokenError:boolean = false;
   disableConnectBtn = true;
 
   shopifyApiTokenError:boolean = false;
@@ -3955,6 +4051,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   halops: { type: 'image', value:'./assets/images/icons/halopsa.png' },
   pax8: { type: 'image', value: './assets/images/icons/pax8-icon.png' },
   connectwise: { type: 'image', value:'./assets/images/icons/connectwise.png' },
+  dbt: { type: 'image', value:'./assets/images/icons/dbt.png' },
   shopify: { type: 'svg', value: this.SVGICONS.shopify },
   open_ai: { type: 'emoji', value: '🤖' },
   bamboohr: { type: 'svg', value: this.SVGICONS.bambooHr },
@@ -4079,6 +4176,7 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
     { name: "QuickBooks", description: "Accounting software",image:'./assets/images/icons/quickbooks.png' },
     { name: "Salesforce", description: "CRM platform", svg:this.SVGICONS.Salesforce },
     { name: "ConnectWise", description: "IT management software", image:'./assets/images/icons/connectwise.png' },
+    { name: "DBT", description: "Data build tool", image:'./assets/images/icons/dbt.png' },
     { name: "HaloPS", description: "PSA platform for IT providers",image:'./assets/images/icons/halopsa.png' },
     { name: "Pax8", description: "Cloud commerce marketplace",image:'./assets/images/icons/pax8-icon.png'},
     { name: "BambooHR", description: "HR management system", svg:this.SVGICONS.bambooHr },
@@ -4106,23 +4204,31 @@ goBackToCategories(){
 
 selectedConnection: string | null = null;
 
-selectConnection(connName: string) {
-  if(connName === 'xAmplify'){
-    !this.iscrossDbSelect ? this.connectxAmplify() : null;
-  } else if(connName === 'QuickBooks'){
-    !this.iscrossDbSelect ? this.connectQuickBooks() : null;
-  } else if(connName === 'Salesforce'){
-    !this.iscrossDbSelect ? this.connectSalesforce() : null;
-  } else if(connName === 'Jira'){
-    !this.iscrossDbSelect ? this.connectJira() : null;
-  } else if(connName === 'Google Sheets'){
-    !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
-  } else{
-    this.selectedConnection = connName;
-    this.getSpecificConnections();
-    console.log('selected sub category:', this.selectedConnection);
+  selectConnection(connName: string) {
+    if(connName === 'xAmplify'){
+      !this.iscrossDbSelect ? this.connectxAmplify() : null;
+    } else if(connName === 'QuickBooks'){
+      !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+    } else if(connName === 'Salesforce'){
+      !this.iscrossDbSelect ? this.connectSalesforce() : null;
+    } else if(connName === 'Jira'){
+      !this.iscrossDbSelect ? this.connectJira() : null;
+    } else if(connName === 'Google Sheets'){
+      !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+    } else{
+      this.selectedConnection = connName;
+      if(connName === 'DBT'){
+        this.displayName = 'dbt';
+        this.dbtAccountId = '';
+        this.dbtDomainUrl = '';
+        this.dbtToken = '';
+      } else {
+        this.displayName = '';
+      }
+      this.getSpecificConnections();
+      console.log('selected sub category:', this.selectedConnection);
+    }
   }
-}
 model = {
     name: '',
     host: '',
