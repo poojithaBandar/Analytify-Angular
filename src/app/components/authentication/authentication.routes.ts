@@ -76,6 +76,11 @@ export const admin: Routes = [
     loadComponent: () =>
       import('./zoho/zoho.component').then((m) => m.ZohoComponent),
   },
+  {
+    path: 'jira',
+    loadComponent: () =>
+      import('./jira/jira.component').then((m) => m.JiraComponent),
+  },
 ]}
 ];
 @NgModule({
