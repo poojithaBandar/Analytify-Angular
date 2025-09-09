@@ -121,6 +121,21 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/deepseek_authentication/`+this.accessToken,obj);
   }
+  geminiConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/gemini_authentication/`+this.accessToken,obj);
+  }
+  getGeminiConnection(id:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/gemini_authentication/`+id+'/'+this.accessToken);
+  }
+  deleteGeminiConnection(id:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/gemini_authentication/`+id+'/'+this.accessToken);
+  }
   hubspotConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -163,6 +178,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/deepseek_authentication/`+this.accessToken,obj);
+  }
+
+  geminiConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/gemini_authentication/`+this.accessToken,obj);
   }
 
   ninjaRMMConnectionUpdate(obj:any){
