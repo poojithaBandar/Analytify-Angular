@@ -210,6 +210,7 @@ export class WorkbenchComponent implements OnInit{
   zohoClientSecret!: string;
   zohoRedirectURL!: string;
   zohoCountry: string = '';
+  zohoCountries: string[] = ['United States','Europe','India','China','Australia','Japan'];
   zohoScopes: string[] = ['CRM','BOOKS'];
   selectedZohoScopes: string[] = [];
   zohoDescription: string = '';
