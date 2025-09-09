@@ -56,6 +56,7 @@ export class WorkbenchComponent implements OnInit{
   relationOfTables = [] as any;
   databaseId:any;
   fileId:any;
+
   databaseType:any;
   openPostgreSqlForm= false;
   openMySqlForm = false;
