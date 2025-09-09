@@ -5372,8 +5372,11 @@
 
         <div class="mb-3">
           <label class="form-label">Country</label>
-          <span class="text-muted" style="display:inline-block;">(Enter your country)</span>
-          <input type="text" class="form-control forms-light w-100" [(ngModel)]="zohoCountry" [ngModelOptions]="{standalone: true}" placeholder="Country">
+          <span class="text-muted" style="display:inline-block;">(Select your country)</span>
+          <select class="form-select forms-light w-100" [(ngModel)]="zohoCountry" [ngModelOptions]="{standalone: true}">
+            <option value="" disabled selected>Select Country</option>
+            <option *ngFor="let country of zohoCountries" [value]="country">{{ country }}</option>
+          </select>
         </div>
 
         <div class="mb-3">
