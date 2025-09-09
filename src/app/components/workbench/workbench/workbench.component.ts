@@ -3139,22 +3139,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
             }
         });
     }
-    connectJira() {
-      Swal.fire({
-          title: 'This will redirect to Jira SignIn page',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Ok'
-      }).then((result) => {
-          if (result.isConfirmed) {
-              // Redirect to the specified URL
-              window.location.href = 'https://id.atlassian.com/login';
-              // Optionally, if there's a loader or some other indication, show it here:
-              // this.loaderService.show();
-          }
-      });
-  }
+
 //gsheets
 connectGoogleSheets(){
   Swal.fire({
