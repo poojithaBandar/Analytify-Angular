@@ -103,6 +103,10 @@
                                     <img alt="product" src="./assets/images/icons/connectwise-icon.png"
                                         class="w-5 h-5 border me-2">{{transformation.server_type}}
                                 </td>
+                                <td *ngIf="transformation.server_type === 'DBT'">
+                                    <img alt="product" src="./assets/images/icons/dbt.png"
+                                        class="w-5 h-5 border me-2">{{transformation.server_type}}
+                                </td>
                                 <td *ngIf="transformation.server_type === 'HALOPS'">
                                     <img alt="product" src="./assets/images/icons/Halopsa-icon.png"
                                         class="w-5 h-5 border me-2">{{transformation.server_type}}
@@ -193,6 +197,10 @@
                                     <span *ngIf="transformation.server_type === 'CONNECTWISE'"
                                         class="avatar rounded-circle">
                                         <img src="./assets/images/icons/connectwise-icon.png" alt="CONNECTWISE"
+                                            class="rounded-circle"></span>
+                                    <span *ngIf="transformation.server_type === 'DBT'"
+                                        class="avatar rounded-circle">
+                                        <img src="./assets/images/icons/dbt.png" alt="DBT"
                                             class="rounded-circle"></span>
                                     <span *ngIf="transformation.server_type === 'HALOPS'"
                                         class="avatar rounded-circle">
