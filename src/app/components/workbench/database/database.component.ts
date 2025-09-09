@@ -322,6 +322,9 @@ export class DatabaseComponent {
       //     this.templateDashboardService.buildSampleHubspotDashboard(this.container, this.databaseId);
       //   }
       // });
+    } if(currentUrl.includes('/analytify/database-connection/jira/')){
+      this.fromDatabasId = true;
+      this.databaseId = +atob(route.snapshot.params['id']);
     }
 }
   ngOnInit(){

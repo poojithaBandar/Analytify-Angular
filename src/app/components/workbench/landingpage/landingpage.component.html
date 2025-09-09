@@ -378,6 +378,10 @@
                                                 src="./assets/images/icons/dbt.svg"
                                                 alt="DBT"
                                                 class="card-img w-5 h-5" />
+                                            <img *ngIf="database.server_type === 'JIRA'"
+                                                src="./assets/images/icons/jira.svg"
+                                                alt="Jira"
+                                                class="card-img w-5 h-5" />
 
                                             <img *ngIf="database.server_type === 'HALOPS'"
                                                 src="./assets/images/icons/Halopsa-icon.png"
@@ -836,6 +840,10 @@
                                             <img *ngIf="savedQuery.server_type === 'DBT'"
                                                 src="./assets/images/icons/dbt.svg"
                                                 alt="DBT"
+                                                class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'JIRA'"
+                                                src="./assets/images/icons/jira.svg"
+                                                alt="Jira"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'HALOPS'"

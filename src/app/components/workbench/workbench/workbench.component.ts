@@ -4272,8 +4272,6 @@ selectedConnection: string | null = null;
       !this.iscrossDbSelect ? this.connectQuickBooks() : null;
     } else if(connName === 'Salesforce'){
       !this.iscrossDbSelect ? this.connectSalesforce() : null;
-    } else if(connName === 'Jira'){
-      !this.iscrossDbSelect ? this.connectJira() : null;
     } else if(connName === 'Google Sheets'){
       !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
     } else{
