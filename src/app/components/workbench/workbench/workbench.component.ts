@@ -212,7 +212,7 @@ export class WorkbenchComponent implements OnInit{
   zohoCountry: string = '';
   zohoCountries: string[] = ['United States','Europe','India','China','Australia','Japan'];
   zohoScopes: string[] = ['CRM','BOOKS'];
-  selectedZohoScopes: string[] = ['CRM'];
+  selectedZohoScopes: string[] = [];
   zohoDescription: string = '';
   zohoClientIdError = false;
   zohoClientSecretError = false;
@@ -917,7 +917,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.selectedHubspotScopes = [];
     this.zohoClientId = '';
     this.zohoClientSecret = '';
-    this.selectedZohoScopes = ['CRM'];
+    this.selectedZohoScopes = [];
     this.zohoRedirectURL = '';
     this.zohoCountry = '';
     this.zohoDescription = '';
@@ -3517,7 +3517,7 @@ connectGoogleSheets(){
   this.zohoClientSecret = '';
   this.zohoRedirectURL = '';
   this.zohoCountry = '';
-  this.selectedZohoScopes = ['CRM'];
+  this.selectedZohoScopes = [];
   this.zohoDescription = '';
   this.siteURLPSA = '';
   this.tallyToken = '';
@@ -4219,7 +4219,7 @@ selectedConnection: string | null = null;
     } else{
       this.selectedConnection = connName;
       if(connName === 'DBT'){
-        this.displayName = 'dbt';
+        this.displayName = '';
         this.dbtAccountId = '';
         this.dbtDomainUrl = '';
         this.dbtToken = '';
@@ -4312,7 +4312,7 @@ model = {
   this.zohoClientSecret = '';
   this.zohoRedirectURL = '';
   this.zohoCountry = '';
-  this.selectedZohoScopes = ['CRM'];
+  this.selectedZohoScopes = [];
   this.zohoDescription = '';
   this.zohoClientIdError = false;
   this.zohoClientSecretError = false;
