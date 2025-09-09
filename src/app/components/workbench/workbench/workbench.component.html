@@ -31,11 +31,34 @@
                           <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
                           <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                       </div>
-                      <div class="mb-2">
-                         <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
-                         <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
-                      </div>
-                     </form>
+                     <div class="mb-2">
+                        <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                        <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+                     </div>
+                    </form>
+            } @else if(databaseType == 'dbt') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. dbt" (input)="displayNameIntegrationConditionError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': dbtAccountIdError}" class="col-form-label">Account ID <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': dbtAccountIdError}" type="text" class="form-control" [(ngModel)]="dbtAccountId" [ngModelOptions]="{standalone: true}" placeholder="Account ID" (input)="dbtAccountIdInputError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': dbtDomainUrlError}" class="col-form-label">Domain URL <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': dbtDomainUrlError}" type="text" class="form-control" [(ngModel)]="dbtDomainUrl" [ngModelOptions]="{standalone: true}" placeholder="Domain URL" (input)="dbtDomainUrlInputError()">
+                </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': dbtTokenError}" class="col-form-label">Token <span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': dbtTokenError}" type="password" class="form-control" [(ngModel)]="dbtToken" [ngModelOptions]="{standalone: true}" placeholder="Token" (input)="dbtTokenInputError()">
+                </div>
+                <div class="mb-2">
+                   <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                   <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+                </div>
+              </form>
             } @else if(databaseType == 'ninja') {
               <form>
                 <div class="mb-2">
@@ -411,6 +434,10 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName && !connectionDescription) ">Update</button>
 
+            } @else if(databaseType == 'dbt') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="dbtUpdate()" [disabled]="(dbtAccountIdError || dbtDomainUrlError || dbtTokenError || displayNameError) || !(dbtAccountId && dbtDomainUrl && dbtToken && displayName && !connectionDescription)">Update</button>
+
             } @else if(databaseType == 'halops') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName &&!connectionDescription )">Update</button>
@@ -571,6 +598,9 @@
                       <td *ngIf="database.server_type === 'CONNECTWISE'">
                         <img alt="product" src="./assets/images/icons/connectwise-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'DBT'">
+                        <img alt="product" src="./assets/images/icons/dbt.svg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                       <td *ngIf="database.server_type === 'HALOPS'">
                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
@@ -718,6 +748,8 @@
                                                 <img src="/assets/images/Db_server_images/geminiLLm.svg" alt="" class="rounded-circle"></span>
                                             <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
+                                              <span *ngIf="database.server_type === 'DBT'" class="avatar avatar rounded-circle">
+                                                <img src="./assets/images/icons/dbt.svg" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'PAX8'" class="avatar avatar rounded-circle">
@@ -943,7 +975,7 @@
                               <div [innerHTML]="getSafeSvg(connectionListIcons[connection.database_type]?.value)"></div>
                              }
                              @if(connectionListIcons[connection.database_type]?.type === 'image'){
-                              <img [src]="connectionListIcons[connection.database_type]?.value" alt="connection.database_type">
+                              <img [src]="connectionListIcons[connection.database_type]?.value" alt="{{connection.database_type}}">
                              }
                             <!-- <span *ngIf="connectionListIcons[connection.database_type]?.type === 'emoji'">
                               {{ connectionListIcons[connection.database_type]?.value }}
@@ -3374,7 +3406,7 @@
                 <div [innerHTML]="getSafeSvg(connectionListIcons[conn.database_type]?.value)"></div>
                 }
                 @if(connectionListIcons[conn.database_type]?.type === 'image'){
-                <img [src]="connectionListIcons[conn.database_type]?.value" alt="conn.database_type">
+                <img [src]="connectionListIcons[conn.database_type]?.value" alt="{{conn.database_type}}">
                 }
               </div>
               <div>
@@ -4525,6 +4557,82 @@
           </button>
         </div>
       
+      </form>
+    </div>
+  </div>
+  <div *ngSwitchCase="'DBT'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="dbtSignIn()" style="overflow-x: hidden;">
+
+        <!-- Display Name -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. dbt"
+            autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+
+        <!-- Account Id -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': dbtAccountIdError}" class="form-label d-inline-block me-1">
+            Account ID <span class="text-danger">*</span>
+          </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Account ID in this field)</span>
+          <input [ngClass]="{'error-input': dbtAccountIdError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="dbtAccountId" [ngModelOptions]="{standalone: true}" placeholder="Account ID" (input)="dbtAccountIdInputError()">
+        </div>
+
+        <!-- Domain URL -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': dbtDomainUrlError}" class="form-label d-inline-block me-1">
+            Domain URL <span class="text-danger">*</span>
+          </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Domain URL in this field)</span>
+          <input [ngClass]="{'error-input': dbtDomainUrlError}" type="text" class="form-control forms-light w-100"
+            [(ngModel)]="dbtDomainUrl" [ngModelOptions]="{standalone: true}" placeholder="Domain URL" (input)="dbtDomainUrlInputError()">
+        </div>
+
+        <!-- Token -->
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': dbtTokenError}" class="form-label d-inline-block me-1">
+            Token <span class="text-danger">*</span>
+          </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Token in this field)</span>
+          <input [ngClass]="{'error-input': dbtTokenError}" type="password" class="form-control forms-light w-100"
+            [(ngModel)]="dbtToken" [ngModelOptions]="{standalone: true}" placeholder="Token" (input)="dbtTokenInputError()">
+        </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+        <!-- Footer Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button"
+            (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary me-3 animate-button"
+            [disabled]="dbtAccountIdError || dbtDomainUrlError || dbtTokenError || displayNameError || !(dbtAccountId && dbtDomainUrl && dbtToken && displayName)">
+            {{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}
+          </button>
+        </div>
+
       </form>
     </div>
   </div>

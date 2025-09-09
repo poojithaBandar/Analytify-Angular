@@ -374,6 +374,10 @@
                                                 src="./assets/images/icons/connectwise-icon.png"
                                                 alt="Connectwise"
                                                 class="card-img w-5 h-5" />
+                                            <img *ngIf="database.server_type === 'DBT'"
+                                                src="./assets/images/icons/dbt.svg"
+                                                alt="DBT"
+                                                class="card-img w-5 h-5" />
 
                                             <img *ngIf="database.server_type === 'HALOPS'"
                                                 src="./assets/images/icons/Halopsa-icon.png"
@@ -494,6 +498,10 @@
                                     </td>
                                     <td *ngIf="database.server_type === 'CONNECTWISE'">
                                         <img alt="product" src="./assets/images/icons/connectwise-icon.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'DBT'">
+                                        <img alt="product" src="./assets/images/icons/dbt.svg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <td *ngIf="database.server_type === 'HALOPS'">
@@ -824,6 +832,10 @@
                                             <img *ngIf="savedQuery.server_type === 'CONNECTWISE'"
                                                 src="./assets/images/icons/connectwise-icon.png"
                                                 alt="Connectwise"
+                                                class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'DBT'"
+                                                src="./assets/images/icons/dbt.svg"
+                                                alt="DBT"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'HALOPS'"
