@@ -988,11 +988,11 @@ p { font-size: 12px;}
 }
 
 /* Special flex for vals */
-:host ::ng-deep .pvtVals.pvtUiCell {
-  display: flex;
-  align-items: flex-start;  /* left align */
-  gap: 8px;                 /* space between dropdowns */
-}
+// :host ::ng-deep .pvtVals.pvtUiCell {
+//   display: flex;
+//   align-items: flex-start;  /* left align */
+//   gap: 8px;                 /* space between dropdowns */
+// }
 
 // :host ::ng-deep .pvtUi {
 //   border: 1px solid #e5e7eb;       /* soft gray border */

@@ -5326,6 +5326,7 @@ kpiData?: KpiData;
       this.setSelectedSheetData();
       this.removeUnSelectedSheetsFromCanvas();
        this.isSheetsView = false;
+       this.pivotReinitialize(true, true);
       },
       error:(error)=>{
         console.log(error)

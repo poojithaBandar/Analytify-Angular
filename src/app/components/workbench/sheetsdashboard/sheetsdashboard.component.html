@@ -35,7 +35,7 @@
               <div class="input-group">
                 <input type="text" class="form-control border-end-0 " [(ngModel)]="searchSheets" (keydown.enter)="fetchSheetsListSearch()" placeholder="Search" >
                 <button class="btn btn-primary border me-2  search-icon-border-radius" (click)="fetchSheetsListSearch()"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
-                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard();pivotReinitialize(false, true)" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
+                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
                 <button *ngIf="panelscheckbox?.length<1" type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="sheetsRoute()" ><i class="fa fa-plus"></i> New Sheet</button>
                 <button type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="isSheetsView = false" >Close</button>
 
@@ -2271,7 +2271,7 @@
 
     <div *ngIf="isAnalyzedashbaordView">
       <div class="my-4">
-        <button class="btn btn-primary" ngbTooltip="Back to dashboard" (click)="isAnalyzedashbaordView = false"><i
+        <button class="btn btn-primary" ngbTooltip="Back to dashboard" (click)="isAnalyzedashbaordView = false; pivotReinitialize(true, true)"><i
                       class="fa fa-arrow-left "></i> </button>
         <div class="d-flex justify-content-center mb-3">
           <h5 class="mb-0"><strong>Dashboard Analysis Report</strong></h5>
