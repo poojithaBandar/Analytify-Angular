@@ -2645,7 +2645,8 @@ allowDrop(ev : any): void {
       }
 
       //  this.initializeChartData(element);  // Initialize chart after adding
-      this.dashboard.forEach((sheet: any) => {
+      const dashboardData = isTabs ? this.dashboardTest : this.dashboard;
+      dashboardData.forEach((sheet: any) => {
         // console.log('Before sanitization:', sheet.data.sheetTagName);
         if(sheet.data?.sheetTagName){
         this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
@@ -6351,7 +6352,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
             const label = dataPoint.x;
             const value = dataPoint.y;
-            return `${label}: `+ this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            return `${label}: `+ this.formatNumber(value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
           };
         } else if(![1, 25, 10, 24, 9, 18, 20].includes(chartId)){
           if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
@@ -6844,6 +6845,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.workbechService.actionUpdateOnSheetRemove(object).subscribe({
       next: (data) => {
         console.log(data);
+        this.actionId = '';
         this.getDrillThroughActionList();
         this.toasterService.info(data.message,'info',{ positionClass: 'toast-top-center'})
       },
