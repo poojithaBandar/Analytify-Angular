@@ -48,6 +48,7 @@ import { lastValueFrom, Subscription, timer } from 'rxjs';
 import { boolean, evaluate, i, parse, re } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import { WordcloudChartComponent } from '../wordcloud-chart/wordcloud-chart.component';
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 import { ChartRenderService } from '../../../services/chart-render.service';
@@ -108,7 +109,7 @@ declare var $:any;
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent,NgbTooltipModule],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,WordcloudChartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent,NgbTooltipModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -195,6 +196,7 @@ export class SheetsComponent{
   public lineChartOptions!: Partial<EChartsOption>;
   chartOptions:any;
   chartOptions1:any;
+  wordcloudOptions:any = {};
   sheetNumber: number = 1;
   sheetName = "Sheet 1";
   sheetTitle = "Sheet ";
@@ -1701,8 +1703,9 @@ try {
   guage = false;
   calendar = false;
   treemap = false;
+  wordcloud = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,wordcloud:boolean,chartId:any){
     this.table = table;
     this.pivotTable = pivotTable;
     this.bar=bar;
@@ -1727,6 +1730,7 @@ try {
     this.treemap = (chartId === 18);
     this.map = map;
     this.calendar = calendar;
+    this.wordcloud = wordcloud;
     if(this.bar){
       this.isHorizontalBar = false;
     }
@@ -4362,93 +4366,97 @@ routeConfigure(){
 
   if (chartType.includes("table")) {
     // Table
-    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
+    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
 
   } else if (chartType.includes("horizontal stacked bar")) {
     // Horizontal Stacked Bar => horizontalBar + horizentalStocked
-    this.chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,true,2);
+    this.chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,true,false,2);
 
   } else if (chartType.includes("horizontal side by side")) {
     // Horizontal Side by Side => horizontalBar + sideBySide
-    this.chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,3);
+    this.chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,3);
 
   } else if (chartType.includes("dual combination")) {
     // Dual Combination => barLine
-    this.chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,4);
+    this.chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,4);
 
   } else if (chartType.includes("stacked bar")) {
     // Stacked Bar (vertical) => bar + stocked
-    this.chartDisplay(false,true,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,5);
+    this.chartDisplay(false,true,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,5);
 
   } else if (chartType.includes("side by side")) {
     // Side by Side (vertical) => bar + sideBySide
-    this.chartDisplay(false,true,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,7);
+    this.chartDisplay(false,true,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,7);
 
   } else if (chartType.includes("bar")) {
     // Plain Bar (vertical)
-    this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+    this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
 
   } else if (chartType.includes("dual line")) {
     // Dual Line => multiLine
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,8);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,8);
 
   } else if (chartType.includes("donut")) {
     // Donut
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,10);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,10);
 
   } else if (
     chartType.includes("calendar") ||        // correct spelling
     chartType.includes("calender")   
   ) {
     // Calendar
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,11);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,11);
 
   } else if (chartType.includes("radar")) {
     // Radar
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,12);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,12);
 
   } else if (chartType.includes("line")) {
     // Line
-    this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+    this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
 
   } else if (chartType.includes("hbar")) {
     // HBar (generic horizontal bar)
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,14);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,14);
 
   } else if (chartType.includes("area")) {
     // Area
-    this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+    this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
 
   } else if (chartType.includes("pie")) {
     // Pie
-    this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+    this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
 
   } else if (chartType.includes("kpi")) {
     // KPI
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,25);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,25);
 
   } else if (chartType.includes("treemap")) {
     // Treemap
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18);
 
   } else if (chartType.includes("heat map")) {
     // Heat Map
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,26);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,26);
 
   } else if (chartType.includes("radial")) {
     // Radial
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,20);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,20);
+
+  } else if (chartType.includes("wordcloud")) {
+    // WordCloud
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,21);
 
   } else if (chartType.includes("funnel")) {
     // Funnel
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,27);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,27);
 
   } else if (chartType.includes("world map")) {
     // World Map
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,29);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,29);
   } else {
     console.warn("[Chart] Unrecognized chart_type:", chartTypeRaw, "— defaulting to table");
-    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
+    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
   }
 
   this.dataExtraction(false);
