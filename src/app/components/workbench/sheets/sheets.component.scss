@@ -740,13 +740,13 @@ input.BitSpace {
   cursor: grabbing;
 }
 /* Hover effect */
-:host ::ng-deep .pvtAxisContainer li:hover,
-.pvtVals li:hover {
+// :host ::ng-deep .pvtAxisContainer li:hover,
+// .pvtVals li:hover {
   // background: #f0f9ff !important;
   // border-color: #3b82f6 !important;
   // color: #1d4ed8 !important;
   // box-shadow: 0 2px 5px rgba(59,130,246,0.2);
-}
+// }
 /* Round the outer Heatmap (renderer) cell */
 :host ::ng-deep .pvtUi > tbody > tr:first-child > td:first-child {
   border-top-left-radius: 12px;
