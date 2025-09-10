@@ -1135,6 +1135,11 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.get<any>(`${environment.apiUrl}/salesforce_dashbaord/`+id+'/'+this.accessToken);
     }
+    buildSampleZohoDashboard(id: number){
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/zoho_dashbaord/`+id+'/'+this.accessToken);
+    }
     buildSampleTallyDashboard(id: number) {
       const currentUser = localStorage.getItem('currentUser');
       this.accessToken = JSON.parse(currentUser!)['Token'];
