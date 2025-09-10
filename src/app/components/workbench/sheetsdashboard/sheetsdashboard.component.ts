@@ -2718,7 +2718,8 @@ allowDrop(ev : any): void {
       }
 
       //  this.initializeChartData(element);  // Initialize chart after adding
-      this.dashboard.forEach((sheet: any) => {
+      const dashboardData = isTabs ? this.dashboardTest : this.dashboard;
+      dashboardData.forEach((sheet: any) => {
         // console.log('Before sanitization:', sheet.data.sheetTagName);
         if(sheet.data?.sheetTagName){
         this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
