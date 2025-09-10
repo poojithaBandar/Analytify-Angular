@@ -1,23 +1,114 @@
 <app-page-header title="Database" moduleId="datasource" title1="Home" activeitem="Database"></app-page-header>
 
-<div class="main-container container-fluid TopHeader">
-
     @if(tableJoiningUI){
+         <!-- <div class="row">
+                 <div class="card mb-0 p-3 border bg-light database-title-card">
+                        <div class="flex-grow-1 ">
+                            <input type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title"
+                                aria-label="Sheet" class="form-control">
+                        </div>
+                        <div class="right">
+                            @if(draggedtables?.length){
+                            <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
+                                (click)="openSuperScaled(applyFiltersModal);getFilteredList('fromTableJoinig')"
+                                class="modal-effect btn btn-primary ms-1">
+                                <i class="fa fa-filter"></i> Apply Filters
+                            </a>
+                            }
+                            <app-insights-button *ngIf="sheetCustmSqlDisable" [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light ms-1'"
+                                [previledgeId]="54" [isBtn]="true" (btnClickEvent)="custmSqlUI()"
+                                [isIcon]="false"></app-insights-button>
+                            <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72"
+                                [gotoSheetButton]="draggedtables?.length === 0" [isBtn]="true" [isIcon]="false"
+                                (btnClickEvent)="viewQuery(viewQueryModal)" [toolTip]="' View Query'"
+                                [imageUrl]="'./assets/images/icons/view-query.png'">
+                            </app-insights-button>
+                        </div>
+                    </div>
+            </div> -->
+
+          <div class="card mb-2 p-3 border bg-light database-title-card d-flex align-items-center justify-content-between">
+  <!-- Left side: icon + title + subtitle -->
+  <div class="d-flex align-items-center gap-3 flex-grow-1">
+    <!-- Icon -->
+    <div class="icon-box d-flex align-items-center justify-content-center">
+      <i class="bi bi-database text-white fs-4"></i>
+    </div>
+
+    <!-- Title & Subtitle -->
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <!-- Show title or input depending on editing state -->
+        <ng-container *ngIf="!isEditing; else editMode">
+          <h6 class="mb-0 fw-bold">{{ saveQueryName || 'Untitled Query' }}</h6>
+          <i class="bi bi-pencil small text-muted cursor-pointer"
+             (click)="isEditing = true"></i>
+        </ng-container>
+        <ng-template #editMode>
+          <input type="text"
+                 [(ngModel)]="saveQueryName"
+                 (blur)="isEditing = false; markDirty()"
+                 (keyup.enter)="isEditing = false; markDirty()"
+                 placeholder="Enter Title"
+                 class="form-control form-control-sm w-auto">
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right side: buttons -->
+  <div class="d-flex gap-2">
+    <!-- Apply Filters -->
+    <button class="btn btn-outline-primary animate-b d-flex align-items-center gap-1"
+            (click)="openSuperScaled(applyFiltersModal); getFilteredList('fromTableJoinig')"
+            *ngIf="draggedtables?.length">
+      <i class="fa fa-filter"></i> Apply Filters
+    </button>
+
+    <!-- Custom SQL -->
+    <app-insights-button *ngIf="sheetCustmSqlDisable"
+        [buttonName]="'Custom SQL'" 
+        [classesList]="'btn btn-outline-primary animate-b d-flex align-items-center gap-1'" 
+        [previledgeId]="54" [isBtn]="true" [isIcon]="false"
+        (btnClickEvent)="custmSqlUI()">
+    </app-insights-button>
+
+    <!-- View Query -->
+    <button class="btn btn-outline-primary animate-b d-flex align-items-center gap-1"
+            (click)="viewQuery(viewQueryModal)">
+      <i class="fa fa-code"></i> View Query
+    </button>
+  </div>
+</div>
+
+
         <div class="main-container container-fluid">
+           
     <div class="row">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card mb-3 mt-1 left-sidebar border">
-            <div class="p-2 br-0 mb-0  border-bottom d-block">
+        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 p-1 database-card mb-3 mt-1">
+            <div class="p-4 br-0 mb-0 d-block">
                 <div class="d-flex align-items-center justify-content-between ">
-                    <h6 class="mb-0">Connections</h6>
-                    <a ngbTooltip="Click to connect multi datasources" (click)="goToConnections()"><span  class="add-txt text-info">Add</span></a>
+                    <img src="./assets/images/icons/connection.svg"> <h6 class="mb-0" style="margin-left:-60px">Connections</h6>
+                    <!-- <a ngbTooltip="Click to connect multi datasources" (click)="goToConnections()"><span  class="add-txt text-info">Add New</span></a> -->
+                    <button class="btn btn-card btn animate-b" style="align-items: flex-start;">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
+                        <g clip-path="url(#clip0_2870_41687)">
+                            <path d="M9.60938 4.60938H5.39062V0.390625C5.39062 0.174883 5.21574 0 5 0C4.78426 0 4.60938 0.174883 4.60938 0.390625V4.60938H0.390625C0.174883 4.60938 0 4.78426 0 5C0 5.21574 0.174883 5.39062 0.390625 5.39062H4.60938V9.60938C4.60938 9.82512 4.78426 10 5 10C5.21574 10 5.39062 9.82512 5.39062 9.60938V5.39062H9.60938C9.82512 5.39062 10 5.21574 10 5C10 4.78426 9.82512 4.60938 9.60938 4.60938Z" fill="black"/>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_2870_41687">
+                            <rect width="10" height="10" fill="white"/>   
+                            </clipPath>
+                        </defs>
+                        </svg> Add New</button>
                 </div>
-                <p class=" mb-0" [ngbTooltip]="hostName?.length > 15 ? hostName : null">{{hostName?.length > 15 ? (hostName| slice:0:15)+'...':hostName}}</p>
+                <!-- <p class=" mb-0" [ngbTooltip]="hostName?.length > 15 ? hostName : null">{{hostName?.length > 15 ? (hostName| slice:0:15)+'...':hostName}}</p> -->
             </div>
-            <div class="mb-0 p-2 br-0 border-bottom justify-content-between d-flex">
+            <div class="mb-2 p-2 mx-2 database-name-card  justify-content-between d-flex">
                 <div>
-                <h6 class="mb-0">Database</h6>
-                <p class="mb-0" [ngbTooltip]="databaseName?.length > 15 ? databaseName : null">
-                    {{databaseName?.length > 20 ? (databaseName| slice:0:22)+'...':databaseName}}
+                <!-- <h6 class="mb-0">Database</h6> -->
+                <p class="mb-0 d-flex align-items-center" [ngbTooltip]="databaseName?.length > 25 ? databaseName : null"><i class="bi bi-database fs-3 icon-color"></i>
+                    {{databaseName?.length > 25 ? (databaseName| slice:0:25)+'...':databaseName}}
                 </p>
             </div>
             <div *ngIf="isCrossDb && crossDbConnections.length > 1">
@@ -28,8 +119,9 @@
             </div>
             <!-- <div class="card mb-0 br-0">
             </div> -->
-            <div class="mb-0 br-0 pt-0 schema-table-height" >
-                <div class="mb-0 p-0 py-1 border-bottom-0">
+            <div class="mb-0 mx-2 br-0 pt-0 border-top schema-table-height" >
+                <div class="mb-0 p-0 py-1 ">
+                    <h6 class="mb-2 mt-2 ms-2">Database</h6>
                     <div class="input-group ">
                         <input type="text" class="form-control border-end-0" [placeholder]="canSearchTablesInSemanticLayer ? 'Search Tables' : 'Search disabled on this account'"
                             [(ngModel)]="searchTables" (keydown.enter)="canSearchTablesInSemanticLayer ? getSchemaTablesFromConnectedDb() : null">
@@ -63,6 +155,9 @@
                                             (cdkDropListDropped)="drop($event)">
                                             <div *ngFor="let submenu of menu.tables"
                                                 class="sub-menu-item example-box subMenuFlex p-2 border rounded-3" cdkDrag [cdkDragDisabled]="!dragTablestoSemanticLayer">
+                                                <span class="drag-handle" cdkDragHandle>
+    <i class="bi bi-grip-vertical"></i> 
+  </span>
                                                 <i class="fa fa-table table-icon-p"></i>
                                                 <span [ngbTooltip]="submenu.table.length > 15 ? submenu.table : null">{{submenu.table ? (submenu.table.length > 15 ? (submenu.table| slice:0:15)+'...':submenu.table) : ''}}</span>
                                             </div>
@@ -76,10 +171,10 @@
 
             </div>
         </div>
-        <div class="col-xl-10 col-md-12 p-1">
+        <div class="col-xl-9 col-md-9 p-1">
             <div class=" p-0 ">
                 <div class="col-xl-12 col-md-12 p-0">
-                    <div class="card mb-0 p-3 border bg-light database-title-card">
+                    <!-- <div class="card mb-0 p-3 border bg-light database-title-card">
                         <div class="flex-grow-1 ">
                             <input type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title"
                                 aria-label="Sheet" class="form-control">
@@ -100,13 +195,17 @@
                                 (btnClickEvent)="viewQuery(viewQueryModal)" [toolTip]="' View Query'"
                                 [imageUrl]="'./assets/images/icons/view-query.png'">
                             </app-insights-button>
-                            <!-- <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a> -->
                         </div>
-                    </div>
-                    <div class="d-flex border">
-                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
-                            <div class="card card-body databse-T-H mb-0 br-0 p-0">
-                                <div class="card-body example-list-drop  mb-0" cdkDropList
+                    </div> -->
+                    <div class="d-flex">
+                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 ps-2">
+                            <div class="database-card  databse-T-H mb-0  p-0">
+                                <div class="card-header d-flex align-items-center gap-2 p-4 border-bottom">
+                                    <img src="./assets/images/icons/table.svg" alt="Table Relation">
+                                    <h6 class="mb-0">Table Relation</h6>
+                                </div>
+                                <div class="card-body example-list-drop">
+                                <div class="mb-0" cdkDropList
                                     #destinationList="cdkDropList" [cdkDropListData]="draggedtables"
                                     (cdkDropListDropped)="tableCustomJoinError ? '' : drop($event)">
                                     @for(item of draggedtables;track $index){
@@ -126,11 +225,16 @@
                                     <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
                                     }
                                 </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
-                            <div class="card databse-T-H mb-0 br-0">
-                                <div class="card-body overflow-auto border-start" >
+                            <div class="database-card databse-T-H mb-0">
+                                <div class="card-header d-flex align-items-center gap-2 p-4 border-bottom">
+                                    <img src="./assets/images/icons/join.svg" alt="Table Relation">
+                                    <h6 class="mb-0">Join Configuration</h6>
+                                </div>
+                                <div class="card-body overflow-auto join-configuration" >
                                     @if(relationOfTables.length){
                                     <ul class="tags">
                                         @for(relation of tableJoiningList;track relation;let i = $index){
@@ -420,9 +524,9 @@
                             </div>
                             <div class="p-0"
                                 [ngClass]="!crossDbId ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
-                                <div class="card mb-0 border joining-T-H"  [ngClass]="isOpen ? 'right-card':''"
+                                <div class="database-card mb-0 ms-2 p-0 joining-T-H"  [ngClass]="isOpen ? 'right-card':''"
                                     [class.expanded]="!isOpen">
-                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
                                             @if(crossDbId){
                                             @if(!isOpen){
@@ -435,14 +539,15 @@
                                             </i>
                                             }
                                             }
-                                            <h6 class="mb-0 me-2">Result Preview</h6>
+                                            <img src="./assets/images/icons/preview.svg">
+                                            <h6 class="mb-0 me-2 ms-2"> Result Preview</h6>
                                             <p *ngIf="qurtySetId != 0" class="border p-1 rounded-2 mb-0 bg-light">Showing {{showingRows}} rows of {{totalRows}}
                                             </p>
                                         </div>
                                         <div class="result-rows d-flex justify-content-end">
 
                                             @if(TabledataJoining){
-                                                 <button class="btn btn-icon btn-outline-primary me-2" (click)="downloadExcel()" type="button">
+                                                 <button class="btn btn-icon animate-b btn-outline-primary me-2" (click)="downloadExcel()" type="button">
                                                     <i class="fa fa-download"></i>
                                                 </button>
                                             <input type="number" [(ngModel)]="rowLimit" id="input-text"
@@ -453,14 +558,15 @@
                                                 (click)="resetOffsetgetJoiningTableData()"><i
                                                     class="mdi mdi-arrow-right-thick result-icon"></i></a>
                                             <app-insights-button [buttonName]="' Go to sheet '"
-                                                [classesList]="'btn btn-primary ms-2'" [previledgeId]="17"
-                                                [isBtn]="true" [gotoSheetButton]="gotoSheetButtonDisable"
-                                                (btnClickEvent)="goToSheet('fromtablejoining')" [isIcon]="false"></app-insights-button>
+                                                [classesList]="'btn btn-primary ms-2 animate-b'" [previledgeId]="17"
+                                                [isBtn]="true" [gotoSheetButton]="gotoSheetButtonDisable" [faIconList]="'fa fa-external-link'"
+                                                (btnClickEvent)="goToSheet('fromtablejoining')" [isIcon]="true"></app-insights-button>
                                             }
                                         </div>
                                     </div>
                                     <div class="card-body d-flex align-items-center justify-content-center p-0">
                                         @if(TabledataJoining.length){
+                                        <img src="./assets/images/icons/preview.svg">
                                         <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
                                         }@else{
                                         <div class="table-responsive Result-preview-table-h" 
@@ -487,7 +593,7 @@
                                                     }
                                                 </tbody>
                                             </table> -->
-                                            <cdk-virtual-scroll-viewport itemSize="40" class="viewport-full-table" style="height: 193px;" (scrolledIndexChange)="onResultScroll($event)">
+                                            <cdk-virtual-scroll-viewport itemSize="40" class="viewport-full-table" style="height: 229px;" (scrolledIndexChange)="onResultScroll($event)">
                                                 <table
                                                     class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 ">
                                                     <thead class="Result-preview-table-sticky">
@@ -628,6 +734,7 @@
                     <div class="card mb-0 border customsql-result-preview-h" >
                         <div class="card-header bg-light d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
+                                <img src="./assets/images/icons/preview.svg">
                                 <h6 class="mb-0 me-2">Result Preview</h6>
                                 <p *ngIf="custmQryTime" class="border mb-0 bg-light">Showing
                                     {{showingRowsCustomQuery}} rows of {{totalRowsCustomQuery}}</p>
@@ -646,9 +753,9 @@
                                     placeholder="rows" class="form-control w-30" min="0">
                                 <a (click)="resetAndRunQuery()"><i
                                         class="mdi mdi-arrow-right-thick result-icon me-2"></i></a>
-                                <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'"
+                                <app-insights-button [buttonName]="' Go to sheet '" [faIconList]="'fa fa-external-link'" [classesList]="'btn btn-primary'"
                                     [previledgeId]="17" [isBtn]="true" (btnClickEvent)="goToSheet('fromcustomsql')"
-                                    [isIcon]="false"></app-insights-button>
+                                    [isIcon]="true"></app-insights-button>
                                 }
                             </div>
                         </div>
