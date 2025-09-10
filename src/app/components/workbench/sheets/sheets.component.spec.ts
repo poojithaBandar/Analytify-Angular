@@ -20,4 +20,10 @@ describe('SheetsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should activate wordcloud chart', () => {
+    component.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,21);
+    expect(component.wordcloud).toBeTrue();
+    expect(component.chartId).toBe(21);
+  });
 });
