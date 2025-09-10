@@ -167,6 +167,7 @@ export class DatabaseComponent {
   dragTablestoSemanticLayer = false;
   deleteTablesFromSemanticLayer = false;
   canSearchTablesInSemanticLayer = false;
+  isEditing = false;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService,private templateService:ViewTemplateDrivenService,private templateDashboardService: TemplateDashboardService){
     const currentUrl = this.router.url;
     this.dragTablestoSemanticLayer = this.templateService.dragTablesToSemanticLayer();
