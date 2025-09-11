@@ -56,7 +56,6 @@ export class WorkbenchComponent implements OnInit{
   relationOfTables = [] as any;
   databaseId:any;
   fileId:any;
-
   databaseType:any;
   smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR','GEMINI'];
   openPostgreSqlForm= false;
@@ -3412,6 +3411,7 @@ connectGoogleSheets(){
     }
     // this.getDbConnectionList();
     this.errorCheck();
+    this.categorySelect('All');
   }
 
   pageChangegetconnectionList(page:any){
@@ -4078,7 +4078,7 @@ connectGoogleSheets(){
 skeletons = Array(6); // show 3 skeleton cards while loading
   searchQuery: string = '';
   showNewConnection: boolean = false;
-  selectedCategory: string | null = null;
+  selectedCategory: string='All';
   selectedConnectionType: string | null = null;
 
   connectionListIcons: any = {
@@ -4128,13 +4128,13 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   }
 
   handleBackToCategories() {
-    this.selectedCategory = null;
+    this.selectedCategory = 'All';
     this.selectedConnectionType = null;
   }
 
   handleBackToConnections() {
     this.showNewConnection = false;
-    this.selectedCategory = null;
+    this.selectedCategory = 'All';
     this.selectedConnectionType = null;
   }
 
@@ -4143,6 +4143,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   }
 
  categories = [
+  // { name: 'All sources', icon: '', description: 'Browse all connection types',count:'33' },
     { name: 'Relational Database', icon: '🛢️', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
     { name: 'LLM Integrations', icon: '🤖', description: 'AI & Large Language Model integrations',count:'6' },
     { name: 'Multi-dimensional Database', icon: '📊', description: 'OLAP & analytical data stores',count:'2' },
@@ -4150,47 +4151,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
     { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
-  showRelational = false;
-  showLLM = false;
-  showMultiDim = false;
-  showNoSQL = false;
-  showFiles = false;
-  showIntegrations = false;
-  categorySelect(categoryName: string){
-    this.selectedCategory = categoryName;
-    console.log(this.selectedCategory);
-      this.viewNewDbs = false;
-      this.showRelational = false;
-      this.showLLM = false;
-      this.showMultiDim = false;
-      this.showNoSQL = false;
-      this.showFiles = false;
-      this.showIntegrations = false;
-        switch (categoryName) {
-          case 'Relational Database':
-            this.showRelational = true;
-            break;
-          case 'LLM Integrations':
-            this.showLLM = true;
-            break;
-          case 'Multi-dimensional Database':
-            this.showMultiDim = true;
-            break;
-          case 'NoSQL Database':
-            this.showNoSQL = true;
-            break;
-          case 'Files Source':
-            this.showFiles = true;
-            break;
-          case 'Integrations':
-            this.showIntegrations = true;
-            break;
-  }
-  }
-  getSafeSvg(svg: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(svg);
-  }
-connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string,disabled?:boolean}[] } = {
+  connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string,disabled?:boolean}[] } = {
   "Relational Database": [
     { name: "MySQL", icon: "🐬", description: "Relational database" },
     { name: "ORACLE", icon: "🏺", description: "Enterprise relational database" },
@@ -4238,7 +4199,87 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
     { name: "Immybot", description: "IT automation tool",svg:this.SVGICONS.immybot },
     { name: "Zoho", description: "Zoho CRM platform", image:'./assets/images/icons/zoho.svg' }
   ]
+
 };
+  showRelational = false;
+  showLLM = false;
+  showMultiDim = false;
+  showNoSQL = false;
+  showFiles = false;
+  showIntegrations = false;
+  
+  // categorySelect(categoryName: string){
+  //   this.selectedCategory = categoryName;
+  //   console.log(this.selectedCategory);
+  //     // this.viewNewDbs = false;
+  // //     // this.showRelational = false;
+  // //     // this.showLLM = false;
+  // //     // this.showMultiDim = false;
+  // //     // this.showNoSQL = false;
+  // //     // this.showFiles = false;
+  // //     // this.showIntegrations = false;
+  // //     //   switch (categoryName) {
+  // //     //     case 'Relational Database':
+  // //     //       this.showRelational = true;
+  // //     //       break;
+  // //     //     case 'LLM Integrations':
+  // //     //       this.showLLM = true;
+  // //     //       break;
+  // //     //     case 'Multi-dimensional Database':
+  // //     //       this.showMultiDim = true;
+  // //     //       break;
+  // //     //     case 'NoSQL Database':
+  // //     //       this.showNoSQL = true;
+  // //     //       break;
+  // //     //     case 'Files Source':
+  // //     //       this.showFiles = true;
+  // //     //       break;
+  // //     //     case 'Integrations':
+  // //     //       this.showIntegrations = true;
+  // //     //       break;
+  // //     //     case 'All Sources':  
+  // //     //       this.showRelational = true;
+  // //     //       this.showLLM = true;
+  // //     //       this.showMultiDim = true;
+  // //     //       this.showNoSQL = true;
+  // //     //       this.showFiles = true;
+  // //     //       this.showIntegrations = true;
+  // //     //       console.log("All Sources selected",this.showRelational,this.showLLM,this.showMultiDim,this.showNoSQL,this.showFiles,this.showIntegrations );
+  // //     //       break;
+  // // }
+  // }
+  categorySelect(categoryName: string) {
+  if (categoryName === 'All') {
+    // flatten all categories into one array
+    this.selectedCategory = 'All';
+  } else {
+    this.selectedCategory = categoryName;
+  }
+}
+
+getConnectionTypes() {
+  if (this.selectedCategory === 'All') {
+    return Object.values(this.connectionTypes).flat();
+  }
+  return this.connectionTypes[this.selectedCategory] || [];
+}
+  getSafeSvg(svg: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(svg);
+  }
+
+  getConnectionTypesByCategory() {
+  if (this.selectedCategory === 'ALL') {
+    // return all categories as { key, value } pairs
+    return Object.entries(this.connectionTypes); // [ [categoryName, items], ... ]
+  }
+
+  if (this.selectedCategory) {
+    // return only the selected category in the same format
+    return [[this.selectedCategory, this.connectionTypes[this.selectedCategory] || []]];
+  }
+
+  return [];
+}
 goBackToCategories(){
   this.showRelational = false;
   this.showLLM = false;
@@ -4247,12 +4288,13 @@ goBackToCategories(){
   this.showFiles = false;
   this.showIntegrations = false;
   this.viewNewDbs = true;
-  this.selectedCategory = null;
+  this.selectedCategory = 'All';
 }
 
 selectedConnection: string | null = null;
 
   selectConnection(connName: string) {
+    this.viewNewDbs = false
     if(connName === 'xAmplify'){
       !this.iscrossDbSelect ? this.connectxAmplify() : null;
     } else if(connName === 'QuickBooks'){
@@ -4318,7 +4360,7 @@ model = {
   this.showNoSQL = false;
   this.showFiles = false;
   this.showIntegrations = false;
-  this.viewNewDbs = false;
+  this.viewNewDbs = true;
   this.selectedConnection = null;
 //old
   this.postGreServerName = '';
@@ -4381,6 +4423,14 @@ model = {
             this.showFiles = true;
             break;
           case 'Integrations':
+            this.showIntegrations = true;
+            break;
+          case 'All sources':  
+            this.showRelational = true;
+            this.showLLM = true;
+            this.showMultiDim = true;
+            this.showNoSQL = true;
+            this.showFiles = true;
             this.showIntegrations = true;
             break;
   }
