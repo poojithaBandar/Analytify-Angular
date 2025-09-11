@@ -220,7 +220,7 @@ a.float-start { font-size: 13px; }
 .avatar { width: 2.05rem; height: 2.075rem; }
 .tiled-card-body-padding { padding: 10px; }
 .tiled-card-header-padding { padding: 10px !important; }
-span { font-size: 12px; }
+// span { font-size: 12px; }
 }
 
 // for 100% Resolution //
@@ -238,7 +238,7 @@ a.float-start { font-size: 13px;}
 .avatar { width: 2.05rem; height: 2.075rem;}
 .tiled-card-body-padding { padding: 10px;}
 .tiled-card-header-padding { padding: 10px !important;}
-span { font-size: 11px;}
+// span { font-size: 11px;}
 }
 
 // for 110% Resolution //
@@ -561,4 +561,11 @@ h2.fw-500 {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none; /* prevents click */
+}
+.cat-border{
+  border-right: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.15);
+}
+.subcat-border{
+    border-bottom: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.15);
+
 }
