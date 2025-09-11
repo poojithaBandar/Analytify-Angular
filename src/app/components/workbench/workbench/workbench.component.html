@@ -3303,7 +3303,7 @@
       </div> -->
     
 <div class="row">
-  <div class="col-3" style="height:80vh; overflow-y:auto;">
+  <div class="col-3 cat-border" style="height:80vh; overflow-y:auto;">
 <div class="main-container container-fluid TopHeader">
   <div class="d-flex align-items-center mb-4">
     <div class="flex-grow-1 position-relative me-3">
@@ -3339,7 +3339,7 @@
         (click)="categorySelect(cat.name)">
          <h6 class="mb-2">{{ cat.name }}</h6>
           <div class="d-flex align-items-start flex-grow-1">
-        <div class=" me-2 mt-2"style="width:28px;min-width:28px;card-icon">{{ cat.icon }}</div>
+        <div class="fs-2 me-2 card-icon">{{ cat.icon }}</div>
          <div class="flex-frow-1 d-flex flex-column">
         <small class="text-muted ">{{ cat.description }}</small>
         <span class="mt-1 ">
@@ -3391,14 +3391,24 @@
   <!-- Cards -->
     <ng-container *ngIf="selectedCategory === 'All'; else singleCategory">
         <ng-container *ngFor="let cat of categories">
-            <h5 class="mt-3 mb-2">{{ cat.name }}</h5>
-            <small class="text-muted">{{ cat.description }}</small>
+             <div class="d-flex align-items-center gap-2 mt-3 mb-2">
+    <!-- Icon -->
+    <div class="fs-3">
+      <span>{{ cat.icon }}</span>
+    </div>
+
+    <!-- Title & Subtitle -->
+    <div>
+      <h5 class="mb-0">{{ cat.name }}</h5>
+      <small class="text-muted">{{ cat.description }}</small>
+    </div>
+  </div>
 
 
-              <div class="row g-3 p-4 ">
+              <div class="row g-3 mt-2 pb-2">
     <div class="col-md-4" *ngFor="let type of connectionTypes[cat.name]">
       <div class="glass-card h-100 p-3 hoverable d-flex justify-content-between text-center" [class.disabled-card]="type.disabled" (click)="selectConnection(type.name)">
-        <div class="d-flex align-items-start gap-3">
+        <div class="d-flex align-items-center gap-3 w-100">
           <!-- <div class="fs-3 card-icon">{{ type.icon }}</div> -->
           <div class="fs-3 card-icon ">
 
@@ -3410,7 +3420,7 @@
               [innerHTML]="getSafeSvg(type.svg)">
           </div>
           </div>
-          <div>
+          <div class="d-flex flex-column text-start flex-grow-1">
             <h6 class="mb-1 d-flex align-items-center">{{ type.name }}</h6>
             <small class="text-muted">{{ type.description }}</small>
           </div>
