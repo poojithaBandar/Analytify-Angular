@@ -55,7 +55,7 @@
                   <input [ngClass]="{'error-input': dbtTokenError}" type="password" class="form-control" [(ngModel)]="dbtToken" [ngModelOptions]="{standalone: true}" placeholder="Token" (input)="dbtTokenInputError()">
                 </div>
                 <div class="mb-2">
-                   <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                   <label class="col-form-label">Description </label>
                    <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
                 </div>
               </form>
@@ -3563,7 +3563,7 @@
 
           <!-- Description + Details -->
           <p class="mt-2 mb-1 small  d-inline-block"
-         ngbTooltip="{{ conn?.description }}">
+         ngbTooltip="{{ conn?.description }}" >
             <strong> {{ conn?.description | slice:0:30 }}{{ conn?.description?.length > 30 ? '...': '' }} </strong></p>
 
           <div class="d-flex justify-content-between small">
@@ -3656,14 +3656,7 @@
             (input)="databaseConditionError()">
         </div>
         </div>
-        <!-- description -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+        
       
         <!-- Username / Password Row -->
         <div class="row g-3">
@@ -3690,9 +3683,19 @@
               </button>
             </div>
           </div>
-        
+             <!-- New Description  -->
+         
+
       
       </div>
+       <div class="mb-3">
+             <label class="form-label" style="padding-left:8px;">
+               Description <span class="text-muted ms-1">(Enter your description)</span>
+             </label>
+             
+            <input  type="text" class="form-control forms-light w-100"
+              [(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}"placeholder="Enter your description">
+          </div>
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
@@ -3767,15 +3770,7 @@
             (input)="databaseConditionError()">
         </div>
         </div>
-        <!-- New Description  -->
-        <!--  -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+       
       
       
         <!-- Username / Password Row -->
@@ -3804,6 +3799,15 @@
             </div>
           </div>
         </div>
+         <!-- New Description  -->
+        <!--  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -3880,15 +3884,7 @@
             (input)="databaseConditionError()">
         </div>
         </div>
-        <!-- Description Field -->
-      
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+        
       
       
         <!-- Username / Password Row -->
@@ -3916,7 +3912,16 @@
             </div>
           </div>
         </div>
+      <!-- Description Field -->
       
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+
         <!-- Schema Selection (Optional) -->
         @if(schemaList && schemaList.length > 0) {
         <div class="mb-3">
@@ -4031,14 +4036,7 @@
               (input)="databaseConditionError()">
           </div>
           </div>
-          <!--  Description  -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+         
   
           <!-- Username / Password Row (only for SQL Auth) -->
           <div *ngIf="selectedMicroSoftAuthType === 'SQL Server Authentication'" class="row g-3">
@@ -4068,6 +4066,14 @@
             </div>
           </div>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
   
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -4141,14 +4147,7 @@
             (input)="databaseConditionError()">
         </div>
       </div>
-      <!--  Description  -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+      
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
@@ -4175,6 +4174,15 @@
             </div>
           </div>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -4368,14 +4376,7 @@
         </div>
           </div>
         
-      <!--  Description  -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+      
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
@@ -4402,6 +4403,14 @@
             </div>
           </div>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
       
         <!-- Schema Selection -->
         <div *ngIf="schemaList && schemaList.length > 0" class="mb-3">
@@ -4609,7 +4618,7 @@
           <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
-          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4699,7 +4708,7 @@
           <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
-          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. dbt"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -5491,7 +5500,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Description <span class="text-danger">*</span></label>
+          <label class="form-label">Description </label>
           <span class="text-muted" style="display:inline-block;">(Enter your description)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
         </div>
@@ -5521,7 +5530,7 @@
           <label [ngClass]="{'error-label': displayNameError}" class="form-label">
             Connection Name <span class="text-danger">*</span>
           </label>
-          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Zoho" autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
         </div>
 
@@ -5724,7 +5733,7 @@
     </div>
     <!--  Description  -->
         <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description<span class="text-danger">*</span>
+          <label class="form-label d-inline-block me-1"> Description
           </label>
           <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
           <input type="text" class="form-control forms-light w-100"

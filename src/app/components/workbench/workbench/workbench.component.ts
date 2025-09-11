@@ -1074,6 +1074,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
               this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
             }
             this.getDbConnectionList();
+            if(this.callAllConnectionsExistingList){
+              this.connectionListWithOutPagination();
+            }
           },
           error: (error) => {
             console.log(error);
@@ -1432,6 +1435,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
                 this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
               }
               this.getDbConnectionList();
+              if(this.callAllConnectionsExistingList){
+                this.connectionListWithOutPagination();
+              }
             },
             error: (error) => {
               console.log(error);
@@ -3380,6 +3386,10 @@ connectGoogleSheets(){
       this.errorCheck();
     }
   }
+
+
+
+
 
     Openmdo(OpenmdoModal: any) {
       this.modalService.open(OpenmdoModal);
