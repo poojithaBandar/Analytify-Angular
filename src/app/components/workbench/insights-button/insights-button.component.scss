@@ -29,3 +29,11 @@ button.viewQueryImg {
 .btn-outline-danger-light:hover {
   background: rgba(var(--bs-danger-rgb, 220, 53, 69), 0.15);
 }
+.animate-b {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.animate-b:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}

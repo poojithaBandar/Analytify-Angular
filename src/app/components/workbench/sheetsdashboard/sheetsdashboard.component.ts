@@ -246,6 +246,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   calendarTotalHeight : string = '400px';
   // @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
   @ViewChildren('pivotTableContainer') pivotContainers!: QueryList<ElementRef>;
+  @ViewChildren('pivotTableContainerTabs') pivotContainersTabs!: QueryList<ElementRef>;
   @ViewChild('fileInput') fileInput:any;
   @ViewChild('fileInput1') fileInput1:any;
   @ViewChild('analyzeDashbaordModal') analyzeDashbaordModal:any;
@@ -1055,7 +1056,7 @@ export class SheetsdashboardComponent implements OnDestroy {
           this.dashboardTagName = data.dashboard_tag_name;
         }
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
-        this.dynamicOptionsUpdateinDashboard(this.dashboard, false);
+        this.dynamicOptionsUpdateinDashboard(this.dashboard, false, false);
         if(this.displayTabs){
           this.sheetTabs.forEach(tabsData => {
             const match = this.tabData.find((t:any) => t.tab_name == tabsData.name);
@@ -1063,7 +1064,7 @@ export class SheetsdashboardComponent implements OnDestroy {
               tabsData.id = match.id;
             }
             if(tabsData.dashboard && tabsData.dashboard.length > 0){
-              this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, false);
+              this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, false, true);
             }
           });
         }
@@ -1072,7 +1073,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
   }
 
-  dynamicOptionsUpdateinDashboard(dashboard: any, isPublic: boolean){
+  dynamicOptionsUpdateinDashboard(dashboard: any, isPublic: boolean, isTab?:boolean){
     let self = this;
     dashboard.forEach((sheet : any)=>{
       // console.log('Before sanitization:', sheet.data?.sheetTagName);
@@ -1308,7 +1309,8 @@ export class SheetsdashboardComponent implements OnDestroy {
           if (pivotTables.length !== this.pivotContainers.length) {
             console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
           }
-          this.pivotContainers.forEach((pivotContainer, index) => {
+          const pivotContainer = isTab ? this.pivotContainersTabs : this.pivotContainers;
+          pivotContainer.forEach((pivotContainer, index) => {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
             const nativeEl = pivotContainer.nativeElement;
@@ -2605,7 +2607,8 @@ allowDrop(ev : any): void {
         if (pivotTables.length !== this.pivotContainers.length) {
           console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
         }
-        this.pivotContainers.forEach((pivotContainer, index) => {
+        const pivotContainer = isTabs ? this.pivotContainersTabs : this.pivotContainers;
+        pivotContainer.forEach((pivotContainer, index) => {
           if (pivotContainer && pivotContainer.nativeElement) {
             const pivotData = pivotTables[index]; // Get the corresponding pivot data
             const nativeEl = pivotContainer.nativeElement;
@@ -2642,7 +2645,8 @@ allowDrop(ev : any): void {
       }
 
       //  this.initializeChartData(element);  // Initialize chart after adding
-      this.dashboard.forEach((sheet: any) => {
+      const dashboardData = isTabs ? this.dashboardTest : this.dashboard;
+      dashboardData.forEach((sheet: any) => {
         // console.log('Before sanitization:', sheet.data.sheetTagName);
         if(sheet.data?.sheetTagName){
         this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
@@ -3692,10 +3696,10 @@ assignSDKFiltertoDashboard(embedFilterData?: any){
     // this.tablePageNo =1;
     this.tablePage=1
   } else{
-  this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false);
+  this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false);
   if (this.displayTabs) {
     this.sheetTabs.forEach((tabData: any) => {
-      this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false);
+      this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,true,false);
     })
   }
   }
@@ -3861,10 +3865,10 @@ getFilteredData(){
         // this.tablePageNo =1;
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false);
+      this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false,false);
+          this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,true,false,false);
         })
       }
       }
@@ -3915,7 +3919,7 @@ clearAllFilters(isSwitchDb?:boolean): void {
 }
 
 
-setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean, dashboard : any[],switchDb?: boolean,isDashboardTransfer?: boolean){
+setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean, dashboard : any[], isTabs?:boolean ,switchDb?: boolean,isDashboardTransfer?: boolean){
   dashboard.forEach((item1:any) => {
     if(item1.sheetId){
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
@@ -3966,9 +3970,13 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       let transformedData :any =[];
       let headers: string[] = [];
 
-     let columnKeys = item?.columns?.map((col: any) => col.column); 
-     let rowKeys = item?.rows?.map((row: any) => row.column);
-    let valueKeys = item?.pivot?.map((col:any) =>col.column)
+    //  let columnKeys = item?.columns?.map((col: any) => col.column); 
+    //  let rowKeys = item?.rows?.map((row: any) => row.column);
+    // let valueKeys = item?.pivot?.map((col:any) =>col.column)
+
+     let columnKeys = item1?.customizeOptions?.pivotConfig.rows;
+     let rowKeys = item1?.customizeOptions?.pivotConfig.vals;
+     let valueKeys = item1?.customizeOptions?.pivotConfig.cols;
 
     item?.columns?.forEach((colObj: any) => {
       headers.push(colObj.column);
@@ -4026,7 +4034,8 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       if (pivotTables.length !== this.pivotContainers.length) {
         console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
       }
-      this.pivotContainers.forEach((pivotContainer, index) => {
+      const pivotContainer = isTabs ? this.pivotContainersTabs : this.pivotContainers;
+      pivotContainer.forEach((pivotContainer, index) => {
         if (pivotContainer && pivotContainer.nativeElement) {
           const pivotData = pivotTables[index]; // Get the corresponding pivot data
           const nativeEl = pivotContainer.nativeElement;
@@ -4865,10 +4874,10 @@ deleteDashboardFilter(id:any){
               this.filteredRowData.push(obj);
               console.log('filterowData',this.filteredRowData)
             });
-            this.setDashboardSheetData(item, true, false, false, false, '', false,false,this.dashboard,false);
+            this.setDashboardSheetData(item, true, false, false, false, '', false,false,this.dashboard,false,false);
             if(this.displayTabs){
               this.sheetTabs.forEach((sheet:any)=>{
-                this.setDashboardSheetData(item, true, false, false, false, '', false,false,sheet.dashboard,false);
+                this.setDashboardSheetData(item, true, false, false, false, '', false,false,sheet.dashboard,true,false);
               })
             }
           });
@@ -5317,6 +5326,7 @@ kpiData?: KpiData;
       this.setSelectedSheetData();
       this.removeUnSelectedSheetsFromCanvas();
        this.isSheetsView = false;
+       this.pivotReinitialize(true, true);
       },
       error:(error)=>{
         console.log(error)
@@ -5478,7 +5488,7 @@ kpiData?: KpiData;
             if (pivotTables.length !== this.pivotContainers.length) {
               console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
             }
-            this.pivotContainers.forEach((pivotContainer, index) => {
+            this.pivotContainersTabs.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
                 const pivotData = pivotTables[index]; // Get the corresponding pivot data
                 const nativeEl = pivotContainer.nativeElement;
@@ -5672,7 +5682,7 @@ kpiData?: KpiData;
         }
         this.sheetIdsDataSet = data.selected_sheet_ids;
         let self = this;
-        this.dynamicOptionsUpdateinDashboard(this.dashboard, true);
+        this.dynamicOptionsUpdateinDashboard(this.dashboard, true, false);
         if(this.displayTabs){
           this.sheetTabs.forEach(tabsData => {
             const match = this.tabData.find((t:any) => t.tab_name == tabsData.name);
@@ -5680,7 +5690,7 @@ kpiData?: KpiData;
               tabsData.id = match.id;
             }
             if(tabsData.dashboard && tabsData.dashboard.length > 0){
-              this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, true);
+              this.dynamicOptionsUpdateinDashboard(tabsData.dashboard, true, true);
             }
           });
         }
@@ -5768,10 +5778,10 @@ kpiData?: KpiData;
         if(item.chart_id === 1){
           this.pageChangeTableDisplayPublic(item,1)
         }else{
-        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false);
+        this.setDashboardSheetData(item, true , true, false, false, '', false,false,this.dashboard,false,false,false);
         if (this.displayTabs) {
           this.sheetTabs.forEach((tabData: any) => {
-            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,false,false);
+            this.setDashboardSheetData(item, true, true, false, false, '', false, false, tabData.dashboard,true,false,false);
           })
         }
         }
@@ -5903,10 +5913,10 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard,false);
+      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard,false,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard,false);
+          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard,true,false);
         })
       }
       // if(item.chartId == '29'){
@@ -5981,10 +5991,10 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard,false);
+      this.setDashboardSheetData(item, false, false, true, false, '', false,false,this.dashboard,false,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard,false);
+          this.setDashboardSheetData(item, false, false, true, false, '', false, false, tabData.dashboard,true,false);
         })
       }
       // if(item.chartId == '29'){
@@ -6099,13 +6109,13 @@ pageChangeTableDisplay(
         this.tableTotalItems = data.total_items;
 
         this.setDashboardSheetData(
-          data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, this.dashboard, switchDb
+          data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, this.dashboard,false, switchDb
         );
 
         if (this.displayTabs) {
           this.sheetTabs.forEach((tabData: any) => {
             this.setDashboardSheetData(
-              data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard, switchDb
+              data.data, true, false, false, false, '', isLiveReloadData, isLastIndex, tabData.dashboard,true, switchDb
             );
           });
         }
@@ -6150,10 +6160,10 @@ pageChangeTableDisplayPublic(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '', false,false,this.dashboard,false);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', false,false,this.dashboard,false,false);
       if (this.displayTabs) {
         this.sheetTabs.forEach((tabData: any) => {
-          this.setDashboardSheetData(data.data, true, false, false, false, '', false, false, tabData.dashboard,false);
+          this.setDashboardSheetData(data.data, true, false, false, false, '', false, false, tabData.dashboard,true,false);
         })
       }
     },error:(error)=>{
@@ -6343,7 +6353,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
             const label = dataPoint.x;
             const value = dataPoint.y;
-            return `${label}: `+ this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            return `${label}: `+ this.formatNumber(value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
           };
         } else if(![1, 25, 10, 24, 9, 18, 20].includes(chartId)){
           if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
@@ -6808,10 +6818,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
             this.filteredRowData.push(rowObject);
           }
-          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false,this.dashboard,false);
+          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,false,this.dashboard,false,false);
           if (this.displayTabs) {
             this.sheetTabs.forEach((tabData: any) => {
-              this.setDashboardSheetData(sheet, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard,false);
+              this.setDashboardSheetData(sheet, false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard,true,false);
             })
           }
         });
@@ -6836,6 +6846,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.workbechService.actionUpdateOnSheetRemove(object).subscribe({
       next: (data) => {
         console.log(data);
+        this.actionId = '';
         this.getDrillThroughActionList();
         this.toasterService.info(data.message,'info',{ positionClass: 'toast-top-center'})
       },
@@ -6871,10 +6882,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.filteredRowData.push(rowObject);
             console.log('filterowData', this.filteredRowData);
           });
-          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,false,this.dashboard,false);
+          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,false,this.dashboard,false,false);
           if (this.displayTabs) {
             this.sheetTabs.forEach((tabData: any) => {
-              this.setDashboardSheetData([], false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard,false);
+              this.setDashboardSheetData([], false, false, false, true, sheet.sheet_id, false, false, tabData.dashboard,true,false);
             })
           }
         });
@@ -7531,7 +7542,7 @@ validateTextEditor(): boolean {
       this.pageChangeTableDisplay(item,1,true,isLastIndex,value);
       this.tablePage=1
     }else{
-    this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard,value,true);
+    this.setDashboardSheetData(item, true , true, false, false, '',true,isLastIndex,this.dashboard,false,value,true);
     // if (this.displayTabs) {
     //   this.sheetTabs.forEach((tabData: any) => {
     //     this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard,value);
@@ -7540,7 +7551,7 @@ validateTextEditor(): boolean {
     if (data.dashboard.tab_data) {
       data.dashboard.tab_data.forEach((tabData: any) => {
         // const isLastInThisTab = this.isLastSheetInData(item.sheet_id, tabData.dashboard, data.sheets);
-        this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard, value,true);
+        this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, tabData.dashboard,true, value,true);
       });
     }
     }
@@ -7587,12 +7598,12 @@ validateTextEditor(): boolean {
         console.error('Error during pagination:', err);
       }
     } else {
-      this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, this.dashboard, value);
+      this.setDashboardSheetData(item, true, true, false, false, '', true, isLastIndex, this.dashboard,false, value);
 
       if (this.displayTabs) {
         this.sheetTabs.forEach(tabData => {
           const isLastInThisTab = this.isLastSheetInData(item.sheet_id, tabData.dashboard, data);
-          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastInThisTab, tabData.dashboard, value);
+          this.setDashboardSheetData(item, true, true, false, false, '', true, isLastInThisTab, tabData.dashboard,true, value);
         });
       }
     }

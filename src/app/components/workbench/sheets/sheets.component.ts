@@ -98,7 +98,7 @@ declare var $:any;
 @Component({
   selector: 'app-sheets',
   standalone: true,
-  encapsulation: ViewEncapsulation.None,
+  // encapsulation: ViewEncapsulation.None,
   // changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {

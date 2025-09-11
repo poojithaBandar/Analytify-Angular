@@ -57,7 +57,7 @@ export class WorkbenchComponent implements OnInit{
   databaseId:any;
   fileId:any;
   databaseType:any;
-  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR','GEMINI'];
+  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','ZOHO','TALLY','PAX8','BAMBOOHR','GEMINI'];
   openPostgreSqlForm= false;
   openMySqlForm = false;
   openConnectWiseForm = false;
@@ -4008,6 +4008,8 @@ connectGoogleSheets(){
       request$ = this.workbechService.buildSampleBambooHRDashboard(database.hierarchy_id);
     }else if(database.server_type === 'GEMINI'){
       request$ = this.workbechService.buildSampleGeminiDashboard(database.hierarchy_id);
+    }else if(database.server_type === 'ZOHO'){
+      request$ = this.workbechService.buildSampleZohoDashboard(database.hierarchy_id);
     }else{
       request$ = this.workbechService.createSmartDashboard(database.hierarchy_id);
     }
@@ -4025,6 +4027,9 @@ connectGoogleSheets(){
             break;
           case 'QUICKBOOKS':
             this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, database.hierarchy_id, responce);
+            break;
+          case 'ZOHO':
+            this.templateDashboardService.buildSampleZohoDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'IMMYBOT':
             this.templateDashboardService.buildSampleImmybotDashboard(this.container, database.hierarchy_id, responce);
