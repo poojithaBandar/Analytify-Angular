@@ -10,7 +10,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { SharedModule } from '../../../shared/sharedmodule';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -34,7 +34,7 @@ const EXCEL_TYPE =
 @Component({
   selector: 'app-database',
   standalone: true,
-  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent,ScrollingModule,TestPipe],
+  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent,ScrollingModule,TestPipe,NgbDropdownModule],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   providers: [TemplateDashboardService],
@@ -167,7 +167,8 @@ export class DatabaseComponent {
   dragTablestoSemanticLayer = false;
   deleteTablesFromSemanticLayer = false;
   canSearchTablesInSemanticLayer = false;
-  isEditing = false;
+  isEditingTableJoininig = false;
+  isEditingTitleCustomSql = false
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService,private templateService:ViewTemplateDrivenService,private templateDashboardService: TemplateDashboardService){
     const currentUrl = this.router.url;
     this.dragTablestoSemanticLayer = this.templateService.dragTablesToSemanticLayer();
@@ -2245,4 +2246,9 @@ deleteConnectedDb(db:any){
     }
   });
 }
+openViewFullModal(content:any){
+    this.modalService.open(content, { size: 'xl'});
+
+}
+
 }
