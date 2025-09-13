@@ -4945,7 +4945,12 @@
           <label [ngClass]="{'error-label': zohoScopeError}" class="form-label">
             Scopes <span class="text-danger">*</span>
           </label>
-          <ng-multiselect-dropdown [data]="zohoScopes" [(ngModel)]="selectedZohoScopes" [ngModelOptions]="{standalone: true}" [settings]="hubspotDropdownSettings" (onSelect)="onZohoScopeChange()" (onDeSelect)="onZohoScopeChange()" (onSelectAll)="onZohoScopeChange()" (onDeSelectAll)="onZohoScopeChange()">
+          <ng-multiselect-dropdown
+            [data]="zohoScopes"
+            [(ngModel)]="selectedZohoScopes"
+            [ngModelOptions]="{standalone: true}"
+            [settings]="hubspotDropdownSettings"
+            (ngModelChange)="onZohoScopeChange($event)">
           </ng-multiselect-dropdown>
         </div>
 
