@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../shared/sharedmodule';
 // import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { UsersDashboardComponent } from '../users-dashboard/users-dashboard.component';
@@ -25,6 +25,7 @@ export class ConfigureComponent implements OnInit {
   errorMessage: string = '';
   showPassword: boolean = false;
   activeTab = 'configure';
+  selectedEmbedType!: string;
   dashboardId:any;
   sheetId:any;
   dbId:any;
@@ -111,6 +112,7 @@ sheetToggles = {
 };
 datasourceToggles = {
   datasource_update: false,
+  datasource_renewal: false
 };
 dashboards :any=[];
 sheets :any=[];
@@ -164,6 +166,13 @@ selectedSheet: any = null;
   preventSpaces(event: KeyboardEvent) {
     if (event.code === 'Space' || event.key === ' ') {
       event.preventDefault();
+    }
+  }
+  onNavChange(event: NgbNavChangeEvent) {
+    if (event.nextId === 'embedsdk') {
+      this.selectedEmbedType = 'embed-sdk';
+    } else if (event.nextId === 'embedproject') {
+      this.selectedEmbedType = 'embed-project';
     }
   }
   getDashbaordList(){
@@ -272,13 +281,22 @@ selectedSheet: any = null;
     });
 
   }
-  getDatasourceDetails(id:any){
+  isPax8 = false;
+  getDatasourceDetails(id:any,serverType?:any){
+    if(serverType === 'PAX8'){
+      this.isPax8 = true
+    }else{
+      this.isPax8 = false;
+    }
     this.dbId = id;
     this.workbechService.getMailAlertsDatasourceData(id).subscribe({
       next: (data: any) => {
         if (data) {
           console.log(data);
           this.datasourceName = data.data?.datasource_name;
+          if(data.data?.server_type === 'PAX8'){
+            this.isPax8 = true
+          }
           this.updateDatasourceTogglesFromApi(data.data?.mail_action);
           this.userId =data.data?.id;
           this.enabledEmail=data.data?.is_enabled;
@@ -363,6 +381,7 @@ updateDatasourceTogglesFromApi(mailAction: any) {
   }
   this.datasourceToggles = {
     datasource_update: actions.includes('datasource_update'),
+    datasource_renewal: actions.includes('renewal'),
   };
 }
   onDashboardSelect(dashboard:any){
@@ -541,6 +560,7 @@ getSelectedSheetMailActions(): string[] {
 getSelectedDatasourceMailActions(): string[] {
   const actions = [];
   if (this.datasourceToggles.datasource_update) actions.push('datasource_update');
+  if (this.datasourceToggles.datasource_renewal) actions.push('renewal');
   return actions;
 }
 
@@ -587,11 +607,14 @@ openThresholdModal(editThreshold: any = null) {
   this.modalService.open(this.thresholdModal, { centered: true });
 }
 // ...existing code...
+currentValue: any = null;
   onSheetChange() {
-    this.selectedChart = this.charts.find(c => c.sheet_id == this.thresholdForm.sheet_id && c.chart_id === 25);
+    this.selectedChart = this.charts.find(c => c.sheet_id == this.thresholdForm.selectedChart.sheet_id && c.chart_id === 25);
     if (this.selectedChart) {
       this.thresholdForm.metric = this.selectedChart.column_name;
     }
+    console.log(this.selectedChart);
+    this.currentValue = this.thresholdForm.selectedChart?.current_value || null;
   }
 
   saveThreshold(modal:any) {
@@ -643,6 +666,7 @@ openThresholdModal(editThreshold: any = null) {
   }
   editThreshold(threshold:any) {
     this.openThresholdModal(threshold);
+    this.currentValue = threshold.current_value;
   }
 
   deleteThreshold(threshold:any) {

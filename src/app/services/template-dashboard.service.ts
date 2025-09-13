@@ -696,6 +696,8 @@ export class TemplateDashboardService {
       chartData = this.echartInstance.barLinechartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     } else if(data.chart_id == 26){
       chartData = this.echartInstance.heatmapFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+    } else if(data.chart_id == 18){
+      chartData = this.echartInstance.treemapFromGenieDashboard(chartsColumnData, chartsRowData);
     } else if(data.chart_id == 5){
       chartData = this.echartInstance.stackedchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
     } else if(data.chart_id == 11){
@@ -724,7 +726,7 @@ export class TemplateDashboardService {
     const sheet_rows_data = data.row_data.map((item:any) => {
       return [
         item.orginal_column,
-        "aggregate",
+        item.type ? "aggregate" : item.data_type,
         item.type ? item.type : "",
         ""
       ];
@@ -733,7 +735,7 @@ export class TemplateDashboardService {
       return [
         item.orginal_column,
         item.data_type,
-        "",
+        (item?.type ? item?.type : "") ?? "",
         ""
       ];
     });
@@ -915,6 +917,85 @@ export class TemplateDashboardService {
       handleResponse(responceData);
     } else {
       this.workbechService.buildSampleHALOPSADashbaord(databaseId).subscribe({
+        next: handleResponse,
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      })
+    }
+  }
+  buildSamplePaxDashboard(container: ViewContainerRef , databaseId: any, responceData?: any){
+    const componentRef =container.createComponent(InsightEchartComponent);
+    this.echartInstance = componentRef.instance;
+
+    const handleResponse = (responce: any) => {
+      const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+      queries.forEach((query: any) => {
+        const obj ={
+          query_set_id:query.queryset_id,
+          hierarchy_id:query.hierarchy_id,
+          joining_tables: query.joining_tables,
+          join_type:query.join_type,
+          joining_conditions:query.joining_conditions,
+          dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+          is_smart_dashboard:true
+        } as any;
+          this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
+              error: (error) => {
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+                console.log(error);
+              }
+            }
+          )
+      });
+      this.buildDashboardResponseData(responce);
+    };
+
+    if(responceData){
+      handleResponse(responceData);
+    } else {
+      this.workbechService.buildSamplePaxDashboard(databaseId).subscribe({
+        next: handleResponse,
+        error: (error) => {
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          console.log(error);
+        }
+      })
+    }
+  }
+
+  buildSampleBambooHRDashboard(container: ViewContainerRef , databaseId: any, responceData?: any){
+    const componentRef =container.createComponent(InsightEchartComponent);
+    this.echartInstance = componentRef.instance;
+
+    const handleResponse = (responce: any) => {
+      const queries = Array.isArray(responce.datasource_query) ? responce.datasource_query : [responce.datasource_query];
+      queries.forEach((query: any) => {
+        const obj ={
+          query_set_id:query.queryset_id,
+          hierarchy_id:query.hierarchy_id,
+          joining_tables: query.joining_tables,
+          join_type:query.join_type,
+          joining_conditions:query.joining_conditions,
+          dragged_array: {dragged_array:query.dragged_array,dragged_array_indexing:{}},
+          is_smart_dashboard:true
+        } as any;
+          this.workbechService.joiningTablesTest(obj).subscribe({next: () => {},
+              error: (error) => {
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+                console.log(error);
+              }
+            }
+          )
+      });
+      this.buildDashboardResponseData(responce);
+    };
+
+    if(responceData){
+      handleResponse(responceData);
+    } else {
+      this.workbechService.buildSampleBambooHRDashboard(databaseId).subscribe({
         next: handleResponse,
         error: (error) => {
           this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -1127,7 +1208,7 @@ buildSampleHubspotDashboard(container: ViewContainerRef, databaseId: any, respon
 
   private readonly TABLE_MAX     = 1;
   private readonly TABLE_PER_ROW = 1;
-  private readonly TABLE_SIZE    = { cols: 20, rows: 15 };
+  private readonly TABLE_SIZE    = { cols: 20, rows: 12 };
 
   private readonly MIDDLE_PER_ROW = 2;
   private readonly MIDDLE_SIZE    = { cols: 10, rows: 8 };

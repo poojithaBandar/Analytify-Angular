@@ -4,9 +4,9 @@
   <div class="row">
     <!-- Form Card -->
     <div class="col-lg-6 mb-4">
-      <div class="card shadow-sm h-100">
+      <div class="card shadow-sm h-100 rounded-3">
         <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">Configure SDK</h5>
+          <h5 class="mb-0">{{ isProjectSDK ? 'Embed Project' : 'Configure SDK' }}</h5>
         </div>
         <div class="card-body">
           <form #sdkForm="ngForm" (ngSubmit)="submitSDKKeys()">
@@ -108,28 +108,18 @@
 
     <!-- Script & Preview Card -->
     <div class="col-lg-6 mb-4" *ngIf="displayScript">
-      <div class="card shadow-sm h-100">
+      <div class="card shadow-sm h-100 rounded-3">
         <div class="card-header bg-secondary text-white">
           <h5 class="mb-0">Embed Script & Preview</h5>
         </div>
         <div class="card-body d-flex flex-column">
-          <div class="border overflow-hidden flex-grow-1">
-            <div
-              id="dashboard-container"
-              class="w-100 h-100"
-            >
-              <textarea
+          <textarea
             class="form-control mb-3 font-monospace flex-grow-1"
-            rows="8"
+            style="min-height: 400px; overflow-y: scroll;"
             readonly
-          >
-{{ scriptContent }}
-          </textarea>
-          
-          </div>
+          >{{ scriptContent }}</textarea>
         </div>
       </div>
     </div>
-  </div>
   </div>
 </section>

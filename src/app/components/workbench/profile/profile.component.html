@@ -17,7 +17,7 @@
                             <!-- <div class="nav-item" [class.btn-primary]="activeTab === 'settings'" [class.btn-primary-light]="activeTab !== 'settings'" (click)="setActiveTab('settings')">
                                 <i class="fe fe-settings me-1"></i> Account Settings
                             </div> -->
-                            <div class="nav-item btn-danger-light" style="color: #ff4d4f;" (click)="signOut()">
+                            <div *ngIf="!isEmbedSDK" class="nav-item btn-danger-light" style="color: #ff4d4f;" (click)="signOut()">
                                 <i class="fe fe-log-out me-1"></i>Sign Out
                             </div>
                         </div>
