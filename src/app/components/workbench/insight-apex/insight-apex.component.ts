@@ -2003,7 +2003,7 @@ xaxis: {
       },
       plotOptions: {
         treemap: {
-          distributed: this.isDistributed,
+          distributed: this.isMeasureDistribution ? true : this.isDistributed,
           borderRadius: this.barCornerRadius,
         }
       },
@@ -3573,10 +3573,10 @@ xaxis: {
         this.chartOptions.plotOptions = {
           ...this.chartOptions.plotOptions,
           treemap: {
-            distributed: true
+            distributed: this.isMeasureDistribution ? true : this.isDistributed,
           }
         };
-        const object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
+        object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
         this.treemapCharts?.updateOptions(object);
       }
     }

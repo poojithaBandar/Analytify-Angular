@@ -670,7 +670,7 @@ input.BitSpace {
 
 
 /* === Pivot container === */
-.pvtUi {
+:host ::ng-deep .pvtUi {
   // border: 1px solid #e5e7eb;       /* soft gray border */
   // border-radius: 12px;             /* ✅ outer curve */
   // padding: 12px;
@@ -678,7 +678,7 @@ input.BitSpace {
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   transition: box-shadow 0.2s ease;
 }
-table.pvtUi {
+:host ::ng-deep table.pvtUi {
   // border: 1px solid #e5e7eb;
   // border-radius: 12px;      /* ✅ rounded edges */
   overflow: hidden;         /* clips inner content */
@@ -688,14 +688,14 @@ table.pvtUi {
   border-collapse: separate !important; /* allow radius */
   border-spacing: 0; 
 }
-.pvtUi:hover {
+:host ::ng-deep .pvtUi:hover {
   box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 
 /* === Axis containers === */
-.pvtAxisContainer,
-.pvtVals,
-.pvtRendererArea {
+:host ::ng-deep .pvtAxisContainer,
+:host ::ng-deep .pvtVals,
+:host ::ng-deep .pvtRendererArea {
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   background: #fafafa;
@@ -719,14 +719,14 @@ table.pvtUi {
 //   cursor: grab;
 //   transition: all 0.15s ease-in-out;
 // }
-.pvtUi select {
+:host ::ng-deep .pvtUi select {
   // border-radius: 8px;
   // border: 1px solid #d1d5db;
   padding: 4px 8px;
   font-size: 13px;
   background: #fff;
 }
-.pvtAxisContainer li {
+:host ::ng-deep .pvtAxisContainer li {
   // border-radius: 20px !important;    /* pill shape */
   // background: #f9fafb !important;    /* ✅ no grey */
   // border: 1px solid #e5e7eb !important;
@@ -736,43 +736,43 @@ table.pvtUi {
   // box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   cursor: grab;
 }
-.pvtAxisContainer li:active {
+:host ::ng-deep .pvtAxisContainer li:active {
   cursor: grabbing;
 }
 /* Hover effect */
-.pvtAxisContainer li:hover,
-.pvtVals li:hover {
+// :host ::ng-deep .pvtAxisContainer li:hover,
+// .pvtVals li:hover {
   // background: #f0f9ff !important;
   // border-color: #3b82f6 !important;
   // color: #1d4ed8 !important;
   // box-shadow: 0 2px 5px rgba(59,130,246,0.2);
-}
+// }
 /* Round the outer Heatmap (renderer) cell */
-.pvtUi > tbody > tr:first-child > td:first-child {
+:host ::ng-deep .pvtUi > tbody > tr:first-child > td:first-child {
   border-top-left-radius: 12px;
   overflow: hidden;
 }
 
 /* Round the top-right (next to Heatmap cell) */
-.pvtUi > tbody > tr:first-child > td:last-child {
+:host ::ng-deep .pvtUi > tbody > tr:first-child > td:last-child {
   border-top-right-radius: 12px;
   overflow: hidden;
 }
-.pvtUiCell{
+:host ::ng-deep .pvtUiCell{
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   transition: box-shadow 0.2s ease;
   border: 1px solid #f0f0f0;
   border-radius: 10px;
 }
-.pvtVals.pvtUiCell {
-  display: flex;
-  align-items: flex-start;  /* left align */
-  gap: 8px;                 /* space between dropdowns */
-}
+// :host ::ng-deep .pvtVals.pvtUiCell {
+//   display: flex;
+//   align-items: flex-start;  /* left align */
+//   gap: 8px;                 /* space between dropdowns */
+// }
 /* Dragging state */
-.pvtAxisContainer li.ui-sortable-helper,
-.pvtVals li.ui-sortable-helper {
+:host ::ng-deep .pvtAxisContainer li.ui-sortable-helper,
+:host ::ng-deep .pvtVals li.ui-sortable-helper {
   // background: #3b82f6 !important;
   // color: #fff !important;
   border: none !important;
@@ -782,9 +782,9 @@ table.pvtUi {
 
 
 /* === Dropdowns (aggregator, renderer, attributes) === */
-.pvtRenderer,
-.pvtAggregator,
-.pvtAttrDropdown {
+:host ::ng-deep .pvtRenderer,
+:host ::ng-deep .pvtAggregator,
+:host ::ng-deep .pvtAttrDropdown {
   border-radius: 8px;
   border: 1px solid #d1d5db;
   padding: 6px 10px;
@@ -793,14 +793,14 @@ table.pvtUi {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.pvtRenderer:focus,
-.pvtAggregator:focus,
-.pvtAttrDropdown:focus {
+:host ::ng-deep .pvtRenderer:focus,
+:host ::ng-deep .pvtAggregator:focus,
+:host ::ng-deep .pvtAttrDropdown:focus {
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
   outline: none;
 }
-.pvtUi > tbody > tr:first-child {
+:host ::ng-deep .pvtUi > tbody > tr:first-child {
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
   border-top-left-radius: 12px;
@@ -808,7 +808,7 @@ table.pvtUi {
   overflow: hidden;
 }
 /* === Pivot table === */
-.pvtTable {
+:host ::ng-deep .pvtTable {
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
@@ -818,15 +818,15 @@ table.pvtUi {
   margin-top: 12px;
 }
 
-.pvtTable th,
-.pvtTable td {
+:host ::ng-deep .pvtTable th,
+:host ::ng-deep .pvtTable td {
   border: 1px solid #f0f0f0;
   padding: 8px 12px;
   font-size: 13px;
   background: #fff;
 }
 
-.pvtTable th {
+:host ::ng-deep .pvtTable th {
   background: #f9fafb;
   font-weight: 600;
 }
