@@ -1726,8 +1726,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.zohoRedirectURLError = !this.zohoRedirectURL;
   }
 
-  onZohoScopeChange(): void {
-    this.zohoScopeError = this.selectedZohoScopes.length <= 0;
+  onZohoScopeChange(scopes: string[]): void {
+    this.selectedZohoScopes = scopes;
+    this.zohoScopeError = !scopes || scopes.length === 0;
   }
   
     shopifySignIn(){
