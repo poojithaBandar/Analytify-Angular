@@ -983,7 +983,7 @@
                 
             
                       <div class="d-flex gap-2">
-                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT' || iscrossDbSelect)"
+                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT' || connection.server_type ==='ZOHO' || connection.server_type ==='JIRA'|| iscrossDbSelect)"
                           class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill" (click)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);"
                           [ngClass]="{'transform-card': !['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT'].includes(connection.server_type)}">
                          
