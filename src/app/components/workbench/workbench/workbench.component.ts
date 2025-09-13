@@ -211,7 +211,7 @@ export class WorkbenchComponent implements OnInit{
   zohoRedirectURL!: string;
   zohoCountry: string = '';
   zohoScopes: string[] = ['CRM','BOOKS'];
-  selectedZohoScopes: string[] = ['CRM'];
+  selectedZohoScopes: string[] = [];
   zohoDescription: string = '';
   zohoClientIdError = false;
   zohoClientSecretError = false;
@@ -905,7 +905,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.selectedHubspotScopes = [];
     this.zohoClientId = '';
     this.zohoClientSecret = '';
-    this.selectedZohoScopes = ['CRM'];
+    this.selectedZohoScopes = [];
     this.zohoRedirectURL = '';
     this.zohoCountry = '';
     this.zohoDescription = '';
@@ -3340,7 +3340,7 @@ connectGoogleSheets(){
   this.zohoClientSecret = '';
   this.zohoRedirectURL = '';
   this.zohoCountry = '';
-  this.selectedZohoScopes = ['CRM'];
+  this.selectedZohoScopes = [];
   this.zohoDescription = '';
   this.siteURLPSA = '';
   this.tallyToken = '';
@@ -4116,7 +4116,7 @@ model = {
   this.zohoClientSecret = '';
   this.zohoRedirectURL = '';
   this.zohoCountry = '';
-  this.selectedZohoScopes = ['CRM'];
+  this.selectedZohoScopes = [];
   this.zohoDescription = '';
   this.zohoClientIdError = false;
   this.zohoClientSecretError = false;
