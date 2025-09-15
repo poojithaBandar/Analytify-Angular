@@ -4168,36 +4168,36 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   mysql: { type: 'image', value: './assets/images/icons/Mysql.svg' },
   microsoftsqlserver: { type: 'image', value: './assets/images/icons/Microsofy SQl.svg' },
   snowflake: { type: 'image', value: './assets/images/icons/Snowflake.svg' },
-  mongodb: { type: 'emoji', value: '🍃' },
-  'sap hana': { type: 'emoji', value: '⚡' },
+  mongodb: { type: 'image', value: './assets/images/icons/mongo DB.svg' },
+  'sap hana': { type: 'image', value: './assets/images/icons/SAP Hana.svg' },
 
   quickbooks: { type: 'image', value: './assets/images/icons/quickbooks.png' },
   ninja: { type: 'svg', value: this.SVGICONS.ninjaOne },
   tally: { type: 'image', value: './assets/images/icons/tally-icon.svg' },
-  csv: { type: 'emoji', value: '📑' },
-  excel: { type: 'emoji', value: '📊' },
+  csv: { type: 'image', value: './assets/images/icons/CSV.svg' },
+  excel: { type: 'image', value: './assets/images/icons/Excel.svg' },
   google_analytics: { type: 'svg', value: this.SVGICONS.googleAnalytics },
   halops: { type: 'image', value:'./assets/images/icons/halopsa.png' },
   pax8: { type: 'image', value: './assets/images/icons/pax8-icon.png' },
   connectwise: { type: 'image', value:'./assets/images/icons/connectwise.png' },
   dbt: { type: 'image', value:'./assets/images/icons/dbt.svg' },
   shopify: { type: 'svg', value: this.SVGICONS.shopify },
-  open_ai: { type: 'emoji', value: '🤖' },
+  open_ai: { type: 'image', value: './assets/images/icons/Open AI.svg' },
   bamboohr: { type: 'svg', value: this.SVGICONS.bambooHr },
-  deepseek: { type: 'emoji', value: '🔍' },
-  gemini: { type: 'emoji', value: '♊' },
+  deepseek: { type: 'image', value: './assets/images/icons/Deep_seek.svg' },
+  gemini: { type: 'image', value: './assets/images/icons/gemini-color 2.svg' },
   salesforce: { type: 'svg', value: this.SVGICONS.Salesforce },
   jira: { type: 'svg', value: this.SVGICONS.jira },
   google_sheets: { type: 'svg', value: this.SVGICONS.googleSheets },
   hubspot: { type: 'svg', value: this.SVGICONS.hubspot },
   xAmplify: { type: 'image', value: './assets/images/icons/Xamplify.png' },
   zoho: { type: 'image', value: './assets/images/icons/zoho.svg' },
-  sap: { type: 'emoji', value: '🏢' },
-  cassandra: { type: 'emoji', value: '🌌' },
-  sqlite: { type: 'emoji', value: '💾' },
-  Anthropic: { type: 'emoji', value: '🌐' },
-  'azure apenai': { type: 'emoji', value: '☁️' },
-  'meta llma': { type: 'emoji', value: '🦙' },
+  sap: { type: 'image', value: './assets/images/icons/SAP.svg' },
+  cassandra: { type: 'image', value: './assets/images/icons/Cassandra.svg' },
+  sqlite: { type: 'image', value: './assets/images/icons/SQLite.svg' },
+  Anthropic: { type: 'image', value: './assets/images/icons/Anthropic.svg' },
+  'azure apenai': { type: 'image', value: './assets/images/icons/Azure.svg' },
+  'meta llma': { type: 'image', value: './assets/images/icons/Meta LLaMA.svg' },
   immybot: { type: 'svg', value: this.SVGICONS.immybot }
 };
   existingConnections: any = [];
@@ -4241,25 +4241,25 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: "Snow Flake", image: './assets/images/icons/Snowflake.svg', description: "Cloud data warehouse" }
   ],
   "LLM Integrations": [
-    { name: "OpenAI", icon: "🤖", description: "AI & language models by OpenAI" },
-    { name: "DeepSeek", icon: "🔍", description: "Deep learning & LLM platform" },
-    { name: "Gemini", icon: "♊", description: "Google DeepMind Gemini models" },
-    { name: "Anthropic", icon: "🌐", description: "Claude AI models", disabled: true },
-    { name: "Azure OpenAI", icon: "☁️", description: "Azure-hosted OpenAI models", disabled: true },
-    { name: "Meta LLaMA", icon: "🦙", description: "Meta’s LLaMA family of LLMs", disabled: true }
+    { name: "OpenAI", image: './assets/images/icons/Open AI.svg', description: "AI & language models by OpenAI" },
+    { name: "DeepSeek", image: './assets/images/icons/Deep_seek.svg', description: "Deep learning & LLM platform" },
+    { name: "Gemini", image: './assets/images/icons/gemini-color 2.svg', description: "Google DeepMind Gemini models" },
+    { name: "Anthropic", image: './assets/images/icons/Anthropic.svg', description: "Claude AI models", disabled: true },
+    { name: "Azure OpenAI",image: './assets/images/icons/Azure.svg', description: "Azure-hosted OpenAI models", disabled: true },
+    { name: "Meta LLaMA", image: './assets/images/icons/Meta LLaMA.svg', description: "Meta’s LLaMA family of LLMs", disabled: true }
   ],
   "NoSQL Database": [
-    { name: "Cassandra", icon: "🌌", description: "Highly scalable NoSQL database", disabled: true },
-    { name: "SQLite", icon: "💾", description: "Lightweight embedded database" },
-    { name: "MongoDB", icon: "🍃", description: "Document-oriented NoSQL database", disabled: true }
+    { name: "Cassandra", image: './assets/images/icons/Cassandra.svg', description: "Highly scalable NoSQL database", disabled: true },
+    { name: "SQLite", image: './assets/images/icons/SQLite.svg', description: "Lightweight embedded database" },
+    { name: "MongoDB", image: './assets/images/icons/mongo DB.svg', description: "Document-oriented NoSQL database", disabled: true }
   ],
   "Multi-dimensional Database": [
-    { name: "SAP", icon: "🏢", description: "Enterprise resource planning & database", disabled: true },
-    { name: "SAP HANA", icon: "⚡", description: "In-memory, column-oriented database" }
+    { name: "SAP", image: './assets/images/icons/SAP.svg', description: "Enterprise resource planning & database", disabled: true },
+    { name: "SAP HANA", image: './assets/images/icons/SAP Hana.svg', description: "In-memory, column-oriented database" }
   ],
   "File Source": [
-    { name: "CSV", icon: "📑", description: "Comma-separated values file" },
-    { name: "Excel", icon: "📊", description: "Spreadsheet file format" }
+    { name: "CSV", image: "./assets/images/icons/CSV.svg", description: "Comma-separated values file" },
+    { name: "Excel", image: "./assets/images/icons/Excel.svg", description: "Spreadsheet file format" }
   ],
   "Integrations": [
     { name: "xAmplify",image:'./assets/images/icons/Xamplify.png', description: "Business automation platform" },
