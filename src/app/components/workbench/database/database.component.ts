@@ -167,6 +167,7 @@ export class DatabaseComponent {
   dragTablestoSemanticLayer = false;
   deleteTablesFromSemanticLayer = false;
   canSearchTablesInSemanticLayer = false;
+  isEditing = false;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService,private templateService:ViewTemplateDrivenService,private templateDashboardService: TemplateDashboardService){
     const currentUrl = this.router.url;
     this.dragTablestoSemanticLayer = this.templateService.dragTablesToSemanticLayer();
@@ -301,6 +302,29 @@ export class DatabaseComponent {
           this.templateDashboardService.buildSampleHubspotDashboard(this.container, this.databaseId);
         }
       });
+    }
+    if(currentUrl.includes('/analytify/database-connection/zoho/')){
+      this.fromDatabasId = true;
+      this.databaseId = +atob(route.snapshot.params['id']);
+      Swal.fire({
+        position: "center",
+        iconHtml: '<img src="./assets/images/copilot.gif">',
+        title: "Create smart dashboard from your data with just one click?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        customClass: {
+          icon: 'no-icon-bg',
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.templateDashboardService.buildSampleZohoDashboard(this.container, this.databaseId);
+        }
+      });
+    } if(currentUrl.includes('/analytify/database-connection/jira/')){
+      this.fromDatabasId = true;
+      this.databaseId = +atob(route.snapshot.params['id']);
     }
 }
   ngOnInit(){

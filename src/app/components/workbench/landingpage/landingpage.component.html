@@ -296,6 +296,10 @@
                                                 src="./assets/images/icons/oracle-icon.jpg"
                                                 alt="Oracle"
                                                 class="card-img w-5 h-5 icon-bounce" />
+                                            <img *ngIf="database.server_type === 'ZOHO'"
+                                                src="./assets/images/icons/zoho.svg"
+                                                alt="Zoho"
+                                                class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'NINJA'"
                                                 src="./assets/images/icons/ninjaRMMIcon.jpg"
@@ -346,12 +350,12 @@
                                                 alt="Snowflake"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
-                                            <img *ngIf="database.server_type === 'EXCEL'"
+                                            <img *ngIf="database.server_type === 'CSV'"
                                                 src="./assets/images/icons/csv-icon.jpg"
                                                 alt="Excel"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
-                                            <img *ngIf="database.server_type === 'CSV'"
+                                            <img *ngIf="database.server_type === 'EXCEL'"
                                                 src="./assets/images/icons/excel-icon.jpg"
                                                 alt="CSV"
                                                 class="card-img w-5 h-5 icon-bounce" />
@@ -369,6 +373,14 @@
                                             <img *ngIf="database.server_type === 'CONNECTWISE'"
                                                 src="./assets/images/icons/connectwise-icon.png"
                                                 alt="Connectwise"
+                                                class="card-img w-5 h-5" />
+                                            <img *ngIf="database.server_type === 'DBT'"
+                                                src="./assets/images/icons/dbt.svg"
+                                                alt="DBT"
+                                                class="card-img w-5 h-5" />
+                                            <img *ngIf="database.server_type === 'JIRA'"
+                                                src="./assets/images/icons/jira.svg"
+                                                alt="Jira"
                                                 class="card-img w-5 h-5" />
 
                                             <img *ngIf="database.server_type === 'HALOPS'"
@@ -490,6 +502,10 @@
                                     </td>
                                     <td *ngIf="database.server_type === 'CONNECTWISE'">
                                         <img alt="product" src="./assets/images/icons/connectwise-icon.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'DBT'">
+                                        <img alt="product" src="./assets/images/icons/dbt.svg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <td *ngIf="database.server_type === 'HALOPS'">
@@ -742,6 +758,10 @@
                                                 src="./assets/images/icons/oracle-icon.jpg"
                                                 alt="Oracle"
                                                 class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'ZOHO'"
+                                                src="./assets/images/icons/zoho.svg"
+                                                alt="Oracle"
+                                                class="avatar-radius icon-pulse w-5 h-5">   
 
                                             <img *ngIf="savedQuery.server_type === 'NINJA'"
                                                 src="./assets/images/icons/ninjaRMMIcon.jpg"
@@ -816,6 +836,14 @@
                                             <img *ngIf="savedQuery.server_type === 'CONNECTWISE'"
                                                 src="./assets/images/icons/connectwise-icon.png"
                                                 alt="Connectwise"
+                                                class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'DBT'"
+                                                src="./assets/images/icons/dbt.svg"
+                                                alt="DBT"
+                                                class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'JIRA'"
+                                                src="./assets/images/icons/jira.svg"
+                                                alt="Jira"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'HALOPS'"

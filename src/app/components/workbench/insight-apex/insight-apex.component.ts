@@ -1981,10 +1981,29 @@ xaxis: {
         height: 350,
         type: 'treemap',
         background: this.backgroundColor,
+        events: {
+          dataPointSelection: function (event: any, chartContext: any, config: any) {
+            const selectedXValue = self.chartsColumnData[config.dataPointIndex];
+            if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
+              let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              nestedKey = nestedKey === 'date' ? 'year/month/day' :  (nestedKey === 'time' ? 'date' : nestedKey);
+              self.drillDownIndex++;
+              let obj = { [nestedKey]: selectedXValue };
+              self.drillDownObject.push(obj);
+              let dObject = {
+                drillDownIndex : self.drillDownIndex,
+                draggedDrillDownColumns :self.draggedDrillDownColumns,
+                drillDownObject : self.drillDownObject,
+                chartOptions : JSON.parse(JSON.stringify(self.chartOptions))
+              };
+              self.setDrilldowns.emit(dObject);
+            }
+          }
+        }
       },
       plotOptions: {
         treemap: {
-          distributed: this.isDistributed,
+          distributed: this.isMeasureDistribution ? true : this.isDistributed,
           borderRadius: this.barCornerRadius,
         }
       },
@@ -3554,10 +3573,10 @@ xaxis: {
         this.chartOptions.plotOptions = {
           ...this.chartOptions.plotOptions,
           treemap: {
-            distributed: true
+            distributed: this.isMeasureDistribution ? true : this.isDistributed,
           }
         };
-        const object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
+        object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
         this.treemapCharts?.updateOptions(object);
       }
     }
