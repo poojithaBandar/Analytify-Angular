@@ -4349,7 +4349,7 @@ routeConfigure(){
   this.draggedRowsData = chartData.row;
   this.draggedColumns = chartData.columns;
   this.draggedRows = chartData.rows;
-  this.filterId = [];
+  this.filterId = chartData.filter_id ? chartData.filter_id : [];
   this.filterQuerySetId = chartData.datasource_quertsetid;
 
   console.log("This is SheetData", chartData);
