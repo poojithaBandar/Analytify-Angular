@@ -3339,7 +3339,11 @@
         (click)="categorySelect(cat.name)">
          <h6 class="mb-2">{{ cat.name }}</h6>
           <div class="d-flex align-items-start flex-grow-1">
-        <div class="fs-2 me-2 card-icon">{{ cat.icon }}</div>
+       <div class="fs-2 me-2 card-icon">
+        <img *ngIf="cat.image" [src]="cat.image" [alt]="cat.name" class="db-icon">
+        <span *ngIf="!cat.image && cat.icon">{{ cat.icon }}</span>
+        <div *ngIf="!cat.image && !cat.icon && cat.svg" [innerHTML]="getSafeSvg(cat.svg)"></div>
+      </div>
          <div class="flex-frow-1 d-flex flex-column">
         <small class="text-muted ">{{ cat.description }}</small>
         <span class="mt-1 ">
@@ -3394,8 +3398,17 @@
              <div class="d-flex align-items-center gap-2 mt-3 mb-2">
     <!-- Icon -->
     <div class="fs-3">
-      <span>{{ cat.icon }}</span>
-    </div>
+  <!-- Show image if available -->
+  <img *ngIf="cat.image" [src]="cat.image" [alt]="cat.name" class="db-icon">
+
+  <!-- Fallback to emoji/icon -->
+  <span *ngIf="!cat.image && cat.icon">{{ cat.icon }}</span>
+
+  <!-- Fallback to svg if present -->
+  <div *ngIf="!cat.image && !cat.icon && cat.svg"
+       [innerHTML]="getSafeSvg(cat.svg)">
+  </div>
+</div>
 
     <!-- Title & Subtitle -->
     <div>
