@@ -24,7 +24,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
-import _ from 'lodash';
+import _, { values } from 'lodash';
 
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -32,6 +32,7 @@ import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BambooHRIntegrationService } from '../bamboohr-integration.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { image } from 'd3';
 
 
 @Component({
@@ -4162,11 +4163,11 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   selectedConnectionType: string | null = null;
 
   connectionListIcons: any = {
-  postgresql: { type: 'emoji', value: '🐘' },
-  oracle: { type: 'emoji', value: '🏺' },
-  mysql: { type: 'emoji', value: '🐬' },
-  microsoftsqlserver: { type: 'emoji', value: '🖥️' },
-  snowflake: { type: 'emoji', value: '❄️' },
+  postgresql: { type: 'image', value: './assets/images/icons/PostgreSQl.svg' },
+  oracle: { type: 'image', value: './assets/images/icons/Oracel.svg' },
+  mysql: { type: 'image', value: './assets/images/icons/Mysql.svg' },
+  microsoftsqlserver: { type: 'image', value: './assets/images/icons/Microsofy SQl.svg' },
+  snowflake: { type: 'image', value: './assets/images/icons/Snowflake.svg' },
   mongodb: { type: 'emoji', value: '🍃' },
   'sap hana': { type: 'emoji', value: '⚡' },
 
@@ -4233,11 +4234,11 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   ];
   connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string,disabled?:boolean}[] } = {
   "Relational Database": [
-    { name: "MySQL", icon: "🐬", description: "Relational database" },
-    { name: "ORACLE", icon: "🏺", description: "Enterprise relational database" },
-    { name: "PostgreSQL", icon: "🐘", description: "Advanced open-source relational database" },
-    { name: "Microsoft SQL SERVER", icon: "🖥️", description: "Microsoft relational database" },
-    { name: "Snow Flake", icon: "❄️", description: "Cloud data warehouse" }
+    { name: "MySQL", image:'./assets/images/icons/Mysql.svg', description: "Relational database" },
+    { name: "ORACLE", image: './assets/images/icons/Oracel.svg', description: "Enterprise relational database" },
+    { name: "PostgreSQL", image: './assets/images/icons/PostgreSQl.svg', description: "Advanced open-source relational database" },
+    { name: "Microsoft SQL SERVER", image: './assets/images/icons/Microsofy SQl.svg', description: "Microsoft relational database" },
+    { name: "Snow Flake", image: './assets/images/icons/Snowflake.svg', description: "Cloud data warehouse" }
   ],
   "LLM Integrations": [
     { name: "OpenAI", icon: "🤖", description: "AI & language models by OpenAI" },
