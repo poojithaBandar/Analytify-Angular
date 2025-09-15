@@ -31,11 +31,11 @@
                           <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
                           <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                       </div>
-                     <div class="mb-2">
-                        <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
-                        <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
-                     </div>
-                    </form>
+                      <div class="mb-2">
+                         <label class="col-form-label">Description </label>
+                         <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
+                      </div>
+                     </form>
             } @else if(databaseType == 'dbt') {
               <form>
                 <div class="mb-2">
@@ -55,7 +55,7 @@
                   <input [ngClass]="{'error-input': dbtTokenError}" type="password" class="form-control" [(ngModel)]="dbtToken" [ngModelOptions]="{standalone: true}" placeholder="Token" (input)="dbtTokenInputError()">
                 </div>
                 <div class="mb-2">
-                   <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                   <label class="col-form-label">Description </label>
                    <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
                 </div>
               </form>
@@ -85,7 +85,7 @@
                         </ng-select>
                       </div>
                       <div class="mb-2">
-                         <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                         <label class="col-form-label">Description </label>
                          <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
                       </div>
               </form>
@@ -101,7 +101,7 @@
                   placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdErrorPSA()">
               </div>
                 <div class="mb-2">
-                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name </label>
                         <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
                     </div>
 
@@ -120,7 +120,7 @@
                     (input)="siteUrlPSAError()">
                    </div>
                    <div class="mb-2">
-                         <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+                         <label class="col-form-label">Description</label>
                          <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
                       </div>
               </form>
@@ -139,7 +139,7 @@
                   <input [ngClass]="{'error-input': pax8ClientSecretError}" type="text" class="form-control" [(ngModel)]="pax8ClientSecret" [ngModelOptions]="{standalone: true}" placeholder="Client Secret" (input)="pax8ClientSecretValidation()">
                 </div>
                 <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -158,7 +158,7 @@
                   <input [ngClass]="{'error-input': bambooHRApiKeyError}" type="text" class="form-control" [(ngModel)]="bambooHRApiKey" [ngModelOptions]="{standalone: true}" placeholder="API Key" (input)="bambooHRApiKeyValidation()">
                 </div>
                  <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -198,7 +198,7 @@
                     (input)="subDomainImmyBotError()">
                 </div>
                 <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -240,7 +240,7 @@
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Tally" (input)="displayNameIntegrationConditionError()">
                 </div>
                 <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -255,7 +255,7 @@
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. OpenAI" (input)="displayNameIntegrationConditionError()">
                 </div>
                 <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -270,7 +270,7 @@
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. DeepSeek" (input)="displayNameIntegrationConditionError()">
                 </div>
                 <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -285,7 +285,7 @@
                   <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Gemini" (input)="displayNameIntegrationConditionError()">
                 </div>
               <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -324,7 +324,7 @@
                   </ng-select>
                 </div>
                 <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -369,7 +369,7 @@
                 </div>
                 }
                 <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
               </form>
@@ -423,7 +423,7 @@
                 } -->
                 </div>
                 <div class="mb-2">
-              <label class="col-form-label">Description <span class="text-danger ms-1">*</span></label>
+              <label class="col-form-label">Description </label>
              <input type="text" class="form-control"[(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}">
             </div>
             </form>
@@ -432,44 +432,44 @@
           <div class="modal-footer">
             @if(databaseType == 'connectwise') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName && !connectionDescription) ">Update</button>
+              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">Update</button>
 
-            } @else if(databaseType == 'dbt') {
+            }  @else if(databaseType == 'dbt') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="dbtUpdate()" [disabled]="(dbtAccountIdError || dbtDomainUrlError || dbtTokenError || displayNameError) || !(dbtAccountId && dbtDomainUrl && dbtToken && displayName && !connectionDescription)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="dbtUpdate()" [disabled]="(dbtAccountIdError || dbtDomainUrlError || dbtTokenError || displayNameError) || !(dbtAccountId && dbtDomainUrl && dbtToken && displayName)">Update</button>
 
             } @else if(databaseType == 'halops') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName &&!connectionDescription )">Update</button>
+              <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName  )">Update</button>
 
             } @else if(databaseType == 'pax8') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="pax8Update()" [disabled]="(pax8ClientIdError || pax8ClientSecretError || displayNameError) || !(pax8ClientId && pax8ClientSecret && displayName &&!connectionDescription)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="pax8Update()" [disabled]="(pax8ClientIdError || pax8ClientSecretError || displayNameError) || !(pax8ClientId && pax8ClientSecret && displayName)">Update</button>
 
             } @else if(databaseType == 'bamboohr') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="bambooHRUpdate()" [disabled]="(bambooHRApiKeyError || bambooHRDomainError || displayNameError) || !(bambooHRApiKey && bambooHRDomain && displayName &&!connectionDescription)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="bambooHRUpdate()" [disabled]="(bambooHRApiKeyError || bambooHRDomainError || displayNameError) || !(bambooHRApiKey && bambooHRDomain && displayName )">Update</button>
 
             } @else if(databaseType == 'ninja') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="ninjaRMMUpdate()"  [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName &&!connectionDescription) ">Update</button>
+              <button type="button" class="btn btn-primary" (click)="ninjaRMMUpdate()"  [disabled]="(ninjaRMMScopeError || ninjaRMMClientSecretError || displayNameError || ninjaRMMClientIdError) || !(selectedNinjaRMMScopes.length > 0 && ninjaRMMClientSecret && ninjaRMMClientid && displayName ) ">Update</button>
 
             }
              @else if(databaseType == 'shopify') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName &&!connectionDescription)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName )">Update</button>
             } @else if(databaseType == 'tally') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="tallyUpdate()" [disabled]="(tallyTokenError || displayNameError) || !(tallyToken && displayName &&!connectionDescription)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="tallyUpdate()" [disabled]="(tallyTokenError || displayNameError) || !(tallyToken && displayName )">Update</button>
             } @else if(databaseType == 'open_ai') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="openAIUpdate()" [disabled]="(openAiKeyError || displayNameError) || !(openAiKey && displayName &&!connectionDescription)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="openAIUpdate()" [disabled]="(openAiKeyError || displayNameError) || !(openAiKey && displayName )">Update</button>
             } @else if(databaseType == 'deepseek') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="deepSeekUpdate()" [disabled]="(deepSeekKeyError || displayNameError) || !(deepSeekKey && displayName &&!connectionDescription)">Update</button>
+              <button type="button" class="btn btn-primary" (click)="deepSeekUpdate()" [disabled]="(deepSeekKeyError || displayNameError) || !(deepSeekKey && displayName )">Update</button>
             } @else if(databaseType == 'gemini') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="geminiUpdate()" [disabled]="(geminiKeyError || displayNameError) || !(geminiKey && displayName)||!connectionDescription">Update</button>
+              <button type="button" class="btn btn-primary" (click)="geminiUpdate()" [disabled]="(geminiKeyError || displayNameError) || !(geminiKey && displayName)">Update</button>
             } @else if(databaseType == 'google_analytics') {
               <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary"
@@ -479,7 +479,7 @@
               </button>
             } @else if(databaseType == 'immybot') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="ImmybotConnectionUpdate()" [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot &&!connectionDescription ) ">Update</button>
+              <button type="button" class="btn btn-primary" (click)="ImmybotConnectionUpdate()" [disabled]="(secretValueError || subDomainError || displayNameError || tenantIdError || clientIDImmyBotError) || !(subDomain && tenantId && secretValue && displayName && clientIdImmybot ) ">Update</button>
             } @else if(databaseType == 'sap hana') {
               <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
               <button type="button" class="btn btn-secondary" (click)="modal.close('cross click')">Close</button>
@@ -487,7 +487,7 @@
             }
             @else {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn||!connectionDescription">Update</button>
+            <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
             }
           </div>
         </div>
@@ -610,7 +610,7 @@
                       <td *ngIf="database.server_type === 'BAMBOOHR'">
                         <img alt="product" src="https://logo.clearbit.com/bamboohr.com" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
-                      <td *ngIf="database.server_type === 'ZOHO'">
+                     <td *ngIf="database.server_type === 'ZOHO'">
                         <img alt="product" src="./assets/images/icons/zoho.svg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'TALLY'">
@@ -756,7 +756,7 @@
                                                 <img src="./assets/images/icons/Pax8-black.svg" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'BAMBOOHR'" class="avatar avatar rounded-circle">
                                                 <img src="https://logo.clearbit.com/bamboohr.com" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'ZOHO'" class="avatar avatar rounded-circle">
+                                                <span *ngIf="database.server_type === 'ZOHO'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/zoho.svg" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'TALLY'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/TallyLogo.png" alt="" class="rounded-circle"></span>
@@ -975,7 +975,7 @@
                               <div [innerHTML]="getSafeSvg(connectionListIcons[connection.database_type]?.value)"></div>
                              }
                              @if(connectionListIcons[connection.database_type]?.type === 'image'){
-                              <img [src]="connectionListIcons[connection.database_type]?.value" alt="{{connection.database_type}}">
+                              <img [src]="connectionListIcons[connection.database_type]?.value" alt="connection.database_type">
                              }
                             <!-- <span *ngIf="connectionListIcons[connection.database_type]?.type === 'emoji'">
                               {{ connectionListIcons[connection.database_type]?.value }}
@@ -1072,7 +1072,7 @@
                 
             
                       <div class="d-flex gap-2">
-                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT' || iscrossDbSelect)"
+                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT' || connection.server_type ==='ZOHO' || connection.server_type ==='JIRA'|| iscrossDbSelect)"
                           class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill" (click)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);"
                           [ngClass]="{'transform-card': !['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT'].includes(connection.server_type)}">
                          
@@ -2114,7 +2114,7 @@
         </div>
       </div>
           }
-        @if(openHubspotForm){
+          @if(openHubspotForm){
             <div class="main-container container-fluid px-4 TopHeader">
               <div class="row">
                 <div class="col-md-12 col-xl-6 p-1 mb-0">
@@ -3301,44 +3301,63 @@
               </div>
           </div>
       </div> -->
-        
-
+    
+<div class="row">
+  <div class="col-3 cat-border" style="height:80vh; overflow-y:auto;">
 <div class="main-container container-fluid TopHeader">
   <div class="d-flex align-items-center mb-4">
     <div class="flex-grow-1 position-relative me-3">
-      <h4 class="mb-3">Choose a category</h4>
+      <h6 class="mb-3">CHOOSE A CATEGORY</h6>
     </div>
     <div class="d-flex ms-auto">
-      <app-insights-button [buttonName]="' View Connected Datasources'"
+      <!-- <app-insights-button [buttonName]="' View Connected Datasources'"
         [classesList]="'btn btn-primary me-3 animate-button'" [isIcon]="true" [previledgeId]="4"
         [faIconList]="'fa fa-eye'" [isBtn]="true" (click)="routeViewDatabase()">
-      </app-insights-button>
+      </app-insights-button> -->
     </div>
   </div>
 
-  <div class="row g-4">
-    <div class="col-md-4" *ngFor="let cat of categories">
+  <div class="row g-4 flex-column ">
+
+    <div class="col-12">
+    <div 
+      class="glass-card h-100 p-3 hoverable d-flex flex-column align-items-center justify-content-center text-center"
+      (click)="categorySelect('All')">
+      <!-- <div class="fs-2 mb-2 card-icon"></div> -->
+      <h5>All Sources</h5>
+      <small class="text-muted">View all available data source connections</small>
+      <!-- <span class="mb-3">
+        {{ getAllSourcesCount() }} options
+        <i class="bi bi-arrow-right text-primary ms-2 arrow-icon"></i>
+      </span> -->
+    </div>
+  </div>
+
+    <div class="col-12 " *ngFor="let cat of categories">
       <div
-        class="glass-card  h-100 p-3 hoverable d-flex flex-column align-items-center justify-content-center text-center"
+        class="glass-card  h-100 p-3 hoverable text-start d-flex flex-column"
         (click)="categorySelect(cat.name)">
-        <div class="fs-2 mb-2 card-icon">{{ cat.icon }}</div>
-        <h5>{{ cat.name }}</h5>
-        <small class="text-muted">{{ cat.description }}</small>
-        <span class="mb-3">
+         <h6 class="mb-2">{{ cat.name }}</h6>
+          <div class="d-flex align-items-start flex-grow-1">
+        <div class="fs-2 me-2 card-icon">{{ cat.icon }}</div>
+         <div class="flex-frow-1 d-flex flex-column">
+        <small class="text-muted ">{{ cat.description }}</small>
+        <span class="mt-1 ">
           {{ cat.count || 0 }} options
           <i class="bi bi-arrow-right text-primary ms-2 arrow-icon"></i>
         </span>
       </div>
     </div>
+    </div>
+    </div>
+    </div>
   </div>
+
+
 </div>
 
 
-
-
-
-    }
-
+<div class="col-9" style="height:80vh; overflow-y:auto;">
 <div class="main-container container-fluid TopHeader" *ngIf="selectedCategory && !selectedConnection">
 
   <!-- Header -->
@@ -3370,10 +3389,26 @@
   </div>
 
   <!-- Cards -->
-  <div class="row g-3" *ngIf="!selectedConnection">
-    <div class="col-md-4" *ngFor="let type of connectionTypes[selectedCategory]">
+    <ng-container *ngIf="selectedCategory === 'All'; else singleCategory">
+        <ng-container *ngFor="let cat of categories">
+             <div class="d-flex align-items-center gap-2 mt-3 mb-2">
+    <!-- Icon -->
+    <div class="fs-3">
+      <span>{{ cat.icon }}</span>
+    </div>
+
+    <!-- Title & Subtitle -->
+    <div>
+      <h5 class="mb-0">{{ cat.name }}</h5>
+      <small class="text-muted">{{ cat.description }}</small>
+    </div>
+  </div>
+
+
+              <div class="row g-3 mt-2 pb-2">
+    <div class="col-md-4" *ngFor="let type of connectionTypes[cat.name]">
       <div class="glass-card h-100 p-3 hoverable d-flex justify-content-between text-center" [class.disabled-card]="type.disabled" (click)="selectConnection(type.name)">
-        <div class="d-flex align-items-start gap-3">
+        <div class="d-flex align-items-center gap-3 w-100">
           <!-- <div class="fs-3 card-icon">{{ type.icon }}</div> -->
           <div class="fs-3 card-icon ">
 
@@ -3385,7 +3420,7 @@
               [innerHTML]="getSafeSvg(type.svg)">
           </div>
           </div>
-          <div>
+          <div class="d-flex flex-column text-start flex-grow-1">
             <h6 class="mb-1 d-flex align-items-center">{{ type.name }}</h6>
             <small class="text-muted">{{ type.description }}</small>
           </div>
@@ -3394,8 +3429,37 @@
       </div>
     </div>
   </div>
+        </ng-container>
+    </ng-container>
+    <ng-template #singleCategory>
+    <div class="row g-3">
+      <div class="col-md-4" *ngFor="let type of getConnectionTypes()">
+        <div class="glass-card h-100 p-3 hoverable d-flex justify-content-between text-center" 
+             [class.disabled-card]="type.disabled" 
+             (click)="selectConnection(type.name)">
+          <div class="d-flex align-items-start gap-3">
+            <div class="fs-3 card-icon">
+              <img *ngIf="type.image" [src]="type.image" [alt]="type.name" class="db-icon">
+              <span *ngIf="!type.image && type.icon">{{ type.icon }}</span>
+              <div *ngIf="!type.image && !type.icon && type.svg" 
+                   [innerHTML]="getSafeSvg(type.svg)">
+              </div>
+            </div>
+            <div>
+              <h6 class="mb-1 d-flex align-items-center">{{ type.name }}</h6>
+              <small class="text-muted">{{ type.description }}</small>
+            </div>
+          </div>
+          <i class="bi bi-chevron-right fs-10 text-primary mt-3 arrow-icon"></i>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 
 </div>
+</div>
+</div>
+    }
 
 
 <div class="main-container container-fluid TopHeader" *ngIf="selectedConnection">
@@ -3461,7 +3525,7 @@
                 <div [innerHTML]="getSafeSvg(connectionListIcons[conn.database_type]?.value)"></div>
                 }
                 @if(connectionListIcons[conn.database_type]?.type === 'image'){
-                <img [src]="connectionListIcons[conn.database_type]?.value" alt="{{conn.database_type}}">
+                <img [src]="connectionListIcons[conn.database_type]?.value" alt="conn.database_type">
                 }
               </div>
               <div>
@@ -3499,7 +3563,7 @@
 
           <!-- Description + Details -->
           <p class="mt-2 mb-1 small  d-inline-block"
-         ngbTooltip="{{ conn?.description }}">
+         ngbTooltip="{{ conn?.description }}" >
             <strong> {{ conn?.description | slice:0:30 }}{{ conn?.description?.length > 30 ? '...': '' }} </strong></p>
 
           <div class="d-flex justify-content-between small">
@@ -3509,7 +3573,7 @@
 
           <!-- Actions -->
           <div class="d-flex justify-content-between mt-3 gap-2">
-            <button [disabled]="(conn.server_type === 'CSV' || conn.server_type ==='EXCEL' || conn.server_type ==='SQLITE' || conn.server_type ==='QUICKBOOKS' || conn.server_type ==='SALESFORCE' || conn.server_type ==='GOOGLE_SHEETS' ||conn.server_type ==='HUBSPOT')"
+            <button [disabled]="(conn.server_type === 'CSV' || conn.server_type ==='EXCEL' || conn.server_type ==='SQLITE' || conn.server_type ==='QUICKBOOKS' || conn.server_type ==='SALESFORCE' || conn.server_type ==='GOOGLE_SHEETS' || conn.server_type ==='JIRA' || conn.server_type ==='ZOHO' ||conn.server_type ==='HUBSPOT')"
               class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill"
               (click)="editDbDetails(conn.hierarchy_id);editDbConnectionModal(EditDbCon);">
               <i class="bi bi-pencil me-1"></i> Edit
@@ -3592,14 +3656,7 @@
             (input)="databaseConditionError()">
         </div>
         </div>
-        <!-- description -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+        
       
         <!-- Username / Password Row -->
         <div class="row g-3">
@@ -3626,8 +3683,19 @@
               </button>
             </div>
           </div>
-        </div>
+             <!-- New Description  -->
+         
+
       
+      </div>
+       <div class="mb-3">
+             <label class="form-label" style="padding-left:8px;">
+               Description <span class="text-muted ms-1">(Enter your description)</span>
+             </label>
+             
+            <input  type="text" class="form-control forms-light w-100"
+              [(ngModel)]="connectionDescription"[ngModelOptions]="{standalone: true}"placeholder="Enter your description">
+          </div>
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button"
@@ -3702,15 +3770,7 @@
             (input)="databaseConditionError()">
         </div>
         </div>
-        <!-- New Description  -->
-        <!--  -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+       
       
       
         <!-- Username / Password Row -->
@@ -3739,6 +3799,15 @@
             </div>
           </div>
         </div>
+         <!-- New Description  -->
+        <!--  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -3815,15 +3884,7 @@
             (input)="databaseConditionError()">
         </div>
         </div>
-        <!-- Description Field -->
-      
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+        
       
       
         <!-- Username / Password Row -->
@@ -3851,7 +3912,16 @@
             </div>
           </div>
         </div>
+      <!-- Description Field -->
       
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+
         <!-- Schema Selection (Optional) -->
         @if(schemaList && schemaList.length > 0) {
         <div class="mb-3">
@@ -3966,14 +4036,7 @@
               (input)="databaseConditionError()">
           </div>
           </div>
-          <!--  Description  -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+         
   
           <!-- Username / Password Row (only for SQL Auth) -->
           <div *ngIf="selectedMicroSoftAuthType === 'SQL Server Authentication'" class="row g-3">
@@ -4003,6 +4066,14 @@
             </div>
           </div>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
   
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -4076,14 +4147,7 @@
             (input)="databaseConditionError()">
         </div>
       </div>
-      <!--  Description  -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+      
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
@@ -4110,6 +4174,15 @@
             </div>
           </div>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
+
       
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -4303,14 +4376,7 @@
         </div>
           </div>
         
-      <!--  Description  -->
-        <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description
-          </label>
-          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
-          <input type="text" class="form-control forms-light w-100"
-            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
-         </div>
+      
         <!-- Username / Password Row -->
         <div class="row g-3">
           <div class="col-md-6 mb-3">
@@ -4337,6 +4403,14 @@
             </div>
           </div>
         </div>
+        <!--  Description  -->
+        <div class="mb-3">
+          <label class="form-label d-inline-block me-1"> Description
+          </label>
+          <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
+          <input type="text" class="form-control forms-light w-100"
+            [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
+         </div>
       
         <!-- Schema Selection -->
         <div *ngIf="schemaList && schemaList.length > 0" class="mb-3">
@@ -4544,7 +4618,7 @@
           <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
-          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. InsignApps"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -4615,6 +4689,7 @@
       </form>
     </div>
   </div>
+
   <div *ngSwitchCase="'DBT'" class="col-md-6">
     <div class="form-card p-3">
       <h5 class="d-flex align-items-center">
@@ -4633,7 +4708,7 @@
           <label [ngClass]="{'error-label': displayNameError}" class="form-label d-inline-block me-1">
             Connection Name <span class="text-danger">*</span>
           </label>
-          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection Name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100"
             [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. dbt"
             autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
@@ -5425,7 +5500,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Description <span class="text-danger">*</span></label>
+          <label class="form-label">Description </label>
           <span class="text-muted" style="display:inline-block;">(Enter your description)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
         </div>
@@ -5455,7 +5530,7 @@
           <label [ngClass]="{'error-label': displayNameError}" class="form-label">
             Connection Name <span class="text-danger">*</span>
           </label>
-          <span  class="text-muted" style="display:inline-block;">(Enter your Display Name in this field)</span>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection name in this field)</span>
           <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Zoho" autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
         </div>
 
@@ -5497,7 +5572,12 @@
             Scopes <span class="text-danger">*</span>
           </label>
           <span class="text-muted" style="display:inline-block;">(Select the required scopes for this connection)</span>
-          <ng-multiselect-dropdown [data]="zohoScopes" [(ngModel)]="selectedZohoScopes" [ngModelOptions]="{standalone: true}" [settings]="hubspotDropdownSettings" (onSelect)="onZohoScopeChange()" (onDeSelect)="onZohoScopeChange()" (onSelectAll)="onZohoScopeChange()" (onDeSelectAll)="onZohoScopeChange()">
+          <ng-multiselect-dropdown
+            [data]="zohoScopes"
+            [(ngModel)]="selectedZohoScopes"
+            [ngModelOptions]="{standalone: true}"
+            [settings]="hubspotDropdownSettings"
+            (ngModelChange)="onZohoScopeChange($event)">
           </ng-multiselect-dropdown>
         </div>
 
@@ -5658,7 +5738,7 @@
     </div>
     <!--  Description  -->
         <div class="mb-3">
-          <label class="form-label d-inline-block me-1"> Description<span class="text-danger">*</span>
+          <label class="form-label d-inline-block me-1"> Description
           </label>
           <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
           <input type="text" class="form-control forms-light w-100"
@@ -5681,7 +5761,7 @@
           <button type="button" class="btn btn-secondary animate-button"
             (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">Close</button>
             <button type="button" class="btn btn-primary me-3 animate-button"
-           [disabled]="!canUploadCsv || !fileData || !connectionDescription" (click)="uploadfileCsv({ target: { files: [fileData] } }, 'upload', {})">upload</button>
+           [disabled]="!canUploadCsv || !fileData " (click)="uploadfileCsv({ target: { files: [fileData] } }, 'upload', {})">upload</button>
     </div>  
     <div *ngIf="!canUploadCsv" class="text-muted small mt-1">
       You don’t have privilege to upload.
@@ -5753,7 +5833,7 @@
     </div>
       <!--  Description  -->
           <div class="mb-3">
-            <label class="form-label d-inline-block me-1"> Description <span class="text-danger">*</span>
+            <label class="form-label d-inline-block me-1"> Description 
             </label>
             <span class="text-muted"style="display:inline-block; ">(Enter your description)</span>
             <input type="text" class="form-control forms-light w-100"
@@ -5767,7 +5847,7 @@
           <button type="button" class="btn btn-secondary animate-button"
             (click)="datasourceSwitchUI ? gotoDashboardWithoutSwitch() : goBackToSubCategories()">Close</button>
             <button type="button" class="btn btn-primary me-3 animate-button"
-           [disabled]="!uploadfileExcel || !fileData || !connectionDescription" (click)="uploadfileExcel({ target: { files: [fileData] } }, 'upload', {})">upload</button>
+           [disabled]="!uploadfileExcel || !fileData" (click)="uploadfileExcel({ target: { files: [fileData] } }, 'upload', {})">upload</button>
     </div>  
   </div>
 </form>
@@ -5838,6 +5918,7 @@
     </div>
   </div>
 </div>
+
 
 
 
@@ -6119,5 +6200,3 @@
  }  -->
     <ng-template #sheetcontainer></ng-template>
 
-
-    
