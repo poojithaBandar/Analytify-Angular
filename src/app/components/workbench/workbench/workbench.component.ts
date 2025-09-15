@@ -57,6 +57,7 @@ export class WorkbenchComponent implements OnInit{
   databaseId:any;
   fileId:any;
   databaseType:any;
+  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR','GEMINI'];
   openPostgreSqlForm= false;
   openMySqlForm = false;
   openConnectWiseForm = false;
@@ -69,7 +70,8 @@ export class WorkbenchComponent implements OnInit{
   openOpenAIForm = false;
   openDeepSeekForm = false;
   openGeminiForm = false;
-  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','TALLY','PAX8','BAMBOOHR'];
+  openZohoForm = false;
+  openJiraForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -205,6 +207,24 @@ export class WorkbenchComponent implements OnInit{
   hubspotClientSecretError = false;
   hubspotRedirectURLError = false;
   hubspotScopeError = false;
+  zohoClientId!: string;
+  zohoClientSecret!: string;
+  zohoRedirectURL!: string;
+  zohoCountry: string = '';
+  zohoCountries: string[] = ['United States','Europe','India','China','Australia','Japan'];
+  zohoScopes: string[] = ['CRM','BOOKS'];
+  selectedZohoScopes: string[] = [];
+  zohoDescription: string = '';
+  zohoClientIdError = false;
+  zohoClientSecretError = false;
+  zohoRedirectURLError = false;
+  zohoScopeError = false;
+  jiraClientId!: string;
+  jiraClientSecret!: string;
+  jiraRedirectURL!: string;
+  jiraClientIdError = false;
+  jiraClientSecretError = false;
+  jiraRedirectURLError = false;
   openImmybot: boolean = false;
   clientIDImmyBotError: boolean = false;
   clientIdImmybot! : string ;
@@ -289,7 +309,7 @@ export class WorkbenchComponent implements OnInit{
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
-private SVGICONS = {
+public SVGICONS = {
   quickbooks:`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
   <path d="M24.0681 15.1818V28.2027C24.0681 29.3769 23.1861 30.4061 22.0147 30.4869C21.3426 30.5333 20.7311 30.2809 20.2964 29.8463C19.8961 29.446 19.6504 28.8954 19.6504 28.2813V14H22.8863C23.5389 14 24.0681 14.5291 24.0681 15.1818Z" fill="#FD982E"/>
   <path d="M21.1922 2.41774V24.3509C21.1922 24.8534 20.7848 25.2608 20.2823 25.2608H3.73805C3.23551 25.2608 2.82812 24.8534 2.82812 24.3509V2.41774C2.82812 1.9152 3.23551 1.50781 3.73805 1.50781H20.2823C20.7848 1.50781 21.1922 1.9152 21.1922 2.41774Z" fill="#DEDDFF"/>
@@ -563,6 +583,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     else if(this.databaseSwitchType === 'HUBSPOT'){
     this.connectHubspot();
     }
+    else if(this.databaseSwitchType === 'JIRA'){
+    this.connectJira();
+    }
   }
   routeNewDatabase(){
     if (this.iscrossDbSelect) {
@@ -599,6 +622,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     postGreServerName = '';
     postGrePortName = '';
     postGreDatabaseName = '';
+    connectionDescription = '';
+
     postGreUserName = '';
     PostGrePassword = '';
     OracleServiceName = '';
@@ -614,6 +639,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     bambooHRDomain = '';
     publicKey = '';
     privateKey = '';
+    dbtAccountId = '';
+    dbtDomainUrl = '';
+    dbtToken = '';
     path='';
     shopifyToken = '';
     shopifyName = '';
@@ -634,6 +662,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       dimensions: string[];  // <-- Explicitly typed
       metrics: string[];     // <-- Explicitly typed
       displayname: string;
+      
+      connectiondescription?: string;
     } = {
       type: 'service_account',
       project_id: '',
@@ -867,6 +897,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.postGrePortName = '';
     this.postGreDatabaseName = '';
     this.postGreServerName = '';
+    this.connectionDescription = '';
     this.schemaList = [];
     this.selectedSchema = 'public';
     this.postGreUserName = '';
@@ -878,6 +909,9 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.publicKey = '';
     this.siteURL = '';
     this.companyId = '';
+    this.dbtAccountId = '';
+    this.dbtDomainUrl = '';
+    this.dbtToken = '';
     this.siteURLPSA = '';
     this.clientIdPSA = '';
     this.clientSecret = '';
@@ -891,8 +925,17 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.hubspotClientId = '';
     this.hubspotClientSecret = '';
     this.selectedHubspotScopes = [];
-    
-  } 
+    this.zohoClientId = '';
+    this.zohoClientSecret = '';
+    this.selectedZohoScopes = [];
+    this.zohoRedirectURL = '';
+    this.zohoCountry = '';
+    this.zohoDescription = '';
+    this.jiraClientId = '';
+    this.jiraClientSecret = '';
+    this.jiraRedirectURL = '';
+
+  }
   googleSheetsData = [] as any;
   gsheetsParentId:any;
   gsheetprofile:any;
@@ -962,7 +1005,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.openPostgreSqlForm=true;
     this.databaseconnectionsList= false;
     this.viewNewDbs = false;
-      this.emptyVariables();
+    this.emptyVariables();
     }
     postgreSignIn(){
       const obj={
@@ -972,6 +1015,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "database": this.postGreDatabaseName,
+          "description":this.connectionDescription,
           "display_name":this.displayName,
           "schema": this.selectedSchema
       }
@@ -1019,6 +1063,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "public_key":this.publicKey,
         "private_key": this.privateKey,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id":this.databaseId
     }
 
@@ -1039,11 +1084,37 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
 
     }
 
+    dbtUpdate(){
+      const obj = {
+        "account_id": this.dbtAccountId,
+        "domain_url": this.dbtDomainUrl,
+        "display_name": this.displayName,
+        "token": this.dbtToken,
+        "description": this.connectionDescription,
+        "hierarchy_id": this.databaseId
+      }
+      this.workbechService.dbtConnectionUpdate(obj).subscribe({next: (responce) => {
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+
     ninjaRMMUpdate(){
       const obj = {
         "client_id": this.ninjaRMMClientid,
         "client_secret": this.ninjaRMMClientSecret,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "scopes": this.selectedNinjaRMMScopes,
         "hierarchy_id":this.databaseId
       }
@@ -1069,6 +1140,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "site_url": this.siteURLPSA,
         "client_id": this.clientIdPSA,
         "client_secret": this.clientSecret,
+        "description": this.connectionDescription,
         "display_name": this.displayName,
         "hierarchy_id":this.databaseId
       }
@@ -1095,6 +1167,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "client_id": this.pax8ClientId,
         "client_secret": this.pax8ClientSecret,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id":this.databaseId
       }
 
@@ -1120,6 +1193,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "api_key": this.bambooHRApiKey,
         "display_name": this.displayName,
         "domain": this.bambooHRDomain,
+        "description": this.connectionDescription,
         "hierarchy_id":this.databaseId
       }
 
@@ -1147,6 +1221,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "azure_domain":this.tenantId,
         "instance_subdomain":this.subDomain,
         "display_name":this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id": this.databaseId
     }
       this.workbechService.immyBotConnectionUpdate(obj).subscribe({next: (responce) => {
@@ -1169,6 +1244,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "api_token": this.shopifyToken,
         "shop_name": this.shopifyName,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id":this.databaseId
       }
 
@@ -1193,6 +1269,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "token_key": this.tallyToken,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id": this.databaseId
       }
 
@@ -1215,6 +1292,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "open_ai_key": this.openAiKey,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id": this.databaseId
       }
       this.workbechService.openAiConnectionUpdate(obj).subscribe({next:(res)=>{
@@ -1236,6 +1314,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "deepseek_key": this.deepSeekKey,
         "display_name": this.displayName,
+        "description": this.connectionDescription,
         "hierarchy_id": this.databaseId
       }
       this.workbechService.deepSeekConnectionUpdate(obj).subscribe({next:(res)=>{
@@ -1256,7 +1335,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "gemini_key": this.geminiKey,
         "display_name": this.displayName,
-        "hierarchy_id": this.databaseId
+        "hierarchy_id": this.databaseId,
+        "description": this.connectionDescription
       }
       this.workbechService.geminiConnectionUpdate(obj).subscribe({next:(res)=>{
             this.modalService.dismissAll('close');
@@ -1284,6 +1364,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       property_id: g.property_id,
       dimensions: g.dimensions, // Array of strings
       metrics: g.metrics,
+      description: g.connectiondescription,
       display_name:g.displayname
      }
 
@@ -1326,6 +1407,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "description":this.connectionDescription,
           "database_id":this.databaseId,
       };
       if(this.databaseType === 'oracle'){
@@ -1375,6 +1457,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "description":this.connectionDescription,
           "service_name":this.postGreDatabaseName
 
       }
@@ -1477,6 +1560,18 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     }
   connectHubspot(){
     this.openHubspotForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
+  connectZoho(){
+    this.openZohoForm = true;
+    this.databaseconnectionsList = false;
+    this.viewNewDbs = false;
+    this.emptyVariables();
+  }
+  connectJira(){
+    this.openJiraForm = true;
     this.databaseconnectionsList = false;
     this.viewNewDbs = false;
     this.emptyVariables();
@@ -1631,6 +1726,30 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       }
     }
 
+    dbtAccountIdInputError(){
+      if(this.dbtAccountId){
+        this.dbtAccountIdError = false;
+      }else{
+        this.dbtAccountIdError = true;
+      }
+    }
+
+    dbtDomainUrlInputError(){
+      if(this.dbtDomainUrl){
+        this.dbtDomainUrlError = false;
+      }else{
+        this.dbtDomainUrlError = true;
+      }
+    }
+
+    dbtTokenInputError(){
+      if(this.dbtToken){
+        this.dbtTokenError = false;
+      }else{
+        this.dbtTokenError = true;
+      }
+    }
+
     shopifyapiTokenError(){
       if(this.shopifyToken){
         this.shopifyApiTokenError = false;
@@ -1689,11 +1808,40 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
   onHubspotScopeChange(): void {
     this.hubspotScopeError = this.selectedHubspotScopes.length <= 0;
   }
+
+  jiraClientIdInput(){
+    this.jiraClientIdError = !this.jiraClientId;
+  }
+
+  jiraClientSecretInput(){
+    this.jiraClientSecretError = !this.jiraClientSecret;
+  }
+
+  jiraRedirectURLInput(){
+    this.jiraRedirectURLError = !this.jiraRedirectURL;
+  }
+
+  zohoClientIdInput(){
+    this.zohoClientIdError = !this.zohoClientId;
+  }
+
+  zohoClientSecretInput(){
+    this.zohoClientSecretError = !this.zohoClientSecret;
+  }
+
+  zohoRedirectURLInput(){
+    this.zohoRedirectURLError = !this.zohoRedirectURL;
+  }
+
+  onZohoScopeChange(): void {
+    this.zohoScopeError = this.selectedZohoScopes.length <= 0;
+  }
   
     shopifySignIn(){
       const obj={
         "api_token":this.shopifyToken,
         "shop_name": this.shopifyName,
+        "description":this.connectionDescription,
         "display_name": this.displayName
     }
       this.workbechService.shopifyConnection(obj).subscribe({next: (data) => {
@@ -1746,6 +1894,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "client_id": this.ninjaRMMClientid,
         "client_secret": this.ninjaRMMClientSecret,
         "display_name": this.displayName,
+        "description":this.connectionDescription,
         "scopes": this.selectedNinjaRMMScopes
       }
       this.workbechService.ninjaRMMConnection(obj).subscribe({next: (responce) => {
@@ -1802,6 +1951,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "secret_value":this.secretValue,
         "azure_domain":this.tenantId,
         "instance_subdomain":this.subDomain,
+        "description":this.connectionDescription,
         "display_name":this.displayName
     }
       this.workbechService.immyBotConnection(obj).subscribe({next: (responce) => {
@@ -1858,6 +2008,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "site_url": this.siteURL,
         "public_key":this.publicKey,
         "private_key": this.privateKey,
+        "description":this.connectionDescription,
         "display_name": this.displayName
     }
       this.workbechService.connectWiseConnection(obj).subscribe({next: (responce) => {
@@ -1906,11 +2057,44 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       )
     }
 
+    dbtSignIn(){
+      const obj = {
+        "account_id": this.dbtAccountId,
+        "domain_url": this.dbtDomainUrl,
+        "display_name": this.displayName,
+        "token": this.dbtToken,
+        "description": this.connectionDescription
+      }
+      this.workbechService.dbtConnection(obj).subscribe({next: (responce) => {
+        if(responce){
+          this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+          this.databaseId = responce?.hierarchy_id;
+          this.modalService.dismissAll();
+          if(!this.datasourceSwitchUI){
+            this.selectedConnection = null;
+          }
+          const encodedId = btoa(this.databaseId.toString());
+          if(this.iscrossDbSelect){
+            this.selectedHirchyIdCrsDb = this.databaseId;
+            this.connectCrossDbs();
+          }else{
+            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+          }
+        }
+      },
+      error: (error) => {
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        console.log(error);
+      }
+    })
+    }
+
     haloPSASignIn(){
       const obj = {
         "site_url": this.siteURLPSA,
         "client_id": this.clientIdPSA,
         "client_secret": this.clientSecret,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.haloPSAConnection(obj).subscribe({next: (responce) => {
@@ -1961,6 +2145,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     tallySignIn(){
       const obj = {
         "token_key": this.tallyToken,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.createTally(obj).subscribe({next: (res)=>{
@@ -2005,7 +2190,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     openAISignIn(){
       const obj = {
         "open_ai_key": this.openAiKey,
-        "display_name": this.displayName
+        "display_name": this.displayName,
+        "description":this.connectionDescription,
       }
       this.workbechService.openAiConnection(obj).subscribe({next:(res)=>{
         if(res){
@@ -2056,6 +2242,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     deepSeekSignIn(){
       const obj = {
         "deepseek_key": this.deepSeekKey,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.deepSeekConnection(obj).subscribe({next:(res)=>{
@@ -2109,6 +2296,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     geminiSignIn(){
       const obj = {
         "gemini_key": this.geminiKey,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.geminiConnection(obj).subscribe({next:(res)=>{
@@ -2126,7 +2314,24 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           }else if(this.datasourceSwitchUI){
             this.switchDatabase();
           }else{
-            this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            Swal.fire({
+              position: "center",
+              iconHtml: '<img src="./assets/images/copilot.gif">',
+              title: "Create smart dashboard from your data with just one click?",
+              showConfirmButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'Skip',
+              customClass: {
+                icon: 'no-icon-bg',
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.templateDashboardService.buildSampleGeminiDashboard(this.container, this.databaseId);
+              } else {
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
+            });
           }
         }
       }, error:(error)=>{
@@ -2140,6 +2345,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         "client_secret": this.hubspotClientSecret,
         "redirect_uri": this.hubspotRedirectURL,
         "display_name": this.displayName,
+        "description":this.connectionDescription,
         "scopes": this.selectedHubspotScopes
       }
       this.workbechService.hubspotConnection(obj).subscribe({next:(data)=>{
@@ -2147,6 +2353,54 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
             localStorage.setItem('hubspotHierarchyId', data.hierarchy_id);
             this.modalService.dismissAll();
             this.document.location.href = data.authorisation_url;
+          }
+        },
+        error:(error)=>{
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        }});
+    }
+
+    zohoSignIn(){
+      const obj = {
+        "client_id": this.zohoClientId,
+        "client_secret": this.zohoClientSecret,
+        "redirect_uri": this.zohoRedirectURL,
+        "display_name": this.displayName,
+        "country": this.zohoCountry,
+        "scopes": this.selectedZohoScopes,
+        "description": this.zohoDescription
+      }
+      this.workbechService.zohoConnection(obj).subscribe({next:(data)=>{
+          if(data){
+            localStorage.setItem('zohoHierarchyId', data.hierarchy_id);
+            this.modalService.dismissAll();
+            const url = data.authorisation_url || data.authorization_url || data.redirection_url;
+            if(url){
+              this.document.location.href = url;
+            }
+          }
+        },
+        error:(error)=>{
+          this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+        }});
+    }
+
+    jiraSignIn(){
+      const obj = {
+        "client_id": this.jiraClientId,
+        "client_secret": this.jiraClientSecret,
+        "redirect_uri": this.jiraRedirectURL,
+        "display_name": this.displayName,
+        "description": this.connectionDescription
+      }
+      this.workbechService.jiraConnection(obj).subscribe({next:(data)=>{
+          if(data){
+            localStorage.setItem('jiraHierarchyId', data.hierarchy_id);
+            this.modalService.dismissAll();
+            const url = data.authorisation_url || data.authorization_url || data.redirection_url;
+            if(url){
+              this.document.location.href = url;
+            }
           }
         },
         error:(error)=>{
@@ -2162,6 +2416,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "description":this.connectionDescription,
           "database": this.postGreDatabaseName,
 
       }
@@ -2210,6 +2465,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "description":this.connectionDescription,
           "database": this.postGreDatabaseName,
           "authentication_type":this.selectedMicroSoftAuthType
       }
@@ -2259,6 +2515,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "password":this.PostGrePassword,
           "display_name":this.displayName,
           "database": this.postGreDatabaseName,
+          "description":this.connectionDescription,
       }
       this.confirmPopupForDataTransformation().then((isSkip) => {
         if (isSkip === true) {
@@ -2392,6 +2649,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
           "port":this.postGrePortName,
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
+          "description":this.connectionDescription,
           "display_name":this.displayName,
       };
       if(this.postGreDatabaseName){
@@ -2441,6 +2699,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       formData.append('path', this.fileData,this.fileData.name); 
       formData.append('database_type','sqlite');
       formData.append('display_name',this.displayName);
+      formData.append('description',this.connectionDescription);
+      
 
       this.confirmPopupForDataTransformation().then((isSkip) => {
         if (isSkip === true) {
@@ -2492,7 +2752,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       property_id: g.property_id,
       dimensions: g.dimensions, // Array of strings
       metrics: g.metrics,
-      display_name:g.displayname
+      display_name:g.displayname,
+      description :g.connectiondescription
      }
         this.workbechService.googleAnalyticsConnectionApi(obj).subscribe({next: (responce) => {
           console.log(responce)
@@ -2540,6 +2801,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "client_id": this.pax8ClientId,
         "client_secret": this.pax8ClientSecret,
+        "description":this.connectionDescription,
         "display_name": this.displayName
       }
       this.workbechService.pax8Connection(obj).subscribe({next: (responce) => {
@@ -2595,6 +2857,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const obj = {
         "api_key": this.bambooHRApiKey,
         "display_name": this.displayName,
+        "description":this.connectionDescription,
         "domain": this.bambooHRDomain
       }
       this.bambooHRService.createIntegration(obj).subscribe({next: (responce) => {
@@ -2657,8 +2920,21 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         case 'connectwise':
           this.templateDashboardService.buildSampleConnectWiseDashboard(this.container, this.databaseId, dashboardData);
           break;
+        case 'gemini':
+          this.templateDashboardService.buildSampleGeminiDashboard(this.container, this.databaseId, dashboardData);
+          break;
       }
     }
+
+     onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.fileData = file;
+      // console.log('File ready:', file.name);
+    }
+  }
+
+
 
     uploadfileCsv(event:any,type:any,database:any){
       const file:File = event.target.files[0];
@@ -2681,6 +2957,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     const formData: FormData = new FormData();
       formData.append('file_path', this.fileData,this.fileData.name); 
       formData.append('file_type','csv');
+      formData.append('description',this.connectionDescription);
       this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
         console.log(responce)
             if(responce){
@@ -2729,6 +3006,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
       const formData: FormData = new FormData();
         formData.append('file_path', this.fileData,this.fileData.name); 
         formData.append('file_type','excel');
+        formData.append('description',this.connectionDescription);
         this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
@@ -2862,22 +3140,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
             }
         });
     }
-    connectJira() {
-      Swal.fire({
-          title: 'This will redirect to Jira SignIn page',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Ok'
-      }).then((result) => {
-          if (result.isConfirmed) {
-              // Redirect to the specified URL
-              window.location.href = 'https://id.atlassian.com/login';
-              // Optionally, if there's a loader or some other indication, show it here:
-              // this.loaderService.show();
-          }
-      });
-  }
+
 //gsheets
 connectGoogleSheets(){
   Swal.fire({
@@ -3024,47 +3287,64 @@ connectGoogleSheets(){
         this.publicKey = editData.public_key;
         this.privateKey = editData.private_key;
         this.displayName = editData.display_name;
+        this.connectionDescription = editData.description;
+    } else if (this.databaseType == "dbt") {
+      this.dbtAccountId = editData.account_id;
+      this.dbtDomainUrl = editData.domain_url;
+      this.displayName = editData.display_name;
+      this.dbtToken = editData.token;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "ninja") {
        this.displayName = editData.display_name;
        this.ninjaRMMClientid = editData.client_id;
        this.ninjaRMMClientSecret = editData.client_secret;
        this.selectedNinjaRMMScopes = editData.scopes;
+        this.connectionDescription = editData.description;
     }
     else if (this.databaseType == "halops") {
       this.siteURLPSA = editData.site_url;
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "pax8") {
       this.pax8ClientId = editData.client_id;
       this.pax8ClientSecret = editData.client_secret;
       this.displayName = editData.display_name;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "bamboohr") {
       this.bambooHRApiKey = editData.api_key;
       this.bambooHRDomain = editData.domain;
       this.displayName = editData.display_name;
+      this.connectionDescription = editData.description;
     }  else if (this.databaseType == "immybot") {
       this.clientIdImmybot = editData.client_id;
       this.secretValue = editData.secret_value;
       this.tenantId = editData.azure_domain;
       this.subDomain = editData.instance_subdomain;
       this.displayName = editData.display_name;
+      this.connectionDescription = editData.description;
     } else if(this.databaseType == "shopify"){
       this.displayName = editData.display_name;
       this.shopifyName = editData.shop_name;
       this.shopifyToken = editData.api_token;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "tally") {
       this.displayName = editData.display_name;
       this.tallyToken = editData.token_key;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "open_ai") {
       this.displayName = editData.display_name;
       this.openAiKey = editData.open_ai_key;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "deepseek") {
       this.displayName = editData.display_name;
       this.deepSeekKey = editData.deepseek_key;
+      this.connectionDescription = editData.description;
     } else if (this.databaseType == "gemini") {
       this.displayName = editData.display_name;
       this.geminiKey = editData.gemini_key;
+      this.connectionDescription = editData.description;
     }else if (this.databaseType === 'google_analytics') {
       this.googleAnalytics = {
         type: 'service_account',
@@ -3075,6 +3355,7 @@ connectGoogleSheets(){
         client_id: editData.client_id || '',
         client_x509_cert_url: editData.client_x509_cert_url || '',
         property_id: editData.property_id || '',
+        connectiondescription: editData.description || '',
         dimensions: [...editData.dimensions],
         metrics: [...editData.metrics],
         displayname: editData.display_name || ''
@@ -3086,6 +3367,7 @@ connectGoogleSheets(){
       this.postGreUserName = editData.username;
       this.PostGrePassword = '';
       this.OracleServiceName = '';
+      this.connectionDescription = editData.description;
       this.displayName = editData.display_name;
       if (this.databaseType === 'oracle') {
         this.postGreDatabaseName = editData.service_name;
@@ -3255,6 +3537,8 @@ connectGoogleSheets(){
   this.openHubspotForm = false;
   this.openGoogleAnalyticsForm = false;
   this.openGoogleAnalyticsForm = false;
+  this.openZohoForm = false;
+  this.openJiraForm = false;
   this.postGreServerName = '';
   this.schemaList = [];
   this.selectedSchema = 'public';
@@ -3269,6 +3553,12 @@ connectGoogleSheets(){
   this.publicKey = '';
   this.siteURL = '';
   this.companyId = '';
+  this.zohoClientId = '';
+  this.zohoClientSecret = '';
+  this.zohoRedirectURL = '';
+  this.zohoCountry = '';
+  this.selectedZohoScopes = [];
+  this.zohoDescription = '';
   this.siteURLPSA = '';
   this.tallyToken = '';
   this.tallyTokenError = false;
@@ -3286,6 +3576,12 @@ connectGoogleSheets(){
   this.selectedHubspotScopes = [];
   this.hubspotRedirectURL = '';
   this.hubspotRedirectURLError = false;
+  this.jiraClientId = '';
+  this.jiraClientSecret = '';
+  this.jiraRedirectURL = '';
+  this.jiraClientIdError = false;
+  this.jiraClientSecretError = false;
+  this.jiraRedirectURLError = false;
   }
 
   serverError:boolean = false;
@@ -3306,6 +3602,9 @@ connectGoogleSheets(){
   privateKeyError:boolean = false;
   publicKeyError:boolean = false;
   companyIDError:boolean = false;
+  dbtAccountIdError:boolean = false;
+  dbtDomainUrlError:boolean = false;
+  dbtTokenError:boolean = false;
   disableConnectBtn = true;
 
   shopifyApiTokenError:boolean = false;
@@ -3573,6 +3872,7 @@ connectGoogleSheets(){
       "username": this.postGreUserName,
       "password": this.PostGrePassword,
       "display_name": this.displayName
+      
     };
     if(this.postGreDatabaseName){
       obj.database = this.postGreDatabaseName;
@@ -3705,6 +4005,8 @@ connectGoogleSheets(){
       request$ = this.workbechService.buildSamplePaxDashboard(database.hierarchy_id);
     }else if(database.server_type === 'BAMBOOHR'){
       request$ = this.workbechService.buildSampleBambooHRDashboard(database.hierarchy_id);
+    }else if(database.server_type === 'GEMINI'){
+      request$ = this.workbechService.buildSampleGeminiDashboard(database.hierarchy_id);
     }else{
       request$ = this.workbechService.createSmartDashboard(database.hierarchy_id);
     }
@@ -3751,7 +4053,7 @@ connectGoogleSheets(){
             this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'GEMINI':
-            this.templateDashboardService.buildSampleOpenAIDashboard(this.container, database.hierarchy_id, responce);
+            this.createSmartDashboard(responce,'gemini');
             break;
         }
       },
@@ -3796,6 +4098,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   halops: { type: 'image', value:'./assets/images/icons/halopsa.png' },
   pax8: { type: 'image', value: './assets/images/icons/pax8-icon.png' },
   connectwise: { type: 'image', value:'./assets/images/icons/connectwise.png' },
+  dbt: { type: 'image', value:'./assets/images/icons/dbt.svg' },
   shopify: { type: 'svg', value: this.SVGICONS.shopify },
   open_ai: { type: 'emoji', value: '🤖' },
   bamboohr: { type: 'svg', value: this.SVGICONS.bambooHr },
@@ -3806,6 +4109,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   google_sheets: { type: 'svg', value: this.SVGICONS.googleSheets },
   hubspot: { type: 'svg', value: this.SVGICONS.hubspot },
   xAmplify: { type: 'image', value: './assets/images/icons/Xamplify.png' },
+  zoho: { type: 'image', value: './assets/images/icons/zoho.svg' },
   sap: { type: 'emoji', value: '🏢' },
   cassandra: { type: 'emoji', value: '🌌' },
   sqlite: { type: 'emoji', value: '💾' },
@@ -3843,7 +4147,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: 'Multi-dimensional Database', icon: '📊', description: 'OLAP & analytical data stores',count:'2' },
     { name: 'NoSQL Database', icon: '📡', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
-    { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'15' }
+    { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
   showRelational = false;
   showLLM = false;
@@ -3919,6 +4223,7 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
     { name: "QuickBooks", description: "Accounting software",image:'./assets/images/icons/quickbooks.png' },
     { name: "Salesforce", description: "CRM platform", svg:this.SVGICONS.Salesforce },
     { name: "ConnectWise", description: "IT management software", image:'./assets/images/icons/connectwise.png' },
+    { name: "DBT", description: "Data build tool", image:'./assets/images/icons/dbt.svg' },
     { name: "HaloPS", description: "PSA platform for IT providers",image:'./assets/images/icons/halopsa.png' },
     { name: "Pax8", description: "Cloud commerce marketplace",image:'./assets/images/icons/pax8-icon.png'},
     { name: "BambooHR", description: "HR management system", svg:this.SVGICONS.bambooHr },
@@ -3926,10 +4231,11 @@ connectionTypes: { [key: string]: { name: string; icon?: string; description: st
     { name: "Shopify", description: "E-commerce platform",svg:this.SVGICONS.shopify },
     { name: "Tally", description: "Accounting & ERP software",image:'./assets/images/icons/tally-icon.svg' },
     { name: "Google Sheets", description: "Online spreadsheets", svg:this.SVGICONS.googleSheets },
-    { name: "NinjaOne", description: "IT management & automation tool", svg:this.SVGICONS.ninjaOne },
+    { name: "Ninja", description: "IT management & automation tool", svg:this.SVGICONS.ninjaOne },
     { name: "Google Analytics", description: "Web analytics service", svg:this.SVGICONS.googleAnalytics },
     { name: "HubSpot", description: "Marketing & CRM platform",svg:this.SVGICONS.hubspot },
-    { name: "Immybot", description: "IT automation tool",svg:this.SVGICONS.immybot }
+    { name: "Immybot", description: "IT automation tool",svg:this.SVGICONS.immybot },
+    { name: "Zoho", description: "Zoho CRM platform", image:'./assets/images/icons/zoho.svg' }
   ]
 };
 goBackToCategories(){
@@ -3945,23 +4251,29 @@ goBackToCategories(){
 
 selectedConnection: string | null = null;
 
-selectConnection(connName: string) {
-  if(connName === 'xAmplify'){
-    !this.iscrossDbSelect ? this.connectxAmplify() : null;
-  } else if(connName === 'QuickBooks'){
-    !this.iscrossDbSelect ? this.connectQuickBooks() : null;
-  } else if(connName === 'Salesforce'){
-    !this.iscrossDbSelect ? this.connectSalesforce() : null;
-  } else if(connName === 'Jira'){
-    !this.iscrossDbSelect ? this.connectJira() : null;
-  } else if(connName === 'Google Sheets'){
-    !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
-  } else{
-    this.selectedConnection = connName;
-    this.getSpecificConnections();
-    console.log('selected sub category:', this.selectedConnection);
+  selectConnection(connName: string) {
+    if(connName === 'xAmplify'){
+      !this.iscrossDbSelect ? this.connectxAmplify() : null;
+    } else if(connName === 'QuickBooks'){
+      !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+    } else if(connName === 'Salesforce'){
+      !this.iscrossDbSelect ? this.connectSalesforce() : null;
+    } else if(connName === 'Google Sheets'){
+      !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+    } else{
+      this.selectedConnection = connName;
+      if(connName === 'DBT'){
+        this.displayName = '';
+        this.dbtAccountId = '';
+        this.dbtDomainUrl = '';
+        this.dbtToken = '';
+      } else {
+        this.displayName = '';
+      }
+      this.getSpecificConnections();
+      console.log('selected sub category:', this.selectedConnection);
+    }
   }
-}
 model = {
     name: '',
     host: '',
@@ -4013,6 +4325,9 @@ model = {
   this.selectedSchema = 'public';
   this.postGrePortName = '';
   this.postGreDatabaseName = '';
+  this.connectionDescription = '';
+  
+
   this.postGreUserName = '';
   this.PostGrePassword = '';
   this.OracleServiceName = '';
@@ -4037,6 +4352,16 @@ model = {
   this.selectedHubspotScopes = [];
   this.hubspotRedirectURL = '';
   this.hubspotRedirectURLError = false;
+  this.zohoClientId = '';
+  this.zohoClientSecret = '';
+  this.zohoRedirectURL = '';
+  this.zohoCountry = '';
+  this.selectedZohoScopes = [];
+  this.zohoDescription = '';
+  this.zohoClientIdError = false;
+  this.zohoClientSecretError = false;
+  this.zohoRedirectURLError = false;
+  this.zohoScopeError = false;
 //
      switch (this.selectedCategory) {
           case 'Relational Database':
