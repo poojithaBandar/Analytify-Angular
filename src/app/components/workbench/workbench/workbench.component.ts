@@ -24,7 +24,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
-import _ from 'lodash';
+import _, { values } from 'lodash';
 
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -32,6 +32,7 @@ import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BambooHRIntegrationService } from '../bamboohr-integration.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { image } from 'd3';
 
 
 @Component({
@@ -4162,41 +4163,41 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   selectedConnectionType: string | null = null;
 
   connectionListIcons: any = {
-  postgresql: { type: 'emoji', value: '🐘' },
-  oracle: { type: 'emoji', value: '🏺' },
-  mysql: { type: 'emoji', value: '🐬' },
-  microsoftsqlserver: { type: 'emoji', value: '🖥️' },
-  snowflake: { type: 'emoji', value: '❄️' },
-  mongodb: { type: 'emoji', value: '🍃' },
-  'sap hana': { type: 'emoji', value: '⚡' },
+  postgresql: { type: 'image', value: './assets/images/icons/Postgre.svg' },
+  oracle: { type: 'image', value: './assets/images/icons/Oracle.svg' },
+  mysql: { type: 'image', value: './assets/images/icons/MY_sql.svg' },
+  microsoftsqlserver: { type: 'image', value: './assets/images/icons/microsoft-sql-server.svg' },
+  snowflake: { type: 'image', value: './assets/images/icons/Snowflake.svg' },
+  mongodb: { type: 'image', value: './assets/images/icons/mongo DB.svg' },
+  'sap hana': { type: 'image', value: './assets/images/icons/SAP Hana.svg' },
 
-  quickbooks: { type: 'image', value: './assets/images/icons/quickbooks.png' },
+  quickbooks: { type: 'image', value: './assets/images/icons/Quick books.svg' },
   ninja: { type: 'svg', value: this.SVGICONS.ninjaOne },
   tally: { type: 'image', value: './assets/images/icons/tally-icon.svg' },
-  csv: { type: 'emoji', value: '📑' },
-  excel: { type: 'emoji', value: '📊' },
+  csv: { type: 'image', value: './assets/images/icons/CSV.svg' },
+  excel: { type: 'image', value: './assets/images/icons/Excel.svg' },
   google_analytics: { type: 'svg', value: this.SVGICONS.googleAnalytics },
-  halops: { type: 'image', value:'./assets/images/icons/halopsa.png' },
-  pax8: { type: 'image', value: './assets/images/icons/pax8-icon.png' },
-  connectwise: { type: 'image', value:'./assets/images/icons/connectwise.png' },
+  halops: { type: 'image', value:'./assets/images/icons/Halopsa.svg' },
+  pax8: { type: 'image', value: './assets/images/icons/Pax_8.svg' },
+  connectwise: { type: 'image', value:'./assets/images/icons/Connectwise.svg' },
   dbt: { type: 'image', value:'./assets/images/icons/dbt.svg' },
   shopify: { type: 'svg', value: this.SVGICONS.shopify },
-  open_ai: { type: 'emoji', value: '🤖' },
+  open_ai: { type: 'image', value: './assets/images/icons/Open AI.svg' },
   bamboohr: { type: 'svg', value: this.SVGICONS.bambooHr },
-  deepseek: { type: 'emoji', value: '🔍' },
-  gemini: { type: 'emoji', value: '♊' },
+  deepseek: { type: 'image', value: './assets/images/icons/Deep_seek.svg' },
+  gemini: { type: 'image', value: './assets/images/icons/gemini-color 2.svg' },
   salesforce: { type: 'svg', value: this.SVGICONS.Salesforce },
   jira: { type: 'svg', value: this.SVGICONS.jira },
   google_sheets: { type: 'svg', value: this.SVGICONS.googleSheets },
   hubspot: { type: 'svg', value: this.SVGICONS.hubspot },
-  xAmplify: { type: 'image', value: './assets/images/icons/Xamplify.png' },
+  xAmplify: { type: 'image', value: './assets/images/icons/XAmplify.svg' },
   zoho: { type: 'image', value: './assets/images/icons/zoho.svg' },
-  sap: { type: 'emoji', value: '🏢' },
-  cassandra: { type: 'emoji', value: '🌌' },
-  sqlite: { type: 'emoji', value: '💾' },
-  Anthropic: { type: 'emoji', value: '🌐' },
-  'azure apenai': { type: 'emoji', value: '☁️' },
-  'meta llma': { type: 'emoji', value: '🦙' },
+  sap: { type: 'image', value: './assets/images/icons/SAP.svg' },
+  cassandra: { type: 'image', value: './assets/images/icons/Cassandra.svg' },
+  sqlite: { type: 'image', value: './assets/images/icons/SQLite.svg' },
+  Anthropic: { type: 'image', value: './assets/images/icons/Anthropic.svg' },
+  'azure apenai': { type: 'image', value: './assets/images/icons/Azure.svg' },
+  'meta llma': { type: 'image', value: './assets/images/icons/Meta LLaMA.svg' },
   immybot: { type: 'svg', value: this.SVGICONS.immybot }
 };
   existingConnections: any = [];
@@ -4222,52 +4223,52 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     this.selectedConnectionType = type;
   }
 
- categories = [
+ categories:any[]  = [
   // { name: 'All sources', icon: '', description: 'Browse all connection types',count:'33' },
-    { name: 'Relational Database', icon: '🛢️', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
+    { name: 'Relational Database', image: './assets/images/icons/relational-database.svg', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
     { name: 'LLM Integrations', icon: '🤖', description: 'AI & Large Language Model integrations',count:'6' },
-    { name: 'Multi-dimensional Database', icon: '📊', description: 'OLAP & analytical data stores',count:'2' },
-    { name: 'NoSQL Database', icon: '📡', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
+    { name: 'Multi-dimensional Database', image: './assets/images/icons/Multi dimensional.svg', description: 'OLAP & analytical data stores',count:'2' },
+    { name: 'NoSQL Database', image: './assets/images/icons/NoSQl.svg', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
     { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
   connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string,disabled?:boolean}[] } = {
   "Relational Database": [
-    { name: "MySQL", icon: "🐬", description: "Relational database" },
-    { name: "ORACLE", icon: "🏺", description: "Enterprise relational database" },
-    { name: "PostgreSQL", icon: "🐘", description: "Advanced open-source relational database" },
-    { name: "Microsoft SQL SERVER", icon: "🖥️", description: "Microsoft relational database" },
-    { name: "Snow Flake", icon: "❄️", description: "Cloud data warehouse" }
+    { name: "MySQL", image:'./assets/images/icons/MY_sql.svg', description: "Relational database" },
+    { name: "ORACLE", image: './assets/images/icons/Oracle.svg', description: "Enterprise relational database" },
+    { name: "PostgreSQL", image: './assets/images/icons/Postgre.svg', description: "Advanced open-source relational database" },
+    { name: "Microsoft SQL SERVER", image: './assets/images/icons/microsoft-sql-server.svg', description: "Microsoft relational database" },
+    { name: "Snow Flake", image: './assets/images/icons/Snowflake.svg', description: "Cloud data warehouse" }
   ],
   "LLM Integrations": [
-    { name: "OpenAI", icon: "🤖", description: "AI & language models by OpenAI" },
-    { name: "DeepSeek", icon: "🔍", description: "Deep learning & LLM platform" },
-    { name: "Gemini", icon: "♊", description: "Google DeepMind Gemini models" },
-    { name: "Anthropic", icon: "🌐", description: "Claude AI models", disabled: true },
-    { name: "Azure OpenAI", icon: "☁️", description: "Azure-hosted OpenAI models", disabled: true },
-    { name: "Meta LLaMA", icon: "🦙", description: "Meta’s LLaMA family of LLMs", disabled: true }
+    { name: "OpenAI", image: './assets/images/icons/Open AI.svg', description: "AI & language models by OpenAI" },
+    { name: "DeepSeek", image: './assets/images/icons/Deep_seek.svg', description: "Deep learning & LLM platform" },
+    { name: "Gemini", image: './assets/images/icons/gemini-color 2.svg', description: "Google DeepMind Gemini models" },
+    { name: "Anthropic", image: './assets/images/icons/Anthropic.svg', description: "Claude AI models", disabled: true },
+    { name: "Azure OpenAI",image: './assets/images/icons/Azure.svg', description: "Azure-hosted OpenAI models", disabled: true },
+    { name: "Meta LLaMA", image: './assets/images/icons/Meta LLaMA.svg', description: "Meta’s LLaMA family of LLMs", disabled: true }
   ],
   "NoSQL Database": [
-    { name: "Cassandra", icon: "🌌", description: "Highly scalable NoSQL database", disabled: true },
-    { name: "SQLite", icon: "💾", description: "Lightweight embedded database" },
-    { name: "MongoDB", icon: "🍃", description: "Document-oriented NoSQL database", disabled: true }
+    { name: "Cassandra", image: './assets/images/icons/Cassandra.svg', description: "Highly scalable NoSQL database", disabled: true },
+    { name: "SQLite", image: './assets/images/icons/SQLite.svg', description: "Lightweight embedded database" },
+    { name: "MongoDB", image: './assets/images/icons/mongo DB.svg', description: "Document-oriented NoSQL database", disabled: true }
   ],
   "Multi-dimensional Database": [
-    { name: "SAP", icon: "🏢", description: "Enterprise resource planning & database", disabled: true },
-    { name: "SAP HANA", icon: "⚡", description: "In-memory, column-oriented database" }
+    { name: "SAP", image: './assets/images/icons/SAP.svg', description: "Enterprise resource planning & database", disabled: true },
+    { name: "SAP HANA", image: './assets/images/icons/SAP Hana.svg', description: "In-memory, column-oriented database" }
   ],
   "File Source": [
-    { name: "CSV", icon: "📑", description: "Comma-separated values file" },
-    { name: "Excel", icon: "📊", description: "Spreadsheet file format" }
+    { name: "CSV", image: "./assets/images/icons/CSV.svg", description: "Comma-separated values file" },
+    { name: "Excel", image: "./assets/images/icons/Excel.svg", description: "Spreadsheet file format" }
   ],
   "Integrations": [
-    { name: "xAmplify",image:'./assets/images/icons/Xamplify.png', description: "Business automation platform" },
-    { name: "QuickBooks", description: "Accounting software",image:'./assets/images/icons/quickbooks.png' },
+    { name: "xAmplify",image:'./assets/images/icons/XAmplify.svg', description: "Business automation platform" },
+    { name: "QuickBooks", description: "Accounting software",image:'./assets/images/icons/Quick books.svg' },
     { name: "Salesforce", description: "CRM platform", svg:this.SVGICONS.Salesforce },
-    { name: "ConnectWise", description: "IT management software", image:'./assets/images/icons/connectwise.png' },
+    { name: "ConnectWise", description: "IT management software", image:'./assets/images/icons/Connectwise.svg' },
     { name: "DBT", description: "Data build tool", image:'./assets/images/icons/dbt.svg' },
-    { name: "HaloPS", description: "PSA platform for IT providers",image:'./assets/images/icons/halopsa.png' },
-    { name: "Pax8", description: "Cloud commerce marketplace",image:'./assets/images/icons/pax8-icon.png'},
+    { name: "HaloPS", description: "PSA platform for IT providers",image:'./assets/images/icons/Halopsa.svg' },
+    { name: "Pax8", description: "Cloud commerce marketplace",image:'./assets/images/icons/Pax_8.svg'},
     { name: "BambooHR", description: "HR management system", svg:this.SVGICONS.bambooHr },
     { name: "Jira", description: "Project management software",svg:this.SVGICONS.jira },
     { name: "Shopify", description: "E-commerce platform",svg:this.SVGICONS.shopify },
