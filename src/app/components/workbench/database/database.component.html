@@ -90,7 +90,7 @@
                 <div class="d-flex align-items-center justify-content-between ">
                     <img src="./assets/images/icons/connection.svg"> <h6 class="mb-0" style="margin-left:-60px">Connections</h6>
                     <!-- <a ngbTooltip="Click to connect multi datasources" (click)="goToConnections()"><span  class="add-txt text-info">Add New</span></a> -->
-                    <button class="btn btn-card btn animate-b" style="align-items: flex-start;">
+                    <button class="btn btn-card btn animate-b" style="align-items: flex-start;" (click)="goToConnections()">
                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
                         <g clip-path="url(#clip0_2870_41687)">
                             <path d="M9.60938 4.60938H5.39062V0.390625C5.39062 0.174883 5.21574 0 5 0C4.78426 0 4.60938 0.174883 4.60938 0.390625V4.60938H0.390625C0.174883 4.60938 0 4.78426 0 5C0 5.21574 0.174883 5.39062 0.390625 5.39062H4.60938V9.60938C4.60938 9.82512 4.78426 10 5 10C5.21574 10 5.39062 9.82512 5.39062 9.60938V5.39062H9.60938C9.82512 5.39062 10 5.21574 10 5C10 4.78426 9.82512 4.60938 9.60938 4.60938Z" fill="black"/>
@@ -156,8 +156,8 @@
                                             <div *ngFor="let submenu of menu.tables"
                                                 class="sub-menu-item example-box subMenuFlex p-2 border rounded-3" cdkDrag [cdkDragDisabled]="!dragTablestoSemanticLayer">
                                                 <span class="drag-handle" cdkDragHandle>
-    <i class="bi bi-grip-vertical"></i> 
-  </span>
+                                                    <i class="bi bi-grip-vertical"></i> 
+                                                </span>
                                                 <i class="fa fa-table table-icon-p"></i>
                                                 <span [ngbTooltip]="submenu.table.length > 15 ? submenu.table : null">{{submenu.table ? (submenu.table.length > 15 ? (submenu.table| slice:0:15)+'...':submenu.table) : ''}}</span>
                                             </div>
@@ -205,7 +205,7 @@
                                     <h6 class="mb-0">Table Relation</h6>
                                 </div>
                                 <div class="card-body example-list-drop">
-                                <div class="mb-0" cdkDropList
+                                <div class="mb-0" cdkDropList style="height:210px"
                                     #destinationList="cdkDropList" [cdkDropListData]="draggedtables"
                                     (cdkDropListDropped)="tableCustomJoinError ? '' : drop($event)">
                                     @for(item of draggedtables;track $index){

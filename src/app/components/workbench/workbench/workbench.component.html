@@ -1072,7 +1072,7 @@
                 
             
                       <div class="d-flex gap-2">
-                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT' || iscrossDbSelect)"
+                        <button [disabled]="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL' || connection.server_type ==='SQLITE' || connection.server_type ==='QUICKBOOKS' || connection.server_type ==='SALESFORCE' || connection.server_type ==='GOOGLE_SHEETS' ||connection.server_type ==='HUBSPOT' || connection.server_type ==='ZOHO' || connection.server_type ==='JIRA'|| iscrossDbSelect)"
                           class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill" (click)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);"
                           [ngClass]="{'transform-card': !['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT'].includes(connection.server_type)}">
                          
@@ -3573,7 +3573,7 @@
 
           <!-- Actions -->
           <div class="d-flex justify-content-between mt-3 gap-2">
-            <button [disabled]="(conn.server_type === 'CSV' || conn.server_type ==='EXCEL' || conn.server_type ==='SQLITE' || conn.server_type ==='QUICKBOOKS' || conn.server_type ==='SALESFORCE' || conn.server_type ==='GOOGLE_SHEETS' ||conn.server_type ==='HUBSPOT')"
+            <button [disabled]="(conn.server_type === 'CSV' || conn.server_type ==='EXCEL' || conn.server_type ==='SQLITE' || conn.server_type ==='QUICKBOOKS' || conn.server_type ==='SALESFORCE' || conn.server_type ==='GOOGLE_SHEETS' || conn.server_type ==='JIRA' || conn.server_type ==='ZOHO' ||conn.server_type ==='HUBSPOT')"
               class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill"
               (click)="editDbDetails(conn.hierarchy_id);editDbConnectionModal(EditDbCon);">
               <i class="bi bi-pencil me-1"></i> Edit
@@ -5572,7 +5572,12 @@
             Scopes <span class="text-danger">*</span>
           </label>
           <span class="text-muted" style="display:inline-block;">(Select the required scopes for this connection)</span>
-          <ng-multiselect-dropdown [data]="zohoScopes" [(ngModel)]="selectedZohoScopes" [ngModelOptions]="{standalone: true}" [settings]="hubspotDropdownSettings" (onSelect)="onZohoScopeChange()" (onDeSelect)="onZohoScopeChange()" (onSelectAll)="onZohoScopeChange()" (onDeSelectAll)="onZohoScopeChange()">
+          <ng-multiselect-dropdown
+            [data]="zohoScopes"
+            [(ngModel)]="selectedZohoScopes"
+            [ngModelOptions]="{standalone: true}"
+            [settings]="hubspotDropdownSettings"
+            (ngModelChange)="onZohoScopeChange($event)">
           </ng-multiselect-dropdown>
         </div>
 
