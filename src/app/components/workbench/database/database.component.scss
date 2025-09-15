@@ -137,7 +137,7 @@ span.time { background-color: var(--primary-color); color: #fff; padding: 3px 10
 .customSql-dropdown-menu-h{ height: 504px;overflow-y: auto;}
 .customSql-tile-parent-h{ height: 250px;}
 .query-text-h{ outline: none;border: none;width: 100%;}
-.customsql-result-preview-h{ height: 349px;}
+.customsql-result-preview-h{ height: 375px;}
 
 // for 90% Resolution //
 @media ( 1420px <= width <= 1560px) {
@@ -210,4 +210,11 @@ td.ng-tns-c1221481046-0.ng-star-inserted { font-size: 11px;}
 .animate-b:hover {
   transform: scale(1.08);
   box-shadow: 0 8px 16px rgba(var(--primary-rgb, 13, 110, 253), 0.3); /* stronger shadow on hover */
+}
+.btn-close {
+  background: transparent url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'><path d='M2.146 2.146a.5.5 0 011 0L8 6.293l4.854-4.147a.5.5 0 11.708.708L8.707 7l4.855 4.854a.5.5 0 11-.708.708L8 7.707 3.146 12.561a.5.5 0 11-.708-.708L7.293 7 2.146 2.854a.5.5 0 010-.708z'/></svg>") center/1em auto no-repeat;
+  opacity: 0.6;
+}
+.btn-close:hover {
+  opacity: 1;
 }

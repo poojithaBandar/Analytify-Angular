@@ -4375,7 +4375,7 @@ goBackToCategories(){
 selectedConnection: string | null = null;
 
   selectConnection(connName: string) {
-    this.viewNewDbs = false
+    // this.viewNewDbs = false
     if(connName === 'xAmplify'){
       !this.iscrossDbSelect ? this.connectxAmplify() : null;
     } else if(connName === 'QuickBooks'){
