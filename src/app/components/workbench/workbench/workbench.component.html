@@ -3326,6 +3326,7 @@
       <!-- <div class="fs-2 mb-2 card-icon"></div> -->
       <h5>All Sources</h5>
       <small class="text-muted">View all available data source connections</small>
+     
       <!-- <span class="mb-3">
         {{ getAllSourcesCount() }} options
         <i class="bi bi-arrow-right text-primary ms-2 arrow-icon"></i>
@@ -3346,8 +3347,7 @@
       </div>
          <div class="flex-frow-1 d-flex flex-column">
         <small class="text-muted ">{{ cat.description }}</small>
-        <span class="mt-1 ">
-          {{ cat.count || 0 }} options
+        <span>{{ connectionTypes[cat.name]?.length || 0 }}
           <i class="bi bi-arrow-right text-primary ms-2 arrow-icon"></i>
         </span>
       </div>
@@ -3610,6 +3610,7 @@
     </div>
   </div>
 
+  
   <!-- Right Panel: New Connection Form -->
   <div *ngSwitchCase="'MySQL'" class="col-md-6">
     <div class="form-card p-3">
@@ -5923,7 +5924,86 @@
       </form>
     </div>
   </div>
-</div>
+
+  <div *ngSwitchCase="'xAmplify'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height p-4"style="overflow-x: hidden;">
+          <button (click)="handleConnection('xAmplify')" class="btn btn-primary w-100">Connect</button>
+        
+       </form>
+        </div>
+        </div>
+
+         <div *ngSwitchCase="'QuickBooks'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height p-4" style="overflow-x: hidden;">
+  <button (click)="handleConnection('QuickBooks')" class="btn btn-primary w-100">Connect</button>
+       </form>
+        </div>
+        </div>
+
+        <div *ngSwitchCase="'Salesforce'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height p-4"  style="overflow-x: hidden;">
+          <button (click)="handleConnection('Salesforce')" class="btn btn-primary w-100">Connect</button>
+       </form>
+        </div>
+        </div>
+
+
+        <div *ngSwitchCase="'Google Sheets'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo"
+            class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+  
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height p-4"  style="overflow-x: hidden;">
+          <button (click)="handleConnection('Google Sheets')" class="btn btn-primary w-100">Connect</button>
+       </form>
+        </div>
+        </div>
+
+        
+
+
+  
+
 
 
     <div *ngSwitchDefault>
@@ -5933,6 +6013,7 @@
 </div>
 
 
+ </div>
 
 
     <!-- <div class="main-container container-fluid TopHeader" *ngIf="showRelational">

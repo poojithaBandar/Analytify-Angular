@@ -4374,22 +4374,49 @@ goBackToCategories(){
 
 selectedConnection: string | null = null;
 
+handleConnection(connName: string) {
+    if (!this.iscrossDbSelect) {
+        switch(connName) {
+            case 'xAmplify':
+              !this.iscrossDbSelect ? this.connectxAmplify() : null;
+                break;
+            case 'QuickBooks':
+              !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+                break;
+            case 'Salesforce':
+              !this.iscrossDbSelect ? this.connectSalesforce() : null;
+                break;
+            case 'Google Sheets':
+              !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+                break;
+            default:
+                console.log('Unknown connection');
+        }
+    }
+}
+
+
   selectConnection(connName: string) {
-    this.viewNewDbs = false
-    if(connName === 'xAmplify'){
-      !this.iscrossDbSelect ? this.connectxAmplify() : null;
-          this.viewNewDbs = true
-    } else if(connName === 'QuickBooks'){
-      !this.iscrossDbSelect ? this.connectQuickBooks() : null;
-    this.viewNewDbs = true
-    } else if(connName === 'Salesforce'){
-      !this.iscrossDbSelect ? this.connectSalesforce() : null;
-                this.viewNewDbs = true
-    } else if(connName === 'Google Sheets'){
-      !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
-                this.viewNewDbs = true
-    } else{
-      this.selectedConnection = connName;
+    this.viewNewDbs = false;
+    // if(connName === 'xAmplify'){
+    //   !this.iscrossDbSelect ? this.connectxAmplify() : null;
+    //       this.viewNewDbs = true
+    // } 
+    //  if(connName === 'QuickBooks'){
+    //   !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+    // this.viewNewDbs = true
+    // }
+      // if(connName === 'Salesforce'){
+      // !this.iscrossDbSelect ? this.connectSalesforce() : null;
+      //           this.viewNewDbs = true
+    // }
+    
+    // if(connName === 'Google Sheets'){
+      //  !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+               this.viewNewDbs = false;
+      // }
+     {
+     this.selectedConnection = connName;
       if(connName === 'DBT'){
         this.displayName = '';
         this.dbtAccountId = '';
@@ -4518,8 +4545,9 @@ model = {
             this.showFiles = true;
             this.showIntegrations = true;
             break;
-  }
-  }
+     }
+    }
+
   getConnectionAsset(connName: string) {
   // Find the connection object from connectionTypes
   for (const category in this.connectionTypes) {
@@ -4532,8 +4560,5 @@ model = {
   }
   // fallback
   return { type: 'icon', value: '🔗' }; 
-}
-
-
-
+  }
 }
