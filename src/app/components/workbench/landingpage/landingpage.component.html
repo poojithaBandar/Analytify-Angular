@@ -48,27 +48,31 @@
     <div class="row mb-4">
         <div class="col-3">
             <div class="card mb-0 border transform-card">
-                <div class="card-body">
+                <div class="card-body  hover-card">
+                    <div class=""> 
                     <div class="d-flex justify-content-between">
-                        <div class="">
-                            <h5 class="mb-0 500 dashboard-T-C">Dashboards</h5>
+                        <div class=""> 
+                            <h5 class="mb-0 500 dashboard-T-C ">Dashboards <a (click)="navigate($event, '/analytify/dashboards')"><i class="fa fa-external-link" aria-hidden="true"></i></a></h5>
                             <h2 class="fw-500 mb-0"><b>{{totalDashbaords}}</b></h2>
+                            
                         </div>
+                        
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-dash-bg">
                                <img src="./assets/images/icons/land-dashboard1.png" alt="" class="landing-icon icon-bounce">
                             </span>
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-3">
             <div class="card mb-0 border transform-card">
-                <div class="card-body">
+                <div class="card-body  hover-card">
                     <div class="d-flex justify-content-between">
                          <div class="">
-                            <h5 class="mb-0 fw-500 chart-T-C">Charts</h5>
+                            <h5 class="mb-0 fw-500 chart-T-C">Charts  <a (click)="navigate($event, '/analytify/sheets-dashboard')"><i class="fa fa-external-link" aria-hidden="true"></i></a></h5>
                             <h2 class="fw-500 mb-0"><b>{{totalSheets}}</b></h2>
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
@@ -82,10 +86,10 @@
         </div>
         <div class="col-3">
             <div class="card mb-0 border transform-card">
-                <div class="card-body">
+                <div class="card-body  hover-card">
                     <div class="d-flex justify-content-between">
                         <div class="">
-                            <h5 class="mb-0 fw-500 queries-T-C">Queries</h5>
+                            <h5 class="mb-0 fw-500 queries-T-C">Queries <a (click)="navigate($event, '/analytify/saved-queries')"><i class="fa fa-external-link" aria-hidden="true"></i></a></h5>
                             <h2 class="fw-500 mb-0"><b>{{totalQueries}}</b></h2>
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
@@ -99,10 +103,10 @@
         </div>
         <div class="col-3">
             <div class="card mb-0 border transform-card">
-                <div class="card-body">
+                <div class="card-body  hover-card">
                     <div class="d-flex justify-content-between">
                         <div class="">
-                            <h5 class="mb-0 fw-500 data-T-C">Data sources</h5>
+                            <h5 class="mb-0 fw-500 data-T-C">Data sources  <a (click)="navigate($event, '/analytify/datasources/view-connections')"> <i class="fa fa-external-link icon-hover" aria-hidden="true"></i></a></h5>
                             <h2 class="fw-500 mb-0 "><b>{{totalDatabases}}</b></h2>
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">

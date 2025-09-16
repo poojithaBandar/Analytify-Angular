@@ -313,3 +313,12 @@ h6.fw-bold.mb-1 { font-size: 13px; }
   transform: scale(1.15);
 }
 
+
+
+.hover-card i {
+  display: none;   /* hidden by default */
+}
+
+.hover-card:hover i {
+  display: inline-block;  /* show when card is hovered */
+}
