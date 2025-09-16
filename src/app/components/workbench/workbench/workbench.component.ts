@@ -4415,7 +4415,6 @@ handleConnection(connName: string) {
       //  !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
                this.viewNewDbs = false;
       // }
-     {
      this.selectedConnection = connName;
       if(connName === 'DBT'){
         this.displayName = '';
@@ -4427,7 +4426,6 @@ handleConnection(connName: string) {
       }
       this.getSpecificConnections();
       console.log('selected sub category:', this.selectedConnection);
-    }
   }
 model = {
     name: '',
@@ -4436,30 +4434,7 @@ model = {
     username: '',
     password: ''
   };
-  // existingConnections = [  {
-  //   id: 1,
-  //   name: "mysql",
-  //   displayName: "MySql Production",
-  //   type: "mysql",
-  //   status: "Connected",
-  //   lastUpdated: "2 minutes ago",
-  //   description: "Main production database",
-  //   host: "prod-db.company.com",
-  //   size: "2.4 GB",
-  //   icon: "🐬"
-  // },
-  // {
-  //   id: 2,
-  //   name: "MySQL",
-  //   displayName: "MySQL Analytics",
-  //   type: "MySQL",
-  //   status: "Connected",
-  //   lastUpdated: "10 minutes ago",
-  //   description: "Analytics DB for reports",
-  //   host: "analytics.company.com",
-  //   size: "850 MB",
-  //   icon: "🐬"
-  // },]as any;
+  
    saveConnection() {
     console.log('Saving connection:', this.model);
     alert('Connection saved!');
