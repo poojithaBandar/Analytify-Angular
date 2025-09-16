@@ -64,6 +64,16 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/connectwise/`+this.accessToken,obj);
   }
+  dbtConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/dbt_authentication/`+this.accessToken,obj);
+  }
+  dbtConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/dbt_authentication/`+this.accessToken,obj);
+  }
   ninjaRMMConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -140,6 +150,26 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/hubspot_authentication/`+this.accessToken,obj);
+  }
+  zohoConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/zoho_authentication/`+this.accessToken,obj);
+  }
+  zohoConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/zoho_authentication/`+this.accessToken,obj);
+  }
+  jiraConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/jira_authentication/`+this.accessToken,obj);
+  }
+  jiraConnectionUpdate(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/jira_authentication/`+this.accessToken,obj);
   }
   connectWiseConnectionUpdate(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -1095,10 +1125,20 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.get<any>(`${environment.apiUrl}/open_ai_dashbaord/`+id+'/'+this.accessToken);
     }
+    buildSampleGeminiDashboard(id: number){
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/gemini_dashbaord/`+id+'/'+this.accessToken);
+    }
     buildSampleSalesforceDashbaord(id : number){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.get<any>(`${environment.apiUrl}/salesforce_dashbaord/`+id+'/'+this.accessToken);
+    }
+    buildSampleZohoDashboard(id: number){
+      const currentUser = localStorage.getItem('currentUser');
+      this.accessToken = JSON.parse(currentUser!)['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/zoho_dashbaord/`+id+'/'+this.accessToken);
     }
     buildSampleTallyDashboard(id: number) {
       const currentUser = localStorage.getItem('currentUser');

@@ -47,28 +47,32 @@
     </div>
     <div class="row mb-4">
         <div class="col-3">
-            <div class="card mb-0 border transform-card">
+            <div class="card mb-0 border transform-card hover-card cursor-pointer" (click)="navigate($event, '/analytify/dashboards')">
                 <div class="card-body">
+                    <div class=""> 
                     <div class="d-flex justify-content-between">
-                        <div class="">
-                            <h5 class="mb-0 500 dashboard-T-C">Dashboards</h5>
+                        <div class=""> 
+                            <h5 class="mb-0 500 dashboard-T-C ">Dashboards <i class="fa fa-external-link" aria-hidden="true"></i></h5>
                             <h2 class="fw-500 mb-0"><b>{{totalDashbaords}}</b></h2>
+                            
                         </div>
+                        
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-dash-bg">
                                <img src="./assets/images/icons/land-dashboard1.png" alt="" class="landing-icon icon-bounce">
                             </span>
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-3">
-            <div class="card mb-0 border transform-card">
+            <div class="card mb-0 border transform-card hover-card cursor-pointer" (click)="navigate($event, '/analytify/sheets-dashboard')">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                          <div class="">
-                            <h5 class="mb-0 fw-500 chart-T-C">Charts</h5>
+                            <h5 class="mb-0 fw-500 chart-T-C">Charts <i class="fa fa-external-link" aria-hidden="true"></i></h5>
                             <h2 class="fw-500 mb-0"><b>{{totalSheets}}</b></h2>
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
@@ -81,11 +85,11 @@
             </div>
         </div>
         <div class="col-3">
-            <div class="card mb-0 border transform-card">
+            <div class="card mb-0 border transform-card hover-card cursor-pointer" (click)="navigate($event, '/analytify/saved-queries')">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="">
-                            <h5 class="mb-0 fw-500 queries-T-C">Queries</h5>
+                            <h5 class="mb-0 fw-500 queries-T-C">Queries<i class="fa fa-external-link" aria-hidden="true"></i></h5>
                             <h2 class="fw-500 mb-0"><b>{{totalQueries}}</b></h2>
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
@@ -98,11 +102,11 @@
             </div>
         </div>
         <div class="col-3">
-            <div class="card mb-0 border transform-card">
+            <div class="card mb-0 border transform-card hover-card cursor-pointer" (click)="navigate($event, '/analytify/datasources/view-connections')">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="">
-                            <h5 class="mb-0 fw-500 data-T-C">Data sources</h5>
+                            <h5 class="mb-0 fw-500 data-T-C">Data sources  <i class="fa fa-external-link icon-hover" aria-hidden="true"></i></h5>
                             <h2 class="fw-500 mb-0 "><b>{{totalDatabases}}</b></h2>
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
@@ -278,129 +282,141 @@
                                             </span> -->
                                           <span class="avatar avatar-sm avatar-radius w-6 h-6 me-1 bg-transparent border-0" *ngIf="database?.server_type">
                                             <img *ngIf="database.server_type === 'POSTGRESQL'"
-                                                src="./assets/images/icons/postSQL-icon.jpg"
+                                                src="./assets/images/icons/Postgre.svg"
                                                 alt="PostgreSQL"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SAP HANA'"
-                                                src="./assets/images/icons/sap-hana-icon.png"
+                                                src="./assets/images/icons/SAP Hana.svg"
                                                 alt="SAP HANA"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'TALLY'"
-                                                src="./assets/images/icons/TallyLogo.png"
+                                                src="./assets/images/icons/tally-icon.svg"
                                                 alt="Tally"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'ORACLE'"
-                                                src="./assets/images/icons/oracle-icon.jpg"
+                                                src="./assets/images/icons/Oracle.svg"
                                                 alt="Oracle"
+                                                class="card-img w-5 h-5 icon-bounce" />
+                                            <img *ngIf="database.server_type === 'ZOHO'"
+                                                src="./assets/images/icons/zoho.svg"
+                                                alt="Zoho"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'NINJA'"
-                                                src="./assets/images/icons/ninjaRMMIcon.jpg"
+                                                src="./assets/images/icons/Ninja_One.svg"
                                                 alt="Ninja"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'HUBSPOT'"
-                                                src="./assets/images/icons/hubspotlogo.png"
+                                                src="./assets/images/icons/hub_spot.svg"
                                                 alt="Hubspot"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                             <img *ngIf="database.server_type === 'DEEPSEEK'"
-                                                src="./assets/images/icons/deepseek.svg"
+                                                src="./assets/images/icons/Deep_seek.svg"
                                                 alt="DeepSeek"
                                                 class="card-img w-5 h-5 icon-bounce" />
 
                                             <img *ngIf="database.server_type === 'OPEN_AI'"
-                                                src="https://logo.clearbit.com/openai.com"
+                                                src="./assets/images/icons/Open AI.svg"
                                                 alt="OpenAI"
                                                 class="card-img w-5 h-5 icon-bounce" />
 
                                             <img *ngIf="database.server_type === 'GEMINI'"
-                                                src="/assets/images/Db_server_images/geminiLLm.svg"
+                                                src="./assets/images/icons/gemini-color 2.svg"
                                                 alt="Gemini"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'MYSQL'"
-                                                src="./assets/images/icons/MySql-icon1.jpg"
+                                                src="./assets/images/icons/MY_sql.svg"
                                                 alt="MySQL"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'MONGODB'"
-                                                src="./assets/images/icons/mongodb-icon.jpg"
+                                                src="./assets/images/icons/mongo DB.svg"
                                                 alt="MongoDB"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'MICROSOFTSQLSERVER'"
-                                                src="./assets/images/icons/microsoft-sql-server-icon.jpg"
+                                                src="./assets/images/icons/microsoft-sql-server.svg"
                                                 alt="SQL Server"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SQLITE'"
-                                                src="./assets/images/icons/sqlite-icon.jpg"
+                                                src="./assets/images/icons/SQLite.svg"
                                                 alt="SQLite"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SNOWFLAKE'"
-                                                src="./assets/images/icons/snowflake-icon.png"
+                                                src="./assets/images/icons/Snowflake.svg"
                                                 alt="Snowflake"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
-                                            <img *ngIf="database.server_type === 'EXCEL'"
-                                                src="./assets/images/icons/csv-icon.jpg"
+                                            <img *ngIf="database.server_type === 'CSV'"
+                                                src="./assets/images/icons/CSV.svg"
                                                 alt="Excel"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
-                                            <img *ngIf="database.server_type === 'CSV'"
-                                                src="./assets/images/icons/excel-icon.jpg"
+                                            <img *ngIf="database.server_type === 'EXCEL'"
+                                                src="./assets/images/icons/Excel.svg"
                                                 alt="CSV"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'QUICKBOOKS'"
-                                                src="./assets/images/icons/quickbooks-icon.jpg"
+                                                src="./assets/images/icons/Quick books.svg"
                                                 alt="QuickBooks"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SALESFORCE'"
-                                                src="./assets/images/icons/salesforce-icon.jpg"
+                                                src="./assets/images/icons/salesforce-2-2.svg"
                                                 alt="Salesforce"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'CONNECTWISE'"
-                                                src="./assets/images/icons/connectwise-icon.png"
+                                                src="./assets/images/icons/Connectwise.svg"
                                                 alt="Connectwise"
                                                 class="card-img w-5 h-5" />
+                                            <img *ngIf="database.server_type === 'DBT'"
+                                                src="./assets/images/icons/dbt.svg"
+                                                alt="DBT"
+                                                class="card-img w-5 h-5 icon-bounce" />
+                                            <img *ngIf="database.server_type === 'JIRA'"
+                                                src="./assets/images/icons/jira.svg"
+                                                alt="Jira"
+                                                class="card-img w-5 h-5 icon-bounce" />
 
                                             <img *ngIf="database.server_type === 'HALOPS'"
-                                                src="./assets/images/icons/Halopsa-icon.png"
+                                                src="./assets/images/icons/Halopsa.svg"
                                                 alt="Halops"
                                                 class="card-img w-5 h-5" />
                                                 
                                             <img *ngIf="database.server_type === 'IMMYBOT'"
-                                                src="./assets/images/icons/immybot.svg"
+                                                src="./assets/images/icons/Immy_bot.svg"
                                                 alt="Immybot"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'SHOPIFY'"
-                                                src="./assets/images/icons/shopify-large-1.jpg"
+                                                src="./assets/images/icons/Shopify_.svg"
                                                 alt="Shopify"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'GOOGLE_SHEETS'"
-                                                src="./assets/images/icons/google-sheets.jpg"
+                                                src="./assets/images/icons/google_sheets.svg"
                                                 alt="Google Sheets"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                                 
                                             <img *ngIf="database.server_type === 'GOOGLE_ANALYTICS'"
-                                                src="./assets/images/icons/google-anaytics.jpg"
+                                                src="./assets/images/icons/Google_analytics.svg"
                                                 alt="Google Analytics"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                             <img *ngIf="database.server_type === 'BAMBOOHR'" 
-                                                src="./assets/images/icons/bamboohr.png"
+                                                src="./assets/images/icons/bamboo_HR.svg"
                                                 alt="Google Analytics"
                                                 class="card-img w-5 h-5 icon-bounce" />
                                              <img *ngIf="database.server_type === 'PAX8'"
-                                                src="./assets/images/icons/pax8.png"
+                                                src="./assets/images/icons/Pax_8.svg"
                                                 alt="PAX8"
                                                 class="card-img w-5 h-5 icon-bounce" />    
                                             </span>
@@ -490,6 +506,10 @@
                                     </td>
                                     <td *ngIf="database.server_type === 'CONNECTWISE'">
                                         <img alt="product" src="./assets/images/icons/connectwise-icon.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'DBT'">
+                                        <img alt="product" src="./assets/images/icons/dbt.svg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <td *ngIf="database.server_type === 'HALOPS'">
@@ -724,130 +744,142 @@
                                     <div class="dashboard-card-title d-flex">
                                         <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1 bg-transparent border-0">
                                            <img *ngIf="savedQuery.server_type === 'POSTGRESQL'"
-                                                src="./assets/images/icons/postSQL-icon.jpg"
+                                                src="./assets/images/icons/Postgre.svg"
                                                 alt="PostgreSQL"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'SAP HANA'"
-                                                src="./assets/images/icons/sap-hana-icon.png"
+                                                src="./assets/images/icons/SAP Hana.svg"
                                                 alt="SAP HANA"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'TALLY'"
-                                                src="./assets/images/icons/TallyLogo.png"
+                                                src="./assets/images/icons/tally-icon.svg"
                                                 alt="Tally"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'ORACLE'"
-                                                src="./assets/images/icons/oracle-icon.jpg"
+                                                src="./assets/images/icons/Oracle.svg"
                                                 alt="Oracle"
                                                 class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'ZOHO'"
+                                                src="./assets/images/icons/zoho.svg"
+                                                alt="Oracle"
+                                                class="avatar-radius icon-pulse w-5 h-5">   
 
                                             <img *ngIf="savedQuery.server_type === 'NINJA'"
-                                                src="./assets/images/icons/ninjaRMMIcon.jpg"
+                                                src="./assets/images/icons/Ninja_One.svg"
                                                 alt="Ninja"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'HUBSPOT'"
-                                                src="./assets/images/icons/hubspotlogo.png"
+                                                src="./assets/images/icons/hub_spot.svg"
                                                 alt="Hubspot"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'DEEPSEEK'"
-                                                src="./assets/images/icons/deepseek.svg"
+                                                src="./assets/images/icons/Deep_seek.svg"
                                                 alt="DeepSeek"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'OPEN_AI'"
-                                                src="https://logo.clearbit.com/openai.com"
+                                                src="./assets/images/icons/Open AI.svg"
                                                 alt="OpenAI"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'GEMINI'"
-                                                src="/assets/images/Db_server_images/geminiLLm.svg"
+                                                src="./assets/images/icons/gemini-color 2.svg"
                                                 alt="Gemini"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'MYSQL'"
-                                                src="./assets/images/icons/MySql-icon1.jpg"
+                                                src="./assets/images/icons/MY_sql.svg"
                                                 alt="MySQL"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'MONGODB'"
-                                                src="./assets/images/icons/mongodb-icon.jpg"
+                                                src="./assets/images/icons/mongo DB.svg"
                                                 alt="MongoDB"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'MICROSOFTSQLSERVER'"
-                                                src="./assets/images/icons/microsoft-sql-server-icon.jpg"
+                                                src="./assets/images/icons/microsoft-sql-server.svg"
                                                 alt="SQL Server"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'SQLITE'"
-                                                src="./assets/images/icons/sqlite-icon.jpg"
+                                                src="./assets/images/icons/SQLite.svg"
                                                 alt="SQLite"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'SNOWFLAKE'"
-                                                src="./assets/images/icons/snowflake-icon.png"
+                                                src="./assets/images/icons/Snowflake.svg"
                                                 alt="Snowflake"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'EXCEL'"
-                                                src="./assets/images/icons/csv-icon.jpg"
+                                                src="./assets/images/icons/Excel.svg"
                                                 alt="Excel"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'CSV'"
-                                                src="./assets/images/icons/excel-icon.jpg"
+                                                src="./assets/images/icons/CSV.svg"
                                                 alt="CSV"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'QUICKBOOKS'"
-                                                src="./assets/images/icons/quickbooks-icon.jpg"
+                                                src="./assets/images/icons/Quick books.svg"
                                                 alt="QuickBooks"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'SALESFORCE'"
-                                                src="./assets/images/icons/salesforce-icon.jpg"
+                                                src="./assets/images/icons/salesforce-2-2.svg"
                                                 alt="Salesforce"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'CONNECTWISE'"
-                                                src="./assets/images/icons/connectwise-icon.png"
+                                                src=".src/assets/images/icons/Connectwise.svg"
                                                 alt="Connectwise"
+                                                class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'DBT'"
+                                                src="./assets/images/icons/dbt.svg"
+                                                alt="DBT"
+                                                class="avatar-radius icon-pulse w-5 h-5">
+                                            <img *ngIf="savedQuery.server_type === 'JIRA'"
+                                                src="./assets/images/icons/jira.svg"
+                                                alt="Jira"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'HALOPS'"
-                                                src="./assets/images/icons/Halopsa-icon.png"
+                                                src="./assets/images/icons/Halopsa.svg"
                                                 alt="Halops"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'IMMYBOT'"
-                                                src="./assets/images/icons/immybot.png"
+                                                src="./assets/images/icons/Immy_bot.svg"
                                                 alt="Immybot"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'SHOPIFY'"
-                                                src="./assets/images/icons/shopify-large-1.jpg"
+                                                src="./assets/images/icons/Shopify_.svg"
                                                 alt="Shopify"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'GOOGLE_SHEETS'"
-                                                src="./assets/images/icons/google-sheets.jpg"
+                                                src="./assets/images/icons/google_sheets.svg"
                                                 alt="Google Sheets"
                                                 class="avatar-radius icon-pulse w-5 h-5">
 
                                             <img *ngIf="savedQuery.server_type === 'GOOGLE_ANALYTICS'"
-                                                src="./assets/images/icons/google-anaytics.jpg"
+                                                src="./assets/images/icons/Google_analytics.svg"
                                                 alt="Google Analytics"
                                                 class="avatar-radius icon-pulse w-5 h-5">
                                             <img *ngIf="savedQuery.server_type === 'BAMBOOHR'"
-                                                src="./assets/images/icons/bamboohr.png"
+                                                src="./assets/images/icons/bamboo_HR.svg"
                                                 alt="BambooHR"
                                                 class="avatar-radius icon-pulse w-5 h-5">
                                             <img *ngIf="savedQuery.server_type === 'PAX8'"
-                                                src="./assets/images/icons/pax8.png"
+                                                src="./assets/images/icons/Pax_8.svg"
                                                 alt="PAX8"
                                                 class="avatar-radius icon-pulse w-5 h-5">
                                         </span>
