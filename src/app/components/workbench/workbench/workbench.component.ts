@@ -4375,15 +4375,19 @@ goBackToCategories(){
 selectedConnection: string | null = null;
 
   selectConnection(connName: string) {
-    // this.viewNewDbs = false
+    this.viewNewDbs = false
     if(connName === 'xAmplify'){
       !this.iscrossDbSelect ? this.connectxAmplify() : null;
+          this.viewNewDbs = true
     } else if(connName === 'QuickBooks'){
       !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+    this.viewNewDbs = true
     } else if(connName === 'Salesforce'){
       !this.iscrossDbSelect ? this.connectSalesforce() : null;
+                this.viewNewDbs = true
     } else if(connName === 'Google Sheets'){
       !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+                this.viewNewDbs = true
     } else{
       this.selectedConnection = connName;
       if(connName === 'DBT'){
