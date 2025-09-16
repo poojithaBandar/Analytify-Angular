@@ -4225,10 +4225,10 @@ skeletons = Array(6); // show 3 skeleton cards while loading
 
  categories:any[]  = [
   // { name: 'All sources', icon: '', description: 'Browse all connection types',count:'33' },
-    { name: 'Relational Database', image: './assets/images/icons/relational-database.svg', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
+    { name: 'Relational Database', image: './assets/images/icons/Rational.svg', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
     { name: 'LLM Integrations', icon: '🤖', description: 'AI & Large Language Model integrations',count:'6' },
     { name: 'Multi-dimensional Database', image: './assets/images/icons/Multi dimensional.svg', description: 'OLAP & analytical data stores',count:'2' },
-    { name: 'NoSQL Database', image: './assets/images/icons/NoSQl.svg', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
+    { name: 'NoSQL Database', image: './assets/images/icons/NoSQL.svg', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
     { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
@@ -4374,22 +4374,48 @@ goBackToCategories(){
 
 selectedConnection: string | null = null;
 
+handleConnection(connName: string) {
+    if (!this.iscrossDbSelect) {
+        switch(connName) {
+            case 'xAmplify':
+              !this.iscrossDbSelect ? this.connectxAmplify() : null;
+                break;
+            case 'QuickBooks':
+              !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+                break;
+            case 'Salesforce':
+              !this.iscrossDbSelect ? this.connectSalesforce() : null;
+                break;
+            case 'Google Sheets':
+              !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+                break;
+            default:
+                console.log('Unknown connection');
+        }
+    }
+}
+
+
   selectConnection(connName: string) {
-    this.viewNewDbs = false
-    if(connName === 'xAmplify'){
-      !this.iscrossDbSelect ? this.connectxAmplify() : null;
-          this.viewNewDbs = true
-    } else if(connName === 'QuickBooks'){
-      !this.iscrossDbSelect ? this.connectQuickBooks() : null;
-    this.viewNewDbs = true
-    } else if(connName === 'Salesforce'){
-      !this.iscrossDbSelect ? this.connectSalesforce() : null;
-                this.viewNewDbs = true
-    } else if(connName === 'Google Sheets'){
-      !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
-                this.viewNewDbs = true
-    } else{
-      this.selectedConnection = connName;
+    this.viewNewDbs = false;
+    // if(connName === 'xAmplify'){
+    //   !this.iscrossDbSelect ? this.connectxAmplify() : null;
+    //       this.viewNewDbs = true
+    // } 
+    //  if(connName === 'QuickBooks'){
+    //   !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+    // this.viewNewDbs = true
+    // }
+      // if(connName === 'Salesforce'){
+      // !this.iscrossDbSelect ? this.connectSalesforce() : null;
+      //           this.viewNewDbs = true
+    // }
+    
+    // if(connName === 'Google Sheets'){
+      //  !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+               this.viewNewDbs = false;
+      // }
+     this.selectedConnection = connName;
       if(connName === 'DBT'){
         this.displayName = '';
         this.dbtAccountId = '';
@@ -4400,7 +4426,6 @@ selectedConnection: string | null = null;
       }
       this.getSpecificConnections();
       console.log('selected sub category:', this.selectedConnection);
-    }
   }
 model = {
     name: '',
@@ -4409,30 +4434,7 @@ model = {
     username: '',
     password: ''
   };
-  // existingConnections = [  {
-  //   id: 1,
-  //   name: "mysql",
-  //   displayName: "MySql Production",
-  //   type: "mysql",
-  //   status: "Connected",
-  //   lastUpdated: "2 minutes ago",
-  //   description: "Main production database",
-  //   host: "prod-db.company.com",
-  //   size: "2.4 GB",
-  //   icon: "🐬"
-  // },
-  // {
-  //   id: 2,
-  //   name: "MySQL",
-  //   displayName: "MySQL Analytics",
-  //   type: "MySQL",
-  //   status: "Connected",
-  //   lastUpdated: "10 minutes ago",
-  //   description: "Analytics DB for reports",
-  //   host: "analytics.company.com",
-  //   size: "850 MB",
-  //   icon: "🐬"
-  // },]as any;
+  
    saveConnection() {
     console.log('Saving connection:', this.model);
     alert('Connection saved!');
@@ -4518,8 +4520,9 @@ model = {
             this.showFiles = true;
             this.showIntegrations = true;
             break;
-  }
-  }
+     }
+    }
+
   getConnectionAsset(connName: string) {
   // Find the connection object from connectionTypes
   for (const category in this.connectionTypes) {
@@ -4532,8 +4535,5 @@ model = {
   }
   // fallback
   return { type: 'icon', value: '🔗' }; 
-}
-
-
-
+  }
 }
