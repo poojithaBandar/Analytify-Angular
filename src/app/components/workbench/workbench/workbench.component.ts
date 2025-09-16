@@ -4225,10 +4225,10 @@ skeletons = Array(6); // show 3 skeleton cards while loading
 
  categories:any[]  = [
   // { name: 'All sources', icon: '', description: 'Browse all connection types',count:'33' },
-    { name: 'Relational Database', image: './assets/images/icons/relational-database.svg', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
+    { name: 'Relational Database', image: './assets/images/icons/Rational.svg', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
     { name: 'LLM Integrations', icon: '🤖', description: 'AI & Large Language Model integrations',count:'6' },
     { name: 'Multi-dimensional Database', image: './assets/images/icons/Multi dimensional.svg', description: 'OLAP & analytical data stores',count:'2' },
-    { name: 'NoSQL Database', image: './assets/images/icons/NoSQl.svg', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
+    { name: 'NoSQL Database', image: './assets/images/icons/NoSQL.svg', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
     { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
