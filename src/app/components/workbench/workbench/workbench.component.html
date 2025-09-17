@@ -3302,13 +3302,14 @@
           </div>
       </div> -->
     
-<div class="row">
+<div class="row p-4">
   <div class="col-3 cat-border" style="height:80vh; overflow-y:auto;">
 <div class="main-container container-fluid TopHeader">
   <div class="d-flex align-items-center mb-4">
     <div class="flex-grow-1 position-relative me-3">
       <h6 class="mb-3">CHOOSE A CATEGORY</h6>
     </div>
+    
     <div class="d-flex ms-auto">
       <!-- <app-insights-button [buttonName]="' View Connected Datasources'"
         [classesList]="'btn btn-primary me-3 animate-button'" [isIcon]="true" [previledgeId]="4"
@@ -3347,7 +3348,7 @@
       </div>
          <div class="flex-frow-1 d-flex flex-column">
         <small class="text-muted ">{{ cat.description }}</small>
-        <span>{{ connectionTypes[cat.name]?.length || 0 }}
+        <span>{{ connectionTypes[cat.name]?.length || 0 }}  options
           <i class="bi bi-arrow-right text-primary ms-2 arrow-icon"></i>
         </span>
       </div>
