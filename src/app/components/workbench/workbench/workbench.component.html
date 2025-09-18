@@ -851,17 +851,13 @@
 
 
             <div class="main-container container-fluid TopHeader">
-              <div class="d-flex align-items-center mb-4">
+              <!-- <div class="d-flex align-items-center mb-4">
                 <div class="flex-grow-1 position-relative me-3" style="max-width: 400px;">
                   <input type="text" placeholder="Search connections..." [(ngModel)]="searchDbName" (keyup.enter)="searchDbConnectionList()"
                     class="form-control glass-light ps-5" />
                   <span class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 1rem;">
                   </span>
                 </div>
-            
-                <!-- <button (click)="showNewConnection = true" class="btn btn-primary shadow px-4 py-2">
-                  New Connection
-                </button> -->
                 <div class="d-flex ms-auto">
                 <app-insights-button 
                   [buttonName]="'➕ New Connection'" 
@@ -873,8 +869,95 @@
                 </app-insights-button>
                 <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" (click)="connectCrossDbs()" class="btn btn-primary me-3 animate-button" type="button" >Select & Move</button>
                 </div>
+              </div> -->
+            <div class="d-flex align-items-center mb-4 flex-wrap">
+  <!-- Push everything to the right -->
+          <div class="d-flex align-items-center ms-auto flex-wrap">
+              <div ngbDropdown class="me-3" style="min-width: 260px;">
+              <button
+                class="btn glass-light-select p-3 w-100 d-flex justify-content-between align-items-center"
+                id="datasourceDropdown"
+                ngbDropdownToggle tabindex="0">
+                
+                <span *ngIf="selectedDatasource; else placeholder" class="d-flex align-items-center">
+                  <img [src]="selectedDatasource.image" alt="" width="20" height="20" class="me-2" />
+                  {{ selectedDatasource.name }}
+                </span>
+                
+                <ng-template #placeholder>
+                  Select Datasource
+                </ng-template>
+                
+                <i class="bi bi-chevron-down ms-auto"></i>
+              </button>
+
+              <div ngbDropdownMenu aria-labelledby="datasourceDropdown" class="p-2 shadow-lg dropdown-menu-end w-100">
+                <!-- Search Input -->
+                <input type="text"
+                      class="form-control mb-2"
+                      placeholder="Search datasource..."
+                      [(ngModel)]="datasourceSearch" />
+
+                <!-- Datasource List -->
+                <button
+                  *ngFor="let ds of filteredDatasourceList()"
+                  class="dropdown-item d-flex align-items-center"
+                  (click)="onDatasourceSelect(ds)">
+                  <img [src]="ds.image" alt="" width="20" height="20" class="me-2" />
+                  {{ ds.name }}
+                </button>
               </div>
-            
+            </div>
+
+
+
+          <!-- Sorting Dropdown -->
+          <div ngbDropdown class="me-3" style="min-width: 180px;">
+            <button
+              class="btn glass-light-select p-3 w-100 d-flex justify-content-between align-items-center"
+              id="sortDropdown"
+              ngbDropdownToggle>
+              {{ selectedSortLabel || 'Sort By' }}
+              <i class="bi bi-chevron-down"></i>
+            </button>
+
+            <div ngbDropdownMenu aria-labelledby="sortDropdown" class="shadow-lg dropdown-menu-end w-100">
+              <button class="dropdown-item" (click)="onSortChange('name')">Name</button>
+              <button class="dropdown-item" (click)="onSortChange('created_at')">Created Date</button>
+              <button class="dropdown-item" (click)="onSortChange('updated_at')">Updated Date</button>
+            </div>
+          </div>
+
+
+              <!-- Search Box -->
+              <div class="flex-grow-1 position-relative me-3 w-350" style="max-width: 400px;">
+                <input type="text"
+                  placeholder="Search connections..."
+                  [(ngModel)]="searchDbName"
+                  (keyup.enter)="searchDbConnectionList()"
+                  class="form-control glass-light-input p-2 ps-5" />
+              </div>
+
+              <!-- Buttons -->
+                <app-insights-button
+                  [buttonName]="'➕ New Connection'"
+                  [classesList]="'btn btn-primary me-3 animate-button'"
+                  [isIcon]="true"
+                  [previledgeId]="1"
+                  [isBtn]="true"
+                  (click)="routeNewDatabase()">
+                </app-insights-button>
+
+                <button *ngIf="iscrossDbSelect"
+                  [disabled]="!selectedHirchyIdCrsDb"
+                  (click)="connectCrossDbs()"
+                  class="btn btn-primary me-3 animate-button"
+                  type="button">
+                  Select & Move
+                </button>
+              </div>
+            </div>
+
             
               <div class="row mb-4">
                 <div class="col-3">

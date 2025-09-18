@@ -3488,6 +3488,7 @@ connectGoogleSheets(){
     // this.getDbConnectionList();
     this.errorCheck();
     this.categorySelect('All');
+    this.buildSubCategories();
   }
 
   pageChangegetconnectionList(page:any){
@@ -4535,5 +4536,40 @@ model = {
   }
   // fallback
   return { type: 'icon', value: '🔗' }; 
+  }
+
+
+  datasourceSearch: string = '';
+  selectedDatasource: any = null;
+
+  selectedSort: string = '';
+  selectedSortLabel: string = '';
+subCategories: any[] = [];
+buildSubCategories() {
+  const categories = Object.values(this.connectionTypes).flat();
+
+  this.subCategories = categories.map(cat => ({
+    name: cat.name,
+    value: cat.name.toLowerCase().replace(/\s+/g, '_'),
+    // Prefer SVG if exists, else fallback to image
+    image: cat.svg ? cat.svg : cat.image
+  }));
+}
+ filteredDatasourceList() {
+    return this.subCategories.filter(ds =>
+      ds.name.toLowerCase().includes(this.datasourceSearch.toLowerCase())
+    );
+  }
+
+  onDatasourceSelect(ds: any) {
+    this.selectedDatasource = ds;
+  }
+
+  onSortChange(value: string) {
+    this.selectedSort = value;
+    this.selectedSortLabel =
+      value === 'name' ? 'Name' :
+      value === 'created_at' ? 'Created Date' :
+      'Updated Date';
   }
 }
