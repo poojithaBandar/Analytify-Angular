@@ -34,6 +34,8 @@ export class GenieAiqDashboardComponent {
   selectedConnection: any = null;
   schematableList = [] as any[];
   hierarchyId:any;
+  selectedCard: string = 'prompt'; // default selection
+
     @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
 
   constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService){
@@ -46,10 +48,12 @@ export class GenieAiqDashboardComponent {
   }
 
   getConnectionList(){
-    const Obj ={ }
+    const Obj ={ 
+      need_pagination:false
+    }
     this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
       next:(data)=>{
-        this.connectionList = data.sheets;
+        this.connectionList = data;
         this.groupConnectionsByServerType();
       },
       error:(error)=>{
@@ -82,17 +86,11 @@ onServerTypeSelect(type: string) {
   this.displayNamesForType = this.groupedConnections[type] || [];
 }
   onConnect() {
-     if (this.selectedConnection && typeof this.selectedConnection === 'object') {
-    const hierarchyId = this.selectedConnection.hierarchy_id;
-    console.log('Selected hierarchy_id:', hierarchyId);
-    this.hierarchyId = hierarchyId;
-    // Use hierarchyId as needed
   const obj ={
-    hierarchy_ids:[hierarchyId]
+    hierarchy_ids:[this.hierarchyId]
   }
-  const IdToPass = hierarchyId;
   this.schematableList = [];
-  this.workbechService.getSchemaTablesFromConnectedDb(IdToPass, obj).subscribe({
+  this.workbechService.getSchemaTablesFromConnectedDb(obj).subscribe({
     next: (data) => {
       let allTables: any[] = [];
       data.forEach((dataTest: any) => {
@@ -112,10 +110,6 @@ onServerTypeSelect(type: string) {
       this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' });
     }
 })
-  } else {
-    // Handle case where no connection is selected
-    this.toasterService.error('Please select a display name', 'Error');
-  }
   }
   onTableSelect() {
     if (this.selectedTables && this.selectedTables.length > 0) {
@@ -241,4 +235,245 @@ sendPrompt() {
   this.userPrompt = ''; // Clear input after sending
   this.onTableSelect();
 }
+
+
+
+
+
+
+  // datasources = [
+  //   { value: 'postgres', label: 'PostgreSQL', desc: 'Advanced open-source relational database' },
+  //   { value: 'mysql', label: 'MySQL', desc: 'Popular relational database' },
+  //   { value: 'mongo', label: 'MongoDB', desc: 'NoSQL document database' }
+  // ];
+  showDatasource = false;
+
+  toggleDatasource() {
+    this.showDatasource = !this.showDatasource;
+  }
+ selectDatasource(data:any) {
+  this.hierarchyId = data.hierarchy_id;
+  this.selectedConnection = data;
+  this.onConnect();
+ }
+ selectCard(card: string) {
+  this.selectedCard = card;
+}
+isCreateDisabled(): boolean {
+  if (this.selectedCard === 'prompt' && !this.userPrompt.trim()) {
+    return true;
+  }
+  return false;
+}
+showDashboardView = false;
+promptDashboard(){
+  // const payload ={
+  //   h_id: this.hierarchyId,
+  //   question:this.userPrompt
+  // }
+  //     this.workbechService.promptDashboard(payload).subscribe({
+  //     next:(data)=>{
+  //     console.log(data);
+  //     if(this.datafromApi){
+  //       this.buildDashboardprocess(this.datafromApi);
+  //     }
+  //     },
+  //     error:(error)=>{
+  //       console.log(error);
+  //       this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
+  //     }
+  //   })
+  this.showDashboardView = true;
+}
+buildDashboardprocess(datafromApi:any){
+
+  this.genarateQuerysetId(datafromApi)
+
+}
+querySetId:any
+genarateQuerysetId(data:any){
+  const obj={
+    database_id: this.hierarchyId,
+    custom_query: data?.queryset?.custom_query,
+  }
+this.workbechService.executeQuery(obj).subscribe({
+  next:(data)=>{
+    console.log(data);
+    this.querySetId = data.query_set_id;
+    this.builSheets(data);
+  }
+})
+}
+builSheets(data:any){
+
+}
+datafromApi =[
+  {
+    "status": "success",
+    "dashboard": {
+        "dashboard": {
+            "dashboard_title": "Dashboard for Selected Datasource Analysis",
+            "height": "",
+            "width": "",
+            "dashboard_data": ""
+        },
+        "queryset": {
+            "custom_query": "select * from project, users",
+            "queryset_name": "Datasource: Project and Users"
+        },
+        "sheets": [
+            {
+                "sheet_name": "Project Types Analysis",
+                "sheet_description": "Analyzes the distribution of project types",
+                "sql_query": "SELECT \"projectTypeKey\", count(\"id\") FROM (select * from project) temp_table GROUP BY \"projectTypeKey\" ORDER BY \"projectTypeKey\" ASC NULLS FIRST",
+                "dimensions": [
+                    "projectTypeKey"
+                ],
+                "metrics": [
+                    "count(id)"
+                ],
+                "chart_type": "bar",
+                "business_insight": "Insight into the number of projects per project type",
+                "sheet_data": "",
+                "structure_valid": true,
+                "columns": [
+                    {
+                        "column": "projectTypeKey",
+                        "result": [
+                            "software"
+                        ]
+                    }
+                ],
+                "rows": [
+                    {
+                        "column": "count(id)",
+                        "result": [
+                            1
+                        ]
+                    }
+                ]
+            },
+            {
+                "sheet_name": "Active Users Analysis",
+                "sheet_description": "Analyzes the distribution of active users",
+                "sql_query": "SELECT \"active\", count(\"self\") FROM (select * from users) temp_table GROUP BY \"active\" ORDER BY \"active\" ASC NULLS FIRST",
+                "dimensions": [
+                    "active"
+                ],
+                "metrics": [
+                    "count(self)"
+                ],
+                "chart_type": "pie",
+                "business_insight": "Insight into the number of active and inactive users",
+                "sheet_data": "",
+                "structure_valid": true,
+                "columns": [
+                    {
+                        "column": "active",
+                        "result": [
+                            "true"
+                        ]
+                    }
+                ],
+                "rows": [
+                    {
+                        "column": "count(self)",
+                        "result": [
+                            14
+                        ]
+                    }
+                ]
+            },
+            {
+                "sheet_name": "Private Projects Analysis",
+                "sheet_description": "Analyzes the distribution of private projects",
+                "sql_query": "SELECT \"isPrivate\", count(\"id\") FROM (select * from project) temp_table GROUP BY \"isPrivate\" ORDER BY \"isPrivate\" ASC NULLS FIRST",
+                "dimensions": [
+                    "isPrivate"
+                ],
+                "metrics": [
+                    "count(id)"
+                ],
+                "chart_type": "donut",
+                "business_insight": "Insight into the number of private and public projects",
+                "sheet_data": "",
+                "structure_valid": true,
+                "columns": [
+                    {
+                        "column": "isPrivate",
+                        "result": [
+                            "false"
+                        ]
+                    }
+                ],
+                "rows": [
+                    {
+                        "column": "count(id)",
+                        "result": [
+                            1
+                        ]
+                    }
+                ]
+            },
+            {
+                "sheet_name": "Project Style Analysis",
+                "sheet_description": "Analyzes the distribution of project styles",
+                "sql_query": "SELECT \"style\", count(\"id\") FROM (select * from project) temp_table GROUP BY \"style\" ORDER BY \"style\" ASC NULLS FIRST",
+                "dimensions": [
+                    "style"
+                ],
+                "metrics": [
+                    "count(id)"
+                ],
+                "chart_type": "line",
+                "business_insight": "Insight into the number of projects based on style",
+                "sheet_data": "",
+                "structure_valid": true,
+                "columns": [
+                    {
+                        "column": "style",
+                        "result": [
+                            "next-gen"
+                        ]
+                    }
+                ],
+                "rows": [
+                    {
+                        "column": "count(id)",
+                        "result": [
+                            1
+                        ]
+                    }
+                ]
+            },
+            {
+                "sheet_name": "KPI: Total Projects",
+                "sheet_description": "Key Performance Indicator for Total Projects",
+                "sql_query": "SELECT count(\"id\") FROM (select * from project) temp_table",
+                "dimensions": [],
+                "metrics": [
+                    "count(id)"
+                ],
+                "chart_type": "kpi",
+                "business_insight": "Total number of projects in the datasource",
+                "sheet_data": "",
+                "structure_valid": false,
+                "structure_error": "Query doesn't follow the required structure",
+                "columns": [],
+                "rows": [
+                    {
+                        "column": "count(id)",
+                        "result": [
+                            1
+                        ]
+                    }
+                ]
+            }
+        ],
+        "overall_insights": "Key overall insights from the dashboard: Provides detailed analysis of project and user data from the selected datasource"
+    },
+    "message": "Dashboard generated successfully"
+}
+]
+
 }

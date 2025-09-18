@@ -318,7 +318,7 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/queryfetch/`+this.accessToken,obj)
   }
-  getSchemaTablesFromConnectedDb(id:any,obj:any){
+  getSchemaTablesFromConnectedDb(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/server_tables/`+this.accessToken,obj)
@@ -1411,6 +1411,12 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/user_dashboard/`+this.accessToken,obj);
       }
+
+    promptDashboard(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/predictive_analysis/`+this.accessToken,obj);
+    }
      getChartMetricsLandingPage(){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
