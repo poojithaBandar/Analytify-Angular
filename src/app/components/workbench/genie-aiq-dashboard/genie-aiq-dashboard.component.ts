@@ -10,6 +10,8 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import { RouterModule } from '@angular/router';
 import { WorkbenchComponent } from '../workbench/workbench.component';
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
+import { OpenaiService } from '../../../services/openai.service';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-genie-aiq-dashboard',
@@ -38,7 +40,7 @@ export class GenieAiqDashboardComponent {
 
     @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
 
-  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService){
+  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService, private openAi: OpenaiService, private loaderService:LoaderService){
 
   }
   ngOnInit(){
@@ -266,6 +268,7 @@ isCreateDisabled(): boolean {
   return false;
 }
 showDashboardView = false;
+dash1: any = [];
 promptDashboard(){
   // const payload ={
   //   h_id: this.hierarchyId,
@@ -283,7 +286,273 @@ promptDashboard(){
   //       this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
   //     }
   //   })
-  this.showDashboardView = true;
+  const data = [
+    {
+      "sheet_name": "Sheet Data Overview",
+      "sql_query": "SELECT \"chart_id\", count(\"chart_id\") FROM (select * from sheet_data) temp_table GROUP BY \"chart_id\" ORDER BY \"chart_id\" ASC NULLS FIRST",
+      "dimensions": [
+        "chart_id"
+      ],
+      "metrics": [
+        "count(chart_id)"
+      ],
+      "chart_type": "bar",
+      "chart_id": 6,
+      "is_echart": true,
+      "sheet_data": "",
+      "structure_valid": true,
+      "columns": [
+        {
+          "column": "chart_id",
+          "result": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            17,
+            18,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "column": "count(chart_id)",
+          "result": [
+            289,
+            65,
+            78,
+            62,
+            1,
+            295,
+            8,
+            4,
+            5,
+            224,
+            1,
+            65,
+            12,
+            2,
+            34,
+            6,
+            184,
+            1215,
+            64,
+            97,
+            2,
+            71
+          ]
+        }
+      ]
+    },
+    {
+      "sheet_name": "Top Sheet Users",
+      "sql_query": "SELECT \"user_id\", count(\"chart_id\") FROM (select * from sheet_data) temp_table GROUP BY \"user_id\" ORDER BY count(\"chart_id\") DESC",
+      "dimensions": [
+        "user_id"
+      ],
+      "metrics": [
+        "count(chart_id)"
+      ],
+      "chart_type": "line",
+      "chart_id": 13,
+      "is_echart": false,
+      "sheet_data": "",
+      "structure_valid": true,
+      "columns": [
+        {
+          "column": "user_id",
+          "result": [
+            12,
+            1,
+            17,
+            10,
+            62,
+            73,
+            15,
+            4,
+            2,
+            78,
+            70,
+            50,
+            3,
+            6,
+            74,
+            42,
+            7,
+            75,
+            32,
+            26,
+            64,
+            48,
+            44,
+            43,
+            71,
+            5,
+            27,
+            28,
+            25,
+            45,
+            49,
+            36,
+            56,
+            35,
+            9,
+            21,
+            14,
+            18,
+            72,
+            30,
+            34,
+            57,
+            37,
+            19,
+            40,
+            76,
+            8,
+            47,
+            51,
+            31,
+            23,
+            11,
+            61,
+            33,
+            58,
+            38,
+            24,
+            77,
+            46,
+            22,
+            13,
+            41,
+            59,
+            29,
+            69,
+            20
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "column": "count(chart_id)",
+          "result": [
+            282,
+            153,
+            87,
+            72,
+            58,
+            53,
+            53,
+            48,
+            48,
+            44,
+            42,
+            39,
+            38,
+            38,
+            36,
+            35,
+            35,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            34,
+            22,
+            3
+          ]
+        }
+      ]
+    }
+  ]
+  this.loaderService.show();
+  this.openAi.getChartOptions(data)
+  .then(chartOptions => {
+    console.log("Chart Options:", chartOptions);
+
+    // Assign result
+    this.dash1 = chartOptions;
+    this.showDashboardView = true;
+    this.loaderService.hide();
+  })
+  .catch(err => {
+    console.error("Error fetching chart options", err);
+    this.loaderService.hide();
+  });
+}
+customizeDashboard(){
+  const data = this.dash1;
+  this.loaderService.show();
+  this.openAi.getChartOptions(data, this.userPrompt + "/n" + "do not remove any other charts, do update only relative chart only")
+  .then(chartOptions => {
+    console.log("Chart Options:", chartOptions);
+
+    // Assign result
+    this.dash1 = chartOptions;
+    // this.showDashboardView = true;
+    this.loaderService.hide();
+  })
+  .catch(err => {
+    console.error("Error fetching chart options", err);
+    this.loaderService.hide();
+  });
 }
 buildDashboardprocess(datafromApi:any){
 

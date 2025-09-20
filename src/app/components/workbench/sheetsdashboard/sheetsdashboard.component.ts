@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -62,6 +62,7 @@ import jsPDF from 'jspdf';
 import { i } from 'mathjs';
 import { SafeUrlPipe, SanitizeHtmlPipe } from '../../../shared/pipes/sanitize-html.pipe';
 import { AuthService } from '../../../shared/services/auth.service';
+import { OpenaiService } from '../../../services/openai.service';
 
 interface TableRow {
   [key: string]: any;
@@ -269,6 +270,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   showGenieTooltip = false;
   trendData= [];
   trendLabels = [];
+  @Input() dash1: any = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -691,6 +693,13 @@ export class SheetsdashboardComponent implements OnDestroy {
       .subscribe(() => {
         this.getSavedDashboardDataPublic();
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges){
+    if(changes['dash1']){
+      console.log(this.dash1);
+      this.dashboard = this.dash1;
+    }
   }
 
   fetchDashboardIdFromToken(){
