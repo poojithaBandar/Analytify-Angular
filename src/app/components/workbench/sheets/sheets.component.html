@@ -2448,7 +2448,7 @@
                             
                         </div>
                     </div>
-                    <div  [ngStyle]="{'display': ((bar || horizontalBar || pie || donut || map) && draggedColumns && draggedColumns?.length > 0 ? '' : 'none')}" class="row align-items-center">
+                    <div  [ngStyle]="{'display': ((bar || horizontalBar || pie || donut || treemap || map) && draggedColumns && draggedColumns?.length > 0 ? '' : 'none')}" class="row align-items-center">
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                                                    <div class="card-area d-flex gap-2">
                                                        <label for="inputName" class="form-control mb-0 border">Hierarchy</label>
@@ -2490,7 +2490,7 @@
                         <option *ngIf="!(guage)" value="echart">EChart</option>
                     </select>
                 </div> -->
-                @if((pie || bar || horizontalBar|| donut || map) && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
+                @if((pie || bar || horizontalBar|| donut || treemap || map) && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
                                     <div class="col-lg-3 col-md-3 p-1">
                                         <button class="btn btn-primary p-1" (click)="goDrillDownBack()">
                                             <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
@@ -2499,7 +2499,7 @@
                                     <div class="col-lg-9 col-md-9 d-flex mt-2" >
                                         @for(column of drillDownObject;track column;let index = $index){
                                        <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index] === 'date' ? 'year/month/day' :  (draggedDrillDownColumns[index] === 'time' ? 'date' : draggedDrillDownColumns[index])]}}</h6> 
-                                       <span *ngIf="index !== (drillDownObject.length-1)">--</span>
+                                       <span *ngIf="index !== (drillDownObject.length-1)">_</span>
                                    }
                                     </div>
                                 }
@@ -3534,7 +3534,7 @@
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination(false);"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows?.length<1 && draggedColumns?.length<1}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Pivot Table" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,9);pivotTableDatatransform(false);"><img src="./assets/images/charts/pivot-chart.jpg" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': pivotTable}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Pivot Table" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,9);pivotTableDatatransform(false, true);"><img src="./assets/images/charts/pivot-chart.jpg" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': pivotTable}"></a>
                                                         </div>
                                                         <div class="card-title fs-12 mt-2 mb-1 border bg-light p-1" >Single Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
@@ -4539,7 +4539,7 @@
                                                         </div>
                                                     </div>
                                                     <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                        <div class=""> 
+                                                        <div class="">
                                                             <label class="mb-0">Row Totals </label>
                                                         </div>
                                                         <div *ngIf="pivotRowTotals" class="toggle toggle-sm on mb-0" (click)="renderPivotTable(false);pivotRowTotals = false" >
@@ -4549,8 +4549,95 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button">Row Totals</button>
+                                                        </h6>
+                                                        <div ngbAccordionCollapse class="accordion-collapse collapse customize-accordion-h">
+                                                            <div class="accordion-body p-0 database-dropdown" ngbAccordionBody>
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Font Color</label>
+                                                                            </div>
+                                                                            <div *ngIf="rowTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="rowTotalFontColorSwitch = !rowTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!rowTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="rowTotalFontColorSwitch = !rowTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="rowTotalFontColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="rowTotalFontColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Background</label>
+                                                                            </div>
+                                                                            <div *ngIf="rowTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="rowTotalBgColorSwitch = !rowTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!rowTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="rowTotalBgColorSwitch = !rowTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="rowTotalBgColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="rowTotalBgColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button">Column Totals</button>
+                                                        </h6>
+                                                        <div ngbAccordionCollapse class="accordion-collapse collapse customize-accordion-h">
+                                                            <div class="accordion-body p-0 database-dropdown" ngbAccordionBody>
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Font Color</label>
+                                                                            </div>
+                                                                            <div *ngIf="colTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="colTotalFontColorSwitch = !colTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!colTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="colTotalFontColorSwitch = !colTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="colTotalFontColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="colTotalFontColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Background</label>
+                                                                            </div>
+                                                                            <div *ngIf="colTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="colTotalBgColorSwitch = !colTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!colTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="colTotalBgColorSwitch = !colTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="colTotalBgColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="colTotalBgColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="(pivotTable && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" ngbAccordionItem class="accordion-item mb-2 border rounded-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-2 border-0 rounded-2 fw-500 border d-flex justify-content-between" type="button">Grand Totals</button>
+                                                        </h6>
+                                                        <div ngbAccordionCollapse class="accordion-collapse collapse customize-accordion-h">
+                                                            <div class="accordion-body p-0 database-dropdown" ngbAccordionBody>
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Font Color</label>
+                                                                            </div>
+                                                                            <div *ngIf="grandTotalFontColorSwitch" class="toggle toggle-sm on mb-0" (click)="grandTotalFontColorSwitch = !grandTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!grandTotalFontColorSwitch" class="toggle toggle-sm off mb-0" (click)="grandTotalFontColorSwitch = !grandTotalFontColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="grandTotalFontColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="grandTotalFontColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
+                                                                            <div class="">
+                                                                                <label class="mb-0">Background</label>
+                                                                            </div>
+                                                                            <div *ngIf="grandTotalBgColorSwitch" class="toggle toggle-sm on mb-0" (click)="grandTotalBgColorSwitch = !grandTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <div *ngIf="!grandTotalBgColorSwitch" class="toggle toggle-sm off mb-0" (click)="grandTotalBgColorSwitch = !grandTotalBgColorSwitch; applyDynamicStylesToPivot()"><span></span></div>
+                                                                            <ngx-colors *ngIf="grandTotalBgColorSwitch && pivotTable" ngx-colors-trigger [(ngModel)]="grandTotalBgColor" (ngModelChange)="applyDynamicStylesToPivot()" [format]="'hex'"></ngx-colors>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div *ngIf="(table && chartId) && (draggedColumns?.length !== 0 || draggedRows?.length !==0)" class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
-                                                             <div class=""> 
+                                                             <div class="">
                                                             <label class="mb-0">Table Pagination </label>
                                                         </div>
                                                         <div *ngIf="toggleTablePagination" class="toggle toggle-sm on mb-0" (click)="toggleTablePagination=!toggleTablePagination">
@@ -5281,7 +5368,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((pie && chartId) || donut || bar || horizontalBar || map )  && draggedColumns && draggedColumns?.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
+                                                    <div *ngIf="((pie && chartId) || donut || bar || horizontalBar || treemap || map )  && draggedColumns && draggedColumns?.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2 border rounded-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton

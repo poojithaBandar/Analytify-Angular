@@ -251,6 +251,9 @@ getChartMetrics(){
     }
   })
 }
+ navigate(event: Event, route: string) {
+     this.router.navigate([route]); 
+  }
 private buildTreeMap(){
   // return {
   //   tooltip: {
