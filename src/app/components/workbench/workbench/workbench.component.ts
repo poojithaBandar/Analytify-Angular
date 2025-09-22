@@ -2099,25 +2099,27 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
                 this.connectCrossDbs();
               }else{
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-              Swal.fire({
-                position: "center",
-                // icon: "question",
-                iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
-                showConfirmButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Skip',
-                customClass: {
-                  icon: 'no-icon-bg',
-                }
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
-                } else {
-                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-                }
-              });
+              // Swal.fire({
+              //   position: "center",
+              //   // icon: "question",
+              //   iconHtml: '<img src="./assets/images/copilot.gif">',
+              //   title: "Create smart dashboard from your data with just one click?",
+              //   showConfirmButton: true,
+              //   showCancelButton: true,
+              //   confirmButtonText: 'Yes',
+              //   cancelButtonText: 'Skip',
+              //   customClass: {
+              //     icon: 'no-icon-bg',
+              //   }
+              // }).then((result) => {
+              //   if (result.isConfirmed) {
+              //     this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
+              //   } else {
+              //     this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              //   }
+              // });
+
+              this.openAlertPopUp();
               }
             }
           },
@@ -4535,5 +4537,32 @@ model = {
   }
   // fallback
   return { type: 'icon', value: '🔗' }; 
+  }
+
+  openAlertPopUp() {
+    Swal.fire({
+      title: "We're preparing your data!",
+      html: `
+    <div class="mb-3">
+      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <p>Your data source is being securely connected and ingested into Analytify. 
+    This process may take a few minutes depending on the size of your data.</p>
+    <p>In the meantime, feel free to explore other modules. 
+    We’ll notify you once your data is ready to use.</p>
+  `,
+      showConfirmButton: true,
+      confirmButtonText: "Got it",
+      allowOutsideClick: false,
+      customClass: {
+        popup: 'rounded-4 shadow-lg p-3'
+      }
+    }).then((result) => {
+    if (result.isConfirmed) {
+      this.router.navigate(['analytify/home']);
+    }
+  });
   }
 }
