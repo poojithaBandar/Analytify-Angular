@@ -31,7 +31,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/.htaccess"
+              "src/.htaccess",
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               "src/assets/libs/bootstrap/css/bootstrap.min.css",
@@ -102,7 +103,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/.htaccess"
+              "src/.htaccess",
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               "src/assets/libs/bootstrap/css/bootstrap.min.css",

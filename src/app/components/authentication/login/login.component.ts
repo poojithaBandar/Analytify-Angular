@@ -97,6 +97,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     // localStorage.setItem('email', btoa(JSON.stringify(data.email)));
     localStorage.setItem('chartType', chartType);
     localStorage.setItem('userId', userId);  
+    localStorage.setItem('notificationId', data.notification_id);
     localStorage.setItem('customTheme', JSON.stringify(data.custome_theme)); 
     localStorage.setItem('apiCustomTheme', JSON.stringify(data.custome_theme)); 
     localStorage.setItem('defaultColorSchemes', JSON.stringify(defaultColorSchemes));
