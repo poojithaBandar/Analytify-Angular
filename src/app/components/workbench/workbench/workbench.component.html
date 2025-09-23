@@ -2212,9 +2212,22 @@
                         <label [ngClass]="{'error-label': jiraRedirectURLError}" class="col-form-label">Redirect URL <span class="text-danger ms-1">*</span></label>
                         <input [ngClass]="{'error-input': jiraRedirectURLError}" type="text" class="form-control" [(ngModel)]="jiraRedirectURL" [ngModelOptions]="{standalone: true}" (input)="jiraRedirectURLInput()">
                       </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': jiraScopeError}" class="col-form-label">Scopes <span class="text-danger ms-1">*</span></label>
+                        <ng-multiselect-dropdown
+                          [data]="jiraScopes"
+                          [(ngModel)]="selectedJiraScopes"
+                          [ngModelOptions]="{standalone: true}"
+                          [settings]="jiraDropdownSettings"
+                          (onSelect)="onJiraScopeChange()"
+                          (onDeSelect)="onJiraScopeChange()"
+                          (onSelectAll)="onJiraScopeChange()"
+                          (onDeSelectAll)="onJiraScopeChange()">
+                        </ng-multiselect-dropdown>
+                      </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
-                        <button type="button" class="btn btn-primary" (click)="jiraSignIn()" [disabled]="(jiraClientSecretError || displayNameError || jiraClientIdError || jiraRedirectURLError) || !(jiraClientSecret && jiraClientId && displayName && jiraRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                        <button type="button" class="btn btn-primary" (click)="jiraSignIn()" [disabled]="(jiraScopeError || jiraClientSecretError || displayNameError || jiraClientIdError || jiraRedirectURLError) || !(selectedJiraScopes.length>0 && jiraClientSecret && jiraClientId && displayName && jiraRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
                     </form>
                   </div>
@@ -2233,6 +2246,7 @@
                       <li><span class="mb-0"><strong>Client Secret:</strong> Application secret.</span></li>
                       <li><span class="mb-0"><strong>Redirect URI:</strong> Redirect URL configured in Jira.</span></li>
                       <li><span class="mb-0"><strong>Display Name:</strong> A user-friendly name for the connection.</span></li>
+                      <li><span class="mb-0"><strong>Scopes:</strong> Required Jira permissions (manage:jira-configuration, manage:jira-project, manage:jira-webhook, read:jira-user, read:jira-work).</span></li>
                     </ul>
                   </div>
                 </div>
@@ -5514,6 +5528,23 @@
         </div>
 
         <div class="mb-3">
+          <label [ngClass]="{'error-label': jiraScopeError}" class="form-label d-inline-block me-1">
+            Scopes <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted" style="display:inline-block;">(Select the required Jira scopes in this field)</span>
+          <ng-multiselect-dropdown
+            [data]="jiraScopes"
+            [(ngModel)]="selectedJiraScopes"
+            [ngModelOptions]="{standalone: true}"
+            [settings]="jiraDropdownSettings"
+            (onSelect)="onJiraScopeChange()"
+            (onDeSelect)="onJiraScopeChange()"
+            (onSelectAll)="onJiraScopeChange()"
+            (onDeSelectAll)="onJiraScopeChange()">
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="mb-3">
           <label class="form-label">Description </label>
           <span class="text-muted" style="display:inline-block;">(Enter your description)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
@@ -5521,7 +5552,7 @@
 
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button" (click)="goBackToSubCategories()">Close</button>
-          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(jiraClientSecretError || displayNameError || jiraClientIdError || jiraRedirectURLError) || !(jiraClientSecret && jiraClientId && displayName && jiraRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(jiraScopeError || jiraClientSecretError || displayNameError || jiraClientIdError || jiraRedirectURLError) || !(selectedJiraScopes.length>0 && jiraClientSecret && jiraClientId && displayName && jiraRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
         </div>
 
       </form>
