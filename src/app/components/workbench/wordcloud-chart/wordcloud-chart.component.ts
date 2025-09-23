@@ -1,26 +1,9 @@
 import {
-  AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges
+  AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild
 } from '@angular/core';
 
 import * as echarts from 'echarts';
 import 'echarts-wordcloud'; // registers the series
-
-// Minimal local type for the wordcloud series (covers fields you use)
-type MyWordCloudSeries = {
-  type: 'wordCloud';
-  shape?: string;
-  sizeRange?: [number, number];
-  rotationRange?: [number, number];
-  gridSize?: number;
-  textStyle?: { color?: string | ((...args: any[]) => string) };
-  data: { name: string; value: number }[];
-};
-
-type MyOption = {
-  tooltip?: Record<string, unknown>;
-  series: MyWordCloudSeries[];
-};
-
 @Component({
   selector: 'app-wordcloud-chart',
   standalone: true,
@@ -31,8 +14,13 @@ export class WordcloudChartComponent implements AfterViewInit, OnChanges {
   @Input() chartsColumnData: any[] = [];
   @Input() chartsRowData: any[] = [];
   @Input() customOptions: any = {};
-
+  width: string = '400px'; // Width of the chart
+  height: string = '400px'; // Height of the chart
   private chartInstance?: echarts.ECharts;
+  @Input() isSheetSaveOrUpdate : any;
+  chartOptions: any;
+  @Output() saveOrUpdateChart = new EventEmitter<object>();
+  @ViewChild('wordcloudcontainer', { static: true }) chartContainer!: ElementRef;
 
   constructor(private el: ElementRef) {}
 
@@ -42,20 +30,27 @@ export class WordcloudChartComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['chartsColumnData'] || changes['chartsRowData'] || changes['customOptions']) {
+    if (changes['chartsColumnData'] || changes['chartsRowData']) {
       this.renderChart();
+    } else if(changes['customOptions'] && changes['customOptions'].currentValue){
+      this.initChart();
+      this.setWordCloudOption(changes['customOptions'].currentValue);
+    }
+    if(this.isSheetSaveOrUpdate){
+      let object = {
+        chartOptions : this.chartOptions
+      }
+      this.saveOrUpdateChart.emit(object);
     }
   }
 
   private initChart(): void {
-    const container: HTMLDivElement | null =
-      this.el.nativeElement.querySelector('.wordcloud-container');
-
-    if (container) {
+    if (this.chartContainer?.nativeElement) {
       // Force canvas to avoid getImageData errors
-      this.chartInstance = echarts.init(container, undefined, { renderer: 'canvas' });
+      this.chartInstance = echarts.init(this.chartContainer.nativeElement);
     }
   }
+  // }
 
   private renderChart(): void {
     if (!this.chartInstance) return;
@@ -91,28 +86,7 @@ export class WordcloudChartComponent implements AfterViewInit, OnChanges {
     if (Number.isFinite(this.customOptions?.maxWords)) {
       seriesData = seriesData.slice(0, Number(this.customOptions.maxWords));
     }
-  
-    // (Optional) compress big ranges for nicer sizing
-    // const maxV = Math.max(...seriesData.map(d => d.value));
-    // seriesData = seriesData.map(d => ({ ...d, value: Math.log1p(d.value) }));
-  
-    // Safe numeric fallbacks
-    const sizeRange: [number, number] =
-      Array.isArray(this.customOptions?.fontSizeRange) &&
-      this.customOptions.fontSizeRange.length === 2
-        ? [Number(this.customOptions.fontSizeRange[0]) || 12,
-           Number(this.customOptions.fontSizeRange[1]) || 60]
-        : [12, 60];
-  
-    const rotationRange: [number, number] =
-      Array.isArray(this.customOptions?.rotationRange) &&
-      this.customOptions.rotationRange.length === 2
-        ? [Number(this.customOptions.rotationRange[0]) || -90,
-           Number(this.customOptions.rotationRange[1]) || 90]
-        : [-90, 90];
-  
-    const gridSize = Number(this.customOptions?.gridSize) || 8;
-  
+ 
     const colorOpt = this.customOptions?.color;
     const color =
       typeof colorOpt === 'function' ? colorOpt
@@ -126,21 +100,22 @@ export class WordcloudChartComponent implements AfterViewInit, OnChanges {
       tooltip: {},
       series: [{
         type: 'wordCloud',
-        shape:  'circle',
-        sizeRange,
-        rotationRange,
-        gridSize,
-        textStyle: { color },
+        shape:  'rectangle',
+        textStyle: {
+          color,                  
+          // fontFamily,             
+        },
         data: seriesData
       }]
     };
   
+    this.chartOptions = option;
     this.chartInstance.setOption(option, true);
   }
-  
 
-  @HostListener('window:resize')
-  onResize(): void {
-    this.chartInstance?.resize();
+  setWordCloudOption(option: any){
+    if (!this.chartInstance) return;
+    this.chartInstance.setOption(option, true);
   }
+
 }

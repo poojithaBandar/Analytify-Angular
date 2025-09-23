@@ -196,7 +196,6 @@ export class SheetsComponent{
   public lineChartOptions!: Partial<EChartsOption>;
   chartOptions:any;
   chartOptions1:any;
-  wordcloudOptions:any = {};
   sheetNumber: number = 1;
   sheetName = "Sheet 1";
   sheetTitle = "Sheet ";
@@ -3039,6 +3038,34 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+ }
+ if(responce.chart_id == 21){
+  this.chartType = 'wordcloud';
+  // this.pieChart();
+  this.bar = false;
+  this.horizontalBar = false;
+  this.table = false;
+  this.pivotTable = false;
+    this.pie = false;
+    this.line = false;
+    this.area = false;
+    this.sidebyside = false;
+    this.stocked = false;
+    this.barLine = false;
+    this.horizentalStocked = false;
+    this.grouped = false;
+    this.multiLine = false;
+    this.donut = false;
+    this.radar = false;
+    this.kpi = false;
+    this.heatMap = false;
+    this.funnel = false;
+    this.map = false;
+    this.guage = false;
+    this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
+    this.wordcloud = true;
  }
  if(responce.chart_id == 13){
   this.chartType = 'line';
