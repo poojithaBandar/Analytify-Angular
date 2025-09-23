@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WorkbenchService } from '../workbench.service';
@@ -39,7 +39,9 @@ export class GenieAiqDashboardComponent {
   selectedCard: string = 'prompt'; // default selection
 
     @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
+ chatHistory: ChatMessage[] = [];
 
+  @ViewChild('chatContainer') private chatContainer!: ElementRef;
   constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService, private openAi: OpenaiService, private loaderService:LoaderService){
 
   }
@@ -553,7 +555,38 @@ customizeDashboard(){
     console.error("Error fetching chart options", err);
     this.loaderService.hide();
   });
+
+
+   if (!this.userPrompt.trim()) return;
+    const currentPrompt = this.userPrompt; 
+    // Push user message
+    this.chatHistory.push({
+      sender: 'User',
+      text: this.userPrompt,
+      timestamp: new Date()
+    });
+
+    // Simulate AI response (replace with real API call)
+    setTimeout(() => {
+      this.chatHistory.push({
+        sender: 'AI',
+        text: `Got it! I’ll process: "${currentPrompt}"`,
+        timestamp: new Date()
+      });
+      this.scrollToBottom();
+    }, 800);
+
+    this.userPrompt = '';
+    this.scrollToBottom();
 }
+
+  private scrollToBottom() {
+    try {
+      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+    } catch (err) {}
+  }
+
+
 buildDashboardprocess(datafromApi:any){
 
   this.genarateQuerysetId(datafromApi)
@@ -745,4 +778,11 @@ datafromApi =[
 }
 ]
 
+}
+
+
+export interface ChatMessage {
+  sender: 'User' | 'AI';
+  text: string;
+  timestamp: Date;
 }

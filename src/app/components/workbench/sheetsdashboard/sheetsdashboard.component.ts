@@ -271,7 +271,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   trendData= [];
   trendLabels = [];
   @Input() dash1: any = [];
-
+  @Input() hideWidgets = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef,private authService: AuthService){

@@ -225,12 +225,10 @@
 </div>
 
 <!-- Dashboard + Prompt Split View -->
-<div *ngIf="showDashboardView" class="row" style="height: 100vh;">
-  <!-- 70% Dashboard Area -->
+<!-- <div *ngIf="showDashboardView" class="row" style="height: 100vh;">
   <div class="col-9 p-0" style="height: 100%;">
-    <app-sheetsdashboard [dash1]="dash1"></app-sheetsdashboard>
+    <app-sheetsdashboard [dash1]="dash1" [hideWidgets]="true" ></app-sheetsdashboard>
   </div>
-  <!-- 30% Prompt Area -->
   <div class="col-3 p-4 border-start" style="height: 100%; background: #f8f9fa;">
     <h5 class="mb-3">Prompt Area</h5>
     <div class="mb-3">
@@ -239,7 +237,51 @@
         placeholder="Describe your dashboard..."></textarea>
     </div>
     <button class="btn btn-primary w-100" (click)="customizeDashboard()">Send Prompt</button>
-    <!-- You can add more prompt/chat UI here -->
+  </div>
+</div> -->
+
+
+<div *ngIf="showDashboardView" class="row" style="height: 100vh; overflow: hidden;">
+  <!-- Dashboard Area -->
+  <div class="col-9 p-0 d-flex flex-column" style="height: 100%;">
+    <div class="flex-grow-1 overflow-auto">
+      <app-sheetsdashboard [dash1]="dash1" [hideWidgets]="true"></app-sheetsdashboard>
+    </div>
+  </div>
+
+  <!-- Prompt Area -->
+  <div class="col-3 d-flex flex-column border-start" style="height: 100%; background: #f8f9fa;">
+    <!-- Chat Header -->
+    <div class="p-3 border-bottom">
+      <h5 class="mb-0">Prompt Area</h5>
+    </div>
+
+    <!-- Chat Messages (scrollable area) -->
+    <!-- Chat Messages -->
+<div class="flex-grow-1 overflow-auto p-3" id="prompt-messages" #chatContainer>
+  <div *ngFor="let msg of chatHistory" class="mb-3">
+    <div [ngClass]="msg.sender === 'User' ? 'text-end' : 'text-start'">
+      <div 
+        class="d-inline-block px-3 py-2 "
+        [ngClass]="msg.sender === 'User' 
+          ? 'bg-primary text-white' 
+          : 'bg-light border'">
+        {{ msg.text }}
+      </div>
+      <div class="small text-muted mt-1">
+        {{ msg.timestamp | date:'shortTime' }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Prompt Input (fixed at bottom) -->
+<div class="p-3 border-top bg-white">
+  <textarea rows="2" class="form-control mb-2" [(ngModel)]="userPrompt"
+    placeholder="Type your prompt..."></textarea>
+  <button class="btn btn-primary w-100" (click)="customizeDashboard()">Send</button>
+</div>
+
   </div>
 </div>
 

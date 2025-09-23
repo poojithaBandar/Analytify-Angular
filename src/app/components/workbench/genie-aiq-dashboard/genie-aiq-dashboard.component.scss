@@ -463,3 +463,17 @@ form input, form select {
    border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4); /* lighter primary */
   border-radius: 1rem;
 }
+#prompt-messages {
+  scroll-behavior: smooth; /* Smooth scrolling */
+}
+
+textarea.form-control {
+  resize: none; /* Prevents dragging resize handle */
+}
+
+button.btn-primary {
+  transition: background 0.3s ease;
+}
+button.btn-primary:hover {
+  background: #0056b3;
+}

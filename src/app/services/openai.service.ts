@@ -28,12 +28,13 @@ Convert the given data into a valid array of chart objects.
    - id (Gridster item ID)  
    - chartId (must follow the mapping below)  
    - x, y, rows, cols (for Gridster position/size)  
-   - sheetType (must be "Chart" unless user specifies KPI, Pivot, or Table)  
-   - chartType (bar, line, pie, etc.)  
+   - sheetType (must be "Chart" unless user specifies Table)  
+   - chartType (must be chart type as, e.g. "bar", "line", "pie", etc. except KPI and Table it should be "KPI" and "Table")  
    - chartOptions (for ApexCharts, must always include "series")  
    - echartOptions (for ECharts, must always include "series")  
    - isEChart: true if using ECharts, false if using ApexCharts  
    - chartData, column_Data, row_Data, numberFormat, customizeOptions (when provided)  
+   - kpiData (if chartType is KPI, must include kpiNumber, kpiPrefix, kpiSuffix, kpiDecimalPlaces, rows, fontSize, color, trendData, trendLabels, kpiShowTrendline, showKpiIndicator, indicatorIsIncreased, indicatorValue, kpiTarget) and KPI's position in gridster must be at top if more than one KPI they should align one after the other with square shaped gridster item
 
 3. ChartId Mapping (must be strictly followed):  
    - "Table Chart" → 1  
@@ -72,10 +73,12 @@ Convert the given data into a valid array of chart objects.
 
 9. Gridster notes:  
    - x, y, rows, cols define item layout.  
-   - sheetType = "Chart" except for explicitly KPI, Pivot, or Table.  
+   - sheetType = "Chart" except Table.  
    - Compatible with Bootstrap 5 responsive grid system.  
 
-10. Return **only raw JSON array** as the final answer. No markdown, no explanations.  
+10. Map data.title and data.sheetTagName with "sheet_name" from data
+
+11. Return **only raw JSON array** as the final answer. No markdown, no explanations.  
 
 ---
 
@@ -87,11 +90,47 @@ Convert the given data into a valid array of chart objects.
   "y": 5,
   "rows": 8,
   "cols": 9,
+    "data": {
+        "title": "Total Customers",
+        "sheetTagName": "<p>Total Customers</p>"
+    },
   "sheetType": "Chart",
   "chartType": "bar",
   "chartId": 6,
   "isEChart": true,
-
+   "kpiData": {
+        "kpiNumber": "29.00",
+        "kpiPrefix": "",
+        "kpiSuffix": "",
+        "kpiDecimalUnit": "none",
+        "kpiDecimalPlaces": 2,
+        "rows": [
+            {
+                "col": "CNTD(Id)",
+                "result_data": [
+                    29
+                ]
+            }
+        ],
+        "fontSize": 4,
+        "color": "#ba68c8",
+        "kpiChartColor": "#2392c1",
+        "trendData": [
+            7,
+            16,
+            10
+        ],
+        "trendLabels": [
+            "2024-01-01",
+            "2025-01-01",
+            "null"
+        ],
+        "kpiShowTrendline": true,
+        "showKpiIndicator": true,
+        "indicatorIsIncreased": "up",
+        "indicatorValue": 45,
+        "kpiTarget": 20
+    },
   "echartOptions": {
     "backgroundColor": "#fff",
     "legend": { "orient": "vertical", "left": "left" },
@@ -110,7 +149,6 @@ Convert the given data into a valid array of chart objects.
     ],
     "color": ["#1d2e92", "#088ed2"]
   },
-
   "chartOptions": {
     "series": [
       { "name": "Series 1", "data": [100, 200], "group": "apexcharts-axis-0" }
