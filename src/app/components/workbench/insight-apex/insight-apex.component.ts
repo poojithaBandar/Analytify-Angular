@@ -507,7 +507,11 @@ export class InsightApexComponent {
     return chartHeight;
   }
 
-  barChart() {
+  barChart(chartsColumnData? :any, chartsRowData ? : any) {
+    if (chartsColumnData && chartsRowData) {
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
     const self = this;
     this.chartOptions = {
       series: [
@@ -644,7 +648,11 @@ export class InsightApexComponent {
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : (this.isDistributed ? this.selectedColorScheme : [this.color])
     };
   }
-horizontalBarChart() {
+horizontalBarChart(chartsColumnData? :any, chartsRowData ? : any) {
+  if (chartsColumnData && chartsRowData) {
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
   const self = this;
   this.chartOptions = {
     series: [{
@@ -773,7 +781,11 @@ xaxis: {
   };
 }
 
-  areaChart() {
+  areaChart(chartsColumnData? :any, chartsRowData ? : any) {
+    if (chartsColumnData && chartsRowData) {
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
     this.chartOptions = {
       series: [
         {
@@ -882,7 +894,11 @@ xaxis: {
       },
     };
   }
-  lineChart() {
+  lineChart(chartsColumnData? :any, chartsRowData ? : any) {
+    if (chartsColumnData && chartsRowData) {
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
     this.chartOptions = {
       series: [{
         name: "",
@@ -989,7 +1005,11 @@ xaxis: {
       }
     }
   }
-  pieChart() {
+  pieChart(chartsColumnData? :any, chartsRowData ? : any) {
+    if (chartsColumnData && chartsRowData) {
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
     const self = this;
     this.chartOptions = {
       series: this.chartsRowData,
@@ -1036,7 +1056,11 @@ xaxis: {
       },
     };
   }
-  sideBySide() {
+  sideBySide(dualAxisColumnData? :any, dualAxisRowData ? : any) {
+    if (dualAxisColumnData && dualAxisRowData) {
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
 
@@ -1159,7 +1183,11 @@ xaxis: {
       },
     };
   }
-  stockedChart(){
+  stockedChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+    if (dualAxisColumnData && dualAxisRowData) {
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
 
@@ -1277,7 +1305,11 @@ xaxis: {
       }
     };
   }
-  barLineChart(){
+  barLineChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+    if (dualAxisColumnData && dualAxisRowData) {
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
 
@@ -1455,7 +1487,11 @@ xaxis: {
 
     };
   }
-  hStockedChart(){
+  hStockedChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+    if (dualAxisColumnData && dualAxisRowData) {
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
 
@@ -1556,7 +1592,11 @@ xaxis: {
       }
     };
   }
-  hGroupedChart(){
+  hGroupedChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+    if (dualAxisColumnData && dualAxisRowData) {
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
 
@@ -1635,7 +1675,11 @@ xaxis: {
       },
     };
   }
-  multiLineChart(){
+  multiLineChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+    if (dualAxisColumnData && dualAxisRowData) {
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
 
@@ -1771,7 +1815,11 @@ xaxis: {
       }
     };
   }
-  donutChart(){
+  donutChart(chartsColumnData? :any, chartsRowData ? : any){
+    if (chartsColumnData && chartsRowData) {
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
     const self = this;
     this.chartOptions = {
       series: this.chartsRowData,
@@ -1882,7 +1930,11 @@ xaxis: {
       colors: this.isDistributed ? this.selectedColorScheme : [this.color],
     };
   }
-  heatMapChart(){
+  heatMapChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+    if (dualAxisColumnData && dualAxisRowData) {
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
 
@@ -1966,7 +2018,11 @@ xaxis: {
       }
     };
   }
-  treeMapChart(){
+  treeMapChart(chartsColumnData? :any, chartsRowData ? : any){
+    if (chartsColumnData && chartsRowData) {
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
     let self = this;
     this.chartOptions = {
       series: [
@@ -2039,7 +2095,11 @@ xaxis: {
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : this.selectedColorScheme
     };
   }
-  funnelChart(){
+  funnelChart(dualAxisColumnData? :any, dualAxisRowData ? : any){
+    if (dualAxisColumnData && dualAxisRowData) {
+      this.dualAxisColumnData = dualAxisColumnData;
+      this.dualAxisRowData = dualAxisRowData;
+    }
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
 

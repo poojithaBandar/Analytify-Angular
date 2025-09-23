@@ -1053,7 +1053,7 @@
         <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left fs-18"></i>
         <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right fs-18"></i>
       </div>
-      <div *ngIf="!isEmbedDashboard && !hideWidgets" class="dashboard-edit-title-card">
+      <div *ngIf="!isEmbedDashboard" class="dashboard-edit-title-card">
         
          <div *ngIf="!isPublicUrl" class="card mb-1 public-url-position">
             <div class="card-body p-1">
@@ -1082,7 +1082,7 @@
                           <button  class="btn btn-primary me-1"><i class="fa fa-pencil"></i></button>
                         </span>
                         <span [ngbTooltip]="dashboard.length === 0 ? 'Add sheet to save dashboard' : ''">
-                            <button [disabled]="dashboard.length === 0" id="save-btn" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button></span>
+                            <button [disabled]="dashboard.length === 0" id="save-btn" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="isGeenieDashboard ? sendData() : saveDashboard();editor =false">Save </button></span>
                             <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" id="update-btn" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate || dashboard.length == 0" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
                             (btnClickEvent)="updateDashboard(false,true,false);editor =false"></app-insights-button>
                             <!-- <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button> -->

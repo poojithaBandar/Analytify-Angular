@@ -245,7 +245,7 @@
   <!-- Dashboard Area -->
   <div class="col-9 p-0 d-flex flex-column" style="height: 100%;">
     <div class="flex-grow-1 overflow-auto">
-      <app-sheetsdashboard [dash1]="dash1" [hideWidgets]="true"></app-sheetsdashboard>
+      <app-sheetsdashboard [dash1]="dash1" [hideWidgets]="true" (sendDashboardData)="getDashboardData($event)"></app-sheetsdashboard>
     </div>
   </div>
 

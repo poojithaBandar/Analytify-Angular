@@ -7,11 +7,14 @@ import Swal from 'sweetalert2';
 import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { WorkbenchComponent } from '../workbench/workbench.component';
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 import { OpenaiService } from '../../../services/openai.service';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import { InsightApexComponent } from '../insight-apex/insight-apex.component';
+import { concatMap, from, map } from 'rxjs';
 
 @Component({
   selector: 'app-genie-aiq-dashboard',
@@ -37,12 +40,16 @@ export class GenieAiqDashboardComponent {
   schematableList = [] as any[];
   hierarchyId:any;
   selectedCard: string = 'prompt'; // default selection
+  eChartInstance!: InsightEchartComponent;
+  apexChartInstance!: InsightApexComponent;
+  dashboardName: string = '';
+  dashboardTagName: string = '';
 
     @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
  chatHistory: ChatMessage[] = [];
 
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
-  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService, private openAi: OpenaiService, private loaderService:LoaderService){
+  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService, private openAi: OpenaiService, private loaderService:LoaderService, private router:Router){
 
   }
   ngOnInit(){
@@ -272,272 +279,289 @@ isCreateDisabled(): boolean {
 showDashboardView = false;
 dash1: any = [];
 promptDashboard(){
-  // const payload ={
-  //   h_id: this.hierarchyId,
-  //   question:this.userPrompt
-  // }
-  //     this.workbechService.promptDashboard(payload).subscribe({
-  //     next:(data)=>{
-  //     console.log(data);
-  //     if(this.datafromApi){
-  //       this.buildDashboardprocess(this.datafromApi);
-  //     }
-  //     },
-  //     error:(error)=>{
-  //       console.log(error);
-  //       this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
-  //     }
-  //   })
-  const data = [
-    {
-      "sheet_name": "Sheet Data Overview",
-      "sql_query": "SELECT \"chart_id\", count(\"chart_id\") FROM (select * from sheet_data) temp_table GROUP BY \"chart_id\" ORDER BY \"chart_id\" ASC NULLS FIRST",
-      "dimensions": [
-        "chart_id"
-      ],
-      "metrics": [
-        "count(chart_id)"
-      ],
-      "chart_type": "bar",
-      "chart_id": 6,
-      "is_echart": true,
-      "sheet_data": "",
-      "structure_valid": true,
-      "columns": [
-        {
-          "column": "chart_id",
-          "result": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            17,
-            18,
-            24,
-            25,
-            26,
-            27,
-            28,
-            29
-          ]
-        }
-      ],
-      "rows": [
-        {
-          "column": "count(chart_id)",
-          "result": [
-            289,
-            65,
-            78,
-            62,
-            1,
-            295,
-            8,
-            4,
-            5,
-            224,
-            1,
-            65,
-            12,
-            2,
-            34,
-            6,
-            184,
-            1215,
-            64,
-            97,
-            2,
-            71
-          ]
-        }
-      ]
-    },
-    {
-      "sheet_name": "Top Sheet Users",
-      "sql_query": "SELECT \"user_id\", count(\"chart_id\") FROM (select * from sheet_data) temp_table GROUP BY \"user_id\" ORDER BY count(\"chart_id\") DESC",
-      "dimensions": [
-        "user_id"
-      ],
-      "metrics": [
-        "count(chart_id)"
-      ],
-      "chart_type": "line",
-      "chart_id": 13,
-      "is_echart": false,
-      "sheet_data": "",
-      "structure_valid": true,
-      "columns": [
-        {
-          "column": "user_id",
-          "result": [
-            12,
-            1,
-            17,
-            10,
-            62,
-            73,
-            15,
-            4,
-            2,
-            78,
-            70,
-            50,
-            3,
-            6,
-            74,
-            42,
-            7,
-            75,
-            32,
-            26,
-            64,
-            48,
-            44,
-            43,
-            71,
-            5,
-            27,
-            28,
-            25,
-            45,
-            49,
-            36,
-            56,
-            35,
-            9,
-            21,
-            14,
-            18,
-            72,
-            30,
-            34,
-            57,
-            37,
-            19,
-            40,
-            76,
-            8,
-            47,
-            51,
-            31,
-            23,
-            11,
-            61,
-            33,
-            58,
-            38,
-            24,
-            77,
-            46,
-            22,
-            13,
-            41,
-            59,
-            29,
-            69,
-            20
-          ]
-        }
-      ],
-      "rows": [
-        {
-          "column": "count(chart_id)",
-          "result": [
-            282,
-            153,
-            87,
-            72,
-            58,
-            53,
-            53,
-            48,
-            48,
-            44,
-            42,
-            39,
-            38,
-            38,
-            36,
-            35,
-            35,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            34,
-            22,
-            3
-          ]
-        }
-      ]
-    }
-  ]
-  this.loaderService.show();
-  this.openAi.getChartOptions(data)
-  .then(chartOptions => {
-    console.log("Chart Options:", chartOptions);
+  const payload ={
+    h_id: this.hierarchyId,
+    question:this.userPrompt
+  }
+    this.workbechService.promptDashboard(payload).subscribe({
+      next:(data)=>{
+      console.log(data);
+      // if(this.datafromApi){
+      //   this.buildDashboardprocess(this.datafromApi);
+      // }
 
-    // Assign result
-    this.dash1 = chartOptions;
-    this.showDashboardView = true;
-    this.loaderService.hide();
-  })
-  .catch(err => {
-    console.error("Error fetching chart options", err);
-    this.loaderService.hide();
-  });
+        // const data = [
+        //   {
+        //     "sheet_name": "Sheet Data Overview",
+        //     "sql_query": "SELECT \"chart_id\", count(\"chart_id\") FROM (select * from sheet_data) temp_table GROUP BY \"chart_id\" ORDER BY \"chart_id\" ASC NULLS FIRST",
+        //     "dimensions": [
+        //       "chart_id"
+        //     ],
+        //     "metrics": [
+        //       "count(chart_id)"
+        //     ],
+        //     "chart_type": "bar",
+        //     "chart_id": 6,
+        //     "is_echart": true,
+        //     "sheet_data": "",
+        //     "structure_valid": true,
+        //     "col_data": [
+        //       {
+        //         "orginal_column": "chart_id",
+        //         "data_type": "int",
+        //         "type": ""
+        //       }
+        //     ],
+        //     "row_data": [
+        //       {
+        //         "orginal_column": "chart_id",
+        //         "data_type": "int",
+        //         "type": "count"
+        //       }
+        //     ],
+        //     "columns": [
+        //       {
+        //         "column": "chart_id",
+        //         "result": [
+        //           1,
+        //           2,
+        //           3,
+        //           4,
+        //           5,
+        //           6,
+        //           7,
+        //           8,
+        //           9,
+        //           10,
+        //           11,
+        //           12,
+        //           13,
+        //           14,
+        //           17,
+        //           18,
+        //           24,
+        //           25,
+        //           26,
+        //           27,
+        //           28,
+        //           29
+        //         ]
+        //       }
+        //     ],
+        //     "rows": [
+        //       {
+        //         "column": "count(chart_id)",
+        //         "result": [
+        //           289,
+        //           65,
+        //           78,
+        //           62,
+        //           1,
+        //           295,
+        //           8,
+        //           4,
+        //           5,
+        //           224,
+        //           1,
+        //           65,
+        //           12,
+        //           2,
+        //           34,
+        //           6,
+        //           184,
+        //           1215,
+        //           64,
+        //           97,
+        //           2,
+        //           71
+        //         ]
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     "sheet_name": "Top Sheet Users",
+        //     "sql_query": "SELECT \"user_id\", count(\"chart_id\") FROM (select * from sheet_data) temp_table GROUP BY \"user_id\" ORDER BY count(\"chart_id\") DESC",
+        //     "dimensions": [
+        //       "user_id"
+        //     ],
+        //     "metrics": [
+        //       "count(chart_id)"
+        //     ],
+        //     "chart_type": "line",
+        //     "chart_id": 13,
+        //     "is_echart": false,
+        //     "sheet_data": "",
+        //     "structure_valid": true,
+        //     "columns": [
+        //       {
+        //         "column": "user_id",
+        //         "result": [
+        //           12,
+        //           1,
+        //           17,
+        //           10,
+        //           62,
+        //           73,
+        //           15,
+        //           4,
+        //           2,
+        //           78,
+        //           70,
+        //           50,
+        //           3,
+        //           6,
+        //           74,
+        //           42,
+        //           7,
+        //           75,
+        //           32,
+        //           26,
+        //           64,
+        //           48,
+        //           44,
+        //           43,
+        //           71,
+        //           5,
+        //           27,
+        //           28,
+        //           25,
+        //           45,
+        //           49,
+        //           36,
+        //           56,
+        //           35,
+        //           9,
+        //           21,
+        //           14,
+        //           18,
+        //           72,
+        //           30,
+        //           34,
+        //           57,
+        //           37,
+        //           19,
+        //           40,
+        //           76,
+        //           8,
+        //           47,
+        //           51,
+        //           31,
+        //           23,
+        //           11,
+        //           61,
+        //           33,
+        //           58,
+        //           38,
+        //           24,
+        //           77,
+        //           46,
+        //           22,
+        //           13,
+        //           41,
+        //           59,
+        //           29,
+        //           69,
+        //           20
+        //         ]
+        //       }
+        //     ],
+        //     "rows": [
+        //       {
+        //         "column": "count(chart_id)",
+        //         "result": [
+        //           282,
+        //           153,
+        //           87,
+        //           72,
+        //           58,
+        //           53,
+        //           53,
+        //           48,
+        //           48,
+        //           44,
+        //           42,
+        //           39,
+        //           38,
+        //           38,
+        //           36,
+        //           35,
+        //           35,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           34,
+        //           22,
+        //           3
+        //         ]
+        //       }
+        //     ]
+        //   }
+        // ]
+        this.datafromApi = [];
+        this.datafromApi = data.dashboard;
+        this.loaderService.show();
+        this.openAi.getChartOptions(data.dashboard.sheets)
+          .then(chartOptions => {
+            console.log("Chart Options:", chartOptions);
+
+            // Assign result
+            this.dash1 = chartOptions;
+            this.showDashboardView = true;
+            this.loaderService.hide();
+          })
+          .catch(err => {
+            console.error("Error fetching chart options", err);
+            this.loaderService.hide();
+          });
+      },
+      error:(error)=>{
+        console.log(error);
+        this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
+      }
+    })
 }
 customizeDashboard(){
   const data = this.dash1;
@@ -602,182 +626,262 @@ this.workbechService.executeQuery(obj).subscribe({
   next:(data)=>{
     console.log(data);
     this.querySetId = data.query_set_id;
-    this.builSheets(data);
+    this.builSheets(this.datafromApi.sheets, this.dash1);
   }
 })
 }
-builSheets(data:any){
-
-}
-datafromApi =[
-  {
-    "status": "success",
-    "dashboard": {
-        "dashboard": {
-            "dashboard_title": "Dashboard for Selected Datasource Analysis",
-            "height": "",
-            "width": "",
-            "dashboard_data": ""
-        },
-        "queryset": {
-            "custom_query": "select * from project, users",
-            "queryset_name": "Datasource: Project and Users"
-        },
-        "sheets": [
-            {
-                "sheet_name": "Project Types Analysis",
-                "sheet_description": "Analyzes the distribution of project types",
-                "sql_query": "SELECT \"projectTypeKey\", count(\"id\") FROM (select * from project) temp_table GROUP BY \"projectTypeKey\" ORDER BY \"projectTypeKey\" ASC NULLS FIRST",
-                "dimensions": [
-                    "projectTypeKey"
-                ],
-                "metrics": [
-                    "count(id)"
-                ],
-                "chart_type": "bar",
-                "business_insight": "Insight into the number of projects per project type",
-                "sheet_data": "",
-                "structure_valid": true,
-                "columns": [
-                    {
-                        "column": "projectTypeKey",
-                        "result": [
-                            "software"
-                        ]
-                    }
-                ],
-                "rows": [
-                    {
-                        "column": "count(id)",
-                        "result": [
-                            1
-                        ]
-                    }
-                ]
-            },
-            {
-                "sheet_name": "Active Users Analysis",
-                "sheet_description": "Analyzes the distribution of active users",
-                "sql_query": "SELECT \"active\", count(\"self\") FROM (select * from users) temp_table GROUP BY \"active\" ORDER BY \"active\" ASC NULLS FIRST",
-                "dimensions": [
-                    "active"
-                ],
-                "metrics": [
-                    "count(self)"
-                ],
-                "chart_type": "pie",
-                "business_insight": "Insight into the number of active and inactive users",
-                "sheet_data": "",
-                "structure_valid": true,
-                "columns": [
-                    {
-                        "column": "active",
-                        "result": [
-                            "true"
-                        ]
-                    }
-                ],
-                "rows": [
-                    {
-                        "column": "count(self)",
-                        "result": [
-                            14
-                        ]
-                    }
-                ]
-            },
-            {
-                "sheet_name": "Private Projects Analysis",
-                "sheet_description": "Analyzes the distribution of private projects",
-                "sql_query": "SELECT \"isPrivate\", count(\"id\") FROM (select * from project) temp_table GROUP BY \"isPrivate\" ORDER BY \"isPrivate\" ASC NULLS FIRST",
-                "dimensions": [
-                    "isPrivate"
-                ],
-                "metrics": [
-                    "count(id)"
-                ],
-                "chart_type": "donut",
-                "business_insight": "Insight into the number of private and public projects",
-                "sheet_data": "",
-                "structure_valid": true,
-                "columns": [
-                    {
-                        "column": "isPrivate",
-                        "result": [
-                            "false"
-                        ]
-                    }
-                ],
-                "rows": [
-                    {
-                        "column": "count(id)",
-                        "result": [
-                            1
-                        ]
-                    }
-                ]
-            },
-            {
-                "sheet_name": "Project Style Analysis",
-                "sheet_description": "Analyzes the distribution of project styles",
-                "sql_query": "SELECT \"style\", count(\"id\") FROM (select * from project) temp_table GROUP BY \"style\" ORDER BY \"style\" ASC NULLS FIRST",
-                "dimensions": [
-                    "style"
-                ],
-                "metrics": [
-                    "count(id)"
-                ],
-                "chart_type": "line",
-                "business_insight": "Insight into the number of projects based on style",
-                "sheet_data": "",
-                "structure_valid": true,
-                "columns": [
-                    {
-                        "column": "style",
-                        "result": [
-                            "next-gen"
-                        ]
-                    }
-                ],
-                "rows": [
-                    {
-                        "column": "count(id)",
-                        "result": [
-                            1
-                        ]
-                    }
-                ]
-            },
-            {
-                "sheet_name": "KPI: Total Projects",
-                "sheet_description": "Key Performance Indicator for Total Projects",
-                "sql_query": "SELECT count(\"id\") FROM (select * from project) temp_table",
-                "dimensions": [],
-                "metrics": [
-                    "count(id)"
-                ],
-                "chart_type": "kpi",
-                "business_insight": "Total number of projects in the datasource",
-                "sheet_data": "",
-                "structure_valid": false,
-                "structure_error": "Query doesn't follow the required structure",
-                "columns": [],
-                "rows": [
-                    {
-                        "column": "count(id)",
-                        "result": [
-                            1
-                        ]
-                    }
-                ]
-            }
-        ],
-        "overall_insights": "Key overall insights from the dashboard: Provides detailed analysis of project and user data from the selected datasource"
+builSheets(data:any, dashboard:any){
+  let sheetIds : any = [];
+  from(dashboard).pipe(
+    concatMap((sheetData: any, index: number) =>
+      this.sheetSave(sheetData, data[index], index).pipe(
+        map(res => ({ res, index }))
+      )
+    )
+  ).subscribe({
+    next: ({ res, index }) => {
+      console.log("Sheet saved:", res);
+      sheetIds.push(res.sheet_id);
+      this.dash1[index].sheetId = res.sheet_id; 
     },
-    "message": "Dashboard generated successfully"
+    error: (err) => console.error("Error saving sheet:", err),
+    complete: () => {
+      console.log("✅ All sheets saved sequentially!")
+      this.dashboardSave(sheetIds);
+    }
+  });
 }
-]
+datafromApi :any={};
 
+  sheetSave(sheetData: any, data: any, index:any) {
+    let chartsColumnData: [] = [];
+    let chartsRowData: [] = [];
+    let dualAxisRowData: [] = [];
+    let dualAxisColumnData: [] = [];
+    let chartData: any = {};
+    if (sheetData.chart_id == 8) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.multiLineChart(dualAxisColumnData, dualAxisRowData);
+      } else{
+        chartData = this.apexChartInstance.multiLineChart(dualAxisColumnData, dualAxisRowData);
+      }
+    } else if (sheetData.chart_id == 24) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.pieChart(chartsColumnData, chartsRowData);
+      } else{
+        chartData = this.apexChartInstance.pieChart(chartsColumnData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 6) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.barChart(chartsColumnData, chartsRowData);
+      } else{
+        chartData = this.apexChartInstance.barChart(chartsColumnData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 3) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.hgroupedChart(dualAxisColumnData, dualAxisRowData);
+      } else{
+        chartData = this.apexChartInstance.hGroupedChart(dualAxisColumnData, dualAxisRowData);
+      }
+    } else if (sheetData.chart_id == 10) {
+      // this.echartInstance.donutSize = this.customizeOptions.donutSize;
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.donutChart(chartsColumnData, chartsRowData);
+      } else{
+        chartData = this.apexChartInstance.donutChart(chartsColumnData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 7) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.sidebySide(dualAxisColumnData, dualAxisRowData);
+      } else{
+        chartData = this.apexChartInstance.sideBySide(dualAxisColumnData, dualAxisRowData);
+      }
+    } else if (sheetData.chart_id == 27) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.funnelchart(dualAxisColumnData, dualAxisRowData);
+      } else{
+        chartData = this.apexChartInstance.funnelChart(dualAxisColumnData, dualAxisRowData);
+      }
+    } else if (sheetData.chart_id == 29) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.mapChart(dualAxisColumnData, dualAxisRowData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 2) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.hstackedChart(dualAxisColumnData, dualAxisRowData);
+      } else{
+        chartData = this.apexChartInstance.hStockedChart(dualAxisColumnData, dualAxisRowData);
+      }
+    } else if (sheetData.chart_id == 13) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.linechartFromGenieDashboard(chartsColumnData, chartsRowData);
+      } else{
+        chartData = this.apexChartInstance.lineChart(chartsColumnData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 17) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.areachartFromGenieDashboard(chartsColumnData, chartsRowData);
+      } else{
+        chartData = this.apexChartInstance.areaChart(chartsColumnData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 4) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.barLinechartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+      } else{
+        chartData = this.apexChartInstance.barLineChart(dualAxisColumnData, dualAxisRowData);
+      }
+    } else if (sheetData.chart_id == 26) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.heatmapFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+      } else{
+        chartData = this.apexChartInstance.heatMapChart(dualAxisColumnData, dualAxisRowData);
+      }
+    } else if (sheetData.chart_id == 18) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.treemapFromGenieDashboard(chartsColumnData, chartsRowData);
+      } else{
+        chartData = this.apexChartInstance.treeMapChart(chartsColumnData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 5) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.stackedchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+      } else{
+        chartData = this.apexChartInstance.stockedChart(dualAxisColumnData, dualAxisRowData);
+      }
+    } else if (sheetData.chart_id == 11) {
+      if(sheetData?.isEChart){
+        chartData = this.eChartInstance.calendarchartFromGenieDashboard(chartsColumnData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 14) {
+      if(sheetData?.isEChart){
+        this.eChartInstance.autoAdjustChartHeightForHBar();
+        chartData = this.eChartInstance.horizontalBarChart(chartsColumnData, chartsRowData);
+      } else{
+        this.apexChartInstance.autoAdjustChartHeightForHBar();
+        chartData = this.apexChartInstance.horizontalBarChart(chartsColumnData, chartsRowData);
+      }
+    } else if (sheetData.chart_id == 12) {
+       if(sheetData?.isEChart){
+        chartData = this.eChartInstance.radarchartFromGenieDashboard(dualAxisColumnData, dualAxisRowData);
+      }
+    }
+
+    const sheetRows = data.rows.map((item: any) => {
+      return {
+        column: item.column,
+        data_type: item.data_type,
+        type: item.type[0] ? item.type[0] : ""
+      };
+    });
+    const sheetColumns = data.columns.map((item: any) => {
+      return {
+        column: item.column,
+        data_type: item.data_type,
+        type: item.type[0] ? item.type[0] : ""
+      };
+    });
+    const sheet_rows_data = data.rows.map((item: any) => {
+      return [
+        item.column,
+        item.type ? "aggregate" : item.data_type,
+        item.type[0] ? item.type[0] : "",
+        ""
+      ];
+    });
+    const sheet_column_data = data.columns.map((item: any) => {
+      return [
+        item.column,
+        item.data_type,
+        (item?.type[0] ? item?.type[0] : "") ?? "",
+        ""
+      ];
+    });
+
+    const obj = {
+      "chart_id": sheetData.chartId,
+      "queryset_id": this.querySetId,
+      "server_id": this.hierarchyId,
+      "sheet_name": sheetData.data.title,
+      "sheet_tag_name": sheetData.data.sheetTagName,
+      "filter_id": [],
+      "sheetfilter_querysets_id": null,
+      "filter_data": [],
+      "datasource_querysetid": null,
+      "col": data.dimensions,
+      "row": data.metrics,
+      "custom_query": data.sql_query,
+      "data": {
+        "columns": sheetColumns,
+        "columns_data": sheet_column_data,
+        "col": data.columns.map((col:any)=>{ return {column: col.column, result_data: col.result} }),
+        "row": data.rows.map((col:any)=>{ return {column: col.col, result_data: col.result} }),
+        "rows": sheetRows,
+        "rows_data": sheet_rows_data,
+        "results": {
+          "kpiData": '',
+          "kpiFontSize": 3,
+          "kpiNumber": '',
+          "kpiPrefix": "",
+          "kpiSuffix": "",
+          "kpiDecimalPlaces": 2,
+          "kpiDecimalUnit": "none",
+          "tableData": [],
+          "tableColumns": [],
+          "banding": false,
+          "color1": "#f5f5f5",
+          "color2": "#ffffff",
+          "items_per_page": 10,
+          "total_items": 0
+        },
+        "isApexChart": sheetData.isEChart ? false : true,
+        "isEChart": sheetData.isEChart,
+        "savedChartOptions": chartData,
+        "customizeOptions": sheetData.customizeOptions
+      }
+    }
+
+    this.dash1[index].qrySetId = this.querySetId;
+    this.dash1[index].databaseId = this.hierarchyId;
+    return this.workbechService.sheetSave(obj);
+  }
+
+  dashboardSave(sheetIds: any){
+    let object = {
+      "grid": "fixed",
+      "height": 800,
+      "width": 800,
+      "queryset_id": [this.querySetId],
+      "server_id": [this.hierarchyId],
+      "sheet_ids": sheetIds,
+      "selected_sheet_ids": sheetIds,
+      "dashboard_name": this.dashboardName,
+      "dashboard_tag_name": this.dashboardTagName,
+      "data": this.dash1,
+      "tab_data": [],
+      "tab_id": [],
+      "donutDecimalPlaces": 2
+    }
+
+    this.workbechService.saveDashboard(object).subscribe({
+    next: (res) => {
+      console.log("✅ Dashboard saved successfully:", res);
+      const encodedDashboardId = btoa(res.dashboard_id.toString());
+
+      this.router.navigate(['/analytify/home/sheetsdashboard/'+encodedDashboardId])
+      // you can show toast/notification here
+    },
+    error: (err) => {
+      console.error("❌ Error saving dashboard:", err);
+    }
+  });
+  }  
+
+  getDashboardData(event : any){
+    this.dashboardName = event.dashboardName;
+    this.dashboardTagName = event.dashboardTagName;
+
+    this.buildDashboardprocess(this.datafromApi);
+  }
 }
 
 

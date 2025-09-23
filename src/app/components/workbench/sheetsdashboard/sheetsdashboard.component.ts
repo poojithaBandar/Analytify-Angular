@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -272,6 +272,9 @@ export class SheetsdashboardComponent implements OnDestroy {
   trendLabels = [];
   @Input() dash1: any = [];
   @Input() hideWidgets = false;
+  isGeenieDashboard: boolean = false;
+  @Output() sendDashboardData = new EventEmitter<object>();
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService,private cd:ChangeDetectorRef,private authService: AuthService){
@@ -387,6 +390,8 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
       }
     });
+    } else if(currentUrl.includes('analytify/genie-aiq-dashboard')){
+      this.isGeenieDashboard = true;
     }
     if(!this.isPublicUrl && !this.isEmbedDashboard){
       this.editDashboard = this.viewTemplateService.editDashboard();
@@ -8972,6 +8977,14 @@ initializeTabDefaults() {
       const chartHeight = Math.max(calculatedHeight, 320);
       return chartHeight;
     }
+  }
+
+  sendData(){
+    let object = {
+      dashboardName: this.dashboardName,
+      dashboardTagName: this.dashboardTagName
+    }
+    this.sendDashboardData.emit(object);
   }
 
 }
