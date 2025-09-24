@@ -2219,10 +2219,7 @@
                           [(ngModel)]="selectedJiraScopes"
                           [ngModelOptions]="{standalone: true}"
                           [settings]="jiraDropdownSettings"
-                          (onSelect)="onJiraScopeChange()"
-                          (onDeSelect)="onJiraScopeChange()"
-                          (onSelectAll)="onJiraScopeChange()"
-                          (onDeSelectAll)="onJiraScopeChange()">
+                          (ngModelChange)="onJiraScopeChange($event)">
                         </ng-multiselect-dropdown>
                       </div>
                       <div class="modal-footer">
@@ -5537,10 +5534,7 @@
             [(ngModel)]="selectedJiraScopes"
             [ngModelOptions]="{standalone: true}"
             [settings]="jiraDropdownSettings"
-            (onSelect)="onJiraScopeChange()"
-            (onDeSelect)="onJiraScopeChange()"
-            (onSelectAll)="onJiraScopeChange()"
-            (onDeSelectAll)="onJiraScopeChange()">
+            (ngModelChange)="onJiraScopeChange($event)">
           </ng-multiselect-dropdown>
         </div>
 
