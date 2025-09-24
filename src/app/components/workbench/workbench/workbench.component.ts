@@ -97,7 +97,7 @@ export class WorkbenchComponent implements OnInit{
   showPassword1 = false;
   toggleClass = "off-line";
   toggleClass1 = "off-line";
-  gridView = true;
+  // gridView = true;
 
   itemsPerPage!:any;
   pageNo = 1;
@@ -3509,10 +3509,13 @@ connectGoogleSheets(){
   this.getDbConnectionList();
   }
   getDbConnectionList(){
-    const Obj: { search?: any; page_no: number; page_count?: any; remove_hierarchy_id?: boolean } ={
+    const Obj: { search?: any; page_no: number; page_count?: any; remove_hierarchy_id?: boolean,connection_type:any,order_by:any,order:any } ={
       search : this.searchDbName,
       page_no:this.pageNo,
-      page_count:this.itemsPerPage
+      page_count:this.itemsPerPage,
+      connection_type:this.selectedDatasource?.name,
+      order_by:this.orderBy,
+      order:this.order
 
     }
     if(Obj.search == '' || Obj.search == null){
@@ -3520,6 +3523,15 @@ connectGoogleSheets(){
     }
     if(Obj.page_count == undefined || Obj.page_count == null){
       delete Obj.page_count
+    }
+    if(Obj.connection_type == undefined || Obj.connection_type == null){
+      delete Obj.connection_type
+    }
+    if(Obj.order_by == undefined || Obj.order_by == null){
+      delete Obj.order_by
+    }
+    if(Obj.order == undefined || Obj.order == null){
+      delete Obj.order
     }
     if(this.iscrossDbSelect){
       Obj.remove_hierarchy_id = this.primaryHierachyId
@@ -4543,7 +4555,6 @@ model = {
   selectedDatasource: any = null;
 
   selectedSort: string = '';
-  selectedSortLabel: string = '';
 subCategories: any[] = [];
 buildSubCategories() {
   const categories = Object.values(this.connectionTypes).flat();
@@ -4552,7 +4563,11 @@ buildSubCategories() {
     name: cat.name,
     value: cat.name.toLowerCase().replace(/\s+/g, '_'),
     // Prefer SVG if exists, else fallback to image
-    image: cat.svg ? cat.svg : cat.image
+    svg: cat.svg
+    ? this.sanitizer.bypassSecurityTrustHtml(cat.svg) // raw inline SVG
+    : null,
+
+    image: !cat.svg ? cat.image : null
   }));
 }
  filteredDatasourceList() {
@@ -4563,13 +4578,36 @@ buildSubCategories() {
 
   onDatasourceSelect(ds: any) {
     this.selectedDatasource = ds;
+    this.pageNo=1;
+    this.getDbConnectionList();
   }
 
-  onSortChange(value: string) {
-    this.selectedSort = value;
-    this.selectedSortLabel =
-      value === 'name' ? 'Name' :
-      value === 'created_at' ? 'Created Date' :
-      'Updated Date';
-  }
+selectedSortLabel: string | null = null;
+orderBy: string = '';
+order: 'ASC' | 'DESC' = 'ASC';
+
+sortOptions = [
+  { label: 'Name (A–Z)', order_by: 'name', order: 'ASC' },
+  { label: 'Name (Z–A)', order_by: 'name', order: 'DESC' },
+  { label: 'Created Date (ASC)', order_by: 'created_at', order: 'ASC' },
+  { label: 'Created Date (DESC)', order_by: 'created_at', order: 'DESC' },
+  { label: 'Updated Date (ASC)', order_by: 'updated_at', order: 'ASC' },
+  { label: 'Updated Date (DESC)', order_by: 'updated_at', order: 'DESC' }
+];
+
+onSortChange(option: { label: string; order_by: string; order: any }) {
+  this.orderBy = option.order_by;
+  this.order = option.order;
+  this.selectedSortLabel = option.label;
+  this.pageNo=1;
+  this.getDbConnectionList();
+}
+
+
+  viewMode: 'cards' | 'table' = 'table';
+
+disabledEdit(serverType: string): boolean {
+  return ['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT','ZOHO','JIRA']
+    .includes(serverType);
+}
 }

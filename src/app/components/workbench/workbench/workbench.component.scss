@@ -161,7 +161,7 @@
 .image-card-container {  display: flex; flex-wrap: wrap; gap: 16px; /* Optional: space between cards */ }
 .imgcard:hover{  transform: scale(1.2);}
 .op-4{  opacity: 0.5;  background-color: #c1c1c1;}
-.table > :not(:last-child) > :last-child > * { border-block-end-color: var(--default-border); color: #fff; }
+.table > :not(:last-child) > :last-child > * { border-block-end-color: var(--default-border); color:var(--default-text-color) !important; }
 a { cursor: pointer; }
 .table td { padding: 0.60rem;  vertical-align: middle;  border-block-start: 0; color: var(--default-text-color); }
 .light-gry-txt {  color: #bec1c5;}
@@ -303,7 +303,9 @@ overflow: auto;
 /* Input with glass effect */
 .glass-light,
 .glass-light-input,
-.glass-light-select {
+.glass-light-select,
+.glass-light-grid
+ {
   background: 0 4px 12px rgba(var(--primary-rgb, 13, 110, 253), 0.15)!important;
   border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4) !important;
   border-radius: 0.5rem !important;
@@ -316,7 +318,8 @@ overflow: auto;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 .glass-light-input,
-.glass-light-select {
+.glass-light-select,
+.glass-light-grid {
  border-radius: 50px !important; 
 }
 /* styles for cards & hover */
@@ -576,4 +579,44 @@ h2.fw-500 {
 .subcat-border{
     border-bottom: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.15);
 
+}
+.skeleton-header,
+.skeleton-cell {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  height: 60px;
+}
+
+.skeleton-header {
+  height: 25px;
+}
+
+@keyframes shimmer {
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  font-weight: bold;
+  color: #777;
+}
+
+
+.toggle-group .btn.active {
+  background: rgba(var(--primary-rgb, 13, 110, 253), 0.45);
+  color: var(--bs-primary);
+  border: none;
+}
+
+.toggle-group .btn + .btn {
+  margin-left: -1px; /* keep them joined like toggle */
+}
+
+.toggle-group {
+  border-radius: 20px;
+  overflow: hidden; /* smooth rounded container */
 }
