@@ -1909,13 +1909,13 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.jiraRedirectURLError = !this.jiraRedirectURL;
   }
 
+
   onJiraScopeChange(scopes?: string[] | null): void {
     if (Array.isArray(scopes)) {
       this.selectedJiraScopes = scopes;
     } else if (scopes === null) {
       this.selectedJiraScopes = [];
     }
-
     this.jiraScopeError = this.selectedJiraScopes.length <= 0;
   }
 
