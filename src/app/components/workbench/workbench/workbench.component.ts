@@ -223,9 +223,24 @@ export class WorkbenchComponent implements OnInit{
   jiraClientId!: string;
   jiraClientSecret!: string;
   jiraRedirectURL!: string;
+  jiraScopes: string[] = [
+    "manage:jira-configuration",
+    "manage:jira-project",
+    "manage:jira-webhook",
+    "read:jira-user",
+    "read:jira-work"
+  ];
+  jiraDropdownSettings: IDropdownSettings = {
+    enableCheckAll: true,
+    allowSearchFilter: true,
+    itemsShowLimit: 10,
+    closeDropDownOnSelection: false
+  };
+  selectedJiraScopes: string[] = [];
   jiraClientIdError = false;
   jiraClientSecretError = false;
   jiraRedirectURLError = false;
+  jiraScopeError = false;
   openImmybot: boolean = false;
   clientIDImmyBotError: boolean = false;
   clientIdImmybot! : string ;
@@ -935,6 +950,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.jiraClientId = '';
     this.jiraClientSecret = '';
     this.jiraRedirectURL = '';
+    this.selectedJiraScopes = [];
+    this.jiraScopeError = false;
 
   }
   googleSheetsData = [] as any;
@@ -1892,6 +1909,16 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.jiraRedirectURLError = !this.jiraRedirectURL;
   }
 
+  onJiraScopeChange(scopes?: string[] | null): void {
+    if (Array.isArray(scopes)) {
+      this.selectedJiraScopes = scopes;
+    } else if (scopes === null) {
+      this.selectedJiraScopes = [];
+    }
+
+    this.jiraScopeError = this.selectedJiraScopes.length <= 0;
+  }
+
   zohoClientIdInput(){
     this.zohoClientIdError = !this.zohoClientId;
   }
@@ -2458,11 +2485,16 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     }
 
     jiraSignIn(){
+      this.onJiraScopeChange();
+      if (this.jiraScopeError) {
+        return;
+      }
       const obj = {
         "client_id": this.jiraClientId,
         "client_secret": this.jiraClientSecret,
         "redirect_uri": this.jiraRedirectURL,
         "display_name": this.displayName,
+        "scopes": this.selectedJiraScopes,
         "description": this.connectionDescription
       }
       this.workbechService.jiraConnection(obj).subscribe({next:(data)=>{
@@ -3656,6 +3688,8 @@ connectGoogleSheets(){
   this.jiraClientId = '';
   this.jiraClientSecret = '';
   this.jiraRedirectURL = '';
+  this.selectedJiraScopes = [];
+  this.jiraScopeError = false;
   this.jiraClientIdError = false;
   this.jiraClientSecretError = false;
   this.jiraRedirectURLError = false;
@@ -4482,6 +4516,8 @@ model = {
   this.selectedHubspotScopes = [];
   this.hubspotRedirectURL = '';
   this.hubspotRedirectURLError = false;
+  this.selectedJiraScopes = [];
+  this.jiraScopeError = false;
   this.zohoClientId = '';
   this.zohoClientSecret = '';
   this.zohoRedirectURL = '';
