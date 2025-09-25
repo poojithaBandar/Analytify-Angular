@@ -12,7 +12,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { forkJoin, of, switchMap } from 'rxjs';
+import { forkJoin, of, Subscription, switchMap } from 'rxjs';
 // import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
 import { GalleryModule } from 'ng-gallery';
@@ -244,6 +244,8 @@ export class WorkbenchComponent implements OnInit{
   connectionsCount:any;
   callAllConnectionsExistingList: boolean = false;
   isLoadingConnectionsList: boolean = false;
+  private notificationSub?: Subscription;
+
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer,
     private notificationService: NotificationService){
@@ -3486,6 +3488,11 @@ connectGoogleSheets(){
     if (this.viewDatasourceList) {
       if (this.databaseconnectionsList) {
         this.getDbConnectionList();
+        this.notificationSub = this.notificationService.notificationsObservable$.subscribe(msg => {
+          if (msg?.body.toLocaleLowerCase().includes('successful') && this.databaseconnectionsList) {
+            this.getDbConnectionList();
+          }
+        });
       }
     }
     if(this.callAllConnectionsExistingList){
@@ -3494,6 +3501,10 @@ connectGoogleSheets(){
     // this.getDbConnectionList();
     this.errorCheck();
     this.categorySelect('All');
+  }
+
+  ngOnDestroy() { 
+    this.notificationSub?.unsubscribe(); 
   }
 
   pageChangegetconnectionList(page:any){
