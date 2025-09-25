@@ -33,7 +33,9 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { BambooHRIntegrationService } from '../bamboohr-integration.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { image } from 'd3';
+import { HttpParams } from '@angular/common/http';
 import { NotificationService } from '../../../services/notification.service';
+
 
 
 @Component({
@@ -98,7 +100,7 @@ export class WorkbenchComponent implements OnInit{
   showPassword1 = false;
   toggleClass = "off-line";
   toggleClass1 = "off-line";
-  gridView = true;
+  // gridView = true;
 
   itemsPerPage!:any;
   pageNo = 1;
@@ -3533,6 +3535,7 @@ connectGoogleSheets(){
     // this.getDbConnectionList();
     this.errorCheck();
     this.categorySelect('All');
+    this.buildSubCategories();
   }
 
   ngOnDestroy() { 
@@ -3560,7 +3563,10 @@ connectGoogleSheets(){
     const Obj: { search?: any; page_no: number; page_count?: any; remove_hierarchy_id?: boolean } ={
       search : this.searchDbName,
       page_no:this.pageNo,
-      page_count:this.itemsPerPage
+      page_count:this.itemsPerPage,
+      // connection_type:this.selectedDatasource?.value,
+      // order_by:this.orderBy,
+      // order:this.order
 
     }
     if(Obj.search == '' || Obj.search == null){
@@ -3569,11 +3575,29 @@ connectGoogleSheets(){
     if(Obj.page_count == undefined || Obj.page_count == null){
       delete Obj.page_count
     }
+    // if(Obj.connection_type == undefined || Obj.connection_type == null){
+    //   delete Obj.connection_type
+    // }
+    // if(Obj.order_by == undefined || Obj.order_by == null){
+    //   delete Obj.order_by
+    // }
+    // if(Obj.order == undefined || Obj.order == null){
+    //   delete Obj.order
+    // }
+    let params = new HttpParams()
+  .set('connection_type', this.selectedDatasource?.value || 'all');
+    if (this.orderBy) {
+      params = params.set('order_by', this.orderBy);
+    }
+    if (this.order) {
+      params = params.set('order', this.order);
+    }
+
     if(this.iscrossDbSelect){
       Obj.remove_hierarchy_id = this.primaryHierachyId
     }
     this.isLoadingConnectionsList = true;
-    this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
+    this.workbechService.getdatabaseConnectionsList(Obj,params).subscribe({
       next:(data)=>{
         console.log(data);
         this.connectionList = data.sheets;
@@ -4590,6 +4614,112 @@ model = {
   return { type: 'icon', value: '🔗' }; 
   }
 
+  datasourceSearch: string = '';
+  selectedDatasource: any = null;
+
+  selectedSort: string = '';
+subCategories: any[] = [];
+buildSubCategories() {
+  const categories = Object.values(this.connectionTypes).flat();
+
+  const apiNameMap: { [key: string]: string } = {
+    "MySQL": "mysql",
+    "ORACLE": "oracle",
+    "PostgreSQL": "postgresql",
+    "Microsoft SQL SERVER": "microsoftsqlserver",
+    "Snow Flake": "snowflake",
+    "SQLite": "sqlite",
+    "MongoDB": "mongodb",
+    "Cassandra": "cassandra",
+    "SAP HANA": "sap hana",
+    "SAP": "sap bw",
+    "Excel": "excel",
+    "CSV": "csv",
+    "PDF": "pdf",
+    "Text": "text",
+    "XML": "xml",
+    "QuickBooks": "quickbooks",
+    "DBT": "dbt",
+    "DeepSeek": "deepseek",
+    "Shopify": "shopify",
+    "Google Analytics": "google_analytics",
+    "HubSpot": "hubspot",
+    "BambooHR": "bamboohr",
+    "Files": "files",
+    "OpenAI": "open_ai",
+    "Gemini": "gemini",
+    "Cross Database": "cross_database",
+    "Jira": "jira",
+    "HaloPS": "halops",
+    "Pax8": "pax8",
+    "ConnectWise": "connectwise",
+    "Salesforce": "salesforce",
+    "Ninja": "ninja",
+    "Server": "server",
+    "Zoho": "zoho",
+    "Tally": "tally",
+    "Google Sheets": "google_sheets",
+    "Immybot": "immybot"
+  };
+
+  // build categories
+  this.subCategories = categories.map(cat => ({
+    name: cat.name,
+    value: apiNameMap[cat.name] || cat.name.toLowerCase().replace(/\s+/g, '_'),
+    svg: cat.svg ? this.sanitizer.bypassSecurityTrustHtml(cat.svg) : null,
+    image: !cat.svg ? cat.image : null
+  }));
+
+  // ✅ Add "All" manually at the top
+  this.subCategories.unshift({
+    name: "All",
+    value: "all",   // what you’ll send to API
+    svg: null,
+    image: null
+  });
+}
+
+
+ filteredDatasourceList() {
+    return this.subCategories.filter(ds =>
+      ds.name.toLowerCase().includes(this.datasourceSearch.toLowerCase())
+    );
+  }
+
+  onDatasourceSelect(ds: any) {
+    this.selectedDatasource = ds;
+    this.pageNo=1;
+    this.getDbConnectionList();
+  }
+
+selectedSortLabel: string | null = null;
+orderBy: string = '';
+order: 'ASC' | 'DESC' = 'ASC';
+
+sortOptions = [
+  { label: 'Name (A–Z)', order_by: 'name', order: 'ASC' },
+  { label: 'Name (Z–A)', order_by: 'name', order: 'DESC' },
+  { label: 'Created Date (ASC)', order_by: 'created_at', order: 'ASC' },
+  { label: 'Created Date (DESC)', order_by: 'created_at', order: 'DESC' },
+  { label: 'Updated Date (ASC)', order_by: 'updated_at', order: 'ASC' },
+  { label: 'Updated Date (DESC)', order_by: 'updated_at', order: 'DESC' }
+];
+
+onSortChange(option: { label: string; order_by: string; order: any }) {
+  this.orderBy = option.order_by;
+  this.order = option.order;
+  this.selectedSortLabel = option.label;
+  this.pageNo=1;
+  this.getDbConnectionList();
+}
+
+
+  viewMode: 'cards' | 'table' = 'cards';
+
+disabledEdit(serverType: string): boolean {
+  return ['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT','ZOHO','JIRA']
+    .includes(serverType);
+}
   openAlertPopUp() {
     Swal.fire({
       title: "We're preparing your data!",
