@@ -1389,12 +1389,20 @@
                 </div>
                 }
                 @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1 ||
-                item['chartId']=== 9) ){
+                item['chartId']=== 9 || item['chartId']=== 21) ){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
                   [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
                   <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
                     (chartClick)="onEChartClick($event,item)" class="echart-charts"
                     [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
+                </div>
+                
+                } @else if(item['isEChart'] && item['chartId'] === 21){
+                <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                  <app-wordcloud-chart
+                    
+                  [customOptions]="item['echartOptions']">
+                </app-wordcloud-chart>
                 </div>
 
                 } @else if(item['isEChart'] && item['chartId']=== 29){
@@ -1916,12 +1924,20 @@
                 </div>
                 }
                   @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1 ||
-                  item['chartId']=== 9) ){
+                  item['chartId']=== 9 || item['chartId']=== 21) ){
                   <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"
                     [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
                     <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']"
                       (chartClick)="onEChartClick($event,item)" class="echart-charts"
                       [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : ([14, 27].includes(item['chartId']) ? {'height': item['customizeOptions']?.hBarHeight ?? null} : {})"></div>
+                  </div>
+
+                  } @else if(item['isEChart'] && item['chartId'] === 21){
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                    <app-wordcloud-chart
+                    
+                      [customOptions]="item['echartOptions']">
+                    </app-wordcloud-chart>
                   </div>
 
                   } @else if(item['isEChart'] && item['chartId']=== 29){
