@@ -18,9 +18,14 @@ import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withFetch, with
 import { LoaderService } from './shared/services/loader.service';
 import { HttpInterceptorService } from './shared/services/http-interceptor.service';
 import { HttpAuthService } from './shared/services/http-auth.service';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideMessaging, getMessaging } from '@angular/fire/messaging';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(App_Route),RouterOutlet,ColorPickerModule,ColorPickerService,provideAnimations(),  AngularFireModule,
+  providers: [
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideMessaging(() => getMessaging()),
+    provideRouter(App_Route),RouterOutlet,ColorPickerModule,ColorPickerService,provideAnimations(),  AngularFireModule,
     provideHttpClient(),
     //AngularFireDatabaseModule,
     //AngularFirestoreModule,

@@ -1493,4 +1493,22 @@ deleteUser(id:any){
       obj
     );
   }
+
+  saveNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
+  }
+
+  updateNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
+  }
+
+  deleteNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
+  }
 }

@@ -12,7 +12,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { forkJoin, of, switchMap } from 'rxjs';
+import { forkJoin, of, Subscription, switchMap } from 'rxjs';
 // import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
 import { GalleryModule } from 'ng-gallery';
@@ -33,6 +33,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { BambooHRIntegrationService } from '../bamboohr-integration.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { image } from 'd3';
+import { NotificationService } from '../../../services/notification.service';
 
 
 @Component({
@@ -258,8 +259,11 @@ export class WorkbenchComponent implements OnInit{
   connectionsCount:any;
   callAllConnectionsExistingList: boolean = false;
   isLoadingConnectionsList: boolean = false;
+  private notificationSub?: Subscription;
+
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer){
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer,
+    private notificationService: NotificationService){
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
 
@@ -2114,6 +2118,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         console.log(responce)
             if(responce){
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.notificationService.requestPermission();
+              this.notificationService.listenMessages();
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
               if(!this.datasourceSwitchUI){
@@ -3514,6 +3520,11 @@ connectGoogleSheets(){
     if (this.viewDatasourceList) {
       if (this.databaseconnectionsList) {
         this.getDbConnectionList();
+        this.notificationSub = this.notificationService.notificationsObservable$.subscribe(msg => {
+          if (msg?.body.toLocaleLowerCase().includes('successful') && this.databaseconnectionsList) {
+            this.getDbConnectionList();
+          }
+        });
       }
     }
     if(this.callAllConnectionsExistingList){
@@ -3522,6 +3533,10 @@ connectGoogleSheets(){
     // this.getDbConnectionList();
     this.errorCheck();
     this.categorySelect('All');
+  }
+
+  ngOnDestroy() { 
+    this.notificationSub?.unsubscribe(); 
   }
 
   pageChangegetconnectionList(page:any){

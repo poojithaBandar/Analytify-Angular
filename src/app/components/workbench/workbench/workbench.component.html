@@ -956,8 +956,8 @@
                 @if(!isLoadingConnectionsList && connectionList.length > 0){
                 <div class="col-12 col-md-6 col-lg-4" *ngFor="let connection of connectionList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }">
                   <div class="glass-card h-100" [ngClass]="iscrossDbSelect ? 'selectable-card' : ''" [class.selected]="iscrossDbSelect && selectedHirchyIdCrsDb === connection.hierarchy_id"
-                         (click)="iscrossDbSelect ? onSelectedHIDCrsDb(connection.hierarchy_id) : null">
-                    <div class="p-4">
+                         (click)="iscrossDbSelect ? onSelectedHIDCrsDb(connection.hierarchy_id) : null" [ngbTooltip]="(connection.server_type === 'CONNECTWISE' && connection?.data_dumping) ? 'Data Injenction is in Pogress!' : null">
+                    <div class="p-4" [class.disabled-card]="connection.server_type === 'CONNECTWISE' && connection?.data_dumping">
                       <div class="d-flex align-items-start justify-content-between mb-3">
                         <div class="d-flex align-items-center">
                           <!-- <div class="fs-2 me-3 icon-bounce">{{ connectionListIcons[connection.database_type] }}</div> -->
