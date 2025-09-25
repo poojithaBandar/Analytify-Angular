@@ -1319,7 +1319,8 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let connection of connectionList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }">
+                      <tr *ngFor="let connection of connectionList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }"
+                          [class.disabled-card]="connection.server_type === 'CONNECTWISE' && connection?.data_dumping">
                         <td>
                           <div class="d-flex align-items-center">
                             <div class="me-2 fs-5">
