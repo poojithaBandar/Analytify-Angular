@@ -16,6 +16,72 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { concatMap, from, map } from 'rxjs';
 
+type LayoutChartType =
+  | 'Chart'
+  | 'Table'
+  | 'KPI';
+
+interface LayoutNumberFormat {
+  decimalPlaces: number;
+  prefix: string;
+  suffix: string;
+}
+
+interface LayoutCustomizeOptions {
+  backgroundColor: string;
+  color: string;
+  selectedColorScheme: string[];
+  isMeasureDistribution: boolean;
+  xLabelSwitch: boolean;
+  yLabelSwitch: boolean;
+  xLabelFontSize: number;
+  yLabelFontSize: number;
+  xLabelFontFamily: string;
+  yLabelFontFamily: string;
+  xlabelFontWeight: number;
+  ylabelFontWeight: number;
+  dimensionAlignment: string;
+  measureAlignment: string;
+  gridColor: string;
+  xGridSwitch: boolean;
+  yGridSwitch: boolean;
+  barCornerRadius: number;
+  dataLabels: boolean;
+  dataLabelsFontSize: number;
+  dataLabelsFontFamily: string;
+  dataLabelsColor: string;
+  isBold: boolean;
+  dataLabelsFontPosition: string;
+  legendSwitch: boolean;
+  legendsAllignment: string;
+  donutSize: number;
+  donutDecimalPlaces: number;
+}
+
+interface LayoutItem {
+  id: string;
+  x: number;
+  y: number;
+  rows: number;
+  cols: number;
+  sheetType: LayoutChartType;
+  chartType: string;
+  chartId: number;
+  isEChart: boolean;
+  data: {
+    title: string;
+    sheetTagName: string;
+  };
+  chartOptions: Record<string, any>;
+  echartOptions: Record<string, any>;
+  customizeOptions: LayoutCustomizeOptions;
+  column_Data: any[];
+  row_Data: any[];
+  chartData: any[];
+  numberFormat: LayoutNumberFormat;
+  kpiData?: Record<string, any> | null;
+}
+
 @Component({
   selector: 'app-genie-aiq-dashboard',
   standalone: true,
@@ -44,6 +110,138 @@ export class GenieAiqDashboardComponent {
   apexChartInstance!: InsightApexComponent;
   dashboardName: string = '';
   dashboardTagName: string = '';
+
+  private readonly defaultCustomizeOptions: LayoutCustomizeOptions = {
+    backgroundColor: '#ffffff',
+    color: '#2392c1',
+    selectedColorScheme: ['#1d2e92', '#088ed2'],
+    isMeasureDistribution: false,
+    xLabelSwitch: true,
+    yLabelSwitch: true,
+    xLabelFontSize: 12,
+    yLabelFontSize: 12,
+    xLabelFontFamily: 'sans-serif',
+    yLabelFontFamily: 'sans-serif',
+    xlabelFontWeight: 400,
+    ylabelFontWeight: 400,
+    dimensionAlignment: 'center',
+    measureAlignment: 'center',
+    gridColor: '#e0e0e0',
+    xGridSwitch: true,
+    yGridSwitch: true,
+    barCornerRadius: 4,
+    dataLabels: true,
+    dataLabelsFontSize: 12,
+    dataLabelsFontFamily: 'sans-serif',
+    dataLabelsColor: '#2392c1',
+    isBold: false,
+    dataLabelsFontPosition: 'top',
+    legendSwitch: true,
+    legendsAllignment: 'bottom',
+    donutSize: 70,
+    donutDecimalPlaces: 2,
+  };
+
+  private readonly defaultNumberFormat: LayoutNumberFormat = {
+    decimalPlaces: 2,
+    prefix: '',
+    suffix: '',
+  };
+
+  private coerceRecord(input: any): Record<string, any> {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) {
+      return {};
+    }
+    try {
+      return typeof structuredClone === 'function'
+        ? structuredClone(input)
+        : JSON.parse(JSON.stringify(input));
+    } catch {
+      return { ...input };
+    }
+  }
+
+  private normalizeLayoutItems(items: any[]): LayoutItem[] {
+    if (!Array.isArray(items)) {
+      console.warn('LLM did not return an array. Falling back to empty layout.');
+      return [];
+    }
+
+    return items
+      .map((item: any, index: number) => {
+        const sanitizedId = typeof item?.id === 'string' && item.id.trim() ? item.id : this.generateLayoutId(index);
+        const x = Number.isFinite(item?.x) ? Number(item.x) : 0;
+        const y = Number.isFinite(item?.y) ? Number(item.y) : Math.floor(index / 2) * 8;
+        const rows = Number.isFinite(item?.rows) && item.rows > 0 ? Number(item.rows) : 8;
+        const cols = Number.isFinite(item?.cols) && item.cols > 0 ? Number(item.cols) : 6;
+        const sheetType = (item?.sheetType ?? 'Chart') as LayoutChartType;
+        const chartType = typeof item?.chartType === 'string' ? item.chartType : 'bar';
+        const chartId = Number.isFinite(item?.chartId) ? Number(item.chartId) : 6;
+        const chartOptions = this.coerceRecord(item?.chartOptions);
+        const echartOptions = this.coerceRecord(item?.echartOptions);
+        const isEChart =
+          typeof item?.isEChart === 'boolean'
+            ? item.isEChart
+            : Object.keys(echartOptions).length > 0;
+        const title = item?.data?.title ?? 'Untitled Chart';
+        const sheetTagName = item?.data?.sheetTagName ?? `<p>${title}</p>`;
+
+        const customizeOptions: LayoutCustomizeOptions = {
+          ...this.defaultCustomizeOptions,
+          ...(item?.customizeOptions ?? {}),
+        };
+
+        const numberFormat: LayoutNumberFormat = {
+          ...this.defaultNumberFormat,
+          ...(item?.numberFormat ?? {}),
+        };
+
+        return {
+          id: sanitizedId,
+          x,
+          y,
+          rows,
+          cols,
+          sheetType,
+          chartType,
+          chartId,
+          isEChart,
+          data: {
+            title,
+            sheetTagName,
+          },
+          chartOptions,
+          echartOptions,
+          customizeOptions,
+          column_Data: item?.column_Data ?? item?.columnData ?? [],
+          row_Data: item?.row_Data ?? item?.rowData ?? [],
+          chartData: item?.chartData ?? [],
+          numberFormat,
+          kpiData: item?.kpiData ?? null,
+        } as LayoutItem;
+      })
+      .filter((item) => !!item);
+  }
+
+  private applyDashboardLayout(layout: any[]): void {
+    const normalized = this.normalizeLayoutItems(layout);
+    if (!normalized.length) {
+      this.toasterService.warning('Could not build layout from AI response. Showing empty dashboard.');
+    }
+    this.dash1 = normalized;
+    this.showDashboardView = normalized.length > 0;
+  }
+
+  private sanitizePrompt(prompt: string): string {
+    return prompt.replace(/\s+/g, ' ').trim();
+  }
+
+  private generateLayoutId(index: number): string {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+    return `chart-${Date.now()}-${index}`;
+  }
 
     @ViewChild('sheetcontainer', { read: ViewContainerRef }) container!: ViewContainerRef;
  chatHistory: ChatMessage[] = [];
@@ -122,7 +320,7 @@ onServerTypeSelect(type: string) {
     }
 })
   }
-  onTableSelect() {
+  onTableSelect(promptOverride?: string) {
     if (this.selectedTables && this.selectedTables.length > 0) {
       // Get schema names for selected tables
       // const selectedTableObjects = this.schematableList.filter((tbl: any) => this.selectedTables.includes(tbl.table));
@@ -151,10 +349,11 @@ onServerTypeSelect(type: string) {
       // }
        const selectedTableNames = this.selectedTables.slice();
     console.log('Selected table names:', selectedTableNames);
+      const sanitizedPrompt = this.sanitizePrompt(promptOverride ?? this.userPrompt ?? '');
       const Obj= {
          "hierarchy_id":this.hierarchyId,
          "table_name":selectedTableNames,
-         "prompt": this.userPrompt ? this.userPrompt : null,
+         "prompt": sanitizedPrompt || null,
         }
       this.workbechService.getChartSuggestions(Obj).subscribe({
       next:(data)=>{
@@ -236,15 +435,15 @@ isInsightSelected(insight: any): boolean {
   }
   userPrompt: string = '';
 
-sendPrompt() {
+  sendPrompt() {
   if (!this.userPrompt || !this.userPrompt.trim()) {
     this.toasterService.error('Please enter a prompt', 'Error');
     return;
   }
-  console.log('User prompt:', this.userPrompt);
-  // Call your API or handle the message sending logic here
-  this.userPrompt = ''; // Clear input after sending
-  this.onTableSelect();
+  const sanitizedPrompt = this.sanitizePrompt(this.userPrompt);
+  console.log('User prompt:', sanitizedPrompt);
+  this.onTableSelect(sanitizedPrompt);
+  this.userPrompt = '';
 }
 
 
@@ -279,9 +478,14 @@ isCreateDisabled(): boolean {
 showDashboardView = false;
 dash1: any = [];
 promptDashboard(){
+  const sanitizedPrompt = this.sanitizePrompt(this.userPrompt ?? '');
+  if (!sanitizedPrompt) {
+    this.toasterService.error('Please enter a prompt', 'Error');
+    return;
+  }
   const payload ={
     h_id: this.hierarchyId,
-    question:this.userPrompt
+    question: sanitizedPrompt
   }
     this.workbechService.promptDashboard(payload).subscribe({
       next:(data)=>{
@@ -548,8 +752,7 @@ promptDashboard(){
             console.log("Chart Options:", chartOptions);
 
             // Assign result
-            this.dash1 = chartOptions;
-            this.showDashboardView = true;
+            this.applyDashboardLayout(chartOptions);
             this.loaderService.hide();
           })
           .catch(err => {
@@ -566,13 +769,16 @@ promptDashboard(){
 customizeDashboard(){
   const data = this.dash1;
   this.loaderService.show();
-  this.openAi.getChartOptions(data, this.userPrompt + "/n" + "do not remove any other charts, do update only relative chart only")
+  const sanitizedPrompt = this.sanitizePrompt(this.userPrompt ?? '');
+  const enrichedPrompt = sanitizedPrompt
+    ? `${sanitizedPrompt}. Do not remove unrelated charts; only update the charts that match the request.`
+    : 'Do not remove unrelated charts; only update the charts that match the request.';
+  this.openAi.getChartOptions(data, enrichedPrompt)
   .then(chartOptions => {
     console.log("Chart Options:", chartOptions);
 
     // Assign result
-    this.dash1 = chartOptions;
-    // this.showDashboardView = true;
+    this.applyDashboardLayout(chartOptions);
     this.loaderService.hide();
   })
   .catch(err => {
@@ -581,12 +787,12 @@ customizeDashboard(){
   });
 
 
-   if (!this.userPrompt.trim()) return;
-    const currentPrompt = this.userPrompt; 
+   if (!sanitizedPrompt) return;
+    const currentPrompt = sanitizedPrompt;
     // Push user message
     this.chatHistory.push({
       sender: 'User',
-      text: this.userPrompt,
+      text: sanitizedPrompt,
       timestamp: new Date()
     });
 
