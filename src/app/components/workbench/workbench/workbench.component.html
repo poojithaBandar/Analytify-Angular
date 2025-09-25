@@ -872,12 +872,12 @@
           <div class="d-flex align-items-center ms-auto flex-wrap">
               <div ngbDropdown class="me-3" style="min-width: 260px;">
               <button
-                class="btn glass-light-select p-3 w-100 d-flex justify-content-between align-items-center"
+                class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center"
                 id="datasourceDropdown"
                 ngbDropdownToggle tabindex="0">
                 
                 <span *ngIf="selectedDatasource; else placeholder" class="d-flex align-items-center">
-                  <img [src]="selectedDatasource.image" alt="" width="20" height="20" class="me-2" />
+                  <img *ngIf="selectedDatasource.value !== 'all' && selectedDatasource.image" [src]="selectedDatasource.image" alt="" width="20" height="20" class="me-2" />
                   {{ selectedDatasource.name }}
                 </span>
                 
@@ -914,7 +914,7 @@
           <!-- Sorting Dropdown -->
         <div ngbDropdown class="me-3" style="min-width: 200px;">
           <button
-            class="btn glass-light-select p-3 w-100 d-flex justify-content-between align-items-center"
+            class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center"
             id="sortDropdown"
             ngbDropdownToggle>
             {{ selectedSortLabel || 'Sort By' }}
@@ -933,12 +933,12 @@
 
 
             <div class="btn-group toggle-group glass-light-grid me-3" role="group">
-              <button type="button" class="btn p-3"
+              <button type="button" class="btn p-2"
                       [class.active]="viewMode === 'cards'"
                       (click)="viewMode = 'cards'">
                 <i class="bi bi-grid-3x3-gap-fill"></i>
               </button>
-              <button type="button" class="btn p-3"
+              <button type="button" class="btn p-2"
                       [class.active]="viewMode === 'table'"
                       (click)="viewMode = 'table'">
                 <i class="bi bi-table"></i>
@@ -1342,18 +1342,18 @@
                         <td>{{ connection.updated_at | date:'dd/MM/yyyy' }}</td>
                         <td>{{ connection.created_at | date:'dd/MM/yyyy' }}</td>
                         <td class="text-center">
-                          <button class="btn btn-outline-primary btn-sm me-1"
+                          <button class="btn btn-primary btn-sm me-1"
                             (click)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);"
                             [disabled]="disabledEdit(connection.server_type)">
                             <i class="bi bi-pencil"></i>
                           </button>
-                          <button class="btn btn-outline-danger btn-sm"
+                          <button class="btn btn-danger btn-sm me-1"
                             (click)="deleteDbConnection(connection.is_cross_db ? connection.cross_db_id : connection.hierarchy_id)">
                             <i class="bi bi-trash"></i>
                           </button>
                            
                            <div ngbDropdown class="d-inline-block">
-                            <button class="btn btn-outline-secondary btn-sm" ngbDropdownToggle>
+                            <button class="btn btn-secondary btn-sm" ngbDropdownToggle>
                               <i class="bi bi-three-dots-vertical"></i>
                             </button>
                             <div class="dropdown-menu" ngbDropdownMenu>

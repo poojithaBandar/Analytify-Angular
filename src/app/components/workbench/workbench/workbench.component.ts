@@ -3535,7 +3535,7 @@ connectGoogleSheets(){
     //   delete Obj.order
     // }
     let params = new HttpParams()
-  .set('connection_type', this.selectedDatasource?.value || '');
+  .set('connection_type', this.selectedDatasource?.value || 'all');
     if (this.orderBy) {
       params = params.set('order_by', this.orderBy);
     }
@@ -4569,55 +4569,63 @@ subCategories: any[] = [];
 buildSubCategories() {
   const categories = Object.values(this.connectionTypes).flat();
 
-  this.subCategories = categories.map(cat => {
-    const apiNameMap: { [key: string]: string } = {
-      "MySQL": "mysql",
-      "ORACLE": "oracle",
-      "PostgreSQL": "postgresql",
-      "Microsoft SQL SERVER": "microsoftsqlserver",
-      "Snow Flake": "snowflake",
-      "SQLite": "sqlite",
-      "MongoDB": "mongodb",
-      "Cassandra": "cassandra",
-      "SAP HANA": "sap hana",
-      "SAP": "sap bw",
-      "Excel": "excel",
-      "CSV": "csv",
-      "PDF": "pdf",
-      "Text": "text",
-      "XML": "xml",
-      "QuickBooks": "quickbooks",
-      "DBT": "dbt",
-      "DeepSeek": "deepseek",
-      "Shopify": "shopify",
-      "Google Analytics": "google_analytics",
-      "HubSpot": "hubspot",
-      "BambooHR": "bamboohr",
-      "Files": "files",
-      "OpenAI": "open_ai",
-      "Gemini": "gemini",
-      "Cross Database": "cross_database",
-      "Jira": "jira",
-      "HaloPS": "halops",
-      "Pax8": "pax8",
-      "ConnectWise": "connectwise",
-      "Salesforce": "salesforce",
-      "Ninja": "ninja",
-      "Server": "server",
-      "Zoho": "zoho",
-      "Tally": "tally",
-      "Google Sheets": "google_sheets",
-      "Immybot": "immybot"
-    };
+  const apiNameMap: { [key: string]: string } = {
+    "MySQL": "mysql",
+    "ORACLE": "oracle",
+    "PostgreSQL": "postgresql",
+    "Microsoft SQL SERVER": "microsoftsqlserver",
+    "Snow Flake": "snowflake",
+    "SQLite": "sqlite",
+    "MongoDB": "mongodb",
+    "Cassandra": "cassandra",
+    "SAP HANA": "sap hana",
+    "SAP": "sap bw",
+    "Excel": "excel",
+    "CSV": "csv",
+    "PDF": "pdf",
+    "Text": "text",
+    "XML": "xml",
+    "QuickBooks": "quickbooks",
+    "DBT": "dbt",
+    "DeepSeek": "deepseek",
+    "Shopify": "shopify",
+    "Google Analytics": "google_analytics",
+    "HubSpot": "hubspot",
+    "BambooHR": "bamboohr",
+    "Files": "files",
+    "OpenAI": "open_ai",
+    "Gemini": "gemini",
+    "Cross Database": "cross_database",
+    "Jira": "jira",
+    "HaloPS": "halops",
+    "Pax8": "pax8",
+    "ConnectWise": "connectwise",
+    "Salesforce": "salesforce",
+    "Ninja": "ninja",
+    "Server": "server",
+    "Zoho": "zoho",
+    "Tally": "tally",
+    "Google Sheets": "google_sheets",
+    "Immybot": "immybot"
+  };
 
-    return {
-      name: cat.name,
-      value: apiNameMap[cat.name] || cat.name.toLowerCase().replace(/\s+/g, '_'),
-      svg: cat.svg ? this.sanitizer.bypassSecurityTrustHtml(cat.svg) : null,
-      image: !cat.svg ? cat.image : null
-    };
+  // build categories
+  this.subCategories = categories.map(cat => ({
+    name: cat.name,
+    value: apiNameMap[cat.name] || cat.name.toLowerCase().replace(/\s+/g, '_'),
+    svg: cat.svg ? this.sanitizer.bypassSecurityTrustHtml(cat.svg) : null,
+    image: !cat.svg ? cat.image : null
+  }));
+
+  // ✅ Add "All" manually at the top
+  this.subCategories.unshift({
+    name: "All",
+    value: "all",   // what you’ll send to API
+    svg: null,
+    image: null
   });
 }
+
 
  filteredDatasourceList() {
     return this.subCategories.filter(ds =>
@@ -4653,7 +4661,7 @@ onSortChange(option: { label: string; order_by: string; order: any }) {
 }
 
 
-  viewMode: 'cards' | 'table' = 'table';
+  viewMode: 'cards' | 'table' = 'cards';
 
 disabledEdit(serverType: string): boolean {
   return ['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT','ZOHO','JIRA']
