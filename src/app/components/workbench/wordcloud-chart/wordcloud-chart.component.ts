@@ -97,8 +97,10 @@ export class WordcloudChartComponent implements AfterViewInit, OnChanges {
         });
   
     const option: any = {
-      tooltip: {},
-      series: [{
+  tooltip: {
+    formatter: (p: any) => `${p.name}: ${p.value}` // runtime (lost in JSON)
+  },
+            series: [{
         type: 'wordCloud',
         shape:  'rectangle',
         textStyle: {
@@ -115,6 +117,47 @@ export class WordcloudChartComponent implements AfterViewInit, OnChanges {
 
   setWordCloudOption(option: any){
     if (!this.chartInstance) return;
+    if (!option.tooltip) option.tooltip = {};
+
+  const tHint = option.__tooltipHint || { mode: 'name-value' };
+
+  // If formatter is missing or not a function (stringified), rebuild it.
+  const tt = option.tooltip;
+  // enforce basic tooltip settings
+  tt.show = true;
+  tt.trigger = 'item';
+  const isFn = typeof option.tooltip.formatter === 'function';
+  if (!isFn) {
+    tt.formatter = (p: any) => {
+      const name = p?.name ?? p?.data?.name ?? '';
+      const value = p?.value ?? p?.data?.value ?? '';
+      return `${name}: ${value}`;
+    };
+  }
+    const rebuildSeriesColor = (s: any) => {
+      if (!s || s.type !== 'wordCloud') return;
+
+      // Prefer root-level hint, fallback to textStyle stashes
+      const hint = option.__wordColor || {};
+      const t = s.textStyle || (s.textStyle = {});
+
+      const mode = hint.mode || t.__mode;
+      const pal  = hint.palette || t.__palette ||
+                   ['#91c7ae','#749f83','#ca8622','#bda29a','#6e7074','#546570','#c4ccd3'];
+      const single = hint.singleColor;
+
+      if (mode === 'single' && typeof single === 'string') {
+        t.color = single;   // fixed color
+      } else {
+        t.color = function () {   // revive palette function
+          return pal[Math.floor(Math.random() * pal.length)];
+        };
+      }
+    };
+
+    if (Array.isArray(option.series)) {
+      option.series.forEach(rebuildSeriesColor);
+    }
     this.chartInstance.setOption(option, true);
   }
 

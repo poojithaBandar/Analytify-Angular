@@ -4,13 +4,13 @@
 export const environment = {
   // production: true,
   firebase: {
-    apiKey: "***************************************",
-    authDomain: "************************",
-    projectId: "***********************************",
-    storageBucket: "************************",
-    messagingSenderId: "*********************",
-    appId: "*******************************************",
-    measurementId: "*********************"
+    apiKey: "AIzaSyD9j5Dn2_RBxzvVy3ZyMBSQY9NP-CX-dvU",
+    authDomain: "analytify-5a041.firebaseapp.com",
+    projectId: "analytify-5a041",
+    storageBucket: "analytify-5a041.firebasestorage.app",
+    messagingSenderId: "850090127477",
+    appId: "1:850090127477:web:c864aafa9e449ce630083c",
+    measurementId: "G-EYCHNRBP18"
   },
   production: false,
   // dev 
