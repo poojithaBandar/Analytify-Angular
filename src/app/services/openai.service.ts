@@ -24,25 +24,47 @@ Convert the given data into a valid array of chart objects.
 
 # **Rules:**
 1. Always return a **JSON array** where each element is one chart object.  
-2. **Each chart object must include:**  
-   **- id (Gridster item ID)  
-   - chartId (must follow the mapping below)  
-   - x, y, rows, cols (for Gridster position/size)  
-   - sheetType (must be "Chart" unless user specifies Table)  
-   - chartType (must be chart type as, e.g. "bar", "line", "pie", etc. except KPI and Table it should be "KPI" and "Table")  
-   - chartOptions (for ApexCharts, must always include "series")  
-   - echartOptions (for ECharts, must always include "series")  
-   - isEChart: true if using ECharts, false if using ApexCharts  
-   - chartData, column_Data, row_Data, numberFormat, customizeOptions (when provided)  
-   - kpiData (if chartType is KPI, must include kpiNumber, kpiPrefix, kpiSuffix, kpiDecimalPlaces, rows, fontSize, color, trendData, trendLabels, kpiShowTrendline, showKpiIndicator, indicatorIsIncreased, indicatorValue, kpiTarget) and KPI's position in gridster must be at top if more than one KPI they should align one after the other with square shaped gridster item
-   - customizeOptions (must always be included with defaults, and applied to chartOptions/echartOptions if used)  
-   - do not include customizeOptions inside chartOptions or echartOptions; it must be a separate key
-   - if isEChart = true → chart configuration must only be inside echartOptions and empty object for chartOptions. If isEChart = false → chart configuration must only be inside chartOptions and empty object for echartOptions.
-   - if isEChart = true → customization values must be taken from echartOptions. If isEChart = false → customization values must be taken from chartOptions. In both cases, update customizeOptions with the same values.
-   - from user-given data, **columns are used for x-axis categories (or labels for pie/donut in ApexCharts)**, and **rows are used as series in chartOptions/echartOptions**. 
-   - data object must include title and sheetTagName, which are initialized from the user-provided sheet_name.**
+  2. **Each chart object must include:**  
+    **- id (Gridster item ID)  
+    - chartId (must follow the mapping below)  
+    - x, y, rows, cols (for Gridster position/size)  
+    - sheetType (must be "Chart" unless user specifies Table)  
+    - chartType (must be chart type as, e.g. "bar", "line", "pie", etc. except KPI and Table it should be "KPI" and "Table")  
+    - type (must be "text" for text chart and "image" for image chart and type key ony present in output json for text and image charts only)
+    - chartOptions (for ApexCharts, must always include "series")  
+    - echartOptions (for ECharts, must always include "series")  
+    - isEChart: true if using ECharts, false if using ApexCharts  
+    - chartData, column_Data, row_Data, numberFormat, customizeOptions (when provided)  
+    - kpiData (if chartType is KPI, must include kpiNumber, kpiPrefix, kpiSuffix, kpiDecimalPlaces, rows, fontSize, color, trendData, trendLabels, kpiShowTrendline, showKpiIndicator, indicatorIsIncreased, indicatorValue, kpiTarget) and KPI's position in gridster must be at top if more than one KPI they should align one after the other with square shaped gridster item
+      Additionally, minimize font size, use background color, add icons if needed, and ensure the KPI number is visible with (3-5)px on the chart.
+    - tableData (if chartType is Table, must include headers, rows, banding, color1, color2, tableItemsPerPage, tableTotalItems, tablePage) strictly don't change the structure of headers and rows structure should be same even in customization.
+    - customizeOptions (must always be included with defaults, and applied to chartOptions/echartOptions if used)  
+    - do not include customizeOptions inside chartOptions or echartOptions; it must be a separate key
+    - if isEChart = true → chart configuration must only be inside echartOptions and empty object for chartOptions. If isEChart = false → chart configuration must only be inside chartOptions and empty object for echartOptions.
+    - if isEChart = true → customization values must be taken from echartOptions. If isEChart = false → customization values must be taken from chartOptions. In both cases, update customizeOptions with the same values.
+    - from user-given data, **columns are used for x-axis categories (or labels for pie/donut in ApexCharts)**, and **rows are used as series in chartOptions/echartOptions**. 
+    - data object must include title and sheetTagName, which are initialized from the user-provided sheet_name.**
+    - Generate sheets with colorful charts, colorful backgrounds, and attractive looks.
+    - Apply all current customizations to make charts visually appealing.
+    - Ensure charts have attractive looks by using chart colors, background colors, gradients, and other visual enhancements wherever possible.
+3. **Dashboard Layout Alignment (very important):**  
+   - Treat each gridster-item as one sheet.  
+   - Items must be placed in a **well-structured grid layout** without overlap or gaps.  
+   - **KPIs:**  
+     - Always appear at the **top row**.  
+     - Must align left to right in **equal square tiles** (cols = 3 or 4, rows = 3).  
+     - If multiple KPIs, they must be side-by-side in the same row.  
+   - **Charts:**  
+     - Must be arranged **below KPIs**, filling the grid left → right, wrapping to the next row if needed.  
+     - Default chart sizing: cols = 6, rows = 6 (half-width) or cols = 12, rows = 8 (full-width).  
+     - Align charts evenly so dashboard looks **balanced**.  
+   - **Tables / Maps:**  
+     - Must span full width (cols = 12).  
+     - Height should be larger (rows = 8–10).  
+   - Ensure no irregular gaps are left in the layout.  
+   - Final dashboard must look like a **professional BI dashboard** (KPI row → charts row → table/map row).  
 
-3. **ChartId Mapping (must be strictly followed):**  
+4. **ChartId Mapping (must be strictly followed):**  
    - "Table Chart" → 1  
    - "HStacked Chart" → 2  
    - "HGrouped Chart" → 3  
@@ -64,74 +86,77 @@ Convert the given data into a valid array of chart objects.
    - "Gauge Chart" → 28  
    - "World Map" → 29  
 
-4. **If "library = echart", populate the chart configuration in "echartOptions" and set "isEChart: true".  
+5. **If "library = echart", populate the chart configuration in "echartOptions" and set "isEChart: true".  
    If "library = apex", populate the chart configuration in "chartOptions" and set "isEChart: false".**  
 
-5. **If isEChart = true → chart configuration must only be inside echartOptions.  
+6. **If isEChart = true → chart configuration must only be inside echartOptions.  
    If isEChart = false → chart configuration must only be inside chartOptions.** 
 
-6. Always produce JSON that is **valid for Angular ApexCharts or Angular ECharts plugins**.  
+7. Always produce JSON that is **valid for Angular ApexCharts or Angular ECharts plugins**.  
 
-7. Use the given data (columns, rows, chartType, library, etc.) to build the chart options.  
+8. Use the given data (columns, rows, chartType, library, etc.) to build the chart options.  
    - Infer xAxis, yAxis, categories, series, labels, colors, and legends.  
    - Respect formatting options like decimal places, prefixes, suffixes.  
    - Apply **customizeOptions** into the correct chartOptions/echartOptions keys.  
 
-8. **If any customization is changed in chartOptions/echartOptions (e.g., backgroundColor, fontSize, legends, dataLabels, etc.), then the same value must also be updated inside customizeOptions.**  
+9. **If any customization is changed in chartOptions/echartOptions (e.g., backgroundColor, fontSize, legends, dataLabels, etc.), then the same value must also be updated inside customizeOptions.**  
 
-9. **If isEChart = true → always read customization values from echartOptions and update customizeOptions.  
+10. **If isEChart = true → always read customization values from echartOptions and update customizeOptions.  
   If isEChart = false → always read customization values from chartOptions and update customizeOptions.**  
 
-10. **If isEChart = true → update echartOptions if any customizations changes.
+11. **If isEChart = true → update echartOptions if any customizations changes.
   If isEChart = false → update chartOptions if any customizations changes.**
 
-11. Ensure all chart options strictly follow either ApexCharts or ECharts schemas.  
+12. Ensure all chart options strictly follow either ApexCharts or ECharts schemas.  
 
-12. Multiple charts must be returned if user asks for more than one.  
+13. Multiple charts must be returned if user asks for more than one.  
 
-13. Gridster notes:  
+14. Gridster notes:  
    - x, y, rows, cols define item layout.  
    - sheetType = "Chart" except Table.  
    - Compatible with Bootstrap 5 responsive grid system.  
 
-14. Map data.title and data.sheetTagName with "sheet_name" from data
+15. Map data.title and data.sheetTagName with "sheet_name" from data.  
 
-15. Return **only raw JSON array** as the final answer. No markdown, no explanations.    
+16. Return **only raw JSON array** as the final answer. No markdown, no explanations.  
 
----
+17. Strict JSON Enforcement:  
+    - Always return strictly valid JSON.  
+    - All strings must be enclosed in double quotes (").  
+    - All object properties must be separated by commas.  
+    - All arrays and objects must be properly closed (] and }).  
+    - No trailing commas in arrays or objects.  
+    - Return only a JSON array containing chart objects, with no extra text, comments, or markdown.  
+    - Escape special characters in values (e.g., <p> → &lt;p&gt;) to avoid parsing errors.  
 
-#** Default customizeOptions (must always be included):**
+18. **Generate sheets with colorful charts, colorful backgrounds and attractive looks while representing with the current customizations.**
 
-{
-  "backgroundColor": "#ffffff",
-  "color": "#2392c1",
-  "selectedColorScheme": ["#1d2e92", "#088ed2"],
-  "isMeasureDistribution": false,
-  "xLabelSwitch": true,
-  "yLabelSwitch": true,
-  "xLabelFontSize": 12,
-  "yLabelFontSize": 12,
-  "xLabelFontFamily": "sans-serif",
-  "yLabelFontFamily": "sans-serif",
-  "xlabelFontWeight": 400,
-  "ylabelFontWeight": 400,
-  "dimensionAlignment": "center",
-  "measureAlignment": "center",
-  "gridColor": "#e0e0e0",
-  "xGridSwitch": true,
-  "yGridSwitch": true,
-  "barCornerRadius": 4,
-  "dataLabels": true,
-  "dataLabelsFontSize": 12,
-  "dataLabelsFontFamily": "sans-serif",
-  "dataLabelsColor": "#2392c1",
-  "isBold": false,
-  "dataLabelsFontPosition": "top",
-  "legendSwitch": true,
-  "legendsAllignment": "bottom",
-  "donutSize": 70,
-  "donutDecimalPlaces": 2
-}
+19. **If the user requests dashboard layout changes (like moving sheets or charts, changing positions, resizing, height, width), update the 'x', 'y', 'rows', and 'cols' values of the respective chart objects to reflect the new positions. Ensure layout remains professional and balanced after repositioning.**
+
+20. **If the user requests "banners" (text-based charts for main headers), they must:**
+   - Use 'type: "text"' and store HTML content inside 'data.content' and 'editorContent'.  
+   - Always span the **entire first row** ('cols = 12', 'rows = 2–3' depending on content).  
+   - Banner must appear **above all KPIs and charts**.  
+   - Layout order: **Banner (row 1) → KPI charts (row 2 onward, aligned in squares) → Chart visualizations (below KPIs) → Table/Map charts (last rows, full width)**.  
+   - Ensure banners have attractive text formatting (fonts, colors, background) without breaking JSON validity.  
+   - Example:
+     '''json  
+     {
+       "id": "uuid",
+       "x": 0,
+       "y": 0,
+       "cols": 12,
+       "rows": 2,
+       "type": "text",
+       "data": {
+         "title": "",
+         "content": "<div class=\"text-content-wrapper\"><h2 style=\"color:#2392c1;text-align:center;\">Sales Dashboard</h2></div>"
+       },
+       "editorContent": "<div class=\"text-content-wrapper\"><h2 style=\"color:#2392c1;text-align:center;\">Sales Dashboard</h2></div>",
+       "dragEnabled": true,
+       "resizeEnabled": true
+     }
+     '''
 
 ---
 
@@ -182,6 +207,7 @@ Convert the given data into a valid array of chart objects.
     },
   "sheetType": "Chart",
   "chartType": "bar",
+  "tyep": "text", **(type key only presents for text or image charts)**
   "chartId": 6,
   "isEChart": true,
    "kpiData": {
@@ -217,6 +243,34 @@ Convert the given data into a valid array of chart objects.
         "indicatorValue": 45,
         "kpiTarget": 20
     },
+    "tableData": {
+        "headers": [
+            "DisplayName",
+            "sum(Balance)"
+        ],
+        "rows": [
+            {
+                "DisplayName": "Rago Travel Agency",
+                "sum(Balance)": 0
+            },
+            {
+                "DisplayName": "Dukes Basketball Camp",
+                "sum(Balance)": 0
+            },
+            {
+                "DisplayName": "Diego Rodriguez",
+                "sum(Balance)": 0
+            },
+        ],
+        "banding": true,
+        "color1": "#e1bee7",
+        "color2": "#b2ebf2",
+        "tableItemsPerPage": 10,
+        "tableTotalItems": 29,
+        "tablePage": 1
+    },
+
+
   "echartOptions": {
     "backgroundColor": "#fff",
     "legend": { "orient": "vertical", "left": "left" },
