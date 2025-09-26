@@ -25,9 +25,10 @@ export class NotificationService {
         vapidKey: 'BLWVBWUZLgPm5Cbv6ljQUzGQOiySfsu4bNZWsMptAkgko_88nJPguaHIiNVShcALKufIBO5U830qHc-oHsXaSfc'
       });
       console.log('FCM Token:', token);
-      const notificationId = localStorage.getItem('notificationId');
+      let notificationId : any = localStorage.getItem('notificationId') === "null" ? null :  localStorage.getItem('notificationId');
+      notificationId = parseInt(notificationId);
       let object = {
-        ...(notificationId && { id: notificationId }),
+        ...(notificationId && { id: parseInt(notificationId)}),
         user_token: token
       }
       if (notificationId) {
@@ -36,7 +37,8 @@ export class NotificationService {
           next: (responce) => {
             console.log(responce);
             localStorage.setItem('notificationId', responce.notification_id);
-            this.toasterService.info('Push Notifications are Enabled.', 'info', { positionClass: 'toast-top-center' });
+            // this.toasterService.info('Push Notifications are Enabled.', 'info', { positionClass: 'toast-top-right' });
+            this.listenMessages();
           },
           error: (error) => {
             console.log(error);
@@ -48,7 +50,8 @@ export class NotificationService {
           next: (responce) => {
             console.log(responce);
             localStorage.setItem('notificationId', responce.notification_id);
-            this.toasterService.info('Push Notifications are Enabled.', 'info', { positionClass: 'toast-top-center' });
+            // this.toasterService.info('Push Notifications are Enabled.', 'info', { positionClass: 'toast-top-right' });
+            this.listenMessages();
           },
           error: (error) => {
             console.log(error);

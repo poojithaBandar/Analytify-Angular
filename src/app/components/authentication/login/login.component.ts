@@ -117,7 +117,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     }
     if(data.notification_id){
       this.notificationService.requestPermission();
-      this.notificationService.listenMessages();
+      // this.notificationService.listenMessages();
     }
     if(data.accessToken){
       this.router.navigate(['analytify/home'])

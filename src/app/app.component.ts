@@ -26,10 +26,20 @@ export class AppComponent {
   constructor(private notificationService: NotificationService) {}
 
   ngOnInit() {
+    const notificationId = localStorage.getItem('notificationId') === "null" ? null : localStorage.getItem('notificationId');
+    console.log(notificationId);
+    if(notificationId){
+      this.notificationService.requestPermission();
+      // this.notificationService.listenMessages();
+    }
     this.notificationService.notificationsObservable$.subscribe(msg => {
       if (msg) {
         this.notification = msg;
       }
+
+      setTimeout(() => {
+        this.notification = null; // hide after 10 sec
+      }, 10000);
     });
   }
 
