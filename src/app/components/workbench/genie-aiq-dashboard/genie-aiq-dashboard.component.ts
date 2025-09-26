@@ -543,13 +543,34 @@ promptDashboard(){
         this.datafromApi = [];
         this.datafromApi = data.dashboard;
         this.loaderService.show();
-        this.openAi.getChartOptions(data.dashboard.sheets)
+        this.openAi.getChartOptions(data.dashboard.sheets, this.userPrompt)
           .then(chartOptions => {
             console.log("Chart Options:", chartOptions);
 
             // Assign result
             this.dash1 = chartOptions;
             this.showDashboardView = true;
+            if (!this.userPrompt.trim()) return;
+            const currentPrompt = this.userPrompt;
+            // Push user message
+            this.chatHistory.push({
+              sender: 'User',
+              text: this.userPrompt,
+              timestamp: new Date()
+            });
+
+            // Simulate AI response (replace with real API call)
+            setTimeout(() => {
+              this.chatHistory.push({
+                sender: 'AI',
+                text: `Got it! I’ll process: "${currentPrompt}"`,
+                timestamp: new Date()
+              });
+              this.scrollToBottom();
+            }, 800);
+
+            this.userPrompt = '';
+            this.scrollToBottom();
             this.loaderService.hide();
           })
           .catch(err => {
