@@ -2121,7 +2121,7 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
             if(responce){
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.notificationService.requestPermission();
-              this.notificationService.listenMessages();
+              // this.notificationService.listenMessages();
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
               if(!this.datasourceSwitchUI){
@@ -3523,7 +3523,7 @@ connectGoogleSheets(){
       if (this.databaseconnectionsList) {
         this.getDbConnectionList();
         this.notificationSub = this.notificationService.notificationsObservable$.subscribe(msg => {
-          if (msg?.body.toLocaleLowerCase().includes('successful') && this.databaseconnectionsList) {
+          if (msg?.body.toLocaleLowerCase().includes('succesfull') && this.databaseconnectionsList) {
             this.getDbConnectionList();
           }
         });

@@ -275,7 +275,8 @@
                                 </div>
                                 <div *ngIf="connectionList.length > 0">
                                 @for(database of connectionList;track database){
-                                    <div class="d-flex align-items-center mt-0 justify-content-between saved-hover bg-light rounded-4 mb-3">
+                                    <div class="d-flex align-items-center mt-0 justify-content-between saved-hover bg-light rounded-4 mb-3"
+                                        [class.disabled-card]="database.server_type === 'CONNECTWISE' && database?.data_dumping">
                                         <div class="d-flex align-items-center mt-0">
                                             <!-- <span class="rounded-5  p-2 border">
                                                 <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img w-5 h-5">
