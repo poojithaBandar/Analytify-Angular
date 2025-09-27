@@ -279,8 +279,10 @@ isCreateDisabled(): boolean {
 showDashboardView = false;
 dash1: any = [];
 promptDashboard(){
+  const selectedTableNames = this.selectedTables.slice();
   const payload ={
     h_id: this.hierarchyId,
+    table_name:selectedTableNames,
     question:this.userPrompt
   }
     this.workbechService.promptDashboard(payload).subscribe({

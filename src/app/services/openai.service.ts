@@ -426,7 +426,7 @@ Guage Chart → chartOptions
   "cols": 9,
     "data": {
         "title": "Total Customers",
-        "sheetTagName": "<p>Total Customers</p>" **(sheetTagName key not presents for text chart or banner)**
+        "sheetTagName": "<p>Total Customers</p>"
         "content": "<div class=\"text-content-wrapper\"><h2 style=\"color:#2392c1;text-align:center;\">Sales Dashboard</h2></div>" **(content key only presents for text chart or banner)**
     },
   "sheetType": "Chart",
