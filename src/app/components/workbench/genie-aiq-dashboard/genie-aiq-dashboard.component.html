@@ -244,8 +244,15 @@
 <div *ngIf="showDashboardView" class="row" style="height: 100vh; overflow: hidden;">
   <!-- Dashboard Area -->
   <div class="col-9 p-0 d-flex flex-column" style="height: 100%;">
+    <div class="d-flex mb-1 ps-2 pe-2">
+      <button class="btn btn-primary me-2" (click)="goBackToGeenieDatasource();">
+        <i class="fa fa-arrow-left"></i>
+      </button>
+      <input type="text"  placeholder="Title" [(ngModel)]="dashboardName" class="form-control me-1" > 
+      <button [disabled]="dashboardName.length === 0" class="btn btn-primary" (click)="saveGeenieDashboard()">Save </button>
+    </div>
     <div class="flex-grow-1 overflow-auto">
-      <app-sheetsdashboard [dash1]="dash1" [hideWidgets]="true" (sendDashboardData)="getDashboardData($event)"></app-sheetsdashboard>
+      <app-sheetsdashboard [dash1]="dash1" [hideWidgets]="true"></app-sheetsdashboard>
     </div>
   </div>
 

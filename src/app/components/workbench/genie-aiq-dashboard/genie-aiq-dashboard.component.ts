@@ -899,11 +899,28 @@ datafromApi :any={};
   });
   }  
 
-  getDashboardData(event : any){
-    this.dashboardName = event.dashboardName;
-    this.dashboardTagName = event.dashboardTagName;
+  saveGeenieDashboard(){
+    this.dashboardTagName = this.dashboardName;
 
     this.buildDashboardprocess(this.datafromApi);
+  }
+
+  goBackToGeenieDatasource(){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will leave the dashboard view and if want to go, generated dashboard will be lost',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, go back',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Execute your logic
+        this.showDashboardView = false;
+        this.dash1 = [];
+      }
+    });
   }
 }
 

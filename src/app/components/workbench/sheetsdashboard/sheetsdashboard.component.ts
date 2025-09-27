@@ -272,8 +272,6 @@ export class SheetsdashboardComponent implements OnDestroy {
   trendLabels = [];
   @Input() dash1: any = [];
   @Input() hideWidgets = false;
-  isGeenieDashboard: boolean = false;
-  @Output() sendDashboardData = new EventEmitter<object>();
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -390,8 +388,6 @@ export class SheetsdashboardComponent implements OnDestroy {
         }
       }
     });
-    } else if(currentUrl.includes('analytify/genie-aiq-dashboard')){
-      this.isGeenieDashboard = true;
     }
     if(!this.isPublicUrl && !this.isEmbedDashboard){
       this.editDashboard = this.viewTemplateService.editDashboard();
@@ -8977,14 +8973,6 @@ initializeTabDefaults() {
       const chartHeight = Math.max(calculatedHeight, 320);
       return chartHeight;
     }
-  }
-
-  sendData(){
-    let object = {
-      dashboardName: this.dashboardName,
-      dashboardTagName: this.dashboardTagName
-    }
-    this.sendDashboardData.emit(object);
   }
 
 }

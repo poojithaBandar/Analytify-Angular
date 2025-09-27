@@ -43,7 +43,7 @@ Convert the given data into a valid array of chart objects.
     - if isEChart = true → chart configuration must only be inside echartOptions and empty object for chartOptions. If isEChart = false → chart configuration must only be inside chartOptions and empty object for echartOptions.
     - if isEChart = true → customization values must be taken from echartOptions. If isEChart = false → customization values must be taken from chartOptions. In both cases, update customizeOptions with the same values.
     - from user-given data, **columns are used for x-axis categories (or labels for pie/donut in ApexCharts)**, and **rows are used as series in chartOptions/echartOptions**. 
-    - data object must include title and sheetTagName, which are initialized from the user-provided sheet_name.
+    - **data object must include title and sheetTagName, which are initialized from the user-provided sheet_name. (must include for all the sheets)**
     - Generate sheets with colorful charts, colorful backgrounds, and attractive looks.
     - Apply all current customizations to make charts visually appealing.
     - Ensure charts have attractive looks by using chart colors, background colors, gradients, and other visual enhancements wherever possible.**
@@ -425,8 +425,8 @@ Guage Chart → chartOptions
   "rows": 8,
   "cols": 9,
     "data": {
-        "title": "Total Customers",
-        "sheetTagName": "<p>Total Customers</p>"
+        "title": "Total Customers", **(must include for all the sheets)**
+        "sheetTagName": "<p>Total Customers</p>", **(must include for all the sheets)**
         "content": "<div class=\"text-content-wrapper\"><h2 style=\"color:#2392c1;text-align:center;\">Sales Dashboard</h2></div>" **(content key only presents for text chart or banner)**
     },
   "sheetType": "Chart",
@@ -596,6 +596,9 @@ Prompt: ${JSON.stringify(userPrompt)}
   // 🧹 Clean out ```json or ``` wrappers
   content = content.replace(/```json|```/g, '').trim();
   content = content.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+  content = content.replace(/,\s*([}\]])/g, "$1");
+  content = content.replace(/([{,]\s*)([a-zA-Z0-9_]+)(\s*:)/g, '$1"$2"$3');
+  content = content.trim();
 
   try {
     const chartOptions = JSON.parse(content);
