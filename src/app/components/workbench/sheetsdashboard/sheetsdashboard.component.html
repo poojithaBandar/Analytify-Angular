@@ -1400,10 +1400,9 @@
                 } @else if(item['isEChart'] && item['chartId'] === 21){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                   <app-wordcloud-chart
-                    [chartsColumnData]="item['wordcloudData'] ?? item['echartOptions']?.series?.[0]?.data ?? []"
-                    [chartsRowData]="item['wordcloudData'] ?? item['echartOptions']?.series?.[0]?.data ?? []"
-                    [customOptions]="item['customizeOptions']?.wordcloudOptions || item['customizeOptions']">
-                  </app-wordcloud-chart>
+                    
+                  [customOptions]="item['echartOptions']">
+                </app-wordcloud-chart>
                 </div>
 
                 } @else if(item['isEChart'] && item['chartId']=== 29){
@@ -1936,9 +1935,8 @@
                   } @else if(item['isEChart'] && item['chartId'] === 21){
                   <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                     <app-wordcloud-chart
-                      [chartsColumnData]="item['wordcloudData'] ?? item['echartOptions']?.series?.[0]?.data ?? []"
-                      [chartsRowData]="item['wordcloudData'] ?? item['echartOptions']?.series?.[0]?.data ?? []"
-                      [customOptions]="item['customizeOptions']?.wordcloudOptions || item['customizeOptions']">
+                    
+                      [customOptions]="item['echartOptions']">
                     </app-wordcloud-chart>
                   </div>
 
