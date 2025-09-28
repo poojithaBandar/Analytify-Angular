@@ -26,7 +26,9 @@ export class WordcloudChartComponent implements AfterViewInit, OnChanges {
 
   ngAfterViewInit(): void {
     this.initChart();
+    if (!(this.customOptions && Object.keys(this.customOptions).length)) {
     this.renderChart();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -117,23 +119,9 @@ export class WordcloudChartComponent implements AfterViewInit, OnChanges {
 
   setWordCloudOption(option: any){
     if (!this.chartInstance) return;
-    if (!option.tooltip) option.tooltip = {};
-
-  const tHint = option.__tooltipHint || { mode: 'name-value' };
-
-  // If formatter is missing or not a function (stringified), rebuild it.
-  const tt = option.tooltip;
-  // enforce basic tooltip settings
-  tt.show = true;
-  tt.trigger = 'item';
-  const isFn = typeof option.tooltip.formatter === 'function';
-  if (!isFn) {
-    tt.formatter = (p: any) => {
-      const name = p?.name ?? p?.data?.name ?? '';
-      const value = p?.value ?? p?.data?.value ?? '';
-      return `${name}: ${value}`;
-    };
-  }
+  option.tooltip= {
+    formatter: (p: any) => `${p.name}: ${p.value}` // runtime (lost in JSON)
+  };
     const rebuildSeriesColor = (s: any) => {
       if (!s || s.type !== 'wordCloud') return;
 
