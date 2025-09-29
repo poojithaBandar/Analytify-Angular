@@ -3548,6 +3548,7 @@ connectGoogleSheets(){
   }
   searchDbConnectionList(){
     this.pageNo=1;
+    this.page=1;
     this.getDbConnectionList();
   }
    onPageSizeChange() {
@@ -4689,6 +4690,7 @@ buildSubCategories() {
   onDatasourceSelect(ds: any) {
     this.selectedDatasource = ds;
     this.pageNo=1;
+    this.page=1;
     this.getDbConnectionList();
   }
 
@@ -4710,6 +4712,7 @@ onSortChange(option: { label: string; order_by: string; order: any }) {
   this.order = option.order;
   this.selectedSortLabel = option.label;
   this.pageNo=1;
+  this.page=1;
   this.getDbConnectionList();
 }
 
