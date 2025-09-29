@@ -872,7 +872,7 @@
           <div class="d-flex align-items-center ms-auto flex-wrap">
               <div ngbDropdown class="me-3" style="min-width: 260px;">
               <button
-                class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center"
+                class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center text-muted"
                 id="datasourceDropdown"
                 ngbDropdownToggle tabindex="0">
                 
@@ -914,10 +914,10 @@
           <!-- Sorting Dropdown -->
         <div ngbDropdown class="me-3" style="min-width: 200px;">
           <button
-            class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center"
+            class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center text-muted"
             id="sortDropdown"
             ngbDropdownToggle>
-            {{ selectedSortLabel || 'Sort By' }}
+            {{ selectedSortLabel || 'Sort by' }}
             <i class="bi bi-chevron-down"></i>
           </button>
 
@@ -1321,7 +1321,7 @@
                     <tbody>
                       <tr *ngFor="let connection of connectionList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }"
                           [class.disabled-card]="connection.server_type === 'CONNECTWISE' && connection?.data_dumping">
-                        <td>
+                        <td  (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(connection.hierarchy_id,connection.cross_db_id)">
                           <div class="d-flex align-items-center">
                             <div class="me-2 fs-5">
                               <ng-container [ngSwitch]="connectionListIcons[connection.database_type]?.type">

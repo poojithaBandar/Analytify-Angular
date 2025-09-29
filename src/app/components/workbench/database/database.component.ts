@@ -1950,7 +1950,10 @@ checkNameChanged(){
     }
   }
 }
-  goToSheet(fromParam: string) {
+  goToSheet(fromParam: string,modal?:any) {
+    if(modal){
+      this.modalService.dismissAll('close')
+    }
     this.goToSheetButtonClicked = true;
       let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
       let querySetIdToDelete = (fromParam === 'fromcustomsql') ? this.qurtySetId : this.custumQuerySetid
