@@ -367,7 +367,7 @@ form input, form select {
 /* Right panel */
 .panel {
   background: #fff;
-  height: 100vh;            /* Full viewport height */
+  // height: 100vh;            /* Full viewport height */
   display: flex;
   flex-direction: column;   /* Header stays fixed at top */
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);

@@ -546,8 +546,9 @@ promptDashboard(){
         // ]
         this.datafromApi = [];
         this.datafromApi = data.dashboard;
+        this.dashboardName = this.datafromApi.dashboard.dashboard_title;
         this.loaderService.show();
-        this.openAi.getChartOptions(data.dashboard.sheets, this.userPrompt,this.openAiKey)
+        this.openAi.getChartOptions(data.dashboard.sheets, this.openAiKey)
           .then(chartOptions => {
             console.log("Chart Options:", chartOptions);
 
@@ -663,7 +664,8 @@ builSheets(data:any, dashboard:any){
       if (sheetData.chartType === 'text' || sheetData.type === 'text') {
         return of({ res: null, index });
       }
-      return this.sheetSave(sheetData, data[index], index).pipe(
+      const currenrSheet = data.find((f:any)=> f.sheet_name === sheetData.data.title);
+      return this.sheetSave(sheetData, currenrSheet, index).pipe(
         map(res => ({ res, index }))
       );
     }
@@ -836,6 +838,12 @@ datafromApi :any={};
       ];
     });
 
+    if(sheetData?.chartId == 25){
+      sheetData.customizeOptions.kpiColor = sheetData?.kpiData?.color;
+      sheetData.customizeOptions.kpiColorSwitch = true;
+      sheetData.customizeOptions.kpiShowTrendline = sheetData?.kpiData?.kpiShowTrendline;
+    }
+
     const obj = {
       "chart_id": sheetData?.chartId,
       "queryset_id": this.querySetId,
@@ -853,24 +861,33 @@ datafromApi :any={};
         "columns": sheetColumns ?? [],
         "columns_data": sheet_column_data ?? [],
         "col": data?.columns.map((col:any)=>{ return {column: col.column, result_data: col.result} }) ?? [],
-        "row": data?.rows.map((col:any)=>{ return {column: col.col, result_data: col.result} }) ?? [],
+        "row": data?.rows.map((col:any)=>{ return {column: col.column, result_data: col.result} }) ?? [],
         "rows": sheetRows ?? [],
         "rows_data": sheet_rows_data ?? [],
         "results": {
-          "kpiData": '',
-          "kpiFontSize": 3,
-          "kpiNumber": '',
-          "kpiPrefix": "",
-          "kpiSuffix": "",
-          "kpiDecimalPlaces": 2,
+          "kpiData": sheetData?.chartId === 25 ? data?.rows.map((col:any)=>{ return {column: col.column, result_data: col.result[0]} })[0] : [],
+          "kpiFontSize": sheetData?.chartId === 25 ? sheetData?.kpiData?.fontSize : 3,
+          "kpiNumber": sheetData?.chartId === 25 ? sheetData?.kpiData?.kpiNumber : '',
+          "kpiPrefix": sheetData?.chartId === 25 ? sheetData?.kpiData?.kpiPrefix : '',
+          "kpiSuffix": sheetData?.chartId === 25 ? sheetData?.kpiData?.kpiSuffix : '',
+          "kpiDecimalPlaces": sheetData?.chartId === 25 ? sheetData?.kpiData?.kpiDecimalPlaces : 2,
           "kpiDecimalUnit": "none",
-          "tableData": [],
-          "tableColumns": [],
-          "banding": false,
-          "color1": "#f5f5f5",
-          "color2": "#ffffff",
-          "items_per_page": 10,
-          "total_items": 0
+          "kpicolor": sheetData?.chartId === 25 ? sheetData?.kpiData?.color : '#000',
+          "kpiShowTrendline": sheetData?.chartId === 25 ? sheetData?.kpiData?.kpiShowTrendline : false,
+          "kpiTarget": sheetData?.chartId === 25 ? sheetData?.kpiData?.kpiTarget : '',
+          "trendData": sheetData?.chartId === 25 ? sheetData?.kpiData?.trendData : [],
+          "trendLabels": sheetData?.chartId === 25 ? sheetData?.kpiData?.trendLabels : [],
+          "indicatorIsIncreased": sheetData?.chartId === 25 ? sheetData?.kpiData?.indicatorIsIncreased : 'up',
+          "indicatorValue": sheetData?.chartId === 25 ? sheetData?.kpiData?.indicatorValue : '',
+          "showKpiIndicator": sheetData?.chartId === 25 ? sheetData?.kpiData?.showKpiIndicator : false,
+
+          "tableData": sheetData?.chartId === 1 ? sheetData?.tableData?.headers : [],  
+          "tableColumns": sheetData?.chartId === 1 ? sheetData?.tableData?.rows : [],
+          "banding": sheetData?.chartId === 1 ? sheetData?.tableData?.banding : false,
+          "color1": sheetData?.chartId === 1 ? sheetData?.tableData?.color1 : "#f5f5f5",
+          "color2": sheetData?.chartId === 1 ? sheetData?.tableData?.color2 : "#ffffff",
+          "items_per_page": sheetData?.chartId === 1 ? sheetData?.tableData?.tableItemsPerPage : 10,
+          "total_items": sheetData?.chartId === 1 ? sheetData?.tableData?.tableTotalItems : 0
         },
         "isApexChart": sheetData?.isEChart ? false : true,
         "isEChart": sheetData?.isEChart,

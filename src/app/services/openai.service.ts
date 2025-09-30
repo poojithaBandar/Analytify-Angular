@@ -48,6 +48,8 @@ Convert the given data into a valid array of chart objects.
     - Generate sheets with colorful charts, colorful backgrounds, and attractive looks.
     - Apply all current customizations to make charts visually appealing.
     - Ensure charts have attractive looks by using chart colors, background colors, gradients, and other visual enhancements wherever possible.**
+    - **Hex color codes must always consist of 6 characters.**
+
 3. **Dashboard Layout Alignment (very important):**  
    - Treat each gridster-item as one sheet.  
    - Items must be placed in a **well-structured grid layout** without overlap or gaps.  
@@ -151,7 +153,7 @@ Convert the given data into a valid array of chart objects.
      '''
 19. Special ChartOptions Rules (ApexCharts only)  
 
-When isEChart = false and chartType is one of → "pie", "donut", "funnel", "treemap", "radial", "guage", you must strictly use the exact predefined structures below.  
+When isEChart = false and chartType is one of → "pie", "donut", "funnel", "treemap", "radial", "guage", 'hbar' you must strictly use the exact predefined structures below.  
 
 - Do not remove or rename any key.  
 - Do not change array/object nesting.  
@@ -369,50 +371,301 @@ Guage Chart → chartOptions
   "labels": ["sum(actualHours)"]
 }
 
+=====================
+Hbar Chart → chartOptions
+=====================
+{
+    "series": [
+        {
+            "name": "",
+            "data": [
+                26953.57,
+                142715.03,
+                241067.66,
+                133131.61,
+                33401,
+                43093.880000000005,
+                153258.40999999997,
+                51053.899999999994,
+                13634.78,
+                56985.55,
+                331789.41000000003,
+                79535.48,
+                74842.93,
+                203621.16999999998,
+                30335.02,
+                135227.22,
+                27758.63,
+                50444.880000000005,
+                262316.97,
+                127551.61
+            ],
+            "group": "apexcharts-axis-0"
+        }
+    ],
+    "annotations": {
+        "points": [
+            {
+                "x": "zoom",
+                "seriesIndex": 0,
+                "label": {
+                    "borderColor": "#775DD0",
+                    "offsetY": 0,
+                    "style": {
+                        "color": "#fff",
+                        "background": "#775DD0"
+                    },
+                    "text": "zoom"
+                }
+            }
+        ]
+    },
+    "chart": {
+        "toolbar": {
+            "show": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "tools": {
+                "download": true,
+                "selection": true,
+                "zoom": true,
+                "zoomin": true,
+                "zoomout": true,
+                "pan": true,
+                "reset": true
+            },
+            "autoSelected": "zoom"
+        },
+        "type": "bar",
+        "height": 600,
+        "background": "#fff",
+        "events": {}
+    },
+    "yaxis": {
+        "labels": {
+            "show": true,
+            "offsetX": 15,
+            "offsetY": 0,
+            "style": {
+                "colors": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "fontSize": 12,
+                "fontFamily": "sans-serif",
+                "fontWeight": 400
+            }
+        }
+    },
+    "xaxis": {
+        "categories": [
+            "AI Innovations",
+            "Alpha Holdings",
+            "Beta Corporation",
+            "Cloud Nine",
+            "Cyber Solutions",
+            "Data Driven",
+            "Delta Group",
+            "Digital Dynamics",
+            "Epsilon Ltd",
+            "Future Tech",
+            "Gamma Partners",
+            "Global Industries",
+            "Innovate Inc",
+            "Metro Systems",
+            "NextGen Solutions",
+            "Prime Enterprises",
+            "Quantum Corp",
+            "Smart Systems",
+            "TechCorp Solutions",
+            "Zeta Ventures"
+        ],
+        "labels": {
+            "show": true,
+            "style": {
+                "fontSize": 12,
+                "fontFamily": "sans-serif",
+                "fontWeight": 400
+            }
+        },
+        "convertedCatToNumeric": false
+    },
+    "grid": {
+        "show": true,
+        "borderColor": "#089ffc",
+        "xaxis": {
+            "lines": {
+                "show": false
+            }
+        },
+        "yaxis": {
+            "lines": {
+                "show": false
+            }
+        }
+    },
+    "plotOptions": {
+        "bar": {
+            "horizontal": true,
+            "distributed": true,
+            "dataLabels": {
+                "position": "top"
+            },
+            "borderRadius": 0
+        }
+    },
+    "dataLabels": {
+        "enabled": true,
+        "textAnchor": "start",
+        "style": {
+            "fontSize": "12px",
+            "fontFamily": "sans-serif",
+            "fontWeight": 400,
+            "colors": [
+                "#2392c1"
+            ]
+        }
+    },
+    "legend": {
+        "show": false
+    },
+    "colors": [
+        "#FFB750",
+        "#36CEDC"
+    ]
+}
+
    - Ensure these structures are **strictly followed whenever chartType is "pie", "donut", "funnel", "treemap", "radial", "guage"** with 'isEChart = false'.  
    - All customization values (colors, legend position, background, etc.) must be applied to both 'chartOptions' and 'customizeOptions'.  
 
 20. Return **only raw JSON array** as the final answer. No markdown, no explanations. 
 
-21. Strict JSON Enforcement:  
+21. **Strict JSON Enforcement:  
   - Always return strictly valid JSON.  
   - All strings must be enclosed in double quotes (").  
   - All object properties must be separated by commas.  
   - All arrays and objects must be properly closed (] and }).  
   - No trailing commas in arrays or objects.  
   - Return only a JSON array containing chart objects, with no extra text, comments, or markdown.  
-  - Escape special characters in values (e.g., <p> → &lt;p&gt;) to avoid parsing errors.
+  - Escape special characters in values (e.g., <p> → &lt;p&gt;) to avoid parsing errors.**
 
+22. **Generate the JSON array with the same index order as the user-given data.**
+
+23. **Always generate JSON for all the charts in the user-given data.**
 ---
 
 #** 🔗 CustomizeOptions → Chart Mapping:**
 
-- backgroundColor → Apex: chart.background | ECharts: backgroundColor  
-- selectedColorScheme / color → Apex: colors | ECharts: color  
-- isMeasureDistribution → Apex: plotOptions.bar.distributed or setColorsOnRanges() | ECharts: colorBy: 'data' with setColorsOnRanges()  
-- xLabelSwitch → Apex: xaxis.labels.show | ECharts: xAxis.axisLabel.show  
-- yLabelSwitch → Apex: yaxis.labels.show | ECharts: yAxis.axisLabel.show  
-- xLabelFontSize → Apex: xaxis.labels.style.fontSize | ECharts: xAxis.axisLabel.fontSize  
-- yLabelFontSize → Apex: yaxis.labels.style.fontSize | ECharts: yAxis.axisLabel.fontSize  
-- xLabelFontFamily → Apex: xaxis.labels.style.fontFamily | ECharts: xAxis.axisLabel.fontFamily  
-- yLabelFontFamily → Apex: yaxis.labels.style.fontFamily | ECharts: yAxis.axisLabel.fontFamily  
-- xlabelFontWeight → Apex: xaxis.labels.style.fontWeight | ECharts: xAxis.axisLabel.fontWeight  
-- ylabelFontWeight → Apex: yaxis.labels.style.fontWeight | ECharts: yAxis.axisLabel.fontWeight  
-- dimensionAlignment → Apex: xaxis.labels.offsetX | ECharts: xAxis.axisLabel.align  
-- measureAlignment → Apex: yaxis.labels.offsetY | ECharts: yAxis.axisLabel.align  
-- gridColor → Apex: grid.borderColor | ECharts: xAxis.splitLine.lineStyle.color, yAxis.splitLine.lineStyle.color  
-- xGridSwitch → Apex: grid.xaxis.lines.show | ECharts: xAxis.splitLine.show  
-- yGridSwitch → Apex: grid.yaxis.lines.show | ECharts: yAxis.splitLine.show  
-- barCornerRadius → Apex: plotOptions.bar.borderRadius | ECharts: series.itemStyle.borderRadius  
-- dataLabelsFontSize → Apex: dataLabels.style.fontSize | ECharts: series.label.fontSize  
-- dataLabelsFontFamily → Apex: dataLabels.style.fontFamily | ECharts: series.label.fontFamily  
-- dataLabelsColor → Apex: dataLabels.style.colors | ECharts: series.label.color  
-- isBold → Apex: dataLabels.style.fontWeight | ECharts: series.label.fontWeight  
-- dataLabelsFontPosition → Apex: plotOptions.bar.dataLabels.position | ECharts: series.label.position  
-- legendSwitch → Apex: legend.show | ECharts: legend.show  
-- legendsAllignment → Apex: legend.position | ECharts: legend.left / legend.orient  
-- donutSize → Apex: plotOptions.pie.donut.size | ECharts: series.radius  
-- donutDecimalPlaces → Apex: plotOptions.pie.donut.labels.total.formatter | ECharts: series.label.formatter  
+- **isZoom** → Apex: 'chart.zoom.enabled' | ECharts: 'dataZoom' (presence and 'dataZoom.show')  
+- **backgroundColor** → Apex: 'chart.background' | ECharts: 'backgroundColor'  
+- **backgroundColorSwitch** → Apex: read/apply from 'chart.background' when true | ECharts: same (toggle 'backgroundColor')  
+- **color** → Apex: 'colors' (primary color or first in 'colors' array) | ECharts: 'color' (first color)  
+- **selectedColorScheme** → Apex: 'colors' (array) | ECharts: 'color' (array)  
+- **chartColorSwitch** → Apex: toggle applying 'colors' | ECharts: toggle applying 'color' array  
+- **barColor** → Apex: 'colors' (or 'plotOptions.bar.colors') | ECharts: 'series[itemIndex].itemStyle.color' or 'color' array  
+- **lineColor** → Apex: 'colors' (series color) | ECharts: 'series[lineIndex].itemStyle.color' or 'color' array  
+- **kpiChartColor** → Apex: KPI card color / 'chart.background' or 'colors' for small sparkline | ECharts: KPI series color in 'series'  
+- **kpiColor** → Apex: KPI text color (kpiData.color) | ECharts: KPI text color (kpiData.color)  
+- **kpiColorSwitch** → toggle applying 'kpiColor' to KPI display (both libraries)  
+- **isMeasureDistribution** → Apex: 'plotOptions.bar.distributed = true' or programmatic color mapping | ECharts: 'colorBy: 'data'' and custom ranges mapping  
+- **measureColorRanges** → Apex: set custom 'colors' per data value (use 'plotOptions.series' or color callback) | ECharts: 'visualMap' + 'color' or 'series.itemStyle' via value mapping  
+- **measureDivisions** → Apex: used to compute 'plotOptions' color ranges | ECharts: 'visualMap.splitNumber' or 'pieces' count  
+- **xGridColor** → Apex: 'grid.borderColor' or 'xaxis.axisBorder.color' | ECharts: 'xAxis.splitLine.lineStyle.color' / 'xAxis.axisLine.lineStyle.color'  
+- **yGridColor** → Apex: 'grid.borderColor' or 'yaxis.axisBorder.color' | ECharts: 'yAxis.splitLine.lineStyle.color' / 'yAxis.axisLine.lineStyle.color'  
+- **xGridSwitch** → Apex: 'grid.xaxis.lines.show' / 'xaxis.axisTicks.show' (or 'xaxis.labels.show') | ECharts: 'xAxis.splitLine.show'  
+- **yGridSwitch** → Apex: 'grid.yaxis.lines.show' | ECharts: 'yAxis.splitLine.show'  
+- **GridColor** → Apex: 'grid.borderColor' / 'grid.strokeDashArray' as needed | ECharts: 'xAxis.splitLine.lineStyle.color' & 'yAxis.splitLine.lineStyle.color'  
+- **xLabelSwitch** → Apex: 'xaxis.labels.show' | ECharts: 'xAxis.axisLabel.show'  
+- **yLabelSwitch** → Apex: 'yaxis.labels.show' | ECharts: 'yAxis.axisLabel.show'  
+- **xLabelColor** → Apex: 'xaxis.labels.style.colors' or 'xaxis.labels.style.color' | ECharts: 'xAxis.axisLabel.color'  
+- **yLabelColor** → Apex: 'yaxis.labels.style.colors' or 'yaxis.labels.style.color' | ECharts: 'yAxis.axisLabel.color'  
+- **xLabelFontFamily** → Apex: 'xaxis.labels.style.fontFamily' | ECharts: 'xAxis.axisLabel.fontFamily'  
+- **yLabelFontFamily** → Apex: 'yaxis.labels.style.fontFamily' | ECharts: 'yAxis.axisLabel.fontFamily'  
+- **xLabelFontSize** → Apex: 'xaxis.labels.style.fontSize' | ECharts: 'xAxis.axisLabel.fontSize'  
+- **yLabelFontSize** → Apex: 'yaxis.labels.style.fontSize' | ECharts: 'yAxis.axisLabel.fontSize'  
+- **xlabelFontWeight** → Apex: 'xaxis.labels.style.fontWeight' | ECharts: 'xAxis.axisLabel.fontWeight'  
+- **ylabelFontWeight** → Apex: 'yaxis.labels.style.fontWeight' | ECharts: 'yAxis.axisLabel.fontWeight'  
+- **isXlabelBold** → Apex: set 'xaxis.labels.style.fontWeight' to '700' when true | ECharts: 'xAxis.axisLabel.fontWeight' = 700 when true  
+- **isYlabelBold** → Apex: set 'yaxis.labels.style.fontWeight' to '700' when true | ECharts: 'yAxis.axisLabel.fontWeight' = 700 when true  
+- **isBold** → Apex: 'dataLabels.style.fontWeight' | ECharts: 'series.label.fontWeight' (applies to data labels)  
+- **dataLabels** → Apex: 'dataLabels.enabled' | ECharts: 'series.label.show'  
+- **dataLabelsColor** → Apex: 'dataLabels.style.colors' (array) or 'dataLabels.style.color' | ECharts: 'series.label.color'  
+- **dataLabelsFontFamily** → Apex: 'dataLabels.style.fontFamily' | ECharts: 'series.label.fontFamily'  
+- **dataLabelsFontSize** → Apex: 'dataLabels.style.fontSize' | ECharts: 'series.label.fontSize'  
+- **dataLabelsFontPosition** → Apex: 'plotOptions.bar.dataLabels.position' or 'dataLabels.offsetY' | ECharts: 'series.label.position' (e.g., 'top', 'inside')  
+- **dataLabelsLineFontPosition** → Apex: 'dataLabels.position' for line charts | ECharts: 'series.label.position' for line series  
+- **dataLabelsBarFontPosition** → Apex: 'plotOptions.bar.dataLabels.position' | ECharts: 'series.label.position' for bar series  
+- **label** → general label toggle → Apex: 'dataLabels.enabled' / ECharts: 'series.label.show'  
+- **legendSwitch** → Apex: 'legend.show' | ECharts: 'legend.show'  
+- **legendsAllignment** → Apex: 'legend.position' (top/left/right/bottom) | ECharts: 'legend.left' & 'legend.orient'  
+- **legendOrient** → Apex: affect 'legend.position' and layout | ECharts: 'legend.orient' ('horizontal'/'vertical')  
+- **topLegend / leftLegend / rightLegend / bottomLegend** → Apex: map to 'legend.position' and 'legend.offsetX/offsetY' | ECharts: 'legend.top'/'bottom'/'left'/'right' (percent or px)  
+- **donutSize** → Apex: 'plotOptions.pie.donut.size' (e.g., "50%") | ECharts: 'series.radius' (inner/outer)  
+- **outerRadius** → Apex: 'plotOptions.pie.donut.size' outer radius handling | ECharts: 'series.radius' outer value (e.g., ["50%", "70%"])  
+- **donutDecimalPlaces** → Apex: donut total/formatter in 'plotOptions.pie.donut.labels.total.formatter' | ECharts: 'series.label.formatter' or tooltip formatter decimals  
+- **isDistributed** → Apex: 'plotOptions.bar.distributed = true' | ECharts: 'colorBy: 'data'' and distribute colors per datum  
+- **barCornerRadius** → Apex: 'plotOptions.bar.borderRadius' | ECharts: 'series.itemStyle.borderRadius'  
+- **outerRadius / radialStartAngle / radialEndAngle / maxValueRadial / maxValueGuage / minValueGuage / gaugeDisplayMode** → Apex radial/gauge: 'plotOptions.radialBar.startAngle', 'endAngle', 'plotOptions.radialBar.max', 'plotOptions.radialBar.track' settings | ECharts radial/gauge: 'series.startAngle', 'series.endAngle', 'max', 'min', 'pointer' and 'detail' settings  
+- **radialStartAngle / radialEndAngle** → Apex: 'plotOptions.radialBar.startAngle' / 'endAngle' | ECharts: 'series.startAngle' / 'series.endAngle'  
+- **maxValueRadial** → Apex: 'plotOptions.radialBar.max' | ECharts: 'series.max'  
+- **minValueGuage / maxValueGuage** → Apex: in gauge/radial config (see special structures) | ECharts: 'series.min', 'series.max'  
+- **gaugeDisplayMode** → Apex: use both 'dataLabels' and 'plotOptions.radialBar' display options | ECharts: use 'detail.formatter' + 'axisLine' / 'pointer' visibility  
+- **kpiFontSize** → KPI-specific: set 'kpiData.fontSize' (in rem or px) and apply to KPI rendering (both libs)  
+- **kpiShowTrendline** → KPI: show small sparkline → Apex: add tiny 'series' with 'chart.type: 'line'' inside KPI rendering or 'sparkline' config | ECharts: add miniature 'series' in KPI area  
+- **kpiTrendAxis** → used to format trend labels (e.g., month/day) for KPI trend rendering (both libraries)  
+- **kpiShowTrendline / trendData / trendLabels** → Apex: include 'series' + small line 'chart' config for KPI; update 'kpiData.trendData' and 'trendLabels' | ECharts: 'series' within KPI echartOptions with 'xAxis' as 'trendLabels'  
+- **kpiTarget** → KPI: used to display target line/marker in KPI or gauge series (both libs)  
+- **kpiShowTrendline / showKpiIndicator / indicatorIsIncreased / indicatorValue** → KPI widget fields (not chart core) used in KPI card rendering; reflect in 'kpiData' for both libs  
+- **kpiChartColorSwitch** → toggle applying 'kpiChartColor' to KPI chart/sparkline  
+- **kpiFontSize** → Apex: KPI-specific style (not native Apex key) — set in 'custom' area and 'customizeOptions.kpiFontSize' | ECharts: same approach inside KPI 'echartOptions' or custom rendering  
+- **dataLabelsFontFamily / dataLabelsFontSize / dataLabelsFontPosition** → Apex: 'dataLabels.style.fontFamily', 'dataLabels.style.fontSize', 'plotOptions.bar.dataLabels.position' | ECharts: 'series.label.fontFamily', 'series.label.fontSize', 'series.label.position'  
+- **dimensionColor / measureColor** → Apex: assign to 'xaxis.labels.style.color' and 'yaxis.labels.style.color' or series colors | ECharts: 'xAxis.axisLabel.color' and 'yAxis.axisLabel.color' or series colors  
+- **dimensionAlignment** → Apex: 'xaxis.labels.offsetX' (or textAlign via CSS) | ECharts: 'xAxis.axisLabel.align' ('left'/'center'/'right')  
+- **measureAlignment** → Apex: 'yaxis.labels.offsetY' (or align) | ECharts: 'yAxis.axisLabel.align'  
+- **tableDataFontFamily / tableDataFontSize / tableDataFontWeight / tableDataFontStyle / tableDataFontDecoration / tableDataFontColor / tableDataFontAlignment** → Table rendering CSS / Angular component props (not Apex/ECharts core): map to table cell styles in Table chart's 'tableData' object (preserve structure)  
+- **headerFontFamily / headerFontSize / headerFontWeight / headerFontStyle / headerFontDecoration / headerFontColor / headerFontAlignment** → Table header CSS settings inside 'tableData.headers' metadata  
+- **isTableHeaderBold / isTableDataBold** → Table: toggle 'fontWeight' for header and rows (update 'tableData' styles)  
+- **bandingSwitch** → Table: toggle 'banding' boolean → when true use 'bandingEvenColor' / 'bandingOddColor' for rows | ECharts/Apex: N/A (table-only)  
+- **bandingEvenColor / bandingOddColor** → Table: 'tableData.color1' / 'tableData.color2' (even/odd)  
+- **color1 / color2** → Table: fallback banding colors ('tableData.color1', 'tableData.color2')  
+- **rowTotalFontColor / rowTotalFontColorSwitch / rowTotalBgColor / rowTotalBgColorSwitch** → Table: style for row totals (apply when switches true)  
+- **colTotalFontColor / colTotalFontColorSwitch / colTotalBgColor / colTotalBgColorSwitch** → Table: style for column totals  
+- **grandTotalFontColor / grandTotalFontColorSwitch / grandTotalBgColor / grandTotalBgColorSwitch** → Table: grand total cell styling  
+- **toggleTableSearch** → Table: show/hide search input in table UI component  
+- **toggleTablePagination** → Table: enable/disable pagination (and 'tableItemsPerPage')  
+- **tableDataFontAlignment / headerFontAlignment** → Table: 'text-align' for cells/headers ('left'/'center'/'right')  
+- **sortType / sortColumn** → Table: default sorting (0 = none / 1 = asc / 2 = desc), 'sortColumn' column name  
+- **topLegend / leftLegend / legendOrient / bottomLegend / rightLegend** → Apex: map to 'legend.position', 'legend.offsetX/Y' | ECharts: 'legend.top/left/bottom/right' and 'legend.orient'  
+- **measureColorRanges / isMeasureDistribution** → Apex: use 'plotOptions.bar.distributed' or color callbacks; ECharts: use 'visualMap' with ranges or 'pieces' for discrete coloring  
+- **funnelColorSwitch** → Funnel: when true, apply custom 'colors' (Apex funnel special structure) | ECharts: apply 'color' for funnel series  
+- **donutSize / outerRadius / donutDecimalPlaces** → Apex: 'plotOptions.pie.donut.size' and 'plotOptions.pie.donut.labels.total.formatter' | ECharts: 'series.radius' (inner,outer) and 'series.label.formatter'  
+- **isDistributed** → Apex: 'plotOptions.bar.distributed' | ECharts: 'colorBy: 'data''  
+- **hBarHeight** → Apex: 'plotOptions.bar.barHeight' or 'barHeight' property for horizontal bar | ECharts: 'series.barWidth' or 'series.barCategoryGap' adjustments  
+- **label** → generic label toggle (maps to 'dataLabels' keys as above)  
+- **minValueGuage / maxValueGuage** → Apex: gauge/radial 'plotOptions.radialBar.min/max' | ECharts: 'series.min' / 'series.max'  
+- **donutDecimalPlaces** → Apex/ECharts: use formatter functions for labels/tooltip to set decimal places  
+- **trendData / trendLabels** → Apex: small 'series' with 'categories=trendLabels' and data=trendData for KPI or chart trendlines | ECharts: same in 'series' + 'xAxis' for labels  
+- **selectedDateColumn** → used to choose x-axis/time column; map to 'xAxis.data' (both libs)  
+- **locationDrillDownSwitch** → map to interactive map/chart drilldown toggle (custom behavior outside core Apex/ECharts)  
+- **pivotColumnTotals / pivotRowTotals** → pivot table rendering flags (table-only)  
+- **measureAlignment / dimensionAlignment** → Apex: 'yaxis.labels.offsetY' / 'xaxis.labels.offsetX' | ECharts: 'yAxis.axisLabel.align' / 'xAxis.axisLabel.align'  
+- **label / dataLabels** → ensure both map to 'dataLabels.enabled' / 'series.label.show' consistently in both 'chartOptions' and 'customizeOptions'  
+- **numberFormat (decimalPlaces/prefix/suffix)** → Apex: use 'yaxis.labels.formatter' and 'dataLabels.formatter' | ECharts: use 'axisLabel.formatter' and 'series.label.formatter' / tooltip formatters  
+- **outerRadius / radial settings** → follow radial/guage special structures (apply to both chartOptions and customizeOptions when isEChart=false and using Apex special definitions)  
+
+---
+
+### Implementation notes / best-practice rules
+1. **Sync to 'customizeOptions':** If you change a value in 'chartOptions' (Apex) or 'echartOptions' (ECharts), mirror that same value inside 'customizeOptions'.  
+2. **Hex length:** Ensure all hex color codes are 6 characters (e.g., '#2392c1' is valid). If an input uses 3 or fewer characters, expand/normalize to 6.  
+3. **KPI handling:** KPI fields ('kpiColor', 'kpiChartColor', 'trendData', 'showKpiIndicator', etc.) live in 'kpiData' object — charts use a tiny sparkline series for trendlines (Apex: small line series; ECharts: tiny series).  
+4. **Table styling:** Table style keys map to table renderer CSS and must be preserved inside 'tableData' object (do not mix into 'chartOptions'/'echartOptions').  
+5. **Distribution & ranges:** For 'isMeasureDistribution' + 'measureColorRanges', prefer 'visualMap' (ECharts) or 'plotOptions.bar.distributed' with explicit 'colors' (Apex) or a color callback function.  
+6. **Special charts:** For pie/donut/funnel/radial/gauge/treemap in Apex, use the provided strict structures and apply colors/legend/background from these mappings.  
+
 
 ---
 
@@ -532,7 +785,7 @@ Guage Chart → chartOptions
     },
     "dataLabels": {
       "enabled": true,
-      "style": { "fontSize": "12px", "fontFamily": "sans-serif", "colors": ["#2392c1"] }
+      "style": { "fontSize": "12px", "fontFamily": "sans-serif" }
     },
     "colors": ["#1d2e92", "#088ed2"]
   },
@@ -546,34 +799,129 @@ Guage Chart → chartOptions
     "suffix": ""
   },
     "customizeOptions": {
-      "backgroundColor": "#ffffff",
-      "color": "#2392c1",
-      "selectedColorScheme": ["#1d2e92", "#088ed2"],
-      "isMeasureDistribution": false,
-      "xLabelSwitch": true,
-      "yLabelSwitch": true,
-      "xLabelFontSize": 12,
-      "yLabelFontSize": 12,
-      "xLabelFontFamily": "sans-serif",
-      "yLabelFontFamily": "sans-serif",
-      "xlabelFontWeight": 400,
-      "ylabelFontWeight": 400,
-      "dimensionAlignment": "center",
-      "measureAlignment": "center",
-      "gridColor": "#e0e0e0",
-      "xGridSwitch": true,
-      "yGridSwitch": true,
-      "barCornerRadius": 4,
-      "dataLabels": true,
-      "dataLabelsFontSize": 12,
-      "dataLabelsFontFamily": "sans-serif",
-      "dataLabelsColor": "#2392c1",
-      "isBold": false,
-      "dataLabelsFontPosition": "top",
-      "legendSwitch": true,
-      "legendsAllignment": "bottom",
-      "donutSize": 70,
-      "donutDecimalPlaces": 2
+    "isZoom"= false;
+    "xGridColor" = '#2392c1';
+    "xGridSwitch" = false;
+    "xLabelSwitch" = true;
+    "xLabelColor" = '#2392c1';
+    "yLabelSwitch" = true;
+    "yGridColor" = '#2392c1';
+    "yGridSwitch" = false;
+    "yLabelColor" = '#2392c1';
+    "xLabelFontFamily" = 'sans-serif';
+    "xLabelFontSize" = 12;
+    "xlabelFontWeight" = 400;
+    "backgroundColor" = '#fff';
+    "color" = '#2392c1';
+    "selectedColorScheme" = ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'],
+    "ylabelFontWeight" = 400;
+    "isBold" = false;
+    "isTableHeaderBold" = false;
+    "isTableDataBold" = false;
+    "isXlabelBold" = false;
+    "isYlabelBold" = false;
+    "yLabelFontFamily" = 'sans-serif';
+    "yLabelFontSize" = 12;
+    "bandingSwitch" = false;
+    "backgroundColorSwitch" = false;
+    "chartColorSwitch" = false;
+    "barColorSwitch" = false;
+    "lineColorSwitch" = false;
+    "gridLineColorSwitch" = false;
+    "xLabelColorSwitch" = false;
+    "xGridLineColorSwitch" = false;
+    "yLabelColorSwitch" = false;
+    "yGridLineColorSwitch" = false;
+    "bandingColorSwitch" = false;
+    "kpiColorSwitch" = false;
+    "funnelColorSwitch" = false;
+    "color1" = undefined;
+    "color2" = undefined;
+    "kpiColor" = '#000000';
+    "kpiChartColor" = '#2392c1';
+    "barColor" = '#4382f7';
+    "lineColor" = '#38ff98';
+    "GridColor" = '#089ffc';
+    "legendSwitch" = true;
+    "dataLabels" = true;
+    "label" = true;
+    "donutSize" = 50;
+    "outerRadius" = 70;
+    "barCornerRadius" = 0;
+    "isDistributed" = true;
+    "kpiFontSize" = '3';
+    "minValueGuage" = 0;
+    "gaugeDisplayMode" = 'both';
+    "maxValueGuage" = 100;
+    "donutDecimalPlaces" = 2;
+    "legendsAllignment" = 'bottom';
+    "radialStartAngle" = 0;
+    "radialEndAngle" = 360;
+    "maxValueRadial" = 100;
+    "dataLabelsFontFamily" = 'sans-serif';
+    "dataLabelsFontSize" = '12px';
+    "dataLabelsFontPosition" = 'top';
+    "measureAlignment" = 'center';
+    "dimensionAlignment" = 'center';
+    "dimensionColor" = '#2392c1';
+    "measureColor" = '#2392c1';
+    "dataLabelsColor" = '#2392c1';
+    "tableDataFontFamily" = 'sans-serif';
+    "tableDataFontSize" = '12px';
+    "tableDataFontWeight" = 400;
+    "tableDataFontStyle" = 'normal';
+    "tableDataFontDecoration" = 'none';
+    "tableDataFontColor" = '#000000';
+    "tableDataFontAlignment" = 'left';
+    "headerFontFamily" = "'Arial', sans-serif";
+    "headerFontSize" = '16px';
+    "headerFontWeight" = 700;
+    "headerFontStyle" = 'normal';
+    "headerFontDecoration" = 'none';
+    "headerFontColor" = '#000000'
+    "headerFontAlignment" = 'left';
+    "sortType" = 0;
+    "dataLabelsLineFontPosition" = 'top';
+    "dataLabelsBarFontPosition" = 'top';
+    "topLegend" = null;
+    "leftLegend" = 'center';
+    "legendOrient" = 'horizontal'
+    "bottomLegend" = '0%'
+    "rightLegend" = null
+    "sortColumn" = 'select';
+    "locationDrillDownSwitch" = false;
+    "pivotColumnTotals" = true;
+    "pivotRowTotals" = true;
+    "bandingEvenColor"= '#ffffff'
+    "bandingOddColor"= '#f5f7fa'
+    "rowTotalFontColor" = '#000000';
+    "rowTotalFontColorSwitch" = false;
+    "rowTotalBgColor" = '#f2f2f2';
+    "rowTotalBgColorSwitch" = false;
+    "colTotalFontColor" = '#000000';
+    "colTotalFontColorSwitch" = false;
+    "colTotalBgColor" = '#e6f7ff';
+    "colTotalBgColorSwitch" = false;
+    "grandTotalFontColor" = '#000000';
+    "grandTotalFontColorSwitch" = false;
+    "grandTotalBgColor" = '#ffe7cc';
+    "grandTotalBgColorSwitch" = false;
+    "toggleTableSearch" = true;
+    "toggleTablePagination" = true;
+    "measureColorRanges" = [];
+    "isMeasureDistribution" = false;
+    "measureDivisions" = 2;
+    "kpiTarget" = 0;
+    "kpiShowTrendline" = false;
+    "kpiTrendAxis" = 'month';
+    "trendData" = [];
+    "trendLabels" = [];
+    "selectedDateColumn"  ='';
+    "showKpiIndicator" = false;
+    "indicatorValue" = '';
+    "indicatorIsIncreased" = '';
+    "kpiChartColorSwitch" = false;
+    "hBarHeight" = '';
     }
   }
 ]
