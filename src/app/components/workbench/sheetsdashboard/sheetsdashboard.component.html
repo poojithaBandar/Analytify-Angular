@@ -1049,7 +1049,7 @@
     </div>
     <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
     <div [ngClass]="hideWidgets ? 'col-12' : 'col-xl-10 col-lg-10 col-md-10'"  id="dashboard-content">
-      <div [ngClass]="hideWidgets ? 'd-none' : 'd-block'" type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" [ngbTooltip]="issheetListPaneOpen ? 'Collapse' : 'Expand'" class="card mb-0 hide-show-btn btn-primary">
+      <div *ngIf="!hideWidgets" type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" [ngbTooltip]="issheetListPaneOpen ? 'Collapse' : 'Expand'" class="card mb-0 hide-show-btn btn-primary">
         <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left fs-18"></i>
         <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right fs-18"></i>
       </div>
@@ -1171,7 +1171,7 @@
             </button> -->
             <!-- </div> -->
       
-        <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
+        <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden , 'mt-4': hideWidgets}"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
        
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList" id="capture-image-pdf"
         [cdkDropListData]="dashboard" style="margin: 0px;" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"

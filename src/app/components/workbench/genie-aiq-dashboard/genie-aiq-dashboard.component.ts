@@ -15,7 +15,8 @@ import { LoaderService } from '../../../shared/services/loader.service';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { concatMap, from, map, of } from 'rxjs';
-
+import { HttpClient } from '@angular/common/http';
+import { base64DecodeUtf8 } from '../../../services/base64';
 @Component({
   selector: 'app-genie-aiq-dashboard',
   standalone: true,
@@ -49,13 +50,14 @@ export class GenieAiqDashboardComponent {
  chatHistory: ChatMessage[] = [];
 
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
-  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService, private openAi: OpenaiService, private loaderService:LoaderService, private router:Router){
+  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService, private openAi: OpenaiService, private loaderService:LoaderService, private router:Router,private http: HttpClient){
 
   }
   ngOnInit(){
     this.step = 1;
     console.log(this.step);
     this.getConnectionList();
+    this.getOpenAiKey();
   }
 
   getConnectionList(){
@@ -545,7 +547,7 @@ promptDashboard(){
         this.datafromApi = [];
         this.datafromApi = data.dashboard;
         this.loaderService.show();
-        this.openAi.getChartOptions(data.dashboard.sheets, this.userPrompt)
+        this.openAi.getChartOptions(data.dashboard.sheets, this.userPrompt,this.openAiKey)
           .then(chartOptions => {
             console.log("Chart Options:", chartOptions);
 
@@ -937,6 +939,32 @@ datafromApi :any={};
       }
     });
   }
+  openAiKey:any;
+getOpenAiKey(){
+    this.workbechService.getOpenAiKey().subscribe({
+      next:(data)=>{
+      console.log(data);
+      this.openAiKey = base64DecodeUtf8(data.data);
+    },
+      error:(error)=>{
+        console.log(error);
+                   Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops!',
+                    html: 'You haven\'t configured OpenAI API key.<br><small>Please configure your OpenAI key to continue.</small>',
+                    width: '400px',
+                    confirmButtonText: 'Go Configure'
+
+                  }).then((result) => {
+                    // result.isConfirmed is true if user clicked "OK"
+                    if (result.isConfirmed) {
+                      this.router.navigate(['/analytify/configure-page/configure']);
+                    }
+                  });
+      }
+    })
+}
+
 }
 
 
