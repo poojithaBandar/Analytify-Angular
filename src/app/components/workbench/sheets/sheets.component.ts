@@ -4609,7 +4609,7 @@ customizechangeChartPlugin() {
     this.dimensionAlignment = data.dimensionAlignment ?? 'center';
     this.dimensionColor = data.dimensionColor ?? '#2392c1';
     this.measureColor = data.measureColor ?? '#2392c1';
-    this.dataLabelsColor = data.dataLabelsColor ?? '#0a5a2';
+    this.dataLabelsColor = data.dataLabelsColor ?? '#2392c1';
     this.tableDataFontFamily = data.tableDataFontFamily ?? 'sans-serif';
     this.tableDataFontSize = data.tableDataFontSize ?? '12px';
     this.tableDataFontWeight = data.tableDataFontWeight ?? 400;

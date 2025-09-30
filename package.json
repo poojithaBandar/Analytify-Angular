@@ -85,6 +85,7 @@
     "ngx-toastr": "^18.0.0",
     "nouislider": "^15.7.1",
     "npm": "^10.4.0",
+    "openai": "^5.21.0",
     "pivottable": "^2.23.0",
     "rxjs": "~7.8.0",
     "sass": "^1.70.0",

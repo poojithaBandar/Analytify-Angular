@@ -313,6 +313,14 @@ h6.fw-bold.mb-1 { font-size: 13px; }
   transform: scale(1.15);
 }
 
+.overlay-div{position: fixed; bottom: 32px; right: 32px; z-index: 1050; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.18); border-radius: 50%; background: #fff; padding: 8px; transition: box-shadow 0.2s;height: 83px;width: 83px;}
+.overlay-img{bottom: 3px;width: 60px;object-fit: contain;margin: 0 auto;display: block;height: 87px;position: relative;}
+.genie-animate {
+  transition: transform 0.4s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.3s;
+}
+.genie-animate.bounce {
+  animation: genieBounce 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
 
 
 .hover-card i {
