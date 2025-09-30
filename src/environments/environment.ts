@@ -4,22 +4,22 @@
 export const environment = {
   // production: true,
   firebase: {
-    apiKey: "***************************************",
-    authDomain: "************************",
-    projectId: "***********************************",
-    storageBucket: "************************",
-    messagingSenderId: "*********************",
-    appId: "*******************************************",
-    measurementId: "*********************"
+    apiKey: "AIzaSyD9j5Dn2_RBxzvVy3ZyMBSQY9NP-CX-dvU",
+    authDomain: "analytify-5a041.firebaseapp.com",
+    projectId: "analytify-5a041",
+    storageBucket: "analytify-5a041.firebasestorage.app",
+    messagingSenderId: "850090127477",
+    appId: "1:850090127477:web:c864aafa9e449ce630083c",
+    measurementId: "G-EYCHNRBP18"
   },
   production: false,
   // dev 
-  // apiUrl:'http://13.57.231.251:50/v1',
+   apiUrl:'http://13.57.231.251:50/v1',
     //  //local
     //  apiUrl:'http://172.16.16.81:8000/v1',
     // QA server
     // apiUrl:'http://13.52.99.241:80/v1',
-     apiUrl:'https://api.qa.insightapps.ai/v1', 
+     //apiUrl:'https://api.qa.insightapps.ai/v1', 
         airflowApiUrl: 'http://3.101.147.3:8080/api/v2', // TODO: Set to your Airflow API base URL
         // apiUrl:'https://api.qa.insightapps.ai/v1',
     // demo url

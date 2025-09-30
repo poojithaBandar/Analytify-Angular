@@ -284,7 +284,41 @@ export class DashboardTransferService {
       chartOptions.xAxis?.forEach((column: any) => {
         column.data = xAxisCategories;
       });
-    } else if ([2, 3, 14].includes(chartId)) {
+    } else if (chartId == 21) {
+      const normalizeLabel = (value: any) => {
+        if (value === null || value === undefined) {
+          return 'null';
+        }
+        const label = String(value).trim();
+        return label === '' ? 'null' : label;
+      };
+
+      const aggregatedMeasures = multiSeriesChartData.reduce((acc: number[], row: any) => {
+        (row?.data || []).forEach((val: any, index: number) => {
+          const numericValue = typeof val === 'number' ? val : parseFloat(val);
+          const safeValue = Number.isFinite(numericValue) ? numericValue : 0;
+          acc[index] = (acc[index] ?? 0) + safeValue;
+        });
+        return acc;
+      }, [] as number[]);
+
+      const wordcloudData = xAxisCategories.map((label: any, index: number) => ({
+        name: normalizeLabel(label),
+        value: aggregatedMeasures[index] ?? 0
+      }));
+
+      if (chartOptions.series && chartOptions.series.length) {
+        chartOptions.series = [
+          {
+            ...chartOptions.series[0],
+            data: wordcloudData
+          },
+          ...chartOptions.series.slice(1)
+        ];
+      } else {
+        chartOptions.series = [{ type: 'wordCloud', data: wordcloudData }];
+      } 
+    }else if ([2, 3, 14].includes(chartId)) {
       // chartOptions.yAxis?.forEach((column: any) => {
       //   column.data = xAxisCategories;
       // });

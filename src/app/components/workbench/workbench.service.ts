@@ -298,10 +298,10 @@ export class WorkbenchService {
   getTableData(obj:any){
     return this.http.put<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj)
   }
-  getdatabaseConnectionsList(obj:any){
+  getdatabaseConnectionsList(obj:any,params?:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.put<any>(`${environment.apiUrl}/connection_list/`+this.accessToken,obj)
+    return this.http.put<any>(`${environment.apiUrl}/connection_list/`+this.accessToken,obj,{ params: params });
   }
   getTablesFromConnectedDb(id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -1503,5 +1503,23 @@ deleteUser(id:any){
       `${environment.apiUrl}/email_remainder/${this.accessToken}`,
       obj
     );
+  }
+
+  saveNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
+  }
+
+  updateNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
+  }
+
+  deleteNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
   }
 }

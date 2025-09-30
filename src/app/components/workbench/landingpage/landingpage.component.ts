@@ -12,7 +12,8 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { debounceTime, Subject } from 'rxjs';
+import { debounceTime, Subject, Subscription } from 'rxjs';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -170,9 +171,10 @@ fixedColors = [
 
 @ViewChild('propertiesModal') propertiesModal : any;
 @ViewChild('sampleDashboardPropertiesModal') sampleDashboardPropertiesModal : any;
+private notificationSub?: Subscription;
 
 
-constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService){
+constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService, private notificationService: NotificationService){
   localStorage.setItem('QuerySetId', '0');
   localStorage.setItem('customQuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
@@ -196,6 +198,11 @@ ngOnInit(){
   this.loaderService.hide();
   if(this.viewDatabbses){
     this.getDbConnectionList();
+    this.notificationSub = this.notificationService.notificationsObservable$.subscribe(msg => {
+      if (msg?.body.toLocaleLowerCase().includes('succesfull') && this.viewDatabbses) {
+        this.getDbConnectionList();
+      }
+    });
   }if(this.viewSheets){
     this.getuserSheets();
   }if(this.viewDashboardList){
@@ -205,6 +212,9 @@ ngOnInit(){
   }
   this.getHostAndPort();
   this.getChartMetrics();
+}
+ngOnDestroy() { 
+  this.notificationSub?.unsubscribe(); 
 }
 barChartData:any =[]
 heatmapData:any=[]
@@ -251,6 +261,9 @@ getChartMetrics(){
     }
   })
 }
+ navigate(event: Event, route: string) {
+     this.router.navigate([route]); 
+  }
 private buildTreeMap(){
   // return {
   //   tooltip: {

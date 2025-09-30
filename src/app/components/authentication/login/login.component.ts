@@ -12,6 +12,7 @@ import { CustomThemeService } from '../../../services/custom-theme.service';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { SharedService } from '../../../shared/services/shared.service';
 import * as CryptoJS from 'crypto-js';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -47,8 +48,8 @@ toggleVisibility1() {
 }
   constructor(
     @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,private switcherComponent: SwitcherComponent,private themeService : CustomThemeService,private sharedService: SharedService,
-    private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService,private loaderService : LoaderService
-  ) {
+    private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService,private loaderService : LoaderService,
+    private notificationService: NotificationService) {
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
       this.router.navigate(['analytify/home']);
@@ -97,6 +98,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     // localStorage.setItem('email', btoa(JSON.stringify(data.email)));
     localStorage.setItem('chartType', chartType);
     localStorage.setItem('userId', userId);  
+    localStorage.setItem('notificationId', data.notification_id);
     localStorage.setItem('customTheme', JSON.stringify(data.custome_theme)); 
     localStorage.setItem('apiCustomTheme', JSON.stringify(data.custome_theme)); 
     localStorage.setItem('defaultColorSchemes', JSON.stringify(defaultColorSchemes));
@@ -112,6 +114,10 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     }
     if(data.previlages){
       this.rolesService.setRoleBasedPreviledges(data.previlages);
+    }
+    if(data.notification_id){
+      this.notificationService.requestPermission();
+      // this.notificationService.listenMessages();
     }
     if(data.accessToken){
       this.router.navigate(['analytify/home'])

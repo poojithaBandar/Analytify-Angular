@@ -12,7 +12,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { forkJoin, of, switchMap } from 'rxjs';
+import { forkJoin, of, Subscription, switchMap } from 'rxjs';
 // import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
 import { GalleryModule } from 'ng-gallery';
@@ -24,7 +24,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
-import _ from 'lodash';
+import _, { values } from 'lodash';
 
 import { TemplateDashboardService } from '../../../services/template-dashboard.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -32,6 +32,10 @@ import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BambooHRIntegrationService } from '../bamboohr-integration.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { image } from 'd3';
+import { HttpParams } from '@angular/common/http';
+import { NotificationService } from '../../../services/notification.service';
+
 
 
 @Component({
@@ -96,7 +100,7 @@ export class WorkbenchComponent implements OnInit{
   showPassword1 = false;
   toggleClass = "off-line";
   toggleClass1 = "off-line";
-  gridView = true;
+  // gridView = true;
 
   itemsPerPage!:any;
   pageNo = 1;
@@ -222,9 +226,24 @@ export class WorkbenchComponent implements OnInit{
   jiraClientId!: string;
   jiraClientSecret!: string;
   jiraRedirectURL!: string;
+  jiraScopes: string[] = [
+    "manage:jira-configuration",
+    "manage:jira-project",
+    "manage:jira-webhook",
+    "read:jira-user",
+    "read:jira-work"
+  ];
+  jiraDropdownSettings: IDropdownSettings = {
+    enableCheckAll: true,
+    allowSearchFilter: true,
+    itemsShowLimit: 10,
+    closeDropDownOnSelection: false
+  };
+  selectedJiraScopes: string[] = [];
   jiraClientIdError = false;
   jiraClientSecretError = false;
   jiraRedirectURLError = false;
+  jiraScopeError = false;
   openImmybot: boolean = false;
   clientIDImmyBotError: boolean = false;
   clientIdImmybot! : string ;
@@ -242,8 +261,11 @@ export class WorkbenchComponent implements OnInit{
   connectionsCount:any;
   callAllConnectionsExistingList: boolean = false;
   isLoadingConnectionsList: boolean = false;
+  private notificationSub?: Subscription;
+
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer){
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer,
+    private notificationService: NotificationService){
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
 
@@ -934,6 +956,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.jiraClientId = '';
     this.jiraClientSecret = '';
     this.jiraRedirectURL = '';
+    this.selectedJiraScopes = [];
+    this.jiraScopeError = false;
 
   }
   googleSheetsData = [] as any;
@@ -1891,6 +1915,16 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     this.jiraRedirectURLError = !this.jiraRedirectURL;
   }
 
+
+  onJiraScopeChange(scopes?: string[] | null): void {
+    if (Array.isArray(scopes)) {
+      this.selectedJiraScopes = scopes;
+    } else if (scopes === null) {
+      this.selectedJiraScopes = [];
+    }
+    this.jiraScopeError = this.selectedJiraScopes.length <= 0;
+  }
+
   zohoClientIdInput(){
     this.zohoClientIdError = !this.zohoClientId;
   }
@@ -2086,6 +2120,8 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
         console.log(responce)
             if(responce){
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.notificationService.requestPermission();
+              // this.notificationService.listenMessages();
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
               if(!this.datasourceSwitchUI){
@@ -2098,25 +2134,27 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
                 this.connectCrossDbs();
               }else{
               // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-              Swal.fire({
-                position: "center",
-                // icon: "question",
-                iconHtml: '<img src="./assets/images/copilot.gif">',
-                title: "Create smart dashboard from your data with just one click?",
-                showConfirmButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Skip',
-                customClass: {
-                  icon: 'no-icon-bg',
-                }
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
-                } else {
-                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-                }
-              });
+              // Swal.fire({
+              //   position: "center",
+              //   // icon: "question",
+              //   iconHtml: '<img src="./assets/images/copilot.gif">',
+              //   title: "Create smart dashboard from your data with just one click?",
+              //   showConfirmButton: true,
+              //   showCancelButton: true,
+              //   confirmButtonText: 'Yes',
+              //   cancelButtonText: 'Skip',
+              //   customClass: {
+              //     icon: 'no-icon-bg',
+              //   }
+              // }).then((result) => {
+              //   if (result.isConfirmed) {
+              //     this.templateDashboardService.buildSampleConnectWiseDashboard(this.container , this.databaseId);
+              //   } else {
+              //     this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              //   }
+              // });
+
+              this.openAlertPopUp();
               }
             }
           },
@@ -2457,11 +2495,16 @@ immybot:`<svg width="48" height="47" viewBox="0 0 24 24" aria-label="Immybot ico
     }
 
     jiraSignIn(){
+      this.onJiraScopeChange();
+      if (this.jiraScopeError) {
+        return;
+      }
       const obj = {
         "client_id": this.jiraClientId,
         "client_secret": this.jiraClientSecret,
         "redirect_uri": this.jiraRedirectURL,
         "display_name": this.displayName,
+        "scopes": this.selectedJiraScopes,
         "description": this.connectionDescription
       }
       this.workbechService.jiraConnection(obj).subscribe({next:(data)=>{
@@ -3479,6 +3522,11 @@ connectGoogleSheets(){
     if (this.viewDatasourceList) {
       if (this.databaseconnectionsList) {
         this.getDbConnectionList();
+        this.notificationSub = this.notificationService.notificationsObservable$.subscribe(msg => {
+          if (msg?.body.toLocaleLowerCase().includes('succesfull') && this.databaseconnectionsList) {
+            this.getDbConnectionList();
+          }
+        });
       }
     }
     if(this.callAllConnectionsExistingList){
@@ -3487,6 +3535,11 @@ connectGoogleSheets(){
     // this.getDbConnectionList();
     this.errorCheck();
     this.categorySelect('All');
+    this.buildSubCategories();
+  }
+
+  ngOnDestroy() { 
+    this.notificationSub?.unsubscribe(); 
   }
 
   pageChangegetconnectionList(page:any){
@@ -3495,6 +3548,7 @@ connectGoogleSheets(){
   }
   searchDbConnectionList(){
     this.pageNo=1;
+    this.page=1;
     this.getDbConnectionList();
   }
    onPageSizeChange() {
@@ -3510,7 +3564,10 @@ connectGoogleSheets(){
     const Obj: { search?: any; page_no: number; page_count?: any; remove_hierarchy_id?: boolean } ={
       search : this.searchDbName,
       page_no:this.pageNo,
-      page_count:this.itemsPerPage
+      page_count:this.itemsPerPage,
+      // connection_type:this.selectedDatasource?.value,
+      // order_by:this.orderBy,
+      // order:this.order
 
     }
     if(Obj.search == '' || Obj.search == null){
@@ -3519,11 +3576,29 @@ connectGoogleSheets(){
     if(Obj.page_count == undefined || Obj.page_count == null){
       delete Obj.page_count
     }
+    // if(Obj.connection_type == undefined || Obj.connection_type == null){
+    //   delete Obj.connection_type
+    // }
+    // if(Obj.order_by == undefined || Obj.order_by == null){
+    //   delete Obj.order_by
+    // }
+    // if(Obj.order == undefined || Obj.order == null){
+    //   delete Obj.order
+    // }
+    let params = new HttpParams()
+  .set('connection_type', this.selectedDatasource?.value || 'all');
+    if (this.orderBy) {
+      params = params.set('order_by', this.orderBy);
+    }
+    if (this.order) {
+      params = params.set('order', this.order);
+    }
+
     if(this.iscrossDbSelect){
       Obj.remove_hierarchy_id = this.primaryHierachyId
     }
     this.isLoadingConnectionsList = true;
-    this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
+    this.workbechService.getdatabaseConnectionsList(Obj,params).subscribe({
       next:(data)=>{
         console.log(data);
         this.connectionList = data.sheets;
@@ -3655,6 +3730,8 @@ connectGoogleSheets(){
   this.jiraClientId = '';
   this.jiraClientSecret = '';
   this.jiraRedirectURL = '';
+  this.selectedJiraScopes = [];
+  this.jiraScopeError = false;
   this.jiraClientIdError = false;
   this.jiraClientSecretError = false;
   this.jiraRedirectURLError = false;
@@ -4162,41 +4239,41 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   selectedConnectionType: string | null = null;
 
   connectionListIcons: any = {
-  postgresql: { type: 'emoji', value: '🐘' },
-  oracle: { type: 'emoji', value: '🏺' },
-  mysql: { type: 'emoji', value: '🐬' },
-  microsoftsqlserver: { type: 'emoji', value: '🖥️' },
-  snowflake: { type: 'emoji', value: '❄️' },
-  mongodb: { type: 'emoji', value: '🍃' },
-  'sap hana': { type: 'emoji', value: '⚡' },
+  postgresql: { type: 'image', value: './assets/images/icons/POSTGRESQL.svg' },
+  oracle: { type: 'image', value: './assets/images/icons/ORACLE.svg' },
+  mysql: { type: 'image', value: './assets/images/icons/MYSQL.svg' },
+  microsoftsqlserver: { type: 'image', value: './assets/images/icons/MICROSOFTSQLSERVER.svg' },
+  snowflake: { type: 'image', value: './assets/images/icons/SNOWFLAKE.svg' },
+  mongodb: { type: 'image', value: './assets/images/icons/MONGODB.svg' },
+  'sap hana': { type: 'image', value: './assets/images/icons/SAPHANA.svg' },
 
-  quickbooks: { type: 'image', value: './assets/images/icons/quickbooks.png' },
+  quickbooks: { type: 'image', value: './assets/images/icons/QUICKBOOKS.svg' },
   ninja: { type: 'svg', value: this.SVGICONS.ninjaOne },
-  tally: { type: 'image', value: './assets/images/icons/tally-icon.svg' },
-  csv: { type: 'emoji', value: '📑' },
-  excel: { type: 'emoji', value: '📊' },
+  tally: { type: 'image', value: './assets/images/icons/TALLY.svg' },
+  csv: { type: 'image', value: './assets/images/icons/CSV.svg' },
+  excel: { type: 'image', value: './assets/images/icons/EXCEL.svg' },
   google_analytics: { type: 'svg', value: this.SVGICONS.googleAnalytics },
-  halops: { type: 'image', value:'./assets/images/icons/halopsa.png' },
-  pax8: { type: 'image', value: './assets/images/icons/pax8-icon.png' },
-  connectwise: { type: 'image', value:'./assets/images/icons/connectwise.png' },
-  dbt: { type: 'image', value:'./assets/images/icons/dbt.svg' },
+  halops: { type: 'image', value:'./assets/images/icons/HALOPS.svg' },
+  pax8: { type: 'image', value: './assets/images/icons/PAX8.svg' },
+  connectwise: { type: 'image', value:'./assets/images/icons/CONNECTWISE.svg' },
+  dbt: { type: 'image', value:'./assets/images/icons/DBT.svg' },
   shopify: { type: 'svg', value: this.SVGICONS.shopify },
-  open_ai: { type: 'emoji', value: '🤖' },
+  open_ai: { type: 'image', value: './assets/images/icons/OPEN_AI.svg' },
   bamboohr: { type: 'svg', value: this.SVGICONS.bambooHr },
-  deepseek: { type: 'emoji', value: '🔍' },
-  gemini: { type: 'emoji', value: '♊' },
+  deepseek: { type: 'image', value: './assets/images/icons/DEEPSEEK.svg' },
+  gemini: { type: 'image', value: './assets/images/icons/GEMINI.svgg' },
   salesforce: { type: 'svg', value: this.SVGICONS.Salesforce },
   jira: { type: 'svg', value: this.SVGICONS.jira },
   google_sheets: { type: 'svg', value: this.SVGICONS.googleSheets },
   hubspot: { type: 'svg', value: this.SVGICONS.hubspot },
-  xAmplify: { type: 'image', value: './assets/images/icons/Xamplify.png' },
-  zoho: { type: 'image', value: './assets/images/icons/zoho.svg' },
-  sap: { type: 'emoji', value: '🏢' },
-  cassandra: { type: 'emoji', value: '🌌' },
-  sqlite: { type: 'emoji', value: '💾' },
-  Anthropic: { type: 'emoji', value: '🌐' },
-  'azure apenai': { type: 'emoji', value: '☁️' },
-  'meta llma': { type: 'emoji', value: '🦙' },
+  xAmplify: { type: 'image', value: './assets/images/icons/XAMPLIFY.svg' },
+  zoho: { type: 'image', value: './assets/images/icons/ZOHO.svg' },
+  sap: { type: 'image', value: './assets/images/icons/SAP.svg' },
+  cassandra: { type: 'image', value: './assets/images/icons/CASSANDRA.svg' },
+  sqlite: { type: 'image', value: './assets/images/icons/SQLITE.svg' },
+  Anthropic: { type: 'image', value: './assets/images/icons/ANTHROPIC.svg' },
+  'azure apenai': { type: 'image', value: './assets/images/icons/AZURE.svg' },
+  'meta llma': { type: 'image', value: './assets/images/icons/METALLAMA.svg' },
   immybot: { type: 'svg', value: this.SVGICONS.immybot }
 };
   existingConnections: any = [];
@@ -4222,62 +4299,62 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     this.selectedConnectionType = type;
   }
 
- categories = [
+ categories:any[]  = [
   // { name: 'All sources', icon: '', description: 'Browse all connection types',count:'33' },
-    { name: 'Relational Database', icon: '🛢️', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
+    { name: 'Relational Database', image: './assets/images/icons/Rational.svg', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
     { name: 'LLM Integrations', icon: '🤖', description: 'AI & Large Language Model integrations',count:'6' },
-    { name: 'Multi-dimensional Database', icon: '📊', description: 'OLAP & analytical data stores',count:'2' },
-    { name: 'NoSQL Database', icon: '📡', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
+    { name: 'Multi-dimensional Database', image: './assets/images/icons/Multi dimensional.svg', description: 'OLAP & analytical data stores',count:'2' },
+    { name: 'NoSQL Database', image: './assets/images/icons/NoSQl.svg', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
     { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
   connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string,disabled?:boolean}[] } = {
   "Relational Database": [
-    { name: "MySQL", icon: "🐬", description: "Relational database" },
-    { name: "ORACLE", icon: "🏺", description: "Enterprise relational database" },
-    { name: "PostgreSQL", icon: "🐘", description: "Advanced open-source relational database" },
-    { name: "Microsoft SQL SERVER", icon: "🖥️", description: "Microsoft relational database" },
-    { name: "Snow Flake", icon: "❄️", description: "Cloud data warehouse" }
+    { name: "MySQL", image:'./assets/images/icons/MYSQL.svg', description: "Relational database" },
+    { name: "ORACLE", image: './assets/images/icons/ORACLE.svg', description: "Enterprise relational database" },
+    { name: "PostgreSQL", image: './assets/images/icons/POSTGRESQL.svg', description: "Advanced open-source relational database" },
+    { name: "Microsoft SQL SERVER", image: './assets/images/icons/MICROSOFTSQLSERVER.svg', description: "Microsoft relational database" },
+    { name: "Snow Flake", image: './assets/images/icons/SNOWFLAKE.svg', description: "Cloud data warehouse" }
   ],
   "LLM Integrations": [
-    { name: "OpenAI", icon: "🤖", description: "AI & language models by OpenAI" },
-    { name: "DeepSeek", icon: "🔍", description: "Deep learning & LLM platform" },
-    { name: "Gemini", icon: "♊", description: "Google DeepMind Gemini models" },
-    { name: "Anthropic", icon: "🌐", description: "Claude AI models", disabled: true },
-    { name: "Azure OpenAI", icon: "☁️", description: "Azure-hosted OpenAI models", disabled: true },
-    { name: "Meta LLaMA", icon: "🦙", description: "Meta’s LLaMA family of LLMs", disabled: true }
+    { name: "OpenAI", image: './assets/images/icons/OPEN_AI.svg', description: "AI & language models by OpenAI" },
+    { name: "DeepSeek", image: './assets/images/icons/DEEPSEEK.svg', description: "Deep learning & LLM platform" },
+    { name: "Gemini", image: './assets/images/icons/GEMINI.svg', description: "Google DeepMind Gemini models" },
+    { name: "Anthropic", image: './assets/images/icons/ANTHROPIC.svg', description: "Claude AI models", disabled: true },
+    { name: "Azure OpenAI",image: './assets/images/icons/AZURE.svg', description: "Azure-hosted OpenAI models", disabled: true },
+    { name: "Meta LLaMA", image: './assets/images/icons/METALLAMA.svg', description: "Meta’s LLaMA family of LLMs", disabled: true }
   ],
   "NoSQL Database": [
-    { name: "Cassandra", icon: "🌌", description: "Highly scalable NoSQL database", disabled: true },
-    { name: "SQLite", icon: "💾", description: "Lightweight embedded database" },
-    { name: "MongoDB", icon: "🍃", description: "Document-oriented NoSQL database", disabled: true }
+    { name: "Cassandra", image: './assets/images/icons/CASSANDRA.svg', description: "Highly scalable NoSQL database", disabled: true },
+    { name: "SQLite", image: './assets/images/icons/SQLITE.svg', description: "Lightweight embedded database" },
+    { name: "MongoDB", image: './assets/images/icons/MONGODB.svg', description: "Document-oriented NoSQL database", disabled: true }
   ],
   "Multi-dimensional Database": [
-    { name: "SAP", icon: "🏢", description: "Enterprise resource planning & database", disabled: true },
-    { name: "SAP HANA", icon: "⚡", description: "In-memory, column-oriented database" }
+    { name: "SAP", image: './assets/images/icons/SAP.svg', description: "Enterprise resource planning & database", disabled: true },
+    { name: "SAP HANA", image: './assets/images/icons/SAPHANA.svg', description: "In-memory, column-oriented database" }
   ],
   "File Source": [
-    { name: "CSV", icon: "📑", description: "Comma-separated values file" },
-    { name: "Excel", icon: "📊", description: "Spreadsheet file format" }
+    { name: "CSV", image: "./assets/images/icons/CSV.svg", description: "Comma-separated values file" },
+    { name: "Excel", image: "./assets/images/icons/EXCEL.svg", description: "Spreadsheet file format" }
   ],
   "Integrations": [
-    { name: "xAmplify",image:'./assets/images/icons/Xamplify.png', description: "Business automation platform" },
-    { name: "QuickBooks", description: "Accounting software",image:'./assets/images/icons/quickbooks.png' },
+    { name: "xAmplify",image:'./assets/images/icons/XAMPLIFY.svg', description: "Business automation platform" },
+    { name: "QuickBooks", description: "Accounting software",image:'./assets/images/icons/QUICKBOOKS.svg' },
     { name: "Salesforce", description: "CRM platform", svg:this.SVGICONS.Salesforce },
-    { name: "ConnectWise", description: "IT management software", image:'./assets/images/icons/connectwise.png' },
-    { name: "DBT", description: "Data build tool", image:'./assets/images/icons/dbt.svg' },
-    { name: "HaloPS", description: "PSA platform for IT providers",image:'./assets/images/icons/halopsa.png' },
-    { name: "Pax8", description: "Cloud commerce marketplace",image:'./assets/images/icons/pax8-icon.png'},
+    { name: "ConnectWise", description: "IT management software", image:'./assets/images/icons/CONNECTWISE.svg' },
+    { name: "DBT", description: "Data build tool", image:'./assets/images/icons/DBT.svg' },
+    { name: "HaloPS", description: "PSA platform for IT providers",image:'./assets/images/icons/HALOPS.svg' },
+    { name: "Pax8", description: "Cloud commerce marketplace",image:'./assets/images/icons/PAX8.svg'},
     { name: "BambooHR", description: "HR management system", svg:this.SVGICONS.bambooHr },
     { name: "Jira", description: "Project management software",svg:this.SVGICONS.jira },
     { name: "Shopify", description: "E-commerce platform",svg:this.SVGICONS.shopify },
-    { name: "Tally", description: "Accounting & ERP software",image:'./assets/images/icons/tally-icon.svg' },
+    { name: "Tally", description: "Accounting & ERP software",image:'./assets/images/icons/TALLY.svg' },
     { name: "Google Sheets", description: "Online spreadsheets", svg:this.SVGICONS.googleSheets },
     { name: "Ninja", description: "IT management & automation tool", svg:this.SVGICONS.ninjaOne },
     { name: "Google Analytics", description: "Web analytics service", svg:this.SVGICONS.googleAnalytics },
     { name: "HubSpot", description: "Marketing & CRM platform",svg:this.SVGICONS.hubspot },
     { name: "Immybot", description: "IT automation tool",svg:this.SVGICONS.immybot },
-    { name: "Zoho", description: "Zoho CRM platform", image:'./assets/images/icons/zoho.svg' }
+    { name: "Zoho", description: "Zoho CRM platform", image:'./assets/images/icons/ZOHO.svg' }
   ]
 
 };
@@ -4373,18 +4450,48 @@ goBackToCategories(){
 
 selectedConnection: string | null = null;
 
+handleConnection(connName: string) {
+    if (!this.iscrossDbSelect) {
+        switch(connName) {
+            case 'xAmplify':
+              !this.iscrossDbSelect ? this.connectxAmplify() : null;
+                break;
+            case 'QuickBooks':
+              !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+                break;
+            case 'Salesforce':
+              !this.iscrossDbSelect ? this.connectSalesforce() : null;
+                break;
+            case 'Google Sheets':
+              !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+                break;
+            default:
+                console.log('Unknown connection');
+        }
+    }
+}
+
+
   selectConnection(connName: string) {
-    this.viewNewDbs = false
-    if(connName === 'xAmplify'){
-      !this.iscrossDbSelect ? this.connectxAmplify() : null;
-    } else if(connName === 'QuickBooks'){
-      !this.iscrossDbSelect ? this.connectQuickBooks() : null;
-    } else if(connName === 'Salesforce'){
-      !this.iscrossDbSelect ? this.connectSalesforce() : null;
-    } else if(connName === 'Google Sheets'){
-      !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
-    } else{
-      this.selectedConnection = connName;
+    this.viewNewDbs = false;
+    // if(connName === 'xAmplify'){
+    //   !this.iscrossDbSelect ? this.connectxAmplify() : null;
+    //       this.viewNewDbs = true
+    // } 
+    //  if(connName === 'QuickBooks'){
+    //   !this.iscrossDbSelect ? this.connectQuickBooks() : null;
+    // this.viewNewDbs = true
+    // }
+      // if(connName === 'Salesforce'){
+      // !this.iscrossDbSelect ? this.connectSalesforce() : null;
+      //           this.viewNewDbs = true
+    // }
+    
+    // if(connName === 'Google Sheets'){
+      //  !this.iscrossDbSelect ? this.connectGoogleSheets() : null;
+               this.viewNewDbs = false;
+      // }
+     this.selectedConnection = connName;
       if(connName === 'DBT'){
         this.displayName = '';
         this.dbtAccountId = '';
@@ -4395,7 +4502,6 @@ selectedConnection: string | null = null;
       }
       this.getSpecificConnections();
       console.log('selected sub category:', this.selectedConnection);
-    }
   }
 model = {
     name: '',
@@ -4404,30 +4510,7 @@ model = {
     username: '',
     password: ''
   };
-  // existingConnections = [  {
-  //   id: 1,
-  //   name: "mysql",
-  //   displayName: "MySql Production",
-  //   type: "mysql",
-  //   status: "Connected",
-  //   lastUpdated: "2 minutes ago",
-  //   description: "Main production database",
-  //   host: "prod-db.company.com",
-  //   size: "2.4 GB",
-  //   icon: "🐬"
-  // },
-  // {
-  //   id: 2,
-  //   name: "MySQL",
-  //   displayName: "MySQL Analytics",
-  //   type: "MySQL",
-  //   status: "Connected",
-  //   lastUpdated: "10 minutes ago",
-  //   description: "Analytics DB for reports",
-  //   host: "analytics.company.com",
-  //   size: "850 MB",
-  //   icon: "🐬"
-  // },]as any;
+  
    saveConnection() {
     console.log('Saving connection:', this.model);
     alert('Connection saved!');
@@ -4475,6 +4558,8 @@ model = {
   this.selectedHubspotScopes = [];
   this.hubspotRedirectURL = '';
   this.hubspotRedirectURLError = false;
+  this.selectedJiraScopes = [];
+  this.jiraScopeError = false;
   this.zohoClientId = '';
   this.zohoClientSecret = '';
   this.zohoRedirectURL = '';
@@ -4513,8 +4598,9 @@ model = {
             this.showFiles = true;
             this.showIntegrations = true;
             break;
-  }
-  }
+     }
+    }
+
   getConnectionAsset(connName: string) {
   // Find the connection object from connectionTypes
   for (const category in this.connectionTypes) {
@@ -4527,8 +4613,140 @@ model = {
   }
   // fallback
   return { type: 'icon', value: '🔗' }; 
+  }
+
+  datasourceSearch: string = '';
+  selectedDatasource: any = null;
+
+  selectedSort: string = '';
+subCategories: any[] = [];
+buildSubCategories() {
+  const categories = Object.values(this.connectionTypes).flat();
+
+  const apiNameMap: { [key: string]: string } = {
+    "MySQL": "mysql",
+    "ORACLE": "oracle",
+    "PostgreSQL": "postgresql",
+    "Microsoft SQL SERVER": "microsoftsqlserver",
+    "Snow Flake": "snowflake",
+    "SQLite": "sqlite",
+    "MongoDB": "mongodb",
+    "Cassandra": "cassandra",
+    "SAP HANA": "sap hana",
+    "SAP": "sap bw",
+    "Excel": "excel",
+    "CSV": "csv",
+    "PDF": "pdf",
+    "Text": "text",
+    "XML": "xml",
+    "QuickBooks": "quickbooks",
+    "DBT": "dbt",
+    "DeepSeek": "deepseek",
+    "Shopify": "shopify",
+    "Google Analytics": "google_analytics",
+    "HubSpot": "hubspot",
+    "BambooHR": "bamboohr",
+    "Files": "files",
+    "OpenAI": "open_ai",
+    "Gemini": "gemini",
+    "Cross Database": "cross_database",
+    "Jira": "jira",
+    "HaloPS": "halops",
+    "Pax8": "pax8",
+    "ConnectWise": "connectwise",
+    "Salesforce": "salesforce",
+    "Ninja": "ninja",
+    "Server": "server",
+    "Zoho": "zoho",
+    "Tally": "tally",
+    "Google Sheets": "google_sheets",
+    "Immybot": "immybot"
+  };
+
+  // build categories
+  this.subCategories = categories.map(cat => ({
+    name: cat.name,
+    value: apiNameMap[cat.name] || cat.name.toLowerCase().replace(/\s+/g, '_'),
+    svg: cat.svg ? this.sanitizer.bypassSecurityTrustHtml(cat.svg) : null,
+    image: !cat.svg ? cat.image : null
+  }));
+
+  // ✅ Add "All" manually at the top
+  this.subCategories.unshift({
+    name: "All",
+    value: "all",   // what you’ll send to API
+    svg: null,
+    image: null
+  });
 }
 
 
+ filteredDatasourceList() {
+    return this.subCategories.filter(ds =>
+      ds.name.toLowerCase().includes(this.datasourceSearch.toLowerCase())
+    );
+  }
 
+  onDatasourceSelect(ds: any) {
+    this.selectedDatasource = ds;
+    this.pageNo=1;
+    this.page=1;
+    this.getDbConnectionList();
+  }
+
+selectedSortLabel: string | null = null;
+orderBy: string = '';
+order: 'ASC' | 'DESC' = 'ASC';
+
+sortOptions = [
+  { label: 'Name (A–Z)', order_by: 'name', order: 'ASC' },
+  { label: 'Name (Z–A)', order_by: 'name', order: 'DESC' },
+  { label: 'Created Date (ASC)', order_by: 'created_at', order: 'ASC' },
+  { label: 'Created Date (DESC)', order_by: 'created_at', order: 'DESC' },
+  { label: 'Updated Date (ASC)', order_by: 'updated_at', order: 'ASC' },
+  { label: 'Updated Date (DESC)', order_by: 'updated_at', order: 'DESC' }
+];
+
+onSortChange(option: { label: string; order_by: string; order: any }) {
+  this.orderBy = option.order_by;
+  this.order = option.order;
+  this.selectedSortLabel = option.label;
+  this.pageNo=1;
+  this.page=1;
+  this.getDbConnectionList();
+}
+
+
+  viewMode: 'cards' | 'table' = 'cards';
+
+disabledEdit(serverType: string): boolean {
+  return ['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT','ZOHO','JIRA']
+    .includes(serverType);
+}
+  openAlertPopUp() {
+    Swal.fire({
+      title: "We're preparing your data!",
+      html: `
+    <div class="mb-3">
+      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <p>Your data source is being securely connected and ingested into Analytify. 
+    This process may take a few minutes depending on the size of your data.</p>
+    <p>In the meantime, feel free to explore other modules. 
+    We’ll notify you once your data is ready to use.</p>
+  `,
+      showConfirmButton: true,
+      confirmButtonText: "Got it",
+      allowOutsideClick: false,
+      customClass: {
+        popup: 'rounded-4 shadow-lg p-3'
+      }
+    }).then((result) => {
+    if (result.isConfirmed) {
+      this.router.navigate(['analytify/home']);
+    }
+  });
+  }
 }

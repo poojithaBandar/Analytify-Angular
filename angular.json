@@ -31,7 +31,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/.htaccess"
+              "src/.htaccess",
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               "src/assets/libs/bootstrap/css/bootstrap.min.css",
@@ -45,7 +46,8 @@
               "node_modules/jquery/dist/jquery.min.js",      
               "node_modules/jquery-ui-dist/jquery-ui.min.js", 
               "node_modules/pivottable/dist/pivot.min.js",
-              "./node_modules/drawflow/dist/drawflow.min.js"
+              "./node_modules/drawflow/dist/drawflow.min.js",
+              "node_modules/echarts-wordcloud/dist/echarts-wordcloud.min.js"
             ]
           },
           "configurations": {
@@ -102,7 +104,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/.htaccess"
+              "src/.htaccess",
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               "src/assets/libs/bootstrap/css/bootstrap.min.css",
