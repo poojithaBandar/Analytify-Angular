@@ -13,7 +13,7 @@ export class OpenaiService {
     dangerouslyAllowBrowser: true,  // Only for testing
   });
 
-  async getChartOptions(data: any, userPrompt?: any,openAiKey?:any): Promise<any> {
+  async getChartOptions(data: any, openAiKey?:any, userPrompt?: any): Promise<any> {
     this.openai.apiKey = openAiKey;
     const response = await this.openai.chat.completions.create({
       model: 'gpt-4o-mini', // or gpt-4.1-mini

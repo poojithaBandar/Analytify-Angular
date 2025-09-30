@@ -64,7 +64,6 @@ import { i } from 'mathjs';
 import { SafeUrlPipe, SanitizeHtmlPipe } from '../../../shared/pipes/sanitize-html.pipe';
 import { AuthService } from '../../../shared/services/auth.service';
 import { OpenaiService } from '../../../services/openai.service';
-import { GenieAiqDashboardComponent } from '../genie-aiq-dashboard/genie-aiq-dashboard.component';
 
 interface TableRow {
   [key: string]: any;
@@ -135,7 +134,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,WordcloudChartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe,SanitizeHtmlPipe,SafeUrlPipe,GenieAiqDashboardComponent],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,WordcloudChartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe,SanitizeHtmlPipe,SafeUrlPipe],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss',
 })

@@ -592,7 +592,7 @@ promptDashboard(){
 customizeDashboard(){
   const data = this.dash1;
   this.loaderService.show();
-  this.openAi.getChartOptions(data, this.userPrompt + "/n" + "do not remove any other charts, do update only relative chart only")
+  this.openAi.getChartOptions(data, this.openAiKey, this.userPrompt + "/n" + "do not remove any other charts, do update only relative chart only")
   .then(chartOptions => {
     console.log("Chart Options:", chartOptions);
 
