@@ -14,7 +14,7 @@ import { OpenaiService } from '../../../services/openai.service';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
-import { concatMap, from, map } from 'rxjs';
+import { concatMap, from, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-genie-aiq-dashboard',
@@ -657,15 +657,29 @@ builSheets(data:any, dashboard:any){
   let sheetIds : any = [];
   from(dashboard).pipe(
     concatMap((sheetData: any, index: number) =>
-      this.sheetSave(sheetData, data[index], index).pipe(
+      {
+      if (sheetData.chartType === 'text' || sheetData.type === 'text') {
+        return of({ res: null, index });
+      }
+      return this.sheetSave(sheetData, data[index], index).pipe(
         map(res => ({ res, index }))
-      )
+      );
+    }
+      // this.sheetSave(sheetData, data[index], index).pipe(
+      //   map(res => ({ res, index }))
+      // )
     )
   ).subscribe({
     next: ({ res, index }) => {
-      console.log("Sheet saved:", res);
-      sheetIds.push(res.sheet_id);
-      this.dash1[index].sheetId = res.sheet_id; 
+      // console.log("Sheet saved:", res);
+      // sheetIds.push(res.sheet_id);
+      // this.dash1[index].sheetId = res.sheet_id; 
+
+      if (res) {
+        console.log("Sheet saved:", res);
+        sheetIds.push(res.sheet_id);
+        this.dash1[index].sheetId = res.sheet_id;
+      }
     },
     error: (err) => console.error("Error saving sheet:", err),
     complete: () => {
@@ -789,21 +803,21 @@ datafromApi :any={};
       }
     }
 
-    const sheetRows = data.rows.map((item: any) => {
+    const sheetRows = data?.rows.map((item: any) => {
       return {
         column: item.column,
         data_type: item.data_type,
         type: item.type[0] ? item.type[0] : ""
       };
     });
-    const sheetColumns = data.columns.map((item: any) => {
+    const sheetColumns = data?.columns.map((item: any) => {
       return {
         column: item.column,
         data_type: item.data_type,
         type: item.type[0] ? item.type[0] : ""
       };
     });
-    const sheet_rows_data = data.rows.map((item: any) => {
+    const sheet_rows_data = data?.rows.map((item: any) => {
       return [
         item.column,
         item.type ? "aggregate" : item.data_type,
@@ -811,7 +825,7 @@ datafromApi :any={};
         ""
       ];
     });
-    const sheet_column_data = data.columns.map((item: any) => {
+    const sheet_column_data = data?.columns.map((item: any) => {
       return [
         item.column,
         item.data_type,
@@ -821,25 +835,25 @@ datafromApi :any={};
     });
 
     const obj = {
-      "chart_id": sheetData.chartId,
+      "chart_id": sheetData?.chartId,
       "queryset_id": this.querySetId,
       "server_id": this.hierarchyId,
-      "sheet_name": sheetData.data.title,
-      "sheet_tag_name": sheetData.data.sheetTagName,
+      "sheet_name": sheetData?.data?.title,
+      "sheet_tag_name": sheetData?.data?.sheetTagName,
       "filter_id": [],
       "sheetfilter_querysets_id": null,
       "filter_data": [],
       "datasource_querysetid": null,
-      "col": data.dimensions,
-      "row": data.metrics,
-      "custom_query": data.sql_query,
+      "col": data?.dimensions ?? [],
+      "row": data?.metrics ?? [],
+      "custom_query": data?.sql_query,
       "data": {
-        "columns": sheetColumns,
-        "columns_data": sheet_column_data,
-        "col": data.columns.map((col:any)=>{ return {column: col.column, result_data: col.result} }),
-        "row": data.rows.map((col:any)=>{ return {column: col.col, result_data: col.result} }),
-        "rows": sheetRows,
-        "rows_data": sheet_rows_data,
+        "columns": sheetColumns ?? [],
+        "columns_data": sheet_column_data ?? [],
+        "col": data?.columns.map((col:any)=>{ return {column: col.column, result_data: col.result} }) ?? [],
+        "row": data?.rows.map((col:any)=>{ return {column: col.col, result_data: col.result} }) ?? [],
+        "rows": sheetRows ?? [],
+        "rows_data": sheet_rows_data ?? [],
         "results": {
           "kpiData": '',
           "kpiFontSize": 3,
@@ -856,10 +870,10 @@ datafromApi :any={};
           "items_per_page": 10,
           "total_items": 0
         },
-        "isApexChart": sheetData.isEChart ? false : true,
-        "isEChart": sheetData.isEChart,
+        "isApexChart": sheetData?.isEChart ? false : true,
+        "isEChart": sheetData?.isEChart,
         "savedChartOptions": chartData,
-        "customizeOptions": sheetData.customizeOptions
+        "customizeOptions": sheetData?.customizeOptions
       }
     }
 
@@ -908,7 +922,7 @@ datafromApi :any={};
   goBackToGeenieDatasource(){
     Swal.fire({
       title: 'Are you sure?',
-      text: 'You will leave the dashboard view and if want to go, generated dashboard will be lost',
+      text: 'Leaving this page will discard your generated dashboard. Do you still want to proceed?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, go back',
@@ -919,6 +933,7 @@ datafromApi :any={};
         // Execute your logic
         this.showDashboardView = false;
         this.dash1 = [];
+        this.chatHistory = [];
       }
     });
   }

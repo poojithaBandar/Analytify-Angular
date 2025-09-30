@@ -86,6 +86,7 @@ Convert the given data into a valid array of chart objects.
    - "Funnel Chart" → 27  
    - "Gauge Chart" → 28  
    - "World Map" → 29  
+   - **Do not generate or accept any chart type outside of the above list.**
 
 5. **If "library = echart", populate the chart configuration in "echartOptions" and set "isEChart: true".  
    If "library = apex", populate the chart configuration in "chartOptions" and set "isEChart: false".**  
@@ -424,11 +425,11 @@ Guage Chart → chartOptions
   "y": 5,
   "rows": 8,
   "cols": 9,
-    "data": {
-        "title": "Total Customers", **(must include for all the sheets)**
-        "sheetTagName": "<p>Total Customers</p>", **(must include for all the sheets)**
-        "content": "<div class=\"text-content-wrapper\"><h2 style=\"color:#2392c1;text-align:center;\">Sales Dashboard</h2></div>" **(content key only presents for text chart or banner)**
-    },
+  "data": {
+      "title": "Total Customers", **(must include for all the sheets)**
+      "sheetTagName": "<p>Total Customers</p>", **(must include for all the sheets)**
+      "content": "<div class=\"text-content-wrapper\"><h2 style=\"color:#2392c1;text-align:center;\">Sales Dashboard</h2></div>"
+  },
   "sheetType": "Chart",
   "chartType": "bar",
   "tyep": "text", **(type key only presents for text or image charts)**
@@ -574,7 +575,20 @@ Guage Chart → chartOptions
       "donutDecimalPlaces": 2
     }
   }
-]`
+]
+
+#**notes:**
+- **Mandatory Data Object:**  
+  Every chart object must include a 'data' object with:  
+  - 'title': sheet_name from the user input  
+  - 'sheetTagName': wrapped in '<p>' tags (e.g., '<p>Sales Overview</p>')  
+
+  Example for non-text chart:
+  "data": {
+    "title": "Sales Overview",
+    "sheetTagName": "<p>Sales Overview</p>"
+  }
+`
         },
         {
           role: "user",
