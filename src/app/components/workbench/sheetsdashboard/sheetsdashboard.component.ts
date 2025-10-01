@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -49,6 +49,7 @@ import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
 import { tap, takeUntil } from 'rxjs/operators'; 
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import { WordcloudChartComponent } from '../wordcloud-chart/wordcloud-chart.component';
 import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.json';
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
 import 'pivottable';
@@ -62,7 +63,7 @@ import jsPDF from 'jspdf';
 import { i } from 'mathjs';
 import { SafeUrlPipe, SanitizeHtmlPipe } from '../../../shared/pipes/sanitize-html.pipe';
 import { AuthService } from '../../../shared/services/auth.service';
-import { GenieAiqDashboardComponent } from '../genie-aiq-dashboard/genie-aiq-dashboard.component';
+import { OpenaiService } from '../../../services/openai.service';
 
 interface TableRow {
   [key: string]: any;
@@ -133,7 +134,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe,SanitizeHtmlPipe,SafeUrlPipe,GenieAiqDashboardComponent],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,WordcloudChartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe,ScrollingModule,TestPipe,SanitizeHtmlPipe,SafeUrlPipe],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss',
 })
@@ -270,6 +271,8 @@ export class SheetsdashboardComponent implements OnDestroy {
   showGenieTooltip = false;
   trendData= [];
   trendLabels = [];
+  @Input() dash1: any = [];
+  @Input() hideWidgets = false;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -394,9 +397,11 @@ export class SheetsdashboardComponent implements OnDestroy {
   }
   options!: GridsterConfig;
 
-  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any
+  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any,
+    wordcloudData?: any[]
   }>;
-  dashboardTest!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any
+  dashboardTest!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any,
+    wordcloudData?: any[]
   }>;
   dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
   }>;
@@ -692,6 +697,13 @@ export class SheetsdashboardComponent implements OnDestroy {
       .subscribe(() => {
         this.getSavedDashboardDataPublic();
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges){
+    if(changes['dash1']){
+      console.log(this.dash1);
+      this.dashboard = this.dash1;
+    }
   }
 
   fetchDashboardIdFromToken(){
@@ -1079,6 +1091,9 @@ export class SheetsdashboardComponent implements OnDestroy {
       // console.log('Before sanitization:', sheet.data?.sheetTagName);
       if(sheet.data?.sheetTagName){
         this.sheetTagTitle[sheet.data?.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
+      }
+      if(sheet.chartId == 21 && sheet.echartOptions?.series?.[0]?.data){
+        sheet.wordcloudData = _.cloneDeep(sheet.echartOptions.series[0].data);
       }
       if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
       sheet.chartOptions.chart.events = {
@@ -1933,6 +1948,13 @@ export class SheetsdashboardComponent implements OnDestroy {
           item1.chartOptions = item1['originalData'].chartOptions;
           delete item1['originalData'];
         }
+        if(item1.chartId == '21' && item1['originalData']){//wordcloud
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+            item1.wordcloudData = _.cloneDeep(item1.echartOptions?.series?.[0]?.data || []);
+          }
+          delete item1['originalData'];
+        }
         if(item1.chartId == '18' && item1['originalData']){//treemap
           if(item1.isEChart){
             item1.echartOptions = item1['originalData'].chartOptions;
@@ -2353,7 +2375,8 @@ allowDrop(ev : any): void {
         isDrillDownData: copy.isDrillDownData,
         numberFormat: copy.numberFormat,
         customizeOptions: copy.customizeOptions,
-        pivotData: copy.pivotData
+        pivotData: copy.pivotData,
+        wordcloudData: copy.chartId === 21 ? _.cloneDeep(copy.chartOptions?.series?.[0]?.data || []) : copy.wordcloudData
       };
       // if (element.chartId == '18' && element.echartOptions) {
       //   const nf = element.numberFormat || {};
@@ -4210,6 +4233,53 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
               item1.numberFormat?.suffix ?? ''
             )}`
         };
+      }
+      if((item.chart_id == '21' || item.chartId == '21' && (isFilter || isDrillDown)) || (item1.chartId == '21' && isDrillThrough)){
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+        }
+        if(item1.isEChart && item1.echartOptions?.series?.length){
+          if(!item1.originalData && !isLiveReloadData && !switchDb){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          const normalizeLabel = (val: any) => {
+            if (val === null || val === undefined) {
+              return 'null';
+            }
+            const label = String(val).trim();
+            return label === '' ? 'null' : label;
+          };
+          const dimensions: Dimension[] = this.filteredColumnData;
+          let categories: string[] = [];
+          if(dimensions?.length){
+            if(dimensions.length === 1){
+              categories = (dimensions[0].values || []).map(normalizeLabel);
+            } else {
+              categories = this.flattenDimensions(dimensions).map((value: string) => normalizeLabel(value));
+            }
+          }
+          const aggregatedMeasures = this.filteredRowData.reduce((acc: number[], row: any) => {
+            row?.data?.forEach((val: any, index: number) => {
+              const numericValue = typeof val === 'number' ? val : parseFloat(val);
+              const safeValue = isNaN(numericValue) ? 0 : numericValue;
+              acc[index] = (acc[index] ?? 0) + safeValue;
+            });
+            return acc;
+          }, [] as number[]);
+          const wordcloudData = categories.map((label: string, index: number) => ({
+            name: label,
+            value: aggregatedMeasures[index] ?? 0
+          }));
+          item1.wordcloudData = wordcloudData;
+          item1.echartOptions.series[0].data = wordcloudData;
+          item1.echartOptions = {
+            ...item1.echartOptions
+          };
+        }
       }
       if((item.chart_id == '18' || item.chartId == '18' && (isFilter || isDrillDown)) || (item1.chartId == '18' && isDrillThrough)){//treemap
         if(switchDb){

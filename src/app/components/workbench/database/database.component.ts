@@ -483,9 +483,8 @@ getSchemaTablesFromConnectedDb(){
   if(obj.querySetId === '0' || obj.querySetId === 0){
     delete obj.querySetId
   }
-  const IdToPass = this.databaseId
   this.schematableList =[];
-  this.workbechService.getSchemaTablesFromConnectedDb(IdToPass,obj).subscribe({next: (data) => {
+  this.workbechService.getSchemaTablesFromConnectedDb(obj).subscribe({next: (data) => {
     this.crossDbConnections = data;
     this.isCrossDb = data[0]?.is_cross_db;
     if(data[0].cross_db_id){
@@ -602,8 +601,8 @@ refreshSchemaForTable(table: any, callback: () => void) {
   if (obj.querySetId === '0' || obj.querySetId === 0) {
     delete obj.querySetId;
   }
-  const idToPass = this.databaseId;
-  this.workbechService.getSchemaTablesFromConnectedDb(idToPass, obj).subscribe({
+  // const idToPass = this.databaseId;
+  this.workbechService.getSchemaTablesFromConnectedDb(obj).subscribe({
     next: (data) => {
       this.schematableList = [];
       this.crossDbConnections = data;
@@ -1950,7 +1949,10 @@ checkNameChanged(){
     }
   }
 }
-  goToSheet(fromParam: string) {
+  goToSheet(fromParam: string,modal?:any) {
+    if(modal){
+      this.modalService.dismissAll('close')
+    }
     this.goToSheetButtonClicked = true;
       let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
       let querySetIdToDelete = (fromParam === 'fromcustomsql') ? this.qurtySetId : this.custumQuerySetid
