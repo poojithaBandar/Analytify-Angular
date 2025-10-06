@@ -31,7 +31,7 @@ import 'ckeditor5/ckeditor5.css';
 import * as echarts from 'echarts';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SecurityContext } from '@angular/platform-browser';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options } from '@angular-slider/ngx-slider';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
@@ -140,7 +140,8 @@ export class SheetsComponent{
   chartEnable = true;
   dimensionExpand = false;
   chartSuggestions: any = null;
-  errorMessage : any;
+  errorMessage = '';
+  safeErrorMessage = '';
   errorMessage1:any;
   userPrompt: string = '';
   selectedChartPlugin : string = '';	
@@ -559,15 +560,22 @@ isSidebarCollapsed: boolean = false;
       // this.sheetRetrive();
       }
    } 
-   if(this.router.url.includes('/embed/sheet/')){
+  if(this.router.url.includes('/embed/sheet/')){
 
-   } else {
-   this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
-   this.canEditDashbaordInSheet = this.templateService.editDashboard();
-   this.canAddDashbaordInSheet = this.templateService.addDashboard();
-  this.canEditDb = this.templateService.addDatasource();
-  this.canDrop = !this.canEditDb
+  } else {
+  this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
+  this.canEditDashbaordInSheet = this.templateService.editDashboard();
+  this.canAddDashbaordInSheet = this.templateService.addDashboard();
+ this.canEditDb = this.templateService.addDatasource();
+ this.canDrop = !this.canEditDb
   }
+  }
+
+  private setErrorMessage(value: string): void {
+    const normalized = value ?? '';
+    const sanitized = this.sanitizer.sanitize(SecurityContext.HTML, normalized) ?? '';
+    this.errorMessage = normalized;
+    this.safeErrorMessage = sanitized;
   }
 
   preventInvalidStartAngleInput(event: KeyboardEvent): void {
@@ -4332,13 +4340,13 @@ console.log(reName.split(',')[0])
         console.log(data);
         if (Array.isArray(data.data)) {
           this.chartSuggestions = data.data;
-          this.errorMessage = '';
+          this.setErrorMessage('');
         } else if (typeof data.data === 'string') {
           this.chartSuggestions = [];
-          this.errorMessage = data.data;
+          this.setErrorMessage(data.data);
         } else {
           this.chartSuggestions = [];
-          this.errorMessage = 'Unexpected data format';
+          this.setErrorMessage('Unexpected data format');
         }
       },
       error => {
@@ -4353,17 +4361,17 @@ console.log(reName.split(',')[0])
         }
         if (backendMsg === 'Queryset ID is required') {
           this.chartSuggestions = null;
-          this.errorMessage = '';
+          this.setErrorMessage('');
         } else if (backendMsg) {
           this.chartSuggestions = null;
-          this.errorMessage = backendMsg;
+          this.setErrorMessage(backendMsg);
         } else if (!apiKey || apiKey.trim() === '') {
           localStorage.setItem('previousUrl', this.router.url);
           this.chartSuggestions = null;
           this.errorMessage1 = 'The GPT API key is missing. Please';
         } else {
           this.chartSuggestions = null;
-          this.errorMessage = `We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`;
+          this.setErrorMessage(`We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`);
           console.error(error);
         }
       }
@@ -4831,13 +4839,13 @@ customizechangeChartPlugin() {
           this.zone.run(() => {
             if (Array.isArray(data.data)) {
               this.chartSuggestions = data.data;
-              this.errorMessage = '';
+              this.setErrorMessage('');
             } else if (typeof data.data === 'string') {
               this.chartSuggestions = [];
-              this.errorMessage = data.data;
+              this.setErrorMessage(data.data);
             } else {
               this.chartSuggestions = [];
-              this.errorMessage = 'Unexpected data format';
+              this.setErrorMessage('Unexpected data format');
             }
           });
         },
@@ -4845,7 +4853,7 @@ customizechangeChartPlugin() {
           const apiKey = localStorage.getItem('API_KEY');
           if (error.error.message === 'Queryset ID is required'){
             this.chartSuggestions = null;
-            this.errorMessage = ""
+            this.setErrorMessage('');
           }
           else if  (!apiKey || apiKey.trim() === '') {
             this.chartSuggestions = null;
@@ -4857,7 +4865,7 @@ customizechangeChartPlugin() {
             // Handle other errors
             console.log("Error:", error.message);
             this.chartSuggestions = null;
-            this.errorMessage = `We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`;
+            this.setErrorMessage(`We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`);
             console.error(error);
           }
         }
@@ -4884,7 +4892,7 @@ customizechangeChartPlugin() {
     recognition.onerror = (event: any) => {
       console.error('Voice recognition error', event);
       this.zone.run(() => {
-        this.errorMessage = 'Voice recognition error';
+        this.setErrorMessage('Voice recognition error');
       });
     };
   
