@@ -9040,6 +9040,56 @@ initializeTabDefaults() {
     }
   }
 
+  // Store visibility states for each sheet
+  pivotStateMap: { [sheetId: string]: { showSideBar: boolean; showTopBar: boolean } } = {};
+
+  togglePivotSideBar(sheetId: any, isTab: boolean) {
+    this.ensurePivotState(sheetId);
+    this.pivotStateMap[sheetId].showSideBar = !this.pivotStateMap[sheetId].showSideBar;
+    this.updatePivotUIVisibility(sheetId, isTab);
+  }
+
+  togglePivotTopBar(sheetId: any, isTab: boolean) {
+    this.ensurePivotState(sheetId);
+    this.pivotStateMap[sheetId].showTopBar = !this.pivotStateMap[sheetId].showTopBar;
+    this.updatePivotUIVisibility(sheetId, isTab);
+  }
+
+  private ensurePivotState(sheetId: any) {
+    if (!this.pivotStateMap[sheetId]) {
+      this.pivotStateMap[sheetId] = { showSideBar: true, showTopBar: true };
+    }
+  }
+
+  updatePivotUIVisibility(sheetId: any, isTab: boolean) {
+    setTimeout(() => {
+      // Choose the correct QueryList based on where the chart lives
+      const targetList = isTab ? this.pivotContainersTabs : this.pivotContainers;
+
+      // Find the matching pivot container by sheetId
+      const pivotContainerRef = targetList.find(
+        (ref) => ref.nativeElement.getAttribute('data-sheet-id') === sheetId.toString()
+      );
+
+      if (!pivotContainerRef) return;
+
+      const pivotContainer = pivotContainerRef.nativeElement;
+      const state = this.pivotStateMap[sheetId];
+
+      // Hide/show sidebar areas
+      const sideBars = pivotContainer.querySelectorAll('.pvtAxisContainer, .pvtRows, .pvtCols');
+      sideBars.forEach((el: Element) => {
+        (el as HTMLElement).style.display = state.showSideBar ? '' : 'none';
+      });
+
+      // Hide/show top bar areas
+      const topBars = pivotContainer.querySelectorAll('.pvtVals, .pvtRendererArea');
+      topBars.forEach((el: Element) => {
+        (el as HTMLElement).style.display = state.showTopBar ? '' : 'none';
+      });
+    }, 0);
+  }
+
 }
 
 // export interface CustomGridsterItem extends GridsterItem {
