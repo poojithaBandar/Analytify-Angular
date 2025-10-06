@@ -2564,12 +2564,9 @@
                                 }
                                 @if(pivotTable && chartId){
                                     <!-- Add these toggle buttons where appropriate -->
-<button (click)="togglePivotSideBar()">
-  {{ showPivotSideBar ? 'Hide Side Bar' : 'Show Side Bar' }}
-</button>
-<button (click)="togglePivotTopBar()">
-  {{ showPivotTopBar ? 'Hide Top Bar' : 'Show Top Bar' }}
-</button>
+                                <button (click)="togglePivotSideBar()">
+                                {{ showPivotSideBar ? 'Hide Side Bar' : 'Show Side Bar' }}
+                                </button>
                                     <div id="pivotTableContainer" #pivotTableContainer></div>                                
                                 }
                                 @if(kpi && chartId){

@@ -758,6 +758,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
+        ignoreContentClass: 'pivot-drag-zone',
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -797,6 +798,7 @@ export class SheetsdashboardComponent implements OnDestroy {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
+        ignoreContentClass: 'pivot-drag-zone',
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -839,6 +841,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
+          ignoreContentClass: 'pivot-drag-zone',
           stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
             // Optional logic when dragging stops
             console.log('Drag stopped for item', item);
@@ -876,6 +879,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
+          ignoreContentClass: 'pivot-drag-zone',
           stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
             // Optional logic when dragging stops
             console.log('Drag stopped for item', item);
