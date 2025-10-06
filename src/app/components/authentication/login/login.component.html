@@ -17,12 +17,11 @@
                             <h4 class="mb-1 fw-600 signin-text">Sign in to Analytify</h4>
                             <p class="fs-16">Sign in to your account to continue.</p>
                         </div>
-                        <div class="row" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                            <form>
+                        <form class="row" [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off" novalidate>
                             <div class="col-sm-12">
                                 <div class="mb-3">
                                     <label class="mb-2 fw-600">Email Address<span class="text-danger ms-1">*</span></label>
-                                    <input class="form-control ms-0" type="email" formControlName="email" placeholder="Enter your Email">
+                                    <input class="form-control ms-0" type="email" formControlName="email" placeholder="Enter your Email" autocomplete="email">
                                     @if(loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched){
                                         <div class="text-danger">Email required</div>
                                     }
@@ -40,8 +39,8 @@
                                         </div>
                                     </div>
                                     <div class="input-group has-validation">
-                                        <input type="password" class="form-control" id="input-password" formControlName="password" placeholder="Password" [type]="showPassword1 ? 'text' : 'password'">
-                                        <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
+                                        <input type="password" class="form-control" id="input-password" formControlName="password" placeholder="Password" [type]="showPassword1 ? 'text' : 'password'" autocomplete="current-password">
+                                        <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -75,8 +74,7 @@
                                     </p>
                                 </div>
                             </div>
-                            </form>
-                        </div>
+                        </form>
                         <!-- <p class="text-center mt-3 mb-2">Signin with</p> -->
                         <!-- <div class="d-flex justify-content-center">
                             <div class="btn-list">

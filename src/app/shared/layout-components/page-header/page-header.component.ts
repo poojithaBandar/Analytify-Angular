@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SecurityContext } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
 @Component({
@@ -18,19 +18,24 @@ export class PageHeaderComponent {
   @Input() moduleId:any;
   @Input() isPublicUrl! : boolean;
   @Output() btnClickEvent: EventEmitter<any>;
-  dashbaordName: any;
+  dashbaordName = '';
 
 constructor(private route:Router,private sanitizer: DomSanitizer){
   this.btnClickEvent = new EventEmitter();
 }
 
 ngOnInit(){
-  this.dashbaordName = this.sanitizer.bypassSecurityTrustHtml(this.title);
+  this.setDashboardName();
 }
 
 ngOnChanges(){
-  this.dashbaordName = this.sanitizer.bypassSecurityTrustHtml(this.title);
+  this.setDashboardName();
   }
+
+private setDashboardName(): void {
+  const sanitized = this.sanitizer.sanitize(SecurityContext.HTML, this.title ?? '');
+  this.dashbaordName = sanitized ?? '';
+}
 
 helpRoute(){
   console.log(this.moduleId)
