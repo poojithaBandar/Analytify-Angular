@@ -2563,6 +2563,13 @@
                                   <pagination-controls *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 ) && toggleTablePagination" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(pivotTable && chartId){
+                                    <!-- Add these toggle buttons where appropriate -->
+<button (click)="togglePivotSideBar()">
+  {{ showPivotSideBar ? 'Hide Side Bar' : 'Show Side Bar' }}
+</button>
+<button (click)="togglePivotTopBar()">
+  {{ showPivotTopBar ? 'Hide Top Bar' : 'Show Top Bar' }}
+</button>
                                     <div id="pivotTableContainer" #pivotTableContainer></div>                                
                                 }
                                 @if(kpi && chartId){
