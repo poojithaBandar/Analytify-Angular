@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef,SecurityContext, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -41,7 +41,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
-import { DomSanitizer, SecurityContext } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
 import { HttpClient } from '@angular/common/http';

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { DomSanitizer, SecurityContext } from '@angular/platform-browser';
+import { Component, EventEmitter, Input, Output, SecurityContext } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
 @Component({
