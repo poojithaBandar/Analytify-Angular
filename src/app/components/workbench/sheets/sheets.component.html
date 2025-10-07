@@ -5583,7 +5583,7 @@
                                                 <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
                                                     <a class="cursor-pointer" *ngIf="!qrySetId" (click)="goToConnections()" ><span
                                                         class="add-txt text-info">Connect to DataSource</span></a>
-                                                    <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                                    <p *ngIf="errorMessage" [innerHTML]="safeErrorMessage"></p>
                                                     <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
                                                 </div>
                                                 <!-- <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-1">
@@ -5635,7 +5635,7 @@
                                                 <!-- <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
                                                     <a class="cursor-pointer" *ngIf="!qrySetId" (click)="goToConnections()" ><span
                                                         class="add-txt text-info">Connect to DataSource</span></a>
-                                                    <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                                    <p *ngIf="errorMessage" [innerHTML]="safeErrorMessage"></p>
                                                     <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
                                                 </div> -->
                                                 <!-- <div class="input-group mt-3 inp">
