@@ -1,7 +1,401 @@
 <app-page-header title="Saved Queries" moduleId="datasource" title1="Home" activeitem="Saved Queries"></app-page-header>
 
 <div class="main-container container-fluid TopHeader">
-    <div class="row" class="card card-padding-top">
+  <div class="d-flex align-items-center mb-4 flex-wrap">
+    <div class="d-flex align-items-center ms-auto flex-wrap">
+      <!-- <div ngbDropdown class="me-3" style="min-width: 260px;">
+        <button class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center text-muted"
+          id="datasourceDropdown" ngbDropdownToggle tabindex="0">
+
+          <span *ngIf="selectedDatasource; else placeholder" class="d-flex align-items-center">
+                  <img *ngIf="selectedDatasource.value !== 'all' && selectedDatasource.image" [src]="selectedDatasource.image" alt="" width="20" height="20" class="me-2" />
+                  {{ selectedDatasource.name }}
+                </span>
+
+          <ng-template #placeholder>
+            Select Datasource
+          </ng-template>
+
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </button>
+
+        <div ngbDropdownMenu aria-labelledby="datasourceDropdown"
+          class="p-2 shadow-lg dropdown-menu-end w-100 h-300 overflow-auto">
+          <input type="text" class="form-control mb-2" placeholder="Search datasource..." />
+
+          <button
+                  *ngFor="let ds of filteredDatasourceList()"
+                  class="dropdown-item d-flex align-items-center"
+                  (click)="onDatasourceSelect(ds)">
+                  <span *ngIf="ds.svg" class="me-2" [innerHTML]="ds.svg"></span>
+
+                    <img *ngIf="ds.image" [src]="ds.image" alt="" width="20" height="20" class="me-2" />
+                  {{ ds.name }}
+                </button>
+        </div>
+      </div> -->
+
+
+
+      <div ngbDropdown class="me-3" style="min-width: 200px;">
+        <button class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center text-muted"
+          id="sortDropdown" ngbDropdownToggle>
+          {{ selectedSortLabel || 'Sort by' }}
+          <i class="bi bi-chevron-down"></i>
+        </button>
+
+        <div ngbDropdownMenu aria-labelledby="sortDropdown" class="shadow-lg dropdown-menu-end w-100">
+          <button
+              *ngFor="let option of sortOptions"
+              class="dropdown-item"
+              (click)="onSortChange(option)">
+              {{ option.label }}
+            </button>
+        </div>
+      </div>
+
+
+      <div class="btn-group toggle-group glass-light-grid me-3" role="group">
+        <button type="button" class="btn p-2" [class.active]="viewMode === 'cards'" (click)="viewMode = 'cards'">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+        </button>
+        <button type="button" class="btn p-2" [class.active]="viewMode === 'table'" (click)="viewMode = 'table'">
+          <i class="bi bi-table"></i>
+        </button>
+      </div>
+
+
+
+      <!-- Search Box -->
+      <div class="flex-grow-1 position-relative me-3 w-350" style="max-width: 400px;">
+        <input type="text" placeholder="Search Queries..." [(ngModel)]="searchName"
+          (keyup.enter)="getSavedQueriesSearch()" class="form-control glass-light-input p-2 ps-5" />
+      </div>
+
+      <!-- Buttons -->
+      <!-- <app-insights-button
+                  [buttonName]="'➕ New Sheet'"
+                  [classesList]="'btn btn-primary me-3 animate-button'"
+                  [isIcon]="true"
+                  [previledgeId]="1"
+                  [isBtn]="true"
+                  (click)="">
+                </app-insights-button> -->
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-3">
+      <div class="glass-card mb-0 connections-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="">
+              <h5 class="mb-0 500 dashboard-T-C">Total Queries</h5>
+              <h2 class="fw-500 mb-0"><b></b></h2>
+            </div>
+            <div class="min-w-fit-content me-2 d-flex align-items-center">
+              <span
+                class="avatar rounded-circle avatar-md landing-dash-bg d-flex align-items-center justify-content-center connections-icon">
+                <i class="bi bi-collection fs-3"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="glass-card mb-0 datasets-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="">
+              <h5 class="mb-0 fw-500 chart-T-C">Active Queries</h5>
+              <h2 class="fw-500 mb-0"><b></b></h2>
+            </div>
+            <div class="min-w-fit-content me-2 d-flex align-items-center">
+              <span
+                class="avatar rounded-circle avatar-md landing-chart-bg d-flex align-items-center justify-content-center datasets-icon">
+                <i class="bi bi-lightning-charge fs-3"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="glass-card mb-0 sync-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="">
+              <h5 class="mb-0 fw-500 queries-T-C">Charts</h5>
+              <h2 class="fw-500 mb-0"><b></b></h2>
+            </div>
+            <div class="min-w-fit-content me-2 d-flex align-items-center">
+              <span
+                class="avatar rounded-circle avatar-md landing-queries-bg d-flex align-items-center justify-content-center sync-icon">
+                <i class="bi bi-bar-chart-line text-white fs-3"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="glass-card mb-0 bell-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="">
+              <h5 class="mb-0 fw-500 data-T-C">Dashboards</h5>
+              <h2 class="fw-500 mb-0 "><b></b></h2>
+            </div>
+            <div class="min-w-fit-content me-2 d-flex align-items-center">
+              <span
+                class="avatar rounded-circle avatar-md landing-data-bg d-flex align-items-center justify-content-center bell-icon">
+                <i class="bi bi-grid-1x2  fs-3"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="viewMode==='cards'" class="row g-4">
+    <!-- Data Cards -->
+    <ng-container *ngIf="!isLoadingSavedQueries && savedQueryList.length > 0">
+      <div class="col-12 col-md-6 col-lg-4"
+        *ngFor="let query of savedQueryList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }">
+        <div class="glass-card h-100">
+          <div class="p-4">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+              <div class="d-flex align-items-center">
+              <div class="fs-3 me-3 icon-bounce">
+                      <img [src]="'assets/images/icons_new/' + query.server_type + '.svg'" alt="connection.database_type">
+              </div>
+              <div>
+                <h5 class="fw-semibold mb-1" style="cursor: pointer;" ngbTooltip="{{query.queryset_name}}"
+                  triggers="hover"
+                  (click)="gotoSavedQuery(query.hierarchy_id, query.queryset_id, query.is_custom_sql, query?.datasource_filterdata[0]?.datasource_querysetid)">
+                  {{ query.queryset_name | slice:0:15 }}
+                </h5>
+                <p class="text-muted small mb-0">{{ query.database_name }}</p>
+              </div>
+              </div>
+              <!-- <div ngbDropdown container="body" class="d-inline-block">
+                            <button class="btn btn-sm" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
+                                    aria-expanded="false">
+                              <i class="bi bi-gear"></i>
+                            </button>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                              <a class="dropdown-item"
+                                (click)="gotoSavedQuery(query.hierarchy_id, query.queryset_id, query.is_custom_sql, query?.datasource_filterdata[0]?.datasource_querysetid)">
+                                <i class="fe fe-edit me-2 d-inline-flex"></i> Edit
+                              </a>
+                              <a class="dropdown-item"
+                                (click)="deleteSavedQuery(query.queryset_id)">
+                                <i class="fe fe-trash me-2 d-inline-flex"></i> Delete
+                              </a>
+                            </div>
+                          </div> -->
+            </div>
+            <p class="large mb-0"><strong>{{ query.description | slice:0:30 }}{{ query.description?.length > 30 ? '...'
+                : '' }}</strong></p>
+            <div class="mb-3 d-flex align-items-center justify-content-between">
+              <span class="small text-muted">Created By</span>
+              <span class="small text-capitalize">{{ query.created_by }}</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="small text-muted">Last Modified</span>
+              <span class="small text-capitalize">{{ query.modified | date: 'mediumDate' }}</span>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-primary-light rounded-2 btn-sm flex-fill"
+                (click)="gotoSavedQuery(query.hierarchy_id, query.queryset_id, query.is_custom_sql, query?.datasource_filterdata[0]?.datasource_querysetid)">
+                <i class="bi bi-pencil me-1"></i> Edit
+              </button>
+              <button class="btn btn-outline-danger-light rounded-2 btn-sm flex-fill"
+                (click)="deleteSavedQuery(query.queryset_id)">
+                <i class="bi bi-trash me-1"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Skeleton Loading -->
+    <ng-container *ngIf="isLoadingSavedQueries">
+      <div class="col-12 col-md-6 col-lg-4" *ngFor="let sk of [1,2,3,4,5,6]">
+        <div class="glass-card h-100">
+          <div class="p-4">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+              <div>
+                <div class="skeleton mb-2" style="width: 120px; height: 16px;"></div>
+                <div class="skeleton" style="width: 80px; height: 12px;"></div>
+              </div>
+              <div class="skeleton rounded" style="width: 24px; height: 24px;"></div>
+            </div>
+            <div class="skeleton mb-2" style="width: 100%; height: 10px;"></div>
+            <div class="skeleton mb-2" style="width: 90%; height: 10px;"></div>
+            <div class="skeleton mb-3" style="width: 95%; height: 10px;"></div>
+            <div class="d-flex gap-2">
+              <div class="skeleton" style="flex:1; height: 28px;"></div>
+              <div class="skeleton" style="flex:1; height: 28px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- No Data State -->
+    <ng-container *ngIf="!isLoadingSavedQueries && savedQueryList.length === 0">
+      <div class="col-12 d-flex justify-content-center py-4">
+        <div class="glass-card text-center w-100 p-4">
+          <div class="card-body">
+            <i class="bi bi-database fs-1 text-secondary mb-3"></i>
+            <h5 class="card-title text-muted">No Saved Queries Found</h5>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="viewMode==='table'" class="table-responsive">
+    <!-- 1. Loader skeleton -->
+    <ng-container *ngIf="isLoadingSavedQueries; else checkData">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>
+              <div class="skeleton" style="width:120px; height:16px;"></div>
+            </th>
+            <th>
+              <div class="skeleton" style="width:100px; height:16px;"></div>
+            </th>
+            <th>
+              <div class="skeleton" style="width:120px; height:16px;"></div>
+            </th>
+            <th>
+              <div class="skeleton" style="width:120px; height:16px;"></div>
+            </th>
+            <th class="text-center">
+              <div class="skeleton" style="width:80px; height:16px;"></div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let i of [1,2,3,4,5]">
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="skeleton" style="width:25px; height:25px; border-radius:4px; margin-right:8px;"></div>
+                <div>
+                  <div class="skeleton" style="width:120px; height:16px; margin-bottom:4px;"></div>
+                  <div class="skeleton" style="width:80px; height:12px;"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="skeleton" style="width:100px; height:16px;"></div>
+            </td>
+            <td>
+              <div class="skeleton" style="width:80px; height:16px;"></div>
+            </td>
+            <td>
+              <div class="skeleton" style="width:80px; height:16px;"></div>
+            </td>
+            <td class="text-center">
+              <div class="skeleton" style="width:60px; height:20px; display:inline-block;"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+
+    <!-- 2. If not loading, check data -->
+    <ng-template #checkData>
+      <div *ngIf="savedQueryList.length === 0; else tableBlock" class="text-center py-4 text-muted">
+        <i class="bi bi-database-x fs-3 d-block mb-2"></i>
+        No Saved Queries Found
+      </div>
+    </ng-template>
+
+    <!-- 3. Actual table -->
+    <ng-template #tableBlock>
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Query Name</th>
+            <th scope="col">Database</th>
+            <th scope="col">Created By</th>
+            <th scope="col">Last Modified</th>
+            <th scope="col" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let query of savedQueryList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }">
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="me-2 fs-5">
+                  <img 
+                  [src]="'assets/images/icons_new/' + query.server_type + '.svg'"
+                  class="card-img w-5 h-5 icon-bounce" />    
+                </div>
+                <div>
+                  <div class="fw-semibold" ngbTooltip="{{query.queryset_name}}" triggers="hover">
+                    {{ query.queryset_name | slice:0:25 }}
+                  </div>
+                  <small class="text-muted">{{ query.database_name }}</small>
+                </div>
+              </div>
+            </td>
+            <td>{{ query.database_name }}</td>
+            <td>{{ query.created_by }}</td>
+            <td>{{ query.modified | date:'dd/MM/yyyy' }}</td>
+            <td class="text-center">
+              <button class="btn btn-primary btn-sm me-1"
+                (click)="gotoSavedQuery(query.hierarchy_id, query.queryset_id, query.is_custom_sql, query?.datasource_filterdata[0]?.datasource_querysetid)">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-danger btn-sm me-1" (click)="deleteSavedQuery(query.queryset_id)">
+                <i class="bi bi-trash"></i>
+              </button>
+             
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-template>
+
+  </div>
+
+
+</div>
+
+    <div *ngIf="!isLoadingSavedQueries && savedQueryList.length > 0" class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2 px-5">
+
+            <!-- Pagination Controls with padding -->
+            <pagination-controls
+              previousLabel="Prev"
+              nextLabel="Next"
+              (pageChange)="pageChangeSavedQueries(page = $event)"
+              class="pagination-custom px-2 py-1">
+            </pagination-controls>
+
+            <!-- Items per page selector -->
+            <div class="d-flex align-items-center gap-2 px-5">
+              <label class="small text-muted mb-0">Items per page:</label>
+              <select [(ngModel)]="itemsPerPage" (ngModelChange)="onPageSizeChange()" 
+                      class="form-select form-select-sm cursor" style="width: auto;">
+                <option value="10">10</option>
+                <option [disabled]="!(totalItems > 10)" value="20">20</option>
+                <option [disabled]="!(totalItems > 20)" value="30">30</option>
+              </select>
+            </div>
+          </div>
+
+
+
+
+<!-- 
+   <div class="row" class="card card-padding-top">
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0">
       <div class="d-flex justify-content-between px-5">
         <div class="connect-txt">
@@ -75,10 +469,8 @@
               <div class="card card-box-shadow ">
                 <div class="card-header tiled-header-bg bg-primary tiled-card-header-padding">
                   <div class="d-sm-flex align-items-center">
-                    <!-- <span class="avatar avatar-xl rounded-circle">
-                        <img src="./assets/images/charts/table-tiled-icon.jpg" alt="" class="rounded-circle"></span> -->
+                    
                       <div class="ms-2 mt-sm-0 mt-2">
-                        <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                           <h6 class="mb-1">
                               <a ngbTooltip="{{data.queryset_name}}" (click)="gotoSavedQuery(data.hierarchy_id,data.queryset_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)"  class="float-start"> {{data.queryset_name | slice:0:15}}</a>
                           </h6>
@@ -157,5 +549,4 @@
            </div>
         </div>
     </div>
-    </div>
-  </div>
+    </div> -->

@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-saved-queries',
@@ -27,6 +28,9 @@ export class SavedQueriesComponent {
   savedQueryList:any[]=[];
   gridView = true;
   viewSavedQueries = false;
+  isLoadingSavedQueries: boolean = false;
+  viewMode: 'cards' | 'table' = 'cards';
+
 constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService, private toasterservice:ToastrService,private loaderService:LoaderService){
   this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
 }
@@ -39,6 +43,7 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
   }
   getSavedQueriesSearch(){
     this.pageNo=1;
+    this.page=1;
     this.getSavedQueries()
   }
    onPageSizeChange() {
@@ -59,14 +64,24 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     if(Obj.search == '' || Obj.search == null){
       delete Obj.search;
     }
-    this.workbechService.getSavedQueryList(Obj).subscribe({
+      let params = new HttpParams()
+        if (this.orderBy) {
+          params = params.set('order_by', this.orderBy);
+        }
+        if (this.order) {
+          params = params.set('order', this.order);
+        }
+    this.isLoadingSavedQueries = true;
+    this.workbechService.getSavedQueryList(Obj,params).subscribe({
       next:(data)=>{
         console.log(data);
         this.savedQueryList = data.sheets;
         this.itemsPerPage = data.items_per_page;
-        this.totalItems = data.total_items
+        this.totalItems = data.total_items;
+        this.isLoadingSavedQueries = false;
        },
       error:(error)=>{
+        this.isLoadingSavedQueries = false;
         console.log(error);
         Swal.fire({
           icon: 'error',
@@ -174,4 +189,27 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
    this.route.navigate(['/analytify/database-connection/sheets/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   }
   }
+
+
+  selectedSortLabel: string | null = null;
+orderBy: string = '';
+order: 'ASC' | 'DESC' = 'ASC';
+
+sortOptions = [
+  { label: 'Name (A–Z)', order_by: 'name', order: 'ASC' },
+  { label: 'Name (Z–A)', order_by: 'name', order: 'DESC' },
+  { label: 'Created Date (ASC)', order_by: 'created_at', order: 'ASC' },
+  { label: 'Created Date (DESC)', order_by: 'created_at', order: 'DESC' },
+  { label: 'Updated Date (ASC)', order_by: 'updated_at', order: 'ASC' },
+  { label: 'Updated Date (DESC)', order_by: 'updated_at', order: 'DESC' }
+];
+
+onSortChange(option: { label: string; order_by: string; order: any }) {
+  this.orderBy = option.order_by;
+  this.order = option.order;
+  this.selectedSortLabel = option.label;
+  this.pageNo=1;
+  this.page=1;
+  this.getSavedQueries();
+}
 }
