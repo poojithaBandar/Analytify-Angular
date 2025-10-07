@@ -1236,7 +1236,7 @@
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="setDrillThrough('',item)"><i
                       class="fa fa-undo "></i> </button>
                   }
-                  @if(item['type'] !== 'image'){
+                  @if(item['type'] !== 'image' && !(item['chartType'] === 'KPI' && item['chartId'] === 25)){
                   <div style="width: 100%;"
                     [innerHtml]="sheetTagTitle[item.data?.title]?sheetTagTitle[item.data?.title]:item.data?.sheetTagName"></div>
                   }
@@ -1325,6 +1325,12 @@
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Remove Image'" [previledgeId]="37" [isBtn]="false"
                           (btnClickEvent)="removeKpiImage(item)" [isIcon]="false"></app-insights-button>
+                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit Layout'" [previledgeId]="37" [isBtn]="false"
+                          (btnClickEvent)="openLayoutModal(layoutModal, item)" [isIcon]="false"></app-insights-button>
+                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit Title'" [previledgeId]="37" [isBtn]="false"
+                          (btnClickEvent)="openTitleModal(titleModal, item)" [isIcon]="false"></app-insights-button>
                           <app-insights-button 
                             *ngIf="!isPublicUrl && item['type'] === 'text' && !item['textImage']" 
                             [classesList]="'dropdown-item'" 
@@ -1621,36 +1627,47 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                  <div (click)="setDrillThrough('',item,true)" class="big-number-container" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                  <div (click)="setDrillThrough('',item,true)" class="big-number-container position-relative" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                    <div *ngIf="item['type'] !== 'image'"
+                      class="position-absolute"
+                      [ngStyle]="getPositionStyles(item['kpiData']?.kpiTitlePosition, 'top-left')"
+                      style="width: max-content; max-width: 90%;">
+                      <div [innerHtml]="sheetTagTitle[item.data?.title] ? sheetTagTitle[item.data?.title] : item.data?.sheetTagName"></div>
+                    </div>
+                    <div class="position-absolute"
+                      [ngStyle]="getPositionStyles(item['kpiData']?.kpiNumberPosition, 'middle-center')">
+                      <h1 *ngIf="item['kpiData']?.kpiNumber !== undefined" class="big-number" [style.font-size]="item['kpiData']?.fontSize + 'rem'"
+                        [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
+                    </div>
                     @for(row of item['kpiData'].rows;track row){
-                    <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'"
-                      [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
-                       <div *ngIf="item['kpiData']?.showKpiIndicator" class="text-center text-muted" [style.color]="item['kpiData']?.color" style="font-size: 13px;">
-                              Target: {{ item['kpiData']?.kpiTarget }}
+                    <ng-container *ngIf="row?.result_data">
+                      <div *ngIf="item['kpiData']?.showKpiIndicator" class="text-center text-muted" [style.color]="item['kpiData']?.color" style="font-size: 13px;">
+                        Target: {{ item['kpiData']?.kpiTarget }}
+                      </div>
+                      <apx-chart *ngIf="item['kpiData']?.trendData && item['kpiData']?.kpiShowTrendline "
+                          [series]="[{ name: 'KPI Trend',data:item['kpiData']?.trendData  }]"
+                          [chart]="{ type: 'line', height: 50, sparkline: { enabled: true } }"
+                          [stroke]="{ curve: 'smooth', width: 2 }"
+                          [colors]="[item['kpiData']?.kpiChartColor]"
+                          [tooltip]="{ enabled: true }"
+                          [xaxis]="{ categories: item['kpiData']?.trendLabels}"
+                          style="margin-top: 5px;">
+                        </apx-chart>
+                        <div *ngIf="item['kpiData']?.showKpiIndicator"
+                            class="d-flex justify-content-around mt-2 flex-wrap text-center"
+                            style="font-size: 12px;">
+                          <span [ngStyle]="{
+                                  color: item['kpiData']?.indicatorIsIncreased === 'up' ? 'green' : 'red',
+                                  fontWeight: 'bold'
+                                }">
+                            <i class="bi"
+                              [ngClass]="item['kpiData']?.indicatorIsIncreased === 'up'
+                                              ? 'bi-arrow-up'
+                                              : 'bi-arrow-down'"></i>
+                            {{ item['kpiData']?.indicatorValue }}% {{ item['kpiData']?.indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
+                          </span>
                         </div>
-                        <apx-chart *ngIf="item['kpiData']?.trendData && item['kpiData']?.kpiShowTrendline "
-                            [series]="[{ name: 'KPI Trend',data:item['kpiData']?.trendData  }]"
-                            [chart]="{ type: 'line', height: 50, sparkline: { enabled: true } }"
-                            [stroke]="{ curve: 'smooth', width: 2 }"
-                            [colors]="[item['kpiData']?.kpiChartColor]"
-                            [tooltip]="{ enabled: true }"
-                            [xaxis]="{ categories: item['kpiData']?.trendLabels}"
-                            style="margin-top: 5px;">
-                          </apx-chart>
-                            <div *ngIf="item['kpiData']?.showKpiIndicator"
-                                class="d-flex justify-content-around mt-2 flex-wrap text-center"
-                                style="font-size: 12px;">
-                              <span [ngStyle]="{
-                                      color: item['kpiData']?.indicatorIsIncreased === 'up' ? 'green' : 'red',
-                                      fontWeight: 'bold'
-                                    }">
-                                <i class="bi"
-                                  [ngClass]="item['kpiData']?.indicatorIsIncreased === 'up'
-                                                ? 'bi-arrow-up'
-                                                : 'bi-arrow-down'"></i>
-                                {{ item['kpiData']?.indicatorValue }}% {{ item['kpiData']?.indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
-                              </span>
-                            </div>
+                    </ng-container>
                     }
                     <i [class]="item['kpiIconsArray']?.kpiIcon" [style.font-size]="item['kpiIconsArray']?.kpiIconSize + 'px'"
                       [style.color]="item['kpiIconsArray']?.kpiIconColor"
@@ -1903,6 +1920,12 @@
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Remove Image'" [previledgeId]="37" [isBtn]="false"
                           (btnClickEvent)="removeKpiImage(item)" [isIcon]="false"></app-insights-button>
+                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit Layout'" [previledgeId]="37" [isBtn]="false"
+                          (btnClickEvent)="openLayoutModal(layoutModal, item)" [isIcon]="false"></app-insights-button>
+                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit Title'" [previledgeId]="37" [isBtn]="false"
+                          (btnClickEvent)="openTitleModal(titleModal, item)" [isIcon]="false"></app-insights-button>
                         <input type="file" #ImageUploadKPI (change)="imageFileSelectEvent($event)" accept="image/*"
                           style="display: none;" />
                       </div>
@@ -2156,41 +2179,52 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                  <div (click)="setDrillThrough('',item,true)" class="big-number-container" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                  <div (click)="setDrillThrough('',item,true)" class="big-number-container position-relative" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                    <div *ngIf="item['type'] !== 'image'"
+                      class="position-absolute"
+                      [ngStyle]="getPositionStyles(item['kpiData']?.kpiTitlePosition, 'top-left')"
+                      style="width: max-content; max-width: 90%;">
+                      <div [innerHtml]="sheetTagTitle[item.data?.title] ? sheetTagTitle[item.data?.title] : item.data?.sheetTagName"></div>
+                    </div>
+                    <div class="position-absolute"
+                      [ngStyle]="getPositionStyles(item['kpiData']?.kpiNumberPosition, 'middle-center')">
+                      <h1 *ngIf="item['kpiData']?.kpiNumber !== undefined" class="big-number" [style.font-size]="item['kpiData']?.fontSize + 'rem'"
+                        [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
+                    </div>
                     @for(row of item['kpiData'].rows;track row){
-                    <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'"
-                      [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
-                       <div *ngIf="item['kpiData']?.showKpiIndicator" class="text-center text-muted" [style.color]="item['kpiData']?.color" style="font-size: 13px;">
-                              Target: {{ item['kpiData']?.kpiTarget }}
+                    <ng-container *ngIf="row?.result_data">
+                      <div *ngIf="item['kpiData']?.showKpiIndicator" class="text-center text-muted" [style.color]="item['kpiData']?.color" style="font-size: 13px;">
+                        Target: {{ item['kpiData']?.kpiTarget }}
+                      </div>
+                      <apx-chart *ngIf="item['kpiData']?.trendData && item['kpiData']?.kpiShowTrendline "
+                          [series]="[{ name: 'KPI Trend',data:item['kpiData']?.trendData  }]"
+                          [chart]="{ type: 'line', height: 50, sparkline: { enabled: true } }"
+                          [stroke]="{ curve: 'smooth', width: 2 }"
+                          [colors]="[item['kpiData']?.kpiChartColor]"
+                          [tooltip]="{ enabled: true }"
+                          [xaxis]="{ categories: item['kpiData']?.trendLabels}"
+                          style="margin-top: 5px;">
+                        </apx-chart>
+                        <div *ngIf="item['kpiData']?.showKpiIndicator"
+                            class="d-flex justify-content-around mt-2 flex-wrap text-center"
+                            style="font-size: 12px;">
+                          <span [ngStyle]="{
+                                  color: item['kpiData']?.indicatorIsIncreased === 'up' ? 'green' : 'red',
+                                  fontWeight: 'bold'
+                                }">
+                            <i class="bi"
+                              [ngClass]="item['kpiData']?.indicatorIsIncreased === 'up'
+                                              ? 'bi-arrow-up'
+                                              : 'bi-arrow-down'"></i>
+                            {{ item['kpiData']?.indicatorValue }}% {{ item['kpiData']?.indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
+                          </span>
                         </div>
-                        <apx-chart *ngIf="item['kpiData']?.trendData && item['kpiData']?.kpiShowTrendline "
-                            [series]="[{ name: 'KPI Trend',data:item['kpiData']?.trendData  }]"
-                            [chart]="{ type: 'line', height: 50, sparkline: { enabled: true } }"
-                            [stroke]="{ curve: 'smooth', width: 2 }"
-                            [colors]="[item['kpiData']?.kpiChartColor]"
-                            [tooltip]="{ enabled: true }"
-                            [xaxis]="{ categories: item['kpiData']?.trendLabels}"
-                            style="margin-top: 5px;">
-                          </apx-chart>
-                            <div *ngIf="item['kpiData']?.showKpiIndicator"
-                                class="d-flex justify-content-around mt-2 flex-wrap text-center"
-                                style="font-size: 12px;">
-                              <span [ngStyle]="{
-                                      color: item['kpiData']?.indicatorIsIncreased === 'up' ? 'green' : 'red',
-                                      fontWeight: 'bold'
-                                    }">
-                                <i class="bi"
-                                  [ngClass]="item['kpiData']?.indicatorIsIncreased === 'up'
-                                                ? 'bi-arrow-up'
-                                                : 'bi-arrow-down'"></i>
-                                {{ item['kpiData']?.indicatorValue }}% {{ item['kpiData']?.indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
-                              </span>
-                            </div>
+                    </ng-container>
                     }
                     <i [class]="item['kpiIconsArray']?.kpiIcon" [style.font-size]="item['kpiIconsArray']?.kpiIconSize + 'px'"
                       [style.color]="item['kpiIconsArray']?.kpiIconColor"
                       [ngStyle]="getIconPositionStyles(item['kpiIconsArray']?.kpiIconPosition)" style="position: absolute;"></i>
-                  </div>
+                </div>
                   }
                   <!-- <div *ngIf="item['chartType'] === 'Table'"> -->
                     <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
@@ -2324,6 +2358,39 @@
 
 
 
+
+  <ng-template #layoutModal let-modal>
+    <ng-container *ngTemplateOutlet="positionModalContent; context: { modal: modal }"></ng-container>
+  </ng-template>
+
+  <ng-template #titleModal let-modal>
+    <ng-container *ngTemplateOutlet="positionModalContent; context: { modal: modal }"></ng-container>
+  </ng-template>
+
+  <ng-template #positionModalContent let-modal="modal">
+    <div class="modal-header">
+      <h6 class="modal-title">{{ positionModalTitle }}</h6>
+      <button type="button" class="btn-close" aria-label="Close"
+        (click)="modal.dismiss('close'); resetPositionState()"></button>
+    </div>
+    <div class="modal-body">
+      <p class="text-muted small mb-3">{{ positionModalDescription }}</p>
+      <div *ngFor="let row of kpiPositionMatrix" class="d-flex justify-content-center mb-2">
+        <button type="button" class="btn m-1"
+          [ngClass]="selectedPosition === pos ? 'btn-primary' : 'btn-outline-secondary'"
+          (click)="selectKpiPosition(pos)"
+          *ngFor="let pos of row">
+          {{ pos.replace('-', ' ') | titlecase }}
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary"
+        (click)="modal.dismiss('close'); resetPositionState()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="confirmPositionSelection(modal)"
+        [disabled]="!selectedPosition">Save</button>
+    </div>
+  </ng-template>
 
   <ng-template #iconModal let-modal>
     <div class="modal-header">

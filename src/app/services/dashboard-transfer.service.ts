@@ -6,6 +6,18 @@ import { SheetsComponent } from '../components/workbench/sheets/sheets.component
 import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboard/sheetsdashboard.component';
 import { WorkbenchService } from '../components/workbench/workbench.service';
 
+const KPI_POSITION_VALUES = [
+  'top-left',
+  'top-center',
+  'top-right',
+  'middle-left',
+  'middle-center',
+  'middle-right',
+  'bottom-left',
+  'bottom-center',
+  'bottom-right'
+];
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,6 +28,30 @@ export class DashboardTransferService {
   dashboardInstance! : SheetsdashboardComponent;
 
   constructor(private workbechService: WorkbenchService, private toasterservice: ToastrService) { }
+
+  private ensureKpiPositionDefaults(item: any): void {
+    if (!item || !item.kpiData) {
+      return;
+    }
+    item.kpiData.kpiNumberPosition = this.normalizePosition(item.kpiData.kpiNumberPosition, 'middle-center');
+    item.kpiData.kpiTitlePosition = this.normalizePosition(item.kpiData.kpiTitlePosition, 'top-left');
+  }
+
+  private normalizePosition(position?: string | null, fallback: string = 'middle-center'): string {
+    if (!position) {
+      return fallback;
+    }
+    const normalizedMap: Record<string, string> = {
+      'top-middle': 'top-center',
+      'left-middle': 'middle-left',
+      'center': 'middle-center',
+      'right-middle': 'middle-right',
+      'bottom-middle': 'bottom-center'
+    };
+    const lower = (position || '').toLowerCase();
+    const candidate = normalizedMap[lower] || lower;
+    return KPI_POSITION_VALUES.includes(candidate) ? candidate : fallback;
+  }
 
     buildDashboardTransfer(container: ViewContainerRef,responesData : any){
     const componentRef =container.createComponent(SheetsComponent);
@@ -463,6 +499,7 @@ export class DashboardTransferService {
       dashboard.dashboard_data.forEach((dashboardItem:any) => {
         if (dashboardItem.sheetId === sheetId) {
           if(dashboardItem.chartId == 25 || sheet.chart_id == 25){
+            this.ensureKpiPositionDefaults(dashboardItem);
             dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
             dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
           } else if(dashboardItem.chartId == 1 || sheet.chart_id == 1){
@@ -488,6 +525,7 @@ export class DashboardTransferService {
           tabData.dashboard?.forEach((dashboardItem: any) => {
             if (dashboardItem.sheetId === sheetId) {
               if (dashboardItem.chartId == 25 || sheet.chart_id == 25) {
+                this.ensureKpiPositionDefaults(dashboardItem);
                 dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
                 dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
               } else if (dashboardItem.chartId == 1 || sheet.chart_id == 1) {
