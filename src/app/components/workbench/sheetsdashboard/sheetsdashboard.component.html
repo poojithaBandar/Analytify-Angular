@@ -1224,7 +1224,7 @@
                             accept="image/*">
                   </div>
                 </div>
-                 <div class="card-header d-flex justify-content-between p-1" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
+                 <div class="d-flex justify-content-between p-1" [ngClass]="{ 'card-header': !(item['chartId'] === 25)}" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
                   @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18 || item['chartId'] === 20 || item['chartId'] === 28) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
@@ -1326,10 +1326,10 @@
                           [classesList]="'dropdown-item'" [buttonName]="'Remove Image'" [previledgeId]="37" [isBtn]="false"
                           (btnClickEvent)="removeKpiImage(item)" [isIcon]="false"></app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Layout'" [previledgeId]="37" [isBtn]="false"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit Number Layout'" [previledgeId]="37" [isBtn]="false"
                           (btnClickEvent)="openLayoutModal(layoutModal, item)" [isIcon]="false"></app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Title'" [previledgeId]="37" [isBtn]="false"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit Title Layout'" [previledgeId]="37" [isBtn]="false"
                           (btnClickEvent)="openTitleModal(titleModal, item)" [isIcon]="false"></app-insights-button>
                           <app-insights-button 
                             *ngIf="!isPublicUrl && item['type'] === 'text' && !item['textImage']" 
@@ -1627,7 +1627,7 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                  <div (click)="setDrillThrough('',item,true)" class="big-number-container position-relative" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                  <div (click)="setDrillThrough('',item,true)" class="big-number-container" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                     <div *ngIf="item['type'] !== 'image'"
                       class="position-absolute"
                       [ngStyle]="getPositionStyles(item['kpiData']?.kpiTitlePosition, 'top-left')"
@@ -1851,7 +1851,7 @@
                           : ''" [style.background-position]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
                           ? 'center' 
                           : ''">
-                <div class="card-header d-flex justify-content-between p-1">
+                <div class=" d-flex justify-content-between p-1" [ngClass]="{ 'card-header': !(item['chartId'] === 25)}">
                   @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18 || item['chartId'] === 20 || item['chartId'] === 28) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
@@ -1863,7 +1863,7 @@
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="setDrillThrough('',item)"><i
                       class="fa fa-undo "></i> </button>
                   }
-                  @if(item['type'] !== 'image'){
+                  @if(item['type'] !== 'image' && !(item['chartType'] === 'KPI' && item['chartId'] === 25)){
                   <div style="width: 100%;"
                     [innerHtml]="sheetTagTitle[item.data?.title]?sheetTagTitle[item.data?.title]:item.data?.sheetTagName"></div>
                   }
@@ -1921,10 +1921,10 @@
                           [classesList]="'dropdown-item'" [buttonName]="'Remove Image'" [previledgeId]="37" [isBtn]="false"
                           (btnClickEvent)="removeKpiImage(item)" [isIcon]="false"></app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Layout'" [previledgeId]="37" [isBtn]="false"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit Number Layout'" [previledgeId]="37" [isBtn]="false"
                           (btnClickEvent)="openLayoutModal(layoutModal, item)" [isIcon]="false"></app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Title'" [previledgeId]="37" [isBtn]="false"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit Title Layout'" [previledgeId]="37" [isBtn]="false"
                           (btnClickEvent)="openTitleModal(titleModal, item)" [isIcon]="false"></app-insights-button>
                         <input type="file" #ImageUploadKPI (change)="imageFileSelectEvent($event)" accept="image/*"
                           style="display: none;" />
@@ -2179,7 +2179,7 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                  <div (click)="setDrillThrough('',item,true)" class="big-number-container position-relative" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                  <div (click)="setDrillThrough('',item,true)" class="big-number-container" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                     <div *ngIf="item['type'] !== 'image'"
                       class="position-absolute"
                       [ngStyle]="getPositionStyles(item['kpiData']?.kpiTitlePosition, 'top-left')"
