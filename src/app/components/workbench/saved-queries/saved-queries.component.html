@@ -331,7 +331,7 @@
         <tbody>
           <tr
             *ngFor="let query of savedQueryList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }">
-            <td>
+            <td  (click)="gotoSavedQuery(query.hierarchy_id, query.queryset_id, query.is_custom_sql, query?.datasource_filterdata[0]?.datasource_querysetid)">
               <div class="d-flex align-items-center">
                 <div class="me-2 fs-5">
                   <img 
