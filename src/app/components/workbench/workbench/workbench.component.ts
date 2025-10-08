@@ -4312,10 +4312,10 @@ skeletons = Array(6); // show 3 skeleton cards while loading
 
  categories:any[]  = [
   // { name: 'All sources', icon: '', description: 'Browse all connection types',count:'33' },
-    { name: 'Relational Database', image: './assets/images/icons_new/Rational.svg', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
+    { name: 'Relational Database', image: './assets/images/icons/Rational.svg', description: 'Traditional SQL databases like MySQL, PostgreSQL',count:'5' },
     { name: 'LLM Integrations', icon: '🤖', description: 'AI & Large Language Model integrations',count:'6' },
-    { name: 'Multi-dimensional Database', image: './assets/images/icons_new/Multi dimensional.svg', description: 'OLAP & analytical data stores',count:'2' },
-    { name: 'NoSQL Database', image: './assets/images/icons_new/NoSQl.svg', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
+    { name: 'Multi-dimensional Database', image: './assets/images/icons/Multi dimensional.svg', description: 'OLAP & analytical data stores',count:'2' },
+    { name: 'NoSQL Database', image: './assets/images/icons/NoSQl.svg', description: 'Document, Key-Value, Graph & Wide-column databases',count:'3' },
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
     { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
@@ -4324,7 +4324,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: "MySQL", image:'./assets/images/icons_new/MYSQL.svg', description: "Relational database" },
     { name: "ORACLE", image: './assets/images/icons_new/ORACLE.svg', description: "Enterprise relational database" },
     { name: "PostgreSQL", image: './assets/images/icons_new/POSTGRESQL.svg', description: "Advanced open-source relational database" },
-    { name: "Microsoft SQL SERVER", image: './assets/images_new/icons/MICROSOFTSQLSERVER.svg', description: "Microsoft relational database" },
+    { name: "Microsoft SQL SERVER", image: './assets/images/icons_new/MICROSOFTSQLSERVER.svg', description: "Microsoft relational database" },
     { name: "Snow Flake", image: './assets/images/icons_new/SNOWFLAKE.svg', description: "Cloud data warehouse" }
   ],
   "LLM Integrations": [
