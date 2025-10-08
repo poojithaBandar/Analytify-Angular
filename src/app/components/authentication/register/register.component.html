@@ -17,7 +17,7 @@
                                         <h4 class="mb-1 fw-600 signin-text">Create an Account </h4>
                                         <p class="fs-16">Sign up to your account to continue.</p>
                                     </div>
-                                    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+                                    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" autocomplete="off" novalidate>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="mb-3">
@@ -103,7 +103,7 @@
                                             <div class="mb-3">
                                                 <label class="mb-2 fw-600">Confirm Password<span class="text-danger ms-1">*</span></label>
                                                 <div class="input-group has-validation">
-                                                    <input type="password" class="form-control ms-0 border" placeholder="Confirm your Password" name="confirmPasswordField"  (paste)="onPaste($event)" formControlName="conformpassword" autocomplete="new-1234e4dq" id="signup-confirmpassword"
+                                                    <input type="password" class="form-control ms-0 border" placeholder="Confirm your Password" name="confirmPasswordField"  (paste)="onPaste($event)" formControlName="conformpassword" autocomplete="off" id="signup-confirmpassword"
                                                     [type]="showPassword1 ? 'text' : 'password'" >
                                                         <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
                                                 </div>

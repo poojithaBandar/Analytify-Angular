@@ -10,7 +10,7 @@
             <h4 class="mb-1">Protected Access</h4>
             <p>Enter email to receive OTP.</p>
           </div>
-          <form [formGroup]="emailForm" (ngSubmit)="sendRecoveryEmail()" *ngIf="!showOtp">
+          <form [formGroup]="emailForm" (ngSubmit)="sendRecoveryEmail()" *ngIf="!showOtp" autocomplete="off" novalidate>
             <div class="mb-3">
               <label class="mb-2 fw-500">Email<span class="text-danger ms-1">*</span></label>
               <input class="form-control ms-0" type="email" formControlName="email" placeholder="Enter your email">
@@ -28,7 +28,7 @@
             <div class="text-danger mt-2" *ngIf="errorMessage">{{ errorMessage }}</div>
 
           </form>
-          <form [formGroup]="otpForm" (ngSubmit)="verifyOtp()" *ngIf="showOtp">
+          <form [formGroup]="otpForm" (ngSubmit)="verifyOtp()" *ngIf="showOtp" autocomplete="off" novalidate>
             <div class="mb-3">
               <label class="mb-2 fw-500">OTP<span class="text-danger ms-1">*</span></label>
               <ng-otp-input [config]="config" (onInputChange)="onOtpChange($event)"></ng-otp-input>
