@@ -3326,6 +3326,7 @@ connectGoogleSheets(){
                         if(this.callAllConnectionsExistingList){
                           this.connectionListWithOutPagination();
                         }
+                        this.getConnectedServers();
                       },
                       error:(error:any)=>{
                         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
