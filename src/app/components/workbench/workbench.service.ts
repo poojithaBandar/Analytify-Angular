@@ -604,10 +604,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/delete_condition/`+this.accessToken,obj);
   }
-  getSavedQueryList(obj:any){
+  getSavedQueryList(obj:any,params?:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.put<any>(`${environment.apiUrl}/savedqueries/`+this.accessToken,obj);
+    return this.http.put<any>(`${environment.apiUrl}/savedqueries/`+this.accessToken,obj,{ params: params });
   }
   //jhansi
   getSheetNames(obj:any){
