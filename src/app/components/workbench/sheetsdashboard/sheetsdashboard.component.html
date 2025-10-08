@@ -1557,35 +1557,39 @@
                         [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                     </div>
                     <div class="position-absolute"
-                      [ngStyle]="getPositionStyles(item['kpiData']?.kpiNumberPosition, 'middle-center')">
+                    [ngStyle]="getTrendlinePositionStyles(item['kpiData']?.kpiTrendlinePosition)">
                     @for(row of item['kpiData'].rows;track row){
                     <ng-container *ngIf="row?.result_data">
-                      <div *ngIf="item['kpiData']?.showKpiIndicator" class="text-center text-muted" [style.color]="item['kpiData']?.color" style="font-size: 13px;">
-                        Target: {{ item['kpiData']?.kpiTarget }}
-                      </div>
-                      <apx-chart *ngIf="item['kpiData']?.trendData && item['kpiData']?.kpiShowTrendline "
-                          [series]="[{ name: 'KPI Trend',data:item['kpiData']?.trendData  }]"
-                          [chart]="{ type: 'line', height: 50, sparkline: { enabled: true } }"
-                          [stroke]="{ curve: 'smooth', width: 2 }"
-                          [colors]="[item['kpiData']?.kpiChartColor]"
-                          [tooltip]="{ enabled: true }"
-                          [xaxis]="{ categories: item['kpiData']?.trendLabels}"
-                          style="margin-top: 5px;">
-                        </apx-chart>
-                        <div *ngIf="item['kpiData']?.showKpiIndicator"
-                            class="d-flex justify-content-around mt-2 flex-wrap text-center"
-                            style="font-size: 12px;">
-                          <span [ngStyle]="{
-                                  color: item['kpiData']?.indicatorIsIncreased === 'up' ? 'green' : 'red',
-                                  fontWeight: 'bold'
-                                }">
-                            <i class="bi"
-                              [ngClass]="item['kpiData']?.indicatorIsIncreased === 'up'
-                                              ? 'bi-arrow-up'
-                                              : 'bi-arrow-down'"></i>
-                            {{ item['kpiData']?.indicatorValue }}% {{ item['kpiData']?.indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
-                          </span>
+                      <div class="trendline-block"
+                       >
+                        <div *ngIf="item['kpiData']?.showKpiIndicator" class="text-center text-muted"
+                          [style.color]="item['kpiData']?.color" style="font-size: 13px;">
+                          Target: {{ item['kpiData']?.kpiTarget }}
                         </div>
+                        <apx-chart *ngIf="item['kpiData']?.trendData && item['kpiData']?.kpiShowTrendline "
+                            [series]="[{ name: 'KPI Trend',data:item['kpiData']?.trendData  }]"
+                            [chart]="{ type: 'line', height: 50, sparkline: { enabled: true } }"
+                            [stroke]="{ curve: 'smooth', width: 2 }"
+                            [colors]="[item['kpiData']?.kpiChartColor]"
+                            [tooltip]="{ enabled: true }"
+                            [xaxis]="{ categories: item['kpiData']?.trendLabels}"
+                            style="margin-top: 5px;">
+                          </apx-chart>
+                          <div *ngIf="item['kpiData']?.showKpiIndicator"
+                              class="d-flex justify-content-around mt-2 flex-wrap text-center"
+                              style="font-size: 12px;">
+                            <span [ngStyle]="{
+                                    color: item['kpiData']?.indicatorIsIncreased === 'up' ? 'green' : 'red',
+                                    fontWeight: 'bold'
+                                  }">
+                              <i class="bi"
+                                [ngClass]="item['kpiData']?.indicatorIsIncreased === 'up'
+                                                ? 'bi-arrow-up'
+                                                : 'bi-arrow-down'"></i>
+                              {{ item['kpiData']?.indicatorValue }}% {{ item['kpiData']?.indicatorIsIncreased === 'up' ? 'above target' : 'below target' }}
+                            </span>
+                          </div>
+                      </div>
                     </ng-container>
                     }
                     </div>
@@ -2291,6 +2295,9 @@
     <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
       [classesList]="'dropdown-item'" [buttonName]="'Edit Number Layout'" [previledgeId]="37" [isBtn]="false"
       (btnClickEvent)="openLayoutModal(layoutModal, item)" [isIcon]="false"></app-insights-button>
+      <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
+                          [classesList]="'dropdown-item'" [buttonName]="'Edit TrendLine Layout'" [previledgeId]="37" [isBtn]="false"
+                          (btnClickEvent)="openTrendlineModal(trendlineModal, item)" [isIcon]="false"></app-insights-button>
     <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
       [classesList]="'dropdown-item'" [buttonName]="'Edit Title Layout'" [previledgeId]="37" [isBtn]="false"
       (btnClickEvent)="openTitleModal(titleModal, item)" [isIcon]="false"></app-insights-button>
@@ -2339,6 +2346,10 @@
     <ng-container *ngTemplateOutlet="positionModalContent; context: { modal: modal }"></ng-container>
   </ng-template>
 
+  <ng-template #trendlineModal let-modal>
+    <ng-container *ngTemplateOutlet="positionModalContent; context: { modal: modal }"></ng-container>
+  </ng-template>
+
   <ng-template #positionModalContent let-modal="modal">
     <div class="modal-header">
       <h6 class="modal-title">{{ positionModalTitle }}</h6>
@@ -2347,14 +2358,26 @@
     </div>
     <div class="modal-body">
       <p class="text-muted small mb-3">{{ positionModalDescription }}</p>
-      <div *ngFor="let row of kpiPositionMatrix" class="d-flex justify-content-center mb-2">
-        <button type="button" class="btn m-1"
-          [ngClass]="selectedPosition === pos ? 'btn-primary' : 'btn-outline-secondary'"
-          (click)="selectKpiPosition(pos)"
-          *ngFor="let pos of row">
-          {{ pos.replace('-', ' ') | titlecase }}
-        </button>
-      </div>
+      <ng-container *ngIf="positionTarget === 'trendline'; else positionGrid">
+        <div class="d-flex justify-content-center flex-wrap">
+          <button type="button" class="btn m-1"
+            *ngFor="let pos of trendlinePositionOptions"
+            [ngClass]="selectedPosition === pos ? 'btn-primary' : 'btn-outline-secondary'"
+            (click)="selectKpiPosition(pos)">
+            {{ pos | titlecase }}
+          </button>
+        </div>
+      </ng-container>
+      <ng-template #positionGrid>
+        <div *ngFor="let row of kpiPositionMatrix" class="d-flex justify-content-center mb-2">
+          <button type="button" class="btn m-1"
+            [ngClass]="selectedPosition === pos ? 'btn-primary' : 'btn-outline-secondary'"
+            (click)="selectKpiPosition(pos)"
+            *ngFor="let pos of row">
+            {{ pos.replace('-', ' ') | titlecase }}
+          </button>
+        </div>
+      </ng-template>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline-secondary"
