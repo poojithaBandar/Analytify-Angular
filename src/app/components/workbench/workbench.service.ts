@@ -303,6 +303,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/connection_list/`+this.accessToken,obj,{ params: params });
   }
+  getConnectedServers(){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/user_connection_list/`+this.accessToken)
+  }
   getTablesFromConnectedDb(id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];

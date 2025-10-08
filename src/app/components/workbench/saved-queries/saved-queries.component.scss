@@ -175,3 +175,48 @@ a.float-start { font-size: 13px;}
   0% { background-position: -200px 0; }
   100% { background-position: calc(200px + 100%) 0; }
 }
+/* Smooth transitions */
+.hover-animate {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Slight lift on hover */
+.hover-animate:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Animate the icon inside */
+.hover-animate:hover i {
+  animation: iconPulse 0.6s ease-in-out;
+  color: #fff;
+}
+
+/* Define subtle pulse animation */
+@keyframes iconPulse {
+  0% { transform: scale(1) rotate(0deg); }
+  30% { transform: scale(1.2) rotate(10deg); }
+  60% { transform: scale(1.1) rotate(-10deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* Optional: give each card type a custom hover glow */
+.connections-card:hover .avatar {
+  background-color: #0d6efd; /* Blue tone */
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.7);
+}
+
+.datasets-card:hover .avatar {
+  background-color: #198754; /* Green tone */
+  box-shadow: 0 0 10px rgba(25, 135, 84, 0.7);
+}
+
+.sync-card:hover .avatar {
+  background-color: #ffc107; /* Yellow tone */
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.7);
+}
+
+.bell-card:hover .avatar {
+  background-color: #dc3545; /* Red tone */
+  box-shadow: 0 0 10px rgba(220, 53, 69, 0.7);
+}

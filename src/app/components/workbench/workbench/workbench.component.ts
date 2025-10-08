@@ -262,7 +262,7 @@ export class WorkbenchComponent implements OnInit{
   callAllConnectionsExistingList: boolean = false;
   isLoadingConnectionsList: boolean = false;
   private notificationSub?: Subscription;
-
+  connectedServers: any[] = [];
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private bambooHRService: BambooHRIntegrationService,private cd:ChangeDetectorRef,private templateDashboardService: TemplateDashboardService,private toasterService:ToastrService,private sanitizer: DomSanitizer,
     private notificationService: NotificationService){
@@ -3535,9 +3535,20 @@ connectGoogleSheets(){
     // this.getDbConnectionList();
     this.errorCheck();
     this.categorySelect('All');
-    this.buildSubCategories();
+    this.getConnectedServers();
   }
-
+  getConnectedServers(){
+    this.workbechService.getConnectedServers().subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.connectedServers = data.servers;
+        this.buildSubCategories();
+       },
+      error:(error)=>{
+        console.log(error);
+      }
+    })
+  }
   ngOnDestroy() { 
     this.notificationSub?.unsubscribe(); 
   }
@@ -4663,18 +4674,31 @@ buildSubCategories() {
     "Immybot": "immybot"
   };
 
-  // build categories
-  this.subCategories = categories.map(cat => ({
+   // ✅ servers you get from API
+  const availableServers = this.connectedServers || []; // e.g. ["GOOGLE_ANALYTICS", "POSTGRESQL"]
+
+  // Convert all to lowercase for consistent comparison
+  const normalizedAvailable = availableServers.map(s => s.toLowerCase());
+
+  // ✅ Filter categories based on availability
+  const filteredCategories = categories.filter(cat => {
+    const apiValue = apiNameMap[cat.name]?.toLowerCase() 
+      || cat.name.toLowerCase().replace(/\s+/g, '_');
+    return normalizedAvailable.includes(apiValue);
+  });
+
+  // ✅ Build subCategories
+  this.subCategories = filteredCategories.map(cat => ({
     name: cat.name,
     value: apiNameMap[cat.name] || cat.name.toLowerCase().replace(/\s+/g, '_'),
     svg: cat.svg ? this.sanitizer.bypassSecurityTrustHtml(cat.svg) : null,
     image: !cat.svg ? cat.image : null
   }));
 
-  // ✅ Add "All" manually at the top
+  // ✅ Add "All" at the top
   this.subCategories.unshift({
     name: "All",
-    value: "all",   // what you’ll send to API
+    value: "all",
     svg: null,
     image: null
   });
