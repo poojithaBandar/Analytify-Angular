@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef,SecurityContext, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -990,7 +990,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     })
   }
   sheetTagTitle : any={};
-  dashboardTagTitle : any;
+  dashboardTagTitle = '';
   getSavedDashboardData(){
     const obj ={ 
       queryset_id:this.qrySetId,
@@ -1067,7 +1067,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         else{
           this.dashboardTagName = data.dashboard_tag_name;
         }
-        this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+        this.dashboardTagTitle = this.sanitizeHtmlValue(this.dashboardTagName);
         this.dynamicOptionsUpdateinDashboard(this.dashboard, false, false);
         if(this.displayTabs){
           this.sheetTabs.forEach(tabsData => {
@@ -1090,7 +1090,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     dashboard.forEach((sheet : any)=>{
       // console.log('Before sanitization:', sheet.data?.sheetTagName);
       if(sheet.data?.sheetTagName){
-        this.sheetTagTitle[sheet.data?.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
+        this.sheetTagTitle[sheet.data?.title] = this.sanitizeHtmlValue(sheet.data?.sheetTagName);
       }
       if(sheet.chartId == 21 && sheet.echartOptions?.series?.[0]?.data){
         sheet.wordcloudData = _.cloneDeep(sheet.echartOptions.series[0].data);
@@ -1544,7 +1544,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         const data = await this.workbechService.saveDashboard(obj).toPromise();
         console.log(data);
         this.dashboardId = data.dashboard_id;
-        this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+        this.dashboardTagTitle = this.sanitizeHtmlValue(this.dashboardTagName);
         this.updateDashbpardBoolen = true;
   
         // Call saveDashboardimage after the dashboard is saved
@@ -2672,7 +2672,7 @@ allowDrop(ev : any): void {
       dashboardData.forEach((sheet: any) => {
         // console.log('Before sanitization:', sheet.data.sheetTagName);
         if(sheet.data?.sheetTagName){
-        this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+        this.sheetTagTitle[sheet.data.title] = this.sanitizeHtmlValue(sheet.data.sheetTagName);
         }
         // console.log('After sanitization:', sheet.data.sheetTagName);
 
@@ -5309,13 +5309,18 @@ const obj ={
   updateSheetName() {
     const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
     if (inputElement) {
-      inputElement.innerHTML = this.dashboardTagName;
+      const sanitized = this.sanitizer.sanitize(SecurityContext.HTML, this.dashboardTagName) ?? '';
+      inputElement.textContent = sanitized;
       inputElement.style.paddingTop = '1.5%';
     }
     const parser = new DOMParser();
     const doc = parser.parseFromString(this.dashboardTagName, 'text/html');
     this.dashboardName = doc.body.textContent+'';
 }
+
+  private sanitizeHtmlValue(value: string | null | undefined): string {
+    return this.sanitizer.sanitize(SecurityContext.HTML, value ?? '') ?? '';
+  }
 kpiData?: KpiData;
   loadDashboard(){
     let obj = {sheet_ids: this.sheetIdsDataSet};
@@ -5687,7 +5692,7 @@ kpiData?: KpiData;
   }
   updatedashboardName(name:any){
     this.dashboardTagName = name;
-    this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+    this.dashboardTagTitle = this.sanitizeHtmlValue(this.dashboardTagName);
     const parser = new DOMParser();
     const doc = parser.parseFromString(this.dashboardTagName, 'text/html');
     this.dashboardName = doc.body.textContent+'';
@@ -5776,7 +5781,7 @@ kpiData?: KpiData;
           // inputElement.style.paddingTop = '1.5%';
           this.dashboardTagName = data.dashboard_tag_name;
         }
-        this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+        this.dashboardTagTitle = this.sanitizeHtmlValue(this.dashboardTagName);
         console.log(this.dashboard);
         let obj = {sheet_ids: this.sheetIdsDataSet};
       },
