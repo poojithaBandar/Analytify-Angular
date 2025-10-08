@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef,SecurityContext, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef,SecurityContext, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, OnDestroy, Input, SimpleChanges, Output, EventEmitter, TemplateRef } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -106,7 +106,7 @@ interface KpiData {
   kpiSuffix: string;
   kpiDecimalUnit : string;
   kpiDecimalPlaces: number;
-  trendData: [], 
+  trendData: [],
   trendLabels: [],
   kpiShowTrendline : boolean,
   showKpiIndicator : boolean,
@@ -114,7 +114,35 @@ interface KpiData {
   indicatorValue : any,
   kpiChartColor: string;
   kpiTarget: any;
+  kpiNumberPosition?: KpiPosition;
+  kpiTitlePosition?: KpiPosition;
+  kpiTrendlinePosition?: KpiTrendlinePosition;
 }
+
+type KpiPosition =
+  | 'top-left'
+  | 'top-center'
+  | 'middle-left'
+  | 'middle-center'
+  | 'middle-right'
+  | 'bottom-left'
+  | 'bottom-center'
+  | 'bottom-right';
+
+type KpiTrendlinePosition = 'top' | 'center' | 'bottom';
+
+const KPI_POSITION_VALUES: KpiPosition[] = [
+  'top-left',
+  'top-center',
+  'middle-left',
+  'middle-center',
+  'middle-right',
+  'bottom-left',
+  'bottom-center',
+  'bottom-right'
+];
+
+const KPI_TRENDLINE_POSITION_VALUES: KpiTrendlinePosition[] = ['top', 'center', 'bottom'];
 declare var $:any;
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
   constructor() {
@@ -193,9 +221,24 @@ export class SheetsdashboardComponent implements OnDestroy {
  excludeFilterIdArray = [] as any;
  tablePreviewRow = [] as any;
  tablePreviewColumn =[] as any;
- filteredColumnData = [] as any;
- filteredRowData = [] as any;
- disableDashboardUpdate: boolean = false;
+  filteredColumnData = [] as any;
+  filteredRowData = [] as any;
+  readonly kpiPositionMatrix: KpiPosition[][] = [
+    ['top-left', 'top-center'],
+    ['middle-left', 'middle-center', 'middle-right'],
+    ['bottom-left', 'bottom-center', 'bottom-right']
+  ];
+  readonly trendlinePositionOptions: KpiTrendlinePosition[] = ['top', 'center', 'bottom'];
+  private readonly defaultKpiNumberPosition: KpiPosition = 'middle-center';
+  private readonly defaultKpiTitlePosition: KpiPosition = 'top-left';
+  private readonly defaultKpiTrendlinePosition: KpiTrendlinePosition = 'bottom';
+  selectedKpiItem: any = null;
+  positionTarget: 'number' | 'title' | 'trendline' | null = null;
+  selectedPosition: (KpiPosition | KpiTrendlinePosition) | null = null;
+  positionModalTitle = '';
+  positionModalDescription = '';
+  positionFallback: KpiPosition | KpiTrendlinePosition = this.defaultKpiNumberPosition;
+  disableDashboardUpdate: boolean = false;
  sheetTabs : any[] = [];
  selectedTabIndex : number = 0;
  selectedTab : any = {};
@@ -951,6 +994,9 @@ export class SheetsdashboardComponent implements OnDestroy {
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
               kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+              kpiNumberPosition: this.normalizePosition(sheet.sheet_data?.results?.kpiNumberPosition, this.defaultKpiNumberPosition),
+              kpiTitlePosition: this.normalizePosition(sheet.sheet_data?.results?.kpiTitlePosition, this.defaultKpiTitlePosition),
+              kpiTrendlinePosition: this.normalizeTrendlinePosition(sheet.sheet_data?.results?.kpiTrendlinePosition, this.defaultKpiTrendlinePosition),
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -1088,6 +1134,9 @@ export class SheetsdashboardComponent implements OnDestroy {
   dynamicOptionsUpdateinDashboard(dashboard: any, isPublic: boolean, isTab?:boolean){
     let self = this;
     dashboard.forEach((sheet : any)=>{
+      if (this.isKpiChart(sheet)) {
+        this.ensureKpiPositionDefaults(sheet);
+      }
       // console.log('Before sanitization:', sheet.data?.sheetTagName);
       if(sheet.data?.sheetTagName){
         this.sheetTagTitle[sheet.data?.title] = this.sanitizeHtmlValue(sheet.data?.sheetTagName);
@@ -2122,6 +2171,9 @@ export class SheetsdashboardComponent implements OnDestroy {
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
               kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+              kpiNumberPosition: this.normalizePosition(sheet.sheet_data?.results?.kpiNumberPosition, this.defaultKpiNumberPosition),
+              kpiTitlePosition: this.normalizePosition(sheet.sheet_data?.results?.kpiTitlePosition, this.defaultKpiTitlePosition),
+              kpiTrendlinePosition: this.normalizeTrendlinePosition(sheet.sheet_data?.results?.kpiTrendlinePosition, this.defaultKpiTrendlinePosition),
 
           };
           return this.kpiData; // Return the kpi object to kpiData
@@ -2205,6 +2257,9 @@ export class SheetsdashboardComponent implements OnDestroy {
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
               kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+              kpiNumberPosition: this.normalizePosition(sheet.sheet_data?.results?.kpiNumberPosition, this.defaultKpiNumberPosition),
+              kpiTitlePosition: this.normalizePosition(sheet.sheet_data?.results?.kpiTitlePosition, this.defaultKpiTitlePosition),
+              kpiTrendlinePosition: this.normalizeTrendlinePosition(sheet.sheet_data?.results?.kpiTrendlinePosition, this.defaultKpiTrendlinePosition),
 
           };
           return this.kpiData; // Return the kpi object to kpiData
@@ -3945,6 +4000,7 @@ clearAllFilters(isSwitchDb?:boolean): void {
 setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,isLastIndex:boolean, dashboard : any[], isTabs?:boolean ,switchDb?: boolean,isDashboardTransfer?: boolean){
   dashboard.forEach((item1:any) => {
     if(item1.sheetId){
+      this.ensureKpiPositionDefaults(item1);
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
       if(item.chart_id == '1'){//table
         if(!item1.originalData && !isLiveReloadData && !switchDb){
@@ -5367,6 +5423,9 @@ kpiData?: KpiData;
               indicatorIsIncreased : sheet.sheet_data?.results?.indicatorIsIncreased || '',
               indicatorValue : sheet.sheet_data?.results?.indicatorValue || '',
               kpiTarget : sheet.sheet_data?.results?.kpiTarget || 0,
+              kpiNumberPosition: this.normalizePosition(sheet.sheet_data?.results?.kpiNumberPosition, this.defaultKpiNumberPosition),
+              kpiTitlePosition: this.normalizePosition(sheet.sheet_data?.results?.kpiTitlePosition, this.defaultKpiTitlePosition),
+              kpiTrendlinePosition: this.normalizeTrendlinePosition(sheet.sheet_data?.results?.kpiTrendlinePosition, this.defaultKpiTrendlinePosition),
             };
             return this.kpiData; // Return the kpi object to kpiData
           })()
@@ -7384,7 +7443,7 @@ validateTextEditor(): boolean {
     KpiIconItem:any;
     selectedIconFontSize: string = '24'; // Default size
     selectedIconColor: string = '#888'; // Default color
-    selectedIconPosition: string = 'bottom-right';
+    selectedIconPosition: KpiPosition = 'bottom-right';
     selectIcon(icon: any) {
       console.log('Selected Icon:', icon);
       this.selectedIcon = `${icon.styles[0]} fa-${icon.name}`;
@@ -7404,17 +7463,17 @@ validateTextEditor(): boolean {
     }
     positions = [
       { value: 'top-left', iconClass: 'dollar-top-left' },
-      { value: 'top-middle', iconClass: 'dollar-top-center' },
+      { value: 'top-center', iconClass: 'dollar-top-center' },
       { value: 'top-right', iconClass: 'dollar-top-right' },
-      { value: 'left-middle', iconClass: 'dollar-center-left' },
-      { value: 'center', iconClass: '' },
-      { value: 'right-middle', iconClass: 'dollar-center-right' },
+      { value: 'middle-left', iconClass: 'dollar-center-left' },
+      { value: 'middle-center', iconClass: '' },
+      { value: 'middle-right', iconClass: 'dollar-center-right' },
       { value: 'bottom-left', iconClass: 'dollar-bottom-left' },
-      { value: 'bottom-middle', iconClass: 'dollar-bottom-center' },
+      { value: 'bottom-center', iconClass: 'dollar-bottom-center' },
       { value: 'bottom-right', iconClass: 'dollar-bottom-right' }
     ];
     selectPosition(position: string): void {
-      this.selectedIconPosition = position;
+      this.selectedIconPosition = this.normalizePosition(position);
       console.log('kpiPosition',this.selectedIconPosition)
     }
     applyIconInKpi(){
@@ -7467,37 +7526,72 @@ validateTextEditor(): boolean {
     
     }
 
-    getIconPositionStyles(position: string) {
-      let styles = {};
-      const offset = '10px'; // Distance from the edges
-      switch (position) {
-          case 'top-left':
-            return { top: offset, left: offset, transform: 'none' };
-          case 'top-middle':
-            return { top: offset, left: '50%', transform: 'translateX(-50%)' };
-          case 'top-right':
-            return { top: offset, right: offset, transform: 'none' };
-          case 'left-middle':
-            return { top: '50%', left: offset, transform: 'translateY(-50%)' };
-          case 'center':
-            return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
-          case 'right-middle':
-            return { top: '50%', right: offset, transform: 'translateY(-50%)' };
-          case 'bottom-left':
-            return { bottom: offset, left: offset, transform: 'none' };
-          case 'bottom-middle':
-            return { bottom: offset, left: '50%', transform: 'translateX(-50%)' };
-          case 'bottom-right':
-            return { bottom: offset, right: offset, transform: 'none' };
-        default:
-          styles = { bottom: '0', right: '0' }; 
-          break;
-      }
-    
-      return styles;
+  getPositionStyles(position?: string | null, fallback: KpiPosition = this.defaultKpiNumberPosition) {
+    const normalized = this.normalizePosition(position, fallback);
+    const map: Record<KpiPosition, any> = {
+      'top-left': { top: '0.5rem', left: '0.5rem' },
+      'top-center': { top: '0.5rem', left: '50%', transform: 'translateX(-50%)' },
+      'middle-left': { top: '50%', left: '0.5rem', transform: 'translateY(-50%)' },
+      'middle-center': { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' },
+      'middle-right': { top: '50%', right: '0.5rem', transform: 'translateY(-50%)' },
+      'bottom-left': { bottom: '0.5rem', left: '0.5rem' },
+      'bottom-center': { bottom: '0.5rem', left: '50%', transform: 'translateX(-50%)' },
+      'bottom-right': { bottom: '0.5rem', right: '0.5rem' }
+    };
+    return { position: 'absolute', ...(map[normalized] || map[fallback]) };
+  }
+  getTrendlinePositionStyles(
+    position?: string | null,
+    fallback: KpiTrendlinePosition = this.defaultKpiTrendlinePosition
+  ) {
+    const normalized = this.normalizeTrendlinePosition(position, fallback);
+    const map: Record<KpiTrendlinePosition, any> = {
+      top: { top: '0.5rem' },
+      center: { top: '34%'},
+      bottom: { bottom: '0.5rem' }
+    };
+    const styles = map[normalized] || map[fallback];
+    return {
+      position: 'absolute',
+      width: '90%',
+      maxWidth: '100%',
+      ...(styles ?? {})
+    };
+  }
+  getIconPositionStyles(position: string) {
+    return this.getPositionStyles(position, 'bottom-right');
+  }
+  private normalizePosition(position?: string | null, fallback: KpiPosition = this.defaultKpiNumberPosition): KpiPosition {
+    if (!position) {
+      return fallback;
     }
+    const normalizedMap: Record<string, KpiPosition> = {
+      'top-middle': 'top-center',
+        'left-middle': 'middle-left',
+        'center': 'middle-center',
+        'right-middle': 'middle-right',
+        'bottom-middle': 'bottom-center'
+      };
+      const lowerPosition = (position || '').toLowerCase();
+    const candidate = normalizedMap[lowerPosition] || lowerPosition;
+    return KPI_POSITION_VALUES.includes(candidate as KpiPosition)
+      ? (candidate as KpiPosition)
+      : fallback;
+  }
+  private normalizeTrendlinePosition(
+    position?: string | null,
+    fallback: KpiTrendlinePosition = this.defaultKpiTrendlinePosition
+  ): KpiTrendlinePosition {
+    if (!position) {
+      return fallback;
+    }
+    const lower = (position || '').toLowerCase();
+    return KPI_TRENDLINE_POSITION_VALUES.includes(lower as KpiTrendlinePosition)
+      ? (lower as KpiTrendlinePosition)
+      : fallback;
+  }
     getIconClass(icon: any): string {
-      return `${icon.styles[0]} fa-${icon.name}`; 
+      return `${icon.styles[0]} fa-${icon.name}`;
     }
     priorityIcons: string[] = ['arrow-trend-up','arrow-trend-down','house','magnifying-glass','user','facebook','check','download','twitter','instagram','envelope','linkedin','arrow-up','file','calendar-days','circle-down','address-book','handshake','layer-group','users','link','sack-dollar'
     ];; 
@@ -7520,6 +7614,171 @@ validateTextEditor(): boolean {
     this.showAll = !this.showAll;
     this.updateFilteredIcons();
   }
+  openLayoutModal(modalTemplate: TemplateRef<any>, item: any): void {
+    this.openPositionModal(
+      modalTemplate,
+      item,
+      'number',
+      this.defaultKpiNumberPosition,
+      'Edit KPI Layout',
+      'Choose where the KPI number should appear on the card.'
+    );
+  }
+  openTitleModal(modalTemplate: TemplateRef<any>, item: any): void {
+    this.openPositionModal(
+      modalTemplate,
+      item,
+      'title',
+      this.defaultKpiTitlePosition,
+      'Edit KPI Title',
+      'Choose where the KPI title should appear on the card.'
+    );
+  }
+  openTrendlineModal(modalTemplate: TemplateRef<any>, item: any): void {
+    this.openPositionModal(
+      modalTemplate,
+      item,
+      'trendline',
+      this.defaultKpiTrendlinePosition,
+      'Edit Trendline Layout',
+      'Choose where the KPI trendline and indicator should appear on the card.'
+    );
+  }
+  private openPositionModal(
+    modalTemplate: TemplateRef<any>,
+    item: any,
+    target: 'number' | 'title' | 'trendline',
+    fallback: KpiPosition | KpiTrendlinePosition,
+    title: string,
+    description: string
+  ): void {
+    if (!item) {
+      return;
+    }
+    this.ensureKpiPositionDefaults(item);
+    this.selectedKpiItem = item;
+    this.positionTarget = target;
+    this.positionFallback = fallback;
+    this.positionModalTitle = title;
+    this.positionModalDescription = description;
+    const currentPosition = target === 'number'
+      ? item.kpiData?.kpiNumberPosition
+      : target === 'title'
+        ? item.kpiData?.kpiTitlePosition
+        : item.kpiData?.kpiTrendlinePosition;
+    if (target === 'trendline') {
+      this.selectedPosition = this.normalizeTrendlinePosition(currentPosition, fallback as KpiTrendlinePosition);
+    } else {
+      this.selectedPosition = this.normalizePosition(currentPosition, fallback as KpiPosition);
+    }
+    this.modalService.open(modalTemplate, {
+      backdrop: 'static',
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn'
+    });
+  }
+  selectKpiPosition(position: KpiPosition | KpiTrendlinePosition): void {
+    if (this.positionTarget === 'trendline') {
+      this.selectedPosition = this.normalizeTrendlinePosition(position, this.positionFallback as KpiTrendlinePosition);
+    } else {
+      this.selectedPosition = this.normalizePosition(position, this.positionFallback as KpiPosition);
+    }
+  }
+  confirmPositionSelection(modal: any): void {
+    if (!this.selectedKpiItem || !this.positionTarget) {
+      this.resetPositionState();
+      modal.dismiss('close');
+      return;
+    }
+    const positionToSave = this.selectedPosition ?? this.positionFallback;
+    this.applyKpiPosition(this.selectedKpiItem, this.positionTarget, positionToSave);
+    modal.close('save');
+    this.resetPositionState();
+  }
+  resetPositionState(): void {
+    this.selectedKpiItem = null;
+    this.positionTarget = null;
+    this.selectedPosition = null;
+    this.positionModalTitle = '';
+    this.positionModalDescription = '';
+    this.positionFallback = this.defaultKpiNumberPosition;
+  }
+  private applyKpiPosition(
+    item: any,
+    target: 'number' | 'title' | 'trendline',
+    position: KpiPosition | KpiTrendlinePosition
+  ): void {
+    let field: 'kpiNumberPosition' | 'kpiTitlePosition' | 'kpiTrendlinePosition';
+    let normalized: KpiPosition | KpiTrendlinePosition;
+    if (target === 'trendline') {
+      field = 'kpiTrendlinePosition';
+      normalized = this.normalizeTrendlinePosition(position, this.defaultKpiTrendlinePosition);
+    } else {
+      field = target === 'number' ? 'kpiNumberPosition' : 'kpiTitlePosition';
+      normalized = this.normalizePosition(
+        position as KpiPosition,
+        target === 'number' ? this.defaultKpiNumberPosition : this.defaultKpiTitlePosition
+      );
+    }
+    if (!item.kpiData) {
+      item.kpiData = {};
+    }
+    item.kpiData[field] = normalized;
+    const updateCollection = (collection?: any[]) => {
+      if (!collection) {
+        return null;
+      }
+      const index = collection.findIndex((d: any) => d['id'] === item.id);
+      if (index === -1) {
+        return null;
+      }
+      const existingItem = collection[index];
+      const updatedItem = {
+        ...existingItem,
+        kpiData: {
+          ...(existingItem.kpiData || {}),
+          [field]: normalized
+        }
+      };
+      collection[index] = updatedItem;
+      return updatedItem;
+    };
+    let updatedItem = updateCollection(this.dashboard);
+    if (this.displayTabs && this.sheetTabs && this.sheetTabs.length > 0 && this.selectedTabIndex >= 0) {
+      const tabDashboard = this.sheetTabs[this.selectedTabIndex]?.dashboard;
+      const tabUpdatedItem = updateCollection(tabDashboard);
+      if (tabUpdatedItem) {
+        updatedItem = tabUpdatedItem;
+      }
+    }
+    if (updatedItem) {
+      this.selectedKpiItem = updatedItem;
+    }
+    this.canNavigateToAnotherPage = true;
+  }
+  private ensureKpiPositionDefaults(item: any): void {
+    if (!this.isKpiChart(item)) {
+      return;
+    }
+    if (!item.kpiData) {
+      item.kpiData = {};
+    }
+    item.kpiData.kpiNumberPosition = this.normalizePosition(
+      item.kpiData.kpiNumberPosition,
+      this.defaultKpiNumberPosition
+    );
+    item.kpiData.kpiTitlePosition = this.normalizePosition(
+      item.kpiData.kpiTitlePosition,
+      this.defaultKpiTitlePosition
+    );
+    item.kpiData.kpiTrendlinePosition = this.normalizeTrendlinePosition(
+      item.kpiData.kpiTrendlinePosition,
+      this.defaultKpiTrendlinePosition
+    );
+  }
+  private isKpiChart(item: any): boolean {
+    return !!item && (item.chartId == 25 || item.chart_id == 25);
+  }
   editKpiIcon(iconModal:any,item:any){
     this.modalService.open(iconModal, {
       centered: true,
@@ -7530,7 +7789,7 @@ validateTextEditor(): boolean {
     const kpiIconsArray = item.kpiIconsArray
     this.selectedIconColor = kpiIconsArray.kpiIconColor ?? '#888'
     this.selectedIconFontSize = kpiIconsArray.kpiIconSize ?? '24'
-    this.selectedIconPosition = kpiIconsArray.kpiIconPosition ?? 'bottom-right'
+    this.selectedIconPosition = this.normalizePosition(kpiIconsArray.kpiIconPosition ?? 'bottom-right')
     this.selectedIcon = kpiIconsArray.kpiIcon ?? null
  
   }
