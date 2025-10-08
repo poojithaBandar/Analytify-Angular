@@ -620,3 +620,8 @@ h2.fw-500 {
   border-radius: 20px;
   overflow: hidden; /* smooth rounded container */
 }
+.ds-dropdown{
+  max-height: 300px;
+  height: auto;
+  overflow-y: auto;
+}

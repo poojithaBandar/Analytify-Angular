@@ -675,7 +675,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     }
     let displayGrid = DisplayGrid.Always;
     this.options = {
-      gridType: GridType.Fit,
+      gridType: this.hideWidgets ? GridType.Fixed : GridType.Fit,
       compactType: CompactType.CompactLeftAndUp,
       displayGrid: displayGrid,
       initCallback: SheetsdashboardComponent.gridInit,
