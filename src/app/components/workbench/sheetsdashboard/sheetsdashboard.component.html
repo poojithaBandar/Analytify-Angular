@@ -1268,104 +1268,13 @@
                   <i class="fa fa-filter filter-icon-count" ngbTooltip="{{filter?.filter_count}} Filters Applied"></i>
                   }
                   }
-                  <div *ngIf="!isPublicUrl && !isEmbedDashboard && !hideWidgets" class="dashboard-option">
+                  <div *ngIf="!isPublicUrl && !isEmbedDashboard && !hideWidgets && !(item['chartType'] === 'KPI' && item['chartId'] === 25)" class="dashboard-option">
                     <div class=" p-1" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
-                        <app-insights-button *ngIf="item['type'] !== 'image' && item['type'] !== 'text'" [classesList]="'dropdown-item'"
-                          [buttonName]="'Goto Sheet'" [previledgeIdsList]="[20,18]" [isBtn]="false"
-                          (btnClickEvent)="viewSheet(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'"
-                          [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, false)" [isIcon]="false">
-                        </app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['type'] === 'text'" [classesList]="'dropdown-item'" [buttonName]="'Edit Text'"
-                          [previledgeId]="37" [isBtn]="false" (btnClickEvent)="editTextItem(item)" [isIcon]="false">
-                        </app-insights-button>
-                        <!-- <app-insights-button [classesList]="'dropdown-item'" 
-                          [buttonName]="'PDF'" 
-                          [previledgeIdsList]="[20,18]" 
-                          [isBtn]="false"
-                          (btnClickEvent)="downloadSheet(item, 'pdf')" 
-                          [isIcon]="false">
-                        </app-insights-button> -->
-                        <app-insights-button  *ngIf="item['type'] !== 'image' && item['type'] !== 'text'" [classesList]="'dropdown-item'" 
-                          [buttonName]="'Download CSV'" 
-                          [previledgeIdsList]="[20,18]" 
-                          [isBtn]="false"
-                          (btnClickEvent)="downloadSheet(item, 'csv')" 
-                          [isIcon]="false">
-                        </app-insights-button>
-                        <!-- <app-insights-button [classesList]="'dropdown-item'" 
-                          [buttonName]="'HTML'" 
-                          [previledgeIdsList]="[20,18]" 
-                          [isBtn]="false"
-                          (btnClickEvent)="downloadSheet(item, 'html')" 
-                          [isIcon]="false">
-                        </app-insights-button> -->
-                        <!-- <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
-                          [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
-                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button> -->
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
-                          [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
-                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiIconsArray']?.kpiIcon"
-                          [classesList]="'dropdown-item'" [buttonName]="'Add Icon'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="addIcon(iconModal,item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiIconsArray']?.kpiIcon"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Icon'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="editKpiIcon(iconModal,item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiIconsArray']?.kpiIcon"
-                          [classesList]="'dropdown-item'" [buttonName]="'Remove Icon'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="removeKpiIcon(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']"
-                          [classesList]="'dropdown-item'" [buttonName]="'Change Image'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']"
-                          [classesList]="'dropdown-item'" [buttonName]="'Remove Image'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="removeKpiImage(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Number Layout'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="openLayoutModal(layoutModal, item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Title Layout'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="openTitleModal(titleModal, item)" [isIcon]="false"></app-insights-button>
-                          <app-insights-button 
-                            *ngIf="!isPublicUrl && item['type'] === 'text' && !item['textImage']" 
-                            [classesList]="'dropdown-item'" 
-                            [buttonName]="'Add Background Image'"
-                            [previledgeId]="37" 
-                            [isBtn]="false" 
-                            (btnClickEvent)="uploadTextImage(item)" 
-                            [isIcon]="false">
-                          </app-insights-button>
-                          <app-insights-button 
-                            *ngIf="!isPublicUrl && item['type'] === 'text' && item['textImage']" 
-                            [classesList]="'dropdown-item'" 
-                            [buttonName]="'Edit Background Image'"
-                            [previledgeId]="37" 
-                            [isBtn]="false" 
-                            (btnClickEvent)="uploadTextImage(item)" 
-                            [isIcon]="false">
-                          </app-insights-button>
-                          <app-insights-button 
-                            *ngIf="!isPublicUrl && item['type'] === 'text' && item['textImage']" 
-                            [classesList]="'dropdown-item'" 
-                            [buttonName]="'Remove Background Image'"
-                            [previledgeId]="37" 
-                            [isBtn]="false" 
-                            (btnClickEvent)="removeTextImage(item)" 
-                            [isIcon]="false">
-                          </app-insights-button>
-                        <input type="file" #ImageUploadKPI (change)="imageFileSelectEvent($event)" accept="image/*"
-                          style="display: none;" />
-                          <input 
-                            #ImageUploadText 
-                            type="file" 
-                            (change)="imageFileSelectForText($event)" 
-                            style="display: none;" 
-                            accept="image/*">
+                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item}"></ng-container>
                       </div>
                     </div>
                   </div>
@@ -1627,6 +1536,14 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
+                    <div class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0.5rem', right: '0.2rem' }" ngbDropdown>
+                      <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
+                        aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                      </a>
+                      <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
+                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item}"></ng-container>
+                      </div>
+                    </div>
                   <div (click)="setDrillThrough('',item,true)" class="big-number-container" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                     <div *ngIf="item['type'] !== 'image'"
                       class="position-absolute"
@@ -1639,6 +1556,8 @@
                       <h1 *ngIf="item['kpiData']?.kpiNumber !== undefined" class="big-number" [style.font-size]="item['kpiData']?.fontSize + 'rem'"
                         [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                     </div>
+                    <div class="position-absolute"
+                      [ngStyle]="getPositionStyles(item['kpiData']?.kpiNumberPosition, 'middle-center')">
                     @for(row of item['kpiData'].rows;track row){
                     <ng-container *ngIf="row?.result_data">
                       <div *ngIf="item['kpiData']?.showKpiIndicator" class="text-center text-muted" [style.color]="item['kpiData']?.color" style="font-size: 13px;">
@@ -1669,6 +1588,7 @@
                         </div>
                     </ng-container>
                     }
+                    </div>
                     <i [class]="item['kpiIconsArray']?.kpiIcon" [style.font-size]="item['kpiIconsArray']?.kpiIconSize + 'px'"
                       [style.color]="item['kpiIconsArray']?.kpiIconColor"
                       [ngStyle]="getIconPositionStyles(item['kpiIconsArray']?.kpiIconPosition)" style="position: absolute;"></i>
@@ -1896,38 +1816,7 @@
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu>
-                        <app-insights-button *ngIf="item['type'] !== 'image'" [classesList]="'dropdown-item'"
-                          [buttonName]="'Goto Sheet'" [previledgeIdsList]="[20,18]" [isBtn]="false"
-                          (btnClickEvent)="viewSheet(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'"
-                          [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, true)" [isIcon]="false">
-                        </app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
-                          [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
-                          [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiIconsArray']?.kpiIcon"
-                          [classesList]="'dropdown-item'" [buttonName]="'Add Icon'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="addIcon(iconModal,item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiIconsArray']?.kpiIcon"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Icon'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="editKpiIcon(iconModal,item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiIconsArray']?.kpiIcon"
-                          [classesList]="'dropdown-item'" [buttonName]="'Remove Icon'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="removeKpiIcon(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']"
-                          [classesList]="'dropdown-item'" [buttonName]="'Change Image'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']"
-                          [classesList]="'dropdown-item'" [buttonName]="'Remove Image'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="removeKpiImage(item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Number Layout'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="openLayoutModal(layoutModal, item)" [isIcon]="false"></app-insights-button>
-                        <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
-                          [classesList]="'dropdown-item'" [buttonName]="'Edit Title Layout'" [previledgeId]="37" [isBtn]="false"
-                          (btnClickEvent)="openTitleModal(titleModal, item)" [isIcon]="false"></app-insights-button>
-                        <input type="file" #ImageUploadKPI (change)="imageFileSelectEvent($event)" accept="image/*"
-                          style="display: none;" />
+                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item}"></ng-container>
                       </div>
                     </div>
                   </div>
@@ -2179,6 +2068,14 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
+                    <div class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0.5rem', right: '0.2rem' }" ngbDropdown>
+                      <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
+                        aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                      </a>
+                      <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
+                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item}"></ng-container>
+                      </div>
+                    </div>
                   <div (click)="setDrillThrough('',item,true)" class="big-number-container" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
                     <div *ngIf="item['type'] !== 'image'"
                       class="position-absolute"
@@ -2356,8 +2253,83 @@
 
   }
 
-
-
+  <ng-template #sheetOptions let-item>
+    <app-insights-button *ngIf="item['type'] !== 'image' && item['type'] !== 'text'" [classesList]="'dropdown-item'"
+      [buttonName]="'Goto Sheet'" [previledgeIdsList]="[20,18]" [isBtn]="false"
+      (btnClickEvent)="viewSheet(item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'"
+      [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, false)" [isIcon]="false">
+    </app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['type'] === 'text'" [classesList]="'dropdown-item'" [buttonName]="'Edit Text'"
+      [previledgeId]="37" [isBtn]="false" (btnClickEvent)="editTextItem(item)" [isIcon]="false">
+    </app-insights-button>
+    <app-insights-button  *ngIf="item['type'] !== 'image' && item['type'] !== 'text'" [classesList]="'dropdown-item'"
+      [buttonName]="'Download CSV'"
+      [previledgeIdsList]="[20,18]"
+      [isBtn]="false"
+      (btnClickEvent)="downloadSheet(item, 'csv')"
+      [isIcon]="false">
+    </app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
+      [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
+      [isBtn]="false" (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiIconsArray']?.kpiIcon"
+      [classesList]="'dropdown-item'" [buttonName]="'Add Icon'" [previledgeId]="37" [isBtn]="false"
+      (btnClickEvent)="addIcon(iconModal,item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiIconsArray']?.kpiIcon"
+      [classesList]="'dropdown-item'" [buttonName]="'Edit Icon'" [previledgeId]="37" [isBtn]="false"
+      (btnClickEvent)="editKpiIcon(iconModal,item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiIconsArray']?.kpiIcon"
+      [classesList]="'dropdown-item'" [buttonName]="'Remove Icon'" [previledgeId]="37" [isBtn]="false"
+      (btnClickEvent)="removeKpiIcon(item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']"
+      [classesList]="'dropdown-item'" [buttonName]="'Change Image'" [previledgeId]="37" [isBtn]="false"
+      (btnClickEvent)="uploadKpiImage(item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']"
+      [classesList]="'dropdown-item'" [buttonName]="'Remove Image'" [previledgeId]="37" [isBtn]="false"
+      (btnClickEvent)="removeKpiImage(item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
+      [classesList]="'dropdown-item'" [buttonName]="'Edit Number Layout'" [previledgeId]="37" [isBtn]="false"
+      (btnClickEvent)="openLayoutModal(layoutModal, item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25"
+      [classesList]="'dropdown-item'" [buttonName]="'Edit Title Layout'" [previledgeId]="37" [isBtn]="false"
+      (btnClickEvent)="openTitleModal(titleModal, item)" [isIcon]="false"></app-insights-button>
+    <app-insights-button
+      *ngIf="!isPublicUrl && item['type'] === 'text' && !item['textImage']"
+      [classesList]="'dropdown-item'"
+      [buttonName]="'Add Background Image'"
+      [previledgeId]="37"
+      [isBtn]="false"
+      (btnClickEvent)="uploadTextImage(item)"
+      [isIcon]="false">
+    </app-insights-button>
+    <app-insights-button
+      *ngIf="!isPublicUrl && item['type'] === 'text' && item['textImage']"
+      [classesList]="'dropdown-item'"
+      [buttonName]="'Edit Background Image'"
+      [previledgeId]="37"
+      [isBtn]="false"
+      (btnClickEvent)="uploadTextImage(item)"
+      [isIcon]="false">
+    </app-insights-button>
+    <app-insights-button
+      *ngIf="!isPublicUrl && item['type'] === 'text' && item['textImage']"
+      [classesList]="'dropdown-item'"
+      [buttonName]="'Remove Background Image'"
+      [previledgeId]="37"
+      [isBtn]="false"
+      (btnClickEvent)="removeTextImage(item)"
+      [isIcon]="false">
+    </app-insights-button>
+    <input type="file" #ImageUploadKPI (change)="imageFileSelectEvent($event)" accept="image/*"
+      style="display: none;" />
+    <input
+      #ImageUploadText
+      type="file"
+      (change)="imageFileSelectForText($event)"
+      style="display: none;"
+      accept="image/*">
+  </ng-template>
 
   <ng-template #layoutModal let-modal>
     <ng-container *ngTemplateOutlet="positionModalContent; context: { modal: modal }"></ng-container>

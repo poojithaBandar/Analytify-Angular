@@ -121,7 +121,6 @@ interface KpiData {
 type KpiPosition =
   | 'top-left'
   | 'top-center'
-  | 'top-right'
   | 'middle-left'
   | 'middle-center'
   | 'middle-right'
@@ -132,7 +131,6 @@ type KpiPosition =
 const KPI_POSITION_VALUES: KpiPosition[] = [
   'top-left',
   'top-center',
-  'top-right',
   'middle-left',
   'middle-center',
   'middle-right',
@@ -221,7 +219,7 @@ export class SheetsdashboardComponent implements OnDestroy {
   filteredColumnData = [] as any;
   filteredRowData = [] as any;
   readonly kpiPositionMatrix: KpiPosition[][] = [
-    ['top-left', 'top-center', 'top-right'],
+    ['top-left', 'top-center'],
     ['middle-left', 'middle-center', 'middle-right'],
     ['bottom-left', 'bottom-center', 'bottom-right']
   ];
@@ -7517,7 +7515,6 @@ validateTextEditor(): boolean {
       const map: Record<KpiPosition, any> = {
         'top-left': { top: '0.5rem', left: '0.5rem' },
         'top-center': { top: '0.5rem', left: '50%', transform: 'translateX(-50%)' },
-        'top-right': { top: '0.5rem', right: '0.5rem' },
         'middle-left': { top: '50%', left: '0.5rem', transform: 'translateY(-50%)' },
         'middle-center': { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' },
         'middle-right': { top: '50%', right: '0.5rem', transform: 'translateY(-50%)' },
