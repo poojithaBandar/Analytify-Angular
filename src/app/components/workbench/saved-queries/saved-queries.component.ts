@@ -30,7 +30,10 @@ export class SavedQueriesComponent {
   viewSavedQueries = false;
   isLoadingSavedQueries: boolean = false;
   viewMode: 'cards' | 'table' = 'cards';
-
+  totalQueries:any;
+  totalCharts:any;
+  totalDashboards:any;
+  activeQueries:any;
 constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService, private toasterservice:ToastrService,private loaderService:LoaderService){
   this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
 }
@@ -79,6 +82,10 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
         this.itemsPerPage = data.items_per_page;
         this.totalItems = data.total_items;
         this.isLoadingSavedQueries = false;
+        this.activeQueries= data.active_queries
+        this.totalDashboards = data.total_dashboards;
+        this.totalCharts = data.total_charts;
+        this.totalQueries = data.total_items;
        },
       error:(error)=>{
         this.isLoadingSavedQueries = false;
