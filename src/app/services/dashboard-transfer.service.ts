@@ -18,6 +18,8 @@ const KPI_POSITION_VALUES = [
   'bottom-right'
 ];
 
+const KPI_TRENDLINE_POSITION_VALUES = ['top', 'center', 'bottom'];
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,6 +37,7 @@ export class DashboardTransferService {
     }
     item.kpiData.kpiNumberPosition = this.normalizePosition(item.kpiData.kpiNumberPosition, 'middle-center');
     item.kpiData.kpiTitlePosition = this.normalizePosition(item.kpiData.kpiTitlePosition, 'top-left');
+    item.kpiData.kpiTrendlinePosition = this.normalizeTrendlinePosition(item.kpiData.kpiTrendlinePosition, 'bottom');
   }
 
   private normalizePosition(position?: string | null, fallback: string = 'middle-center'): string {
@@ -51,6 +54,14 @@ export class DashboardTransferService {
     const lower = (position || '').toLowerCase();
     const candidate = normalizedMap[lower] || lower;
     return KPI_POSITION_VALUES.includes(candidate) ? candidate : fallback;
+  }
+
+  private normalizeTrendlinePosition(position?: string | null, fallback: string = 'bottom'): string {
+    if (!position) {
+      return fallback;
+    }
+    const lower = (position || '').toLowerCase();
+    return KPI_TRENDLINE_POSITION_VALUES.includes(lower) ? lower : fallback;
   }
 
     buildDashboardTransfer(container: ViewContainerRef,responesData : any){
