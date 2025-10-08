@@ -1036,7 +1036,7 @@ export class SheetsdashboardComponent implements OnDestroy {
     })
   }
   sheetTagTitle : any={};
-  dashboardTagTitle = '';
+  dashboardTagTitle : any;
   getSavedDashboardData(){
     const obj ={ 
       queryset_id:this.qrySetId,
@@ -5374,8 +5374,8 @@ const obj ={
     this.dashboardName = doc.body.textContent+'';
 }
 
-  private sanitizeHtmlValue(value: string | null | undefined): string {
-    return this.sanitizer.sanitize(SecurityContext.HTML, value ?? '') ?? '';
+  private sanitizeHtmlValue(value: string): any {
+    return this.sanitizer.bypassSecurityTrustHtml(value);
   }
 kpiData?: KpiData;
   loadDashboard(){
