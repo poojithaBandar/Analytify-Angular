@@ -3326,6 +3326,7 @@ connectGoogleSheets(){
                         if(this.callAllConnectionsExistingList){
                           this.connectionListWithOutPagination();
                         }
+                        this.getConnectedServers();
                       },
                       error:(error:any)=>{
                         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
@@ -4272,7 +4273,7 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   open_ai: { type: 'image', value: './assets/images/icons_new/OPEN_AI.svg' },
   bamboohr: { type: 'svg', value: this.SVGICONS.bambooHr },
   deepseek: { type: 'image', value: './assets/images/icons_new/DEEPSEEK.svg' },
-  gemini: { type: 'image', value: './assets/images/icons_new/GEMINI.svgg' },
+  gemini: { type: 'image', value: './assets/images/icons_new/GEMINI.svg' },
   salesforce: { type: 'svg', value: this.SVGICONS.Salesforce },
   jira: { type: 'svg', value: this.SVGICONS.jira },
   google_sheets: { type: 'svg', value: this.SVGICONS.googleSheets },
