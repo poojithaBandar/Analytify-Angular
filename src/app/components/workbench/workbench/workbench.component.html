@@ -804,7 +804,7 @@
                         <span class="time-text"><i class="bi bi-clock me-1"></i>{{ connection?.lastSync }}</span>
                       </div> -->
             
-                      <p class="large mb-0"><strong>{{ connection?.description | slice:0:30 }}{{ connection?.description?.length > 30 ? '...': '' }} </strong></p> 
+                      <p class="large mb-1" [ngbTooltip]="connection?.description?.length > 30 ? connection?.description : null"><strong>{{ connection?.description | slice:0:30 }}{{ connection?.description?.length > 30 ? '...': '' }} </strong></p> 
                   
                       <div class="mb-3 d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
