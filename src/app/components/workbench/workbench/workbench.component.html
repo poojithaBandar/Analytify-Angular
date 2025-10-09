@@ -554,7 +554,7 @@
                 <!-- Search Input -->
                 <input type="text"
                       class="form-control mb-2"
-                      placeholder="Search datasource..."
+                      placeholder="Search Display name..."
                       [(ngModel)]="datasourceSearch" />
 
                 <!-- Datasource List -->
@@ -2184,8 +2184,9 @@
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                 <div class="card user-card border Relational-database-height">
                   <div class="user-image">
-                    <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline" [innerHTML]="SVGICONS.jira"></span>
-                  </div>
+                      <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                        <img src="./assets/images/icons_new/JIRA.png" alt="" class="rounded-circle bg-white user-image-border-color">
+                      </span>                  </div>
                   <div class="card-body server-content-card">
                     <ul class="">
                       <li><span class="mt-1">Jira is a project management tool for tracking issues and agile workflows.</span></li>
