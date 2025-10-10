@@ -17,6 +17,7 @@ import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { concatMap, from, map, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { base64DecodeUtf8 } from '../../../services/base64';
+import { DashboardTransferService } from '../../../services/dashboard-transfer.service';
 @Component({
   selector: 'app-genie-aiq-dashboard',
   standalone: true,
@@ -50,7 +51,7 @@ export class GenieAiqDashboardComponent {
  chatHistory: ChatMessage[] = [];
 
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
-  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService, private openAi: OpenaiService, private loaderService:LoaderService, private router:Router,private http: HttpClient){
+  constructor(private workbechService:WorkbenchService, private toasterService:ToastrService, private templateDashboardService:TemplateDashboardService, private openAi: OpenaiService, private loaderService:LoaderService, private router:Router,private http: HttpClient,private dashbaordTransferService:DashboardTransferService){
 
   }
   ngOnInit(){
@@ -280,6 +281,9 @@ isCreateDisabled(): boolean {
 }
 showDashboardView = false;
 dash1: any = [];
+
+allChartOptions: { [title: string]: any } = {};
+
 promptDashboard(){
   const selectedTableNames = this.selectedTables.slice();
   const payload ={
@@ -290,272 +294,114 @@ promptDashboard(){
     this.workbechService.promptDashboard(payload).subscribe({
       next:(data)=>{
       console.log(data);
-      // if(this.datafromApi){
-      //   this.buildDashboardprocess(this.datafromApi);
-      // }
-
-        // const data = [
-        //   {
-        //     "sheet_name": "Sheet Data Overview",
-        //     "sql_query": "SELECT \"chart_id\", count(\"chart_id\") FROM (select * from sheet_data) temp_table GROUP BY \"chart_id\" ORDER BY \"chart_id\" ASC NULLS FIRST",
-        //     "dimensions": [
-        //       "chart_id"
-        //     ],
-        //     "metrics": [
-        //       "count(chart_id)"
-        //     ],
-        //     "chart_type": "bar",
-        //     "chart_id": 6,
-        //     "is_echart": true,
-        //     "sheet_data": "",
-        //     "structure_valid": true,
-        //     "col_data": [
-        //       {
-        //         "orginal_column": "chart_id",
-        //         "data_type": "int",
-        //         "type": ""
-        //       }
-        //     ],
-        //     "row_data": [
-        //       {
-        //         "orginal_column": "chart_id",
-        //         "data_type": "int",
-        //         "type": "count"
-        //       }
-        //     ],
-        //     "columns": [
-        //       {
-        //         "column": "chart_id",
-        //         "result": [
-        //           1,
-        //           2,
-        //           3,
-        //           4,
-        //           5,
-        //           6,
-        //           7,
-        //           8,
-        //           9,
-        //           10,
-        //           11,
-        //           12,
-        //           13,
-        //           14,
-        //           17,
-        //           18,
-        //           24,
-        //           25,
-        //           26,
-        //           27,
-        //           28,
-        //           29
-        //         ]
-        //       }
-        //     ],
-        //     "rows": [
-        //       {
-        //         "column": "count(chart_id)",
-        //         "result": [
-        //           289,
-        //           65,
-        //           78,
-        //           62,
-        //           1,
-        //           295,
-        //           8,
-        //           4,
-        //           5,
-        //           224,
-        //           1,
-        //           65,
-        //           12,
-        //           2,
-        //           34,
-        //           6,
-        //           184,
-        //           1215,
-        //           64,
-        //           97,
-        //           2,
-        //           71
-        //         ]
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     "sheet_name": "Top Sheet Users",
-        //     "sql_query": "SELECT \"user_id\", count(\"chart_id\") FROM (select * from sheet_data) temp_table GROUP BY \"user_id\" ORDER BY count(\"chart_id\") DESC",
-        //     "dimensions": [
-        //       "user_id"
-        //     ],
-        //     "metrics": [
-        //       "count(chart_id)"
-        //     ],
-        //     "chart_type": "line",
-        //     "chart_id": 13,
-        //     "is_echart": false,
-        //     "sheet_data": "",
-        //     "structure_valid": true,
-        //     "columns": [
-        //       {
-        //         "column": "user_id",
-        //         "result": [
-        //           12,
-        //           1,
-        //           17,
-        //           10,
-        //           62,
-        //           73,
-        //           15,
-        //           4,
-        //           2,
-        //           78,
-        //           70,
-        //           50,
-        //           3,
-        //           6,
-        //           74,
-        //           42,
-        //           7,
-        //           75,
-        //           32,
-        //           26,
-        //           64,
-        //           48,
-        //           44,
-        //           43,
-        //           71,
-        //           5,
-        //           27,
-        //           28,
-        //           25,
-        //           45,
-        //           49,
-        //           36,
-        //           56,
-        //           35,
-        //           9,
-        //           21,
-        //           14,
-        //           18,
-        //           72,
-        //           30,
-        //           34,
-        //           57,
-        //           37,
-        //           19,
-        //           40,
-        //           76,
-        //           8,
-        //           47,
-        //           51,
-        //           31,
-        //           23,
-        //           11,
-        //           61,
-        //           33,
-        //           58,
-        //           38,
-        //           24,
-        //           77,
-        //           46,
-        //           22,
-        //           13,
-        //           41,
-        //           59,
-        //           29,
-        //           69,
-        //           20
-        //         ]
-        //       }
-        //     ],
-        //     "rows": [
-        //       {
-        //         "column": "count(chart_id)",
-        //         "result": [
-        //           282,
-        //           153,
-        //           87,
-        //           72,
-        //           58,
-        //           53,
-        //           53,
-        //           48,
-        //           48,
-        //           44,
-        //           42,
-        //           39,
-        //           38,
-        //           38,
-        //           36,
-        //           35,
-        //           35,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           34,
-        //           22,
-        //           3
-        //         ]
-        //       }
-        //     ]
-        //   }
-        // ]
         this.datafromApi = [];
-        this.datafromApi = data.dashboard;
-        this.dashboardName = this.datafromApi.dashboard.dashboard_title;
-        this.loaderService.show();
-        this.openAi.getChartOptions(data.dashboard.sheets, this.openAiKey)
-          .then(chartOptions => {
-            console.log("Chart Options:", chartOptions);
+        this.datafromApi = data;
+        // this.storeDashbaord_data = data.
+        this.jsonTosendBackToAPI();
+        this.dashboardName = this.datafromApi.dashboard.dashboard.dashboard_title;
+        this.buildGenieDashbaordJson();
+      },
+      error:(error)=>{
+        console.log(error);
+        this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
+      }
+    })
+}
 
-            // Assign result
-            this.dash1 = chartOptions;
+buildGenieDashbaordJson(){
+      this.datafromApi.dashboard_json = this.datafromApi.dashboard_json.map((chartItem:any) => {
+      const title = chartItem?.data?.title?.trim();
+      const sheet = this.datafromApi.dashboard_data.sheets.find((s:any) => s.sheet_name === title);
+
+      if (!sheet) return chartItem; // no matching sheet found
+
+  const xAxisCategories = sheet.columns?.[0]?.result || [];
+    const multiSeriesChartData = sheet.rows?.map((row: any) => ({
+      name: row.metric_name || row.name || 'Series',
+      data: row.result || [],
+    })) || [];
+
+    let updatedOptions: any = {};
+
+    // ✅ Skip service for Table (1) and KPI (25)
+    if (chartItem.chartId === 1) {
+     const headers = [
+        ...(sheet.columns?.map((col: any) => col.column) || []),
+        ...(sheet.rows?.map((row: any) => row.column) || [])
+      ];
+      const columnsData = sheet.columns || [];
+      const rowsData = sheet.rows || [];
+
+      const combined = [...columnsData, ...rowsData];
+
+      const rows = combined[0]?.result?.map((_: any, index: number) => {
+        const obj: any = {};
+        combined.forEach((item: any) => {
+          obj[item.column] = item.result[index];
+        });
+        return obj;
+      }) || [];
+
+      console.log(rows);
+
+      updatedOptions = {
+        ...chartItem,
+        tableData: {
+          ...chartItem?.tableData,
+          headers: headers,
+          rows: rows
+        }
+      };
+      } else if (chartItem.chartId === 25) {
+      const firstMetric = multiSeriesChartData[0];
+      const kpiValue = firstMetric?.data?.[0] ?? 0;
+
+      updatedOptions = {
+        ...chartItem,
+        kpiData: {
+          ...chartItem?.kpiData,
+          kpiNumber: kpiValue, // only update value, keep rest (label, prefix, suffix)
+          rows:[{
+            col: firstMetric?.name || 'Metric',
+            result_data: [kpiValue]
+          }]
+        }
+      };
+
+    } else {
+      // --- Other chart types use the service ---
+      updatedOptions = this.dashbaordTransferService.updateChartOptions(
+        chartItem.isEChart ? chartItem.echartOptions : chartItem.chartOptions,
+        chartItem.chartId,
+        !chartItem.isEChart, // isApexChart = true if not EChart
+        xAxisCategories,
+        multiSeriesChartData
+      );
+    }
+
+
+      // ✅ Store locally (optional)
+      this.allChartOptions[title] = updatedOptions;
+
+      // ✅ Replace inside dashboard_json
+      if(chartItem.chartId === 1){
+        return { ...chartItem, tableData: updatedOptions.tableData };
+      }
+      else if(chartItem.chartId === 25){
+        return { ...chartItem, kpiData: updatedOptions.kpiData };
+      }
+      else if (chartItem.isEChart) {
+        return { ...chartItem, echartOptions: updatedOptions };
+      } else {
+        return { ...chartItem, chartOptions: updatedOptions };
+      }
+    });
+    console.log('Updated dashboard_json:', this.datafromApi.dashboard_json);
+
+this.dash1 = this.datafromApi.dashboard_json;
             this.showDashboardView = true;
-            if (!this.userPrompt.trim()) return;
+
+             if (!this.userPrompt.trim()) return;
             const currentPrompt = this.userPrompt;
             // Push user message
             this.chatHistory.push({
@@ -577,18 +423,62 @@ promptDashboard(){
             this.userPrompt = '';
             this.scrollToBottom();
             this.loaderService.hide();
-          })
-          .catch(err => {
-            console.error("Error fetching chart options", err);
-            this.loaderService.hide();
-          });
-      },
-      error:(error)=>{
-        console.log(error);
-        this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-top-right'});
-      }
-    })
 }
+responceTosendBackToApi:any;
+jsonTosendBackToAPI(){
+  
+  // Method to clean response
+    // Create a shallow copy to avoid mutating original
+    const cleaned = { ...this.datafromApi };
+
+    // Remove unwanted keys if they exist
+    delete cleaned.dashboard_data;
+    delete cleaned.dashboard_json;
+    delete cleaned.tables;
+
+   this.responceTosendBackToApi = JSON.stringify(cleaned);
+  console.log('Cleaned response to send back to API:', this.responceTosendBackToApi);
+    return cleaned;
+}
+
+customizeApi(){
+  this.jsonTosendBackToAPI();
+const obj ={
+    "question": this.userPrompt,
+    "h_id":this.hierarchyId,
+    "json":this.responceTosendBackToApi
+  }
+this.workbechService.promptDetect(obj).subscribe({
+  next:(data)=>{
+    console.log(data);
+     this.datafromApi = data;
+    this.buildGenieDashbaordJson();
+  }
+})
+  if (!this.userPrompt.trim()) return;
+    const currentPrompt = this.userPrompt; 
+    // Push user message
+    this.chatHistory.push({
+      sender: 'User',
+      text: this.userPrompt,
+      timestamp: new Date()
+    });
+
+    // Simulate AI response (replace with real API call)
+    setTimeout(() => {
+      this.chatHistory.push({
+        sender: 'AI',
+        text: `Got it! I’ll process: "${currentPrompt}"`,
+        timestamp: new Date()
+      });
+      this.scrollToBottom();
+    }, 800);
+
+    this.userPrompt = '';
+    this.scrollToBottom();
+
+}
+
 customizeDashboard(){
   const data = this.dash1;
   this.loaderService.show();
@@ -981,6 +871,1034 @@ getOpenAiKey(){
                   });
       }
     })
+}
+datafromApi1={
+    "status": "success",
+    "dashboard": {
+        "dashboard": {
+            "dashboard_title": "Sales Data Dashboard",
+            "height": "",
+            "width": "",
+            "dashboard_data": ""
+        },
+        "queryset": {
+            "custom_query": "SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\"",
+            "queryset_name": "Sales Data Dashboard"
+        },
+        "sheets": [
+            {
+                "sheet_name": "Revenue by Region",
+                "sql_query": "SELECT \"Region\", sum(\"Revenue\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table GROUP BY \"Region\" ORDER BY \"Region\" ASC NULLS FIRST",
+                "dimensions": [
+                    "Region"
+                ],
+                "metrics": [
+                    "sum(Revenue)"
+                ],
+                "chart_type": "bar",
+                "chart_id": 6,
+                "sheet_data": ""
+            },
+            {
+                "sheet_name": "Profit Over Time",
+                "sql_query": "SELECT \"Date & Time\", sum(\"Profit\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table GROUP BY \"Date & Time\" ORDER BY \"Date & Time\" ASC NULLS FIRST",
+                "dimensions": [
+                    "Date & Time"
+                ],
+                "metrics": [
+                    "sum(Profit)"
+                ],
+                "chart_type": "line",
+                "chart_id": 13,
+                "sheet_data": ""
+            },
+            {
+                "sheet_name": "Sales by Channel",
+                "sql_query": "SELECT \"Channel\", sum(\"Revenue\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table GROUP BY \"Channel\" ORDER BY \"Channel\" ASC NULLS FIRST",
+                "dimensions": [
+                    "Channel"
+                ],
+                "metrics": [
+                    "sum(Revenue)"
+                ],
+                "chart_type": "TABLE",
+                "chart_id": 1,
+                "sheet_data": ""
+            },
+            {
+                "sheet_name": "Total Revenue KPI",
+                "sql_query": "SELECT sum(\"Revenue\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table",
+                "dimensions": [],
+                "metrics": [
+                    "sum(Revenue)"
+                ],
+                "chart_type": "KPI",
+                "chart_id": 25,
+                "sheet_data": ""
+            },
+            {
+                "sheet_name": "Total Profit KPI",
+                "sql_query": "SELECT sum(\"Profit\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table",
+                "dimensions": [],
+                "metrics": [
+                    "sum(Profit)"
+                ],
+                "chart_type": "KPI",
+                "chart_id": 25,
+                "sheet_data": ""
+            }
+        ],
+        "overall_insights": "The dashboard provides insights into revenue distribution by region and channel, profit trends over time, and key performance indicators for total revenue and profit."
+    },
+    "message": "Dashboard generated successfully",
+    "dashboard_data": {
+        "dashboard": {
+            "dashboard_title": "Sales Data Dashboard",
+            "height": "",
+            "width": "",
+            "dashboard_data": ""
+        },
+        "queryset": {
+            "custom_query": "SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\"",
+            "queryset_name": "Sales Data Dashboard"
+        },
+        "sheets": [
+            {
+                "sheet_name": "Revenue by Region",
+                "sql_query": "SELECT \"Region\", sum(\"Revenue\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table GROUP BY \"Region\" ORDER BY \"Region\" ASC NULLS FIRST",
+                "dimensions": [
+                    "Region"
+                ],
+                "metrics": [
+                    "sum(Revenue)"
+                ],
+                "chart_type": "bar",
+                "chart_id": 6,
+                "sheet_data": "",
+                "structure_valid": false,
+                "structure_error": "Query doesn't follow the required structure",
+                "is_echart": false,
+                "columns": [
+                    {
+                        "column": "Region",
+                        "result": [
+                            "Central",
+                            "East",
+                            "North",
+                            "South",
+                            "West"
+                        ],
+                        "data_type": "String",
+                        "type": []
+                    }
+                ],
+                "rows": [
+                    {
+                        "column": "Revenue",
+                        "result": [
+                            1007605.4000000001,
+                            558180.26,
+                            839993.2799999999,
+                            1281203.4100000001,
+                            1159773.1800000002
+                        ],
+                        "data_type": "Float64",
+                        "type": [
+                            "sum"
+                        ]
+                    }
+                ]
+            },
+            {
+                "sheet_name": "Profit Over Time",
+                "sql_query": "SELECT \"Date & Time\", sum(\"Profit\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table GROUP BY \"Date & Time\" ORDER BY \"Date & Time\" ASC NULLS FIRST",
+                "dimensions": [
+                    "Date & Time"
+                ],
+                "metrics": [
+                    "sum(Profit)"
+                ],
+                "chart_type": "line",
+                "chart_id": 13,
+                "sheet_data": "",
+                "structure_valid": false,
+                "structure_error": "Query doesn't follow the required structure",
+                "is_echart": false,
+                "columns": [
+                    {
+                        "column": "Date & Time",
+                        "result": [
+                            "2023-01-21T08:39:50",
+                            "2023-01-24T12:57:40",
+                            "2023-01-27T13:57:13",
+                            "2023-01-31T10:16:33",
+                            "2023-02-02T08:13:05",
+                            "2023-02-03T08:55:43",
+                            "2023-02-09T16:49:13",
+                            "2023-02-17T14:43:52",
+                            "2023-02-18T11:14:51",
+                            "2023-02-26T08:43:07",
+                            "2023-03-05T08:05:10",
+                            "2023-03-09T13:04:22",
+                            "2023-03-21T10:59:03",
+                            "2023-04-03T08:29:26",
+                            "2023-04-07T09:39:57",
+                            "2023-04-18T14:36:02",
+                            "2023-04-19T16:36:14",
+                            "2023-04-20T17:32:29",
+                            "2023-04-26T08:29:29",
+                            "2023-04-28T08:04:55",
+                            "2023-04-28T10:47:40",
+                            "2023-04-28T17:53:08",
+                            "2023-05-05T13:31:53",
+                            "2023-05-08T09:57:32",
+                            "2023-05-20T11:47:45",
+                            "2023-05-23T11:28:07",
+                            "2023-05-28T14:29:08",
+                            "2023-06-08T15:38:00",
+                            "2023-06-20T10:59:39",
+                            "2023-06-25T11:46:07",
+                            "2023-07-15T14:42:26",
+                            "2023-07-17T15:45:00",
+                            "2023-07-25T15:17:54",
+                            "2023-07-29T09:39:47",
+                            "2023-08-08T17:49:16",
+                            "2023-08-17T11:59:07",
+                            "2023-08-19T12:56:29",
+                            "2023-08-23T13:52:30",
+                            "2023-09-06T15:06:06",
+                            "2023-09-19T14:59:49",
+                            "2023-09-26T09:47:33",
+                            "2023-10-12T09:27:17",
+                            "2023-10-16T14:43:58",
+                            "2023-10-16T16:10:20",
+                            "2023-10-27T15:35:23",
+                            "2023-11-10T15:44:53",
+                            "2023-11-15T09:19:50",
+                            "2023-12-02T12:35:25",
+                            "2023-12-04T10:41:09",
+                            "2023-12-30T12:17:22",
+                            "2024-01-06T13:11:59",
+                            "2024-01-07T11:27:25",
+                            "2024-01-20T12:43:11",
+                            "2024-01-21T16:11:31",
+                            "2024-01-23T13:23:17",
+                            "2024-01-25T09:56:40",
+                            "2024-02-01T15:06:47",
+                            "2024-02-11T09:36:23",
+                            "2024-02-14T12:15:07",
+                            "2024-02-15T13:12:58",
+                            "2024-02-15T15:56:03",
+                            "2024-02-23T12:41:40",
+                            "2024-02-26T14:15:23",
+                            "2024-03-12T15:41:23",
+                            "2024-03-18T08:05:37",
+                            "2024-03-22T17:50:41",
+                            "2024-03-27T14:29:20",
+                            "2024-03-28T09:24:08",
+                            "2024-04-06T15:56:59",
+                            "2024-04-23T13:47:42",
+                            "2024-04-25T15:12:12",
+                            "2024-05-12T16:47:18",
+                            "2024-05-14T12:04:30",
+                            "2024-05-16T17:05:25",
+                            "2024-05-26T12:15:29",
+                            "2024-06-08T10:32:00",
+                            "2024-06-24T16:07:45",
+                            "2024-07-26T08:01:29",
+                            "2024-07-31T12:50:47",
+                            "2024-07-31T13:37:13",
+                            "2024-08-04T10:16:30",
+                            "2024-08-22T15:50:10",
+                            "2024-08-31T10:10:52",
+                            "2024-09-05T17:22:08",
+                            "2024-10-01T15:09:14",
+                            "2024-10-08T17:27:12",
+                            "2024-10-09T17:36:10",
+                            "2024-10-23T11:26:51",
+                            "2024-10-24T09:38:15",
+                            "2024-10-28T10:41:29",
+                            "2024-11-03T13:17:19",
+                            "2024-11-05T15:49:18",
+                            "2024-11-11T09:35:01",
+                            "2024-11-23T10:09:44",
+                            "2024-11-23T16:39:04",
+                            "2024-11-25T16:42:55",
+                            "2024-12-16T16:28:32",
+                            "2024-12-18T13:19:37",
+                            "2024-12-26T13:33:35",
+                            "2024-12-30T13:16:53"
+                        ],
+                        "data_type": "DateTime64(3)",
+                        "type": []
+                    }
+                ],
+                "rows": [
+                    {
+                        "column": "Profit",
+                        "result": [
+                            7273.68,
+                            5303.57,
+                            9016.14,
+                            5291.26,
+                            12673.2,
+                            246349.64,
+                            5931.54,
+                            200390.51,
+                            12098.32,
+                            9795.57,
+                            7486.13,
+                            8549.97,
+                            8234.19,
+                            10676.15,
+                            10408.77,
+                            13002.37,
+                            11212.4,
+                            10968.4,
+                            4954.23,
+                            4428.95,
+                            9916.09,
+                            9547.26,
+                            16802.31,
+                            6020.05,
+                            8138.17,
+                            8106.61,
+                            4025.65,
+                            11533.94,
+                            113922.06,
+                            6561.72,
+                            9046.25,
+                            139594.91,
+                            5915.85,
+                            10173.62,
+                            10043.43,
+                            142959.24,
+                            7417.74,
+                            10890.23,
+                            8274.12,
+                            11997.94,
+                            11549.02,
+                            94984.44,
+                            12369.53,
+                            11372.75,
+                            4207.78,
+                            8225.1,
+                            12194.43,
+                            6691.08,
+                            5584.92,
+                            157445.83,
+                            10480.35,
+                            10274.78,
+                            6013.44,
+                            8731.11,
+                            10857.55,
+                            3063.66,
+                            6583.06,
+                            10896.15,
+                            5779.4,
+                            4190.88,
+                            13868.36,
+                            14073.16,
+                            190737.62,
+                            7524.7,
+                            13817.22,
+                            8065.13,
+                            7512.96,
+                            7228.63,
+                            13520.83,
+                            4792.67,
+                            2888.65,
+                            7785.82,
+                            224273.25,
+                            9812.93,
+                            6263.85,
+                            14840.75,
+                            4225.19,
+                            7679.51,
+                            10765.21,
+                            4846.43,
+                            10015.69,
+                            10160.99,
+                            5561.69,
+                            6566.26,
+                            5865.62,
+                            14338.38,
+                            7073.82,
+                            4738.56,
+                            10050.21,
+                            4432.27,
+                            10043.54,
+                            11177.2,
+                            5993.19,
+                            16326.81,
+                            11260.79,
+                            4158.25,
+                            7977.42,
+                            7361.67,
+                            198519.24,
+                            145464.91
+                        ],
+                        "data_type": "Float64",
+                        "type": [
+                            "sum"
+                        ]
+                    }
+                ]
+            },
+            {
+                "sheet_name": "Sales by Channel",
+                "sql_query": "SELECT \"Channel\", sum(\"Revenue\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table GROUP BY \"Channel\" ORDER BY \"Channel\" ASC NULLS FIRST",
+                "dimensions": [
+                    "Channel"
+                ],
+                "metrics": [
+                    "sum(Revenue)"
+                ],
+                "chart_type": "TABLE",
+                "chart_id": 1,
+                "sheet_data": "",
+                "structure_valid": false,
+                "structure_error": "Query doesn't follow the required structure",
+                "is_echart": false,
+                "columns": [
+                    {
+                        "column": "Channel",
+                        "result": [
+                            "Direct Sales",
+                            "Online",
+                            "Partner",
+                            "Retail"
+                        ],
+                        "data_type": "String",
+                        "type": []
+                    }
+                ],
+                "rows": [
+                    {
+                        "column": "Revenue",
+                        "result": [
+                            1396222.52,
+                            678237.8400000001,
+                            1656015.34,
+                            1116279.8299999996
+                        ],
+                        "data_type": "Float64",
+                        "type": [
+                            "sum"
+                        ]
+                    }
+                ]
+            },
+            {
+                "sheet_name": "Total Revenue KPI",
+                "sql_query": "SELECT sum(\"Revenue\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table",
+                "dimensions": [],
+                "metrics": [
+                    "sum(Revenue)"
+                ],
+                "chart_type": "KPI",
+                "chart_id": 25,
+                "sheet_data": "",
+                "structure_valid": false,
+                "structure_error": "Query doesn't follow the required structure",
+                "is_echart": false,
+                "columns": [],
+                "rows": [
+                    {
+                        "column": "Revenue",
+                        "result": [
+                            4846755.529999999
+                        ],
+                        "data_type": "Float64",
+                        "type": [
+                            "sum"
+                        ]
+                    }
+                ]
+            },
+            {
+                "sheet_name": "Total Profit KPI",
+                "sql_query": "SELECT sum(\"Profit\") FROM (SELECT \"Sales Data\".\"Transaction ID\" AS \"Transaction ID\", \"Sales Data\".\"Date & Time\" AS \"Date & Time\", \"Sales Data\".\"Customer\" AS \"Customer\", \"Sales Data\".\"Product\" AS \"Product\", \"Sales Data\".\"Sales Rep\" AS \"Sales Rep\", \"Sales Data\".\"Region\" AS \"Region\", \"Sales Data\".\"Revenue\" AS \"Revenue\", \"Sales Data\".\"Cost\" AS \"Cost\", \"Sales Data\".\"Profit\" AS \"Profit\", \"Sales Data\".\"Quantity\" AS \"Quantity\", \"Sales Data\".\"Margin %\" AS \"Margin %\", \"Sales Data\".\"Channel\" AS \"Channel\" FROM \"Financial_Sales_Data_4KPSSN.xlsx\".\"Sales Data\" AS \"Sales Data\") temp_table",
+                "dimensions": [],
+                "metrics": [
+                    "sum(Profit)"
+                ],
+                "chart_type": "KPI",
+                "chart_id": 25,
+                "sheet_data": "",
+                "structure_valid": false,
+                "structure_error": "Query doesn't follow the required structure",
+                "is_echart": false,
+                "columns": [],
+                "rows": [
+                    {
+                        "column": "Profit",
+                        "result": [
+                            2628036.82
+                        ],
+                        "data_type": "Float64",
+                        "type": [
+                            "sum"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "overall_insights": "The dashboard provides insights into revenue distribution by region and channel, profit trends over time, and key performance indicators for total revenue and profit."
+    },
+    "dashboard_json": [
+        {
+            "id": "84cddaf7-7c3e-4b3e-862c-611145ff551b",
+            "x": 0,
+            "y": 0,
+            "rows": 10,
+            "cols": 6,
+            "data": {
+                "title": "Revenue by Region",
+                "sheetTagName": "<p>Revenue by Region</p>"
+            },
+            "sheetType": "Chart",
+            "chartType": "bar",
+            "chartId": 6,
+            "isEChart": false,
+            "kpiData": null,
+            "tableData": null,
+            "chartData": [
+                {
+                    "Region": "North",
+                    "sum(Revenue)": 5000
+                },
+                {
+                    "Region": "South",
+                    "sum(Revenue)": 5000
+                },
+                {
+                    "Region": "East",
+                    "sum(Revenue)": 4000
+                },
+                {
+                    "Region": "West",
+                    "sum(Revenue)": 4000
+                }
+            ],
+            "column_Data": [
+                "Region",
+                "sum(Revenue)"
+            ],
+            "row_Data": [
+                [
+                    "North",
+                    5000
+                ],
+                [
+                    "South",
+                    5000
+                ],
+                [
+                    "East",
+                    4000
+                ],
+                [
+                    "West",
+                    4000
+                ]
+            ],
+            "numberFormat": {
+                "decimalPlaces": 2,
+                "prefix": "",
+                "suffix": ""
+            },
+            "customizeOptions": {
+                "backgroundColor": "#ffffff",
+                "color": "#2392c1",
+                "selectedColorScheme": [
+                    "#1d2e92",
+                    "#088ed2",
+                    "#2392c1",
+                    "#4CAF50",
+                    "#FF9800",
+                    "#9C27B0"
+                ],
+                "isMeasureDistribution": false,
+                "xLabelSwitch": true,
+                "yLabelSwitch": true,
+                "xLabelFontSize": 12,
+                "yLabelFontSize": 12,
+                "xLabelFontFamily": "sans-serif",
+                "yLabelFontFamily": "sans-serif",
+                "xlabelFontWeight": 400,
+                "ylabelFontWeight": 400,
+                "dimensionAlignment": "center",
+                "measureAlignment": "center",
+                "gridColor": "#e0e0e0",
+                "xGridSwitch": true,
+                "yGridSwitch": true,
+                "barCornerRadius": 4,
+                "dataLabels": true,
+                "dataLabelsFontSize": 12,
+                "dataLabelsFontFamily": "sans-serif",
+                "dataLabelsColor": "#2392c1",
+                "isBold": false,
+                "dataLabelsFontPosition": "top",
+                "legendSwitch": true,
+                "legendsAllignment": "bottom",
+                "donutSize": 70,
+                "donutDecimalPlaces": 2
+            },
+            "echartOptions": {},
+            "chartOptions": {
+                "series": [
+                    {
+                        "name": "sum(Revenue)",
+                        "data": [
+                            5000,
+                            5000,
+                            4000,
+                            4000
+                        ],
+                        "group": "apexcharts-axis-0"
+                    }
+                ],
+                "chart": {
+                    "type": "bar",
+                    "height": 320,
+                    "background": "#ffffff"
+                },
+                "xaxis": {
+                    "categories": [
+                        "North",
+                        "South",
+                        "East",
+                        "West"
+                    ],
+                    "labels": {
+                        "show": true,
+                        "style": {
+                            "fontSize": 12,
+                            "fontFamily": "sans-serif",
+                            "fontWeight": 400,
+                            "colors": "#2392c1"
+                        }
+                    }
+                },
+                "yaxis": {
+                    "labels": {
+                        "show": true,
+                        "style": {
+                            "fontSize": 12,
+                            "fontFamily": "sans-serif",
+                            "fontWeight": 400,
+                            "colors": "#2392c1"
+                        }
+                    }
+                },
+                "colors": [
+                    "#1d2e92",
+                    "#088ed2",
+                    "#2392c1",
+                    "#4CAF50",
+                    "#FF9800"
+                ],
+                "dataLabels": {
+                    "enabled": true,
+                    "style": {
+                        "fontSize": "12px",
+                        "fontFamily": "sans-serif",
+                        "colors": [
+                            "#2392c1"
+                        ]
+                    }
+                },
+                "legend": {
+                    "show": true,
+                    "position": "bottom"
+                }
+            }
+        },
+        {
+            "id": "9652d3a2-a648-405d-8061-3e2660549805",
+            "x": 6,
+            "y": 0,
+            "rows": 10,
+            "cols": 6,
+            "data": {
+                "title": "Profit Over Time",
+                "sheetTagName": "<p>Profit Over Time</p>"
+            },
+            "sheetType": "Chart",
+            "chartType": "line",
+            "chartId": 13,
+            "isEChart": false,
+            "kpiData": null,
+            "tableData": null,
+            "chartData": [
+                {
+                    "Date & Time": "North",
+                    "sum(Profit)": 5000
+                },
+                {
+                    "Date & Time": "South",
+                    "sum(Profit)": 5000
+                },
+                {
+                    "Date & Time": "East",
+                    "sum(Profit)": 4000
+                },
+                {
+                    "Date & Time": "West",
+                    "sum(Profit)": 4000
+                }
+            ],
+            "column_Data": [
+                "Date & Time",
+                "sum(Profit)"
+            ],
+            "row_Data": [
+                [
+                    "North",
+                    5000
+                ],
+                [
+                    "South",
+                    5000
+                ],
+                [
+                    "East",
+                    4000
+                ],
+                [
+                    "West",
+                    4000
+                ]
+            ],
+            "numberFormat": {
+                "decimalPlaces": 2,
+                "prefix": "",
+                "suffix": ""
+            },
+            "customizeOptions": {
+                "backgroundColor": "#ffffff",
+                "color": "#2392c1",
+                "selectedColorScheme": [
+                    "#1d2e92",
+                    "#088ed2",
+                    "#2392c1",
+                    "#4CAF50",
+                    "#FF9800",
+                    "#9C27B0"
+                ],
+                "isMeasureDistribution": false,
+                "xLabelSwitch": true,
+                "yLabelSwitch": true,
+                "xLabelFontSize": 12,
+                "yLabelFontSize": 12,
+                "xLabelFontFamily": "sans-serif",
+                "yLabelFontFamily": "sans-serif",
+                "xlabelFontWeight": 400,
+                "ylabelFontWeight": 400,
+                "dimensionAlignment": "center",
+                "measureAlignment": "center",
+                "gridColor": "#e0e0e0",
+                "xGridSwitch": true,
+                "yGridSwitch": true,
+                "barCornerRadius": 4,
+                "dataLabels": true,
+                "dataLabelsFontSize": 12,
+                "dataLabelsFontFamily": "sans-serif",
+                "dataLabelsColor": "#2392c1",
+                "isBold": false,
+                "dataLabelsFontPosition": "top",
+                "legendSwitch": true,
+                "legendsAllignment": "bottom",
+                "donutSize": 70,
+                "donutDecimalPlaces": 2
+            },
+            "echartOptions": {},
+            "chartOptions": {
+                "series": [
+                    {
+                        "name": "sum(Profit)",
+                        "data": [
+                            5000,
+                            5000,
+                            4000,
+                            4000
+                        ],
+                        "group": "apexcharts-axis-0"
+                    }
+                ],
+                "chart": {
+                    "type": "line",
+                    "height": 320,
+                    "background": "#ffffff"
+                },
+                "xaxis": {
+                    "categories": [
+                        "North",
+                        "South",
+                        "East",
+                        "West"
+                    ],
+                    "labels": {
+                        "show": true,
+                        "style": {
+                            "fontSize": 12,
+                            "fontFamily": "sans-serif",
+                            "fontWeight": 400,
+                            "colors": "#2392c1"
+                        }
+                    }
+                },
+                "yaxis": {
+                    "labels": {
+                        "show": true,
+                        "style": {
+                            "fontSize": 12,
+                            "fontFamily": "sans-serif",
+                            "fontWeight": 400,
+                            "colors": "#2392c1"
+                        }
+                    }
+                },
+                "colors": [
+                    "#1d2e92",
+                    "#088ed2",
+                    "#2392c1",
+                    "#4CAF50",
+                    "#FF9800"
+                ],
+                "dataLabels": {
+                    "enabled": true,
+                    "style": {
+                        "fontSize": "12px",
+                        "fontFamily": "sans-serif",
+                        "colors": [
+                            "#2392c1"
+                        ]
+                    }
+                },
+                "legend": {
+                    "show": true,
+                    "position": "bottom"
+                }
+            }
+        },
+        {
+            "id": 1,
+            "x": 0,
+            "y": 10,
+            "cols": 6,
+            "rows": 10,
+            "data": {
+                "title": "Sales by Channel",
+                "sheetTagName": "Sales by Channel"
+            },
+            "sheetType": "TABLE",
+            "chartType": "TABLE",
+            "chartId": 1,
+            "isEChart": false,
+            "tableData": {
+                "headers": [
+                    "Channel",
+                    "Revenue"
+                ],
+                "rows": [
+                    {
+                        "Channel": "Online",
+                        "Revenue": 120000
+                    },
+                    {
+                        "Channel": "Retail",
+                        "Revenue": 180000
+                    },
+                    {
+                        "Channel": "Wholesale",
+                        "Revenue": 150000
+                    }
+                ],
+                "banding": true,
+                "color1": "#e1bee7",
+                "color2": "#b2ebf2",
+                "tableItemsPerPage": 10,
+                "tableTotalItems": 100,
+                "tablePage": 1
+            },
+            "chartData": [],
+            "column_Data": [],
+            "row_Data": [],
+            "numberFormat": {},
+            "customizeOptions": {
+                "showTitle": true,
+                "showLegend": false,
+                "showGrid": true,
+                "showAxis": true,
+                "showValues": true,
+                "showLabels": true,
+                "showTooltips": true
+            },
+            "chartOptions": {
+                "theme": "light",
+                "responsive": true
+            }
+        },
+        {
+            "id": 25,
+            "x": 6,
+            "y": 10,
+            "cols": 6,
+            "rows": 10,
+            "data": {
+                "title": "Total Revenue KPI",
+                "sheetTagName": "Total Revenue KPI"
+            },
+            "sheetType": "KPI",
+            "chartType": "KPI",
+            "chartId": 25,
+            "isEChart": false,
+            "kpiData": {
+                "kpiNumber": "450000",
+                "kpiPrefix": "$",
+                "kpiSuffix": "",
+                "kpiDecimalUnit": "none",
+                "kpiDecimalPlaces": 2,
+                "rows": [
+                    {
+                        "col": "Total Revenue",
+                        "result_data": [
+                            450000
+                        ]
+                    }
+                ],
+                "fontSize": 1.5,
+                "color": "#4caf50",
+                "kpiChartColor": "#4caf50",
+                "trendData": [
+                    400000,
+                    420000,
+                    430000,
+                    450000
+                ],
+                "trendLabels": [
+                    "Q1",
+                    "Q2",
+                    "Q3",
+                    "Q4"
+                ],
+                "kpiShowTrendline": true,
+                "showKpiIndicator": true,
+                "indicatorIsIncreased": "up",
+                "indicatorValue": 5,
+                "kpiTarget": 500000
+            },
+            "chartData": [],
+            "column_Data": [],
+            "row_Data": [],
+            "numberFormat": {},
+            "customizeOptions": {
+                "showTitle": true,
+                "showLegend": false,
+                "showGrid": false,
+                "showAxis": false,
+                "showValues": true,
+                "showLabels": false,
+                "showTooltips": false
+            },
+            "chartOptions": {
+                "theme": "light",
+                "responsive": true
+            }
+        },
+        {
+            "id": "chart_25",
+            "x": 0,
+            "y": 20,
+            "cols": 6,
+            "rows": 10,
+            "data": {
+                "title": "Total Profit KPI",
+                "sheetTagName": "Total Profit KPI"
+            },
+            "sheetType": "chart",
+            "chartType": "KPI",
+            "chartId": 25,
+            "isEChart": false,
+            "kpiData": {
+                "kpiNumber": "1500000",
+                "kpiPrefix": "$",
+                "kpiSuffix": "",
+                "kpiDecimalUnit": "none",
+                "kpiDecimalPlaces": 2,
+                "rows": [
+                    {
+                        "col": "sum(Profit)",
+                        "result_data": [
+                            1500000
+                        ]
+                    }
+                ],
+                "fontSize": 1.5,
+                "color": "#4caf50",
+                "kpiChartColor": "#81c784",
+                "trendData": [
+                    1400000,
+                    1450000,
+                    1500000
+                ],
+                "trendLabels": [
+                    "Q1",
+                    "Q2",
+                    "Q3"
+                ],
+                "kpiShowTrendline": true,
+                "showKpiIndicator": true,
+                "indicatorIsIncreased": "up",
+                "indicatorValue": 5,
+                "kpiTarget": 1600000
+            },
+            "column_Data": [],
+            "row_Data": [],
+            "numberFormat": {
+                "decimalPlaces": 2,
+                "prefix": "$",
+                "suffix": ""
+            },
+            "customizeOptions": {
+                "backgroundColor": "#ffffff",
+                "borderColor": "#e0e0e0",
+                "borderWidth": 1,
+                "borderRadius": 5,
+                "fontFamily": "Arial, sans-serif",
+                "fontSize": 12,
+                "fontColor": "#333333"
+            },
+            "chartOptions": {
+                "chart": {
+                    "type": "kpi",
+                    "height": 350
+                },
+                "plotOptions": {
+                    "kpi": {
+                        "dataLabels": {
+                            "enabled": true,
+                            "style": {
+                                "colors": [
+                                    "#333333"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "colors": [
+                    "#4caf50"
+                ],
+                "title": {
+                    "text": "Total Profit",
+                    "align": "center"
+                }
+            }
+        }
+    ],
+    "tables": []
 }
 
 }

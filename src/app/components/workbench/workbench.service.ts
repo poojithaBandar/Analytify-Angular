@@ -1417,6 +1417,11 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/predictive_analysis/`+this.accessToken,obj);
     }
+    promptDetect(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/prompt_detect/`+this.accessToken,obj);
+    }
      getChartMetricsLandingPage(){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
