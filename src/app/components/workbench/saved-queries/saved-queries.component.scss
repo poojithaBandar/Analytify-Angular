@@ -9,6 +9,7 @@ a { cursor: pointer;}
 .table-primary-position { position: sticky; top: -1px; }
 .pagination-count { float: right; font-size: 15px; margin-top: -34px;  }
 .card-padding-top { padding-top: 15px; }
+.table > :not(:last-child) > :last-child > * { border-block-end-color: var(--default-border); color:var(--default-text-color) !important; }
 
 // for 90% Resolution //
 @media ( 1420px <= width <= 1560px) {
