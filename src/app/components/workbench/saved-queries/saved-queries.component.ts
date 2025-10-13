@@ -34,15 +34,58 @@ export class SavedQueriesComponent {
   totalCharts:any;
   totalDashboards:any;
   activeQueries:any;
+  datasourceSearch: string = '';
+  selectedDatasource: any = null;
+  datasourcesDisplayNames: any[] = [];
+
 constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService, private toasterservice:ToastrService,private loaderService:LoaderService){
   this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
 }
 
   ngOnInit(){
+    this.getConnectionList();
     this.loaderService.hide();
     if(this.viewSavedQueries){
     this.getSavedQueries();
     }
+  }
+  getConnectionList(){
+      const Obj ={
+            need_pagination:false
+        }
+         this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
+          next:(data)=>{
+            console.log(data);
+            this.datasourcesDisplayNames = data;
+             this.datasourcesDisplayNames.unshift({
+                display_name: "All",
+                hierarchy_id: "",
+                image: null
+              });
+            console.log('connectionlist',data)
+           },
+          error:(error)=>{
+            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'oops!',
+              text: error.error.message,
+              width: '400px',
+            })
+          }
+        })
+  }
+   filteredDatasourceList() {
+    return this.datasourcesDisplayNames.filter(ds =>
+      ds.display_name.toLowerCase().includes(this.datasourceSearch.toLowerCase())
+    );
+  }
+  selectedHid:any;
+  onDatasourceSelect(ds:any){
+    this.selectedDatasource = ds;
+     this.pageNo=1;
+    this.page=1;
+    this.getSavedQueries()
   }
   getSavedQueriesSearch(){
     this.pageNo=1;
@@ -68,6 +111,7 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
       delete Obj.search;
     }
       let params = new HttpParams()
+      .set('h_id', this.selectedDatasource?.hierarchy_id || '');
         if (this.orderBy) {
           params = params.set('order_by', this.orderBy);
         }
