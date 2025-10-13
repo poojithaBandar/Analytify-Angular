@@ -1536,7 +1536,7 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                    <div class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0.5rem', right: '0.2rem' }" ngbDropdown>
+                    <div *ngIf="!isPublicUrl && !isEmbedDashboard && !hideWidgets" class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0.5rem', right: '0.2rem' }" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
@@ -2072,7 +2072,7 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                    <div class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0.5rem', right: '0.2rem' }" ngbDropdown>
+                    <div *ngIf="!isPublicUrl && !isEmbedDashboard && !hideWidgets" class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0.5rem', right: '0.2rem' }" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
@@ -2258,7 +2258,7 @@
   }
 
   <ng-template #sheetOptions let-item>
-    <app-insights-button *ngIf="item['type'] !== 'image' && item['type'] !== 'text'" [classesList]="'dropdown-item'"
+    <app-insights-button *ngIf="item['type'] !== 'image' && item['type'] !== 'text' && !isPublicUrl" [classesList]="'dropdown-item'"
       [buttonName]="'Goto Sheet'" [previledgeIdsList]="[20,18]" [isBtn]="false"
       (btnClickEvent)="viewSheet(item)" [isIcon]="false"></app-insights-button>
     <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'"
@@ -2267,7 +2267,7 @@
     <app-insights-button *ngIf="!isPublicUrl && item['type'] === 'text'" [classesList]="'dropdown-item'" [buttonName]="'Edit Text'"
       [previledgeId]="37" [isBtn]="false" (btnClickEvent)="editTextItem(item)" [isIcon]="false">
     </app-insights-button>
-    <app-insights-button  *ngIf="item['type'] !== 'image' && item['type'] !== 'text'" [classesList]="'dropdown-item'"
+    <app-insights-button  *ngIf="item['type'] !== 'image' && item['type'] !== 'text' && !isPublicUrl" [classesList]="'dropdown-item'"
       [buttonName]="'Download CSV'"
       [previledgeIdsList]="[20,18]"
       [isBtn]="false"
