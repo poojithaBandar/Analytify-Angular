@@ -441,7 +441,7 @@ jsonTosendBackToAPI(){
     return cleaned;
 }
 
-customizeApi(){
+customizeDashboard(){
   this.jsonTosendBackToAPI();
 const obj ={
     "question": this.userPrompt,
@@ -479,46 +479,46 @@ this.workbechService.promptDetect(obj).subscribe({
 
 }
 
-customizeDashboard(){
-  const data = this.dash1;
-  this.loaderService.show();
-  this.openAi.getChartOptions(data, this.openAiKey, this.userPrompt + "/n" + "do not remove any other charts, do update only relative chart only")
-  .then(chartOptions => {
-    console.log("Chart Options:", chartOptions);
+// customizeDashboard(){
+//   const data = this.dash1;
+//   this.loaderService.show();
+//   this.openAi.getChartOptions(data, this.openAiKey, this.userPrompt + "/n" + "do not remove any other charts, do update only relative chart only")
+//   .then(chartOptions => {
+//     console.log("Chart Options:", chartOptions);
 
-    // Assign result
-    this.dash1 = chartOptions;
-    // this.showDashboardView = true;
-    this.loaderService.hide();
-  })
-  .catch(err => {
-    console.error("Error fetching chart options", err);
-    this.loaderService.hide();
-  });
+//     // Assign result
+//     this.dash1 = chartOptions;
+//     // this.showDashboardView = true;
+//     this.loaderService.hide();
+//   })
+//   .catch(err => {
+//     console.error("Error fetching chart options", err);
+//     this.loaderService.hide();
+//   });
 
 
-   if (!this.userPrompt.trim()) return;
-    const currentPrompt = this.userPrompt; 
-    // Push user message
-    this.chatHistory.push({
-      sender: 'User',
-      text: this.userPrompt,
-      timestamp: new Date()
-    });
+//    if (!this.userPrompt.trim()) return;
+//     const currentPrompt = this.userPrompt; 
+//     // Push user message
+//     this.chatHistory.push({
+//       sender: 'User',
+//       text: this.userPrompt,
+//       timestamp: new Date()
+//     });
 
-    // Simulate AI response (replace with real API call)
-    setTimeout(() => {
-      this.chatHistory.push({
-        sender: 'AI',
-        text: `Got it! I’ll process: "${currentPrompt}"`,
-        timestamp: new Date()
-      });
-      this.scrollToBottom();
-    }, 800);
+//     // Simulate AI response (replace with real API call)
+//     setTimeout(() => {
+//       this.chatHistory.push({
+//         sender: 'AI',
+//         text: `Got it! I’ll process: "${currentPrompt}"`,
+//         timestamp: new Date()
+//       });
+//       this.scrollToBottom();
+//     }, 800);
 
-    this.userPrompt = '';
-    this.scrollToBottom();
-}
+//     this.userPrompt = '';
+//     this.scrollToBottom();
+// }
 
   private scrollToBottom() {
     try {
