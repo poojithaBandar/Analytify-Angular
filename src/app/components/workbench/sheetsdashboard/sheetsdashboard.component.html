@@ -1814,7 +1814,7 @@
                   <i class="fa fa-filter filter-icon-count" ngbTooltip="{{filter?.filter_count}} Filters Applied"></i>
                   }
                   }
-                  <div *ngIf="!isPublicUrl && !isEmbedDashboard" class="dashboard-option">
+                  <div *ngIf="!isPublicUrl && !isEmbedDashboard && !(item['chartType'] === 'KPI' && item['chartId'] === 25)" class="dashboard-option">
                     <div class=" p-1" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
