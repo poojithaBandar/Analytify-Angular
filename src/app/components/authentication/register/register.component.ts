@@ -29,7 +29,7 @@ export class RegisterComponent {
       first_name: ['', [Validators.required, Validators.maxLength(64),Validators.pattern(/^(?!\s*$).+/)]],
       last_name: ['', [Validators.required, Validators.maxLength(64),Validators.pattern(/^(?!\s*$).+/)]],
       //
-      username: ['', [Validators.required, Validators.maxLength(64)]],
+      username: ['', [Validators.required, Validators.maxLength(64),Validators.pattern(/^(?!\s*$).+/)]],
       // username: ['', Validators.required],
       email: [
         '',
