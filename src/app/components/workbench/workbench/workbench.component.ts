@@ -216,7 +216,6 @@ export class WorkbenchComponent implements OnInit{
   zohoRedirectURL!: string;
   zohoCountry: string = '';
   zohoCountries: string[] = ['United States','Europe','India','China','Australia','Japan'];
-  zohoScopes: string[] = ['CRM','BOOKS'];
   selectedZohoScopes: string[] = [];
   zohoDescription: string = '';
   zohoClientIdError = false;
@@ -1709,11 +1708,6 @@ export class WorkbenchComponent implements OnInit{
     this.zohoRedirectURLError = !this.zohoRedirectURL;
   }
 
-  onZohoScopeChange(scopes: string[]): void {
-    this.selectedZohoScopes = scopes;
-    this.zohoScopeError = !scopes || scopes.length === 0;
-  }
-  
     shopifySignIn(){
       const obj={
         "api_token":this.shopifyToken,
@@ -2241,7 +2235,8 @@ export class WorkbenchComponent implements OnInit{
         }});
     }
 
-    zohoSignIn(){
+    zohoSignIn(zohoScope: string){
+      this.selectedZohoScopes.push(zohoScope);
       const obj = {
         "client_id": this.zohoClientId,
         "client_secret": this.zohoClientSecret,
@@ -4141,7 +4136,9 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: "Google Analytics", description: "Web analytics service", image:'./assets/images/icons_new/GOOGLE_ANALYTICS.svg' },
     { name: "HubSpot", description: "Marketing & CRM platform",image:'./assets/images/icons_new/HUBSPOT.svg' },
     { name: "Immybot", description: "IT automation tool",image:'./assets/images/icons_new/IMMYBOT.svg' },
-    { name: "Zoho", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO.svg' }
+    { name: "ZohoBooks", description: "Zoho CRM Books platform", image:'./assets/images/icons_new/ZOHO.svg' },
+    { name: "ZohoInventory", description: "Zoho CRM Inventory platform", image:'./assets/images/icons_new/ZOHO.svg' },
+    { name: "ZohoCRM", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO.svg' }
   ]
 
 };

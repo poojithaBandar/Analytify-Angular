@@ -5506,7 +5506,7 @@
     </div>
   </div>
 
-  <div *ngSwitchCase="'Zoho'" class="col-md-6">
+  <div *ngSwitchCase="'ZohoCRM'" class="col-md-6">
     <div class="form-card p-3">
       <h5 class="d-flex align-items-center">
         <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
@@ -5516,7 +5516,7 @@
         </ng-container>
         Create New {{ selectedConnection }}
       </h5>
-      <form class="form-height" (ngSubmit)="zohoSignIn()" style="overflow-x: hidden;">
+      <form class="form-height" (ngSubmit)="zohoSignIn('CRM')" style="overflow-x: hidden;">
 
         <div class="mb-3">
           <label [ngClass]="{'error-label': displayNameError}" class="form-label">
@@ -5560,17 +5560,71 @@
         </div>
 
         <div class="mb-3">
-          <label [ngClass]="{'error-label': zohoScopeError}" class="form-label">
-            Scopes <span class="text-danger">*</span>
+          <label class="form-label">Description</label>
+          <span class="text-muted" style="display:inline-block;">(Optional description for this connection)</span>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="zohoDescription" [ngModelOptions]="{standalone: true}" placeholder="Description">
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button" (click)="goBackToSubCategories()">Close</button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(zohoScopeError || zohoClientSecretError || displayNameError || zohoClientIdError || zohoRedirectURLError) || !(zohoClientSecret && zohoClientId && displayName && zohoRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'ZohoInventory'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo" class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="zohoSignIn('INVENTORY')" style="overflow-x: hidden;">
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
           </label>
-          <span class="text-muted" style="display:inline-block;">(Select the required scopes for this connection)</span>
-          <ng-multiselect-dropdown
-            [data]="zohoScopes"
-            [(ngModel)]="selectedZohoScopes"
-            [ngModelOptions]="{standalone: true}"
-            [settings]="hubspotDropdownSettings"
-            (ngModelChange)="onZohoScopeChange($event)">
-          </ng-multiselect-dropdown>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection name in this field)</span>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Zoho" autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoClientIdError}" class="form-label">
+            Client Id <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted" style="display:inline-block;">(Enter your Zoho Client ID in this field)</span>
+          <input [ngClass]="{'error-input': zohoClientIdError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoClientId" [ngModelOptions]="{standalone: true}" (input)="zohoClientIdInput()" placeholder="Client Id">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoClientSecretError}" class="form-label">
+            Client Secret <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted" style="display:inline-block;">(Enter your Zoho Client Secret in this field)</span>
+          <input [ngClass]="{'error-input': zohoClientSecretError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoClientSecret" [ngModelOptions]="{standalone: true}" (input)="zohoClientSecretInput()" placeholder="Client Secret">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoRedirectURLError}" class="form-label">
+            Redirect URL <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted" style="display:inline-block;">(Enter the redirect URL configured in your Zoho app)</span>
+          <input [ngClass]="{'error-input': zohoRedirectURLError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoRedirectURL" [ngModelOptions]="{standalone: true}" (input)="zohoRedirectURLInput()" placeholder="Redirect URL">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Country</label>
+          <span class="text-muted" style="display:inline-block;">(Select your country)</span>
+          <select class="form-select forms-light w-100" [(ngModel)]="zohoCountry" [ngModelOptions]="{standalone: true}">
+            <option value="" disabled selected>Select Country</option>
+            <option *ngFor="let country of zohoCountries" [value]="country">{{ country }}</option>
+          </select>
         </div>
 
         <div class="mb-3">
@@ -5581,13 +5635,79 @@
 
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button" (click)="goBackToSubCategories()">Close</button>
-          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(zohoScopeError || zohoClientSecretError || displayNameError || zohoClientIdError || zohoRedirectURLError) || !(selectedZohoScopes.length>0 && zohoClientSecret && zohoClientId && displayName && zohoRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(zohoScopeError || zohoClientSecretError || displayNameError || zohoClientIdError || zohoRedirectURLError) || !(zohoClientSecret && zohoClientId && displayName && zohoRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
         </div>
 
       </form>
     </div>
   </div>
+  <div *ngSwitchCase="'ZohoBooks'" class="col-md-6">
+    <div class="form-card p-3">
+      <h5 class="d-flex align-items-center">
+        <ng-container *ngIf="getConnectionAsset(selectedConnection) as asset">
+          <span *ngIf="asset.type === 'icon'" class="card-icon me-2 fs-5">{{ asset.value }}</span>
+          <img *ngIf="asset.type === 'image'" [src]="asset.value" alt="{{ selectedConnection }} logo" class="me-2 card-icon" width="24" height="24">
+          <span *ngIf="asset.type === 'svg'" class="me-2 card-icon" [innerHTML]="asset.value"></span>
+        </ng-container>
+        Create New {{ selectedConnection }}
+      </h5>
+      <form class="form-height" (ngSubmit)="zohoSignIn('BOOKS')" style="overflow-x: hidden;">
 
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': displayNameError}" class="form-label">
+            Connection Name <span class="text-danger">*</span>
+          </label>
+          <span  class="text-muted" style="display:inline-block;">(Enter your Connection name in this field)</span>
+          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control forms-light w-100" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Zoho" autocomplete="new-myname" (input)="displayNameIntegrationConditionError()">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoClientIdError}" class="form-label">
+            Client Id <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted" style="display:inline-block;">(Enter your Zoho Client ID in this field)</span>
+          <input [ngClass]="{'error-input': zohoClientIdError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoClientId" [ngModelOptions]="{standalone: true}" (input)="zohoClientIdInput()" placeholder="Client Id">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoClientSecretError}" class="form-label">
+            Client Secret <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted" style="display:inline-block;">(Enter your Zoho Client Secret in this field)</span>
+          <input [ngClass]="{'error-input': zohoClientSecretError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoClientSecret" [ngModelOptions]="{standalone: true}" (input)="zohoClientSecretInput()" placeholder="Client Secret">
+        </div>
+
+        <div class="mb-3">
+          <label [ngClass]="{'error-label': zohoRedirectURLError}" class="form-label">
+            Redirect URL <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted" style="display:inline-block;">(Enter the redirect URL configured in your Zoho app)</span>
+          <input [ngClass]="{'error-input': zohoRedirectURLError}" type="text" class="form-control forms-light w-100" [(ngModel)]="zohoRedirectURL" [ngModelOptions]="{standalone: true}" (input)="zohoRedirectURLInput()" placeholder="Redirect URL">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Country</label>
+          <span class="text-muted" style="display:inline-block;">(Select your country)</span>
+          <select class="form-select forms-light w-100" [(ngModel)]="zohoCountry" [ngModelOptions]="{standalone: true}">
+            <option value="" disabled selected>Select Country</option>
+            <option *ngFor="let country of zohoCountries" [value]="country">{{ country }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <span class="text-muted" style="display:inline-block;">(Optional description for this connection)</span>
+          <input type="text" class="form-control forms-light w-100" [(ngModel)]="zohoDescription" [ngModelOptions]="{standalone: true}" placeholder="Description">
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-secondary animate-button" (click)="goBackToSubCategories()">Close</button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(zohoScopeError || zohoClientSecretError || displayNameError || zohoClientIdError || zohoRedirectURLError) || !(zohoClientSecret && zohoClientId && displayName && zohoRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
   <div *ngSwitchCase="'Immybot'" class="col-md-6">
     <div class="form-card p-3">
       <h5 class="d-flex align-items-center">
