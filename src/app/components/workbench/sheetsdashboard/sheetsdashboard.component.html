@@ -1274,7 +1274,7 @@
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
-                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item}"></ng-container>
+                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item,fromTabs: false }"></ng-container>
                       </div>
                     </div>
                   </div>
@@ -1541,7 +1541,7 @@
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
-                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item}"></ng-container>
+                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item,fromTabs: false }"></ng-container>
                       </div>
                     </div>
                   <div (click)="setDrillThrough('',item,true)" class="big-number-container" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
@@ -1820,7 +1820,7 @@
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu>
-                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item}"></ng-container>
+                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item,fromTabs: true }"></ng-container>
                       </div>
                     </div>
                   </div>
@@ -2077,7 +2077,7 @@
                         aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
-                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item}"></ng-container>
+                        <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item,fromTabs: true }"></ng-container>
                       </div>
                     </div>
                   <div (click)="setDrillThrough('',item,true)" class="big-number-container" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
@@ -2092,6 +2092,8 @@
                       <h1 *ngIf="item['kpiData']?.kpiNumber !== undefined" class="big-number" [style.font-size]="item['kpiData']?.fontSize + 'rem'"
                         [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                     </div>
+                    <div class="position-absolute"
+                    [ngStyle]="getTrendlinePositionStyles(item['kpiData']?.kpiTrendlinePosition)">
                     @for(row of item['kpiData'].rows;track row){
                     <ng-container *ngIf="row?.result_data">
                       <div *ngIf="item['kpiData']?.showKpiIndicator" class="text-center text-muted" [style.color]="item['kpiData']?.color" style="font-size: 13px;">
@@ -2122,6 +2124,7 @@
                         </div>
                     </ng-container>
                     }
+                    </div>
                     <i [class]="item['kpiIconsArray']?.kpiIcon" [style.font-size]="item['kpiIconsArray']?.kpiIconSize + 'px'"
                       [style.color]="item['kpiIconsArray']?.kpiIconColor"
                       [ngStyle]="getIconPositionStyles(item['kpiIconsArray']?.kpiIconPosition)" style="position: absolute;"></i>
@@ -2257,17 +2260,17 @@
 
   }
 
-  <ng-template #sheetOptions let-item>
+  <ng-template #sheetOptions let-item let-fromTabs="fromTabs">
     <app-insights-button *ngIf="item['type'] !== 'image' && item['type'] !== 'text' && !isPublicUrl" [classesList]="'dropdown-item'"
       [buttonName]="'Goto Sheet'" [previledgeIdsList]="[20,18]" [isBtn]="false"
       (btnClickEvent)="viewSheet(item)" [isIcon]="false"></app-insights-button>
     <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'"
-      [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, false)" [isIcon]="false">
+      [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, fromTabs)" [isIcon]="false">
     </app-insights-button>
     <app-insights-button *ngIf="!isPublicUrl && item['type'] === 'text'" [classesList]="'dropdown-item'" [buttonName]="'Edit Text'"
       [previledgeId]="37" [isBtn]="false" (btnClickEvent)="editTextItem(item)" [isIcon]="false">
     </app-insights-button>
-    <app-insights-button  *ngIf="item['type'] !== 'image' && item['type'] !== 'text' && !isPublicUrl" [classesList]="'dropdown-item'"
+    <app-insights-button  *ngIf="item['type'] !== 'image' && item['type'] !== 'text' && !isPublicUrl && !fromTabs" [classesList]="'dropdown-item'"
       [buttonName]="'Download CSV'"
       [previledgeIdsList]="[20,18]"
       [isBtn]="false"
