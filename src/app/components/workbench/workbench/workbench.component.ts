@@ -3870,12 +3870,15 @@ connectGoogleSheets(){
       showCloseButton: true, 
       allowOutsideClick: false, 
     }).then((result) => {
-      if (result.dismiss === Swal.DismissReason.close) {
-        return null;
-      }
-      if (result.dismiss === Swal.DismissReason.cancel) {
-        return false;
-      }
+      // if (result.dismiss === Swal.DismissReason.close) {
+      //   return null;
+      // }
+      // if (result.dismiss === Swal.DismissReason.cancel) {
+      //   return false;
+      // }
+      const dismiss = result.dismiss as string | undefined;
+      if (dismiss === 'close') return null;
+      if (dismiss === 'cancel') return false;
       return result.isConfirmed;
     });
   }
