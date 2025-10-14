@@ -1,4 +1,4 @@
-.table thead th{ color: #fff;}
+// .table thead th{ color: #fff;}
 a { cursor: pointer;}
 .dropdown-toggle::after{ display: none;}
 .card-box-shadow{ box-shadow: 5px 10px 10px 5px #0000001a;}
@@ -9,6 +9,7 @@ a { cursor: pointer;}
 .table-primary-position { position: sticky; top: -1px; }
 .pagination-count { float: right; font-size: 15px; margin-top: -34px;  }
 .card-padding-top { padding-top: 15px; }
+.table > :not(:last-child) > :last-child > * { border-block-end-color: var(--default-border); color:var(--default-text-color) !important; }
 
 // for 90% Resolution //
 @media ( 1420px <= width <= 1560px) {
@@ -39,4 +40,203 @@ a.float-start { font-size: 13px;}
 .tiled-card-body-padding { padding: 10px;}
 .tiled-card-header-padding { padding: 10px !important;}
 }
-  
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4); /* lighter primary */
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb, 13, 110, 253), 0.15); /* soft primary shadow */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+ transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(var(--bs-primary-rgb, 13, 110, 253), 0.25); /* slightly stronger on hover */
+}
+.glass-light,
+.glass-light-input,
+.glass-light-select,
+.glass-light-grid
+ {
+  background: 0 4px 12px rgba(var(--primary-rgb, 13, 110, 253), 0.15)!important;
+  border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4) !important;
+  border-radius: 0.5rem !important;
+}
+
+.glass-light:focus,
+.glass-light-input:focus,
+.glass-light-select:focus {
+  border-color: rgba(0, 123, 255, 0.8);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+.glass-light-input,
+.glass-light-select,
+.glass-light-grid {
+ border-radius: 50px !important; 
+}
+/* styles for cards & hover */
+.hoverable {
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.hoverable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  background: rgba(25, 135, 84, 0.1); /* light green bg */
+  border: 1px solid rgba(25, 135, 84, 0.3); /* soft green border */
+  color: rgb(25, 135, 84); /* Bootstrap success green */
+  font-weight: 500;
+}
+.btn-outline-primary-light {
+  border: 1px solid rgba(var(--primary-rgb, 13, 110, 253), 0.4);
+  color: var(--bs-primary);
+  background: rgba(var(--primary-rgb, 13, 110, 253), 0.05);
+}
+.btn-outline-primary-light:hover {
+  background: rgba(var(--primary-rgb, 13, 110, 253), 0.15);
+}
+
+.btn-outline-danger-light {
+  border: 1px solid rgba(var(--bs-danger-rgb, 220, 53, 69), 0.4);
+  color: var(--bs-danger);
+  background: rgba(var(--bs-danger-rgb, 220, 53, 69), 0.05);
+}
+.btn-outline-danger-light:hover {
+  background: rgba(var(--bs-danger-rgb, 220, 53, 69), 0.15);
+}
+.toggle-group .btn.active {
+  background: rgba(var(--primary-rgb, 13, 110, 253), 0.45);
+  color: var(--bs-primary);
+  border: none;
+}
+
+.toggle-group .btn + .btn {
+  margin-left: -1px; /* keep them joined like toggle */
+}
+
+.toggle-group {
+  border-radius: 20px;
+  overflow: hidden; /* smooth rounded container */
+}
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  color: #fff;
+}
+
+/* Sizes */
+.avatar-md {
+  width: 55px;
+  height: 55px;
+  font-size: 1.5rem;
+}
+.landing-dash-bg {
+  background-color: #0d6efd; /* Bootstrap primary */
+}
+
+.landing-chart-bg {
+  background-color: #198754; /* Bootstrap success */
+}
+
+.landing-queries-bg {
+  background-color: #ffc107; /* Bootstrap warning */
+  color: #212529; /* better contrast */
+}
+
+.landing-data-bg {
+  background-color: #dc3545; /* Bootstrap danger */
+}
+
+.icon-bounce {
+  display: inline-block;
+  animation: bounce 5s infinite;
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e2e2e2 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+.skeleton-loader {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+  border-radius: 4px;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+@keyframes skeleton-loading {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+/* Smooth transitions */
+.hover-animate {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Slight lift on hover */
+.hover-animate:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Animate the icon inside */
+.hover-animate:hover i {
+  animation: iconPulse 0.6s ease-in-out;
+  color: #fff;
+}
+
+/* Define subtle pulse animation */
+@keyframes iconPulse {
+  0% { transform: scale(1) rotate(0deg); }
+  30% { transform: scale(1.2) rotate(10deg); }
+  60% { transform: scale(1.1) rotate(-10deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* Optional: give each card type a custom hover glow */
+.connections-card:hover .avatar {
+  background-color: #0d6efd; /* Blue tone */
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.7);
+}
+
+.datasets-card:hover .avatar {
+  background-color: #198754; /* Green tone */
+  box-shadow: 0 0 10px rgba(25, 135, 84, 0.7);
+}
+
+.sync-card:hover .avatar {
+  background-color: #ffc107; /* Yellow tone */
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.7);
+}
+
+.bell-card:hover .avatar {
+  background-color: #dc3545; /* Red tone */
+  box-shadow: 0 0 10px rgba(220, 53, 69, 0.7);
+}
+.dashboard-T-C,
+.chart-T-C,
+.queries-T-C,
+.data-T-C {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #6c757d; /* Bootstrap secondary text */
+}

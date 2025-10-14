@@ -284,7 +284,7 @@ promptDashboard(){
   const selectedTableNames = this.selectedTables.slice();
   const payload ={
     h_id: this.hierarchyId,
-    table_name:selectedTableNames,
+    tables:selectedTableNames,
     question:this.userPrompt
   }
     this.workbechService.promptDashboard(payload).subscribe({
@@ -647,14 +647,28 @@ genarateQuerysetId(data:any){
   const obj={
     database_id: this.hierarchyId,
     custom_query: data?.queryset?.custom_query,
+    query_name:data?.queryset?.queryset_name
   }
-this.workbechService.executeQuery(obj).subscribe({
-  next:(data)=>{
-    console.log(data);
-    this.querySetId = data.query_set_id;
-    this.builSheets(this.datafromApi.sheets, this.dash1);
-  }
-})
+  this.workbechService.executeQuery(obj).subscribe({
+    next: (data) => {
+      console.log(data);
+      this.querySetId = data.query_set_id;
+      const object = {
+        database_id: this.hierarchyId,
+        query_set_id: this.querySetId,
+        query_name: data.query_name
+      }
+      this.workbechService.saveQueryName(object).subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.builSheets(this.datafromApi.sheets, this.dash1);
+        },
+        error: (error: any) => {
+          console.log(error);
+        }
+      })
+    }
+  });
 }
 builSheets(data:any, dashboard:any){
   let sheetIds : any = [];

@@ -303,6 +303,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/connection_list/`+this.accessToken,obj,{ params: params });
   }
+  getConnectedServers(){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/user_connection_list/`+this.accessToken)
+  }
   getTablesFromConnectedDb(id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -373,6 +378,11 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/query_data/`+this.accessToken,obj);
+  }
+  downloadExcelS3(qryId:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/download_data_preview/`+qryId+'/'+this.accessToken);
   }
   getDataExtraction(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -604,10 +614,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/delete_condition/`+this.accessToken,obj);
   }
-  getSavedQueryList(obj:any){
+  getSavedQueryList(obj:any,params?:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.put<any>(`${environment.apiUrl}/savedqueries/`+this.accessToken,obj);
+    return this.http.put<any>(`${environment.apiUrl}/savedqueries/`+this.accessToken,obj,{ params: params });
   }
   //jhansi
   getSheetNames(obj:any){
