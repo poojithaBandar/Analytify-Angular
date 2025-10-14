@@ -1,4 +1,4 @@
-<div class="main-container container-fluid">
+<div class="main-container container-fluid mbs-5rem">
     <!-- <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius" id="home" #home>
         <div class="container px-sm-0">
         <div class="row justify-content-center">
@@ -8,7 +8,7 @@
         </div>
         </div>
     </div> -->
-     <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius mb-4" id="home" #home>
+     <!-- <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active header-bg-radius mb-4" id="home" #home>
         <div class="container-fluid mt-4 p-0">
         <div class="row justify-content-center">
             <div class="col-xl-12 col-lg-6 p-0">
@@ -21,21 +21,26 @@
             </div>
         </div>
         </div>
-    </div>
+    </div> -->
    
     <!-- <div class="card mb-5 transform-card" style="margin-top: 90px;">
         <h1 class="mt-0 text-center" style="padding: 3rem;">A quick and easy way to build your <br>Business with <span class=" fw-bold">"Analytify"</span></h1>
     </div> -->
     <!-- ROW-1 OPEN-->
     <div class="col-lg-12 p-0 mb-4">
-        <div class="landing-connect-search">
+        <div class="landing-connect-search align-items-center">
+             <div class="welcome-user me-auto">
+                <h5 class="mb-0 fw-bold text-primary">
+                     Welcome back, {{displayUserName}} 
+                </h5>
+                </div>
             <app-insights-button [buttonName]="' New Chart'" [classesList]="'btn btn-primary me-3 animate-button'" [previledgeId]="17" [isBtn]="true"
             (btnClickEvent)="sheetsRoute()" [isIcon]="true" [faIconList]="'fa fa-plus me-1'"></app-insights-button>
             <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary me-3 animate-button'" [previledgeId]="34" [isBtn]="true"
             (btnClickEvent)="loadNewDashboard()" [isIcon]="true" [faIconList]="'fa fa-plus me-1'"></app-insights-button>
             <app-insights-button [buttonName]="'Connect To Datasource'" [classesList]="'btn btn-primary me-3 animate-button'" [isIcon]="false" [previledgeId]="1" [isBtn]="true"
             (btnClickEvent)="newConnections()"></app-insights-button>
-            <div class="view-card mt-1">
+            <div class="mt-1">
                 <div class="input-group">
                     <input type="text" class="form-control rounded-start-pill border-primary shadow-sm" [(ngModel)]="wholeSearch" (ngModelChange)="onSearchChange($event)" placeholder="Search ...">
                     <button type="button"  aria-label="button" class="btn btn-primary rounded-end-pill">
@@ -45,9 +50,26 @@
             </div>
         </div>
     </div>
+       
+       
+
     <div class="row mb-4">
+        <ng-container *ngIf="loading; else dashboardContent">   
+        <div class="col-3" *ngFor="let item of [1,2,3,4]">
+      <div class="card border skeleton-kpi-card">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="flex-grow-1">
+            <div class="skeleton skeleton-title mb-2"></div>
+            <div class="skeleton skeleton-number w-50"></div>
+          </div>
+            <div class="skeleton-circle"></div>
+        </div>
+      </div>
+    </div>
+        </ng-container>
+        <ng-template #dashboardContent>
         <div class="col-3">
-            <div class="card mb-0 border transform-card hover-card cursor-pointer" (click)="navigate($event, '/analytify/dashboards')">
+            <div class="card mb-0 border transform-card hover-card cursor-pointer fade-in" style="animation-delay: 0s;" (click)="navigate($event, '/analytify/dashboards')">
                 <div class="card-body">
                     <div class=""> 
                     <div class="d-flex justify-content-between">
@@ -59,7 +81,7 @@
                         
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-dash-bg">
-                               <img src="./assets/images/icons/land-dashboard1.png" alt="" class="landing-icon icon-bounce">
+                               <img src="./assets/images/icons/land-dashboard1.png" alt="" class="landing-icon icon-pulse">
                             </span>
                         </div>
                     </div>
@@ -68,7 +90,7 @@
             </div>
         </div>
         <div class="col-3">
-            <div class="card mb-0 border transform-card hover-card cursor-pointer" (click)="navigate($event, '/analytify/sheets-dashboard')">
+            <div class="card mb-0 border transform-card hover-card cursor-pointer fade-in" style="animation-delay: 0.1s;" (click)="navigate($event, '/analytify/sheets-dashboard')">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                          <div class="">
@@ -77,7 +99,7 @@
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-chart-bg">
-                               <img src="./assets/images/icons/land-chart1.png" alt="" class="landing-icon icon-bounce">
+                               <img src="./assets/images/icons/land-chart1.png" alt="" class="landing-icon icon-pulse">
                             </span>
                         </div>
                     </div>
@@ -85,16 +107,16 @@
             </div>
         </div>
         <div class="col-3">
-            <div class="card mb-0 border transform-card hover-card cursor-pointer" (click)="navigate($event, '/analytify/saved-queries')">
+            <div class="card mb-0 border transform-card hover-card cursor-pointer fade-in" style="animation-delay: 0.2s;" (click)="navigate($event, '/analytify/saved-queries')">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="">
-                            <h5 class="mb-0 fw-500 queries-T-C">Queries<i class="fa fa-external-link" aria-hidden="true"></i></h5>
+                            <h5 class="mb-0 fw-500 queries-T-C">Queries <i class="fa fa-external-link" aria-hidden="true"></i></h5>
                             <h2 class="fw-500 mb-0"><b>{{totalQueries}}</b></h2>
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-queries-bg">
-                               <img src="./assets/images/icons/land-queries1.png" alt="" class="landing-icon icon-bounce">
+                               <img src="./assets/images/icons/land-queries1.png" alt="" class="landing-icon icon-pulse">
                             </span>
                         </div>
                     </div>
@@ -102,7 +124,7 @@
             </div>
         </div>
         <div class="col-3">
-            <div class="card mb-0 border transform-card hover-card cursor-pointer" (click)="navigate($event, '/analytify/datasources/view-connections')">
+            <div class="card mb-0 border transform-card hover-card cursor-pointer fade-in" style="animation-delay: 0.3s;" (click)="navigate($event, '/analytify/datasources/view-connections')">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="">
@@ -111,13 +133,14 @@
                         </div>
                          <div class="min-w-fit-content me-2 d-flex align-items-center">
                             <span class="avatar rounded-circle avatar-md landing-data-bg">
-                               <img src="./assets/images/icons/land-data1.png" alt="" class="landing-icon icon-bounce">
+                               <img src="./assets/images/icons/land-data1.png" alt="" class="landing-icon icon-pulse">
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </ng-template>
     </div>  
     <div class="row mt-1">
         <div class="col-xl-9">
@@ -184,7 +207,7 @@
                 <div class="row">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h6 class="fw-bold mb-1">Saved Dashboards</h6>
-                        <div class="view-card">
+                        <div>
                             <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Dashboard</a> -->
                             <!-- @if(!showAllDasboards && savedDashboardList.length !== 0){
                             <a class="">
@@ -446,7 +469,7 @@
                             <h6 class="fw-bold mb-1">Saved Charts</h6>
                             <!-- <label class="mb-0">Individual chart components</label> -->
                         </div>
-                        <div class="view-card">
+                        <div>
                              @if(showAllSheets && userSheetsList.length > 4){
                             <a class="" *ngIf="userSheetsList.length > 4">
                                 <span class="add-txt card-title " (click)="viewAllSheets()">View More <i
@@ -579,7 +602,7 @@
                             <h6 class="fw-bold mb-1">Semantic Layer</h6>
                             <!-- <label class="mb-1">Reusable data queries</label> -->
                         </div>
-                        <div class="view-card">
+                        <div>
                             <!-- @if(!showAllSavedQueries && savedQueryList.length !==0){
                             <a class="">
                                 <span class="add-txt card-title me-2"
@@ -717,7 +740,7 @@
                 <div class="row mb-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <h6 class="fw-bold mb-1"> Sample Dashboards</h6>
-                        <div class="view-card">
+                        <div>
                             <!-- <a class="">
                                             <span class="add-txt me-2 card-title" >View More <i class="fa fa-angle-double-right"> </i></span>
                                         </a> -->

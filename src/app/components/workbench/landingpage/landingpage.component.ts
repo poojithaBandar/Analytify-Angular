@@ -65,6 +65,7 @@ totalDashbaords:any;
 totalSheets:any;
 totalQueries:any;
 totalDatabases:any;
+displayUserName:any;
 private searchSubject = new Subject<string>();
 
 features = [
@@ -194,7 +195,7 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
   }
 ngOnInit(){
   // const colors = this.normalizeColors(this.baseColors);
-
+this.displayUserName = localStorage.getItem('firstName');
   this.loaderService.hide();
   if(this.viewDatabbses){
     this.getDbConnectionList();

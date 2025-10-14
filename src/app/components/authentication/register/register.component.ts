@@ -26,6 +26,9 @@ export class RegisterComponent {
     private renderer: Renderer2,private formBuilder:FormBuilder,private router:Router
   ) {
     this.signupForm = this.formBuilder.group({
+      first_name: ['', [Validators.required, Validators.maxLength(64),Validators.pattern(/^(?!\s*$).+/)]],
+      last_name: ['', [Validators.required, Validators.maxLength(64),Validators.pattern(/^(?!\s*$).+/)]],
+      //
       username: ['', [Validators.required, Validators.maxLength(64)]],
       // username: ['', Validators.required],
       email: [
@@ -95,10 +98,21 @@ get passwordValid() {
 }
 
 get requiredValid() {
-  return !this.signupForm.controls["password"].hasError("required");
+  const passwordControl = this.signupForm.controls["password"];
+  const password = passwordControl.value;
+  if (!password) return false; // Hide rules if password is empty
+  // Show rules if any rule is not satisfied
+  return passwordControl.hasError("minlength") ||
+         passwordControl.hasError("requiresDigit") ||
+         passwordControl.hasError("requiresUppercase") ||
+         passwordControl.hasError("requiresLowercase") ||
+         passwordControl.hasError("requiresSpecialChars");
 }
 
 get minLengthValid() {
+  // return !this.signupForm.controls["password"].hasError("minlength");
+  const password = this.signupForm.controls["password"].value;
+  if (!password) return false;
   return !this.signupForm.controls["password"].hasError("minlength");
 }
 
