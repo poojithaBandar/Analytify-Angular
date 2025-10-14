@@ -188,6 +188,64 @@ export class InsightEchartComponent {
     }, 0);
   }
 
+  private readonly legendSupportedChartTypes = new Set([
+    'pie',
+    'donut',
+    'sidebyside',
+    'sidesidebar',
+    'stocked',
+    'stacked',
+    'hstocked',
+    'hstacked',
+    'hgrouped',
+    'multiline',
+    'barline'
+  ]);
+
+  private shouldUseLegendConfiguration(): boolean {
+    return this.legendSupportedChartTypes.has(this.chartType ?? '');
+  }
+
+  private getLegendConfiguration(): any {
+    const legendConfig: any = {
+      orient: this.legendOrient,
+      type: 'scroll',
+      show: this.legendSwitch
+    };
+
+    if (this.bottomLegend) {
+      legendConfig.bottom = this.bottomLegend;
+    }
+    if (this.leftLegend) {
+      legendConfig.left = this.leftLegend;
+    }
+    if (this.rightLegend) {
+      legendConfig.right = this.rightLegend;
+    }
+    if (this.topLegend) {
+      legendConfig.top = this.topLegend;
+    }
+
+    return legendConfig;
+  }
+
+  private applyLegendConfiguration(): void {
+    if (!this.shouldUseLegendConfiguration() || !this.chartOptions) {
+      return;
+    }
+
+    const legendConfig = this.getLegendConfiguration();
+    if (this.chartOptions.legend?.data) {
+      legendConfig.data = this.chartOptions.legend.data;
+    }
+
+    this.chartOptions.legend = legendConfig;
+
+    if (this.chartInstance) {
+      this.chartInstance.setOption({ legend: legendConfig });
+    }
+  }
+
  barChart(chartsColumnData? : any ,chartsRowData?: any ){
     if(chartsColumnData && chartsRowData){
       this.chartsColumnData = chartsColumnData;
@@ -326,10 +384,7 @@ horizontalBarChart(chartsColumnData?: any, chartsRowData?: any) {
   
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
-    legend: {
-      orient: 'vertical',
-      left: 'left'
-    },
+    legend: this.getLegendConfiguration(),
     toolbox: {
       feature: {
         magicType: { show: true, type: ['line'] },
@@ -528,10 +583,7 @@ stackedChart(){
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
-    legend: {
-      orient: 'vertical',
-      left: 'left'
-    },
+    legend: this.getLegendConfiguration(),
     toolbox: {
       feature: {
         magicType: { show: true, type: ['line'] },
@@ -639,10 +691,7 @@ sidebySide(dualAxisColumnData? : any ,dualAxisRowData? : any ){
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
-    legend: {
-      orient: 'vertical',
-      left: 'left'
-    },
+    legend: this.getLegendConfiguration(),
     toolbox: {
       feature: {
         magicType: { show: true, type: ['line'] },
@@ -752,10 +801,7 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
-    legend: {
-      orient: 'vertical',
-      left: 'left'
-    },
+    legend: this.getLegendConfiguration(),
     toolbox: {
       feature: {
         magicType: { show: true, type: ['line'] },
@@ -866,10 +912,7 @@ hgroupedChart(dualAxisColumnData? : any, dualAxisRowData? : any){
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
-    legend: {
-      orient: 'vertical',
-      left: 'left'
-    },
+    legend: this.getLegendConfiguration(),
     toolbox: {
       feature: {
         magicType: { show: true, type: ['line'] },
@@ -1197,15 +1240,7 @@ pieChart(chartsColumnData?:any[],chartsRowData?:any[]){
       trigger: 'item',
       formatter:(params:any) => params.name + ' : ' + this.formatNumber(params.value) 
     },
-    legend: {
-          bottom: this.bottomLegend, 
-          left: this.leftLegend, 
-          orient: this.legendOrient,
-          right:this.rightLegend,
-          top:this.topLegend,
-          type:'scroll',
-      show: this.legendSwitch 
-      },
+    legend: this.getLegendConfiguration(),
           label: {
       show : this.dataLabels,
       formatter: '{b}: {d}%',
@@ -1246,15 +1281,7 @@ donutChart(chartsColumnData?:any[],chartsRowData?:any[]){
     tooltip: {
       trigger: 'item',
     },
-    legend: {
-      bottom: this.bottomLegend, 
-          left: this.leftLegend, 
-          orient: this.legendOrient,
-          right:this.rightLegend,
-          top:this.topLegend,
-          type:'scroll',
-      show: this.legendSwitch // Control legend visibility
-  },            
+    legend: this.getLegendConfiguration(),
   label: {
       show : this.dataLabels,
       formatter: '{b}: {d}%',
@@ -1312,9 +1339,7 @@ barLineChart(){
         saveAsImage: { show: true }
       }
     },
-    legend: {
-      show:true
-    },
+    legend: this.getLegendConfiguration(),
     xAxis: [
       {
         type: 'category',
@@ -3491,14 +3516,11 @@ radarDistributionSetOptions() {
   }
   }
   legendSwitchSetOptions(){
-    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'radar'){
-      let obj ={
-        legend :{
-            show: this.legendSwitch
-        }
-      }
-      this.chartInstance?.setOption(obj);
+    if(this.shouldUseLegendConfiguration()){
+      this.applyLegendConfiguration();
+    } else if(this.chartType === 'radar' && this.chartOptions?.legend){
       this.chartOptions.legend.show = this.legendSwitch;
+      this.chartInstance?.setOption({ legend: this.chartOptions.legend });
     }
   }
   dataLabelsSetOptions(){
@@ -3724,62 +3746,10 @@ radarDistributionSetOptions() {
       this.chartOptions = { ...this.chartOptions, ...obj };
   }
   legendsAllignmentSetOptions(){
-    if(this.chartType === 'pie' || this.chartType === 'donut'){
-    if(this.legendsAllignment === 'top'){
-    let obj ={
-      legend :{
-        top: this.topLegend,
-        left: this.leftLegend,
-        orient: this.legendOrient,
-        bottom:'null',
-        right:'null',
-        show: this.legendSwitch 
-      },
+    if(this.shouldUseLegendConfiguration()){
+      this.applyLegendConfiguration();
     }
-    this.chartOptions.legend = obj;
-    this.chartInstance?.setOption(obj)
-  }
-  else if(this.legendsAllignment === 'bottom'){
-    let obj ={
-      legend :{
-          bottom: this.bottomLegend, 
-          left: this.leftLegend, 
-          orient: this.legendOrient,
-          // right:'null',
-          // top:'null',
-          show: this.legendSwitch,
-
-      },
-    }
-    this.chartOptions.legend = obj;
-    this.chartInstance?.setOption(obj)
-  }
-  else if(this.legendsAllignment === 'left'){
-    let obj ={
-      legend :{
-          left: this.leftLegend, 
-          top: this.topLegend, 
-          orient: this.legendOrient,
-          show: this.legendSwitch 
-      },
-    }
-    this.chartOptions.legend = obj;
-    this.chartInstance?.setOption(obj)
-  }
-  else if(this.legendsAllignment === 'right'){
-    let obj ={
-      legend :{
-         right: this.rightLegend, 
-         top:this.topLegend, 
-         orient:this.legendOrient,
-         show: this.legendSwitch 
-      },
-    }
-    this.chartOptions.legend = obj;
-    this.chartInstance?.setOption(obj)
-  }
-  }
-  else if(this.chartType === 'radar'){
+    else if(this.chartType === 'radar'){
     let legendPosition: any = {};
 
     if (this.legendsAllignment === 'top') {
