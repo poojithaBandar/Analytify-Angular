@@ -436,10 +436,39 @@ jsonTosendBackToAPI(){
     delete cleaned.dashboard_json;
     delete cleaned.tables;
 
-   this.responceTosendBackToApi = JSON.stringify(cleaned);
+   this.responceTosendBackToApi = cleaned;
   console.log('Cleaned response to send back to API:', this.responceTosendBackToApi);
-    return cleaned;
+  return cleaned;
+
+  //   try {
+  //   // Step 1: Parse the inner JSON (string to object)
+  //   const parsedJson = JSON.parse(this.datafromApi);
+
+  //   // Step 2: Remove unwanted keys recursively
+  //   const cleanedJson = this.removeKeys(parsedJson, ['dashboard_data', 'dashboard_json', 'tables']);
+
+  //  this.responceTosendBackToApi = cleanedJson
+
+  //   return cleanedJson; // ✅ Ready to send as normal JSON object
+  // } catch (e) {
+  //   console.error('Invalid JSON format in API response:', e);
+  //   return null;
+  // }
 }
+// removeKeys(obj: any, keysToRemove: string[]): any {
+//   if (Array.isArray(obj)) {
+//     return obj.map(item => this.removeKeys(item, keysToRemove));
+//   } else if (typeof obj === 'object' && obj !== null) {
+//     const cleaned: any = {};
+//     for (const key of Object.keys(obj)) {
+//       if (!keysToRemove.includes(key)) {
+//         cleaned[key] = this.removeKeys(obj[key], keysToRemove);
+//       }
+//     }
+//     return cleaned;
+//   }
+//   return obj;
+// }
 
 customizeDashboard(){
   this.jsonTosendBackToAPI();
