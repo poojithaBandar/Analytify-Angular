@@ -1746,8 +1746,12 @@ getFilteredList(fromParam:any){
   this.workbechService.getFilteredList(obj).subscribe(
     {
       next:(data:any) =>{
-        console.log(data)
+        console.log(data);
+        this.datasourceFilterIdArrayCustomQuery = [];
         this.filteredList = data.filters_data;
+        data.filters_data.forEach((item: { filter_id: any; }) => {
+        this.datasourceFilterIdArrayCustomQuery.push(item.filter_id);
+        });
       },
       error:(error:any)=>{
       console.log(error);
