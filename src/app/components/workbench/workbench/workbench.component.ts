@@ -61,7 +61,7 @@ export class WorkbenchComponent implements OnInit{
   databaseId:any;
   fileId:any;
   databaseType:any;
-  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','ZOHO','TALLY','PAX8','BAMBOOHR','GEMINI'];
+  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','ZOHO_CRM','TALLY','PAX8','BAMBOOHR','GEMINI'];
   openPostgreSqlForm= false;
   openMySqlForm = false;
   openConnectWiseForm = false;
@@ -216,7 +216,6 @@ export class WorkbenchComponent implements OnInit{
   zohoRedirectURL!: string;
   zohoCountry: string = '';
   zohoCountries: string[] = ['United States','Europe','India','China','Australia','Japan'];
-  zohoScopes: string[] = ['CRM','BOOKS'];
   selectedZohoScopes: string[] = [];
   zohoDescription: string = '';
   zohoClientIdError = false;
@@ -1709,11 +1708,6 @@ export class WorkbenchComponent implements OnInit{
     this.zohoRedirectURLError = !this.zohoRedirectURL;
   }
 
-  onZohoScopeChange(scopes: string[]): void {
-    this.selectedZohoScopes = scopes;
-    this.zohoScopeError = !scopes || scopes.length === 0;
-  }
-  
     shopifySignIn(){
       const obj={
         "api_token":this.shopifyToken,
@@ -2241,7 +2235,8 @@ export class WorkbenchComponent implements OnInit{
         }});
     }
 
-    zohoSignIn(){
+    zohoSignIn(zohoScope: string){
+      this.selectedZohoScopes.push(zohoScope);
       const obj = {
         "client_id": this.zohoClientId,
         "client_secret": this.zohoClientSecret,
@@ -3947,7 +3942,7 @@ connectGoogleSheets(){
       request$ = this.workbechService.buildSampleBambooHRDashboard(database.hierarchy_id);
     }else if(database.server_type === 'GEMINI'){
       request$ = this.workbechService.buildSampleGeminiDashboard(database.hierarchy_id);
-    }else if(database.server_type === 'ZOHO'){
+    }else if(database.server_type === 'ZOHO_CRM'){
       request$ = this.workbechService.buildSampleZohoDashboard(database.hierarchy_id);
     }else{
       request$ = this.workbechService.createSmartDashboard(database.hierarchy_id);
@@ -3967,7 +3962,7 @@ connectGoogleSheets(){
           case 'QUICKBOOKS':
             this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, database.hierarchy_id, responce);
             break;
-          case 'ZOHO':
+          case 'ZOHO_CRM':
             this.templateDashboardService.buildSampleZohoDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'IMMYBOT':
@@ -4054,7 +4049,9 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   google_sheets: { type: 'image', value: './assets/images/icons_new/GOOGLE_SHEETS.svg' },
   hubspot: { type: 'image', value: './assets/images/icons_new/HUBSPOT.svg' },
   xAmplify: { type: 'image', value: './assets/images/icons_new/XAMPLIFY.svg' },
-  zoho: { type: 'image', value: './assets/images/icons_new/ZOHO.svg' },
+  "zoho_books": { type: 'image', value: './assets/images/icons_new/ZOHO_BOOKS.svg' },
+  "zoho_crm": { type: 'image', value: './assets/images/icons_new/ZOHO_CRM.svg' },
+  "zoho_inventory": { type: 'image', value: './assets/images/icons_new/ZOHO_INVENTORY.svg' },
   sap: { type: 'image', value: './assets/images/icons_new/SAP.svg' },
   cassandra: { type: 'image', value: './assets/images/icons_new/CASSANDRA.svg' },
   sqlite: { type: 'image', value: './assets/images/icons_new/SQLITE.svg' },
@@ -4141,7 +4138,9 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: "Google Analytics", description: "Web analytics service", image:'./assets/images/icons_new/GOOGLE_ANALYTICS.svg' },
     { name: "HubSpot", description: "Marketing & CRM platform",image:'./assets/images/icons_new/HUBSPOT.svg' },
     { name: "Immybot", description: "IT automation tool",image:'./assets/images/icons_new/IMMYBOT.svg' },
-    { name: "Zoho", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO.svg' }
+    { name: "Zoho Books", description: "Zoho Books platform", image:'./assets/images/icons_new/ZOHO_BOOKS.svg' },
+    { name: "Zoho Inventory", description: "Zoho Inventory platform", image:'./assets/images/icons_new/ZOHO_INVENTORY.svg' },
+    { name: "Zoho CRM", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO_CRM.svg' }
   ]
 
 };
@@ -4444,7 +4443,9 @@ buildSubCategories() {
     "Salesforce": "salesforce",
     "Ninja": "ninja",
     "Server": "server",
-    "Zoho": "zoho",
+    "Zoho CRM": "zoho_crm",
+    "Zoho Inventory":"zoho_inventory",
+    "Zoho Books": "zoho_books",
     "Tally": "tally",
     "Google Sheets": "google_sheets",
     "Immybot": "immybot"
@@ -4520,7 +4521,7 @@ onSortChange(option: { label: string; order_by: string; order: any }) {
   viewMode: 'cards' | 'table' = 'cards';
 
 disabledEdit(serverType: string): boolean {
-  return ['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT','ZOHO','JIRA']
+  return ['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT','ZOHO_CRM','ZOHO_INVENTORY','ZOHO_BOOKS','JIRA']
     .includes(serverType);
 }
   openAlertPopUp() {
