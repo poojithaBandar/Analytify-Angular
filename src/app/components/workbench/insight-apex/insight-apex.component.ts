@@ -105,6 +105,86 @@ export class InsightApexComponent {
   formattedData : any[] = [];
   guageNumber : any;
   radialRawValues: any[] = [];
+  private readonly legendSupportedChartTypes = new Set([
+    'pie',
+    'donut',
+    'radial',
+    'sidebyside',
+    'sidesidebar',
+    'stocked',
+    'stacked',
+    'barline',
+    'hstocked',
+    'hstacked',
+    'hgrouped',
+    'multiline'
+  ]);
+
+  private getApexLegendConfig(): any {
+    const legend: any = {
+      show: this.legendSwitch,
+      position: this.legendsAllignment
+    };
+
+    if (['top', 'bottom'].includes(this.legendsAllignment)) {
+      legend.horizontalAlign = 'center';
+      legend.offsetY = 0;
+    } else {
+      legend.offsetY = this.legendsAllignment === 'right' ? 40 : 0;
+    }
+
+    return legend;
+  }
+
+  private applyApexLegendConfiguration(): void {
+    if (!this.chartOptions || !this.legendSupportedChartTypes.has(this.chartType ?? '')) {
+      return;
+    }
+
+    const legendConfig = this.getApexLegendConfig();
+    this.chartOptions.legend = { ...(this.chartOptions.legend ?? {}), ...legendConfig };
+
+    if (!['top', 'bottom'].includes(this.legendsAllignment)) {
+      delete this.chartOptions.legend.horizontalAlign;
+    }
+
+    const object = { legend: this.chartOptions.legend };
+
+    switch (this.chartType) {
+      case 'pie':
+        this.pieCharts?.updateOptions(object);
+        break;
+      case 'donut':
+        this.donutCharts?.updateOptions(object);
+        break;
+      case 'radial':
+        this.radialCharts?.updateOptions(object);
+        break;
+      case 'sidebyside':
+      case 'sidesidebar':
+        this.sideBySideCharts?.updateOptions(object);
+        break;
+      case 'stocked':
+      case 'stacked':
+        this.stockedCharts?.updateOptions(object);
+        break;
+      case 'barline':
+        this.barLineCharts?.updateOptions(object);
+        break;
+      case 'hstocked':
+      case 'hstacked':
+        this.horizontalStockedCharts?.updateOptions(object);
+        break;
+      case 'hgrouped':
+        this.groupedCharts?.updateOptions(object);
+        break;
+      case 'multiline':
+        this.multiLineCharts?.updateOptions(object);
+        break;
+      default:
+        break;
+    }
+  }
 
   ngOnInit(){
     // this.generateChart();
@@ -185,7 +265,7 @@ export class InsightApexComponent {
     if(changes['yGridSwitch']){
       this.yGridShowOrHide();
     }
-    if(['donut','pie','radial'].includes(this.chartType) && changes['legendSwitch']){
+    if(this.legendSupportedChartTypes.has(this.chartType ?? '') && changes['legendSwitch']){
       this.legendsShowOrHide();
     }
     if(['donut','pie','treemap'].includes(this.chartType) && changes['dataLabels']){
@@ -197,7 +277,7 @@ export class InsightApexComponent {
     if(['bar','funnel','horizontalBar','radial'].includes(this.chartType) && changes['isDistributed']){
       this.colorDistribution();
     }
-    if(['donut','pie','radial'].includes(this.chartType) && changes['legendsAllignment']){
+    if(this.legendSupportedChartTypes.has(this.chartType ?? '') && changes['legendsAllignment']){
       this.legendPositionChange();
     }
     if(this.chartType == 'donut' && changes['donutSize']){
@@ -1044,10 +1124,7 @@ xaxis: {
       },
       colors:this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData ) : this.selectedColorScheme,
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
-      legend: {
-        show: this.legendSwitch,
-        position: this.legendsAllignment
-      },
+      legend: this.getApexLegendConfig(),
       dataLabels: {
         enabled: this.dataLabels,
         dropShadow: {
@@ -1096,12 +1173,13 @@ xaxis: {
             pan: true,
             reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
           },
-          autoSelected: 'zoom' 
+          autoSelected: 'zoom'
         },
         type: 'bar',
         height: 320,
         background: this.backgroundColor,
       },
+      legend: this.getApexLegendConfig(),
       plotOptions: {
         bar: {
           horizontal: false,
@@ -1271,10 +1349,7 @@ xaxis: {
           formatter: this.formatNumber.bind(this)
         }
       },
-      legend: {
-        position: "right",
-        offsetY: 40
-      },
+      legend: this.getApexLegendConfig(),
       fill: {
         opacity: 1
       },
@@ -1368,12 +1443,13 @@ xaxis: {
             pan: true,
             reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
           },
-          autoSelected: 'zoom' 
+          autoSelected: 'zoom'
         },
         height: 350,
         type: "line",
         background: this.backgroundColor
       },
+      legend: this.getApexLegendConfig(),
       grid: {
         show: true,
         borderColor: this.gridColor,
@@ -1558,10 +1634,7 @@ xaxis: {
           },
         }
       },
-      legend: {
-        position: "right",
-        offsetY: 40
-      },
+      legend: this.getApexLegendConfig(),
       fill: {
         opacity: 1
       },
@@ -1745,6 +1818,7 @@ xaxis: {
         align: "left"
       },
       legend: {
+        ...this.getApexLegendConfig(),
         tooltipHoverFormatter: function (val: any, opts: any) {
           return (
             val +
@@ -2141,9 +2215,7 @@ xaxis: {
       xaxis: {
         categories: categories
       },
-      legend: {
-        show: false
-      },
+      legend: this.getApexLegendConfig(),
       colors: this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData ) : (this.isDistributed ? this.selectedColorScheme : [this.color])
     };
   }
@@ -3107,23 +3179,19 @@ xaxis: {
   }
   }
   legendsShowOrHide(){
+    if(this.legendSupportedChartTypes.has(this.chartType ?? '')){
+      this.applyApexLegendConfiguration();
+      return;
+    }
+
     if(this.chartOptions?.legend){
       this.chartOptions.legend.show = this.legendSwitch;
 
-    let object = { legend:  this.chartOptions.legend };
-    if (this.pieCharts) {
-      this.pieCharts.updateOptions(object);
+      const object = { legend:  this.chartOptions.legend };
+      if (this.treemapCharts) {
+        this.treemapCharts.updateOptions(object);
+      }
     }
-    else if (this.donutCharts) {
-      this.donutCharts.updateOptions(object);
-    }
-    else if (this.radialCharts) {
-      this.radialCharts.updateOptions(object);
-    }
-    else if (this.treemapCharts) {
-      this.treemapCharts.updateOptions(object);
-    }
-  }
   }
   dataLabelsShowOrHide(){
     if(this.chartOptions?.dataLabels){
@@ -3179,23 +3247,19 @@ xaxis: {
     }
   }
   legendPositionChange(){
+    if(this.legendSupportedChartTypes.has(this.chartType ?? '')){
+      this.applyApexLegendConfiguration();
+      return;
+    }
+
     if(this.chartOptions?.legend?.position){
       this.chartOptions.legend.position = this.legendsAllignment;
 
-    let object = { legend:  this.chartOptions.legend };
-    if (this.pieCharts) {
-      this.pieCharts.updateOptions(object);
+      const object = { legend:  this.chartOptions.legend };
+      if (this.treemapCharts) {
+        this.treemapCharts.updateOptions(object);
+      }
     }
-    else if (this.donutCharts) {
-      this.donutCharts.updateOptions(object);
-    }
-    else if (this.radialCharts) {
-      this.radialCharts.updateOptions(object);
-    }
-    else if (this.treemapCharts) {
-      this.treemapCharts.updateOptions(object);
-    }
-  }
   }
   donutSizeChange(){
     if (this.donutCharts) {
