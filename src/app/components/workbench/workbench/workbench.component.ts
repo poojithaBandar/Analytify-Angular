@@ -4441,7 +4441,9 @@ buildSubCategories() {
     "Salesforce": "salesforce",
     "Ninja": "ninja",
     "Server": "server",
-    "Zoho": "zoho",
+    "Zoho CRM": "zoho_crm",
+    "Zoho Inventory":"zoho_inventory",
+    "Zoho Books": "zoho_books",
     "Tally": "tally",
     "Google Sheets": "google_sheets",
     "Immybot": "immybot"
