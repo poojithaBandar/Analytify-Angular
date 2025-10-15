@@ -4136,9 +4136,9 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: "Google Analytics", description: "Web analytics service", image:'./assets/images/icons_new/GOOGLE_ANALYTICS.svg' },
     { name: "HubSpot", description: "Marketing & CRM platform",image:'./assets/images/icons_new/HUBSPOT.svg' },
     { name: "Immybot", description: "IT automation tool",image:'./assets/images/icons_new/IMMYBOT.svg' },
-    { name: "ZohoBooks", description: "Zoho CRM Books platform", image:'./assets/images/icons_new/ZOHO_BOOKS.svg' },
-    { name: "ZohoInventory", description: "Zoho CRM Inventory platform", image:'./assets/images/icons_new/ZOHO_INVENTORY.svg' },
-    { name: "ZohoCRM", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO_CRM.svg' }
+    { name: "Zoho Books", description: "Zoho Books platform", image:'./assets/images/icons_new/ZOHO_BOOKS.svg' },
+    { name: "Zoho Inventory", description: "Zoho Inventory platform", image:'./assets/images/icons_new/ZOHO_INVENTORY.svg' },
+    { name: "Zoho CRM", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO_CRM.svg' }
   ]
 
 };
