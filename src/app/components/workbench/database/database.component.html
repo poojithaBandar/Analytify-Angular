@@ -809,9 +809,12 @@
                                     <!-- <button class="btn btn-primary me-2" (click)="downloadExcelFromCustomSql()">
                                         <i class="fa fa-download"></i> Download
                                     </button>  -->
-                                    <button class="btn btn-icon btn-outline-primary me-2" (click)="downloadExcelFromCustomSql()" type="button">
+                                    <button class="btn btn-icon btn-outline-primary me-2" (click)="downloadExcel()" type="button">
                                         <i class="fa fa-download"></i>
                                     </button>
+                                    <button class="btn animate-b btn-outline-primary me-2" (click)="openViewFullModal(fullPreviewModalCustomQry)" type="button">
+                                                 <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                                                </button>
                                 <input type="number" [(ngModel)]="rowLimit" id="input-text"
                                     (keydown.enter)="resetAndRunQuery()"
                                     placeholder="rows" class="form-control w-30" min="0">
@@ -823,7 +826,7 @@
                                 }
                             </div>
                         </div>
-                        <div class="card-body d-flex align-items-center justify-content-center p-0">
+                         <div class="card-body d-flex align-items-center justify-content-center p-0">
 
                             <div *ngIf="cutmquryTable" class="table-responsive"
                             style="overflow-y: auto;height: 233px;">
@@ -1196,7 +1199,7 @@
     <div class="d-flex align-items-center">
 
     <img src="./assets/images/icons/preview.svg">
-    <h5 class="modal-title mb-0">Result Preview</h5>
+    <h5 class="modal-title mb-0 mx-2"> Result Preview</h5>
     </div>
     <div class="d-flex align-items-center">
       <!-- Download Excel -->
@@ -1266,4 +1269,83 @@
   </div>
 </ng-template>
 
+<ng-template #fullPreviewModalCustomQry let-modal>
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center">
+
+    <img src="./assets/images/icons/preview.svg">
+    <h5 class="modal-title mb-0 mx-2"> Result Preview</h5>
+    </div>
+    <div class="d-flex align-items-center">
+      <!-- Download Excel -->
+      <button class="btn btn-icon animate-b btn-outline-primary me-2"
+              (click)="downloadExcel()" type="button">
+        <i class="fa fa-download"></i>
+      </button>     
+      <button class="btn animate-b btn-outline-primary me-2" (click)="openViewFullModal(fullPreviewModal)" type="button">
+        <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+      </button>
+      <!-- Row limit input -->
+      <div class="d-flex align-items-center me-2">
+        <input type="number" [(ngModel)]="rowLimit" id="input-text"
+               (keydown.enter)="resetOffsetgetJoiningTableData()"
+               placeholder="rows"
+               class="form-control w-30" min="0">
+        <a [class.disabled]="!rowLimit || rowLimit <= 0"
+           [style.pointer-events]="!rowLimit || rowLimit <= 0 ? 'none' : 'auto'"
+           (click)="resetOffsetgetJoiningTableData()">
+          <i class="mdi mdi-arrow-right-thick result-icon"></i>
+        </a>
+         <app-insights-button [buttonName]="' Go to sheet '"
+          [classesList]="'btn btn-primary ms-2 animate-b'" [previledgeId]="17"
+          [isBtn]="true" [gotoSheetButton]="gotoSheetButtonDisable"
+          [faIconList]="'fa fa-external-link'" (btnClickEvent)="goToSheet('fromcustomsql','fullPreviewModal')"
+          [isIcon]="true">
+      </app-insights-button>
+      </div>
+
+      <!-- Go to sheet -->
+     
+
+      <!-- Close button -->
+      <button type="button" class="btn-close ms-3"
+              aria-label="Close"
+              (click)="modal.dismiss()"></button>
+    </div>
+  </div>
+  <div class="modal-body p-0">
+    <div class="table-responsive ">
+      <cdk-virtual-scroll-viewport itemSize="40" class="viewport-full-table" style="height: 400px;" (scrolledIndexChange)="onTableScroll($event)">
+                            <table
+                            class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                            <thead class="Result-preview-table-sticky">
+                            <tr>
+                            @for(data of cutmquryTable.column_data;track data){
+                            <th>{{data}}</th>
+                            }
+                            </tr>
+                            
+                            </thead>
+                            <tbody>  
+                                @for(rowss of cutmquryTable.row_data;track rowss){
+                                    <tr>
+                                        @for(rowdata of rowss; track rowdata;let i = $index){
+                                            <td>{{rowdata}}</td>
+                                        }
+                                    </tr>
+                                } 
+                                </tbody>
+                            </table>
+                             @if(isLoadingResults && cutmquryTable?.row_data?.length){
+                                                    <div class="d-flex align-items-center p-3">
+                                                        <div class="spinner-border text-primary me-2" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                        <span>Loading more data...</span>
+                                                    </div>
+                                                    }
+                            </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+</ng-template>
     <ng-template #sheetcontainer></ng-template>

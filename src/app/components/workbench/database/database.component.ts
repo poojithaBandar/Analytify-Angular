@@ -1424,7 +1424,7 @@ downloadExcel() {
 if(obj.row_limit === null || obj.row_limit === undefined){
  delete obj.row_limit;
 } 
-  this.workbechService.downloadExcelS3(this.qurtySetId).subscribe(
+  this.workbechService.downloadExcelS3(obj).subscribe(
     {
       next:(data:any) =>{
          const fileUrl = data?.file_url;
@@ -1747,10 +1747,10 @@ getFilteredList(fromParam:any){
     {
       next:(data:any) =>{
         console.log(data);
-        this.datasourceFilterIdArrayCustomQuery = [];
+        this.datasourceFilterIdArray = [];
         this.filteredList = data.filters_data;
         data.filters_data.forEach((item: { filter_id: any; }) => {
-        this.datasourceFilterIdArrayCustomQuery.push(item.filter_id);
+        this.datasourceFilterIdArray.push(item.filter_id);
         });
       },
       error:(error:any)=>{
