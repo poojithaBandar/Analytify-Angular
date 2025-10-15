@@ -1747,10 +1747,10 @@ getFilteredList(fromParam:any){
     {
       next:(data:any) =>{
         console.log(data);
-        this.datasourceFilterIdArrayCustomQuery = [];
+        this.datasourceFilterIdArray = [];
         this.filteredList = data.filters_data;
         data.filters_data.forEach((item: { filter_id: any; }) => {
-        this.datasourceFilterIdArrayCustomQuery.push(item.filter_id);
+        this.datasourceFilterIdArray.push(item.filter_id);
         });
       },
       error:(error:any)=>{
