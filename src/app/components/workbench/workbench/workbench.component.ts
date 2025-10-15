@@ -61,7 +61,7 @@ export class WorkbenchComponent implements OnInit{
   databaseId:any;
   fileId:any;
   databaseType:any;
-  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','ZOHO','TALLY','PAX8','BAMBOOHR','GEMINI'];
+  smartDashboardSources = ['CONNECTWISE','SHOPIFY','HALOPS','OPEN_AI','HUBSPOT','NINJA','IMMYBOT','QUICKBOOKS','SALESFORCE','ZOHO_CRM','TALLY','PAX8','BAMBOOHR','GEMINI'];
   openPostgreSqlForm= false;
   openMySqlForm = false;
   openConnectWiseForm = false;
@@ -3942,7 +3942,7 @@ connectGoogleSheets(){
       request$ = this.workbechService.buildSampleBambooHRDashboard(database.hierarchy_id);
     }else if(database.server_type === 'GEMINI'){
       request$ = this.workbechService.buildSampleGeminiDashboard(database.hierarchy_id);
-    }else if(database.server_type === 'ZOHO'){
+    }else if(database.server_type === 'ZOHO_CRM'){
       request$ = this.workbechService.buildSampleZohoDashboard(database.hierarchy_id);
     }else{
       request$ = this.workbechService.createSmartDashboard(database.hierarchy_id);
@@ -3962,7 +3962,7 @@ connectGoogleSheets(){
           case 'QUICKBOOKS':
             this.templateDashboardService.buildSampleQuickbooksDashboard(this.container, database.hierarchy_id, responce);
             break;
-          case 'ZOHO':
+          case 'ZOHO_CRM':
             this.templateDashboardService.buildSampleZohoDashboard(this.container, database.hierarchy_id, responce);
             break;
           case 'IMMYBOT':
@@ -4136,9 +4136,9 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: "Google Analytics", description: "Web analytics service", image:'./assets/images/icons_new/GOOGLE_ANALYTICS.svg' },
     { name: "HubSpot", description: "Marketing & CRM platform",image:'./assets/images/icons_new/HUBSPOT.svg' },
     { name: "Immybot", description: "IT automation tool",image:'./assets/images/icons_new/IMMYBOT.svg' },
-    { name: "ZohoBooks", description: "Zoho CRM Books platform", image:'./assets/images/icons_new/ZOHO.svg' },
-    { name: "ZohoInventory", description: "Zoho CRM Inventory platform", image:'./assets/images/icons_new/ZOHO.svg' },
-    { name: "ZohoCRM", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO.svg' }
+    { name: "ZohoBooks", description: "Zoho CRM Books platform", image:'./assets/images/icons_new/ZOHO_BOOKS.svg' },
+    { name: "ZohoInventory", description: "Zoho CRM Inventory platform", image:'./assets/images/icons_new/ZOHO_INVENTORY.svg' },
+    { name: "ZohoCRM", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO_CRM.svg' }
   ]
 
 };
@@ -4517,7 +4517,7 @@ onSortChange(option: { label: string; order_by: string; order: any }) {
   viewMode: 'cards' | 'table' = 'cards';
 
 disabledEdit(serverType: string): boolean {
-  return ['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT','ZOHO','JIRA']
+  return ['CSV','EXCEL','SQLITE','QUICKBOOKS','SALESFORCE','GOOGLE_SHEETS','HUBSPOT','ZOHO_CRM','ZOHO_INVENTORY','ZOHO_BOOKS','JIRA']
     .includes(serverType);
 }
   openAlertPopUp() {
