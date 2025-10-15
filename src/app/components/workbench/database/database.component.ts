@@ -1424,7 +1424,7 @@ downloadExcel() {
 if(obj.row_limit === null || obj.row_limit === undefined){
  delete obj.row_limit;
 } 
-  this.workbechService.downloadExcelS3(this.qurtySetId).subscribe(
+  this.workbechService.downloadExcelS3(obj).subscribe(
     {
       next:(data:any) =>{
          const fileUrl = data?.file_url;
