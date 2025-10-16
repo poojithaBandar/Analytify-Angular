@@ -429,14 +429,17 @@ jsonTosendBackToAPI(){
   
   // Method to clean response
     // Create a shallow copy to avoid mutating original
-    const cleaned = { ...this.datafromApi };
+    // const cleaned = { ...this.datafromApi };
 
-    // Remove unwanted keys if they exist
-    delete cleaned.dashboard_data;
-    delete cleaned.dashboard_json;
-    delete cleaned.tables;
-
-   this.responceTosendBackToApi = cleaned;
+    // // Remove unwanted keys if they exist
+    // delete cleaned.dashboard_data;
+    // delete cleaned.dashboard_json;
+    // delete cleaned.tables;
+    // delete cleaned.status;
+    const cleaned = this.datafromApi?.dashboard 
+    ? { dashboard: this.datafromApi.dashboard }
+    : {};
+   this.responceTosendBackToApi = cleaned.dashboard;
   console.log('Cleaned response to send back to API:', this.responceTosendBackToApi);
   return cleaned;
 
@@ -565,8 +568,8 @@ querySetId:any
 genarateQuerysetId(data:any){
   const obj={
     database_id: this.hierarchyId,
-    custom_query: data?.queryset?.custom_query,
-    query_name:data?.queryset?.queryset_name
+    custom_query: data?.dashboard?.queryset?.custom_query,
+    query_name:data?.dashboard?.queryset?.queryset_name
   }
   this.workbechService.executeQuery(obj).subscribe({
     next: (data) => {
@@ -580,7 +583,7 @@ genarateQuerysetId(data:any){
       this.workbechService.saveQueryName(object).subscribe({
         next: (data: any) => {
           console.log(data);
-          this.builSheets(this.datafromApi.sheets, this.dash1);
+          this.builSheets(this.datafromApi.dashboard.sheets, this.dash1);
         },
         error: (error: any) => {
           console.log(error);
