@@ -889,6 +889,8 @@ datafromApi :any={};
         this.showDashboardView = false;
         this.dash1 = [];
         this.chatHistory = [];
+        this.selectedConnection = null;
+        this.selectedTables = [];
       }
     });
   }
