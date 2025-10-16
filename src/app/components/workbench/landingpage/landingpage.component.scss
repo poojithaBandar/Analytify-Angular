@@ -50,6 +50,14 @@ tbody, td, tfoot, th, thead, tr { border-color: inherit; border-style: none; bor
   flex-direction: column;
   justify-content: center;
 }
+.welcome-user {
+  margin-right: auto; /* Pushes buttons and search to right */
+  display: flex;
+  align-items: center;
+}
+.mbs-5rem {
+  margin-block-start: 5rem !important;
+}
 .glass {
     background-color: #fafafcf5;
     border-radius: 15px;
@@ -335,4 +343,58 @@ h6.fw-bold.mb-1 { font-size: 13px; }
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none; /* prevents click */
+}
+/* Skeleton animation */
+@keyframes shimmer {
+  0% { background-position: -450px 0; }
+  100% { background-position: 450px 0; }
+}
+
+.skeleton {
+  display: block;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 900px 100%;
+  animation: shimmer 1.6s infinite;
+}
+
+/* Skeleton Card */
+.skeleton-kpi-card {
+  min-height: 80px; /* smaller height */
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Title placeholder */
+.skeleton-title {
+  height: 16px;
+  width: 60%;
+  margin-bottom: 0.25rem;
+}
+
+/* Number placeholder */
+.skeleton-number {
+  height: 24px;
+  width: 40%;
+}
+
+/* Circle for icon */
+.skeleton-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  flex-shrink: 0;
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInAnimation 0.5s forwards;
+}
+
+@keyframes fadeInAnimation {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

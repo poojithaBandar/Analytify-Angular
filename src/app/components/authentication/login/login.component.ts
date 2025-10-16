@@ -95,6 +95,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
 
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
+    localStorage.setItem('firstName', data.first_name);
     // localStorage.setItem('email', btoa(JSON.stringify(data.email)));
     localStorage.setItem('chartType', chartType);
     localStorage.setItem('userId', userId);  

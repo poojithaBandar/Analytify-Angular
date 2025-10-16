@@ -119,8 +119,8 @@ export class ProfileComponent {
     initializeForms(): void {
     // Profile Form with validations
     this.profileForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50),Validators.pattern(/^(?!\s*$).+/)]],
+      lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50),Validators.pattern(/^(?!\s*$).+/)]],
       email: ['', [Validators.required, Validators.email]],
       company: ['', [Validators.minLength(2)]],
       bio: ['', [Validators.maxLength(500)]]

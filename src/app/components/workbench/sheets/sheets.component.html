@@ -2658,7 +2658,10 @@
                     [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
                     [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [selectedColorScheme]="selectedColorScheme"
-                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate"
+                    [legendSwitch]="legendSwitch" [legendsAllignment]="legendsAllignment" [leftLegend]="leftLegend" [topLegend]="topLegend"
+                    [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient"
+                    (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
                 }
             @else if(sidebyside && chartId){         
@@ -2669,7 +2672,9 @@
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [yGridColor]="yGridColor" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
-                        [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                        [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [legendSwitch]="legendSwitch" [legendsAllignment]="legendsAllignment"
+                        [leftLegend]="leftLegend" [topLegend]="topLegend" [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient"
+                        (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
                     }
             @else if(grouped && chartId){         
@@ -2680,7 +2685,10 @@
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [selectedColorScheme]="selectedColorScheme"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
-                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate"
+                        [legendSwitch]="legendSwitch" [legendsAllignment]="legendsAllignment" [leftLegend]="leftLegend" [topLegend]="topLegend"
+                        [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient"
+                        (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
             }
             @else if(horizentalStocked && chartId){         
@@ -2690,7 +2698,10 @@
                     [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
                     [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
-                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate"
+                    [legendSwitch]="legendSwitch" [legendsAllignment]="legendsAllignment" [leftLegend]="leftLegend" [topLegend]="topLegend"
+                    [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient"
+                    (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
         }
                 
@@ -2754,7 +2765,10 @@
                     [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"  [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [dataLabelsBarFontPosition]="dataLabelsBarFontPosition" [dataLabelsLineFontPosition]="dataLabelsLineFontPosition"
-                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate"
+                    [legendSwitch]="legendSwitch" [legendsAllignment]="legendsAllignment" [leftLegend]="leftLegend" [topLegend]="topLegend"
+                    [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient"
+                    (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
                 }
                 @else if(multiLine && chartId){
@@ -2765,7 +2779,10 @@
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [selectedColorScheme]="selectedColorScheme"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
-                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate"
+                        [legendSwitch]="legendSwitch" [legendsAllignment]="legendsAllignment" [leftLegend]="leftLegend" [topLegend]="topLegend"
+                        [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient"
+                        (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
                     }
             @else if(radar && chartId){
@@ -5215,7 +5232,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                    <div *ngIf="((pie && chartId) || donut || radar || radial)">
+                                                    <div *ngIf="((pie && chartId) || donut || radar || radial || sidebyside || stocked || horizentalStocked || grouped || multiLine || (barLine && isEChatrts))">
                                                         <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                             <div class=""> 
                                                                 <label class="mb-0">Legends </label>
@@ -5583,7 +5600,7 @@
                                                 <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
                                                     <a class="cursor-pointer" *ngIf="!qrySetId" (click)="goToConnections()" ><span
                                                         class="add-txt text-info">Connect to DataSource</span></a>
-                                                    <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                                    <p *ngIf="errorMessage" [innerHTML]="safeErrorMessage"></p>
                                                     <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
                                                 </div>
                                                 <!-- <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-1">
@@ -5635,7 +5652,7 @@
                                                 <!-- <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
                                                     <a class="cursor-pointer" *ngIf="!qrySetId" (click)="goToConnections()" ><span
                                                         class="add-txt text-info">Connect to DataSource</span></a>
-                                                    <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                                    <p *ngIf="errorMessage" [innerHTML]="safeErrorMessage"></p>
                                                     <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
                                                 </div> -->
                                                 <!-- <div class="input-group mt-3 inp">
