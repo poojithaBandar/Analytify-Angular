@@ -583,7 +583,7 @@ genarateQuerysetId(data:any){
       this.workbechService.saveQueryName(object).subscribe({
         next: (data: any) => {
           console.log(data);
-          this.builSheets(this.datafromApi.dashboard.sheets, this.dash1);
+          this.builSheets(this.datafromApi.dashboard_data.sheets, this.dash1);
         },
         error: (error: any) => {
           console.log(error);
