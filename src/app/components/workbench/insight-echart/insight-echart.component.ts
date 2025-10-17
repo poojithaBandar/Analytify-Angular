@@ -199,7 +199,8 @@ export class InsightEchartComponent {
     'hstacked',
     'hgrouped',
     'multiline',
-    'barline'
+    'barline',
+    'scatter'
   ]);
 
   private shouldUseLegendConfiguration(): boolean {
@@ -1223,6 +1224,130 @@ lineChart(){
   };
   return this.chartOptions;
 }
+scatterChart(){
+  const categories = this.chartsColumnData.map((category: any) => category === null ? 'null' : category);
+  const legendConfig = this.getLegendConfiguration();
+  const seriesName = 'Values';
+  if (legendConfig) {
+    legendConfig.data = [seriesName];
+  }
+
+  const baseColors = this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData || []) : [this.color];
+  const scatterData = categories.map((category: any, index: number) => {
+    const value = this.chartsRowData?.[index] ?? null;
+    const dataPoint: any = {
+      value,
+      name: category
+    };
+
+    if (this.isMeasureDistribution) {
+      dataPoint.itemStyle = {
+        color: baseColors[index % baseColors.length]
+      };
+    }
+
+    return dataPoint;
+  });
+
+  this.chartOptions = {
+    backgroundColor: this.backgroundColor,
+    legend: legendConfig,
+    toolbox: {
+      feature: {
+        restore: { show: true },
+        saveAsImage: { show: true }
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+      formatter: (params: any) => {
+        const value = Array.isArray(params[0].value) ? params[0].value[1] : params[0].value;
+        return params[0].name + ' : ' + this.formatNumber(value);
+      }
+    },
+    axisPointer: {
+      type: 'none'
+    },
+    dataZoom: [
+      {
+        show: this.isZoom,
+        type: 'slider'
+      }
+    ],
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '13%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'category',
+      data: categories,
+      nameLocation:this.xlabelAlignment,
+      splitLine: {
+        lineStyle: {
+          color: this.xGridColor
+        }, show: this.xGridSwitch
+      },
+      axisLine: {
+        lineStyle: {
+          color: this.xLabelColor,
+        },
+      },
+      axisLabel: {
+        show: this.xLabelSwitch,
+        fontFamily: this.xLabelFontFamily,
+        fontSize: this.xLabelFontSize,
+        fontWeight: this.xlabelFontWeight,
+        color: this.dimensionColor,
+        align: this.dimensionAlignment
+      }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: this.yLabelColor
+        }
+      },
+      axisLabel: {
+        show: this.yLabelSwitch,
+        fontFamily: this.yLabelFontFamily,
+        fontSize: this.yLabelFontSize,
+        fontWeight: this.ylabelFontWeight,
+        color:this.measureColor,
+      },
+      splitLine: {
+        lineStyle: {
+          color: this.yGridColor
+        },
+        show: this.yGridSwitch
+      }
+    },
+    series: [
+      {
+        name: seriesName,
+        type: 'scatter',
+        data: scatterData,
+        symbolSize: 12,
+        label: {
+          show: true,
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
+          position:this.dataLabelsFontPosition,
+          formatter:(params:any) => {
+            const value = Array.isArray(params.value) ? params.value[1] : params.value;
+            return this.formatNumber(value);
+          }
+        }
+      }
+    ],
+    color: this.isMeasureDistribution ? baseColors : [this.color]
+  };
+  return this.chartOptions;
+}
 pieChart(chartsColumnData?:any[],chartsRowData?:any[]){
   if(chartsColumnData && chartsRowData){
     this.chartsColumnData = chartsColumnData;
@@ -2171,6 +2296,9 @@ chartInitialize(){
   else if (this.chartType === 'line'){
     this.lineChart();
   }
+  else if(this.chartType === 'scatter'){
+    this.scatterChart();
+  }
   else if(this.chartType === 'pie'){
     this.pieChart();
   }
@@ -2485,7 +2613,7 @@ chartInitialize(){
     // }
 
     if (changes['isMeasureDistribution'] || changes['measureColorRanges']) {
-      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar','treemap'].includes(this.chartType)) {
+      if (['bar', 'pie', 'donut', 'funnel', 'horizontalBar','treemap','scatter'].includes(this.chartType)) {
         this.setMeasureRangeColors();
       }
     }
@@ -2611,6 +2739,29 @@ setColorsOnRanges(data: any): string[] {
           // Update stored chartOptions
           this.chartOptions.series[0].data = series.data;
         }
+      } else if (this.chartType === 'scatter') {
+        const colors = this.setColorsOnRanges(this.chartsRowData || []);
+        const data = this.chartsColumnData.map((category: any, index: number) => ({
+          value: this.chartsRowData?.[index] ?? null,
+          name: category === null ? 'null' : category,
+          itemStyle: {
+            color: colors[index % colors.length]
+          }
+        }));
+
+        this.chartInstance?.setOption({
+          series: [
+            {
+              data
+            }
+          ],
+          color: colors
+        });
+
+        if (this.chartOptions.series?.[0]) {
+          this.chartOptions.series[0].data = data;
+        }
+        this.chartOptions.color = colors;
       } else {
         let data = this.chartOptions.series[0].data.map((item: any) => item.value);
         let obj = {
@@ -3811,6 +3962,9 @@ updateNumberFormat(){
   } else if(this.chartType === 'line'){
     this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
     this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'scatter'){
+    this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(Array.isArray(params.value) ? params.value[1] : params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
   } else if(this.chartType === 'area'){
     this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
     this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
@@ -3885,7 +4039,7 @@ updateNumberFormat(){
 }
 
 updateCategories(){
-  if(this.chartType === 'bar' || this.chartType === 'horizontalBar' || this.chartType === 'line' || this.chartType === 'area'){
+  if(this.chartType === 'bar' || this.chartType === 'horizontalBar' || this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter'){
    let obj={
     xAxis:{
       data:this.chartsColumnData
@@ -3999,7 +4153,45 @@ updateSeries(){
     }
     this.chartInstance?.setOption(obj);
     this.chartOptions.series[0].data = this.chartsRowData;
-}  else if(this.chartType === 'pie'){
+}  else if(this.chartType === 'scatter'){
+  const legendName = this.chartOptions.series?.[0]?.name || 'Values';
+  const colors = this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData || []) : [this.color];
+  const data = this.chartsColumnData.map((category: any, index: number) => {
+    const value = this.chartsRowData?.[index] ?? null;
+    const dataPoint: any = {
+      value,
+      name: category === null ? 'null' : category
+    };
+
+    if (this.isMeasureDistribution) {
+      dataPoint.itemStyle = {
+        color: colors[index % colors.length]
+      };
+    }
+
+    return dataPoint;
+  });
+
+  const optionUpdate: any = {
+    series: [
+      {
+        data
+      }
+    ],
+    color: colors
+  };
+
+  this.chartInstance?.setOption(optionUpdate);
+  if (this.chartOptions.series?.[0]) {
+    this.chartOptions.series[0].data = data;
+    this.chartOptions.series[0].name = legendName;
+  }
+  this.chartOptions.color = colors;
+  this.chartOptions.legend = this.chartOptions.legend || this.getLegendConfiguration();
+  this.chartOptions.legend.data = [legendName];
+  this.applyLegendConfiguration();
+}
+  else if(this.chartType === 'pie'){
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
     value: value,
     name: this.chartsColumnData[index]

@@ -22,4 +22,11 @@ describe('ChartRenderService', () => {
     expect(config?.chartType).toBe('wordcloud');
     expect((config as any).flags.wordcloud).toBeTrue();
   });
+
+  it('should map chart id 19 to scatter', () => {
+    const config = service.getChartConfig(19);
+    expect(config).toBeTruthy();
+    expect(config?.chartType).toBe('scatter');
+    expect((config as any).flags.scatter).toBeTrue();
+  });
 });
