@@ -86,6 +86,7 @@ export class InsightApexComponent {
   @ViewChild('horizontalBarChart') horizontalBarCharts!: ChartComponent;
   @ViewChild('areaChart') areaCharts!: ChartComponent;
   @ViewChild('lineChart') lineCharts!: ChartComponent;
+  @ViewChild('scatterChart') scatterCharts!: ChartComponent;
   @ViewChild('sidebyside') sideBySideCharts!: ChartComponent;
   @ViewChild('stocked') stockedCharts!: ChartComponent;
   @ViewChild('barline') barLineCharts!: ChartComponent;
@@ -117,7 +118,8 @@ export class InsightApexComponent {
     'hstocked',
     'hstacked',
     'hgrouped',
-    'multiline'
+    'multiline',
+    'scatter'
   ]);
 
   private getApexLegendConfig(): any {
@@ -363,6 +365,21 @@ export class InsightApexComponent {
     } else if (this.chartType === 'line') {
       this.chartOptions.series[0].data = this.chartsRowData;
       this.lineCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'scatter') {
+      const categories = this.chartsColumnData.map((category: any) => category === null ? 'null' : category);
+      const distributionColors = this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : null;
+      this.chartOptions.series[0].data = categories.map((category, index) => {
+        const value = this.chartsRowData?.[index] ?? null;
+        const point: any = { x: category, y: value };
+        if (distributionColors) {
+          point.fillColor = distributionColors[index % distributionColors.length];
+        }
+        return point;
+      });
+      if (distributionColors) {
+        this.chartOptions.colors = distributionColors;
+      }
+      this.scatterCharts?.updateOptions({ series: this.chartOptions.series, colors: this.chartOptions.colors });
     } else if (this.chartType === 'pie') {
       this.chartOptions.series = this.chartsRowData;
       this.pieCharts?.updateOptions({ series: this.chartOptions.series });
@@ -427,9 +444,12 @@ export class InsightApexComponent {
     } else if(this.areaCharts){
       this.chartOptions.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
       this.areaCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
-    } else if(this.lineCharts){
+    } else if (this.lineCharts) {
       this.chartOptions.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
       this.lineCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
+    } else if (this.scatterCharts) {
+      this.chartOptions.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
+      this.scatterCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.pieCharts){
       this.chartOptions.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
       this.pieCharts.updateOptions({ labels: this.chartOptions.labels });
@@ -477,8 +497,10 @@ export class InsightApexComponent {
       this.barCharts.destroy();
     } else if(this.areaCharts){
       this.areaCharts.destroy();
-    } else if(this.lineCharts){
+    } else if (this.lineCharts) {
       this.lineCharts.destroy();
+    } else if (this.scatterCharts) {
+      this.scatterCharts.destroy();
     } else if(this.pieCharts){
       this.pieCharts.destroy();
     } else if(this.sideBySideCharts){
@@ -515,6 +537,8 @@ export class InsightApexComponent {
       this.areaChart();
     } else if(this.chartType === 'line'){
       this.lineChart();
+    } else if(this.chartType === 'scatter'){
+      this.scatterChart();
     } else if(this.chartType === 'pie'){
       this.pieChart();
     } else if(this.chartType === 'sidebyside'){
@@ -569,6 +593,14 @@ export class InsightApexComponent {
         )
       )
     );
+    } else if (this.chartType === 'scatter') {
+      return series?.every((set) =>
+        set?.data?.every((value: any) =>
+          value === null ||
+          (typeof value === 'object' && value !== null &&
+            (typeof value.y === 'number' || (!isNaN(value.y) && !isNaN(parseFloat(value.y)))))
+        )
+      );
     } else {
       return series?.every((set) =>
       set?.data?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null)
@@ -1084,6 +1116,113 @@ xaxis: {
         }
       }
     }
+  }
+  scatterChart(chartsColumnData?: any, chartsRowData?: any) {
+    if (chartsColumnData && chartsRowData) {
+      this.chartsColumnData = chartsColumnData;
+      this.chartsRowData = chartsRowData;
+    }
+
+    const categories = this.chartsColumnData.map((category: any) => category === null ? 'null' : category);
+    const distributionColors = this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : null;
+    const seriesData = categories.map((category, index) => {
+      const value = this.chartsRowData?.[index] ?? null;
+      const point: any = { x: category, y: value };
+      if (distributionColors) {
+        point.fillColor = distributionColors[index % distributionColors.length];
+      }
+      return point;
+    });
+
+    this.chartOptions = {
+      series: [
+        {
+          name: '',
+          data: seriesData
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: true,
+          offsetX: 0,
+          offsetY: 0,
+          tools: {
+            download: true,
+            selection: true,
+            zoom: true,
+            zoomin: true,
+            zoomout: true,
+            pan: true,
+            reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
+          },
+          autoSelected: 'zoom'
+        },
+        height: 350,
+        type: 'scatter',
+        background: this.backgroundColor,
+        zoom: { enabled: true }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: this.formatNumber.bind(this),
+        style: {
+          fontSize: this.dataLabelsFontSize,
+          fontFamily: this.dataLabelsFontFamily,
+          fontWeight: this.isBold ? 700 : 400,
+          colors: [this.dataLabelsColor],
+        },
+        background: { enabled: false }
+      },
+      markers: {
+        size: 7,
+        strokeWidth: 0
+      },
+      grid: {
+        borderColor: this.gridColor,
+        show: true,
+        xaxis: {
+          lines: {
+            show: this.xGridSwitch
+          }
+        },
+        yaxis: {
+          lines: {
+            show: this.yGridSwitch
+          }
+        },
+      },
+      xaxis: {
+        type: 'category',
+        categories,
+        labels: {
+          show: this.xLabelSwitch,
+          offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10)),
+          style: {
+            fontSize: this.xLabelFontSize,
+            fontFamily: this.xLabelFontFamily,
+            fontWeight: this.xlabelFontWeight,
+          },
+        }
+      },
+      yaxis: {
+        labels: {
+          show: this.yLabelSwitch,
+          offsetY: (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)),
+          style: {
+            fontSize: this.yLabelFontSize,
+            fontFamily: this.yLabelFontFamily,
+            fontWeight: this.ylabelFontWeight,
+          },
+          formatter: this.formatNumber.bind(this)
+        }
+      },
+      colors: distributionColors ?? [this.color],
+      tooltip: {
+        y: {
+          formatter: this.formatNumber.bind(this)
+        }
+      }
+    };
   }
   pieChart(chartsColumnData? :any, chartsRowData ? : any) {
     if (chartsColumnData && chartsRowData) {
@@ -2376,6 +2515,9 @@ xaxis: {
       else if (this.lineCharts) {
         this.lineCharts.updateOptions(object);
       }
+      else if (this.scatterCharts) {
+        this.scatterCharts.updateOptions(object);
+      }
       else if (this.sideBySideCharts) {
         this.sideBySideCharts.updateOptions(object);
       }
@@ -2412,6 +2554,9 @@ xaxis: {
       }
       else if (this.lineCharts) {
         this.lineCharts.updateOptions(object);
+      }
+      else if (this.scatterCharts) {
+        this.scatterCharts.updateOptions(object);
       }
       else if (this.sideBySideCharts) {
         this.sideBySideCharts.updateOptions(object);
@@ -2450,6 +2595,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+    else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -2486,6 +2634,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -2539,6 +2690,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -2586,6 +2740,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -2635,6 +2792,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -2683,6 +2843,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -2728,6 +2891,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -2782,6 +2948,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -2885,6 +3054,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -2938,6 +3110,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -2994,6 +3169,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -3032,6 +3210,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -3081,6 +3262,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -3118,6 +3302,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -3154,6 +3341,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -3283,6 +3473,9 @@ xaxis: {
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
     }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
+    }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
     }
@@ -3341,7 +3534,7 @@ xaxis: {
       this.chartOptions.colors = this.selectedColorScheme
       object = { colors: this.chartOptions.colors };
     }
-    else if(['area','line','guage'].includes(this.chartType)){
+    else if(['area','line','scatter','guage'].includes(this.chartType)){
       if(this.chartOptions?.colors){
         // if(this.chartType === 'funnel'){
         //   this.chartOptions.colors = this.selectedColorScheme;
@@ -3420,6 +3613,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -3530,6 +3726,9 @@ xaxis: {
     }
     else if (this.lineCharts) {
       this.lineCharts.updateOptions(object);
+    }
+      else if (this.scatterCharts) {
+      this.scatterCharts.updateOptions(object);
     }
     else if (this.sideBySideCharts) {
       this.sideBySideCharts.updateOptions(object);
@@ -3688,6 +3887,18 @@ xaxis: {
         }
         object = { colors: this.chartOptions.colors};
         this.donutCharts?.updateOptions(object);
+      } else if (this.chartType === 'scatter') {
+        const data = this.chartOptions?.series?.[0]?.data;
+        if (Array.isArray(data)) {
+          const colors = this.setColorsOnRanges(data.map((point: any) => point?.y));
+          this.chartOptions.colors = colors;
+          this.chartOptions.series[0].data = data.map((point: any, index: number) => ({
+            ...point,
+            fillColor: colors[index % colors.length]
+          }));
+          object = { series: this.chartOptions.series, colors: this.chartOptions.colors };
+          this.scatterCharts?.updateOptions(object);
+        }
       } else if (this.chartType === 'treemap') {
         const data = this.chartOptions?.series?.[0]?.data;
         if (this.chartOptions?.colors && data) {
