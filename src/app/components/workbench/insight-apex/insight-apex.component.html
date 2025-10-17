@@ -52,14 +52,30 @@
     <div class="card-body">
         <div id="line-chart">
             <apx-chart #lineChart
-            [series]="chartOptions.series || []" 
+            [series]="chartOptions.series || []"
             [chart]="chartOptions.chart"
-            [xaxis]="chartOptions.xaxis" 
-            [dataLabels]="chartOptions.dataLabels" 
+            [xaxis]="chartOptions.xaxis"
+            [dataLabels]="chartOptions.dataLabels"
             [yaxis]="chartOptions.yaxis"
-            [grid]="chartOptions.grid" 
+            [grid]="chartOptions.grid"
             [stroke]="chartOptions.stroke"
             [colors]="chartOptions.colors">
+            </apx-chart>
+        </div>
+    </div>
+} @else if(chartType === 'scatter'){
+    <div class="card-body">
+        <div id="scatter-chart">
+            <apx-chart #scatterChart
+            [series]="chartOptions.series || []"
+            [chart]="chartOptions.chart"
+            [xaxis]="chartOptions.xaxis"
+            [yaxis]="chartOptions.yaxis"
+            [dataLabels]="chartOptions.dataLabels"
+            [markers]="chartOptions.markers"
+            [grid]="chartOptions.grid"
+            [colors]="chartOptions.colors"
+            [tooltip]="chartOptions.tooltip">
             </apx-chart>
         </div>
     </div>
