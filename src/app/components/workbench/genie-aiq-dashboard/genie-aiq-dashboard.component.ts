@@ -834,6 +834,8 @@ datafromApi :any={};
 
     this.dash1[index].qrySetId = this.querySetId;
     this.dash1[index].databaseId = this.hierarchyId;
+    this.dash1[index].column_Data = sheet_column_data;
+    this.dash1[index].row_Data = sheet_rows_data;
     return this.workbechService.sheetSave(obj);
   }
 
