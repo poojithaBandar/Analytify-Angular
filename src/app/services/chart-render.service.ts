@@ -5,6 +5,7 @@ export interface ChartFlags {
   bar: boolean;
   area: boolean;
   line: boolean;
+  scatter: boolean;
   pie: boolean;
   sidebysideBar: boolean;
   stocked: boolean;
@@ -38,6 +39,7 @@ export class ChartRenderService {
     bar: false,
     area: false,
     line: false,
+    scatter: false,
     pie: false,
     sidebysideBar: false,
     stocked: false,
@@ -63,6 +65,7 @@ export class ChartRenderService {
     6: { chartType: 'bar', flags: { ...this.baseFlags, bar: true } },
     17: { chartType: 'area', flags: { ...this.baseFlags, area: true } },
     13: { chartType: 'line', flags: { ...this.baseFlags, line: true } },
+    19: { chartType: 'scatter', flags: { ...this.baseFlags, scatter: true } },
     24: { chartType: 'pie', flags: { ...this.baseFlags, pie: true } },
     7: { chartType: 'sidebyside', flags: { ...this.baseFlags, sidebysideBar: true } },
     5: { chartType: 'stocked', flags: { ...this.baseFlags, stocked: true } },
