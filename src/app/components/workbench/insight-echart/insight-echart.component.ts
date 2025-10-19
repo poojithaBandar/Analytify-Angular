@@ -1331,7 +1331,7 @@ scatterChart(){
         data: scatterData,
         symbolSize: 12,
         label: {
-          show: true,
+          show: this.dataLabels,
           fontFamily:this.dataLabelsFontFamily,
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
@@ -3675,7 +3675,7 @@ radarDistributionSetOptions() {
     }
   }
   dataLabelsSetOptions(){
-    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'treemap'){
+    if(this.chartType === 'donut' || this.chartType === 'pie' || this.chartType === 'treemap' || this.chartType === 'scatter'){
       let obj ={
         series :[{
           label:{

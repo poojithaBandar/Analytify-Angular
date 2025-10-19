@@ -368,7 +368,7 @@ export class InsightApexComponent {
     } else if (this.chartType === 'scatter') {
       const categories = this.chartsColumnData.map((category: any) => category === null ? 'null' : category);
       const distributionColors = this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : null;
-      this.chartOptions.series[0].data = categories.map((category, index) => {
+      this.chartOptions.series[0].data = categories.map((category: any, index: number) => {
         const value = this.chartsRowData?.[index] ?? null;
         const point: any = { x: category, y: value };
         if (distributionColors) {
@@ -1125,7 +1125,7 @@ xaxis: {
 
     const categories = this.chartsColumnData.map((category: any) => category === null ? 'null' : category);
     const distributionColors = this.isMeasureDistribution ? this.setColorsOnRanges(this.chartsRowData) : null;
-    const seriesData = categories.map((category, index) => {
+    const seriesData = categories.map((category : any, index: number) => {
       const value = this.chartsRowData?.[index] ?? null;
       const point: any = { x: category, y: value };
       if (distributionColors) {
@@ -1163,7 +1163,9 @@ xaxis: {
         zoom: { enabled: true }
       },
       dataLabels: {
-        enabled: true,
+        enabled: this.dataLabels,
+        offsetY:  this.dataLabelsFontPosition === 'top'    ? -8 :
+        this.dataLabelsFontPosition === 'bottom' ?  8 : 0,
         formatter: this.formatNumber.bind(this),
         style: {
           fontSize: this.dataLabelsFontSize,
@@ -1192,8 +1194,7 @@ xaxis: {
         },
       },
       xaxis: {
-        type: 'category',
-        categories,
+        type: 'numeric',
         labels: {
           show: this.xLabelSwitch,
           offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10)),
@@ -1221,7 +1222,8 @@ xaxis: {
         y: {
           formatter: this.formatNumber.bind(this)
         }
-      }
+      },
+      
     };
   }
   pieChart(chartsColumnData? :any, chartsRowData ? : any) {

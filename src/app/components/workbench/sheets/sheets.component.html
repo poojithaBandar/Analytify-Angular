@@ -2740,7 +2740,7 @@
             }
             @else if(scatter && chartId){
             <div class="card-body">
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabels]="dataLabels"  [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch"
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
@@ -5236,7 +5236,7 @@
                                                           </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="((pie && chartId) || donut || radar || treemap)">
+                                                    <div *ngIf="((pie && chartId) || donut || radar || treemap || scatter)">
                                                     <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 p-2 border rounded-2">
                                                         <div class=""> 
                                                             <label class="mb-0" >Data Labels </label>

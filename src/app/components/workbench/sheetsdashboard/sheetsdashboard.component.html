@@ -1224,7 +1224,7 @@
                             accept="image/*">
                   </div>
                 </div>
-                 <div class="d-flex justify-content-between p-1" [ngClass]="{ 'card-header': !(item['chartId'] === 25)}" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
+                 <div [ngClass]="{ 'card-header d-flex justify-content-between p-1': !(item['chartId'] === 25)}" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
                   @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18 || item['chartId'] === 20 || item['chartId'] === 28) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
@@ -1536,9 +1536,9 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                    <div *ngIf="!isPublicUrl && !isEmbedDashboard && !hideWidgets" class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0.5rem', right: '0.2rem' }" ngbDropdown>
+                    <div *ngIf="!isPublicUrl && !isEmbedDashboard && !hideWidgets" class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0rem', right: '0.2rem' }" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
-                        aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                        aria-expanded="false" class=""><i class="fe fe-more-horizontal fs-14 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
                         <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item,fromTabs: false }"></ng-container>
@@ -1775,7 +1775,7 @@
                           : ''" [style.background-position]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
                           ? 'center' 
                           : ''">
-                <div class=" d-flex justify-content-between p-1" [ngClass]="{ 'card-header': !(item['chartId'] === 25)}">
+                <div  [ngClass]="{ 'card-header d-flex justify-content-between p-1': !(item['chartId'] === 25)}">
                   @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18 || item['chartId'] === 20 || item['chartId'] === 28) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
@@ -2072,9 +2072,9 @@
                 }
                 <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1">
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                    <div *ngIf="!isPublicUrl && !isEmbedDashboard && !hideWidgets" class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0.5rem', right: '0.2rem' }" ngbDropdown>
+                    <div *ngIf="!isPublicUrl && !isEmbedDashboard && !hideWidgets" class=" p-1" [ngStyle]="{ position: 'absolute',  top: '0rem', right: '0.2rem' }" ngbDropdown>
                       <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle aria-haspopup="true"
-                        aria-expanded="false" class=""><i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                        aria-expanded="false" class=""><i class="fe fe-more-horizontal fs-14 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu [ngClass]="item['type'] !== 'image' ? 'dropdown-height-80' : 'dropdown-height-40'">
                         <ng-container *ngTemplateOutlet="sheetOptions; context: {$implicit: item,fromTabs: true }"></ng-container>
