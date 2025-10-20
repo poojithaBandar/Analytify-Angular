@@ -13,6 +13,7 @@ import { LoaderService } from '../../../shared/services/loader.service';
 import { SharedService } from '../../../shared/services/shared.service';
 import * as CryptoJS from 'crypto-js';
 import { NotificationService } from '../../../services/notification.service';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -48,7 +49,7 @@ toggleVisibility1() {
 }
   constructor(
     @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,private switcherComponent: SwitcherComponent,private themeService : CustomThemeService,private sharedService: SharedService,
-    private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService,private loaderService : LoaderService,
+    private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService,private loaderService : LoaderService,private userService: UserService,
     private notificationService: NotificationService) {
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
@@ -96,6 +97,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
     localStorage.setItem('firstName', data.first_name);
+    this.userService.setUserName(data.first_name);
     // localStorage.setItem('email', btoa(JSON.stringify(data.email)));
     localStorage.setItem('chartType', chartType);
     localStorage.setItem('userId', userId);  

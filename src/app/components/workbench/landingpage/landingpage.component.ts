@@ -14,6 +14,7 @@ import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { NotificationService } from '../../../services/notification.service';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -175,7 +176,8 @@ fixedColors = [
 private notificationSub?: Subscription;
 
 
-constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService, private notificationService: NotificationService){
+constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService, 
+  private notificationService: NotificationService,private userService: UserService) {
   localStorage.setItem('QuerySetId', '0');
   localStorage.setItem('customQuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
@@ -195,8 +197,9 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
   }
 ngOnInit(){
   // const colors = this.normalizeColors(this.baseColors);
-this.displayUserName = localStorage.getItem('firstName');
-  this.loaderService.hide();
+this.userService.userName$.subscribe(name => {
+      this.displayUserName = name;
+    });  this.loaderService.hide();
   if(this.viewDatabbses){
     this.getDbConnectionList();
     this.notificationSub = this.notificationService.notificationsObservable$.subscribe(msg => {
