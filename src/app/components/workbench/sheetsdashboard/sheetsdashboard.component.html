@@ -1225,7 +1225,7 @@
                   </div>
                 </div>
                  <div [ngClass]="{ 'card-header d-flex justify-content-between p-1': !(item['chartId'] === 25)}" [attr.style]="((item.data?.title || item['type'] === 'image') ? 'display: flex !important;' : 'display: none !important;')">
-                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18 || item['chartId'] === 20 || item['chartId'] === 28) &&
+                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18 || item['chartId'] === 20 || item['chartId'] === 28 || item['chartId'] === 19) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i
@@ -1430,6 +1430,14 @@
                       [dataLabels]="item.chartOptions.dataLabels!" [grid]="item.chartOptions.grid!"
                       [stroke]="item.chartOptions.stroke!" [yaxis]="item.chartOptions.yaxis!" [title]="item.chartOptions.title!"
                       [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
+                  </div>
+                  <div *ngIf="item.chartOptions && item['chartId'] === 19">
+                    <apx-chart #test344 id="test344" [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
+                      [dataLabels]="item.chartOptions.dataLabels!" [plotOptions]="item.chartOptions.plotOptions!"
+                      [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
+                      [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" [yaxis]="item.chartOptions.yaxis!"
+                      [legend]="item.chartOptions.legend!" (chartInit)="onChartInit($event, item)">
+                    </apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 24">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
@@ -1776,7 +1784,7 @@
                           ? 'center' 
                           : ''">
                 <div  [ngClass]="{ 'card-header d-flex justify-content-between p-1': !(item['chartId'] === 25)}">
-                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18 || item['chartId'] === 20 || item['chartId'] === 28) &&
+                  @if((item['chartId'] === 6 || item['chartId'] === 14 || item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29 || item['chartId'] === 18 || item['chartId'] === 20 || item['chartId'] === 28 || item['chartId'] === 19) &&
                   item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                   <!-- <div class="col-lg-3 col-md-3"> -->
                   <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i
@@ -1966,6 +1974,14 @@
                       [dataLabels]="item.chartOptions.dataLabels!" [grid]="item.chartOptions.grid!"
                       [stroke]="item.chartOptions.stroke!" [yaxis]="item.chartOptions.yaxis!" [title]="item.chartOptions.title!"
                       [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
+                  </div>
+                  <div *ngIf="item.chartOptions && item['chartId'] === 19">
+                    <apx-chart #test344 id="test344" [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
+                      [dataLabels]="item.chartOptions.dataLabels!" [plotOptions]="item.chartOptions.plotOptions!"
+                      [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
+                      [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" [yaxis]="item.chartOptions.yaxis!"
+                      [legend]="item.chartOptions.legend!" (chartInit)="onChartInit($event, item)">
+                    </apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 24">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
