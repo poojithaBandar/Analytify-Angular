@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { SharedService } from '../../../shared/services/shared.service';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { error } from 'jquery';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -42,7 +43,7 @@ export class ProfileComponent {
   isEmbedSDK: boolean = false;
 
 
-  constructor(private fb: FormBuilder,private workbechService:WorkbenchService, private toasterService: ToastrService,private authService:AuthService, private router: Router,private sharedService:SharedService) {
+  constructor(private fb: FormBuilder,private workbechService:WorkbenchService, private toasterService: ToastrService,private authService:AuthService, private router: Router,private sharedService:SharedService,private userService: UserService) {
     this.initializeForms();
   }
   ngOnInit() {
@@ -305,6 +306,8 @@ otpError: string = '';
         next: (response: any) => {
            this.isLoading = false;
             this.hasImageChanged = false;
+            const updatedName = formData.get('first_name');
+            this.userService.setUserName(updatedName as string); // Update user name in the service
           this.toasterService.success('Profile updated successfully');
           this.loadUserProfile(); // Reload user profile data
       
