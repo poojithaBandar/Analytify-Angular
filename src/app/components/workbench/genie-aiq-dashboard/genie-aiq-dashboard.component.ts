@@ -875,7 +875,9 @@ datafromApi :any={};
 
     this.buildDashboardprocess(this.datafromApi);
   }
-
+preventClick(event: MouseEvent) {
+  event.preventDefault(); // Prevents default action (like navigating if <a> tag)
+}
   goBackToGeenieDatasource(){
     Swal.fire({
       title: 'Are you sure?',

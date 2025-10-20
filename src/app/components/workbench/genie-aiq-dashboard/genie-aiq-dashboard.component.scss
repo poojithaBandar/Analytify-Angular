@@ -477,3 +477,14 @@ button.btn-primary {
 button.btn-primary:hover {
   background: #0056b3;
 }
+.disabled-card {
+  pointer-events: none; /* Prevent click */
+  opacity: 0.6;
+  cursor: not-allowed;
+  transition: none;
+}
+
+.disabled-card:hover {
+  transform: none;
+  box-shadow: none;
+}

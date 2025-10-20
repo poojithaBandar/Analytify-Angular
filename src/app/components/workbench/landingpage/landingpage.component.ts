@@ -1366,29 +1366,25 @@ emptyDashboardProperties(){
 }
   genieHover = false;
   showGenieTooltip = false;
-playAnalyzeModalAnimation() {
-  const watermark = document.querySelector('.sticky-watermark');
-  if (watermark) {
-    watermark.classList.remove('animate');
-    // Force reflow to restart animation
-    void (watermark as HTMLElement).offsetWidth;
-    watermark.classList.add('animate');
-  }
-}
-playGenieAnimation() {
-  const el = document.querySelector('.genie-animate');
-  if (el) {
-    el.classList.remove('bounce');
-    void (el as HTMLElement).offsetWidth; // force reflow
-    el.classList.add('bounce');
+onGenieHover(el: HTMLElement, hover: boolean) {
+  this.genieHover = hover;
+  this.showGenieTooltip = hover;
+
+  if (hover) {
+    this.playGenieAnimation(el);
+  } else {
+    this.resetGenieAnimation(el);
   }
 }
 
-resetGenieAnimation() {
-  const el = document.querySelector('.genie-animate');
-  if (el) {
-    el.classList.remove('bounce');
-  }
+playGenieAnimation(el: HTMLElement) {
+  el.classList.remove('bounce');
+  void el.offsetWidth; // force reflow
+  el.classList.add('bounce');
+}
+
+resetGenieAnimation(el: HTMLElement) {
+  el.classList.remove('bounce');
 }
 routetoGenieDashbaord(){
 this.router.navigate(['/analytify/genie-aiq-dashboard'])
