@@ -1144,11 +1144,14 @@ export class SheetsdashboardComponent implements OnDestroy {
       if(sheet.chartId == 21 && sheet.echartOptions?.series?.[0]?.data){
         sheet.wordcloudData = _.cloneDeep(sheet.echartOptions.series[0].data);
       }
+      if(sheet.chartId == 19 && !sheet.isEChart && sheet.chartOptions){
+        this.updateScatterCategories(sheet.chartOptions);
+      }
       if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
       sheet.chartOptions.chart.events = {
         markerClick: (event: any, chartContext: any, config: any) => {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28){
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28 || sheet.chartId == 19){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -1159,7 +1162,7 @@ export class SheetsdashboardComponent implements OnDestroy {
         },
         dataPointSelection: function (event: any, chartContext: any, config: any) {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28){
+          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28 || sheet.chartId == 19){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else if(sheet.chartId == 18){
             const selectedNode = sheet.chartOptions.series[0].data[config.dataPointIndex];
@@ -1993,6 +1996,15 @@ export class SheetsdashboardComponent implements OnDestroy {
           }
           delete item1['originalData'];
         }
+        if(item1.chartId == '19' && item1['originalData']){//scatter
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+            this.updateScatterCategories(item1.chartOptions);
+          }
+          delete item1['originalData'];
+        }
         if(item1.chartId == '20' && item1['originalData']){//radial
           item1.chartOptions = item1['originalData'].chartOptions;
           delete item1['originalData'];
@@ -2346,6 +2358,68 @@ export class SheetsdashboardComponent implements OnDestroy {
       return dimensions.map(dim => dim.values[index] || '').join(',');
     });
   }
+
+  private normalizeScatterCategory(point: any): any {
+    if (point === null || point === undefined) {
+      return 'null';
+    }
+    if (Array.isArray(point)) {
+      const label = point[0];
+      return label === null || label === undefined ? 'null' : label;
+    }
+    if (typeof point === 'object') {
+      const rawLabel = point?.x ?? point?.name ?? point?.category ?? point?.label ??
+        (Array.isArray(point?.value) ? point.value[0] : undefined);
+      if (rawLabel === null || rawLabel === undefined) {
+        return 'null';
+      }
+      if (typeof rawLabel === 'string' && rawLabel.trim() === '') {
+        return 'null';
+      }
+      return rawLabel;
+    }
+    if (typeof point === 'string' && point.trim() === '') {
+      return 'null';
+    }
+    return point;
+  }
+
+  private extractScatterCategories(seriesData: any[]): any[] {
+    return (seriesData || []).map(point => this.normalizeScatterCategory(point));
+  }
+
+  private updateScatterCategories(chartOptions: any): void {
+    if (!chartOptions?.series?.[0]?.data) {
+      return;
+    }
+    const categories = this.extractScatterCategories(chartOptions.series[0].data);
+    if (!categories.length) {
+      return;
+    }
+    chartOptions.labels = categories;
+    chartOptions.xaxis = {
+      ...(chartOptions.xaxis || {}),
+      categories
+    };
+  }
+
+  private buildApexScatterSeries(categories: any[], values: any[], existingSeries: any[]): any[] {
+    const data = categories.map((category: any, index: number) => ({
+      x: category,
+      y: values?.[index] ?? null
+    }));
+    const baseSeries = existingSeries?.length ? { ...existingSeries[0] } : { name: '', data: [] };
+    baseSeries.data = data;
+    return [baseSeries];
+  }
+
+  private buildEchartScatterData(categories: any[], values: any[]): any[] {
+    return categories.map((category: any, index: number) => ({
+      name: category,
+      value: values?.[index] ?? null
+    }));
+  }
+
   getChartOptionsBasedOnType(sheet:any){
     return sheet.sheet_data.savedChartOptions;
   }
@@ -2489,29 +2563,32 @@ allowDrop(ev : any): void {
         this.setDashboardNewSheets(copy.sheetId, true);
 
         let self = this;
+        if (!element.isEChart && element.chartId == 19 && element.chartOptions) {
+          this.updateScatterCategories(element.chartOptions);
+        }
         if (element.chartOptions && element.chartOptions.chart) {
           element.chartOptions.chart.events = {
             markerClick: (event: any, chartContext: any, config: any) => {
               let selectedXValue;
-              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4 || element.chartId == 18 || element.chartId == 20 || element.chartId == 28) {
-                selectedXValue = element.chartOptions.labels[config.dataPointIndex];
-              } else {
-                selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
-              }
+          if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4 || element.chartId == 18 || element.chartId == 20 || element.chartId == 28 || element.chartId == 19) {
+            selectedXValue = element.chartOptions.labels[config.dataPointIndex];
+          } else {
+            selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
+          }
               if (self.actionId && element.sheetId === self.sourceSheetId) {
                 self.setDrillThrough(selectedXValue, element);
               }
             },
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               let selectedXValue;
-              if (element.chartId == 24 || element.chartId == 10 || element.chartId == 20 || element.chartId == 4 || element.chartId == 17 || element.chartId == 28) {
-                selectedXValue = element.chartOptions.labels[config.dataPointIndex];
-              } else if(element.chartId == 18){
-                  const selectedNode = element.chartOptions.series[0].data[config.dataPointIndex];
-                  selectedXValue = selectedNode.x;
-              } else {
-                selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
-              }
+          if (element.chartId == 24 || element.chartId == 10 || element.chartId == 20 || element.chartId == 4 || element.chartId == 17 || element.chartId == 28 || element.chartId == 19) {
+            selectedXValue = element.chartOptions.labels[config.dataPointIndex];
+          } else if(element.chartId == 18){
+              const selectedNode = element.chartOptions.series[0].data[config.dataPointIndex];
+              selectedXValue = selectedNode.x;
+          } else {
+            selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
+          }
               if (self.actionId && element.sheetId === self.sourceSheetId) {
                 self.setDrillThrough(selectedXValue, element);
               }
@@ -4260,6 +4337,42 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         }
         item1.chartOptions.labels = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData[0].data;
+        }
+      }
+      if((item.chart_id == '19' || item.chartId == '19' && (isFilter || isDrillDown)) || (item1.chartId == '19' && isDrillThrough)){//scatter
+        if(switchDb){
+          item1.databaseId = item.databaseId;
+        }
+        const categories = (this.filteredColumnData[0]?.values || []).map((category: any) => category === null ? 'null' : category);
+        const values = this.filteredRowData[0]?.data || [];
+        if(item1.isEChart){
+          if(!item1.originalData && !isLiveReloadData && !switchDb){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          if(item1.echartOptions?.series?.length){
+            item1.echartOptions.series[0].data = this.buildEchartScatterData(categories, values);
+          }
+          item1.echartOptions = {
+            ...item1.echartOptions,
+          };
+        } else {
+          if(!item1.originalData && !isLiveReloadData && !switchDb){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          item1.chartOptions.series = this.buildApexScatterSeries(categories, values, item1.chartOptions.series);
+          item1.chartOptions.labels = categories;
+          item1.chartOptions.xaxis = {
+            ...(item1.chartOptions.xaxis || {}),
+            categories
+          };
         }
       }
       if((item.chart_id == '20' || item.chartId == '20' && (isFilter || isDrillDown)) || (item1.chartId == '20' && isDrillThrough)){
