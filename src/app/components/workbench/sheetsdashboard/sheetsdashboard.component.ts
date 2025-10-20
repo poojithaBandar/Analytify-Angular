@@ -1151,7 +1151,10 @@ export class SheetsdashboardComponent implements OnDestroy {
       sheet.chartOptions.chart.events = {
         markerClick: (event: any, chartContext: any, config: any) => {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28 || sheet.chartId == 19){
+          if(sheet.chartId == 19){
+            const scatterCategories = sheet.chartOptions.xaxis?.categories;
+            selectedXValue = scatterCategories?.[config.dataPointIndex] ?? sheet.chartOptions.labels?.[config.dataPointIndex];
+          } else if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else {
             selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -1162,7 +1165,10 @@ export class SheetsdashboardComponent implements OnDestroy {
         },
         dataPointSelection: function (event: any, chartContext: any, config: any) {
           let selectedXValue;
-          if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28 || sheet.chartId == 19){
+          if(sheet.chartId == 19){
+            const scatterCategories = sheet.chartOptions.xaxis?.categories;
+            selectedXValue = scatterCategories?.[config.dataPointIndex] ?? sheet.chartOptions.labels?.[config.dataPointIndex];
+          } else if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4 || sheet.chartId == 20 || sheet.chartId == 28){
             selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
           } else if(sheet.chartId == 18){
             const selectedNode = sheet.chartOptions.series[0].data[config.dataPointIndex];
@@ -2570,7 +2576,10 @@ allowDrop(ev : any): void {
           element.chartOptions.chart.events = {
             markerClick: (event: any, chartContext: any, config: any) => {
               let selectedXValue;
-          if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4 || element.chartId == 18 || element.chartId == 20 || element.chartId == 28 || element.chartId == 19) {
+          if (element.chartId == 19) {
+            const scatterCategories = element.chartOptions.xaxis?.categories;
+            selectedXValue = scatterCategories?.[config.dataPointIndex] ?? element.chartOptions.labels?.[config.dataPointIndex];
+          } else if (element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4 || element.chartId == 18 || element.chartId == 20 || element.chartId == 28) {
             selectedXValue = element.chartOptions.labels[config.dataPointIndex];
           } else {
             selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
@@ -2581,7 +2590,10 @@ allowDrop(ev : any): void {
             },
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               let selectedXValue;
-          if (element.chartId == 24 || element.chartId == 10 || element.chartId == 20 || element.chartId == 4 || element.chartId == 17 || element.chartId == 28 || element.chartId == 19) {
+          if (element.chartId == 19) {
+            const scatterCategories = element.chartOptions.xaxis?.categories;
+            selectedXValue = scatterCategories?.[config.dataPointIndex] ?? element.chartOptions.labels?.[config.dataPointIndex];
+          } else if (element.chartId == 24 || element.chartId == 10 || element.chartId == 20 || element.chartId == 4 || element.chartId == 17 || element.chartId == 28) {
             selectedXValue = element.chartOptions.labels[config.dataPointIndex];
           } else if(element.chartId == 18){
               const selectedNode = element.chartOptions.series[0].data[config.dataPointIndex];
