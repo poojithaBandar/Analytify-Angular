@@ -198,7 +198,8 @@
         </div>
       </div>
       <div class="col-6">
-        <div class="option-card p-3  text-center" [class.selected]="selectedCard === 'insight'"
+        <div class="option-card p-3  text-center disabled-card" [attr.title]="'In Progress 🚧'"
+      (click)="preventClick($event)" 
          (click)="selectCard('insight')">
           <i class="bi bi-lightbulb fs-3 text-info"></i>
           <h6 class="mt-2">Generate Insights</h6>
