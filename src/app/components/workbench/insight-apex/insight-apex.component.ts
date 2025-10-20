@@ -1194,7 +1194,7 @@ xaxis: {
         },
       },
       xaxis: {
-        type: 'numeric',
+        categories: categories,
         labels: {
           show: this.xLabelSwitch,
           offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10)),

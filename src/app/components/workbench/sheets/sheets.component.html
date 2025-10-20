@@ -3583,7 +3583,7 @@
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': line}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
-                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Scatter" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,19)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': scatter}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Scatter" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,19)"><img src="./assets/images/charts/scatter.svg" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': scatter}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows?.length>1 || draggedColumns?.length>1) || ( draggedRows?.length<1 || draggedColumns?.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': pie}"></a>
@@ -5609,6 +5609,9 @@
                                                                 class="rounded-circle-copilot">
                                                             <img *ngIf="chart.chart_id === 14"
                                                                 src="./assets/images/Tiled view sheet icons/horizontal-bar.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 19"
+                                                                src="./assets/images/Tiled view sheet icons/scatter.svg" alt=""
                                                                 class="rounded-circle-copilot">
                                                         </span>
                                                         <span>{{ chart.chart_title }}</span>
