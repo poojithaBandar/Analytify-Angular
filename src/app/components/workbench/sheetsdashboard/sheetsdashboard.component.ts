@@ -4366,6 +4366,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             item1.drillDownObject = [];
           }
           if(item1.echartOptions?.series?.length){
+            item1.echartOptions.xAxis.data = categories;
             item1.echartOptions.series[0].data = this.buildEchartScatterData(categories, values);
           }
           item1.echartOptions = {

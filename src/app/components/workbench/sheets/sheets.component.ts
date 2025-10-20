@@ -882,6 +882,7 @@ try {
               this.area = false;
               this.line = false;
               this.pie = false;
+              this.scatter = false;
               this.sidebyside = false;
               this.stocked = false;
               this.barLine = false;
@@ -900,7 +901,7 @@ try {
               this.treemap = false;
               this.radial = false;
               // this.tableDisplayPagination();
-            } else if(((this.pie || this.bar || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar || this.radial || this.treemap) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
+            } else if(((this.pie || this.bar || this.scatter || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar || this.radial || this.treemap) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
               this.pivotTable = false;
               this.bar = false;
@@ -908,6 +909,7 @@ try {
               this.area = false;
               this.line = false;
               this.pie = false;
+              this.scatter = false;
               this.sidebyside = true;
               this.stocked = false;
               this.barLine = false;
@@ -2219,6 +2221,7 @@ try {
       this.bar = false;
       this.horizontalBar = false;
       this.pie = false;
+      this.scatter = false;
       this.line = false;
       this.area = false;
       this.sidebyside = false;
@@ -2996,6 +2999,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
   if(responce.chart_id == 14){
   // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -3025,6 +3029,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 24){
   this.chartType = 'pie';
@@ -3052,6 +3057,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 21){
   this.chartType = 'wordcloud';
@@ -3061,6 +3067,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
   this.table = false;
   this.pivotTable = false;
     this.pie = false;
+    this.scatter = false;
     this.line = false;
     this.area = false;
     this.sidebyside = false;
@@ -3190,6 +3197,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.treemap = false;
     this.radial = false;
     this.calendar = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 5){
   this.chartType = 'stocked';
@@ -3217,6 +3225,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 4){
   this.chartType = 'barline';
@@ -3244,6 +3253,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.treemap = false;
     this.radial = false;
     this.calendar = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 12){
   this.chartType = 'radar';
@@ -3271,6 +3281,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 2){
   this.chartType = 'hstocked';
@@ -3298,6 +3309,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 3){
   this.chartType = 'hgrouped';
@@ -3325,6 +3337,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 8){
   this.chartType = 'multiline';
@@ -3351,6 +3364,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.calendar = false;
     this.treemap = false;
+    this.scatter = false;
     this.radial = false;
  }
  if(responce.chart_id == 10){
@@ -3379,6 +3393,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 26){
   this.chartType = 'heatmap';
@@ -3404,6 +3419,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.map = false;
     this.calendar = false;
     this.treemap = false;
+    this.scatter = false;
     this.radial = false;
  }
  if(responce.chart_id == 18){
@@ -3431,6 +3447,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = true;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 27){
   this.chartType = 'funnel';
@@ -3457,6 +3474,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 28){
   this.customMinMaxGuage();
@@ -3484,6 +3502,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 11){
   this.chartType = 'calendar';
@@ -3510,6 +3529,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = true;
     this.treemap = false;
     this.radial = false;
+    this.scatter = false;
  }
  if(responce.chart_id == 20){
   this.chartType = 'radial';
@@ -3536,6 +3556,7 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.calendar = false;
     this.radial = true;
     this.treemap = false;
+    this.scatter = false;
  }
  this.getDimensionAndMeasures();
  this.changeSelectedColumn();
