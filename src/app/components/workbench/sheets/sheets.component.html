@@ -2557,15 +2557,20 @@
                                         'color': tableDataFontColor, 'text-align': tableDataFontAlignment, 'font-size': tableDataFontSize }">{{row[column] | formatMeasure : decimalPlaces : prefix : suffix : displayUnits }}</td>
                                         }
                                     </tr>
-                                    
                                     </tbody>
                                   </table>
                                   <pagination-controls *ngIf="table &&(draggedRows?.length > 0 || draggedColumns?.length > 0 ) && toggleTablePagination" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(pivotTable && chartId){
                                     <!-- Add these toggle buttons where appropriate -->
-                                <button (click)="togglePivotSideBar()">
-                                {{ showPivotSideBar ? 'Hide Side Bar' : 'Show Side Bar' }}
+                                <button 
+                                    class="btn btn-light toggle-pivot-btn shadow-sm"
+                                    (click)="togglePivotSideBar()"
+                                    [attr.data-bs-toggle]="'tooltip'"
+                                    [attr.data-bs-placement]="'right'"
+                                    [attr.title]="showPivotSideBar ? 'Collapse Sidebar' : 'Open Sidebar'"
+                                    >
+                                    <i class="bi" [ngClass]="showPivotSideBar ? 'bi-chevron-left' : 'bi-chevron-right'"></i>
                                 </button>
                                     <div id="pivotTableContainer" #pivotTableContainer></div>                                
                                 }
