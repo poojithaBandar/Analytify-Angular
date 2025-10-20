@@ -4061,8 +4061,24 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   immybot: { type: 'image', value: './assets/images/icons_new/IMMYBOT.svg' },
 };
   existingConnections: any = [];
-  getSpecificConnections(){
-    this.existingConnections = this.existingConnectionListWithoutFilter.filter((connection:any) => connection.database_type === (this.selectedConnection?.toLocaleLowerCase() || ''));
+  getSpecificConnections() {
+    const selected = this.selectedConnection?.toLowerCase();
+
+    if (selected === 'zoho books') {
+      this.existingConnections = this.existingConnectionListWithoutFilter.filter(
+        (connection: any) => connection.database_type === 'zoho_books'
+      );
+    } else if (selected === 'zoho crm') {
+      this.existingConnections = this.existingConnectionListWithoutFilter.filter(
+        (connection: any) => connection.database_type === 'zoho_crm'
+      );
+    } else if (selected === 'zoho inventory') {
+      this.existingConnections = this.existingConnectionListWithoutFilter.filter(
+        (connection: any) => connection.database_type === 'zoho_inventory'
+      );
+    } else {
+      this.existingConnections = this.existingConnectionListWithoutFilter.filter((connection: any) => connection.database_type === (this.selectedConnection?.toLocaleLowerCase() || ''));
+    }
   }
   handleCategoryClick(category: string) {
     this.selectedCategory = category;
