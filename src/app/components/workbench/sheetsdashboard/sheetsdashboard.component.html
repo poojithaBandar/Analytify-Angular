@@ -1721,9 +1721,8 @@
                     (click)="togglePivotSideBar(item.sheetId, false)"
                     [attr.data-bs-toggle]="'tooltip'"
                     [attr.data-bs-placement]="'right'"
-                    [attr.title]="showPivotSideBar ? 'Collapse Sidebar' : 'Open Sidebar'"
-                    >
-                    <i class="bi" [ngClass]="showPivotSideBar ? 'bi-chevron-left' : 'bi-chevron-right'"></i>
+                    [attr.title]="pivotStateMap[item.sheetId ?? '']?.showSideBar ? 'Collapse Sidebar' : 'Open Sidebar'">
+                    <i class="bi" [ngClass]="pivotStateMap[item.sheetId ?? '']?.showSideBar ? 'bi-chevron-left' : 'bi-chevron-right'"></i>
                   </button>
                   <!-- <button class="btn btn-sm btn-outline-secondary" (click)="togglePivotTopBar(item.sheetId, false)">
                     Toggle Top Bar
@@ -2280,9 +2279,8 @@
                           (click)="togglePivotSideBar(item.sheetId, true)"
                           [attr.data-bs-toggle]="'tooltip'"
                           [attr.data-bs-placement]="'right'"
-                          [attr.title]="showPivotSideBar ? 'Collapse Sidebar' : 'Open Sidebar'"
-                          >
-                          <i class="bi" [ngClass]="showPivotSideBar ? 'bi-chevron-left' : 'bi-chevron-right'"></i>
+                          [attr.title]="pivotStateMap[item.sheetId ?? '']?.showSideBar ? 'Collapse Sidebar' : 'Open Sidebar'">
+                          <i class="bi" [ngClass]="pivotStateMap[item.sheetId ?? '']?.showSideBar ? 'bi-chevron-left' : 'bi-chevron-right'"></i>
                       </button>
                       <!-- <button class="btn btn-sm btn-outline-secondary" (click)="togglePivotTopBar(item.sheetId, true)">
                                         Toggle Top Bar
