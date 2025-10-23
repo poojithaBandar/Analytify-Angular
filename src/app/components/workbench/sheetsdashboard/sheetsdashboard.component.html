@@ -1661,7 +1661,23 @@
               <!-- </div> -->
               @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
                 <!-- <div [id]="'pivotTableContainer' + item.id" #pivotTableContainer></div> -->
-                <div #pivotTableContainer class="pivot-drag-zone" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"></div>
+                <div class="pivot-controls mb-1">
+                  <!-- <button class="btn btn-sm btn-outline-primary me-2" (click)="togglePivotSideBar(item.sheetId, false)">
+                    Toggle Sidebar
+                  </button> -->
+                  <button 
+                    class="btn btn-light toggle-pivot-btn shadow-sm"
+                    (click)="togglePivotSideBar(item.sheetId, false)"
+                    [attr.data-bs-toggle]="'tooltip'"
+                    [attr.data-bs-placement]="'right'"
+                    [attr.title]="pivotStateMap[item.sheetId ?? '']?.showSideBar ? 'Collapse Sidebar' : 'Open Sidebar'">
+                    <i class="bi" [ngClass]="pivotStateMap[item.sheetId ?? '']?.showSideBar ? 'bi-chevron-left' : 'bi-chevron-right'"></i>
+                  </button>
+                  <!-- <button class="btn btn-sm btn-outline-secondary" (click)="togglePivotTopBar(item.sheetId, false)">
+                    Toggle Top Bar
+                  </button> -->
+                </div>
+                <div #pivotTableContainer class="pivot-drag-zone" [attr.data-sheet-id]="item.sheetId" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"></div>
               }
               </div>
               <!-- <div *ngIf="item['chartType'] === PIVOT">
@@ -2202,14 +2218,29 @@
                           <option value="100"> 100</option>
                           <option value="500"> 500</option>
                           <option value="1000"> 1000</option>
-            
                         </select>
                       </div>
                     </div>
                     <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
                   <!-- </div> -->
                   @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
-                    <div #pivotTableContainerTabs class="pivot-drag-zone" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"></div>
+                    <div class="pivot-controls mb-1">
+                      <!-- <button class="btn btn-sm btn-outline-primary me-2" (click)="togglePivotSideBar(item.sheetId, true)">
+                        Toggle Sidebar
+                      </button> -->
+                      <button 
+                          class="btn btn-light toggle-pivot-btn shadow-sm"
+                          (click)="togglePivotSideBar(item.sheetId, true)"
+                          [attr.data-bs-toggle]="'tooltip'"
+                          [attr.data-bs-placement]="'right'"
+                          [attr.title]="pivotStateMap[item.sheetId ?? '']?.showSideBar ? 'Collapse Sidebar' : 'Open Sidebar'">
+                          <i class="bi" [ngClass]="pivotStateMap[item.sheetId ?? '']?.showSideBar ? 'bi-chevron-left' : 'bi-chevron-right'"></i>
+                      </button>
+                      <!-- <button class="btn btn-sm btn-outline-secondary" (click)="togglePivotTopBar(item.sheetId, true)">
+                                        Toggle Top Bar
+                                      </button> -->
+                    </div>
+                    <div #pivotTableContainerTabs class="pivot-drag-zone" [attr.data-sheet-id]="item.sheetId" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"></div>
             
                   }
                 </div>

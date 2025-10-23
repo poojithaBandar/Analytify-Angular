@@ -1159,7 +1159,39 @@ try {
           }, 1000);
         }
 
+// Add these properties
+showPivotSideBar: boolean = true;
+showPivotTopBar: boolean = true;
 
+// Add these methods
+togglePivotSideBar() {
+  this.showPivotSideBar = !this.showPivotSideBar;
+  this.updatePivotUIVisibility();
+}
+
+togglePivotTopBar() {
+  this.showPivotTopBar = !this.showPivotTopBar;
+  this.updatePivotUIVisibility();
+}
+
+updatePivotUIVisibility() {
+  setTimeout(() => {
+    const pivotContainer = document.getElementById('pivotTableContainer');
+    if (pivotContainer) {
+      // Hide all left side bars (adjust selectors as needed)
+      const sideBars = pivotContainer.querySelectorAll('.pvtAxisContainer, .pvtRows, .pvtCols');
+      sideBars.forEach((sideBar: Element) => {
+        (sideBar as HTMLElement).style.display = this.showPivotSideBar ? '' : 'none';
+      });
+
+      // Hide all top bars (adjust selectors as needed)
+      const topBars = pivotContainer.querySelectorAll('.pvtVals, .pvtRendererArea,');
+      topBars.forEach((topBar: Element) => {
+        (topBar as HTMLElement).style.display = this.showPivotTopBar ? '' : 'none';
+      });
+    }
+  }, 0);
+}
       chartsDataSet(data: any) {
         let sidebysideBarColumnData = [];
         this.sheetCustomQuery = data.custom_query;
