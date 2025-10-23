@@ -2068,6 +2068,9 @@ if(Number.isNaN(minData) || Number.isNaN(maxData)){
  minData = 0;
  maxData = 1;
 }
+if(minData === maxData){
+  minData = 0;
+}
 let mapChartOptions = {
   tooltip: {
     formatter: (params: any) => {
@@ -2092,8 +2095,8 @@ let mapChartOptions = {
         transitionDuration: 0.2
       },
   visualMap: {
-    min: minData,
-    max: maxData,
+    min: minData ?? 0,
+    max: maxData ?? 1,
     text: ['High', 'Low'],
     realtime: false,
     calculable: true,
