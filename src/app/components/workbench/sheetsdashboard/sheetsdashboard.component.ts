@@ -2407,18 +2407,19 @@ export class SheetsdashboardComponent implements OnDestroy {
       return;
     }
     chartOptions.labels = categories;
-    chartOptions.xaxis = {
-      ...(chartOptions.xaxis || {}),
-      categories
+    if(isFinite(+categories[0])){
+      chartOptions.xaxis = { ...(chartOptions.xaxis || {}), categories:undefined ,type: 'numeric'};
+    } else {
+      chartOptions.xaxis = { ...(chartOptions.xaxis || {}), categories ,type: 'category'};
     };
   }
 
-  private buildApexScatterSeries(categories: any[], values: any[], existingSeries: any[]): any[] {
+  private buildApexScatterSeries(categories: any[], values: any[]): any[] {
     const data = categories.map((category: any, index: number) => ({
       x: category,
       y: values?.[index] ?? null
     }));
-    const baseSeries = existingSeries?.length ? { ...existingSeries[0] } : { name: '', data: [] };
+    const baseSeries =  { name: '', data };
     baseSeries.data = data;
     return [baseSeries];
   }
@@ -4384,11 +4385,12 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             item1.drillDownIndex = 0;
             item1.drillDownObject = [];
           }
-          item1.chartOptions.series = this.buildApexScatterSeries(categories, values, item1.chartOptions.series);
+          item1.chartOptions.series = this.buildApexScatterSeries(categories, values);
           item1.chartOptions.labels = categories;
-          item1.chartOptions.xaxis = {
-            ...(item1.chartOptions.xaxis || {}),
-            categories
+          if(isFinite(+categories[0])){
+            item1.chartOptions.xaxis = { ...(item1.chartOptions.xaxis || {}), categories:undefined ,type: 'numeric'};
+          } else {
+            item1.chartOptions.xaxis = { ...(item1.chartOptions.xaxis || {}), categories ,type: 'category'};
           };
         }
       }
