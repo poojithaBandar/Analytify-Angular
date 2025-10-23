@@ -1,7 +1,7 @@
 @if(chartType){
 <div class="sheet-sdk-container">
   <ng-container>
-    @if(chartType =='kpi' || chartType =='pivot' || chartType =='table'){
+    @if(chartType =='kpi' || chartType =='pivotTable' || chartType =='table'){
     <app-sheets [sdkSheetId]="sheetId" [sdkQuerySetID]="sdkQuerySetID" [sdkDatabaseID]="sdkDatabaseID"></app-sheets>
     <!-- Table rendering for non-chart sheets -->
     <!-- <app-custom-sheets

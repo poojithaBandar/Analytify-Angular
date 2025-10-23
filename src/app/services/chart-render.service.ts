@@ -83,6 +83,9 @@ export class ChartRenderService {
     18: { chartType: 'treemap', flags: { ...this.baseFlags, treemap: true } },
     20: { chartType: 'radial', flags: { ...this.baseFlags, radial: true } },
     21: { chartType: 'wordcloud', flags: { ...this.baseFlags, wordcloud: true } },
+    25: { chartType: 'kpi', flags: { ...this.baseFlags, kpi: true } },
+    9: { chartType: 'pivotTable', flags: { ...this.baseFlags, pivotTable: true } },
+    1: { chartType: 'table', flags: { ...this.baseFlags, table: true } },
   };
 
   getChartConfig(chartId: number): ChartConfig | undefined {

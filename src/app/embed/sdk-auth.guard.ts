@@ -8,7 +8,7 @@ export const sdkAuthGuard: CanActivateFn = async (route) => {
   const tokenEndpoint = 'https://api.insightapps.ai/v1';
 
   let current = localStorage.getItem('currentUser');
-  if (!current || !localStorage.getItem('username')) {
+  // if (!current || !localStorage.getItem('username')) {
     const token = route.queryParamMap.get('token');
     const userName = route.queryParamMap.get('appName');
     if (token) {
@@ -24,7 +24,7 @@ export const sdkAuthGuard: CanActivateFn = async (route) => {
         });
         if (!response.ok) throw new Error('Failed to fetch privileges');
         const privileges = await response.json();
-        rolesService.setRoleBasedPreviledges(privileges);
+        rolesService.setRoleBasedPreviledges(privileges[0]?.previleges);
 
         const landing = route.queryParamMap.get('route') || '/analytify/home';
         return router.parseUrl(landing);
@@ -35,6 +35,6 @@ export const sdkAuthGuard: CanActivateFn = async (route) => {
          }
     router.navigate(['authentication/login']);
     return false;
-  }
-  return true;
+  // }
+  // return true;
 };
