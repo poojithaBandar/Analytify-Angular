@@ -4064,21 +4064,21 @@ skeletons = Array(6); // show 3 skeleton cards while loading
   getSpecificConnections() {
     const selected = this.selectedConnection?.toLowerCase();
 
-    if (selected === 'zoho books') {
-      this.existingConnections = this.existingConnectionListWithoutFilter.filter(
-        (connection: any) => connection.database_type === 'zoho_books'
-      );
-    } else if (selected === 'zoho crm') {
-      this.existingConnections = this.existingConnectionListWithoutFilter.filter(
-        (connection: any) => connection.database_type === 'zoho_crm'
-      );
-    } else if (selected === 'zoho inventory') {
-      this.existingConnections = this.existingConnectionListWithoutFilter.filter(
-        (connection: any) => connection.database_type === 'zoho_inventory'
-      );
-    } else {
+    // if (selected === 'zoho books') {
+    //   this.existingConnections = this.existingConnectionListWithoutFilter.filter(
+    //     (connection: any) => connection.database_type === 'zoho_books'
+    //   );
+    // } else if (selected === 'zoho crm') {
+    //   this.existingConnections = this.existingConnectionListWithoutFilter.filter(
+    //     (connection: any) => connection.database_type === 'zoho_crm'
+    //   );
+    // } else if (selected === 'zoho inventory') {
+    //   this.existingConnections = this.existingConnectionListWithoutFilter.filter(
+    //     (connection: any) => connection.database_type === 'zoho_inventory'
+    //   );
+    // } else {
       this.existingConnections = this.existingConnectionListWithoutFilter.filter((connection: any) => connection.database_type === (this.selectedConnection?.toLocaleLowerCase() || ''));
-    }
+    // }
   }
   handleCategoryClick(category: string) {
     this.selectedCategory = category;
@@ -4108,55 +4108,55 @@ skeletons = Array(6); // show 3 skeleton cards while loading
     { name: 'File Source', icon: '📂', description: 'CSV, Excel & JSON files',count:'2' },
     { name: 'Integrations', icon: '🔗', description: 'Third-party services',count:'16' }
   ];
-  connectionTypes: { [key: string]: { name: string; icon?: string; description: string ;image?:string;svg?:string,disabled?:boolean}[] } = {
+  connectionTypes: { [key: string]: { name: string;display_name:string; icon?: string; description: string ;image?:string;svg?:string,disabled?:boolean}[] } = {
   "Relational Database": [
-    { name: "MySQL", image:'./assets/images/icons_new/MYSQL.svg', description: "Relational database" },
-    { name: "ORACLE", image: './assets/images/icons_new/ORACLE.svg', description: "Enterprise relational database" },
-    { name: "PostgreSQL", image: './assets/images/icons_new/POSTGRESQL.svg', description: "Advanced open-source relational database" },
-    { name: "Microsoft SQL SERVER", image: './assets/images/icons_new/MICROSOFTSQLSERVER.svg', description: "Microsoft relational database" },
-    { name: "Snow Flake", image: './assets/images/icons_new/SNOWFLAKE.svg', description: "Cloud data warehouse" }
+    { name: "MySQL",display_name:"MySQL", image:'./assets/images/icons_new/MYSQL.svg', description: "Relational database" },
+    { name: "ORACLE",display_name:"Oracle", image: './assets/images/icons_new/ORACLE.svg', description: "Enterprise relational database" },
+    { name: "PostgreSQL",display_name:"PostgreSQL", image: './assets/images/icons_new/POSTGRESQL.svg', description: "Advanced open-source relational database" },
+    { name: "Microsoft SQL SERVER",display_name:"Microsoft SQL Server", image: './assets/images/icons_new/MICROSOFTSQLSERVER.svg', description: "Microsoft relational database" },
+    { name: "Snow Flake",display_name:"Snowflake", image: './assets/images/icons_new/SNOWFLAKE.svg', description: "Cloud data warehouse" }
   ],
   "LLM Integrations": [
-    { name: "OpenAI", image: './assets/images/icons_new/OPEN_AI.svg', description: "AI & language models by OpenAI" },
-    { name: "DeepSeek", image: './assets/images/icons_new/DEEPSEEK.svg', description: "Deep learning & LLM platform" },
-    { name: "Gemini", image: './assets/images/icons_new/GEMINI.svg', description: "Google DeepMind Gemini models" },
-    { name: "Anthropic", image: './assets/images/icons_new/ANTHROPIC.svg', description: "Claude AI models", disabled: true },
-    { name: "Azure OpenAI",image: './assets/images/icons_new/AZURE.svg', description: "Azure-hosted OpenAI models", disabled: true },
-    { name: "Meta LLaMA", image: './assets/images/icons_new/METALLAMA.svg', description: "Meta’s LLaMA family of LLMs", disabled: true }
+    { name: "OpenAI",display_name:"OpenAI", image: './assets/images/icons_new/OPEN_AI.svg', description: "AI & language models by OpenAI" },
+    { name: "DeepSeek",display_name:"DeepSeek", image: './assets/images/icons_new/DEEPSEEK.svg', description: "Deep learning & LLM platform" },
+    { name: "Gemini",display_name:"Gemini", image: './assets/images/icons_new/GEMINI.svg', description: "Google DeepMind Gemini models" },
+    { name: "Anthropic",display_name:"Anthropic", image: './assets/images/icons_new/ANTHROPIC.svg', description: "Claude AI models", disabled: true },
+    { name: "Azure OpenAI",display_name:"Azure OpenAI",image: './assets/images/icons_new/AZURE.svg', description: "Azure-hosted OpenAI models", disabled: true },
+    { name: "Meta LLaMA",display_name:"Meta LLaMA", image: './assets/images/icons_new/METALLAMA.svg', description: "Meta’s LLaMA family of LLMs", disabled: true }
   ],
   "NoSQL Database": [
-    { name: "Cassandra", image: './assets/images/icons_new/CASSANDRA.svg', description: "Highly scalable NoSQL database", disabled: true },
-    { name: "SQLite", image: './assets/images/icons_new/SQLITE.svg', description: "Lightweight embedded database" },
-    { name: "MongoDB", image: './assets/images/icons_new/MONGODB.svg', description: "Document-oriented NoSQL database", disabled: true }
+    { name: "Cassandra",display_name:"Cassandra", image: './assets/images/icons_new/CASSANDRA.svg', description: "Highly scalable NoSQL database", disabled: true },
+    { name: "SQLite",display_name:"SQLite", image: './assets/images/icons_new/SQLITE.svg', description: "Lightweight embedded database" },
+    { name: "MongoDB",display_name:"MongoDB", image: './assets/images/icons_new/MONGODB.svg', description: "Document-oriented NoSQL database", disabled: true }
   ],
   "Multi-dimensional Database": [
-    { name: "SAP", image: './assets/images/icons_new/SAP.svg', description: "Enterprise resource planning & database", disabled: true },
-    { name: "SAP HANA", image: './assets/images/icons_new/SAPHANA.svg', description: "In-memory, column-oriented database" }
+    { name: "SAP",display_name:"SAP", image: './assets/images/icons_new/SAP.svg', description: "Enterprise resource planning & database", disabled: true },
+    { name: "SAP HANA",display_name:"SAP HANA", image: './assets/images/icons_new/SAPHANA.svg', description: "In-memory, column-oriented database" }
   ],
   "File Source": [
-    { name: "CSV", image: "./assets/images/icons_new/CSV.svg", description: "Comma-separated values file" },
-    { name: "Excel", image: "./assets/images/icons_new/EXCEL.svg", description: "Spreadsheet file format" }
+    { name: "CSV",display_name:"CSV", image: "./assets/images/icons_new/CSV.svg", description: "Comma-separated values file" },
+    { name: "Excel",display_name:"Excel", image: "./assets/images/icons_new/EXCEL.svg", description: "Spreadsheet file format" }
   ],
   "Integrations": [
-    { name: "xAmplify",image:'./assets/images/icons_new/XAMPLIFY.svg', description: "Business automation platform" },
-    { name: "QuickBooks", description: "Accounting software",image:'./assets/images/icons_new/QUICKBOOKS.svg' },
-    { name: "Salesforce", description: "CRM platform", image:'./assets/images/icons_new/SALESFORCE.svg' },
-    { name: "ConnectWise", description: "IT management software", image:'./assets/images/icons_new/CONNECTWISE.svg' },
-    { name: "DBT", description: "Data build tool", image:'./assets/images/icons_new/DBT.svg' },
-    { name: "HaloPS", description: "PSA platform for IT providers",image:'./assets/images/icons_new/HALOPS.svg' },
-    { name: "Pax8", description: "Cloud commerce marketplace",image:'./assets/images/icons_new/PAX8.svg'},
-    { name: "BambooHR", description: "HR management system", image:'./assets/images/icons_new/BAMBOOHR.svg' },
-    { name: "Jira", description: "Project management software",image:'./assets/images/icons_new/JIRA.svg' },
-    { name: "Shopify", description: "E-commerce platform",image:'./assets/images/icons_new/SHOPIFY.svg' },
-    { name: "Tally", description: "Accounting & ERP software",image:'./assets/images/icons_new/TALLY.svg' },
-    { name: "Google Sheets", description: "Online spreadsheets", image:'./assets/images/icons_new/GOOGLE_SHEETS.svg' },
-    { name: "Ninja", description: "IT management & automation tool", image:'./assets/images/icons_new/NINJA.svg' },
-    { name: "Google Analytics", description: "Web analytics service", image:'./assets/images/icons_new/GOOGLE_ANALYTICS.svg' },
-    { name: "HubSpot", description: "Marketing & CRM platform",image:'./assets/images/icons_new/HUBSPOT.svg' },
-    { name: "Immybot", description: "IT automation tool",image:'./assets/images/icons_new/IMMYBOT.svg' },
-    { name: "Zoho Books", description: "Zoho Books platform", image:'./assets/images/icons_new/ZOHO_BOOKS.svg' },
-    { name: "Zoho Inventory", description: "Zoho Inventory platform", image:'./assets/images/icons_new/ZOHO_INVENTORY.svg' },
-    { name: "Zoho CRM", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO_CRM.svg' }
+    { name: "xAmplify",display_name:"xAmplify",image:'./assets/images/icons_new/XAMPLIFY.svg', description: "Business automation platform" },
+    { name: "QuickBooks",display_name:"QuickBooks", description: "Accounting software",image:'./assets/images/icons_new/QUICKBOOKS.svg' },
+    { name: "Salesforce",display_name:"Salesforce", description: "CRM platform", image:'./assets/images/icons_new/SALESFORCE.svg' },
+    { name: "ConnectWise",display_name:"ConnectWise", description: "IT management software", image:'./assets/images/icons_new/CONNECTWISE.svg' },
+    { name: "DBT",display_name:"DBT", description: "Data build tool", image:'./assets/images/icons_new/DBT.svg' },
+    { name: "HaloPS",display_name:"HaloPS", description: "PSA platform for IT providers",image:'./assets/images/icons_new/HALOPS.svg' },
+    { name: "Pax8",display_name:"Pax8", description: "Cloud commerce marketplace",image:'./assets/images/icons_new/PAX8.svg'},
+    { name: "BambooHR",display_name:"BambooHR", description: "HR management system", image:'./assets/images/icons_new/BAMBOOHR.svg' },
+    { name: "Jira",display_name:"Jira", description: "Project management software",image:'./assets/images/icons_new/JIRA.svg' },
+    { name: "Shopify",display_name:"Shopify", description: "E-commerce platform",image:'./assets/images/icons_new/SHOPIFY.svg' },
+    { name: "Tally",display_name:"Tally", description: "Accounting & ERP software",image:'./assets/images/icons_new/TALLY.svg' },
+    { name: "Google Sheets",display_name:"Google Sheets", description: "Online spreadsheets", image:'./assets/images/icons_new/GOOGLE_SHEETS.svg' },
+    { name: "Ninja",display_name:"Ninja", description: "IT management & automation tool", image:'./assets/images/icons_new/NINJA.svg' },
+    { name: "Google Analytics",display_name:"Google Analytics", description: "Web analytics service", image:'./assets/images/icons_new/GOOGLE_ANALYTICS.svg' },
+    { name: "HubSpot",display_name:"HubSpot", description: "Marketing & CRM platform",image:'./assets/images/icons_new/HUBSPOT.svg' },
+    { name: "Immybot",display_name:"Immybot", description: "IT automation tool",image:'./assets/images/icons_new/IMMYBOT.svg' },
+    { name: "zoho_books",display_name:"Zoho Books", description: "Zoho Books platform", image:'./assets/images/icons_new/ZOHO_BOOKS.svg' },
+    { name: "zoho_inventory",display_name:"Zoho Inventory", description: "Zoho Inventory platform", image:'./assets/images/icons_new/ZOHO_INVENTORY.svg' },
+    { name: "zoho_crm",display_name:"Zoho CRM", description: "Zoho CRM platform", image:'./assets/images/icons_new/ZOHO_CRM.svg' }
   ]
 
 };
