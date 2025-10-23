@@ -262,7 +262,7 @@ export class GenieAiqDashboardComponent {
           this.hierarchyId.hierarchy_id,
           data
         );
-        this.step = 3;
+        this.insightsDashboard = true;
       },
       error: (error) => {
         console.log(error);
@@ -361,7 +361,6 @@ export class GenieAiqDashboardComponent {
             this.suggestedInsights = data.sheet_suggestions.data;
             this.selectedInsights = [];
             this.insightsDashboard = true;
-            this.step = 3;
           },
           error: (error) => {
             console.log(error);
@@ -457,14 +456,20 @@ export class GenieAiqDashboardComponent {
         this.allChartOptions[title] = updatedOptions;
 
         // ✅ Replace inside dashboard_json
+        let object = {
+          isDrillDownData: false,
+          drillDownHierarchy: [],
+          drillDownIndex: 0,
+          drillDownObject: []
+        }
         if (chartItem.chartId === 1) {
           return { ...chartItem, tableData: updatedOptions.tableData };
         } else if (chartItem.chartId === 25) {
           return { ...chartItem, kpiData: updatedOptions.kpiData };
         } else if (chartItem.isEChart) {
-          return { ...chartItem, echartOptions: updatedOptions };
+          return { ...chartItem, echartOptions: updatedOptions, ...object };
         } else {
-          return { ...chartItem, chartOptions: updatedOptions };
+          return { ...chartItem, chartOptions: updatedOptions, ...object };
         }
       }
     );
@@ -969,6 +974,9 @@ export class GenieAiqDashboardComponent {
       row: data?.metrics ?? [],
       custom_query: data?.sql_query,
       data: {
+        drillDownHierarchy: [],
+        isDrillDownData: false,
+        heirarchyColumnData: [],
         columns: sheetColumns ?? [],
         columns_data: sheet_column_data ?? [],
         col:
@@ -1110,11 +1118,18 @@ export class GenieAiqDashboardComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         // Execute your logic
-        this.showDashboardView = false;
-        this.dash1 = [];
-        this.chatHistory = [];
-        this.selectedConnection = null;
-        this.selectedTables = [];
+        if (this.selectedCard === 'prompt') {
+          this.showDashboardView = false;
+          this.dash1 = [];
+          this.chatHistory = [];
+          this.selectedConnection = null;
+          this.selectedTables = [];
+        } else if (this.selectedCard === 'insight') {
+          this.showDashboardView = false;
+          this.insightsDashboard = false;
+          this.selectedConnection = null;
+          this.selectedTables = [];
+        }
       }
     });
   }

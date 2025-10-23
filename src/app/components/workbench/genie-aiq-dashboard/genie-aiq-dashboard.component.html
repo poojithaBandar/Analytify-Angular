@@ -1,5 +1,5 @@
 <app-page-header
-  title="Genie AIQ Dashbaord"
+  title="Genie AIQ Dashboard"
   moduleId="customSql"
   title1="Home"
   activeitem="Genie AIQ"
@@ -185,8 +185,8 @@
           <div>
             <strong>
               <span>Connected to : </span>
-              {{ selectedConnection.display_name }} ({{
-                selectedConnection.server_type
+              {{ selectedConnection?.display_name }} ({{
+                selectedConnection?.server_type
               }})
             </strong>
           </div>
@@ -371,7 +371,7 @@
   </div>
 </div>
 
-<div *ngIf="step === 3" class="insights-dashboard-container">
+<div *ngIf="insightsDashboard" class="insights-dashboard-container">
   <div class="insights-dashboard mt-1 p-4">
     <div class="suggested-insights">
       <h2>💡 Suggested Insights</h2>
@@ -406,7 +406,13 @@
     </div>
   </div>
   <div class="button-group d-flex gap-2 justify-content-end mb-2 me-2">
-    <button type="button" class="cancel-btn" (click)="goBack()">Back</button>
+    <button
+      type="button"
+      class="cancel-btn"
+      (click)="goBackToGeenieDatasource()"
+    >
+      Back
+    </button>
     <button
       type="button"
       class="connect-btn btn-primary"
