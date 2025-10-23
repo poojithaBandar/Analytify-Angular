@@ -1,4 +1,9 @@
- <app-page-header title="Genie AIQ Dashbaord" moduleId="customSql" title1="Home" activeitem="Genie AIQ"></app-page-header>
+<app-page-header
+  title="Genie AIQ Dashbaord"
+  moduleId="customSql"
+  title1="Home"
+  activeitem="Genie AIQ"
+></app-page-header>
 
 <!-- <div class="dashboard-container">
   <div class="header text-center">
@@ -51,10 +56,17 @@
   </div>
 </div> -->
 
-<div  *ngIf="!showDashboardView" class="dashboard-container p-0 container-fluid">
+<div
+  *ngIf="!showDashboardView && insightsDashboard === false"
+  class="dashboard-container p-0 container-fluid"
+>
   <div class="row">
     <!-- Left Section (Main Dashboard) -->
-    <div [class.col-12]="!showDatasource" [class.col-7]="showDatasource" class="transition-col">
+    <div
+      [class.col-12]="!showDatasource"
+      [class.col-7]="showDatasource"
+      class="transition-col"
+    >
       <!-- Existing Dashboard Content -->
       <div class="header text-center">
         <h4>Genie Dashboard</h4>
@@ -97,84 +109,95 @@
       <div class="cta-card mt-5">
         <h5>Ready to get started?</h5>
         <p>Connect your first data source and create your dashboard</p>
-        <button class="btn btn-primary" (click)="toggleDatasource()">Connect Datasource →</button>
+        <button class="btn btn-primary" (click)="toggleDatasource()">
+          Connect Datasource →
+        </button>
       </div>
     </div>
 
     <!-- Right Section (Datasource Panel) -->
-   <!-- Right Section (Datasource Panel) -->
-<div class="col-5 p-0 panel transition-col" *ngIf="showDatasource">
-  <!-- Panel Header -->
-  <div class="d-flex justify-content-between align-items-center border-bottom p-3 panel-header">
-    <div class="d-flex align-items-center">
-  <div class="header-icon-wrapper me-2">
-    <i class="bi bi-database"></i>
-  </div>
-  <h6 class="m-0 fw-bold">Connect to Datasource</h6>
-</div>
-
-    <button class="btn-close" (click)="toggleDatasource()"></button>
-  </div>
-
-  <!-- Panel Content -->
-  <div class="p-3">
-    <label for="datasource" class="form-label fw-semibold">
-      Select Datasource <span class="badge-pill required text-danger">Required</span>
-    </label>
-   <ng-select
-        [items]="connectionList"
-        bindLabel="display_name"
-        bindValue="hierarchy_id"
-        [searchable]="true"
-        placeholder="Choose a datasource..."
-        (change)="selectDatasource($event)"
-        class="w-100"
+    <!-- Right Section (Datasource Panel) -->
+    <div class="col-5 p-0 panel transition-col" *ngIf="showDatasource">
+      <!-- Panel Header -->
+      <div
+        class="d-flex justify-content-between align-items-center border-bottom p-3 panel-header"
       >
-    <ng-template ng-option-tmp let-ds="item" let-index="index">
-    <div class="d-flex align-items-start">
-      <img
-        [src]="'assets/images/icons_new/' + ds.server_type + '.svg'"
-        width="28"
-        height="28"
-        class="me-2 mt-1"
-      />
-      <div>
-        <div class="fw-semibold">{{ ds.display_name }}</div>
-        <small class="text-muted">{{ ds.description }}</small>
+        <div class="d-flex align-items-center">
+          <div class="header-icon-wrapper me-2">
+            <i class="bi bi-database"></i>
+          </div>
+          <h6 class="m-0 fw-bold">Connect to Datasource</h6>
+        </div>
+
+        <button class="btn-close" (click)="toggleDatasource()"></button>
       </div>
-    </div>
-  </ng-template>
 
-  <!-- Selected Value Template -->
-  <ng-template ng-label-tmp let-ds="item">
-    <div class="d-flex align-items-center">
-      <img
-        [src]="'assets/images/icons/' + ds.server_type + '.svg'"
-        width="20"
-        height="20"
-        class="me-2"
-      />
-      <span class="fw-semibold">{{ ds.display_name }}</span>
-    </div>
-  </ng-template>
-</ng-select>
+      <!-- Panel Content -->
+      <div class="p-3">
+        <label for="datasource" class="form-label fw-semibold">
+          Select Datasource
+          <span class="badge-pill required text-danger">Required</span>
+        </label>
+        <ng-select
+          [items]="connectionList"
+          bindLabel="display_name"
+          bindValue="hierarchy_id"
+          [searchable]="true"
+          placeholder="Choose a datasource..."
+          (change)="selectDatasource($event)"
+          class="w-100"
+        >
+          <ng-template ng-option-tmp let-ds="item" let-index="index">
+            <div class="d-flex align-items-start">
+              <img
+                [src]="'assets/images/icons_new/' + ds.server_type + '.svg'"
+                width="28"
+                height="28"
+                class="me-2 mt-1"
+              />
+              <div>
+                <div class="fw-semibold">{{ ds.display_name }}</div>
+                <small class="text-muted">{{ ds.description }}</small>
+              </div>
+            </div>
+          </ng-template>
 
-  </div>
-  <div *ngIf="hierarchyId" class="panel-content p-3">
-
-    <!-- Connected Datasource Card -->
-    <div class="connected-ds d-flex align-items-center mb-3 p-2   bg-light">
-      <div class="me-2"><i class="bi bi-database-fill text-primary"></i></div>
-      <div>
-        <strong> <span>Connected to : </span>
-          {{selectedConnection.display_name}} ({{selectedConnection.server_type}})
-        </strong>
+          <!-- Selected Value Template -->
+          <ng-template ng-label-tmp let-ds="item">
+            <div class="d-flex align-items-center">
+              <img
+                [src]="'assets/images/icons_new/' + ds.server_type + '.svg'"
+                width="20"
+                height="20"
+                class="me-2"
+              />
+              <span class="fw-semibold">{{ ds.display_name }}</span>
+            </div>
+          </ng-template>
+        </ng-select>
       </div>
-    </div>
+      <div *ngIf="hierarchyId" class="panel-content p-3">
+        <!-- Connected Datasource Card -->
+        <div class="connected-ds d-flex align-items-center mb-3 p-2 bg-light">
+          <div class="me-2">
+            <i class="bi bi-database-fill text-primary"></i>
+          </div>
+          <div>
+            <strong>
+              <span>Connected to : </span>
+              {{ selectedConnection.display_name }} ({{
+                selectedConnection.server_type
+              }})
+            </strong>
+          </div>
+        </div>
 
-    <!-- Select Tables -->
-    <label class="form-label fw-semibold">Select Tables <span class="badge-pill optional text-muted">Optional</span></label>
-     <ng-select
+        <!-- Select Tables -->
+        <label class="form-label fw-semibold"
+          >Select Tables
+          <span class="badge-pill optional text-muted">Optional</span></label
+        >
+        <ng-select
           [items]="tables"
           bindLabel=""
           bindValue=""
@@ -184,44 +207,56 @@
           placeholder="Type to search and select tables..."
           [searchable]="true"
           [closeOnSelect]="false"
-          >
+        >
         </ng-select>
 
-    <!-- Options -->
-    <div class="row mb-4 mt-4">
-      <div class="col-6">
-        <div class="option-card p-3  text-center" [class.selected]="selectedCard === 'prompt'"
-         (click)="selectCard('prompt')">
-          <i class="bi bi-chat-left-dots fs-3 text-primary"></i>
-          <h6 class="mt-2">Prompt Dashboard</h6>
-          <p class="small text-muted">Natural language</p>
+        <!-- Options -->
+        <div class="row mb-4 mt-4">
+          <div class="col-6">
+            <div
+              class="option-card p-3 text-center"
+              [class.selected]="selectedCard === 'prompt'"
+              (click)="selectCard('prompt')"
+            >
+              <i class="bi bi-chat-left-dots fs-3 text-primary"></i>
+              <h6 class="mt-2">Prompt Dashboard</h6>
+              <p class="small text-muted">Natural language</p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div
+              class="option-card p-3 text-center"
+              [class.selected]="selectedCard === 'insight'"
+              (click)="selectCard('insight')"
+            >
+              <i class="bi bi-lightbulb fs-3 text-info"></i>
+              <h6 class="mt-2">Generate Insights</h6>
+              <p class="small text-muted">AI suggestions</p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="col-6">
-        <div class="option-card p-3  text-center disabled-card" [attr.title]="'In Progress 🚧'"
-      (click)="preventClick($event)" 
-         (click)="selectCard('insight')">
-          <i class="bi bi-lightbulb fs-3 text-info"></i>
-          <h6 class="mt-2">Generate Insights</h6>
-          <p class="small text-muted">AI suggestions</p>
+
+        <!-- Prompt Input -->
+        <div *ngIf="selectedCard === 'prompt'">
+          <label class="form-label fw-semibold">Dashboard Prompt</label>
+          <textarea
+            rows="3"
+            class="form-control mb-4"
+            [(ngModel)]="userPrompt"
+            placeholder="Describe the dashboard you want to create... For example: 'Create a sales dashboard showing revenue trends, top products, and customer analytics'"
+          >
+          </textarea>
         </div>
+        <!-- CTA Button -->
+        <button
+          [disabled]="isCreateDisabled()"
+          (click)="promptDashboard()"
+          class="btn btn-primary w-100"
+        >
+          <i class="bi bi-send me-2"></i> Create Dashboard
+        </button>
       </div>
     </div>
-
-    <!-- Prompt Input -->
-    <div *ngIf="selectedCard === 'prompt'">
-    <label class="form-label fw-semibold">Dashboard Prompt</label>
-    <textarea rows="3" class="form-control mb-4" [(ngModel)]="userPrompt"
-      placeholder="Describe the dashboard you want to create... For example: 'Create a sales dashboard showing revenue trends, top products, and customer analytics'">
-    </textarea>
-    </div>
-    <!-- CTA Button -->
-    <button [disabled]="isCreateDisabled()" (click)="promptDashboard()" class="btn btn-primary w-100">
-      <i class="bi bi-send me-2"></i> Create Dashboard
-    </button>
-  </div>
-</div>
-
   </div>
 </div>
 
@@ -241,24 +276,44 @@
   </div>
 </div> -->
 
-
-<div *ngIf="showDashboardView" class="row" style="height: 100vh; overflow: hidden;">
+<div
+  *ngIf="showDashboardView && insightsDashboard === false"
+  class="row"
+  style="height: 100vh; overflow: hidden"
+>
   <!-- Dashboard Area -->
-  <div class="col-9 p-0 d-flex flex-column" style="height: 100%;">
-    <div class="d-flex mb-1 ps-2 px-6 pe-2 ">
-      <button class="btn btn-primary me-2" (click)="goBackToGeenieDatasource();">
+  <div class="col-9 p-0 d-flex flex-column" style="height: 100%">
+    <div class="d-flex mb-1 ps-2 px-6 pe-2">
+      <button class="btn btn-primary me-2" (click)="goBackToGeenieDatasource()">
         <i class="fa fa-arrow-left"></i>
       </button>
-      <input type="text"  placeholder="Title" [(ngModel)]="dashboardName" class="form-control me-1" > 
-      <button [disabled]="dashboardName.length === 0" class="btn btn-primary" (click)="saveGeenieDashboard()">Save </button>
+      <input
+        type="text"
+        placeholder="Title"
+        [(ngModel)]="dashboardName"
+        class="form-control me-1"
+      />
+      <button
+        [disabled]="dashboardName.length === 0"
+        class="btn btn-primary"
+        (click)="saveGeenieDashboard()"
+      >
+        Save
+      </button>
     </div>
     <div class="flex-grow-1 overflow-auto">
-      <app-sheetsdashboard [dash1]="dash1" [hideWidgets]="true"></app-sheetsdashboard>
+      <app-sheetsdashboard
+        [dash1]="dash1"
+        [hideWidgets]="true"
+      ></app-sheetsdashboard>
     </div>
   </div>
 
   <!-- Prompt Area -->
-  <div class="col-3 d-flex flex-column border-start" style="height: 100%; background: #f8f9fa;">
+  <div
+    class="col-3 d-flex flex-column border-start"
+    style="height: 100%; background: #f8f9fa"
+  >
     <!-- Chat Header -->
     <div class="p-3 border-bottom">
       <h5 class="mb-0">Prompt Area</h5>
@@ -266,31 +321,89 @@
 
     <!-- Chat Messages (scrollable area) -->
     <!-- Chat Messages -->
-<div class="flex-grow-1 overflow-auto p-3" id="prompt-messages" #chatContainer>
-  <div *ngFor="let msg of chatHistory" class="mb-3">
-    <div [ngClass]="msg.sender === 'User' ? 'text-end' : 'text-start'">
-      <div 
-        class="d-inline-block px-3 py-2 "
-        [ngClass]="msg.sender === 'User' 
-          ? 'bg-primary text-white' 
-          : 'bg-light border'">
-        {{ msg.text }}
+    <div
+      class="flex-grow-1 overflow-auto p-3"
+      id="prompt-messages"
+      #chatContainer
+    >
+      <div *ngFor="let msg of chatHistory" class="mb-3">
+        <div [ngClass]="msg.sender === 'User' ? 'text-end' : 'text-start'">
+          <div
+            class="d-inline-block px-3 py-2"
+            [ngClass]="
+              msg.sender === 'User'
+                ? 'bg-primary text-white'
+                : 'bg-light border'
+            "
+          >
+            {{ msg.text }}
+          </div>
+          <div class="small text-muted mt-1">
+            {{ msg.timestamp | date : "shortTime" }}
+          </div>
+        </div>
       </div>
-      <div class="small text-muted mt-1">
-        {{ msg.timestamp | date:'shortTime' }}
-      </div>
+    </div>
+
+    <!-- Prompt Input (fixed at bottom) -->
+    <div class="p-3 border-top bg-white">
+      <textarea
+        rows="2"
+        class="form-control mb-2"
+        [(ngModel)]="userPrompt"
+        placeholder="Type your prompt..."
+      ></textarea>
+      <button class="btn btn-primary w-100" (click)="customizeDashboard()">
+        Send
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Prompt Input (fixed at bottom) -->
-<div class="p-3 border-top bg-white">
-  <textarea rows="2" class="form-control mb-2" [(ngModel)]="userPrompt"
-    placeholder="Type your prompt..."></textarea>
-  <button class="btn btn-primary w-100" (click)="customizeDashboard()">Send</button>
-</div>
-
+<div *ngIf="step === 3" class="insights-dashboard-container">
+  <div class="insights-dashboard mt-1 p-4">
+    <div class="suggested-insights">
+      <h2>💡 Suggested Insights</h2>
+      <div class="insight-cards">
+        <div
+          class="insight-card"
+          *ngFor="let insight of suggestedInsights"
+          [class.selected]="isInsightSelected(insight)"
+          (click)="selectInsight(insight)"
+        >
+          <div class="insight-title">
+            {{ insight.chart_title }}
+            <span class="tag">{{ insight.chart_type }}</span>
+          </div>
+          <div class="insight-desc">{{ insight.description }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="selected-insights">
+      <h2>Selected Insights ({{ selectedInsights.length }})</h2>
+      <div class="selected-desc" *ngIf="selectedInsights.length === 0">
+        Select insights from the suggestions to build your dashboard
+      </div>
+      <ul *ngIf="selectedInsights.length > 0">
+        <li *ngFor="let insight of selectedInsights">
+          {{ insight.chart_title }}
+          <span class="remove-cross" (click)="removeSelectedInsight(insight)"
+            >&times;</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="button-group d-flex gap-2 justify-content-end mb-2 me-2">
+    <button type="button" class="cancel-btn" (click)="goBack()">Back</button>
+    <button
+      type="button"
+      class="connect-btn btn-primary"
+      (click)="generateDashboard()"
+    >
+      Generate Dashboard
+    </button>
   </div>
 </div>
 
-    <ng-template #sheetcontainer></ng-template>
+<ng-template #sheetcontainer></ng-template>

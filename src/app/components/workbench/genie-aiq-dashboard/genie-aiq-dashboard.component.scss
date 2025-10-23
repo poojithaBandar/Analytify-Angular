@@ -179,12 +179,10 @@ form input, form select {
 .insights-dashboard-container {
   display: flex;
   flex-direction: column;
-  min-height: 70vh;
+  min-height: calc(100vh - 100px);
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  // max-width: 1200px;
-  // margin: 2rem auto;
   padding: 0;
 }
 
@@ -192,16 +190,27 @@ form input, form select {
   display: flex;
   flex-direction: row;
   gap: 2rem;
-  flex: 1 1 auto;
+  flex: 1;
   padding: 2rem;
+  margin:0;
   background: transparent;
+  max-width: none;
 }
 
 .suggested-insights, .selected-insights {
-  flex: 1 1 0;
+  flex: 1;
   background: #f7f9fc;
   border-radius: 12px;
   padding: 2rem;
+  height: calc(100vh - 200px); /* Adjust based on your needs */
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.suggested-insights h2, .selected-insights h2 {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1a2233;
   min-width: 0;
 }
 
@@ -216,7 +225,12 @@ form input, form select {
   border-radius: 0 0 12px 12px;
   // box-shadow: 0 -1px 8px rgba(0,0,0,0.03);
 }
-
+.button-group {
+  padding: 1rem 2rem;
+  margin-top: auto;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
 @media (max-width: 900px) {
   .insights-dashboard {
     flex-direction: column;
