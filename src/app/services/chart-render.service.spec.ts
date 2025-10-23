@@ -15,4 +15,11 @@ describe('ChartRenderService', () => {
     expect(config?.chartType).toBe('treemap');
     expect(config?.flags.treemap).toBeTrue();
   });
+
+  it('should map chart id 21 to wordcloud', () => {
+    const config = service.getChartConfig(21);
+    expect(config).toBeTruthy();
+    expect(config?.chartType).toBe('wordcloud');
+    expect((config as any).flags.wordcloud).toBeTrue();
+  });
 });

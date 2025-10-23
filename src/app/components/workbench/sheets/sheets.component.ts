@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit, ViewEncapsulation, SecurityContext } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -48,6 +48,7 @@ import { lastValueFrom, Subscription, timer } from 'rxjs';
 import { boolean, evaluate, i, parse, re } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import { WordcloudChartComponent } from '../wordcloud-chart/wordcloud-chart.component';
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 import { ChartRenderService } from '../../../services/chart-render.service';
@@ -108,7 +109,7 @@ declare var $:any;
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent,NgbTooltipModule],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,WordcloudChartComponent,FormatMeasurePipe,ScrollingModule,TestPipe,CustomSheetsComponent,NgbTooltipModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -139,7 +140,8 @@ export class SheetsComponent{
   chartEnable = true;
   dimensionExpand = false;
   chartSuggestions: any = null;
-  errorMessage : any;
+  errorMessage = '';
+  safeErrorMessage = '';
   errorMessage1:any;
   userPrompt: string = '';
   selectedChartPlugin : string = '';	
@@ -558,15 +560,22 @@ isSidebarCollapsed: boolean = false;
       // this.sheetRetrive();
       }
    } 
-   if(this.router.url.includes('/embed/sheet/')){
+  if(this.router.url.includes('/embed/sheet/')){
 
-   } else {
-   this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
-   this.canEditDashbaordInSheet = this.templateService.editDashboard();
-   this.canAddDashbaordInSheet = this.templateService.addDashboard();
-  this.canEditDb = this.templateService.addDatasource();
-  this.canDrop = !this.canEditDb
+  } else {
+  this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
+  this.canEditDashbaordInSheet = this.templateService.editDashboard();
+  this.canAddDashbaordInSheet = this.templateService.addDashboard();
+ this.canEditDb = this.templateService.addDatasource();
+ this.canDrop = !this.canEditDb
   }
+  }
+
+  private setErrorMessage(value: string): void {
+    const normalized = value ?? '';
+    const sanitized = this.sanitizer.sanitize(SecurityContext.HTML, normalized) ?? '';
+    this.errorMessage = normalized;
+    this.safeErrorMessage = sanitized;
   }
 
   preventInvalidStartAngleInput(event: KeyboardEvent): void {
@@ -1701,8 +1710,9 @@ try {
   guage = false;
   calendar = false;
   treemap = false;
+  wordcloud = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,horizontalBar:boolean,wordcloud:boolean,chartId:any){
     this.table = table;
     this.pivotTable = pivotTable;
     this.bar=bar;
@@ -1727,6 +1737,7 @@ try {
     this.treemap = (chartId === 18);
     this.map = map;
     this.calendar = calendar;
+    this.wordcloud = wordcloud;
     if(this.bar){
       this.isHorizontalBar = false;
     }
@@ -3036,6 +3047,34 @@ this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom
     this.treemap = false;
     this.radial = false;
  }
+ if(responce.chart_id == 21){
+  this.chartType = 'wordcloud';
+  // this.pieChart();
+  this.bar = false;
+  this.horizontalBar = false;
+  this.table = false;
+  this.pivotTable = false;
+    this.pie = false;
+    this.line = false;
+    this.area = false;
+    this.sidebyside = false;
+    this.stocked = false;
+    this.barLine = false;
+    this.horizentalStocked = false;
+    this.grouped = false;
+    this.multiLine = false;
+    this.donut = false;
+    this.radar = false;
+    this.kpi = false;
+    this.heatMap = false;
+    this.funnel = false;
+    this.map = false;
+    this.guage = false;
+    this.calendar = false;
+    this.treemap = false;
+    this.radial = false;
+    this.wordcloud = true;
+ }
  if(responce.chart_id == 13){
   this.chartType = 'line';
   // this.lineChart();
@@ -4301,13 +4340,13 @@ console.log(reName.split(',')[0])
         console.log(data);
         if (Array.isArray(data.data)) {
           this.chartSuggestions = data.data;
-          this.errorMessage = '';
+          this.setErrorMessage('');
         } else if (typeof data.data === 'string') {
           this.chartSuggestions = [];
-          this.errorMessage = data.data;
+          this.setErrorMessage(data.data);
         } else {
           this.chartSuggestions = [];
-          this.errorMessage = 'Unexpected data format';
+          this.setErrorMessage('Unexpected data format');
         }
       },
       error => {
@@ -4322,17 +4361,17 @@ console.log(reName.split(',')[0])
         }
         if (backendMsg === 'Queryset ID is required') {
           this.chartSuggestions = null;
-          this.errorMessage = '';
+          this.setErrorMessage('');
         } else if (backendMsg) {
           this.chartSuggestions = null;
-          this.errorMessage = backendMsg;
+          this.setErrorMessage(backendMsg);
         } else if (!apiKey || apiKey.trim() === '') {
           localStorage.setItem('previousUrl', this.router.url);
           this.chartSuggestions = null;
           this.errorMessage1 = 'The GPT API key is missing. Please';
         } else {
           this.chartSuggestions = null;
-          this.errorMessage = `We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`;
+          this.setErrorMessage(`We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`);
           console.error(error);
         }
       }
@@ -4362,93 +4401,97 @@ routeConfigure(){
 
   if (chartType.includes("table")) {
     // Table
-    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
+    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
 
   } else if (chartType.includes("horizontal stacked bar")) {
     // Horizontal Stacked Bar => horizontalBar + horizentalStocked
-    this.chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,true,2);
+    this.chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,true,false,2);
 
   } else if (chartType.includes("horizontal side by side")) {
     // Horizontal Side by Side => horizontalBar + sideBySide
-    this.chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,3);
+    this.chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,3);
 
   } else if (chartType.includes("dual combination")) {
     // Dual Combination => barLine
-    this.chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,4);
+    this.chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,4);
 
   } else if (chartType.includes("stacked bar")) {
     // Stacked Bar (vertical) => bar + stocked
-    this.chartDisplay(false,true,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,5);
+    this.chartDisplay(false,true,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,5);
 
   } else if (chartType.includes("side by side")) {
     // Side by Side (vertical) => bar + sideBySide
-    this.chartDisplay(false,true,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,7);
+    this.chartDisplay(false,true,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,7);
 
   } else if (chartType.includes("bar")) {
     // Plain Bar (vertical)
-    this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+    this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
 
   } else if (chartType.includes("dual line")) {
     // Dual Line => multiLine
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,8);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,8);
 
   } else if (chartType.includes("donut")) {
     // Donut
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,10);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,10);
 
   } else if (
     chartType.includes("calendar") ||        // correct spelling
     chartType.includes("calender")   
   ) {
     // Calendar
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,11);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,11);
 
   } else if (chartType.includes("radar")) {
     // Radar
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,12);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,12);
 
   } else if (chartType.includes("line")) {
     // Line
-    this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+    this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
 
   } else if (chartType.includes("hbar")) {
     // HBar (generic horizontal bar)
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,14);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,14);
 
   } else if (chartType.includes("area")) {
     // Area
-    this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+    this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
 
   } else if (chartType.includes("pie")) {
     // Pie
-    this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+    this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
 
   } else if (chartType.includes("kpi")) {
     // KPI
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,25);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,25);
 
   } else if (chartType.includes("treemap")) {
     // Treemap
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,18);
 
   } else if (chartType.includes("heat map")) {
     // Heat Map
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,26);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,26);
 
   } else if (chartType.includes("radial")) {
     // Radial
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,20);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,20);
+
+  } else if (chartType.includes("wordcloud")) {
+    // WordCloud
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,21);
 
   } else if (chartType.includes("funnel")) {
     // Funnel
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,27);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,27);
 
   } else if (chartType.includes("world map")) {
     // World Map
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,29);
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,29);
   } else {
     console.warn("[Chart] Unrecognized chart_type:", chartTypeRaw, "— defaulting to table");
-    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
+    this.chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);
   }
 
   this.dataExtraction(false);
@@ -4574,7 +4617,7 @@ customizechangeChartPlugin() {
     this.dimensionAlignment = data.dimensionAlignment ?? 'center';
     this.dimensionColor = data.dimensionColor ?? '#2392c1';
     this.measureColor = data.measureColor ?? '#2392c1';
-    this.dataLabelsColor = data.dataLabelsColor ?? '#0a5a2';
+    this.dataLabelsColor = data.dataLabelsColor ?? '#2392c1';
     this.tableDataFontFamily = data.tableDataFontFamily ?? 'sans-serif';
     this.tableDataFontSize = data.tableDataFontSize ?? '12px';
     this.tableDataFontWeight = data.tableDataFontWeight ?? 400;
@@ -4796,13 +4839,13 @@ customizechangeChartPlugin() {
           this.zone.run(() => {
             if (Array.isArray(data.data)) {
               this.chartSuggestions = data.data;
-              this.errorMessage = '';
+              this.setErrorMessage('');
             } else if (typeof data.data === 'string') {
               this.chartSuggestions = [];
-              this.errorMessage = data.data;
+              this.setErrorMessage(data.data);
             } else {
               this.chartSuggestions = [];
-              this.errorMessage = 'Unexpected data format';
+              this.setErrorMessage('Unexpected data format');
             }
           });
         },
@@ -4810,7 +4853,7 @@ customizechangeChartPlugin() {
           const apiKey = localStorage.getItem('API_KEY');
           if (error.error.message === 'Queryset ID is required'){
             this.chartSuggestions = null;
-            this.errorMessage = ""
+            this.setErrorMessage('');
           }
           else if  (!apiKey || apiKey.trim() === '') {
             this.chartSuggestions = null;
@@ -4822,7 +4865,7 @@ customizechangeChartPlugin() {
             // Handle other errors
             console.log("Error:", error.message);
             this.chartSuggestions = null;
-            this.errorMessage = `We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`;
+            this.setErrorMessage(`We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`);
             console.error(error);
           }
         }
@@ -4849,7 +4892,7 @@ customizechangeChartPlugin() {
     recognition.onerror = (event: any) => {
       console.error('Voice recognition error', event);
       this.zone.run(() => {
-        this.errorMessage = 'Voice recognition error';
+        this.setErrorMessage('Voice recognition error');
       });
     };
   

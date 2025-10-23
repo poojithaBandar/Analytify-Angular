@@ -6,6 +6,20 @@ import { SheetsComponent } from '../components/workbench/sheets/sheets.component
 import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboard/sheetsdashboard.component';
 import { WorkbenchService } from '../components/workbench/workbench.service';
 
+const KPI_POSITION_VALUES = [
+  'top-left',
+  'top-center',
+  'top-right',
+  'middle-left',
+  'middle-center',
+  'middle-right',
+  'bottom-left',
+  'bottom-center',
+  'bottom-right'
+];
+
+const KPI_TRENDLINE_POSITION_VALUES = ['top', 'center', 'bottom'];
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,6 +30,39 @@ export class DashboardTransferService {
   dashboardInstance! : SheetsdashboardComponent;
 
   constructor(private workbechService: WorkbenchService, private toasterservice: ToastrService) { }
+
+  private ensureKpiPositionDefaults(item: any): void {
+    if (!item || !item.kpiData) {
+      return;
+    }
+    item.kpiData.kpiNumberPosition = this.normalizePosition(item.kpiData.kpiNumberPosition, 'middle-center');
+    item.kpiData.kpiTitlePosition = this.normalizePosition(item.kpiData.kpiTitlePosition, 'top-left');
+    item.kpiData.kpiTrendlinePosition = this.normalizeTrendlinePosition(item.kpiData.kpiTrendlinePosition, 'bottom');
+  }
+
+  private normalizePosition(position?: string | null, fallback: string = 'middle-center'): string {
+    if (!position) {
+      return fallback;
+    }
+    const normalizedMap: Record<string, string> = {
+      'top-middle': 'top-center',
+      'left-middle': 'middle-left',
+      'center': 'middle-center',
+      'right-middle': 'middle-right',
+      'bottom-middle': 'bottom-center'
+    };
+    const lower = (position || '').toLowerCase();
+    const candidate = normalizedMap[lower] || lower;
+    return KPI_POSITION_VALUES.includes(candidate) ? candidate : fallback;
+  }
+
+  private normalizeTrendlinePosition(position?: string | null, fallback: string = 'bottom'): string {
+    if (!position) {
+      return fallback;
+    }
+    const lower = (position || '').toLowerCase();
+    return KPI_TRENDLINE_POSITION_VALUES.includes(lower) ? lower : fallback;
+  }
 
     buildDashboardTransfer(container: ViewContainerRef,responesData : any){
     const componentRef =container.createComponent(SheetsComponent);
@@ -284,7 +331,41 @@ export class DashboardTransferService {
       chartOptions.xAxis?.forEach((column: any) => {
         column.data = xAxisCategories;
       });
-    } else if ([2, 3, 14].includes(chartId)) {
+    } else if (chartId == 21) {
+      const normalizeLabel = (value: any) => {
+        if (value === null || value === undefined) {
+          return 'null';
+        }
+        const label = String(value).trim();
+        return label === '' ? 'null' : label;
+      };
+
+      const aggregatedMeasures = multiSeriesChartData.reduce((acc: number[], row: any) => {
+        (row?.data || []).forEach((val: any, index: number) => {
+          const numericValue = typeof val === 'number' ? val : parseFloat(val);
+          const safeValue = Number.isFinite(numericValue) ? numericValue : 0;
+          acc[index] = (acc[index] ?? 0) + safeValue;
+        });
+        return acc;
+      }, [] as number[]);
+
+      const wordcloudData = xAxisCategories.map((label: any, index: number) => ({
+        name: normalizeLabel(label),
+        value: aggregatedMeasures[index] ?? 0
+      }));
+
+      if (chartOptions.series && chartOptions.series.length) {
+        chartOptions.series = [
+          {
+            ...chartOptions.series[0],
+            data: wordcloudData
+          },
+          ...chartOptions.series.slice(1)
+        ];
+      } else {
+        chartOptions.series = [{ type: 'wordCloud', data: wordcloudData }];
+      } 
+    }else if ([2, 3, 14].includes(chartId)) {
       // chartOptions.yAxis?.forEach((column: any) => {
       //   column.data = xAxisCategories;
       // });
@@ -429,6 +510,7 @@ export class DashboardTransferService {
       dashboard.dashboard_data.forEach((dashboardItem:any) => {
         if (dashboardItem.sheetId === sheetId) {
           if(dashboardItem.chartId == 25 || sheet.chart_id == 25){
+            this.ensureKpiPositionDefaults(dashboardItem);
             dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
             dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
           } else if(dashboardItem.chartId == 1 || sheet.chart_id == 1){
@@ -454,6 +536,7 @@ export class DashboardTransferService {
           tabData.dashboard?.forEach((dashboardItem: any) => {
             if (dashboardItem.sheetId === sheetId) {
               if (dashboardItem.chartId == 25 || sheet.chart_id == 25) {
+                this.ensureKpiPositionDefaults(dashboardItem);
                 dashboardItem.kpiData.kpiNumber = sheet.sheet_data.results.kpiNumber
                 dashboardItem.kpiData.rows = sheet.dashboardKPIRows;
               } else if (dashboardItem.chartId == 1 || sheet.chart_id == 1) {

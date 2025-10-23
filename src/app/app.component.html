@@ -1,2 +1,16 @@
 <app-loader></app-loader>
 <router-outlet></router-outlet>
+
+<div *ngIf="notification" class="notification-container">
+  <div class="toast">
+    <div class="icon">
+        <!-- <img [src]="notification?.icon" alt=""> -->
+        <img src="./assets/images/icons_new/CONNECTWISE.svg" alt="">
+    </div>
+    <div class="content">
+      <strong> {{notification.title}} </strong>
+      <p> {{notification.body}} </p>
+    </div>
+    <button (click)="close()">×</button>
+  </div>
+</div>

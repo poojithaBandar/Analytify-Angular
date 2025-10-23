@@ -483,9 +483,8 @@ getSchemaTablesFromConnectedDb(){
   if(obj.querySetId === '0' || obj.querySetId === 0){
     delete obj.querySetId
   }
-  const IdToPass = this.databaseId
   this.schematableList =[];
-  this.workbechService.getSchemaTablesFromConnectedDb(IdToPass,obj).subscribe({next: (data) => {
+  this.workbechService.getSchemaTablesFromConnectedDb(obj).subscribe({next: (data) => {
     this.crossDbConnections = data;
     this.isCrossDb = data[0]?.is_cross_db;
     if(data[0].cross_db_id){
@@ -602,8 +601,8 @@ refreshSchemaForTable(table: any, callback: () => void) {
   if (obj.querySetId === '0' || obj.querySetId === 0) {
     delete obj.querySetId;
   }
-  const idToPass = this.databaseId;
-  this.workbechService.getSchemaTablesFromConnectedDb(idToPass, obj).subscribe({
+  // const idToPass = this.databaseId;
+  this.workbechService.getSchemaTablesFromConnectedDb(obj).subscribe({
     next: (data) => {
       this.schematableList = [];
       this.crossDbConnections = data;
@@ -881,35 +880,49 @@ downloadExcelFromCustomSql() {
   if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
     delete obj.query_name
   }
-  this.workbechService.executeQuery(obj)
+  this.workbechService.downloadExcelS3(this.custumQuerySetid)
   .subscribe(
     {
       next:(data:any) =>{
+        const fileUrl = data?.file_url;
+      if (!fileUrl) {
+        console.error('No file_url found in response');
+        return;
+      }
+        const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = ''; // lets browser decide filename
+      link.style.display = 'none';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      this.toasterService.success('File downloaded successfully', 'Success', { positionClass: 'toast-top-right' });
             //Convert JSON data to worksheet
             // let cominedData =[data.column_data, data.row_data]
-            let combinedData: any[] = data.row_data.map((row: any) => {
-              let combined: { [key: string]: any } = {};
-              data.column_data.forEach((column: string | number, index: string | number) => {
-                combined[column] = row[index];
-              });
-              return combined;
-            });
-            // console.log(combinedData,'combined-data')
-          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(combinedData);
+          //   let combinedData: any[] = data.row_data.map((row: any) => {
+          //     let combined: { [key: string]: any } = {};
+          //     data.column_data.forEach((column: string | number, index: string | number) => {
+          //       combined[column] = row[index];
+          //     });
+          //     return combined;
+          //   });
+          //   // console.log(combinedData,'combined-data')
+          // const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(combinedData);
 
-          // Create a workbook and append the worksheet
-          const wb: XLSX.WorkBook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+          // // Create a workbook and append the worksheet
+          // const wb: XLSX.WorkBook = XLSX.utils.book_new();
+          // XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-          // Write the workbook and download it
-          const excelBuffer: any = XLSX.write(wb, {
-              bookType: 'xlsx',
-              type: 'array',
-          });
-           this.saveAsExcelFile(excelBuffer, 'ExportedData');
+          // // Write the workbook and download it
+          // const excelBuffer: any = XLSX.write(wb, {
+          //     bookType: 'xlsx',
+          //     type: 'array',
+          // });
+          //  this.saveAsExcelFile(excelBuffer, 'ExportedData');
       },
       error:(error:any)=>{
-      console.error('Error fetching data for download:', error);
+        this.toasterService.error('Error fetching data for download','error',{positionClass:'toast-top-right'});
     }
     })
 }
@@ -1411,34 +1424,48 @@ downloadExcel() {
 if(obj.row_limit === null || obj.row_limit === undefined){
  delete obj.row_limit;
 } 
-  this.workbechService.getTableJoiningData(obj).subscribe(
+  this.workbechService.downloadExcelS3(this.qurtySetId).subscribe(
     {
       next:(data:any) =>{
-            //Convert JSON data to worksheet
-            // let cominedData =[data.column_data, data.row_data]
-            let combinedData: any[] = data.row_data.map((row: any) => {
-              let combined: { [key: string]: any } = {};
-              data.column_data.forEach((column: string | number, index: string | number) => {
-                combined[column] = row[index];
-              });
-              return combined;
-            });
-            // console.log(combinedData,'combined-data')
-          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(combinedData);
+         const fileUrl = data?.file_url;
+      if (!fileUrl) {
+        console.error('No file_url found in response');
+        return;
+      }
+        const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = ''; // lets browser decide filename
+      link.style.display = 'none';
 
-          // Create a workbook and append the worksheet
-          const wb: XLSX.WorkBook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      this.toasterService.success('File downloaded successfully', 'Success', { positionClass: 'toast-top-right' });
+          //   //Convert JSON data to worksheet
+          //   // let cominedData =[data.column_data, data.row_data]
+          //   let combinedData: any[] = data.row_data.map((row: any) => {
+          //     let combined: { [key: string]: any } = {};
+          //     data.column_data.forEach((column: string | number, index: string | number) => {
+          //       combined[column] = row[index];
+          //     });
+          //     return combined;
+          //   });
+          //   // console.log(combinedData,'combined-data')
+          // const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(combinedData);
 
-          // Write the workbook and download it
-          const excelBuffer: any = XLSX.write(wb, {
-              bookType: 'xlsx',
-              type: 'array',
-          });
-           this.saveAsExcelFile(excelBuffer, 'ExportedData');
+          // // Create a workbook and append the worksheet
+          // const wb: XLSX.WorkBook = XLSX.utils.book_new();
+          // XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+          // // Write the workbook and download it
+          // const excelBuffer: any = XLSX.write(wb, {
+          //     bookType: 'xlsx',
+          //     type: 'array',
+          // });
+          //  this.saveAsExcelFile(excelBuffer, 'ExportedData');
       },
       error:(error:any)=>{
-      console.error('Error fetching data for download:', error);
+        this.toasterService.error('Error fetching data for download','error',{positionClass:'toast-top-right'});
     }
     })
 }
@@ -1950,7 +1977,10 @@ checkNameChanged(){
     }
   }
 }
-  goToSheet(fromParam: string) {
+  goToSheet(fromParam: string,modal?:any) {
+    if(modal){
+      this.modalService.dismissAll('close')
+    }
     this.goToSheetButtonClicked = true;
       let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
       let querySetIdToDelete = (fromParam === 'fromcustomsql') ? this.qurtySetId : this.custumQuerySetid

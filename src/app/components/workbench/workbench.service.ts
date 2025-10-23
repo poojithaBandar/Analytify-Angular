@@ -298,10 +298,15 @@ export class WorkbenchService {
   getTableData(obj:any){
     return this.http.put<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj)
   }
-  getdatabaseConnectionsList(obj:any){
+  getdatabaseConnectionsList(obj:any,params?:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.put<any>(`${environment.apiUrl}/connection_list/`+this.accessToken,obj)
+    return this.http.put<any>(`${environment.apiUrl}/connection_list/`+this.accessToken,obj,{ params: params });
+  }
+  getConnectedServers(){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/user_connection_list/`+this.accessToken)
   }
   getTablesFromConnectedDb(id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -318,7 +323,7 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/queryfetch/`+this.accessToken,obj)
   }
-  getSchemaTablesFromConnectedDb(id:any,obj:any){
+  getSchemaTablesFromConnectedDb(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/server_tables/`+this.accessToken,obj)
@@ -373,6 +378,11 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/query_data/`+this.accessToken,obj);
+  }
+  downloadExcelS3(qryId:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/download_data_preview/`+qryId+'/'+this.accessToken);
   }
   getDataExtraction(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -604,10 +614,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/delete_condition/`+this.accessToken,obj);
   }
-  getSavedQueryList(obj:any){
+  getSavedQueryList(obj:any,params?:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.put<any>(`${environment.apiUrl}/savedqueries/`+this.accessToken,obj);
+    return this.http.put<any>(`${environment.apiUrl}/savedqueries/`+this.accessToken,obj,{ params: params });
   }
   //jhansi
   getSheetNames(obj:any){
@@ -1411,10 +1421,21 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/user_dashboard/`+this.accessToken,obj);
       }
+
+    promptDashboard(obj:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/predictive_analysis/`+this.accessToken,obj);
+    }
      getChartMetricsLandingPage(){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/dashboard_metrics/`+this.accessToken,{});
+    }
+    getOpenAiKey(){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/encrypt_openai_key/`+this.accessToken);
     }
     // Airflow API
     airflowToken: string | null = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlzcyI6W10sImF1ZCI6ImFwYWNoZS1haXJmbG93IiwibmJmIjoxNzQ5MDQyOTI5LCJleHAiOjE3NDkxMjkzMjksImlhdCI6MTc0OTA0MjkyOX0.OPipRIhG-me15qyyGXRlt2xLuNWKOr2RexHtU7xc8kyXqP3dHfcNAq2t6Zf6sNiKbnb437AyKsagA9rgbKK6wg';
@@ -1492,5 +1513,23 @@ deleteUser(id:any){
       `${environment.apiUrl}/email_remainder/${this.accessToken}`,
       obj
     );
+  }
+
+  saveNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
+  }
+
+  updateNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
+  }
+
+  deleteNotificationToken(obj: any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/notification/${this.accessToken}`,obj);
   }
 }

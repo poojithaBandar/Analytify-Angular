@@ -528,353 +528,116 @@
     </div>
 
         <div *ngIf="viewDatasourceList">
-          @if(!gridView){
-            <div class="table-responsive border table-responsive-height">
-                <table class="table border text-nowrap text-md-nowrap mb-0">
-                    <thead class="table-primary bg-primary table-primary-position">
-                        <tr>
-                            <th>Datasources</th>
-                            <th>Server</th>
-                            <th>Created on</th>
-                            <th>Created by</th>
-                            <th>Last Modified</th>
-                            <th *ngIf="!iscrossDbSelect">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let database of connectionList | paginate : {
-                          itemsPerPage: itemsPerPage,
-                          currentPage: page,
-                          totalItems: totalItems
-                        }" class="selectable-card" (click)="iscrossDbSelect ? onSelectedHIDCrsDb(database.hierarchy_id) : null"
-                        [class.selected-table]="iscrossDbSelect && selectedHirchyIdCrsDb === database.hierarchy_id">
-                            <td (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id,database.cross_db_id)">
-                              <!-- <span><input type="checkbox" [checked]="selectedHirchyIdCrsDb === database.hierarchy_id" (change)="onSelectedHIDCrsDb(database.hierarchy_id)"></span> -->
-                                <a ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
-                                <span  *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}">
-                                  <img src="./assets/images/icons/crossdatabase-black.png" class=" avatar-radius avatar-databse-sm cover-image ms-2">
-                                </span>
-                                <span  *ngIf="database?.transformation && !database.is_cross_db" ngbTooltip="Transformed Datasource">
-                                  <img src="./assets/images/icons/transformation_blue.png" class=" avatar-radius avatar-databse-sm cover-image ms-2">
-                                </span>
-                               </td>
-                            <td *ngIf="database.server_type === 'POSTGRESQL'">
-                              <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
-                          </td>
-                          <td *ngIf="database.server_type === 'ORACLE'">
-                            <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
-                        </td>
-                        <td *ngIf="database.server_type === 'MYSQL'">
-                          <img alt="product" src="./assets/images/icons/MySql-icon1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                        </td>
-                        <td *ngIf="database.server_type === 'MONGODB'">
-                          <img alt="product" src="./assets/images/icons/mongodb-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'MICROSOFTSQLSERVER'">
-                          <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'SNOWFLAKE'">
-                        <img alt="product" src="./assets/images/icons/snowflake-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
-                    </td>
-                      <td *ngIf="database.server_type === 'SQLITE'">
-                          <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'EXCEL'">
-                        <img alt="product" src="./assets/images/icons/excel-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'CSV'">
-                        <img alt="product" src="./assets/images/icons/csv-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'QUICKBOOKS'">
-                        <img alt="product" src="./assets/images/icons/quickbooks-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'SALESFORCE'">
-                        <img alt="product" src="./assets/images/icons/salesforce-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'SAP HANA'">
-                        <img alt="product" src="./assets/images/icons/sap-hana-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      
-                      <td *ngIf="database.server_type === 'CONNECTWISE'">
-                        <img alt="product" src="./assets/images/icons/connectwise-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'DBT'">
-                        <img alt="product" src="./assets/images/icons/dbt.svg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'HALOPS'">
-                        <img alt="product" src="./assets/images/icons/Halopsa-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'PAX8'">
-                        <img alt="product" src="./assets/images/icons/Pax8-black.svg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'BAMBOOHR'">
-                        <img alt="product" src="https://logo.clearbit.com/bamboohr.com" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                     <td *ngIf="database.server_type === 'ZOHO'">
-                        <img alt="product" src="./assets/images/icons/zoho.svg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'TALLY'">
-                        <img alt="product" src="./assets/images/icons/TallyLogo.png" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'IMMYBOT'">
-                        <img alt="product" src="./assets/images/icons/immybot.png" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'SHOPIFY'">
-                        <img alt="product" src="./assets/images/icons/shopify-large-1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'GOOGLE_SHEETS'">
-                        <img alt="product" src="./assets/images/icons/google-sheets.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'NINJA'">
-                        <img alt="product" src="./assets/images/icons/ninjaRMMIcon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'HUBSPOT'">
-                        <img alt="product" src="./assets/images/icons/hubspotlogo.png" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                     <td *ngIf="database.server_type === 'OPEN_AI'">
-                        <img alt="product" src="https://logo.clearbit.com/openai.com" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'DEEPSEEK'">
-                        <img alt="product" src="./assets/images/icons/deepseek.svg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'GEMINI'">
-                        <img alt="product" src="/assets/images/Db_server_images/geminiLLm.svg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                      <td *ngIf="database.server_type === 'GOOGLE_ANALYTICS'">
-                        <img alt="product" src="./assets/images/icons/google-anaytics.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
-                      </td>
-                            <td>{{database.created_at | date:'mediumDate'}}</td>
-                            <td>{{database.created_by}}</td>
-                            <td>{{database.updated_at | date:'mediumDate'}}</td>
-                            <td  *ngIf="!iscrossDbSelect">
-                              <div class="hstack gap-2 fs-1">
-                                <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL') && (!database?.transformation || database.is_cross_db)"
-                                  [disabled]="(database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS' || database.server_type ==='HUBSPOT')"
-                                  aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
-                                  class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                                  <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
-                                <button *ngIf="!database.is_cross_db && smartDashboardSources.includes(database.server_type)" class="btn btn-icon btn-sm btn-primary-light btn-wave waves-effect waves-light" (click)="smartDashboardFromConnection(database)">
-                                  <i class="fe fe-zap" ngbTooltip="Smart Dashboard"></i>
-                                </button>
-                                <div *ngIf="database?.transformation && !database.is_cross_db" class="d-flex justify-content-end" ngbDropdown>
-                                  <button aria-label="Edit Transformation" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbDropdownToggle data-bs-toggle="dropdown">
-                                    <i class="ri-edit-line" ngbTooltip="Edit"></i>
-                                  </button>
-                                  <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"><i class="ri-edit-line"></i> Edit Database</a>
-                                    <a class="dropdown-item" (click)="goToTransformationLayer(database?.hierarchy_id)"><img src="./assets/images/icons/transformation_blue.png" class="avatar-databse-sm d-inline-flex me-2"> Edit Transformation</a>
-                                  </div>
-                                </div>
-                                <div *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="d-flex justify-content-end" ngbDropdown>
-                                  <button aria-label="anchor" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbDropdownToggle data-bs-toggle="dropdown">
-                                    <i class="ri-edit-line" ngbTooltip="Edit database"></i>
-                                  </button>
-                                  <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
-                                      (click)="fileInput.click()"><input type="file"
-                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)"
-                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
-                                        class="fe fe-repeat"></i> Replace</a>
-                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
-                                      (click)="fileInput.click()"><input type="file"
-                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)"
-                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
-                                        class="fe fe-upload"></i> Upsert</a>
-                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
-                                      (click)="fileInput.click()"><input type="file"
-                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)"
-                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
-                                        class="fe fe-plus"></i> Append</a>
-                                  </div>
-                                </div>
-                                <button
-                                  class="btn btn-icon btn-sm btn-orange-light btn-wave waves-effect waves-light"
-                                  ngbTooltip="Set Alerts"
-                                  (click)="gotoConfigureEmailAlerts(database.hierarchy_id)">
-                                  <i class="fa fa-bell"></i>
-                                </button>
-                                <a aria-label="anchor"  (click)="deleteDbConnection(database.is_cross_db ? database?.cross_db_id : database.hierarchy_id)"
-                                  class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                  <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
-                                </a>
-                              </div>
-                              </td>
-                        </tr>
-                    
-                    </tbody>
-                </table>
-            </div>
-          }
-          @if(gridView){
-                <!-- <div class="row">
-                  <div *ngFor="let database of connectionList | paginate : {
-                    itemsPerPage: itemsPerPage,
-                    currentPage: page,
-                    totalItems: totalItems
-                  }"  class="col-md-12 col-xl-3">
-                  <div class="card card-box-shadow selectable-card"  [class.selected]="iscrossDbSelect && selectedHirchyIdCrsDb === database.hierarchy_id"
-                         (click)="iscrossDbSelect ? onSelectedHIDCrsDb(database.hierarchy_id) : null">
-                    <div class="card-header  tiled-header-bg bg-primary tiled-card-header-padding">
-                      <div class="d-sm-flex align-items-center">
-                        <span *ngIf="database.server_type === 'ORACLE'" class="avatar avatar rounded-circle">
-                          <img src="./assets/images/charts/oracle-tiled-icon.jpg" alt="" class="rounded-circle"></span>
-                          <span *ngIf="database.server_type === 'POSTGRESQL'" class="avatar avatar rounded-circle">
-                            <img src="./assets/images/charts/post-tiled-icon.jpg" alt="" class="rounded-circle"></span>
-                            <span *ngIf="database.server_type === 'MYSQL'" class="avatar avatar rounded-circle">
-                              <img src="./assets/images/icons/MySql-icon1.jpg" alt="" class="rounded-circle"></span>
-                              <span *ngIf="database.server_type === 'MICROSOFTSQLSERVER'" class="avatar avatar rounded-circle">
-                                <img src="./assets/images/icons/microsoft-sql-server-icon.jpg" alt="" class="rounded-circle"></span>
-                                <span *ngIf="database.server_type === 'SNOWFLAKE'" class="avatar avatar rounded-circle">
-                                  <img src="./assets/images/icons/snowflake-icon.png" alt="" class="rounded-circle"></span>
-                                <span *ngIf="database.server_type === 'SQLITE'" class="avatar avatar rounded-circle">
-                                  <img src="./assets/images/icons/sqlite-icon.jpg" alt="" class="rounded-circle"></span>
-                                  <span *ngIf="database.server_type === 'MONGODB'" class="avatar avatar rounded-circle">
-                                    <img src="./assets/images/icons/mongodb-icon.jpg" alt="" class="rounded-circle"></span>
-                                    <span *ngIf="database.server_type === 'EXCEL'" class="avatar avatar rounded-circle">
-                                      <img src="./assets/images/icons/excel-icon.jpg" alt="" class="rounded-circle"></span>
-                                      <span *ngIf="database.server_type === 'CSV'" class="avatar avatar rounded-circle">
-                                        <img src="./assets/images/icons/csv-icon.jpg" alt="" class="rounded-circle"></span>
-                                        <span *ngIf="database.server_type === 'SALESFORCE'" class="avatar avatar rounded-circle">
-                                          <img src="./assets/images/icons/salesforce-icon.jpg" alt="" class="rounded-circle"></span>
-                                          <span *ngIf="database.server_type === 'SAP HANA'" class="avatar avatar rounded-circle">
-                                            <img src="./assets/images/icons/sap-hana-icon.png" alt="" class="rounded-circle"></span>
-                                          <span *ngIf="database.server_type === 'QUICKBOOKS'" class="avatar avatar rounded-circle">
-                                            <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
-                                            <span *ngIf="database.server_type === 'OPEN_AI'" class="avatar avatar rounded-circle">
-                                              <img src="https://logo.clearbit.com/openai.com" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'DEEPSEEK'" class="avatar avatar rounded-circle">
-                                                <img src="./assets/images/icons/deepseek.svg" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'GEMINI'" class="avatar avatar rounded-circle">
-                                                <img src="/assets/images/Db_server_images/geminiLLm.svg" alt="" class="rounded-circle"></span>
-                                            <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
-                                              <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'DBT'" class="avatar avatar rounded-circle">
-                                                <img src="./assets/images/icons/dbt.svg" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
-                                                <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'PAX8'" class="avatar avatar rounded-circle">
-                                                <img src="./assets/images/icons/Pax8-black.svg" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'BAMBOOHR'" class="avatar avatar rounded-circle">
-                                                <img src="https://logo.clearbit.com/bamboohr.com" alt="" class="rounded-circle"></span>
-                                                <span *ngIf="database.server_type === 'ZOHO'" class="avatar avatar rounded-circle">
-                                                <img src="./assets/images/icons/zoho.svg" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'TALLY'" class="avatar avatar rounded-circle">
-                                                <img src="./assets/images/icons/TallyLogo.png" alt="" class="rounded-circle"></span>
-                                              <span *ngIf="database.server_type === 'IMMYBOT'" class="avatar avatar rounded-circle">
-                                                <img src="./assets/images/icons/immybot.png" alt="" class="rounded-circle"></span>
-                                                <span *ngIf="database.server_type === 'SHOPIFY'" class="avatar avatar rounded-circle">
-                                                  <img src="./assets/images/icons/shopify-large-1.jpg" alt="" class="rounded-circle"></span>
-                                                  <span *ngIf="database.server_type === 'GOOGLE_SHEETS'" class="avatar avatar rounded-circle">
-                                                    <img src="./assets/images/icons/google-sheets.jpg" alt="" class="rounded-circle"></span>
-                                                    <span *ngIf="database.server_type === 'GOOGLE_ANALYTICS'" class="avatar avatar rounded-circle">
-                                                      <img src="./assets/images/icons/google-anaytics.jpg" alt="" class="rounded-circle"></span>
-                                                      <span *ngIf="database.server_type === 'NINJA'" class="avatar avatar rounded-circle">
-                                                        <img src="./assets/images/icons/ninjaRMMIcon.jpg" alt="" class="rounded-circle"></span>
-                                                        <span *ngIf="database.server_type === 'HUBSPOT'" class="avatar avatar rounded-circle">
-                                                          <img src="./assets/images/icons/hubspotlogo.png" alt="" class="rounded-circle"></span>
-                          <div class="ms-2 mt-sm-0 mt-2">
-                              <h6 class="mb-1">
-                                  <a (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id,database.cross_db_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
-                              </h6>
-                              
-                          </div>
-                      </div>
-  
-                      <div class="col-auto p-0"  *ngIf="!iscrossDbSelect">
-                        <div class="d-flex justify-content-end p-1" ngbDropdown>
-                          <span *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}" class="me-1">
-                            <img src="./assets/images/icons/crossdatabase-icon.png" class="avatar avatar-radius avatar-databse-sm cover-image">
-                          </span>
-                          <span  *ngIf="database?.transformation && !database.is_cross_db" ngbTooltip="Transformed Datasource">
-                            <img src="./assets/images/icons/transformation_white.png" class="avatar avatar-radius avatar-databse-sm cover-image">
-                          </span>
-                          <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                              aria-haspopup="true" aria-expanded="false" class=""><i
-                                  class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                          </a>
-                        <div class="dropdown-menu" ngbDropdownMenu>
-                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS' ||database.server_type ==='HUBSPOT')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
-                              [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
-                              [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                            <a *ngIf="!database.is_cross_db && smartDashboardSources.includes(database.server_type)" class="dropdown-item" (click)="smartDashboardFromConnection(database)"><i class='fe fe-zap me-2 d-inline-flex'></i> Smart Dashboard</a>
-                            <a *ngIf="database?.transformation && !database.is_cross_db" class="dropdown-item" (click)="goToTransformationLayer(database?.hierarchy_id)" ngbTooltip="Edit Transformation"><img src="./assets/images/icons/transformation_blue.png" class="avatar-databse-sm d-inline-flex me-2"> Edit Transforma...</a>
-                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
-                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
-                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-plus"></i> Append</a>
-                            <a (click)="gotoConfigureEmailAlerts(database.hierarchy_id)" tabindex="0" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-bell me-2 d-inline-flex" data-bs-toggle="tooltip" ></i>Set Alerts</a>
-                            <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
-                              [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.is_cross_db ? database?.cross_db_id : database.hierarchy_id)"
-                              [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-
-                          </div>
-                      </div>
-                    </div>
-                    </div>
-                    <div class="card-body title-card-body tiled-card-body-padding">
-                        <div class="row">
-                          
-                            <div  class="col-md-12">
-                               <div class="row">
-                                    <div class="col-md-6">
-                                        <span class="fw-semibold fs-14">Created by:  </span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span class="fs-14">{{database.created_by}}</span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <span class="fw-semibold fs-14">Created on:</span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span class="fs-14">{{database.created_at | date:'mediumDate'}}</span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                  <div class="col-md-6">
-                                      <span class="fw-semibold fs-14">Last Modified: </span>
-                                  </div>
-                                  <div class="col-md-6">
-                                      <span class="fs-14">{{database.updated_at | date:'mediumDate'}}</span>
-                                  </div>
-                              </div>
-                            
-                            </div>
-                           
-                        </div>
-                    </div>
-                    </div>
-
-                
-              </div> 
-            </div> -->
-
-
+         
             <div class="main-container container-fluid TopHeader">
-              <div class="d-flex align-items-center mb-4">
-                <div class="flex-grow-1 position-relative me-3" style="max-width: 400px;">
-                  <input type="text" placeholder="Search connections..." [(ngModel)]="searchDbName" (keyup.enter)="searchDbConnectionList()"
-                    class="form-control glass-light ps-5" />
-                  <span class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 1rem;">
-                  </span>
-                </div>
-            
-                <!-- <button (click)="showNewConnection = true" class="btn btn-primary shadow px-4 py-2">
-                  New Connection
-                </button> -->
-                <div class="d-flex ms-auto">
-                <app-insights-button 
-                  [buttonName]="'➕ New Connection'" 
-                  [classesList]="'btn btn-primary me-3 animate-button'" 
-                  [isIcon]="true" 
-                  [previledgeId]="1"  
+            <div class="d-flex align-items-center mb-4 flex-wrap">
+          <div class="d-flex align-items-center ms-auto flex-wrap">
+              <div ngbDropdown class="me-3" style="min-width: 260px;">
+              <button
+                class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center text-muted"
+                id="datasourceDropdown"
+                ngbDropdownToggle tabindex="0">
+                
+                <span *ngIf="selectedDatasource; else placeholder" class="d-flex align-items-center">
+                  <img *ngIf="selectedDatasource.value !== 'all' && selectedDatasource.image" [src]="selectedDatasource.image" alt="" width="20" height="20" class="me-2" />
+                  {{ selectedDatasource.name }}
+                </span>
+                
+                <ng-template #placeholder>
+                  Select Datasource
+                </ng-template>
+                
+                <i class="bi bi-chevron-down ms-auto"></i>
+              </button>
+
+              <div ngbDropdownMenu aria-labelledby="datasourceDropdown" class="p-2 ds-dropdown shadow-lg dropdown-menu-end w-100">
+                <!-- Search Input -->
+                <input type="text"
+                      class="form-control mb-2"
+                      placeholder="Search Display name..."
+                      [(ngModel)]="datasourceSearch" />
+
+                <!-- Datasource List -->
+                <button
+                  *ngFor="let ds of filteredDatasourceList()"
+                  class="dropdown-item d-flex align-items-center"
+                  (click)="onDatasourceSelect(ds)">
+                  <span *ngIf="ds.svg" class="me-2" [innerHTML]="ds.svg"></span>
+
+                    <!-- Fallback to normal image -->
+                    <img *ngIf="ds.image" [src]="ds.image" alt="" width="20" height="20" class="me-2" />
+                  {{ ds.name }}
+                </button>
+              </div>
+            </div>
+
+
+
+          <!-- Sorting Dropdown -->
+        <div ngbDropdown class="me-3" style="min-width: 200px;">
+          <button
+            class="btn glass-light-select p-2 w-100 d-flex justify-content-between align-items-center text-muted"
+            id="sortDropdown"
+            ngbDropdownToggle>
+            {{ selectedSortLabel || 'Sort by' }}
+            <i class="bi bi-chevron-down"></i>
+          </button>
+
+          <div ngbDropdownMenu aria-labelledby="sortDropdown" class="shadow-lg dropdown-menu-end w-100">
+            <button
+              *ngFor="let option of sortOptions"
+              class="dropdown-item"
+              (click)="onSortChange(option)">
+              {{ option.label }}
+            </button>
+          </div>
+        </div>
+
+
+            <div class="btn-group toggle-group glass-light-grid me-3" role="group">
+              <button type="button" class="btn p-2"
+                      [class.active]="viewMode === 'cards'"
+                      (click)="viewMode = 'cards'">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+              </button>
+              <button type="button" class="btn p-2"
+                      [class.active]="viewMode === 'table'"
+                      (click)="viewMode = 'table'">
+                <i class="bi bi-table"></i>
+              </button>
+            </div>
+
+
+
+              <!-- Search Box -->
+              <div class="flex-grow-1 position-relative me-3 w-350" style="max-width: 400px;">
+                <input type="text"
+                  placeholder="Search connections..."
+                  [(ngModel)]="searchDbName"
+                  (keyup.enter)="searchDbConnectionList()"
+                  class="form-control glass-light-input p-2 ps-5" />
+              </div>
+
+              <!-- Buttons -->
+                <app-insights-button
+                  [buttonName]="'➕ New Connection'"
+                  [classesList]="'btn btn-primary me-3 animate-button'"
+                  [isIcon]="true"
+                  [previledgeId]="1"
                   [isBtn]="true"
                   (click)="routeNewDatabase()">
                 </app-insights-button>
-                <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" (click)="connectCrossDbs()" class="btn btn-primary me-3 animate-button" type="button" >Select & Move</button>
-                </div>
+
+                <button *ngIf="iscrossDbSelect"
+                  [disabled]="!selectedHirchyIdCrsDb"
+                  (click)="connectCrossDbs()"
+                  class="btn btn-primary me-3 animate-button"
+                  type="button">
+                  Select & Move
+                </button>
               </div>
-            
+            </div>
+
             
               <div class="row mb-4">
                 <div class="col-3">
@@ -952,12 +715,12 @@
               </div>
             
             
-              <div class="row g-4">
+              <div *ngIf="viewMode==='cards'" class="row g-4">
                 @if(!isLoadingConnectionsList && connectionList.length > 0){
                 <div class="col-12 col-md-6 col-lg-4" *ngFor="let connection of connectionList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }">
                   <div class="glass-card h-100" [ngClass]="iscrossDbSelect ? 'selectable-card' : ''" [class.selected]="iscrossDbSelect && selectedHirchyIdCrsDb === connection.hierarchy_id"
-                         (click)="iscrossDbSelect ? onSelectedHIDCrsDb(connection.hierarchy_id) : null">
-                    <div class="p-4">
+                         (click)="iscrossDbSelect ? onSelectedHIDCrsDb(connection.hierarchy_id) : null" [ngbTooltip]="(connection.server_type === 'CONNECTWISE' && connection?.data_dumping) ? 'Data Injenction is in Pogress!' : null">
+                    <div class="p-4" [class.disabled-card]="connection.server_type === 'CONNECTWISE' && connection?.data_dumping">
                       <div class="d-flex align-items-start justify-content-between mb-3">
                         <div class="d-flex align-items-center">
                           <!-- <div class="fs-2 me-3 icon-bounce">{{ connectionListIcons[connection.database_type] }}</div> -->
@@ -1041,7 +804,7 @@
                         <span class="time-text"><i class="bi bi-clock me-1"></i>{{ connection?.lastSync }}</span>
                       </div> -->
             
-                      <p class="large mb-0"><strong>{{ connection?.description | slice:0:30 }}{{ connection?.description?.length > 30 ? '...': '' }} </strong></p> 
+                      <p class="large mb-1" [ngbTooltip]="connection?.description?.length > 30 ? connection?.description : null"><strong>{{ connection?.description | slice:0:30 }}{{ connection?.description?.length > 30 ? '...': '' }} </strong></p> 
                   
                       <div class="mb-3 d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
@@ -1122,8 +885,8 @@
 
                       <!-- Skeleton Footer -->
                       <div class="d-flex gap-2">
-                        <div class="skeleton rounded" style="flex:1; height: 28px;"></div>
-                        <div class="skeleton rounded" style="flex:1; height: 28px;"></div>
+                        <div class="skeleton" style="flex:1; height: 28px;"></div>
+                        <div class="skeleton" style="flex:1; height: 28px;"></div>
                       </div>
                     </div>
                   </div>
@@ -1144,8 +907,196 @@
                   </div>
                 </ng-container>
               </div>
+
+              <div *ngIf="viewMode==='table'" class="table-responsive">
+
+                <!-- 1. Loader skeleton -->
+                <ng-container *ngIf="isLoadingConnectionsList; else checkData">
+                  <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>
+                          <div class="skeleton" style="width:120px; height:16px;"></div>
+                        </th>
+                        <th>
+                          <div class="skeleton" style="width:100px; height:16px;"></div>
+                        </th>
+                        <th>
+                          <div class="skeleton" style="width:120px; height:16px;"></div>
+                        </th>
+                        <th>
+                          <div class="skeleton" style="width:120px; height:16px;"></div>
+                        </th>
+                        <th class="text-center">
+                          <div class="skeleton" style="width:80px; height:16px;"></div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let i of [1,2,3,4,5]">
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="skeleton" style="width:25px; height:25px; border-radius:4px; margin-right:8px;"></div>
+                            <div>
+                              <div class="skeleton" style="width:120px; height:16px; margin-bottom:4px;"></div>
+                              <div class="skeleton" style="width:80px; height:12px;"></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="skeleton" style="width:100px; height:16px;"></div>
+                        </td>
+                        <td>
+                          <div class="skeleton" style="width:80px; height:16px;"></div>
+                        </td>
+                        <td>
+                          <div class="skeleton" style="width:80px; height:16px;"></div>
+                        </td>
+                        <td class="text-center">
+                          <div class="skeleton" style="width:60px; height:20px; display:inline-block;"></div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </ng-container>
+
+                <!-- 2. If not loading, check data -->
+                <ng-template #checkData>
+                  <div *ngIf="connectionList.length === 0; else tableBlock" class="text-center py-4 text-muted">
+                    <i class="bi bi-database-x fs-3 d-block mb-2"></i>
+                    No Data Found
+                  </div>
+                </ng-template>
+
+                <!-- 3. Actual table -->
+                <ng-template #tableBlock>
+                  <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th scope="col">Source Name</th>
+                        <th scope="col">Created By</th>
+                        <th scope="col">Last Modified</th>
+                        <th scope="col">Created Date</th>
+                        <th scope="col" class="text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let connection of connectionList | paginate : { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalItems }"
+                          [class.disabled-card]="connection.server_type === 'CONNECTWISE' && connection?.data_dumping">
+                        <td  (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(connection.hierarchy_id,connection.cross_db_id)">
+                          <div class="d-flex align-items-center">
+                            <div class="me-2 fs-5">
+                              <ng-container [ngSwitch]="connectionListIcons[connection.database_type]?.type">
+                                <span *ngSwitchCase="'emoji'">{{ connectionListIcons[connection.database_type]?.value }}</span>
+                                <i *ngSwitchCase="'fa'" [ngClass]="connectionListIcons[connection.database_type]?.value"></i>
+                                <div *ngSwitchCase="'svg'" [innerHTML]="getSafeSvg(connectionListIcons[connection.database_type]?.value)"></div>
+                                <img *ngSwitchCase="'image'" [src]="connectionListIcons[connection.database_type]?.value" alt="icon" width="20" height="20">
+                              </ng-container>
+                            </div>
+                            <div>
+                              <div class="fw-semibold" ngbTooltip="{{connection.display_name}}" triggers="hover">
+                                {{ connection.display_name | slice:0:25 }}
+                              </div>
+                              <small class="text-muted">{{ connection.database_type }}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{ connection.created_by }}</td>
+                        <td>{{ connection.updated_at | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ connection.created_at | date:'dd/MM/yyyy' }}</td>
+                        <td class="text-center">
+                          <button class="btn btn-primary btn-sm me-1"
+                            (click)="editDbDetails(connection.hierarchy_id);editDbConnectionModal(EditDbCon);"
+                            [disabled]="disabledEdit(connection.server_type)">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <button class="btn btn-danger btn-sm me-1"
+                            (click)="deleteDbConnection(connection.is_cross_db ? connection.cross_db_id : connection.hierarchy_id)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                           
+                           <div ngbDropdown class="d-inline-block">
+                            <button class="btn btn-secondary btn-sm" ngbDropdownToggle>
+                              <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                              
+                              <!-- Smart Dashboard -->
+                              <a *ngIf="!connection.is_cross_db && smartDashboardSources.includes(connection.server_type)" 
+                                class="dropdown-item"
+                                (click)="smartDashboardFromConnection(connection)">
+                                <i class='fe fe-zap me-2 d-inline-flex'></i> Smart Dashboard
+                              </a>
+
+                              <!-- Edit Transformation -->
+                              <a *ngIf="connection?.transformation && !connection.is_cross_db" 
+                                class="dropdown-item"
+                                (click)="goToTransformationLayer(connection?.hierarchy_id)" 
+                                ngbTooltip="Edit Transformation">
+                                <img src="./assets/images/icons/transformation_blue.png" 
+                                    class="avatar-databse-sm d-inline-flex me-2"> Edit Transforma...
+                              </a>
+
+                              <!-- Replace -->
+                              <a *ngIf="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL')" 
+                                class="dropdown-item"
+                                (click)="fileInput.click()">
+                                <input type="file"
+                                      (change)="connection.server_type === 'CSV' 
+                                                ? uploadfileCsv($event,'replace',connection) 
+                                                : uploadfileExcel($event,'replace',connection)"
+                                      [attr.accept]="connection.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" 
+                                      #fileInput style="display: none;" />
+                                <i class="fe fe-repeat"></i> Replace
+                              </a>
+
+                              <!-- Upsert -->
+                              <a *ngIf="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL')" 
+                                class="dropdown-item"
+                                (click)="fileInput.click()">
+                                <input type="file"
+                                      (change)="connection.server_type === 'CSV' 
+                                                ? uploadfileCsv($event,'upsert',connection) 
+                                                : uploadfileExcel($event,'upsert',connection)"
+                                      [attr.accept]="connection.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" 
+                                      #fileInput style="display: none;" />
+                                <i class="fe fe-upload"></i> Upsert
+                              </a>
+
+                              <!-- Append -->
+                              <a *ngIf="(connection.server_type === 'CSV' || connection.server_type ==='EXCEL')" 
+                                class="dropdown-item"
+                                (click)="fileInput.click()">
+                                <input type="file"
+                                      (change)="connection.server_type === 'CSV' 
+                                                ? uploadfileCsv($event,'append',connection) 
+                                                : uploadfileExcel($event,'append',connection)"
+                                      [attr.accept]="connection.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" 
+                                      #fileInput style="display: none;" />
+                                <i class="fe fe-plus"></i> Append
+                              </a>
+
+                              <!-- Set Alerts -->
+                              <a (click)="gotoConfigureEmailAlerts(connection.hierarchy_id)" 
+                                tabindex="0" 
+                                class="dropdown-item" 
+                                style="cursor: pointer;">
+                                <i class="fa fa-bell me-2 d-inline-flex"></i> Set Alerts
+                              </a>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </ng-template>
+
+              </div>
+
+
+
             </div>
-          }
+          
           <!-- <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetconnectionList((page = $event))"></pagination-controls>
           <div class="pagination-count">
             <select  [(ngModel)]="itemsPerPage" (ngModelChange)="onPageSizeChange()" class="form-control cursor">
@@ -2212,9 +2163,19 @@
                         <label [ngClass]="{'error-label': jiraRedirectURLError}" class="col-form-label">Redirect URL <span class="text-danger ms-1">*</span></label>
                         <input [ngClass]="{'error-input': jiraRedirectURLError}" type="text" class="form-control" [(ngModel)]="jiraRedirectURL" [ngModelOptions]="{standalone: true}" (input)="jiraRedirectURLInput()">
                       </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': jiraScopeError}" class="col-form-label">Scopes <span class="text-danger ms-1">*</span></label>
+                        <ng-multiselect-dropdown
+                          [data]="jiraScopes"
+                          [(ngModel)]="selectedJiraScopes"
+                          [ngModelOptions]="{standalone: true}"
+                          [settings]="jiraDropdownSettings"
+                          (ngModelChange)="onJiraScopeChange($event)">
+                        </ng-multiselect-dropdown>
+                      </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
-                        <button type="button" class="btn btn-primary" (click)="jiraSignIn()" [disabled]="(jiraClientSecretError || displayNameError || jiraClientIdError || jiraRedirectURLError) || !(jiraClientSecret && jiraClientId && displayName && jiraRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                        <button type="button" class="btn btn-primary" (click)="jiraSignIn()" [disabled]="(jiraScopeError || jiraClientSecretError || displayNameError || jiraClientIdError || jiraRedirectURLError) || !(selectedJiraScopes.length>0 && jiraClientSecret && jiraClientId && displayName && jiraRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
                     </form>
                   </div>
@@ -2223,8 +2184,9 @@
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                 <div class="card user-card border Relational-database-height">
                   <div class="user-image">
-                    <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline" [innerHTML]="SVGICONS.jira"></span>
-                  </div>
+                      <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
+                        <img src="./assets/images/icons_new/JIRA.png" alt="" class="rounded-circle bg-white user-image-border-color">
+                      </span>                  </div>
                   <div class="card-body server-content-card">
                     <ul class="">
                       <li><span class="mt-1">Jira is a project management tool for tracking issues and agile workflows.</span></li>
@@ -2233,6 +2195,7 @@
                       <li><span class="mb-0"><strong>Client Secret:</strong> Application secret.</span></li>
                       <li><span class="mb-0"><strong>Redirect URI:</strong> Redirect URL configured in Jira.</span></li>
                       <li><span class="mb-0"><strong>Display Name:</strong> A user-friendly name for the connection.</span></li>
+                      <li><span class="mb-0"><strong>Scopes:</strong> Required Jira permissions (manage:jira-configuration, manage:jira-project, manage:jira-webhook, read:jira-user, read:jira-work).</span></li>
                     </ul>
                   </div>
                 </div>
@@ -2318,7 +2281,7 @@
                 <div class="card user-card border Relational-database-height">
                   <div class="user-image">
                     <span class="avatar w-20 h-20 rounded-circle mb-2 user-image-outline">
-                      <img src="./assets/images/icons/deepseek.svg" alt="" class="rounded-circle bg-white user-image-border-color">
+                      <img src="./assets/images/icons_new/DEEPSEEK.svg" alt="" class="rounded-circle bg-white user-image-border-color">
                     </span>
                   </div>
                   <div class="card-body server-content-card">
@@ -3302,13 +3265,14 @@
           </div>
       </div> -->
     
-<div class="row">
+<div class="row p-4">
   <div class="col-3 cat-border" style="height:80vh; overflow-y:auto;">
 <div class="main-container container-fluid TopHeader">
   <div class="d-flex align-items-center mb-4">
     <div class="flex-grow-1 position-relative me-3">
       <h6 class="mb-3">CHOOSE A CATEGORY</h6>
     </div>
+    
     <div class="d-flex ms-auto">
       <!-- <app-insights-button [buttonName]="' View Connected Datasources'"
         [classesList]="'btn btn-primary me-3 animate-button'" [isIcon]="true" [previledgeId]="4"
@@ -3347,7 +3311,7 @@
       </div>
          <div class="flex-frow-1 d-flex flex-column">
         <small class="text-muted ">{{ cat.description }}</small>
-        <span>{{ connectionTypes[cat.name]?.length || 0 }}
+        <span>{{ connectionTypes[cat.name]?.length || 0 }}  options
           <i class="bi bi-arrow-right text-primary ms-2 arrow-icon"></i>
         </span>
       </div>
@@ -5514,6 +5478,20 @@
         </div>
 
         <div class="mb-3">
+          <label [ngClass]="{'error-label': jiraScopeError}" class="form-label d-inline-block me-1">
+            Scopes <span class="text-danger">*</span>
+          </label>
+          <span class="text-muted" style="display:inline-block;">(Select the required Jira scopes in this field)</span>
+          <ng-multiselect-dropdown
+            [data]="jiraScopes"
+            [(ngModel)]="selectedJiraScopes"
+            [ngModelOptions]="{standalone: true}"
+            [settings]="jiraDropdownSettings"
+            (ngModelChange)="onJiraScopeChange($event)">
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="mb-3">
           <label class="form-label">Description </label>
           <span class="text-muted" style="display:inline-block;">(Enter your description)</span>
           <input type="text" class="form-control forms-light w-100" [(ngModel)]="connectionDescription" [ngModelOptions]="{standalone: true}" placeholder="Enter your description">
@@ -5521,7 +5499,7 @@
 
         <div class="d-flex justify-content-end gap-2 mt-3">
           <button type="button" class="btn btn-secondary animate-button" (click)="goBackToSubCategories()">Close</button>
-          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(jiraClientSecretError || displayNameError || jiraClientIdError || jiraRedirectURLError) || !(jiraClientSecret && jiraClientId && displayName && jiraRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+          <button type="submit" class="btn btn-primary me-3 animate-button" [disabled]="(jiraScopeError || jiraClientSecretError || displayNameError || jiraClientIdError || jiraRedirectURLError) || !(selectedJiraScopes.length>0 && jiraClientSecret && jiraClientId && displayName && jiraRedirectURL)">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
         </div>
 
       </form>
