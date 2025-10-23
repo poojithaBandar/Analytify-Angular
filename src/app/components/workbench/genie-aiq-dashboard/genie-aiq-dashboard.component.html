@@ -195,8 +195,18 @@
         <!-- Select Tables -->
         <label class="form-label fw-semibold"
           >Select Tables
-          <span class="badge-pill optional text-muted">Optional</span></label
+          <span
+            *ngIf="selectedCard === 'prompt'"
+            class="badge-pill optional text-muted"
+            >Optional</span
+          >
+          <span
+            *ngIf="selectedCard === 'insight'"
+            class="badge-pill required text-danger"
+            >Required</span
+          ></label
         >
+
         <ng-select
           [items]="tables"
           bindLabel=""
