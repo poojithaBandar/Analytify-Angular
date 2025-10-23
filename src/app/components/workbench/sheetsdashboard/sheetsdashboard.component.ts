@@ -4658,7 +4658,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
         let minData = 0;
-       const maxData = Math.max(...this.filteredRowData[0].data);
+       let maxData = 1;
+       if (this.filteredRowData && this.filteredRowData[0]?.data.length > 0) {
+         maxData = Math.max(...this.filteredRowData[0].data);
+       }
        let result:any[] = [];
 
        // Loop through the countries (assuming both data sets align by index)
@@ -4675,7 +4678,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
      
          result.push(countryData);
        });
-    if(this.filteredRowData && this.filteredRowData[0]?.length > 1){
+    if(this.filteredRowData && this.filteredRowData[0]?.data.length > 1){
     minData = Math.min(...this.filteredRowData[0].data);
     }
     item1.echartOptions.tooltip = {
