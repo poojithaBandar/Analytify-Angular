@@ -70,6 +70,7 @@ export class DashboardTransferService {
     const dashboardComponentRef =container.createComponent(SheetsdashboardComponent);
     this.dashboardInstance = dashboardComponentRef.instance;
     const queries = Array.isArray(responesData.datasource_query) ? responesData.datasource_query : [responesData.datasource_query];
+    if(!responesData?.datasource_query[0]?.is_custom_sql){
     queries.forEach((query: any) => {
       const obj ={
         query_set_id:query.queryset_id,
@@ -88,6 +89,7 @@ export class DashboardTransferService {
         }
       });
     });
+    }
     responesData.sheets.forEach((sheet: any)=> {
         const {
           chart_id,
