@@ -1157,10 +1157,10 @@ xaxis: {
           },
           autoSelected: 'zoom'
         },
-        height: 350,
+        height: 450,
         type: 'scatter',
         background: this.backgroundColor,
-        zoom: { enabled: true }
+        zoom: { enabled: false }
       },
       dataLabels: {
         enabled: this.dataLabels,
@@ -1193,8 +1193,10 @@ xaxis: {
           }
         },
       },
+      labels : categories ,
       xaxis: {
         categories: categories,
+        type : isFinite(+categories[0]) ? 'numeric' : 'category',
         labels: {
           show: this.xLabelSwitch,
           offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10)),
@@ -1221,6 +1223,11 @@ xaxis: {
       tooltip: {
         y: {
           formatter: this.formatNumber.bind(this)
+        },
+        fixed: {
+          enabled: true,
+          position: 'bottom',  
+          offsetY: 10          
         }
       },
       
