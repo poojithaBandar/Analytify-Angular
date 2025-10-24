@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit, ViewEncapsulation, SecurityContext } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input, HostListener, AfterViewInit, ViewEncapsulation, SecurityContext, OnChanges, SimpleChanges } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -83,6 +83,11 @@ interface RangeSliderModel {
   maxValue: number;
   options: Options;
 }
+
+interface SheetSdkPreloadedPayload {
+  sheet_retrieve_data: any;
+  sheet_filter_data?: any;
+}
 declare global {
   interface JQuery {
     sortable(): JQuery;
@@ -113,7 +118,7 @@ declare var $:any;
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
-export class SheetsComponent{
+export class SheetsComponent implements OnChanges{
   tableColumnsData = [] as any;
   draggedtables = [] as any;
   draggedColumns = [] as any;
@@ -170,6 +175,8 @@ export class SheetsComponent{
   @Input() sdkSheetId! : number;
   @Input() sdkQuerySetID! : number;
   @Input() sdkDatabaseID! : number;
+  @Input() sdkPreloaded?: SheetSdkPreloadedPayload;
+  private sdkInitialized = false;
 
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
@@ -599,7 +606,19 @@ isSidebarCollapsed: boolean = false;
   ngAfterViewInit(): void {
 
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['sdkPreloaded']?.currentValue) {
+      this.initializeFromSdk(changes['sdkPreloaded'].currentValue as SheetSdkPreloadedPayload);
+    }
+  }
   ngOnInit(): void {
+    if (this.sdkInitialized && this.sdkPreloaded) {
+      return;
+    }
+    if (this.sdkPreloaded) {
+      this.initializeFromSdk(this.sdkPreloaded);
+      return;
+    }
     if(this.sdkSheetId){
       this.retriveDataSheet_id = this.sdkSheetId;
       this.qrySetId = this.sdkQuerySetID;
@@ -640,6 +659,29 @@ isSidebarCollapsed: boolean = false;
     }
     console.log(this.defaultColorSchemes);
   }
+  }
+  private initializeFromSdk(preloaded: SheetSdkPreloadedPayload): void {
+    if (!preloaded?.sheet_retrieve_data) {
+      return;
+    }
+    this.isEmbedSDK = true;
+    const shouldInitializeSheet = !this.sdkInitialized;
+    this.sdkInitialized = true;
+    const retrieve = preloaded.sheet_retrieve_data;
+    this.retriveDataSheet_id = retrieve?.sheet_id ?? this.sdkSheetId ?? this.retriveDataSheet_id;
+    if (retrieve?.sheet_id && !this.sdkSheetId) {
+      this.sdkSheetId = retrieve.sheet_id;
+    }
+    this.qrySetId = this.sdkQuerySetID ?? retrieve?.queryset_id ?? this.qrySetId;
+    this.databaseId = this.sdkDatabaseID ?? retrieve?.hierarchy_id ?? this.databaseId;
+    if (shouldInitializeSheet) {
+      this.setSheetData(retrieve, false, undefined, false);
+    }
+    if (preloaded.sheet_filter_data) {
+      this.resetDataExtractionState();
+      this.handleDataExtractionResponse(preloaded.sheet_filter_data, false);
+      this.hasUnSavedChanges = false;
+    }
   }
   isColorSchemeDropdownOpen = false;
   toggleDropdownColorScheme() {
@@ -791,7 +833,7 @@ try {
       
 
 
-      dataExtraction(isSyncData : boolean){
+      private resetDataExtractionState(): void {
         this.dualAxisColumnData = [];
         this.tablePreviewColumn = [];
         this.tablePreviewRow = [];
@@ -804,6 +846,117 @@ try {
         this.dualAxisRowData = [];
         this.radarRowData = [];
         this.sortedData = [];
+      }
+
+      private handleDataExtractionResponse(responce: any, isSyncData: boolean): void {
+        this.tablePaginationRows=responce.rows;
+        this.tablePaginationColumn=responce.columns;
+        this.tablePaginationCustomQuery=responce.custom_query;
+        this.chartsDataSet(responce);
+        this.mulColData = responce.columns;
+        this.mulRowData = responce.rows;
+        this.pivotMeasureValues = responce.pivot_measure;
+        this.pivotColumnData = responce?.data?.col;
+        this.pivotRowData = responce?.data?.row;
+        this.pivotMeasureData = responce?.data?.pivot_measure;
+        if(isSyncData){
+        }
+        if (this.chartsRowData.length > 0) {
+          // this.enableDisableCharts();
+          // this.chartsOptionsSet();
+          if (this.retriveDataSheet_id && !this.isEChatrts) {
+            const dimensions: Dimension[] = this.dualAxisColumnData;
+            // const categories = this.flattenDimensions(dimensions);
+            // this.updateChart();
+          }
+          else{
+            // this.chartsOptionsSet();
+          }
+        }
+        this.chartsOptionsSet();
+        this.getDimensionAndMeasures();
+        this.changeSelectedColumn();
+        if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage || this.pivotTable) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
+          if(!this.table){
+            this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
+          }
+          this.table = true;
+          this.pivotTable = false;
+          this.bar = false;
+          this.horizontalBar = false;
+          this.area = false;
+          this.line = false;
+          this.pie = false;
+          this.scatter = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.chartId = 1;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.guage = false;
+          this.funnel = false;
+          this.calendar = false;
+          this.map=false;
+          this.treemap = false;
+          this.radial = false;
+          // this.tableDisplayPagination();
+        } else if(((this.pie || this.bar || this.scatter || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar || this.radial || this.treemap) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
+          this.table = false;
+          this.pivotTable = false;
+          this.bar = false;
+          this.horizontalBar = false;
+          this.area = false;
+          this.line = false;
+          this.pie = false;
+          this.scatter = false;
+          this.sidebyside = true;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.chartId = 7;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.calendar = false;
+          this.map = false;
+          this.treemap = false;
+          this.radial = false;
+          // this.sidebysideBar();
+          this.resetCustomizations();
+          this.chartType = 'sidebyside';
+          this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
+          this.chartType = 'sidebyside'
+        }
+        if(this.pivotTable){
+          this.pivotTableDatatransform(isSyncData, true);
+        }
+        if(this.table){
+          this.page = 1;
+          this.pageNo = 1;
+          this.tableDisplayPagination(isSyncData);
+        }
+        if(isSyncData && !this.table && !this.pivotTable){
+          if(this.kpi){
+            this.sheetSave();
+          } else{
+            this.isSheetSaveOrUpdate = true;
+          }
+        }
+      }
+
+      dataExtraction(isSyncData : boolean){
+        this.resetDataExtractionState();
         let draggedColumnsObj;
         if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
           draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
@@ -844,110 +997,7 @@ try {
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
-            this.tablePaginationRows=responce.rows;
-            this.tablePaginationColumn=responce.columns;
-            this.tablePaginationCustomQuery=responce.custom_query;
-            this.chartsDataSet(responce);
-            this.mulColData = responce.columns;
-            this.mulRowData = responce.rows;
-            this.pivotMeasureValues = responce.pivot_measure;
-            this.pivotColumnData = responce?.data?.col;
-            this.pivotRowData = responce?.data?.row;
-            this.pivotMeasureData = responce?.data?.pivot_measure;
-            if(isSyncData){
-            }
-            if (this.chartsRowData.length > 0) {
-              // this.enableDisableCharts();
-              // this.chartsOptionsSet();
-              if (this.retriveDataSheet_id && !this.isEChatrts) {
-                const dimensions: Dimension[] = this.dualAxisColumnData;
-                // const categories = this.flattenDimensions(dimensions);
-                // this.updateChart();
-              }
-              else{
-                // this.chartsOptionsSet();
-              }
-            }
-            this.chartsOptionsSet();
-            this.getDimensionAndMeasures();
-            this.changeSelectedColumn();
-            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage || this.pivotTable) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
-              if(!this.table){
-                this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
-              }
-              this.table = true;
-              this.pivotTable = false;
-              this.bar = false;
-              this.horizontalBar = false;
-              this.area = false;
-              this.line = false;
-              this.pie = false;
-              this.scatter = false;
-              this.sidebyside = false;
-              this.stocked = false;
-              this.barLine = false;
-              this.horizentalStocked = false;
-              this.grouped = false;
-              this.multiLine = false;
-              this.donut = false;
-              this.chartId = 1;
-              this.radar = false;
-              this.kpi = false;
-              this.heatMap = false;
-              this.guage = false;
-              this.funnel = false;
-              this.calendar = false;
-              this.map=false;
-              this.treemap = false;
-              this.radial = false;
-              // this.tableDisplayPagination();
-            } else if(((this.pie || this.bar || this.scatter || this.horizontalBar || this.area || this.line || this.donut || this.funnel || this.calendar || this.radial || this.treemap) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
-              this.table = false;
-              this.pivotTable = false;
-              this.bar = false;
-              this.horizontalBar = false;
-              this.area = false;
-              this.line = false;
-              this.pie = false;
-              this.scatter = false;
-              this.sidebyside = true;
-              this.stocked = false;
-              this.barLine = false;
-              this.horizentalStocked = false;
-              this.grouped = false;
-              this.multiLine = false;
-              this.donut = false;
-              this.chartId = 7;
-              this.radar = false;
-              this.kpi = false;
-              this.heatMap = false;
-              this.funnel = false;
-              this.guage = false;
-              this.calendar = false;
-              this.map = false;
-              this.treemap = false;
-              this.radial = false;
-              // this.sidebysideBar();
-              this.resetCustomizations();
-              this.chartType = 'sidebyside';
-              this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
-              this.chartType = 'sidebyside'
-            }
-            if(this.pivotTable){
-              this.pivotTableDatatransform(isSyncData, true);
-            }
-            if(this.table){
-              this.page = 1;
-              this.pageNo = 1;
-              this.tableDisplayPagination(isSyncData);
-            }
-            if(isSyncData && !this.table && !this.pivotTable){
-              if(this.kpi){
-                this.sheetSave();
-              } else{
-                this.isSheetSaveOrUpdate = true;
-              }
-            }
+            this.handleDataExtractionResponse(responce, isSyncData);
           },
           error: (error) => {
             console.log(error);
